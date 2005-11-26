@@ -1,0 +1,9311 @@
+	ORG #4000
+
+
+L4000	DB "A","B"
+	DW 0
+	DW L5000
+	DW 0
+	DW 0
+	DS 6,0
+
+	DS 8,0
+
+L4018	DB "APRLOPLL"
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+
+L4100	DB "V1.3 1988 04 26",0
+L4110	JP L4140	; WRTOPL
+L4113	JP L4192	; INIOPL
+L4116	JP L42E5	; MSTART
+L4119	JP L43F1	; MSTOP
+L411C	JP L4447	; RDDATA
+L411F	JP L445E	; OPLDRV
+L4122	JP L4752	; TSTBGM
+L4125	RET
+	DW 0FFFFh
+
+
+L4128	DEFW #00AB
+	DEFW #00B5
+	DEFW #00C0
+	DEFW #00CC
+	DEFW #00D8
+	DEFW #00E5
+	DEFW #00F2
+	DEFW #0101
+	DEFW #0110
+	DEFW #0120
+	DEFW #0131
+	DEFW #0143
+
+L4140 PUSH BC
+ OUT (#7C),A
+ PUSH AF
+ LD B,#03
+ CALL L4154		; Wait 0.01 ms
+ LD A,E
+ OUT (#7D),A
+ LD B,#0D
+ CALL L4154		; Wait 0.05 ms
+ POP AF
+ POP BC
+ RET
+
+L4154 IN A,(#E6)
+ LD C,A
+L4157 IN A,(#E6)
+ SUB C
+ CP B
+ JP C,L4157
+ RET
+
+L415F PUSH BC
+ PUSH IY
+ PUSH DE
+ ADD A,#00
+ LD D,#00
+ LD E,A
+ ADD IY,DE
+ POP DE
+ OUT (#7C),A
+ PUSH AF
+ LD B,#03
+ CALL L4154		; Wait 0.01 ms
+ LD A,E
+ OUT (#7D),A
+ LD (IY+0),A
+ LD B,#0D
+ CALL L4154		; Wait 0.05 ms
+ POP AF
+ POP IY
+ POP BC
+ RET
+
+L4183 PUSH HL
+ PUSH IY
+ POP HL
+ ADD A,#00
+ ADD A,L
+ LD L,A
+ LD A,H
+ ADC A,#00
+ LD H,A
+ LD A,(HL)
+ POP HL
+ RET
+
+L4192 DI
+ LD A,L
+ AND #FE
+ LD L,A 		; reset b0 of L
+ PUSH HL
+ LD BC,#4000
+ CALL L41F3		; get pointer in SLTWRK of this ROM
+ POP BC
+ LD A,(HL)
+ AND #01
+ OR C
+ LD (HL),A
+ INC HL
+ LD (HL),B		; set bitpatern
+ PUSH BC
+ POP IY
+ CALL L4247		; quest for MSX-MUSIC
+ PUSH IY
+ POP HL
+ LD DE,#0000
+ ADD HL,DE
+ LD E,L
+ LD D,H
+ INC DE
+ LD BC,#00A0
+ LD (HL),#00
+ LDIR			; clear used area
+ LD A,#00
+ CALL L4652		; PAC(0-7)= ?
+ LD A,#0E
+ LD E,#00
+ CALL L415F		; PAC(14)=0
+ INC A
+ CALL L415F		; PAC(15)=0
+ LD A,#10
+ LD E,#20
+ LD B,#09
+L41D3 CALL L415F
+ INC A
+ DJNZ L41D3		; PAC(16)-PAC(24)=20h
+ LD A,#20
+ LD E,#07
+ LD B,#09
+L41DF CALL L415F
+ INC A
+ DJNZ L41DF		; PAC(32)-PAC(40)=07h
+ LD A,#30
+ LD E,#B3
+ LD B,#09
+L41EB CALL L415F
+ INC A
+ DJNZ L41EB		; PAC(48)-PAC(56)=B3h
+ EI
+ RET
+
+L41F3 CALL L420D	; get slotid of page
+ AND #0F
+ LD L,A
+ RLCA
+ RLCA
+ RLCA
+ RLCA
+ AND #30
+ OR L
+ AND #3C
+ OR #01
+ RLCA
+ LD E,A
+ LD D,#00
+ LD HL,LFD09
+ ADD HL,DE
+ RET
+
+L420D PUSH BC
+ PUSH DE
+ PUSH HL
+ LD A,B
+ RLCA
+ RLCA
+ AND #03
+ LD B,A
+ IN A,(#A8)
+ CALL L423D		; Shift page in b1-b0
+ AND #03
+ LD E,A
+ LD D,#00
+ LD HL,LFCC1
+ ADD HL,DE
+ LD A,(HL)
+ AND #80
+ OR E
+ JP P,L4239		; Slot not expanded, skip
+ LD E,A
+ INC HL
+ INC HL
+ INC HL
+ INC HL
+ LD A,(HL)
+ RLCA
+ RLCA
+ CALL L423D		; Shift page in b1-b0
+ AND #0C
+ OR E
+L4239 POP HL
+ POP DE
+ POP BC
+ RET
+
+L423D INC B
+ DEC B
+ RET Z			; Page 0, quit
+ PUSH BC
+L4241 RRCA
+ RRCA
+ DJNZ L4241		; shift page into b1-b0
+ POP BC
+ RET
+
+L4247 LD HL,L425A
+ PUSH IY
+ POP DE
+ LD BC,#008B
+ LDIR			; init check routine
+ LD BC,#4000
+ CALL L420D		; get slotid of page 1
+ JP (IY)
+
+L425A PUSH AF
+ PUSH IY
+ POP DE
+ LD HL,L426F-L425A
+ ADD HL,DE
+ PUSH HL
+ LD HL,L42D5-L425A
+ ADD HL,DE
+ LD IX,L4291-L425A
+ ADD IX,DE
+ JP (IX)		; Check if a slot with "APRLOPLL"
+
+L426F CP #FF
+ JR NZ,L4289		; found, stop
+ PUSH IY
+ POP DE
+ LD HL,L4281-L425A
+ ADD HL,DE
+ PUSH HL
+ LD HL,L42DD-L425A
+ ADD HL,DE
+ JP (IX)		; Check if a slot with "PAC2OPLL"
+
+L4281 LD A,(L7FF6)
+ OR #01
+ LD (L7FF6),A		; set b0 of #7FF6
+L4289 POP AF
+ LD HL,L4000
+ CALL L0024		; enable org. slot on page 1
+ RET
+
+L4291 EX DE,HL
+ LD HL,LFCC1
+ LD C,#00
+ LD B,#04		; 4 prim. slots
+L4299 PUSH BC
+ PUSH HL
+ LD A,(HL)
+ AND #80
+ OR C
+ LD C,A
+ LD B,#01
+ RLCA
+ JR NC,L42A7		; not expanded, 1 slot
+ LD B,#04		; 4 sec. slots
+L42A7 PUSH BC
+ PUSH DE
+ LD A,C
+ LD H,#40
+ CALL L0024		; enable page 1 of slot
+ POP DE
+ PUSH DE
+ LD HL,L4018
+ LD B,#08
+L42B6 LD A,(DE)
+ INC DE
+ CP (HL)
+ INC HL
+ JR NZ,L42BE
+ DJNZ L42B6		; check if text
+L42BE POP DE
+ POP BC
+ JR Z,L42D1		; found, stop search
+ LD A,C
+ ADD A,#04
+ LD C,A
+ DJNZ L42A7		; next sec. slot (if any)
+ POP HL
+ POP BC
+ INC HL
+ INC C
+ DJNZ L4299		; next prim. slot
+ LD A,#FF
+ RET
+L42D1 LD A,C
+ POP HL
+ POP BC
+ RET
+
+L42D5 DEFM "APRLOPLL"
+L42DD DEFM "PAC2OPLL"
+
+L42E5 DI
+ PUSH HL
+ PUSH AF
+ LD BC,#4000
+ CALL L41F3		; get pointer in SLTWRK of this ROM
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ AND #FE
+ LD L,A
+ PUSH HL
+ POP IY
+ LD DE,#003D
+ ADD HL,DE
+ PUSH HL
+ POP IX
+ POP AF
+ OR A
+ JR NZ,L4303
+ DEC A
+L4303 LD (IY+58),A
+ POP HL
+ LD A,(HL)
+ CP #12
+ JP NZ,L431D
+ LD A,#0E
+ LD E,#00
+ CALL L415F		; PAC(14)=0
+ LD B,#09
+ LD (IY+57),#00
+ JP L4323
+L431D LD B,#07
+ LD (IY+57),#FF
+L4323 LD (IY+59),#00
+ PUSH HL
+L4328 LD E,(HL)
+ INC HL
+ LD D,(HL)
+ INC HL
+ LD A,D
+ OR E
+ JP NZ,L433C
+ LD (IX+0),#00
+ LD (IX+1),#00
+ JP L434E
+L433C EX (SP),HL
+ EX DE,HL
+ ADD HL,DE
+ LD (IX+0),L
+ LD (IX+1),H
+ LD (IX+10),#01
+ EX DE,HL
+ EX (SP),HL
+ INC (IY+59)
+L434E LD DE,#000B
+ ADD IX,DE
+ DJNZ L4328
+ POP HL
+ CALL L435B
+ EI
+ RET
+L435B PUSH IY
+ POP IX
+ LD DE,#003D
+ ADD IX,DE
+ LD B,#09
+ LD A,(IY+57)
+ OR A
+ JP Z,L438B
+ LD L,(IX+0)
+ LD H,(IX+1)
+ LD (IX+2),L
+ LD (IX+3),H
+ LD (IX+4),#01
+ LD (IX+5),#00
+ CALL L43CC
+ LD DE,#000B
+ ADD IX,DE
+ LD B,#06
+L438B LD L,(IX+0)
+ LD H,(IX+1)
+ LD (IX+2),L
+ LD (IX+3),H
+ LD (IX+4),#01
+ LD (IX+5),#00
+ LD (IX+6),#00
+ LD (IX+7),#00
+ LD (IX+9),#00
+ LD (IX+8),#08
+ LD A,#1F
+ ADD A,B
+ CALL L4183		; A=PAC(32+B-1)
+ AND #CF
+ LD E,A
+ LD A,#1F
+ ADD A,B
+ CALL L415F		; PAC(32+B-1)
+ LD DE,#000B
+ ADD IX,DE
+ DJNZ L438B
+ LD A,(IY+59)
+ LD (IY+60),A
+ RET
+
+L43CC LD HL,L43DC
+L43CF LD A,(HL)
+ CP #FF
+ RET Z
+ INC HL
+ LD E,(HL)
+ INC HL
+ CALL L415F		; PAC(A)=E
+ JP L43CF
+
+L43DC DEFB #0E,#20
+ DEFB #16,#20
+ DEFB #17,#50
+ DEFB #18,#C0
+ DEFB #26,#05
+ DEFB #27,#05
+ DEFB #28,#01
+ DEFB #36,#03
+ DEFB #37,#33
+ DEFB #38,#33
+ DEFB #FF
+
+L43F1 DI
+ LD BC,#4000
+ CALL L41F3		; get pointer in SLTWRK of this ROM
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ AND #FE
+ LD L,A
+ PUSH HL
+ POP IY
+ LD DE,#003D
+ ADD HL,DE
+ PUSH HL
+ POP IX
+ LD B,#09
+ LD A,(IY+57)
+ OR A
+ JP Z,L4427
+ LD A,#0E
+ LD E,#20
+ CALL L415F		; PAC(14)=20h
+ LD (IX+2),#00
+ LD (IX+3),#00
+ LD DE,#000B
+L4423 ADD IX,DE
+ LD B,#06
+L4427 LD (IX+2),#00
+ LD (IX+3),#00
+ LD A,#1F
+ ADD A,B
+ CALL L4183		; A=PAC(32+B-1)
+ AND #EF
+ LD E,A
+ LD A,#1F
+ ADD A,B
+ CALL L415F		; PAC(32+B-1)=E
+ LD DE,#000B
+ ADD IX,DE
+ DJNZ L4427
+ EI
+ RET
+
+L4447 PUSH BC
+ PUSH DE
+ PUSH HL
+ EX DE,HL
+ LD L,A
+ LD H,#00
+ ADD HL,HL
+ ADD HL,HL
+ ADD HL,HL
+ LD BC,L4C00
+ ADD HL,BC
+ LD BC,#0008
+ LDIR
+ POP HL
+ POP DE
+ POP BC
+ RET
+
+L445E PUSH AF
+ PUSH BC
+ PUSH DE
+ PUSH HL
+ PUSH IX
+ PUSH IY
+ LD BC,#4000
+ CALL L41F3		; get pointer in SLTWRK of this ROM
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ AND #FE
+ LD L,A
+ PUSH HL
+ POP IY
+ LD DE,#003D
+ ADD HL,DE
+ PUSH HL
+ POP IX
+L447C LD B,#09
+ LD A,(IY+57)
+ OR A
+ JP Z,L44A9
+ LD L,(IX+2)
+ LD H,(IX+3)
+ LD A,L
+ OR H
+ JP Z,L44A2
+ LD E,(IX+4)
+ LD D,(IX+5)
+ DEC DE
+ LD A,E
+ OR D
+ CALL Z,L4698
+ LD (IX+4),E
+ LD (IX+5),D
+L44A2 LD DE,#000B
+ ADD IX,DE
+ LD B,#06
+L44A9 LD E,(IX+6)
+ LD D,(IX+7)
+ LD A,E
+ OR D
+ JP Z,L44C0
+ DEC DE
+ LD A,E
+ OR D
+ LD (IX+6),E
+ LD (IX+7),D
+ CALL Z,L44ED
+L44C0 LD L,(IX+2)
+ LD H,(IX+3)
+ LD A,L
+ OR H
+ JP Z,L44DD
+ LD E,(IX+4)
+ LD D,(IX+5)
+ DEC DE
+ LD A,E
+ OR D
+ CALL Z,L4501
+ LD (IX+4),E
+ LD (IX+5),D
+L44DD LD DE,#000B
+ ADD IX,DE
+ DJNZ L44A9
+ POP IY
+ POP IX
+ POP HL
+ POP DE
+ POP BC
+ POP AF
+ RET
+L44ED LD A,(IX+9)
+ OR A
+ RET NZ
+ LD A,#1F
+ ADD A,B
+ CALL L4183		; A=PAC(32+B-1)
+ AND #EF
+ LD E,A
+ LD A,#1F
+ ADD A,B
+ JP L415F		; PAC(32+B-1)=E
+L4501 LD A,(HL)
+ INC HL
+ CP #FF
+ JP Z,L453B
+ CP #60
+ JP C,L456B
+ CP #70
+ JP C,L45F4
+ CP #80
+ JP C,L460A
+ JP Z,L4624
+ CP #81
+ JP Z,L4636
+ CP #82
+ JP Z,L4648
+ CP #83
+ JP Z,L466B
+ CP #84
+ JP Z,L4691
+ CP #85
+ JP Z,L468A
+ CP #86
+ JP Z,L4682
+ JP L4501
+L453B LD (IX+2),#00
+ LD (IX+3),#00
+ LD A,(IX+10)
+ OR A
+ RET Z
+ DEC (IY+60)
+ RET NZ
+ LD A,(IY+58)
+ CP #FF
+ JP Z,L455B
+ OR A
+ RET Z
+ DEC A
+ LD (IY+58),A
+ RET Z
+L455B POP HL
+ CALL L435B
+ PUSH IY
+ POP IX
+ LD DE,#003D
+ ADD IX,DE
+ JP L447C
+L456B LD C,A
+ CALL L4729
+ LD (IX+2),L
+ LD (IX+3),H
+ LD A,C
+ OR A
+ RET Z
+ PUSH DE
+ LD A,(IX+8)
+ AND #07
+ JP NZ,L4586
+ LD H,E
+ LD L,D
+ JP L45A3
+L4586 RRCA
+ RRCA
+ RRCA
+ PUSH BC
+ LD HL,#0000
+ LD B,#08
+L458F ADD HL,HL
+ RLA
+ JP NC,L4597
+ ADD HL,DE
+ ADC A,#00
+L4597 DJNZ L458F
+ POP BC
+ LD L,A
+ OR H
+ JP NZ,L45A3
+ LD H,#01
+ LD L,#00
+L45A3 LD (IX+6),H
+ LD (IX+7),L
+ DEC C
+ LD L,C
+ LD H,#00
+ LD A,#0C
+ CALL L45DB
+ LD C,L
+ SLA C
+ LD A,H
+ ADD A,A
+ LD E,A
+ LD D,#00
+ LD HL,L4128
+ ADD HL,DE
+ LD A,#0F
+ ADD A,B
+ LD E,(HL)
+ INC HL
+ CALL L415F		; PAC(16+B-1)=E
+ LD A,#1F
+ ADD A,B
+ CALL L4183		; A=PAC(32+B-1)
+ AND #20
+ OR (HL)
+ OR C
+ OR #10
+ LD E,A
+ LD A,#1F
+ ADD A,B
+ CALL L415F		; PAC(32+B-1)=E
+ POP DE
+ RET
+L45DB PUSH BC
+ LD B,#08
+ OR A
+ LD C,A
+L45E0 ADC HL,HL
+ LD A,H
+ JP C,L45EA
+ CP C
+ JP C,L45ED
+L45EA SUB C
+ LD H,A
+ OR A
+L45ED CCF
+ DJNZ L45E0
+ RL L
+ POP BC
+ RET
+L45F4 AND #0F
+ LD C,A
+ LD A,#2F
+ ADD A,B
+ CALL L4183		; A=PAC(48+B-1)
+ AND #F0
+ OR C
+ LD E,A
+ LD A,#2F
+ ADD A,B
+ CALL L415F		; PAC(48+B-1)=E
+ JP L4501
+L460A AND #0F
+ RLCA
+ RLCA
+ RLCA
+ RLCA
+ LD C,A
+ LD A,#2F
+ ADD A,B
+ CALL L4183		; A=PAC(48+B-1)
+ AND #0F
+ OR C
+ LD E,A
+ LD A,#2F
+ ADD A,B
+ CALL L415F		; PAC(48+B-1)=E
+ JP L4501
+L4624 LD A,#1F
+ ADD A,B
+ CALL L4183		; A=PAC(32+B-1)
+ OR #20
+ LD E,A
+ LD A,#1F
+ ADD A,B
+ CALL L415F		; PAC(32+B-1)=E
+ JP L4501
+L4636 LD A,#1F
+ ADD A,B
+ CALL L4183		; A=PAC(32+B-1)
+ AND #DF
+ LD E,A
+ LD A,#1F
+ ADD A,B
+ CALL L415F		; PAC(32+B-1)=E
+ JP L4501
+L4648 LD A,(HL)
+ INC HL
+ AND #7F
+ CALL L4652		; PAC(0-7)=?
+ JP L4501
+
+L4652 INC A
+ PUSH HL
+ LD L,A
+ LD H,#00
+ ADD HL,HL
+ ADD HL,HL
+ ADD HL,HL
+ LD DE,L4C00
+ ADD HL,DE
+ LD A,#07
+L4660 DEC HL
+ LD E,(HL)
+ CALL L415F
+ DEC A
+ JP P,L4660		; init PAC(7)-PAC(0)
+ POP HL
+ RET
+L466B LD E,(HL)
+ INC HL
+ LD D,(HL)
+ INC HL
+ PUSH HL
+ EX DE,HL
+ LD C,#08
+ XOR A
+L4674 LD E,(HL)
+ INC HL
+ CALL L415F
+ INC A
+ DEC C
+ JP NZ,L4674		; init PAC(0)-PAC(7)
+ POP HL
+ JP L4501
+L4682 LD A,(HL)
+ INC HL
+ LD (IX+8),A
+ JP L4501
+L468A LD (IX+9),#FF
+ JP L4501
+L4691 LD (IX+9),#00
+ JP L4501
+L4698 LD A,(HL)
+ INC HL
+ CP #FF
+ JP Z,L453B
+ OR A
+ JP P,L4703
+ LD D,A
+ LD A,(HL)
+ INC HL
+ AND #0F
+ LD C,A
+ RLA
+ RLA
+ RLA
+ RLA
+ LD B,A
+ RR D
+ JR NC,L46C0
+ LD A,#37
+ CALL L4183		; A=PAC(55)
+ AND #0F
+ OR B
+ LD E,A
+ LD A,#37
+ CALL L415F		; PAC(55)=E
+L46C0 RR D
+ JR NC,L46D2
+ LD A,#38
+ CALL L4183		; A=PAC(56)
+ AND #F0
+ OR C
+ LD E,A
+ LD A,#38
+ CALL L415F		; PAC(56)=E
+L46D2 RR D
+ JR NC,L46E4
+ LD A,#38
+ CALL L4183		; A=PAC(56)
+ AND #0F
+ OR B
+ LD E,A
+ LD A,#38
+ CALL L415F		; PAC(56)=E
+L46E4 RR D
+ JR NC,L46F6
+ LD A,#37
+ CALL L4183		; A=PAC(55)
+ AND #F0
+ OR C
+ LD E,A
+ LD A,#37
+ CALL L415F		; PAC(55)=E
+L46F6 RR D
+ JR NC,L4700
+ LD A,#36
+ LD E,C
+ CALL L415F		; PAC(54)=E
+L4700 JP L4698
+L4703 LD C,A
+ XOR #1F
+ LD E,A
+ LD A,#0E
+ CALL L4183		; A=PAC(14)
+ AND E
+ LD E,A
+ LD A,#0E
+ CALL L415F		; PAC(14)=E
+ CALL L4183		; A=PAC(14)
+ LD E,A
+ LD A,C
+ OR E
+ LD E,A
+ LD A,#0E
+ CALL L415F		; PAC(14)=E
+ CALL L4729
+ LD (IX+2),L
+ LD (IX+3),H
+ RET
+
+L4729 LD DE,#0000
+L472C LD A,(HL)
+ INC HL
+ CP #FF
+ JR NZ,L4736
+ INC D
+ DEC DE
+ JR L472C
+L4736 ADD A,E
+ LD E,A
+ LD A,D
+ ADC A,#00
+ LD D,A
+ RET
+
+L473D OR A
+ JP Z,L43F1
+ DEC A
+ ADD A,A
+ LD D,#00
+ LD E,A
+ LD HL,L8010
+ ADD HL,DE
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ LD L,A
+ LD A,B
+ JP L42E5
+
+L4752 PUSH BC
+ PUSH HL
+ LD BC,#4000
+ CALL L41F3		; get pointer in SLTWRK of this ROM
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ AND #FE
+ LD L,A
+ LD BC,#003A
+ ADD HL,BC
+ LD A,(HL)
+ POP HL
+ POP BC
+ RET
+
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+L4BAD RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+
+L4C00 DEFB #11,#11," "," "
+ DEFB #FF,#B2,#F4,#F4
+ DEFB "0",#10," "," "
+ DEFB #FB,#B2,#F3,#F3
+ DEFB "a","a"," "," "
+ DEFB #B4,"V",#17,#17
+ DEFB "1","1"," "," "
+ DEFB "C","C","&","&"
+ DEFB #A2,"0"," "," "
+ DEFB #88,"T",#06,#06
+ DEFB "1","4"," "," "
+ DEFB "r","V",#1C,#1C
+ DEFB "q","q"," "," "
+ DEFB "S","R","$","$"
+ DEFB "4","0"," "," "
+ DEFB "P","0",#06,#06
+ DEFB #FF,"R"," "," "
+ DEFB #D9,#D9,"$","$"
+ DEFB "c","c"," "," "
+ DEFB #FC,#F8,")",")"
+ DEFB "A","A"," "," "
+ DEFB #A3,#A3,#05,#05
+ DEFB "S","S"," "," "
+ DEFB #F5,#F5,#03,#03
+ DEFB "#","C",")"," "
+ DEFB #BF,#BF,#05,#05
+ DEFB #03,#09," "," "
+ DEFB #D2,#B4,#F5,#F5
+ DEFB #01,#00," "," "
+ DEFB #A3,#E2,#F4,#F4
+ DEFB #01,#01," "," "
+ DEFB #C0,#B4,#F6,#F6
+ DEFB #F1,#F1," "," "
+ DEFB #D1,#D1,#F2,#F2
+ DEFB #11,#11," "," "
+ DEFB #FC,#D2,#83,#83
+ DEFB #01,#10," "," "
+ DEFB #CA,#E6,"$","$"
+ DEFB #E0,#F4," "," "
+ DEFB #F1,#F0,#08,#08
+ DEFB #FF,"p"," "," "
+ DEFB #1F,#1F,#01,#01
+ DEFB #11,#11," "," "
+ DEFB #FA,#F2,#F4,#F4
+ DEFB #A6,"B"," "," "
+ DEFB #B9,#B9,#02,#02
+ DEFB "1","1"," "," "
+ DEFB #F9,#F9,#04,#04
+ DEFB "B","D"," "," "
+ DEFB #94,#B0,#F6,#F6
+ DEFB #03,#03," "," "
+ DEFB #D9,#D9,#06,#06
+ DEFB "@",#00," "," "
+ DEFB #D9,#D9,#04,#04
+ DEFB #03,#03," "," "
+ DEFB #FF,#FF,#06,#06
+ DEFB #18,#11," "," "
+ DEFB #F5,#F5,"&","&"
+ DEFB #0B,#04," "," "
+ DEFB #F5,#F5,"'","'"
+ DEFB "@","@"," "," "
+ DEFB #D0,#D6,"'","'"
+ DEFB #00,#01," "," "
+ DEFB #E3,#E3,"%","%"
+ DEFB #11,#11,#08," "
+ DEFB #FA,#B2,#F4,#F4
+ DEFB #11,#11,#BD," "
+ DEFB #C0,#B2,#F4,#F4
+ DEFB #19,"S",#FF," "
+ DEFB #E7,#95,#03,#03
+ DEFB "0","p",#FF," "
+ DEFB "B","b","$","$"
+ DEFB "b","q","%"," "
+ DEFB "d","C","&","&"
+ DEFB "!",#03,"+"," "
+ DEFB #90,#D4,#F5,#F5
+ DEFB #01,#03,#0A," "
+ DEFB #90,#A4,#F5,#F5
+ DEFB "C","S",#0E," "
+ DEFB #B5,#E9,#84,#04
+ DEFB "4","0"," "," "
+ DEFB "P","0",#06,#06
+ DEFB "3","3"," "," "
+ DEFB #F5,#F5,#15,#15
+ DEFB #13,#13,"4"," "
+ DEFB #F5,#F5,#03,#03
+ DEFB "a","!"," "," "
+ DEFB "v","T",#06,#06
+ DEFB "c","p"," "," "
+ DEFB "K","K",#15,#15
+ DEFB #A1,#A1," "," "
+ DEFB "v","T",#07,#07
+ DEFB "a","x"," "," "
+ DEFB #85,#F2,#03,#03
+ DEFB "1","q","5"," "
+ DEFB #B6,#F9,"&","&"
+ DEFB "a","q",#AD," "
+ DEFB "u",#F2,#03,#03
+ DEFB #03,#0C,#14," "
+ DEFB #A7,#FC,#15,#15
+ DEFB #13,"2"," "," "
+ DEFB " ",#85,#AF,#AF
+ DEFB #F1,"1",#FF," "
+ DEFB "#","@",#09,#09
+ DEFB #F0,"t",#B7," "
+ DEFB "Z","C",#FC,#FC
+ DEFB " ","q"," "," "
+ DEFB #D5,#D5,#06,#06
+ DEFB "0","2"," "," "
+ DEFB "@","@","t","t"
+ DEFB "0","2"," "," "
+ DEFB "@","@","t","t"
+ DEFB #01,#08," "," "
+ DEFB "x",#F8,#F9,#F9
+ DEFB #C8,#C0," "," "
+ DEFB #F7,#F7,#F9,#F9
+ DEFB "I","@",")"," "
+ DEFB #F9,#F9,#05,#05
+ DEFB #CD,"B"," "," "
+ DEFB #A2,#F0,#01,#01
+ DEFB "Q","B"," "," "
+ DEFB #13,#10,#01,#01
+ DEFB "Q","B"," "," "
+ DEFB #13,#10,#01,#01
+ DEFB "0","4"," "," "
+ DEFB "#","p",#02,#02
+ DEFB #00,#00," "," "
+ DEFB #00,#00,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+ DEFB #FF,#FF,#FF,#FF
+
+
+L5000 JP L50EB
+L5003 JP L6589
+L5006 JP L5078
+
+L5009 LD HL,LF975
+ LD DE,LF976
+ LD BC,#017B
+ LD (HL),#00
+ LDIR			; clear VOICAQ,VOICBQ,VOICCQ
+ LD B,#04
+L5018 PUSH BC
+ LD A,#04
+ SUB B
+ LD C,A
+ LD HL,LFCC1
+ CALL L5539		; Pointer to slot in EXPTBL
+ LD A,(HL)
+ ADD A,A		; expanded ?
+ JR NC,L5043		; nop,
+ LD B,#04
+L5029 PUSH BC
+ LD A,#24
+ SUB B
+ RLCA
+ RLCA
+ OR C
+ CALL L5054		; Check slot on "APRLOPLL"
+ POP BC
+ JR Z,L5049		; found,
+ DJNZ L5029		; next sec. slot
+L5038 POP BC
+ DJNZ L5018		; next pri. slot
+ LD HL,L7FF6
+ SET 0,(HL)
+L5040 JP L7586		; Reset PAC registers
+L5043 LD A,C
+ CALL L5054		; Check slot on "APRLOPLL"
+ JR NZ,L5038		; not found, next pri. slot
+L5049 POP BC
+ JR L5040
+
+L504C DEFM "APRLOPLL"
+
+L5054 PUSH BC
+ LD HL,L4018
+ LD DE,L504C
+ LD B,#08
+L505D PUSH AF
+ PUSH BC
+ PUSH DE
+ CALL L000C
+ EI
+ POP DE
+ POP BC
+ LD C,A
+ LD A,(DE)
+ CP C
+ JR NZ,L5073
+ POP AF
+ INC DE
+ INC HL
+ DJNZ L505D
+ POP BC
+ XOR A
+ RET
+
+L5073 POP AF
+ POP BC
+ XOR A
+ INC A
+ RET
+L5078 CALL L50C6	; Check b0 set
+ RET Z			; No, quit
+ JP L6BCF
+
+L507F DI
+ CALL L50C6		; Check b0 set
+ RET NZ 		; Yes, quit
+ CALL L50BE		; set b0
+ LD HL,LFF93
+ LD DE,LF9BB
+ PUSH HL
+ CALL L50AE		; Copy Hook H.MDTM (Turbo-R)
+ LD HL,L50B9
+ POP DE
+ CALL L50AE		; Set hook H.MDTM (Turbo-R)
+ CALL L57FE		; Who am i
+ LD (LF97C),A
+ LD (LFF94),A		; Slotid
+ LD HL,L50B4
+ LD DE,LFFC5
+ CALL L50AE		; Set hook H.PLAY
+ LD (LFFC6),A		; Slotid
+ RET
+
+L50AE LD BC,#0005
+ LDIR
+ RET
+
+L50B4 RST #30
+ DEFB #00
+ DEFW L5A9E
+ RET
+
+L50B9 RST #30
+ DEFB #00
+ DEFW L7FED
+ RET
+
+L50BE PUSH HL
+ CALL L50CE
+ SET 0,(HL)		; set b0 in SLTWRK
+ POP HL
+ RET
+
+L50C6 PUSH HL
+ CALL L50CE
+ BIT 0,(HL)		; check b0 in SLTWRK
+ POP HL
+ RET
+
+L50CE PUSH AF
+ PUSH DE
+ CALL L57FE		; which slotid am i
+ AND #0F
+ LD L,A
+ RLCA
+ RLCA
+ RLCA
+ RLCA
+ AND #30
+ OR L
+ AND #3C
+ INC A
+ ADD A,A
+ LD E,A
+ LD D,#00		; offset page slot
+ LD HL,LFD09
+ ADD HL,DE
+ POP DE
+ POP AF
+ RET
+
+L50EB	EI
+	PUSH HL
+	LD HL,LFD89		; Name of call
+	CALL L52A9
+	POP HL
+	RET C
+	PUSH HL
+	LD HL,L5342
+	OR A
+	SBC HL,DE
+	POP HL
+	JR Z,L5122		; _MUSIC,
+	PUSH HL
+	LD HL,L561E
+	OR A
+	SBC HL,DE
+	POP HL
+	JR Z,L5122		; _PCM PLAY
+	PUSH HL
+	LD HL,L5623
+	OR A
+	SBC HL,DE
+	POP HL
+	JR Z,L5122		; _PCM REC
+	PUSH HL
+	LD HL,L57C6
+	OR A
+	SBC HL,DE
+	POP HL
+	JR Z,L5122		; _PAUSE
+	CALL L50C6		; Check b0 set
+	SCF
+	RET Z			; no, error, quit
+L5122	CALL L512D		; Check stack room
+	CALL L512B		; Call function handler
+	EI
+	OR A			; reset Cx flag
+	RET
+
+L512B	PUSH DE
+	RET
+
+L512D PUSH HL
+ PUSH DE
+ LD HL,#FD00
+ ADD HL,SP
+ JP NC,L6F92		; Stack < #0300, out of memory
+ LD DE,(LF6C6)
+ OR A
+ SBC HL,DE
+ JP C,L6F92		; Not #0300 room on stack, out of memory
+ POP DE
+ POP HL
+ RET
+
+L5143 DEFW #0000
+ DEFW #001E
+ DEFW #0023
+ DEFW #001D
+ DEFW #001D
+ DEFW #001D
+ DEFW #001D
+ DEFW #001D
+ DEFW #0041
+ DEFW #001D
+ DEFW #0047
+ DEFW #0057
+ DEFW #0061
+ DEFW #001D
+ DEFW #001D
+ DEFW #00F5
+ DEFW #001D
+ DEFW #009B
+ DEFW #00B2
+ DEFW #00D1
+ DEFW #001D
+ DEFW #00E3
+
+L516F	DCI "UDREG"             ; AUDREG
+	DEFW L554B
+	DCI "PPEND",#FF,"MK"    ; APPEND MK
+	DEFW L5307
+	DCI "PEEK"              ; APEEK
+	DEFW L5307
+	DCI "POKE"              ; APOKE
+	DEFW L5307
+	DEFB #FF
+	DCI "GM"                ; BGM
+	DEFW L550B
+	DEFB #FF
+	DCI "ONT",#FF,"MK"      ; CONT MK
+	DEFW L5307
+	DCI "OPY",#FF,"PCM"     ; COPY PCM
+	DEFW L5307
+	DCI "ONVP"              ; CONVP
+	DEFW L5307
+	DCI "ONVA"              ; CONVA
+	DEFW L5307
+	DEFB #FF
+	DCI "NMK"               ; INMK
+	DEFW L5307
+	DEFB #FF
+	DCI "EY",#FF,"ON"       ; KEY ON
+	DEFW L5307
+	DCI "EY",#FF,"OFF"      ; KEY OFF
+	DEFW L5307
+	DEFB #FF
+	DCI "OAD",#FF,"PCM"     ; LOAD PCM
+	DEFW L5307
+	DEFB #FF
+	DCI "DR"                ; MDR
+	DEFW L55F4
+	DCI "K",#FF,"VOICE"     ; MK VOICE
+	DEFW L5307
+	DCI "K",#FF,"VEL"       ; MK VEL
+	DEFW L5307
+	DCI "K",#FF,"VOL"       ; MK VOL
+	DEFW L5307
+	DCI "K",#FF,"TEMPO"     ; MK TEMPO
+	DEFW L5307
+	DCI "K",#FF,"STAT"      ; MK STAT
+	DEFW L5307
+	DCI "K",#FF,"PCM"       ; MK PCM
+	DEFW L5307
+	DCI "USIC"              ; MUSIC
+	DEFW L5342
+	DEFB #FF
+	DCI "EC",#FF,"MK"       ; REC MK
+	DEFW L5307
+	DCI "ECMOD"             ; RECMOD
+	DEFW L5307
+	DCI "EC",#FF,"PCM"      ; REC PCM
+	DEFW L5307
+	DEFB #FF
+	DCI "TOPM"              ; STOPM
+	DEFW L553E
+	DCI "ET",#FF,"PCM"      ; SET PCM
+	DEFW L5307
+	DCI "AVE",#FF,"PCM"     ; SAVE PCM
+	DEFW L5307
+	DCI "YNTHE"             ; SYNTHE
+	DEFW L5307
+	DEFB #FF
+	DCI "RANSPOSE"          ; TRANSPOSE
+	DEFW L55E8
+	DCI "EMPER"             ; TEMPER
+	DEFW L57F3
+	DEFB #FF
+	DCI "OICE"              ; VOICE
+	DEFW L58EB
+	DCI "OICE",#FF,"COPY"   ; VOICE COPY
+	DEFW L597B
+	DEFB #FF
+	DCI "AUSE"              ; PAUSE
+	DEFW L57C6
+	DCI "LAY"               ; PLAY
+	DEFW L5A43
+	DCI "LAY",#FF,"PCM"     ; PLAY PCM
+	DEFW L5307
+	DCI "CM",#FF,"PLAY"     ; PCM PLAY
+	DEFW L561E
+	DCI "CM",#FF,"REC"      ; PCM REC
+	DEFW L5623
+	DCI "CM",#FF,"FREQ"     ; PCM FREQ
+	DEFW L5307
+	DCI "CM",#FF,"VOL"      ; PCM VOL
+	DEFW L5307
+	DCI "LAY",#FF,"MK"      ; PLAY MK
+	DEFW L5307
+	DCI "ITCH"              ; PITCH
+	DEFW L55DC
+	DEFB #FF
+
+
+L52A9 LD A,(HL)
+ SUB #41
+ RET C
+ CP #16
+ CCF
+ RET C		; Char not between "A" & "V"
+ INC HL
+ PUSH HL
+ PUSH BC
+ LD HL,L5143
+ PUSH AF
+ CALL L5539
+ POP AF
+ CALL L5539	; HL = #5143 + A + A
+ LD C,(HL)
+ INC HL
+ LD B,(HL)
+ LD HL,L516F
+ ADD HL,BC
+ EX DE,HL
+ POP BC
+ POP HL
+L52C9 PUSH HL
+ LD A,(DE)
+ INC A
+ JR Z,L52D9
+ CALL L52DC
+ POP HL
+ JR NZ,L52C9
+ EX DE,HL
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ RET
+L52D9 SCF
+ POP HL
+ RET
+L52DC LD A,(DE)
+ LD B,A
+ AND #7F
+ CP (HL)
+ INC DE
+ INC HL
+ JR NZ,L52ED
+ LD A,B
+ OR A
+ JP P,L52DC
+ LD A,(HL)
+ OR A
+ RET Z
+L52ED INC B
+ JR NZ,L52FA
+ DEC HL
+L52F1 LD A,(HL)
+ CP #20
+ INC HL
+ JR Z,L52F1
+ DEC HL
+ JR L52DC
+L52FA DEC DE
+L52FB LD A,(DE)
+ INC DE
+ INC A
+ JR Z,L52FB
+ DEC A
+ JP P,L52FB
+ INC DE
+ INC DE
+ RET
+L5307 JP L6F89		; Illegal function call
+
+L530A CALL L5896	; Check on "("
+ JP L6FE6		; eval byte operand
+
+ CALL L559A		; Get BASIC char
+ JP NZ,L6F86		; not eol, Syntax error
+ RET
+
+L5317 PUSH BC
+ CALL L530A		; eval "(" operand
+ JR L5330		; eval ")"
+
+ PUSH BC
+ CALL L5896		; Check on "("
+ JR L532D
+ CALL L5896		; Check on "("
+ CALL L6FDA		; eval word operand
+ PUSH DE
+ CALL L5891		; Check on ","
+L532D CALL L6FDA	; eval word operand
+L5330 CALL L589B	; Check on ")"
+ POP BC
+ LD A,E
+ RET
+
+L5336	DEFB	#03	; 3 playchannels
+	DEFB	#01	; drums
+	DEFB	#00	; reserved
+	DEFB	#01,#01,#01,#00,#00,#00,#00,#00,#00
+
+
+; _MUSIC
+
+L5342 PUSH HL
+ CALL L50C6		; check if b0 set
+ CALL Z,L5009		; no, init
+ LD HL,L5336
+ LD DE,LF55E
+ LD BC,#000C
+ LDIR			; init in BUF
+ POP HL
+ CALL L559A		; Get BASIC char
+ JP Z,L53E0		; no parameters, take defaults
+ PUSH HL
+ LD HL,LF55E
+ LD DE,LF55F
+ LD BC,#000B
+ LD (HL),#00
+ LDIR			; clear in BUF
+ POP HL
+ CALL L5896		; Check on "("
+ CP ","
+ JR Z,L5381		; Next is ",", skip
+ CALL L6FE6		; eval byte operand
+ CP #02
+ JP NC,L6F89		; >1, illegal function call
+ LD (LF55F),A
+ LD A,(HL)
+ CP ")"
+ JR Z,L53DA		; ")", end eval
+L5381 CALL L5891	; Check on ","
+ CP ","
+ JR Z,L5396		; Next is ",", skip
+ CALL L6FE6		; eval byte operand
+ OR A
+ JR NZ,L53C6		; <> 0, error
+ LD (LF560),A
+ LD A,(HL)
+ CP ")"
+ JR Z,L53DA		; ")", end eval
+L5396 LD B,#09
+ PUSH HL
+ LD HL,LF561
+ EX (SP),HL
+ LD C,#00
+L539F CALL L5891	; Check on ","
+ PUSH BC
+ CALL L6FE6		; eval byte operand
+ POP BC
+ OR A
+ JR NZ,L53C4		; operand non zero, check
+ PUSH AF
+ LD A,(LF55F)
+ AND #01
+ JR Z,L53C0		; zero & no drums, error
+ LD A,C
+ CP #06
+ JR Z,L53BD
+ CP #07
+ JR Z,L53BD		; zero on channel 6 & 7, ok
+ JR L53C0		; error
+L53BD POP AF
+ JR L53C4
+L53C0 POP AF
+ JP L53C6
+L53C4 CP #0A
+L53C6 JP NC,L6F89	; yes, illegal function call
+ EX (SP),HL
+ LD (HL),A
+ INC HL
+ INC C
+ EX (SP),HL
+ LD A,(HL)
+ CP ")"
+ JR Z,L53D5		; ")", end eval
+ DJNZ L539F
+L53D5 LD A,C
+ LD (LF55E),A
+ POP BC
+L53DA CALL L589B	; Check on ")"
+ JP NZ,L6F86		; not eol, Syntax error
+L53E0 PUSH HL
+ LD HL,LF55F
+ LD A,(HL)
+ AND #01
+ LD D,A
+ ADD A,A
+ ADD A,D		; drums uses 3 hardware channels
+ INC HL
+ ADD A,(HL)		; + sample hardware channels (not used)
+ INC HL
+ LD D,A
+ LD A,(LF55E)
+ LD B,A 		; # of software channels
+ OR A
+ JR Z,L53FA
+ XOR A
+L53F6 ADD A,(HL)	; + # of hardware channels per software channel
+ INC HL
+ DJNZ L53F6
+L53FA ADD A,D
+ CP #0A
+ JR NC,L53C6		; total > 9, illegal function call
+ LD A,#FF
+ LD B,#09
+ LD HL,LFAD7
+L5406 LD (HL),A
+ INC HL
+ DJNZ L5406		; #FAD7-#FADF = #FF
+ LD A,#01
+ LD B,#09
+ LD HL,LFAC4
+L5411 LD (HL),A
+ INC A
+ INC HL
+ DJNZ L5411		; #FAC4-#FACC = #01
+ LD A,#40
+ LD B,#05
+ LD HL,LFAD2
+L541D LD (HL),A
+ INC HL
+ DJNZ L541D		; #FAD2-#FAD6 = #40
+ LD A,#0C
+ LD (LFAE1),A
+ LD A,#00
+ LD (LFAE2),A		; MIDI stop
+ LD A,#00
+ LD (LFAE3),A
+ LD (LFAE4),A
+ LD A,#78
+ LD (LFAE6),A
+ CALL L6FF2		; Close all I/O channels
+ LD HL,(LFC4A)
+ CALL L50C6		; Check if b0 set
+ JR NZ,L5459		; Yes, no init workarea
+ LD DE,#0327
+ AND A
+ SBC HL,DE
+ LD (LFC4A),HL
+ LD (LF97D),HL
+ LD A,(LFFA7)
+ CP #C9 		; Diskdrive ?
+ JR Z,L5459
+ LD (LF349),HL
+L5459 POP DE		; BASIC pointer
+ LD SP,HL
+ PUSH DE
+ CALL L54B1
+ LD HL,(LF41C)
+ LD (LF6BE),HL		; Set OLDLIN for CONT
+ LD HL,L5496
+ LD DE,LF806
+ LD BC,#001B
+ LDIR			; init restart BASIC program
+ LD A,(LF85F)
+ LD (LF80B),A		; set current # of files
+ POP HL 		; BASIC pointer
+ LD A,L
+ LD (LF813),A
+ LD A,H
+ LD (LF81B),A		; set current basic pointer
+ XOR A
+ LD (LF85F),A		; maximum 0 files
+ LD HL,LF55E
+ LD (LF860),HL		; ptr to table I/O channels
+ LD HL,LF560
+ LD (LF55E),HL		; 
+ LD (HL),A
+ LD HL,LF806
+ JP L6FEC		; Start executing loop
+
+
+L5496 DEFB ":"
+ DEFB #CD,#B7,#EF,#0F,#00,":"           ; MAXFILES=0:
+ DEFB #98,#0C,#C0,#F6,",",#0F,#00,":"   ; POKE&HF6C0,0: (L)
+ DEFB #98,#0C,#C1,#F6,",",#0F,#00,":"   ; POKE&HF6C1,0: (H)
+ DEFB #99,#00				; CONT
+ DEFW #0000
+
+L54B1 DI
+ LD HL,LF55E
+ LD A,(HL)
+ LD (LF984),A		; # of software channels
+ INC HL
+ PUSH HL
+ INC HL
+ INC HL
+ LD DE,LF985
+ LD BC,#0009
+ LDIR			; copy channel info
+ POP HL
+ LD B,(HL)		; para1
+ INC HL
+ LD A,(HL)		; para2
+ LD HL,#0000
+ OR A
+L54CD JR Z,L54D7
+ SCF
+ RR H
+ RR L
+ DEC A
+ JR L54CD
+L54D7 ADD HL,HL
+ RL A
+ LD L,H
+ LD H,A
+ LD A,B
+ LD (LF98E),A
+ AND #01
+ JR Z,L54F0
+ SRL H
+ RR L
+ SRL H
+ RR L
+ SRL H
+ RR L
+L54F0 EX DE,HL
+ PUSH DE
+ CALL L6AD0
+ CALL L6B30
+ CALL L507F		; init hooks, when needed
+ POP DE
+ CALL L5836
+ PUSH HL
+ PUSH AF
+ PUSH BC
+ CALL L58A0		; Init MIDI interface
+ POP BC
+ POP AF
+ POP HL
+ JP L6B98
+
+
+; _BGM
+
+L550B CALL L5317	; eval operand between "( )"
+ CP #02
+ JP NC,L6F89		; >1, illegal function call
+ DEC A
+ LD (LF998),A		; Set cancel flag
+ RET
+
+L5518 CALL L5896	; Check on "("
+ CALL L6FDA		; eval word operand
+ LD A,(HL)
+ CP ")"
+ PUSH DE
+ JR Z,L552A		; ")", end eval
+ CALL L5891		; Check on ","
+ CALL L6FDA		; eval word operand
+L552A CALL L589B	; Check on ")"
+ POP BC
+ LD A,E
+ RET
+
+ LD A,D
+ AND A
+ SCF
+ RET NZ
+ LD A,E
+ CP #40
+ CCF
+ RET
+
+L5539 ADD A,L
+ LD L,A
+ RET NC
+ INC H
+ RET
+
+
+; _STOPM
+
+L553E CALL L559A	; Get BASIC char
+ JP NZ,L6F86		; not eol, Syntax error
+ PUSH HL
+ CALL L6BCF		; stop music
+ POP HL
+ OR A
+ RET
+
+; _AUDREG
+
+L554B CALL L5896	; Check on "("
+ CALL L6FE6		; eval byte operand
+ PUSH DE
+ CALL L5891		; Check on ","
+ CALL L6FE6		; eval byte operand
+ PUSH DE
+ LD A,(HL)
+ CP ")"
+ LD E,#00
+ JR Z,L5566		; ")", end eval
+ CALL L5891		; Check on ","
+ CALL L6FE6		; eval byte operand
+L5566 CALL L589B	; Check on ")"
+ LD A,E
+ OR A
+ JP NZ,L6F89		; <>0, illegal function call
+ POP DE
+ POP BC
+ LD B,E 		; data
+ CALL L75DA		; Write PAC register
+ JP C,L6F89		; error, illegal function call
+ RET
+
+L5578 LD A,#01
+ LD (LF6A5),A
+ CALL L6FB4		; Get variable pointer
+ JP NZ,L6F89		; yes, illegal function call
+ LD (LF6A5),A
+ LD A,(LF663)
+ CP #03
+ JP Z,L6F89		; string, illegal function call
+ EX DE,HL
+ ADD HL,BC
+ DEC HL
+ EX DE,HL		; end address
+ LD A,(BC)		; dimension
+ SCF
+ RLA			; *2 +1
+ ADD A,C
+ LD C,A
+ RET NC
+ INC B			; start address
+ RET
+
+L559A DEC HL
+ JP L6FCE
+
+L559E CALL L55A6
+ POP HL
+ CALL L589B		; Check on ")"
+ RET
+L55A6 LD (LF7F8),HL
+ LD HL,LF663
+ LD A,(HL)
+ CP #02
+ JR Z,L55D2
+ CP #04
+ JR Z,L55C4
+ CP #08
+ JP NZ,L6F8C		; String, Type mismatch
+ LD (HL),#02
+ PUSH DE
+ CALL L6FBA		; Convert to var type
+ LD C,#08
+ JR L55CC
+L55C4 LD (HL),#02
+ PUSH DE
+ CALL L6FBA		; Convert to var type
+ LD C,#04
+L55CC POP DE
+ LD HL,LF7F6
+ JR L55D7
+L55D2 LD HL,LF7F8
+ LD C,#02
+L55D7 LD B,#00
+ LDIR
+ RET
+
+
+; _PITCH
+
+L55DC CALL L5518	; eval "(" operand [,operand] ")"
+ PUSH HL
+ CALL L7375
+ POP HL
+ JP C,L6F89		; error, illegal function call
+ RET
+
+
+; _TRANSPOSE
+
+L55E8 CALL L5518	; eval "(" operand [,operand ")"
+ PUSH HL
+ CALL L73FF
+ POP HL
+ JP C,L6F89		; error, illegal function call
+ RET
+
+
+; _MDR
+
+L55F4 CALL L5896	; Check on "("
+ PUSH HL
+ LD B,#00
+ LD HL,LFACD
+ EX (SP),HL
+L55FE PUSH BC
+ CALL L6FE6		; eval byte operand
+ POP BC
+ INC B
+ CP #80
+ JP NC,L6F89		; >127, illegal function call
+ EX (SP),HL
+ LD (HL),A
+ INC HL
+ EX (SP),HL
+ LD A,B
+ CP #05
+ JR Z,L5619		; 6 channels done, must be end
+ PUSH BC
+ CALL L5891		; Check on ","
+ POP BC
+ JR L55FE
+L5619 CALL L589B	; Check on ")"
+ POP AF
+ RET
+
+
+; _PCM PLAY
+
+L561E LD DE,L0186
+ JR L5626
+
+
+; _PCM REC
+
+L5623 LD DE,L0189
+L5626 LD (LF55E),DE
+ XOR A
+ LD (LF562),A
+ LD (LF563),A
+ CALL L5896		; Check on "("
+ LD A,(HL)
+ CP "@"
+ JR Z,L566F		; "@",
+ CALL L59EC		; get arrayvar address, length
+ CALL L5891		; Check on ","
+ LD A,(HL)
+ CP ","
+ JR Z,L5652		; ",", skip parameter
+ PUSH DE
+ PUSH BC
+ CALL L6FDA		; eval word operand
+ POP BC
+ EX (SP),HL
+ OR A
+ SBC HL,DE		; check if bigger as arraysize
+ JP C,L6F89		; yes, illlegal function call
+ POP HL
+L5652 PUSH BC
+ PUSH DE
+ CALL L5891		; Check on ","
+ CALL L6FE6		; eval byte operand
+ PUSH DE
+ CALL L5786		; eval evt REC parameters
+ POP DE
+ CALL L589B		; Check on ")"
+ LD A,E
+ CP #04
+ JP NC,L6F89		; >3, illegal function call
+ LD (LF560),HL
+ POP BC 		; length
+ POP HL 		; org
+ JR L56CE
+L566F CALL L6FC6	; Check "@" with error
+ DEFB "@"
+ CALL L6FD4		; Eval expression in DAC
+ PUSH HL
+ CALL L5721		; convert to 32 bits number
+ CALL L571A		; check if number is < 131072
+ EX (SP),HL
+ PUSH BC
+ CALL L5891		; Check on ","
+ CALL L6FD4		; Eval expression in DAC
+ PUSH HL
+ CALL L5721		; convert to 32 bits number
+ CALL L571A		; check if number is < 131072
+ EX (SP),HL
+ PUSH BC
+ CALL L5891		; Check on ","
+ CALL L6FE6		; eval byte operand
+ PUSH DE
+ CALL L5786		; eval evt REC parameters
+ LD A,(HL)
+ CP ","
+ JR NZ,L56F5		; do not use VRAM, end statement
+ CALL L6FCE		; Get next BASIC char
+ CALL L6FC6
+ DEFB "S"               ; Check on "S"
+ CALL L589B		; Check on ")"
+ LD (LF560),HL
+ POP DE
+ LD A,E
+ EX AF,AF'              ; code
+ POP HL
+ POP BC
+ LD A,C 		; AHL (end)
+ POP DE
+ POP BC 		; CDE (begin)
+ LD B,A
+ OR A
+ SBC HL,DE
+ SBC A,C
+ JR C,L5717		; end before begin, error
+ PUSH DE
+ LD DE,#0001
+ ADD HL,DE
+ ADC A,#00		; AHL = # of bytes
+ POP DE
+ EX DE,HL		; HL = start
+ LD B,D
+ LD D,A 		; D = # of 64Kb
+ LD A,C
+ LD C,E 		; BC = length
+ LD E,A 		; E = start 64Kb
+ EX AF,AF'
+ CP #04
+ JR NC,L5717		; >3, error
+ SET 7,A		; set b7
+L56CE PUSH BC
+ LD BC,(LF562)
+ OR C
+ OR B
+ POP BC
+ LD IY,(LF55E)
+ CALL L56F3		; Call PCM BIOS routine
+ JR NC,L56EE
+ DEC A
+ JP Z,L6F89		; yes, illegal function call
+ LD A,(LFBB1)
+ OR A
+ JR NZ,L56EE		; BASIC ROM prog, quit
+ LD A,#03
+ LD (LFC9B),A		; Set CTRL-STOP detected
+L56EE OR A
+ LD HL,(LF560)		; Restore BASIC pointer
+ RET
+
+L56F3 JP (IY)
+
+L56F5 CALL L589B	; Check on ")"
+ LD (LF560),HL
+ POP DE
+ LD A,E
+ EX AF,AF'              ; code
+ POP HL
+ POP BC
+ LD A,C
+ OR B
+ JR NZ,L5717		; BC<>0, error
+ POP DE
+ POP BC
+ LD A,C
+ OR B
+ JR NZ,L5717		; BC<>0, error
+ SBC HL,DE
+ JR C,L5717		; end before begin, error
+ INC HL
+ EX DE,HL		; HL = start
+ LD C,E
+ LD B,D 		; BC = length
+ EX AF,AF'
+ CP #04
+ JR C,L56CE		; code <4, go
+L5717 JP L6F89		; illegal function call
+
+L571A LD A,L
+ AND #FE
+ OR H
+ JR NZ,L5717		; above 128Kb, error
+ RET
+
+L5721 CALL L70E9	; Check DAC type
+ LD BC,(LF7F8)
+ LD HL,#0000
+ RET M			; integer, quit
+ JP Z,L6F8C		; string, Type mismatch
+ LD HL,LF7F6
+ LD DE,LFABC
+ LD BC,#0008
+ LDIR			; copy DAC
+ LD HL,L577E
+ LD DE,LF847
+ LD C,#08
+ LDIR			; ARG = 65536
+ CALL L289F		; DAC/ARG (double)
+ AND A
+ CALL L30D1		; Round DAC
+ CALL L6FE0		; convert DAC integer
+ PUSH DE
+ EX DE,HL
+ CALL L6FC0		; convert DAC single
+ CALL L3042		; convert DAC double
+ LD BC,#6545
+ LD DE,#6053		; 65536 single
+ CALL L325C		; DAC * 65536 (single)
+ LD HL,LF7F6
+ LD DE,LF847
+ LD BC,#0008
+ LDIR			; copy DAC to ARG
+ LD HL,LFABC
+ LD DE,LF7F6
+ LD C,#08
+ LDIR			; orginal number in DAC
+ CALL L268C		; DAC-ARG (double)
+ CALL L6FE0		; convert DAC integer
+ LD C,E
+ LD B,D
+ POP HL
+ RET
+
+; 0.655360*10^5
+
+L577E DEFB #45,#65,#53,#60,#00,#00,#00,#00
+
+L5786 PUSH HL
+ LD BC,L0189
+ LD HL,(LF55E)
+ OR A
+ SBC HL,BC
+ POP HL
+ RET NZ 		; PCM PLAY, quit
+ LD A,(HL)
+ CP ","
+ RET NZ
+ CALL L6FCE		; Get next BASIC char
+ CP ","
+ JR Z,L57AB		; ",", skip
+ CALL L6FE6		; eval byte operand
+ LD A,E
+ CP #80
+ JP NC,L6F89		; >127, illegal function call
+ AND #78
+ LD (LF562),A		; set flag
+L57AB CALL L559A	; get BASIC char
+ CP ","
+ RET NZ
+ CALL L6FCE		; get next BASIC char
+ CP ","
+ RET Z
+ CALL L6FE6		; eval byte operand
+ LD A,E
+ CP #02
+ JP NC,L6F89		; >1, illegal function call
+ ADD A,A
+ ADD A,A
+ LD (LF563),A		; set flag
+ RET
+
+
+; _PAUSE
+
+L57C6 CALL L5896	; Check on "("
+ CALL L6FDA		; eval word operand
+ CALL L589B		; Check on ")"
+ PUSH HL
+ CALL L57D6		; Do the waiting
+ POP HL
+ OR A
+ RET
+
+L57D6 EX DE,HL
+ LD DE,#0080
+L57DA OR A
+ SBC HL,DE
+ JR C,L57EB
+ LD C,E
+ CALL L763C		; wait 0.5 ms
+ LD A,(LFC9B)
+ CP #03
+ RET Z			; CTRL-STOP, quit
+ JR L57DA
+L57EB ADD HL,DE
+ LD A,L
+ OR A
+ RET Z			; all done, quit
+ LD C,L
+ JP L763C		; wait rest units
+
+
+; _TEMPER
+
+L57F3 CALL L5317	; eval operand between "( )"
+ LD C,A
+ CALL L74C4
+ JP C,L6F89		; error, illegal function call
+ RET
+
+L57FE PUSH BC
+ PUSH DE
+ PUSH HL
+ LD B,#01		; page 1
+ CALL L580A		; get slotid of page
+ POP HL
+ POP DE
+ POP BC
+ RET
+
+L580A IN A,(#A8)	; read pri. slotregister
+ CALL L582C		; shift to page
+ AND #03
+ LD E,A
+ LD D,#00
+ LD HL,LFCC1
+ ADD HL,DE
+ LD A,(HL)
+ AND #80
+ OR E
+ RET P
+ LD E,A
+ INC HL
+ INC HL
+ INC HL
+ INC HL
+ LD A,(HL)		; read sec. slotregister
+ RLCA
+ RLCA			; for into b3-b2
+ CALL L582C		; shift to page
+ AND #0C
+ OR E
+ RET
+
+L582C INC B
+ DEC B
+ RET Z
+ PUSH BC
+L5830 RRCA
+ RRCA
+ DJNZ L5830
+ POP BC
+ RET
+
+L5836 CALL L7586	; reset PAC registers
+ LD IX,LFA27
+ LD BC,#0900
+L5840 LD A,C
+ ADD A,#10
+ LD (IX+0),A
+ LD (IX+1),#04
+ LD (IX+2),#00
+ LD (IX+3),#00
+ LD (IX+4),#00
+ LD (IX+5),#00
+ LD (IX+6),#00
+ LD DE,#0010
+ ADD IX,DE
+ INC C
+L5864 DJNZ L5840
+ LD A,(LF98E)
+ AND #01
+ CALL NZ,L75AB		; Drums, init drum ???
+ LD C,#09
+ CALL L74C4
+ LD IX,LFA27
+ LD A,(LF98E)
+ AND #01		; Drums ?
+ LD B,#09
+ JR Z,L5882		; nop, 9 channels
+ LD B,#06		; yep, 6 channels
+L5882 PUSH BC
+ LD C,#00
+ CALL L7106
+ POP BC
+ LD DE,#0010
+ ADD IX,DE
+ DJNZ L5882
+ RET
+
+L5891 CALL L6FC6	; Check char with error
+ DEFB ","
+ RET
+
+L5896 CALL L6FC6	; Check char with error
+ DEFB "("
+ RET
+
+L589B CALL L6FC6	; Check char with error
+ DEFB ")"
+ RET
+
+L58A0 LD A,#16
+ OUT (#EF),A		; Counter 0, low byte, mode 3, binary
+ LD A,#08
+ OUT (#EC),A		; Load counter 0, 4 MHz/8 = 500 KHz
+ LD A,#B4
+ OUT (#EF),A		; Counter 2, word, mode 2, binary
+ LD HL,#4E20
+ LD A,L
+ OUT (#EE),A
+ LD A,H
+ OUT (#EE),A		; Load counter 2, 4 MHz/20000 = 200 Hz
+ XOR A
+ OUT (#E9),A
+ CALL L58DB		; Wait 0.004 ms
+ OUT (#E9),A
+ CALL L58DB		; Wait 0.004 ms
+ OUT (#E9),A
+ CALL L58DB		; Wait 0.004 ms
+ LD A,#40
+ OUT (#E9),A		; Reset USART
+ CALL L58DB		; Wait 0.004 ms
+ LD A,#4E
+ OUT (#E9),A		; 1 stopbit, No parity, 8 bits, 16x baudfactor
+ CALL L58DB		; Wait 0.004 ms
+ LD A,#03
+ OUT (#E9),A		; DTR on, Transmit/Receive enable
+ CALL L58DB		; Wait 0.004 ms
+ RET
+
+L58DB PUSH AF
+ PUSH BC
+ LD B,#01
+ IN A,(#E6)
+ LD C,A
+L58E2 IN A,(#E6)
+ SUB C
+ CP B
+ JR C,L58E2
+ POP BC
+ POP AF
+ RET
+
+
+; _VOICE
+
+L58EB CALL L6FC6	; Check "(" with error
+ DEFB "("
+ LD DE,LF55E
+ LD B,#09
+L58F4 LD A,(HL)
+ CP ","
+ JR Z,L5918		; ",", skip parameter
+ PUSH BC
+ LD A,#09
+ SUB B
+ LD (DE),A		; channel
+ INC DE
+ PUSH DE
+ LD A,(HL)
+L5901 CALL L59C2	; eval voice parameter
+ LD A,#00
+ JR C,L5909		; number
+ CPL			; array
+L5909 EX (SP),HL
+ LD (HL),A
+ INC HL
+ LD (HL),E
+ INC HL
+ LD (HL),D		; voicenumber / start array
+ INC HL
+ EX (SP),HL
+ POP DE
+ POP BC
+ LD A,(HL)
+ CP ")"
+ JR Z,L591E		; ")", end eval
+L5918 CALL L6FC6	; Check "," with error
+ DEFB ","
+ DJNZ L58F4
+L591E CALL L6FC6	; Check ")" with error
+ DEFB ")"
+ JP NZ,L6F86		; not eol, Syntax error
+ LD A,#FF
+ LD (DE),A		; endmark
+ CALL L592F		; set voices
+ JP C,L6F89		; yes, illegal function call
+ RET
+
+L592F PUSH HL
+ LD HL,LF55E
+L5933 LD A,(HL)
+ CP #FF
+ JR Z,L595F		; end of channels, quit
+ INC HL
+ CALL L596A		; get channel ptr
+ LD A,(HL)
+ INC HL
+ OR A
+ JR Z,L594D		; copy ROM voice
+ LD C,(HL)
+ INC HL
+ LD B,(HL)		; start of array
+ PUSH HL
+ CALL L70FF		; copy array (RAM voice) to voice
+ CALL L5962		; channel ptr to next
+ JR L595B		; next channel
+L594D LD C,(HL)
+ LD A,C
+ CP #40
+ CCF
+ RET C			; >63, crash/ quit
+ INC HL
+ PUSH HL
+ CALL L7106
+ CALL L5962		; channel ptr to next
+L595B POP HL
+ INC HL
+ JR L5933		; next channel
+L595F POP HL
+ OR A
+ RET
+L5962 PUSH BC
+ LD BC,#0010
+ ADD IX,BC
+ POP BC
+ RET
+
+L596A LD IX,LFA27
+ OR A
+ RET Z			; channel 0, quit
+ PUSH BC
+ LD BC,#0010
+L5974 ADD IX,BC
+ DEC A
+ JR NZ,L5974
+ POP BC
+ RET
+
+
+; _VOICE COPY
+
+L597B CALL L6FC6	; Check "(" with error
+ DEFB "("
+ CALL L59C2		; eval voice parameter
+ CCF
+ SBC A,A
+ LD (LF55E),A		; set array/number flag
+ LD (LF55F),DE		; number/ start array
+ LD (LF561),BC		; length array
+ CALL L6FC6		; Check "," with error
+ DEFB ","
+ CALL L59C2		; eval voice parameter
+ CCF
+ SBC A,A
+ LD (LF563),A
+ LD (LF564),DE
+ LD (LF566),BC
+ JR NZ,L59AA		; array, skip
+ LD A,E
+ CP #20
+ JR C,L59DB		; <32, error
+L59AA CALL L6FC6	; Check ")" with error
+ DEFB ")"
+ JP NZ,L6F86		; not eol, Syntax error
+ PUSH HL
+ LD HL,LF55E
+ LD A,(LF563)
+ AND (HL)
+ JR NZ,L59DB		; both array parameters, error
+ CALL L59F6		; do voice copy
+ JR C,L59DB		; error
+ POP HL
+ RET
+
+L59C2 CP #40
+ JR Z,L59D2		; "@",
+ CP #F3 		; is it "*" ?
+ JR NZ,L59DE		; no
+ CALL L6FCE		; Get next BASIC char
+ LD DE,#00FF		; take 255
+ SCF
+ RET
+
+L59D2 CALL L6FCE	; Get next BASIC char
+ CALL L6FE6		; eval byte operand
+ CP #40
+ RET C
+L59DB JP L6F89		; >63, illegal function call
+
+L59DE CALL L59EC	; get arrayvar address, length
+ LD A,E
+ AND #E0
+ OR D
+ JR Z,L59DB		; length <32, error
+ PUSH DE
+ LD E,C
+ LD D,B 		; start
+ POP BC 		; length
+ RET
+
+L59EC CALL L5578	; get address of array var
+ EX DE,HL
+ OR A
+ SBC HL,BC
+ INC HL
+ EX DE,HL		; DE = # of bytes
+ RET
+
+L59F6 LD A,(LF563)
+ LD HL,(LF564)
+ OR A
+ JR NZ,L5A0A		; 2nd is array para
+ LD A,L
+ INC A
+ SCF
+ RET Z			; * as 2nd is illegal
+ CP #40
+ SCF
+ RET NZ 		; 2nd must be 63
+ LD HL,LF9F9		; storage for voice 63
+L5A0A PUSH HL
+ LD A,(LF55E)
+ LD HL,(LF55F)
+ OR A
+ JR NZ,L5A22		; 1st is array parameter
+ LD A,L
+ CP #FF
+ JR Z,L5A2C		; * as 1st is illegal
+ LD C,A
+ CALL L7134
+ JR Z,L5A2C
+ CALL L5A2F		; get address of voice
+L5A22 POP DE
+ LD BC,#0020
+ DI
+ LDIR			; copy voice
+ OR A
+ EI
+ RET
+L5A2C POP HL
+ SCF
+ RET
+
+L5A2F LD A,L
+ CP #3F
+ LD HL,LF9F9
+ RET Z			; storage for voice 63
+ LD L,A
+ LD H,#00
+ ADD HL,HL
+ ADD HL,HL
+ ADD HL,HL
+ ADD HL,HL
+ ADD HL,HL
+ LD DE,L7645
+ ADD HL,DE		; storage for ROM voices
+ RET
+
+
+; _PLAY
+
+L5A43 CALL L530A	; eval "(" operand
+ LD A,(LF991)
+ CP E
+ JP C,L6F89		; yes, illegal function call
+ LD A,E
+ PUSH HL
+ CALL L5A5D
+ EX (SP),HL
+ CALL L5891		; Check on ","
+ CALL L6FB4		; Get variable pointer
+ EX (SP),HL
+ JP L559E
+L5A5D LD HL,(LF995)
+ OR A
+ JR NZ,L5A6E
+ LD A,H
+ AND #1F
+ OR L
+ JR Z,L5A6B
+ LD A,#FF
+L5A6B LD L,A
+L5A6C LD H,A
+ RET
+L5A6E SRL H
+ RR L
+ DEC A
+ JR NZ,L5A6E
+ SBC A,A
+ JR L5A6B
+
+L5A78 LD A,(LF97C)
+ PUSH AF
+ PUSH BC
+ PUSH DE
+ PUSH HL
+ LD A,(LFCC1)
+ LD H,#40
+ CALL L0024
+ POP HL
+ POP DE
+ POP BC
+ CALL L2F8A		; convert DAC to integer
+ POP AF
+ PUSH AF
+ PUSH BC
+ PUSH DE
+ PUSH HL
+ LD H,#40
+ CALL L0024
+ POP HL
+ POP DE
+ POP BC
+ POP AF
+ EI
+ RET
+
+L5A9D DEFB " "
+
+; H.PLAY
+
+L5A9E CALL L512D	; Check stack room
+ CALL L5AD6
+ PUSH HL
+ LD A,(LF97C)
+ DI
+ ADD A,A
+ LD HL,#0008
+ JR NC,L5AB1
+ LD L,#10
+L5AB1 ADD HL,SP
+ PUSH HL
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ LD HL,L73E8
+ OR A
+ SBC HL,DE
+ JP NZ,L6F7D		; No, Internal error
+ POP HL
+ DEC HL
+ LD D,H
+ LD E,L
+ INC DE
+ INC DE
+ LD A,(LF97C)
+ ADD A,A
+ LD BC,#0008
+ JR NC,L5AD0
+ LD C,#10
+L5AD0 LDDR
+ EI
+ POP HL
+ POP HL
+ RET
+
+L5AD6	CP #23			; is it "#"
+	JR NZ,L5AF5		; no, do PLAY#0,
+	CALL L6FCE		; Get next BASIC char
+	CALL L6FE6		; eval byte operand
+	PUSH AF
+	CALL L5891		; Check on ","
+	POP AF
+	OR A
+	JR Z,L5AF5		; 0, org. psg
+	DEC A
+	JR Z,L5AF2		; 1, midi
+	SUB #03
+	JR C,L5B28		; 2-3
+	JP L6F89		; >3, illegal function call
+
+L5AF2	INC A
+	JR L5B29
+
+L5AF5	XOR A
+	LD (LF97F),A
+	PUSH HL
+	LD A,(LF992)
+	OR A
+	JR Z,L5B1E		; no FM-PAC queue's
+	LD B,A
+L5B01	PUSH BC
+	LD A,B
+	DEC A
+	CALL L7005		; get ptr to stringinfo of channel
+	LD DE,L5A9D
+	LD (HL),#01		; length string
+	INC HL
+	LD (HL),E
+	INC HL
+	LD (HL),D		; ptr to " " string
+	INC HL
+	LD D,H
+	LD E,L
+	LD BC,#001C
+	ADD HL,BC
+	EX DE,HL
+	LD (HL),E
+	INC HL
+	LD (HL),D		; ptr to ??
+	POP BC
+	DJNZ L5B01
+L5B1E	POP HL
+	XOR A
+	LD (LFB35),A
+	LD A,(LF992)		; FM-PAC queues
+	JR L5B30
+L5B28	XOR A
+L5B29	LD (LF97F),A
+	XOR A
+	LD (LFB35),A
+L5B30	PUSH HL
+	LD HL,LFFF6
+	ADD HL,SP
+	LD (LFB36),HL
+	POP HL
+	PUSH AF
+L5B3A	PUSH HL
+	LD HL,L5A78
+	LD DE,LF5DE
+	LD BC,#0025
+	LDIR			; init ML routine
+	POP HL
+	CALL L6FD4		; Eval expression in DAC
+	EX (SP),HL
+	PUSH HL
+	CALL L6FF8		; Free storage space
+	CALL L7059		; get string address/length
+	LD A,(LF97F)
+	AND #01
+	JR NZ,L5B71		; MIDI play, skip
+	LD A,(LF98E)
+	AND #01 		; Drums ?
+	JR Z,L5B71		; nop, skip
+	POP HL
+	PUSH HL
+	LD A,H
+	CP #06
+	JR C,L5B71		; channel <6, skip
+	LD A,(LF992)
+	DEC A
+	DEC A
+	CP H
+	JR C,L5B71
+	LD E,#00		; length = 0
+L5B71	LD A,E
+	OR A
+	JR NZ,L5B7A		; length <>0, take it
+	LD DE,1+256*low(L5A9D)
+	LD C,high(L5A9D)	; signalment to " "
+L5B7A	POP AF
+	PUSH AF
+	POP AF			; bullshit ??
+	PUSH AF
+	LD (LFB38),A		; set channel number
+	CALL L63EE		; get ptr
+	XOR A
+	LD (IX+0),A
+	POP AF
+	PUSH AF
+	CALL L7005		; get ptr to stringinfo of channel
+	LD (HL),E		; set length string
+	INC HL
+	LD (HL),D
+	INC HL
+	LD (HL),C		; set address string
+	INC HL
+	LD D,H
+	LD E,L
+	LD BC,#001C
+	ADD HL,BC
+	EX DE,HL
+	LD (HL),E
+	INC HL
+	LD (HL),D		; ptr to ??
+	POP BC
+	POP HL
+	INC B			; increase channel
+	LD A,(LF991)
+	DEC A
+	CP B
+	JR C,L5BC9		; all channels done, must be end
+	DEC HL
+	CALL L6FCE		; Get next BASIC char
+	JR Z,L5BB3		; eol, quit eval
+	PUSH BC
+	CALL L5891		; Check on ","
+	JR L5B3A
+L5BB3	LD A,B
+	LD (LFB38),A		; set channel
+	PUSH BC
+	PUSH HL
+	CALL L5CD0
+	POP HL
+	POP BC
+	CALL L5CB6
+	INC B
+	LD A,(LF991)
+	DEC A
+	CP B
+	JR NC,L5BB3
+L5BC9	DEC HL
+	CALL L6FCE		; Get next BASIC char
+	JP NZ,L6F86		; not eol, Syntax error
+	PUSH HL
+L5BD1	XOR A
+L5BD2	PUSH AF
+	LD (LFB38),A		; set channel
+	LD C,A
+	LD A,(LF991)
+	SUB C
+	SUB #04
+	LD HL,L5D03		; PSG macro table
+	JR C,L5BF1		; yes, PSG channel
+	LD HL,L5FFF		; FM-PAC macro music table
+	JR NZ,L5BF1		; not the drum channel
+	LD A,(LF98E)
+	AND #01
+	JR Z,L5BF1		; no drums, use music
+	LD HL,L648E		; FM-PAC macro drum table
+L5BF1	LD (LF956),HL
+	LD A,C
+	LD B,A
+	CALL L5CF6		; check if 8 bytes free queue space
+ JP C,L5C78		; no, next channel
+ LD A,B
+ CALL L7005		; get ptr to stringinfo of channel
+ LD A,(HL)
+ OR A
+ JP Z,L5C78		; zero length, next channel
+ LD (LFB3B),A		; set stringlength
+ INC HL
+ LD E,(HL)
+ INC HL
+ LD D,(HL)		; address of string
+ INC HL
+ LD (LFB3C),DE		; set address of string
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ INC HL
+ PUSH HL
+ LD L,#24
+ CALL L7009		; get ptr to ?? of cur. channel
+ PUSH HL
+ LD HL,(LFB36)
+ DEC HL
+ POP BC
+ DI
+ CALL L704C
+ POP DE
+ LD H,B
+ LD L,C
+ LD SP,HL
+ EI
+ CALL L5CD0
+ JP L6DDF
+L5C30 LD A,(LFB3B)
+ OR A
+ JR NZ,L5C39
+ CALL L5CB6
+L5C39 LD A,(LFB38)	; which channel ?
+ CALL L7005		; get ptr to stringinfo of channel
+ LD A,(LFB3B)
+ LD (HL),A
+ INC HL
+ LD DE,(LFB3C)
+ LD (HL),E
+ INC HL
+ LD (HL),D
+ LD HL,#0000
+ ADD HL,SP
+ EX DE,HL
+ LD HL,(LFB36)
+ DI
+ LD SP,HL
+ POP BC
+ POP BC
+ POP BC
+ PUSH HL
+ OR A
+ SBC HL,DE
+ JR Z,L5C76
+ LD A,#F0
+ AND L
+ OR H
+ JP NZ,L6F89		; yes, illegal function call
+ LD L,#24
+ CALL L7009		; get ptr to ?? of cur. channel
+ POP BC
+ DEC BC
+ CALL L704C
+ POP HL
+ DEC HL
+ LD (HL),B
+ DEC HL
+ LD (HL),C
+ JR L5C78
+L5C76 POP BC
+ POP BC
+L5C78 EI
+ POP AF
+ INC A
+ LD HL,LF991
+ CP (HL)
+ JP C,L5BD2
+ DI
+ CALL L69A2
+ JR Z,L5CB0
+ LD A,(LFB35)
+ RLCA
+ JR C,L5C99
+ LD HL,LF997
+ INC (HL)
+ LD A,(HL)
+ LD (LFB40),A
+ CALL L7062
+L5C99 EI
+ LD HL,LFB35
+ SET 7,(HL)
+ LD A,(HL)
+ LD HL,LF993
+ CP (HL)
+ JP NZ,L5BD1
+ LD A,(LF998)
+ OR A
+ CALL NZ,L698E		; cancel not premitted
+ JR NC,L5CB4
+L5CB0 CALL L6BCF	; stop music
+ EI
+L5CB4 POP HL
+ RET
+L5CB6 LD A,(LFB35)
+ INC A
+ LD (LFB35),A
+ LD E,#FF
+L5CBF PUSH HL
+ PUSH BC
+L5CC1 PUSH DE
+ LD A,(LFB38)		; which channel ?
+ DI
+ CALL L6F12		; put byte in queue
+ EI
+ POP DE
+ JR Z,L5CC1		; full, keep trying
+L5CCD POP BC
+ POP HL
+ RET
+
+L5CD0 LD HL,LFB38	; channel
+ LD A,(LF992)
+ DEC A
+ CP (HL)
+ RET NZ
+ LD A,(LF97F)
+ LD HL,LF980
+ CP (HL)
+ RET Z
+ LD (HL),A
+ LD A,#88
+ OR (HL)
+ LD E,A
+L5CE6 PUSH HL
+ PUSH BC
+L5CE8 PUSH DE
+ LD A,(LFB38)		; channel
+ DI
+ CALL L6F12		; put byte in queue
+ POP DE
+ JR NZ,L5CCD		; done, quit
+ EI
+ JR L5CE8		; keep trying
+
+L5CF6 LD A,(LFB38)	; channel
+ PUSH BC
+ DI
+ CALL L6F5A		; get free queue space
+ EI
+ POP BC
+ CP #08
+ RET
+
+L5D03	DEFB "A"
+	DEFW L5E57
+	DEFB "M"+#80
+	DEFW L5D75
+	DEFB "V"+#80
+	DEFW L5D5E
+	DEFB "S"+#80
+	DEFW L5D97
+	DEFB "N"+#80
+	DEFW L5E14
+	DEFB "O"+#80
+	DEFW L5DE0
+	DEFB "R"+#80
+	DEFW L5DEF
+	DEFB "T"+#80
+	DEFW L5DBA
+	DEFB "L"+#80
+	DEFW L5DA1
+	DEFB "X"
+	DEFW L6EF4
+	DEFB ">"
+	DEFW L6237
+	DEFB "<"
+	DEFW L6244
+	DEFB "Y"+#80
+	DEFW L5F3E
+	DEFB "Q"+#80
+	DEFW L5F54
+	DEFB "@"
+	DEFW L5F63
+	DEFB "&"
+	DEFW L5F3D
+	DEFB "Z"+#80
+	DEFW L5F5F
+	DEFB #00
+
+L5D37	DEFB #10,#12,#14,#16
+	DEFB #00,#00,#02,#04
+	DEFB #06,#08,#0A,#0A
+	DEFB #0C,#0E,#10
+
+L5D46	DEFW 3421,3228,3047,2876,2715,2562
+	DEFW 2419,2283,2155,2034,1920,1812
+
+; PLAY volume (PSG)
+
+L5D5E JR C,L5D62	; argument avail.
+ LD E,#08		; take 8 as default
+L5D62 LD A,#0F
+ CP E
+ JR C,L5DB7		; >15, error
+L5D67 CALL L5F87	; check highbyte is zero
+ LD L,#12
+ CALL L7009		; get ptr to volume of cur. channel
+ LD A,#40
+ AND (HL)		; save change flag
+ OR E
+ LD (HL),A		; set new volume
+ RET
+
+; PLAY modulation (PSG)
+
+L5D75 LD A,E
+ JR C,L5D7B		; argument avail.
+ CPL
+ INC A
+ LD E,A 		; take 255 as default
+L5D7B OR D
+ JR Z,L5DB7		; 0, error
+ LD L,#13
+ CALL L7009		; get ptr to modulation of cur. channel
+ PUSH HL
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ LD L,A 		; current modulation
+ CALL L70F9		; compare with new
+ POP HL
+ RET Z			; equal, quit
+ LD (HL),E
+ INC HL
+ LD (HL),D		; new modulation
+ DEC HL
+ DEC HL
+ LD A,#40
+ OR (HL)
+ LD (HL),A		; set changed flag
+ RET
+
+; PLAY shape (PSG)
+
+L5D97 LD A,E
+ CP #10
+ JR NC,L5DB7		; >15, error
+ OR #10
+ LD E,A 		; set b4
+ JR L5D67		; set new "volume"
+
+; PLAY length (PSG & FM)
+
+L5DA1 JR C,L5DA5
+ LD E,#04		; take 4 as default
+L5DA5 LD A,E
+ CP #61
+ JR NC,L5DB7		; >96, error
+ LD L,#10		; offset to length
+L5DAC CALL L7009	; get ptr of cur. channel
+ CALL L5F87		; check highbyte is zero
+ OR E
+ JR Z,L5DB7		; 0, error
+ LD (HL),A		; set
+ RET
+
+L5DB7 JP L6F89		; illegal function call
+
+; PLAY tempo (PSG, FM, drum)
+
+L5DBA JR C,L5DBE
+ LD E,#78		; take 120 as default
+L5DBE LD A,E
+ CP #20
+ JR C,L5DB7		; <32, error
+ LD L,#11
+ CALL L7009		; get ptr to tempo of cur. channel
+ CALL L5F87		; check highbyte is zero
+ OR E
+ JR Z,L5DB7		; 0, error
+ LD (HL),A		; set tempo
+ LD C,A
+ LD A,(LFB38)		; channel
+ CP #00
+ RET NZ
+ LD E,#8D
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+
+; PLAY octave (PSG & FM)
+
+L5DE0 JR C,L5DE4	; argument avail.
+ LD E,#04		; take 4 as default
+L5DE4 LD A,E
+ CP #09
+ JR NC,L5DB7		; >8, error
+ LD L,#0F		; off. octave
+ JR L5DAC		; set octave
+
+L5DED XOR A
+ LD D,A
+
+; PLAY rest (PSG)
+
+L5DEF JR C,L5DF3	; argument avail.
+ LD E,#04		; take 4 as default
+L5DF3 XOR A
+ OR D
+ JR NZ,L5DB7		; highbyte <>0, error
+ OR E
+ JR Z,L5DB7		; 0, error
+ CP #61
+ JR NC,L5DB7		; >96, error
+L5DFE LD HL,#0000
+ PUSH HL
+ LD L,#10
+ CALL L7009		; get ptr to playlength of cur. channel
+ PUSH HL
+ INC HL
+ INC HL
+ LD A,(HL)
+ LD (LFB39),A		; save volume
+ LD (HL),#80
+ DEC HL
+ DEC HL
+ JR L5E92		; play rest
+
+; PLAY notenumber (PSG)
+
+L5E14 JR NC,L5DB7	; no argument, error
+ CALL L5F87		; check highbyte is zero
+ OR E
+ JR Z,L5DFE		; zero, rest
+ CP #61
+ JR NC,L5DB7		; >96, error
+ LD A,E
+ LD B,#00
+ LD E,B
+L5E24 SUB #0C
+ INC E
+ JR NC,L5E24
+ ADD A,#0C		; calc octave
+ ADD A,A
+ LD C,A
+ JP L5E67		; into PLAY tone
+
+L5E30 LD B,C
+ LD A,C
+ SUB "A"-1
+ ADD A,A		; 2, 4, etc
+ LD C,A
+ CALL L6E33		; get playstring char
+ JR Z,L5E55		; eos, take "normal" tone
+ CP "#"
+ RET Z
+ CP "+"
+ RET Z			; + or #, take "sharp" tone
+ CP "-"
+ JR Z,L5E4A
+ CALL L6E59		; playstring ptr back
+ JR L5E55		; take "normal" tone
+L5E4A DEC C		; take "flat" tone
+ LD A,B
+ CP "C"
+ JR Z,L5E54
+ CP "F"
+ JR NZ,L5E55
+L5E54 DEC C	       ; C- or F- are special
+L5E55 DEC C
+ RET
+
+; PLAY tone (PSG)
+
+L5E57 CALL L5E30	; eval tone character
+ LD L,#0F
+ CALL L7009		; Get ptr to octave of cur. channel
+ LD E,(HL)		; octave
+ LD B,#00
+ LD HL,L5D37
+ ADD HL,BC
+ LD C,(HL)
+L5E67 LD HL,L5D46
+ ADD HL,BC
+ LD A,E
+ LD E,(HL)
+ INC HL
+ LD D,(HL)		; divide
+L5E6F DEC A
+ JR Z,L5E7B
+ SRL D
+ RR E
+ JR L5E6F
+
+L5E78 CALL L6F89	; illegal function call
+
+L5E7B ADC A,E
+ LD E,A
+ ADC A,D
+ SUB E
+ LD D,A
+ PUSH DE
+ LD L,#10
+ CALL L7009		; Get ptr to notelength of cur. channel
+ LD C,(HL)		; notelength
+ PUSH HL
+ CALL L6E33		; get playstring char
+ JR Z,L5E9E		; eos, skip
+ PUSH BC
+ CALL L6E6A		; eval argument
+ POP BC
+L5E92 LD A,#60
+ CP E
+ JR C,L5E78		; >96, error
+ CALL L5F87		; check highbyte is zero
+ OR E
+ JR Z,L5E9E		; 0, take current
+ LD C,E
+L5E9E POP HL
+ INC HL
+ PUSH HL
+ CALL L633D
+ EX DE,HL
+ LD BC,LFFF7
+ POP HL
+ PUSH HL
+ ADD HL,BC
+ LD (HL),D
+ INC HL
+ LD (HL),E
+ INC HL
+ LD C,#02
+ EX (SP),HL
+ INC HL
+ LD E,(HL)
+ LD A,E
+ AND #BF
+ LD (HL),A
+ EX (SP),HL
+ LD A,#80
+ OR E
+ LD (HL),A
+ INC HL
+ INC C
+ EX (SP),HL
+ LD A,E
+ AND #40
+ JR Z,L5ED1
+ INC HL
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ POP HL
+ LD (HL),D
+ INC HL
+ LD (HL),E
+ INC HL
+ INC C
+ INC C
+ DEFB #FE
+L5ED1 POP HL
+ POP DE
+ LD A,D
+ OR E
+ JR Z,L5EDC
+ LD (HL),D
+ INC HL
+ LD (HL),E
+ INC C
+ INC C
+L5EDC LD L,#07
+ CALL L7009		; get ptr to length pack of cur. channel
+ LD (HL),C
+ LD A,C
+ SUB #02
+ RRCA
+ RRCA
+ RRCA
+ INC HL
+ OR (HL)
+ LD (HL),A
+ DEC HL
+ LD A,D
+ OR E
+ JR NZ,L5EFC
+ PUSH HL
+ LD A,(LFB39)
+ OR #80
+ LD BC,#000B
+ ADD HL,BC
+ LD (HL),A
+ POP HL
+L5EFC POP DE
+ LD B,(HL)
+ INC HL
+L5EFF LD E,(HL)
+ INC HL
+ CALL L5CBF
+ DJNZ L5EFF
+ CALL L5CF6
+ JP C,L5C30
+ JP L6DDF
+
+L5F0F LD B,H
+ LD C,L
+ XOR A
+ LD H,A
+ LD L,A
+ PUSH HL
+ SBC HL,BC
+ EX DE,HL
+ ADD HL,HL
+ LD A,H
+ LD C,L
+ POP HL
+ LD B,#10
+L5F1E ADC HL,HL
+ ADD HL,DE
+ JR C,L5F25
+ SBC HL,DE
+L5F25 RL C
+ RLA
+ DJNZ L5F1E
+ LD D,A
+ LD E,C
+ RET
+L5F2D LD E,#08
+ LD HL,#0000
+L5F32 ADD HL,HL
+ RLA
+ JR NC,L5F39
+ ADD HL,BC
+ ADC A,#00
+L5F39 DEC E
+ JP NZ,L5F32
+L5F3D RET
+
+; PLAY Yn,n (PSG)
+
+L5F3E JR NC,L5F8A	; no argument, error
+L5F40 LD A,E
+ CP #C9
+ JR NC,L5F8A		; >200, error
+ CALL L5F87		; check highbyte is zero
+ CALL L6E33		; get playstring char
+ CP ","
+ JR NZ,L5F8A		; not a ",", error
+ CALL L6E67		; eval argument
+ JR L5F87		; check highbyte is zero
+
+; PLAY Q (PSG)
+
+L5F54 JR C,L5F58
+ LD E,#08		; take 8 as default
+L5F58 LD A,E
+ CP #09
+ JR NC,L5F8A		; >8, error
+ JR L5F87		; check highbyte is zero
+
+; PLAY Z (PSG)
+
+L5F5F JR NC,L5F8A	; no argument, error
+ JR L5F87		; Check highbyte is zero
+
+; PLAY @ (PSG)
+
+L5F63 CALL L6E2D	; get playstring char
+ CP "V"
+ JR Z,L5F8D
+ CP "W"
+ JR Z,L5FA0
+ CP "X"
+ JR Z,L5FB6
+ CP "S"
+ JR Z,L5FCA
+ CP "C"
+ JR Z,L5FDD
+ CALL L60E5		; check if argument starts
+ JR C,L5F8A		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ CP #40
+ JR NC,L5F8A		; >63, error
+L5F87 LD A,D
+ OR A
+ RET Z			; highbyte is zero, quit
+L5F8A JP L6F89		; illegal function call
+
+; PLAY @V (PSG)
+
+L5F8D CALL L6E33	; get playstring char
+ RET Z			; eos, quit
+ CALL L60E5		; check if argument starts
+ JR C,L5F8A		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ CP #80
+ JR NC,L5F8A		; >127, error
+ JR L5F87		; check highbyte is zero
+
+; PLAY @W (PSG)
+
+L5FA0 CALL L6E33	; get playstring char
+ JR Z,L5FB3		; eos,
+ CALL L60E5		; check if argument starts
+ JR C,L5FB0		; no,
+ CALL L6E6A		; eval argument
+ JP L5DF3
+L5FB0 CALL L6E59	; playstring ptr back
+L5FB3 JP L5DED		; play R4
+
+; PLAY @X (PSG)
+
+L5FB6 CALL L6E33	; get playstring char
+ RET Z			; eos, quit
+ CALL L60E5		; check if argument starts
+ JR C,L5F8A		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ DEC A
+ CP #10
+ JR NC,L5F8A		; not 1-16, error
+ JR L5F87		; check highbyte is zero
+
+; PLAY @S (PSG)
+
+L5FCA CALL L6E33	; get playstring char
+ RET Z			; eos, quit
+ CALL L60E5		; check if argument starts
+ JR C,L5F8A		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ CP #04
+ JR NC,L5F8A
+ JR L5F87		; check highbyte is zero
+
+; PLAY @C (PSG)
+
+L5FDD CALL L6E2D	; get playstring char
+ CALL L60E5		; check if argument starts
+ JP C,L5F8A		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ CP #80
+ JR NC,L5F8A		; >127, error
+ CALL L6E2D		; get playstring char
+ CP ","
+ JR NZ,L5F8A
+ CALL L6E67		; eval argument
+ LD A,E
+ CP #80
+ JR NC,L5F8A		; >127, error
+ JR L5F87		; check highbyte is zero
+
+L5FFF DEFB "A"
+ DEFW L6279
+ DEFB "&"
+ DEFW L63FD
+ DEFB "{"
+ DEFW L6406
+ DEFB "}"+#80
+ DEFW L6482
+ DEFB "Y"+#80
+ DEFW L60F5
+ DEFB "L"+#80
+ DEFW L5DA1
+ DEFB "Q"+#80
+ DEFW L6229
+ DEFB "V"+#80
+ DEFW L61E2
+ DEFB "O"+#80
+ DEFW L5DE0
+ DEFB ">"
+ DEFW L6237
+ DEFB "<"
+ DEFW L6244
+ DEFB "Z"+#80
+ DEFW L6127
+ DEFB "X"
+ DEFW L6EF4
+ DEFB "R"+80
+ DEFW L624F
+ DEFB "N"+#80
+ DEFW L626C
+ DEFB "T"+#80
+ DEFW L5DBA
+ DEFB "@"
+ DEFW L6039
+ DEFB "M"+#80
+ DEFW L621A
+ DEFB "S"+#80
+ DEFW L6221
+ DEFB #00
+
+; PLAY @ (FM)
+
+L6039 CALL L6E2D	; get playstring char
+ CP "V"
+ JP Z,L608D
+ CP "W"
+ JP Z,L60BB
+ CP "C"
+ JP Z,L616F
+ CP "H"
+ JP Z,L61B3
+ CP "S"
+ JP Z,L6142
+ CALL L60E5		; check if argument starts
+ JR C,L60C4		; no, error
+ CALL L6E6A		; eval argument
+ CALL L5F87		; check highbyte is zero
+ LD A,(LF97F)
+ CP #01
+ LD A,E
+ JR Z,L606C		; MIDI, big check
+ CP #40 		; >63 ?
+ JR L606E
+L606C CP #80		; >127 ?
+L606E JR NC,L60C4	; yes, error
+ LD C,A
+ LD A,(LFB38)		; channel
+ CALL L6772
+ JR NC,L6083
+ LD A,C
+ CP #10
+ JR NC,L60C4
+ LD A,E
+ CP #40
+ JR NC,L60C4
+L6083 LD E,#84
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+
+; @V (FM & drums)
+
+L608D CALL L6E2D	; get playstring char
+ CALL L60E5		; Check if argument "starts"
+ JR C,L60C4		; no, error
+ CALL L6E6A		; eval argument
+ LD A,(LF97F)
+ CP #01
+ JR Z,L60A8		; MIDI, futher
+ LD A,#7F
+ SUB E
+ JP M,L60C4		; >127, error
+ RRA			; /2
+ JR L60AD
+L60A8 LD A,E
+ CP #80
+ JR NC,L60C4		; >127, error
+L60AD LD C,A
+ CALL L5F87		; check highbyte is zero
+ LD E,#85
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+
+; @W (FM)
+
+L60BB POP DE		; ret address
+ CALL L60C7
+ LD E,#83
+ JP L62F9
+
+L60C4 JP L6F89		; illegal function call
+
+L60C7 CALL L630E
+ PUSH HL
+ CALL L6E33		; get playstring char
+ JR Z,L60E1		; eos, quit
+ PUSH BC
+ CALL L6E6A		; eval argument
+ POP BC
+ LD A,#60
+ CP E
+ JR C,L60C4		; >96, error
+ CALL L5F87		; check highbyte is zero
+ OR E
+ JR Z,L60C4		; 0, error
+ LD C,E
+L60E1 POP HL
+ JP L633C
+
+L60E5 CP "+"
+ RET Z
+ CP "-"
+ RET Z
+ CP "="
+ RET Z
+ CP "0"
+ RET C
+ CP "9"+1
+ CCF
+ RET
+
+; PLAY Y (FM & drum)
+
+L60F5 JR NC,L616C	; no argument, error
+ LD A,(LF97F)
+ AND #01
+ JP NZ,L5F40		; MIDI, skip command
+ LD A,E
+ CALL L7618		; check registernumber
+ JR C,L616C		; illegal, error
+ CALL L5F87		; check highbyte is zero
+ PUSH DE
+ CALL L6E2D		; get playstring char
+ CP ","
+ JR NZ,L616C		; no ",", error
+ CALL L6E67		; eval argument
+ CALL L5F87		; check highbyte is zero
+ PUSH DE
+ LD E,#82
+ CALL L5CE6
+ POP HL
+ EX (SP),HL
+ LD E,L
+ CALL L5CE6
+ POP DE
+ POP BC
+ JP L6301
+
+; PLAY Z (FM & drum)
+
+L6127 JR NC,L616C	; no argument, error
+ LD A,(LF97F)
+ AND #01
+ JP Z,L613F		; not MIDI, skip command
+ CALL L5F87		; check highbyte is zero
+ LD C,E
+ LD E,#8A
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+L613F JP L5F87		; check highbyte is zero
+
+; @S (FM)
+
+L6142 CALL L6E2D	; get playstring char
+ CALL L60E5		; check if argument starts
+ JP C,L60C4		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ CP #03
+ JP NC,L60C4		; >2, error
+ LD C,A
+ LD A,(LF97F)
+ AND #01
+ JR Z,L6169		; not MIDI, skip command
+ CALL L5F87		; check highbyte is zero
+ LD E,#8E
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+
+L6169 JP L5F87		; check highbyte is zero
+
+L616C JP L6F89		; illegal function call
+
+; PLAY @C (FM & drums)
+
+L616F CALL L6E2D	; get playstring char
+ CALL L60E5		; check if argument starts
+ JP C,L60C4		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ CP #80
+ JR NC,L616C		; >127, error
+ CALL L5F87		; check highbyte is zero
+ PUSH DE
+ CALL L6E2D		; get playstring char
+ CP ","
+ JR NZ,L616C		; not ",", error
+ CALL L6E67		; eval argument
+ LD A,E
+ CP #80
+ JR NC,L616C		; >127, error
+ LD A,(LF97F)
+ AND #01
+ JP Z,L61AF		; not MIDI, skip command
+ CALL L5F87		; check highbyte is zero
+ PUSH DE
+ LD E,#8B
+ CALL L5CE6
+ POP HL
+ EX (SP),HL
+ LD E,L
+ CALL L5CE6
+ POP DE
+ POP BC
+ JP L6301
+L61AF POP AF
+ JP L5F87		; check highbyte is zero
+
+; @H (FM & drums)
+
+L61B3 CALL L6E2D	; get playstring char
+ CALL L60E5		; check if argument starts
+ JP C,L60C4		; no, error
+ CALL L6E6A		; eval argument
+ CALL L5F87		; check highbyte is zero
+ LD A,E
+ DEC A
+ CP #10
+ JP NC,L6F89		; not 1-16, error
+ PUSH AF
+ LD A,(LF97F)
+ AND #01
+ JR Z,L61DE		; not MIDI, skip command
+ POP AF
+ INC A
+ LD C,A
+ LD E,#8C
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+L61DE POP AF
+ JP L5F87		; check highbyte is zero
+
+; PLAY volume (FM)
+
+L61E2 JR C,L61E6
+ LD E,#08		; take 8 as default
+L61E6 CALL L5F87	; check highbyte is zero
+ LD A,E
+ CP #10
+ JR NC,L621E		; >15, error
+L61EE LD C,A
+ LD E,#81
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+
+; PLAY V (drums)
+
+L61F9 JR C,L61FD
+ LD E,#08
+L61FD CALL L5F87	; check highbyte is zero
+ LD A,(LF97F)
+ CP #01
+ JR Z,L6213		; not MIDI,
+ LD A,E
+ CP #10
+ JR NC,L621E
+ LD A,#0F
+ SUB E
+ ADD A,A
+ LD E,A
+ JR L61EE
+L6213 LD A,E
+ ADD A,A
+ ADD A,A
+ ADD A,A
+ LD E,A
+ JR L61EE
+
+; PLAY modulation (FM)
+
+L621A RET NC		; no parameter, quit
+ LD A,E
+ OR D
+ RET NZ 		; <>0, quit
+L621E JP L6F89		; illegal function call
+
+; PLAY shape (FM)
+
+L6221 LD A,E
+ CP #10
+ JR NC,L621E		; >15, error
+ JP L5F87		; check highbyte is zero
+
+; PLAY Q (FM)
+
+L6229 JR C,L622D
+ LD E,#08		; take 8 as default
+L622D LD A,E
+ CP #09
+ JR NC,L621E		; >8, error
+ LD L,#26
+ JP L5DAC
+
+; PLAY increase octave (PSG & FM)
+
+L6237 LD L,#0F
+ CALL L7009		; get ptr to octave of cur. channel
+ LD A,(HL)
+ INC A
+ CP #09
+ JR NC,L621E		; octave >8, error
+ LD (HL),A		; set new octave
+ RET
+
+; PLAY decrease octave (PSG & FM)
+
+L6244 LD L,#0F
+ CALL L7009		; get ptr to octave of cur. channel
+ LD A,(HL)
+ DEC A
+ JR Z,L621E		; octave <1, error
+ LD (HL),A		; set new octave
+ RET
+
+; PLAY rest (FM & drum)
+
+L624F JR C,L6253
+ LD E,#04		; take 4 as default
+L6253 CALL L5F87	; check highbyte is zero
+ OR E
+ JR Z,L621E		; 0, error
+ CP #61
+ JR NC,L621E		; >96, error
+ XOR A
+ PUSH AF
+ LD HL,L629D
+ PUSH HL
+ LD L,#10
+ CALL L7009		; get ptr to playlength of cur. channel
+ PUSH HL
+ JP L632E
+
+; PLAY tonenumber (FM)
+
+L626C JR NC,L621E	; no argument, error
+ CALL L5F87		; check highbyte is zero
+ LD A,E
+ CP #61
+ JR C,L6293		; <97, into play tone
+ JP L6F89		; illegal function call
+
+; PLAY tone (FM)
+
+L6279 CALL L5E30	; eval tone character
+ LD L,#0F
+ CALL L7009		; get ptr to octave of cur. channel
+ LD D,#0C
+ LD B,(HL)
+ LD A,#F4
+L6286 ADD A,D
+ DJNZ L6286
+ LD D,A
+ LD B,#00
+ LD HL,L5D37
+ ADD HL,BC
+ LD A,(HL)
+ RRCA
+ ADD A,D
+L6293 ADD A,#0C
+ LD D,A
+ CALL L74A7
+ PUSH DE
+ CALL L6320
+L629D PUSH HL
+ CALL L6E33		; get playstring char
+ JR Z,L62AC		; eos, 
+ CP "&"
+ PUSH AF
+ CALL L6E59		; playstring prt back
+ POP AF
+ JR Z,L62ED
+L62AC LD L,#26
+ CALL L7009		; get ptr to ?? of cur. channel
+ LD A,(HL)
+ CP #08
+ JR Z,L62ED
+ POP DE
+ PUSH DE
+ LD B,A
+ LD HL,#0000
+L62BC ADD HL,DE
+ DJNZ L62BC
+ SRL H
+ RR L
+ SRL H
+ RR L
+ SRL H
+ RR L
+ POP DE
+ EX DE,HL
+ OR A
+ SBC HL,DE
+ EX DE,HL
+ JR Z,L62EE
+ POP BC
+ POP AF
+ PUSH DE
+ LD E,B
+ CALL L5CE6
+ LD A,B
+ OR A
+ LD E,C
+ CALL NZ,L5CE6
+ LD E,L
+ CALL L5CE6
+ LD E,H
+ CALL L5CE6
+ POP HL
+ LD E,#00
+ JR L62F9
+L62ED POP HL
+L62EE POP BC
+ POP DE
+ LD E,B
+ CALL L5CE6
+ LD A,B
+ OR A
+ JR Z,L62FC
+ LD E,C
+L62F9 CALL L5CE6
+L62FC LD E,L
+ CALL L5CE6
+ LD E,H
+
+L6301 CALL L5CE6
+ CALL L5CF6
+ EI
+ JP C,L5C30
+ JP L6DDF
+
+L630E LD L,#09
+ CALL L7009		; get ptr to ?? of cur. channel
+ LD C,(HL)
+ LD A,C
+ OR A
+ PUSH AF
+ LD L,#10
+ CALL L7009		; get ptr to playlength of cur. channel
+ POP AF
+ RET NZ
+ LD C,(HL)
+ RET
+
+L6320 CALL L630E
+ PUSH HL
+ CALL L6E33		; get playstring char
+ JR Z,L633B		; eos,
+ PUSH BC
+ CALL L6E6A		; eval argument
+ POP BC
+
+L632E LD A,#60
+ CP E
+ JP C,L6403		; >96, error
+ CALL L5F87		; check highbyte is zero
+ OR E
+ JR Z,L633B		; 0,
+ LD C,E
+L633B POP HL
+L633C INC HL
+ LD A,(HL)
+ LD L,A
+ LD H,#00
+ LD (LFAE7),HL
+ LD B,#00
+ PUSH BC
+ CALL L5F2D
+ LD DE,(LF97A)
+ CALL L5F0F
+ LD (LFAE9),DE
+ EX DE,HL
+ POP HL
+ CALL L5F0F
+ LD (LFAED),DE
+ CALL L6387
+ LD HL,(LFAE9)
+ PUSH HL
+ LD DE,(LFAED)
+ CALL L63EE
+ LD L,(IX+0)
+ LD H,#00
+ ADD HL,DE
+ LD DE,(LFAE7)
+L6376 PUSH HL
+ SBC HL,DE
+ JR C,L6381
+ POP BC
+ POP BC
+ INC BC
+ PUSH BC
+ JR L6376
+L6381 POP HL
+ LD (IX+0),L
+ POP HL
+ RET
+L6387 LD HL,(LFAE9)
+ LD (LFAEB),HL
+ LD HL,(LFAED)
+ LD (LFAEF),HL
+L6393 CALL L6E33	; get playstring char
+ JR Z,L63ED
+ CP "."
+ JR NZ,L63EA
+ LD HL,(LFAE9)
+ LD DE,(LFAEB)
+ SRL D
+ RR E
+ JR NC,L63CC
+ ADD HL,DE
+ LD (LFAE9),HL
+ LD (LFAEB),DE
+ LD HL,(LFAEF)
+ LD DE,(LFAE7)
+ ADD HL,DE
+ SRL H
+ RR L
+ EX DE,HL
+ LD HL,(LFAED)
+ ADC HL,DE
+ LD (LFAED),HL
+ LD (LFAEF),DE
+ JR L63E8
+L63CC ADD HL,DE
+ LD (LFAE9),HL
+ LD (LFAEB),DE
+ LD HL,(LFAEF)
+ SRL H
+ RR L
+ EX DE,HL
+ LD HL,(LFAED)
+ ADC HL,DE
+ LD (LFAED),HL
+ LD (LFAEF),DE
+L63E8 JR L6393
+L63EA CALL L6E59	; playstring ptr back
+L63ED RET
+
+L63EE PUSH BC
+ LD A,(LFB38)		; channel
+ LD C,A
+ LD B,#00
+ LD IX,LFA19
+ ADD IX,BC
+ POP BC
+ RET
+
+; PLAY & (FM)
+
+L63FD LD E,#87
+ POP BC
+ JP L6301
+
+L6403 JP L6F89		; illegal function call
+
+; PLAY { (FM)
+
+L6406 LD L,#09
+ CALL L7009		; Get ptr to ?? of cur. channel
+ LD A,(HL)
+ JR NZ,L6403		; <>0, error
+ LD C,#00
+ LD HL,(LFB3C)
+ PUSH HL
+ LD A,(LFB3B)		; save current playstring ptr & length
+ PUSH AF
+L6418 CALL L6E2D	; get playstring char
+L641B CP "N"
+ JR Z,L642B
+ CP "R"
+ JR Z,L642B
+ CP "A"
+ JR C,L642E
+ CP "G"+1
+ JR NC,L642E
+L642B INC C
+ JR L6418
+L642E CP "}"
+ JR Z,L6441		; "}", end of ??
+ CP "{"
+ JR Z,L6403		; "{", error
+ CP "="
+ JR NZ,L6418
+ PUSH BC
+ CALL L6EBD		; eval "=var;"
+ POP BC
+ JR L641B		; cont
+L6441 LD L,#10
+ CALL L7009		; get ptr to playlength of cur. channel
+ LD E,(HL)
+ LD D,#00
+ CALL L6E33		; get playstring char
+ JR Z,L645B		; eos,
+ CALL L6E59		; playstring ptr back
+ CALL L60E5		; check if argument starts
+ JR C,L645B		; no,
+ PUSH BC
+ CALL L6E67		; eval argument
+ POP BC
+L645B LD A,#60
+ CP E
+ JR C,L6403		; >96, error
+ CALL L5F87		; check highbyte is zero
+ LD A,C
+ LD B,D
+ LD C,E
+ CALL L5F2D
+ OR H
+ JR NZ,L6403		; error
+ LD A,L
+ CP #61
+ JR NC,L6403		; error
+ PUSH AF
+ LD L,#09
+ CALL L7009		; get ptr to ?? of cur. channel
+ POP AF
+ LD (HL),A
+ POP AF
+ LD (LFB3B),A
+ POP HL
+ LD (LFB3C),HL		; restore playstring ptr & length
+ RET
+
+; PLAY } (FM)
+
+L6482 LD L,#09
+ CALL L7009		; get ptr to ?? of cur. channel
+ LD A,(HL)
+ OR A
+ JR Z,L64BD		; 0, error
+ LD (HL),#00
+ RET
+
+L648E	DEFB "B"
+	DEFW L64C0
+	DEFB "S"
+	DEFW L64C0
+	DEFB "M"
+	DEFW L64C0
+	DEFB "C"
+	DEFW L64C0
+	DEFB "H"
+	DEFW L64C0
+	DEFB "R"+#80
+	DEFW L624F
+	DEFB "@"
+	DEFW L6519
+	DEFB "T"+#80
+	DEFW L5DBA
+	DEFB "Y"+#80
+	DEFW L60F5
+	DEFB "V"+#80
+	DEFW L61F9
+	DEFB "X"
+	DEFW L6EF4
+	DEFB "Z"+#80
+	DEFW L6127
+	DEFB #00
+
+L64B3	DEFB "B","S","M","C","H"
+	DEFB #10,#08,#04,#02,#01
+
+L64BD JP L6F89
+
+; PLAY drum (drum)
+
+L64C0 LD BC,#0000
+ CALL L6E59		; playstring ptr back
+L64C6 CALL L6E2D	; get playstring char
+ CALL L60E5		; check if argument starts
+ JR NC,L64F2		; yes,
+ PUSH BC
+ LD HL,L64B3
+ LD BC,#0005
+ CPIR			; check if one of these
+ JR NZ,L64BD		; no, error
+ LD C,#04
+ ADD HL,BC
+ LD D,(HL)		; get apro. data
+ POP BC
+ CALL L6E2D		; get playstring char
+ CP "!"                 ; is it "!"
+ PUSH AF
+ CALL NZ,L6E59		; no, playstring ptr back
+ POP AF
+ JR NZ,L64ED		; no,
+ LD A,D
+ OR B
+ LD B,A
+L64ED LD A,D
+ OR C
+ LD C,A
+ JR L64C6
+L64F2 INC C
+ DEC C
+ JR Z,L64BD
+ LD A,#C0
+ OR C
+ PUSH AF
+ PUSH BC
+ LD HL,L650E
+ PUSH HL
+ LD L,#10
+ CALL L7009		; get ptr to playlength of cur. channel
+ PUSH HL
+ CALL L6E59		; playstring ptr back
+ CALL L6E67		; eval argument
+ JP L632E
+L650E POP BC
+ POP AF
+ POP DE
+ LD E,A
+ CALL L5CE6
+ LD E,B
+ JP L62F9
+
+; PLAY @ (drum)
+
+L6519 CALL L6E2D	; get playstring char
+ CP "C"
+ JP Z,L616F
+ CP "H"
+ JP Z,L61B3
+ CP "V"
+ JP Z,L608D
+ CP "A"
+ JR Z,L6557
+ CALL L60E5		; check if argument starts
+ JR C,L64BD		; no, error
+ CALL L6E6A		; eval argument
+ LD A,E
+ CP #80
+ JP NC,L64BD		; >127, error
+ PUSH AF
+ LD A,(LF97F)
+ AND #01
+ JP Z,L654E		; not MIDI, skip command
+ CALL L5F87		; check highbyte is zero
+ POP AF
+ LD C,A
+ JP L6083
+L654E POP AF
+ CP #40
+ JP NC,L64BD		; >63, error
+ JP L5F87		; check highbyte is zero
+
+; @A (drums)
+
+L6557 CALL L6E2D	; get playstring char
+ CALL L60E5		; check if argument starts
+ JR C,L6586		; no, error
+ CALL L6E6A		; eval argument
+ CALL L5F87		; check highbyte is zero
+ LD A,E
+ CP #10
+ JR NC,L6586		; >15, error
+ LD A,(LF97F)
+ CP #01
+ JR Z,L6577		; not MIDI,
+ LD A,#0F
+ SUB E
+ ADD A,A
+ JR L657B
+L6577 LD A,E
+ ADD A,A
+ ADD A,A
+ ADD A,A
+L657B LD C,A
+ LD E,#86
+ CALL L5CE6
+ LD E,C
+ POP BC
+ JP L6301
+L6586 JP L6F89		; illegal function call
+
+; Music Interrupt handler
+
+L6589	PUSH AF
+	XOR A
+	OUT (#EA),A		; Enable timer interrupt
+	DI
+	LD HL,LF999
+	LD A,(LF983)
+	OR A			; Still busy with music ?
+	JR NZ,L65B3		; yep, skip this time
+L6597	CPL
+	LD (LF983),A		; busy with music
+	PUSH HL
+L659C	XOR A
+	LD (LFA26),A
+	CALL L65B8
+	LD A,(LFA26)
+	OR A
+	JR NZ,L659C
+	POP HL
+	DI
+	XOR A
+	LD (LF983),A		; ready with music
+	DEC (HL)
+	JP P,L6597
+L65B3	INC (HL)
+	POP AF
+	JP LF9BB		; Old H.MDTM
+
+L65B8	LD A,(LFB3F)
+	OR A			; Handle queues ?
+	JR Z,L65C8		; nop,
+	CALL L69A2		; Check CTRL-STOP
+	JR NZ,L65D5		; No,
+	LD A,(LFB3F)
+	AND #7F
+L65C8	LD HL,(LF995)
+	OR L
+	OR H
+	LD HL,LF997
+	OR (HL)
+	CALL NZ,L6BCF		; stop music
+	RET
+L65D5	LD BC,(LF995)
+	LD A,B
+	OR C
+	JP Z,L666B		; Stop
+	LD L,C
+	LD H,B
+	LD A,(LF991)
+	LD B,A
+	LD A,#10
+	SUB B
+	LD B,A
+L65E8	ADD HL,HL
+	DJNZ L65E8
+	LD A,(LF991)
+L65EE	DEC A
+	JP M,L65FC
+	ADD HL,HL
+	PUSH AF
+	PUSH HL
+	CALL C,L666C		; handle this queue
+	POP HL
+	POP AF
+	JR L65EE
+L65FC	PUSH HL
+	LD A,(LFAE2)
+	OR #00			; MIDI stop ?
+	JR Z,L6658		; yep,
+	LD HL,(LF995)
+	LD A,H
+	OR L
+	JR Z,L6649
+	LD A,(LFAE3)
+	CP #00
+	JR NZ,L6652
+L6612	LD C,#60
+	LD B,#00
+	LD A,(LFAE6)
+	CALL L5F2D
+	PUSH HL
+	LD DE,(LF97A)
+	CALL L5F0F
+	EX DE,HL
+	EX (SP),HL
+	PUSH HL
+	LD HL,(LFAE4)
+	ADD HL,DE
+	POP DE
+	PUSH HL
+	SBC HL,DE
+	JR C,L6639
+	LD (LFAE4),HL
+	POP HL
+	POP HL
+	INC HL
+	JR L663E
+L6639	POP HL
+	LD (LFAE4),HL
+	POP HL
+L663E	LD A,L
+	LD (LFAE3),A
+	LD A,#F8
+	CALL L6DB4		; Transmit MIDI Timing clock
+	JR L6658
+L6649	XOR A
+	LD (LFAE4),A
+	LD (LFAE5),A
+	JR L6658
+L6652	DEC A
+	JR Z,L6612
+	LD (LFAE3),A
+L6658	POP HL
+	LD HL,(LF995)
+	LD A,H
+	OR L
+	JR NZ,L666B		; stop
+	CALL L7062
+	LD HL,(LF995)
+	LD A,H
+	OR L
+	JP NZ,L65B8
+L666B	RET
+
+L666C LD (LF99A),A	; set channel
+ DI
+ LD L,#00
+ CALL L700C		; get ptr to time of channel
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ LD A,D
+ OR E
+ JR Z,L6684		; zero timer, action
+ DEC DE
+ LD (HL),D
+ DEC HL
+ LD (HL),E		; decreased time
+ LD A,D
+ OR E
+ RET NZ 		; not zero yet, quit
+ INC HL
+L6684 LD A,(LF992)
+ LD B,A
+ LD A,(LF99A)
+ CP B
+ JP NC,L6A43		; handle PSG channels
+L668F CALL L6979	; get byte from queue
+ RET Z			; not avail, stop
+L6693 INC A
+ JP Z,L67DB		; endbyte ??
+ DEC A
+ JP M,L6806		; b7 set,
+ PUSH HL
+ LD D,A
+ LD E,A
+ JR Z,L66A4
+ CALL L6979		; get byte from queue
+ LD E,A
+L66A4 LD L,#0D
+ CALL L6987		; get ptr to ?? of channel
+ LD (HL),E
+ INC HL
+ LD (HL),D
+ POP HL
+ CALL L6979		; get byte from queue
+ LD C,A
+ CALL L6979		; get byte from queue
+ LD (HL),A
+ DEC HL
+ LD (HL),C
+ LD A,D
+ OR A
+ JP Z,L6718
+ CALL L67AD
+ LD L,#12
+ CALL L6987
+ LD C,(HL)
+ CALL L66E0
+ JP NZ,L69AE
+ CALL L676F
+ JP C,L6713
+L66D1 PUSH BC
+ PUSH DE
+ CALL L726F
+ LD BC,#0010
+ ADD IX,BC
+ POP DE
+ POP BC
+ DJNZ L66D1
+ RET
+L66E0 PUSH HL
+ LD HL,LF981
+ BIT 0,(HL)
+ POP HL
+ RET
+L66E8 CALL L6979	; get byte from queue
+ RET Z
+ OR A
+ JP M,L6693
+ JR Z,L6693
+ LD D,A
+ CALL L6979		; get byte from queue
+ LD E,A
+ PUSH HL
+ LD L,#0D
+ CALL L6987
+ LD A,E
+ CP (HL)
+ JR NZ,L6704
+ INC HL
+ LD A,D
+ CP (HL)
+L6704 JP NZ,L66A4
+ POP HL
+ CALL L6979		; get byte from queue
+ LD C,A
+ CALL L6979		; get byte from queue
+ LD (HL),A
+ DEC HL
+ LD (HL),C
+ RET
+L6713 LD A,(LF982)
+ RET
+L6717 RET
+L6718 CALL L66E0
+ JR NZ,L6737
+ LD A,(LF98E)
+ AND #01
+ JR Z,L674A		; no drums
+ LD A,(LF99A)
+ CP #06
+ JR C,L674A
+ LD A,(LF992)
+ DEC A
+ DEC A
+ LD HL,LF99A
+ CP (HL)
+ JR C,L674A
+ RET
+L6737 LD A,(LF98E)
+ AND #01
+ JR Z,L674A
+ CALL L676F
+ JR NC,L674A
+ JR Z,L674A
+ LD C,#00
+ JP L69E0
+L674A CALL L676F
+ JR NC,L6759
+ RET NZ
+ CALL L66E0
+ JP NZ,L69B9
+ JP L6717
+L6759 CALL L66E0
+ JP NZ,L69B9
+ CALL L67AD
+L6762 PUSH BC
+ CALL L747D
+ LD BC,#0010
+ ADD IX,BC
+ POP BC
+ DJNZ L6762
+ RET
+L676F LD A,(LF99A)
+L6772 LD HL,LF984
+ CP (HL)
+ CCF
+ RET NC
+ PUSH AF
+ LD A,(LF98E)
+ DEC A
+ JR Z,L6781
+ POP AF
+ RET
+L6781 POP AF
+ ADC A,A
+ RRA
+ RET
+L6785 CALL L66E0
+ JP NZ,L69BD
+ CALL L676F
+ JR NC,L6795
+ LD A,C
+ LD (LF982),A
+ RET
+L6795 PUSH BC
+ CALL L67AD
+ POP DE
+ LD C,E
+L679B PUSH BC
+ CALL L726C
+ POP BC
+ PUSH BC
+ CALL L7106
+ LD BC,#0010
+ ADD IX,BC
+ POP BC
+ DJNZ L679B
+ RET
+L67AD LD A,(LF99A)
+ CALL L6772
+ JR NC,L67BE
+ JR Z,L67BE
+ LD IX,LFA87
+ LD B,#03
+ RET
+L67BE LD HL,LF985
+ OR A
+ JR Z,L67CA
+ LD B,A
+ XOR A
+L67C6 ADD A,(HL)
+ INC HL
+ DJNZ L67C6
+L67CA LD IX,LFA27
+ OR A
+ JR Z,L67D9
+ LD BC,#0010
+L67D4 ADD IX,BC
+ DEC A
+ JR NZ,L67D4
+L67D9 LD B,(HL)
+ RET
+L67DB CALL L6718
+ LD L,#0D
+ CALL L6987
+ LD (HL),#00
+ INC HL
+ LD (HL),#00
+L67E8 LD A,(LF99A)
+ LD HL,#0001
+ LD B,A
+ OR A
+ JR Z,L67F5
+L67F2 ADD HL,HL
+ DJNZ L67F2
+L67F5 EX DE,HL
+ DI
+ LD HL,(LF995)
+ LD A,E
+ AND L
+ XOR L
+ LD L,A
+ LD A,D
+ AND H
+ XOR H
+ LD H,A
+ LD (LF995),HL
+ RET
+
+L6806 LD E,A
+ AND #C0
+ CP #C0
+ JP Z,L6932
+ LD A,E
+ ADD A,A
+ EX DE,HL
+ ADD A,LOW L681F
+ LD L,A
+ LD A,#00
+ ADC A,HIGH L681F
+ LD H,A
+ LD C,(HL)
+ INC HL
+ LD B,(HL)
+ EX DE,HL
+ PUSH BC
+ RET
+
+L681F	DW	L6847
+	DW	L684A
+	DW	L688F
+	DW	L689D
+	DW	L68A8
+	DW	L68B2
+	DW	L6909
+	DW	L66E8
+	DW	L683D
+	DW	L683F
+	DW	L69E5
+	DW	L6A1F
+	DW	L6A30
+	DW	L6A14
+	DW	L69F2
+
+L683D XOR A
+ DB #01
+L683F LD A,#01
+ LD (LF981),A
+ JP L668F
+
+L6847 JP L6718
+
+L684A CALL L66E0
+ JR Z,L6862
+ LD A,(LF98E)
+ AND #04
+ JR Z,L6862
+ LD A,(LF992)
+ DEC A
+ LD B,A
+ LD A,(LF99A)
+ CP B
+ JP Z,L68F1
+L6862 PUSH HL
+ CALL L676F
+ POP HL
+ JR NC,L686E
+ JP NZ,L68F1
+ JR L687C
+L686E PUSH HL
+ LD L,#12
+ CALL L6987
+ CALL L6979		; get byte from queue
+ LD (HL),A
+L6878 POP HL
+ JP L668F
+L687C PUSH HL
+ LD L,#12
+ CALL L6987
+ CALL L6979		; get byte from queue
+ LD (HL),A
+ ADD A,A
+ ADD A,A
+ ADD A,#03
+ CALL L68EA
+ JR L6878
+L688F PUSH HL
+ CALL L6979		; get byte from queue
+ LD C,A
+ CALL L6979		; get byte from queue
+ LD B,A 		; data
+ CALL L75DA		; Write PAC register
+ JR L6878
+L689D CALL L6979	; get byte from queue
+ LD C,A
+ CALL L6979		; get byte from queue
+ LD (HL),A
+ DEC HL
+ LD (HL),C
+ RET
+L68A8 PUSH HL
+ CALL L6979		; get byte from queue
+ LD C,A
+ CALL L6785
+ JR L6878
+L68B2 CALL L66E0
+ JP NZ,L69C2
+ PUSH HL
+ CALL L676F
+ JR NC,L68C7
+ JR Z,L68DE
+ CALL L67AD
+ LD B,#01
+ JR L68CA
+L68C7 CALL L67AD
+L68CA CALL L6979	; get byte from queue
+ LD E,A
+L68CE PUSH BC
+ PUSH DE
+ CALL L71F1
+ LD BC,#0010
+ ADD IX,BC
+ POP DE
+ POP BC
+ DJNZ L68CE
+ JR L6878
+L68DE CALL L6979	; get byte from queue
+ LD E,A
+ LD A,#3F
+ SUB E
+ CALL L68EA
+ POP HL
+ RET
+L68EA LD C,A
+ LD B,#00
+ LD E,A
+ LD D,#00
+ RET
+L68F1 PUSH HL
+ LD L,#0A
+ CALL L6987
+ CALL L6979		; get byte from queue
+ LD (HL),A
+ LD E,A
+ LD L,#08
+ CALL L6987
+ LD A,(HL)
+ CPL
+ CALL L6920
+ JP L6878
+L6909 PUSH HL
+ LD L,#0C
+ CALL L6987
+ CALL L6979		; get byte from queue
+ LD (HL),A
+ LD E,A
+ LD L,#08
+ CALL L6987
+ LD A,(HL)
+ CALL L6920
+ JP L6878
+
+L6920 AND #1F
+ RET Z
+ CALL L66E0
+ JP NZ,L69D5
+ PUSH BC
+ PUSH DE
+ LD C,A
+ CALL L7200
+ POP DE
+ POP BC
+ RET
+L6932 CALL L6979	; get byte from queue
+ LD D,A
+ CALL L6979		; get byte from queue
+ LD C,A
+ CALL L6979		; get byte from queue
+ LD (HL),A
+ DEC HL
+ LD (HL),C
+ PUSH HL
+ LD L,#08
+ CALL L6987
+ LD A,D
+ XOR (HL)
+ JR Z,L696A
+ LD (HL),D
+ PUSH DE
+ PUSH AF
+ AND D
+ PUSH AF
+ LD L,#0C
+ CALL L6987
+ LD E,(HL)
+ POP AF
+ CALL L6920
+ LD A,D
+ CPL
+ LD D,A
+ POP AF
+ AND D
+ PUSH AF
+ LD L,#0A
+ CALL L6987
+ LD E,(HL)
+ POP AF
+ CALL L6920
+ POP DE
+L696A POP HL
+ LD A,E
+ AND #3F
+ LD C,A
+ CALL L66E0
+ JP NZ,L69E0
+ CALL L748D
+ RET
+
+L6979 PUSH HL
+ PUSH DE
+ PUSH BC
+ LD A,(LF99A)		; channel
+ DI
+ CALL L6F2D
+ POP BC
+ POP DE
+ POP HL
+ RET
+
+L6987 LD A,(LF99A)	; channel
+ DI
+ JP L700C
+
+L698E EI
+ CALL L69A2
+ SCF
+ RET Z
+ DI
+ LD HL,(LF995)
+ LD A,L
+ OR H
+ LD HL,LF997
+ OR (HL)
+ JR NZ,L698E
+ EI
+ RET
+
+L69A2 LD A,(LFBB1)
+ OR A
+ RET NZ 		; BASIC ROM, quit
+ LD A,(LFC9B)
+ SUB #03
+ OR A
+ RET			; Zx set, if CTRL-STOP pressed
+
+L69AE LD B,#00
+L69B0 LD A,(LF99A)
+ PUSH HL
+ CALL L6C03
+ POP HL
+ RET
+L69B9 LD B,#01
+ JR L69B0
+L69BD LD B,#02
+ LD D,C
+ JR L69B0
+L69C2 CALL L6979	; get byte from queue
+ LD D,A
+ PUSH HL
+ CALL L676F
+ POP HL
+ LD B,#03
+ JR NC,L69B0
+ JR Z,L69B0
+ LD B,#03
+ JR L69B0
+L69D5 PUSH BC
+ PUSH DE
+ LD D,A
+ LD B,#05
+ CALL L69B0
+ POP DE
+ POP BC
+ RET
+L69E0 LD B,#06
+ LD D,C
+ JR L69B0
+L69E5 PUSH HL
+ CALL L6979		; get byte from queue
+ LD D,A
+ LD B,#07
+ CALL L69B0
+ JP L6878
+
+L69F2 PUSH HL
+ CALL L6979		; get byte from queue
+ LD HL,LFAE2
+ LD (HL),A
+ CP #01
+ JR Z,L6A06
+ CP #02
+ JR Z,L6A0A
+ LD A,#FC		; MIDI stop
+ JR L6A0E
+L6A06 LD A,#FA		; MIDI start
+ JR L6A0E
+L6A0A LD A,#FB		; MIDI continue
+ JR L6A0E
+L6A0E CALL L6DB4	; Transmit MIDI data
+ JP L6878
+
+L6A14 PUSH HL
+ CALL L6979		; get byte from queue
+ LD HL,LFAE6
+ LD (HL),A
+ JP L6878
+
+L6A1F PUSH HL
+ CALL L6979		; get byte from queue
+ LD D,A
+ CALL L6979		; get byte from queue
+ LD E,A
+ LD B,#08
+ CALL L69B0
+ JP L6878
+
+L6A30 PUSH HL
+ LD HL,LFAC4
+ LD A,(LF99A)
+ ADD A,L
+ LD L,A
+ JR NC,L6A3C
+ INC H
+L6A3C CALL L6979	; get byte from queue
+ LD (HL),A
+ JP L6878
+
+L6A43 LD A,(LF992)
+ LD B,A
+ LD A,(LF99A)
+ SUB B
+ LD B,A 		; channel
+ CALL L6979		; get byte from queue
+ RET Z
+ CP #FF
+ JR Z,L6AAF		; end of queue,
+ LD D,A
+ AND #E0
+ RLCA
+ RLCA
+ RLCA
+ LD C,A 		; length data packet (in bytes)
+ LD A,D
+ AND #1F
+ LD (HL),A
+ CALL L6979		; get byte from queue
+ DEC HL
+ LD (HL),A
+ INC C
+L6A65 DEC C
+ RET Z			; end of data packet, stop
+ CALL L6979		; get byte from queue
+ LD D,A
+ AND #C0
+ JR NZ,L6A80		; no freqency block, cont
+ CALL L6979		; get byte from queue
+ LD E,A 		; data
+ LD A,B
+ RLCA			; calc register
+ CALL L6AC7		; Write to PSG register (freq LSB)
+ INC A
+ LD E,D 		; data
+ CALL L6AC7		; Write to PSG register (freq MSB)
+ DEC C
+ JR L6A65
+L6A80 LD H,A
+ AND #80
+ JR Z,L6A94		; no amplitudo blok, cont
+ LD E,D 		; amplitudo
+ LD A,B
+ ADD A,#08
+ CALL L6AC7		; Write to PSG register (volume)
+ LD A,E
+ AND #10		; was envelope ?
+ LD A,#0D
+ CALL NZ,L6AC7		; yes, Write to PSG register (envelope shape)
+L6A94 LD A,H
+ AND #40
+ JR Z,L6A65		; no envelope blok, next
+ CALL L6979		; get byte from queue
+ LD D,A
+ CALL L6979		; get byte from queue
+ LD E,A 		; data
+ LD A,#0B
+ CALL L6AC7		; Write to PSG register (envelope freq LSB)
+ INC A
+ LD E,D 		; data
+ CALL L6AC7		; Write to PSG register (envelope freq MSB)
+ DEC C
+ DEC C
+ JR L6A65		; next
+L6AAF LD A,B
+ ADD A,#08
+ LD E,#00
+ CALL L6AC7		; Write to PSG register (volume)
+ INC B
+ DI
+ LD HL,LFB3F
+ XOR A
+ SCF
+L6ABE RLA
+ DJNZ L6ABE
+ AND (HL)
+ XOR (HL)
+ LD (HL),A
+ JP L67E8
+
+L6AC7 DI
+ OUT (#A0),A		; Set PSG register
+ PUSH AF
+ LD A,E
+ OUT (#A1),A		; Write to register
+ POP AF
+ RET
+
+L6AD0 XOR A
+ LD (LF998),A		; cancel permitted
+ LD A,(LF984)		; channels with _MUSIC
+ LD HL,LF98E
+ BIT 0,(HL)
+ JR Z,L6ADF		; no drums
+ INC A
+L6ADF BIT 1,(HL)
+ JR Z,L6AE4
+ INC A
+L6AE4 LD (LF992),A
+ ADD A,#03		; 3 PSG channels ??
+ LD (LF991),A
+ LD B,A
+ OR #80
+ LD (LF993),A
+ LD HL,#0000
+L6AF5 SCF
+ ADC HL,HL
+ DJNZ L6AF5
+ LD (LF98F),HL
+ LD A,(LF992)
+ LD HL,L6B26
+ CALL L5539		; pointer in tabel
+ LD A,(HL)
+ LD (LF994),A
+ LD HL,(LF97D)
+ LD DE,#0000
+ ADD HL,DE
+ LD (LF99B),HL
+ LD A,(LFCC1)
+ LD HL,L002B
+ CALL L000C
+ AND #80		; interrupt frequence
+ LD HL,LBB80
+ LD (LF97A),HL
+ RET
+
+L6B26 DEFB #7F,#3F,#3F,#3F,#1F,#1F,#1F,#1F,#1F,#1F
+
+L6B30 CALL L6FA2	; Init PSG and play vars
+ DI
+ XOR A
+ LD (LF999),A
+ LD (LF997),A
+ LD (LF983),A
+ LD (LF97F),A
+ LD (LF980),A
+ LD (LF981),A
+ LD (LF982),A
+ LD L,A
+ LD H,A
+ LD (LF995),HL
+ LD A,(LF991)
+ LD B,A
+ LD HL,(LF97D)
+ LD DE,#0048
+ ADD HL,DE
+ EX DE,HL
+L6B5B PUSH BC
+ PUSH DE
+ LD A,(LF991)
+ SUB B
+ LD (LF99A),A
+ LD HL,LF994
+ LD B,(HL)
+ CALL L6F49		; init QUETAB of channel
+ POP DE
+ POP BC
+ LD A,(LF994)
+ INC A
+ LD L,A
+ LD H,#00
+ ADD HL,DE
+ EX DE,HL
+ DJNZ L6B5B
+ LD A,(LF992)
+ OR A
+ JR Z,L6B93
+ LD B,A
+L6B7F PUSH BC
+ LD A,B
+ DEC A
+ LD L,#00
+ CALL L700C		; get ptr to channel VCB
+ EX DE,HL
+ LD HL,L6BA8
+ LD BC,#0027
+ LDIR			; init VCB
+ POP BC
+ DJNZ L6B7F
+L6B93 XOR A
+ LD (LFB3F),A
+ RET
+
+L6B98 LD A,(LF98E)
+ AND #01
+ RET Z
+ LD A,(L6BB2)
+ LD E,A
+ LD A,#1F
+ CALL L6920
+ RET
+
+L6BA8 DEFW #0000
+ DEFB #00
+ DEFW #0000
+ DEFW #0000
+ DEFB #00
+ DEFB #00,#00,#0E,#00,#00,#00,#00
+ DEFB #04
+ DEFB #04
+ DEFB #78
+ DEFB #08
+ DEFW #0000
+ DEFB #00,#00,#00
+ DEFB #00,#00,#00,#00,#00,#00,#00,#00
+ DEFB #00,#00,#00,#00,#00,#00,#08
+
+L6BCF CALL L6B30
+ CALL L6B98
+ LD A,(LF992)
+ CALL L6BF7
+ LD A,(LF98E)
+ AND #01
+ JR Z,L6BEB
+ LD A,(LF992)
+ DEC A
+ LD C,#00
+ CALL L69E0
+L6BEB LD A,(LF992)
+ LD B,A
+L6BEF LD A,B
+ DEC A
+ CALL L6D5D
+ DJNZ L6BEF
+ RET
+L6BF7 DEC A
+ RET M
+ LD (LF99A),A
+ PUSH AF
+ CALL L6718
+ POP AF
+ JR L6BF7
+
+L6C03	DI
+	PUSH AF
+	LD A,B
+	CP #00
+	JP Z,L6C3D
+	CP #01
+	JP Z,L6C7C
+	CP #02
+	JP Z,L6CA9
+	CP #03
+	JP Z,L6CB9
+	CP #05
+L6C1C	JP Z,L6CCE
+	CP #06
+	JP Z,L6CE4
+	CP #07
+	JP Z,L6D41
+	CP #08
+	JP Z,L6D49
+L6C2E	EI
+	RET
+
+L6C30 PUSH HL
+ LD HL,LFAC4
+ ADD A,L
+ LD L,A
+ JR NC,L6C39
+ INC H
+L6C39 LD A,(HL)
+ DEC A
+ POP HL
+ RET
+
+L6C3D POP AF
+ PUSH AF
+ CALL L6C30
+ ADD A,#90
+ CALL L6DB4		; Transmit MIDI Note on
+ LD HL,LFAD7
+ POP AF
+ PUSH AF
+ OR A
+L6C4D JR Z,L6C53
+ DEC A
+ INC HL
+ JR L6C4D
+L6C53 LD A,(HL)
+ CP #FF
+ JR Z,L6C69
+ CALL L6DB4		; Transmit MIDI data (tone)
+ XOR A
+ CALL L6DB4		; Transmit MIDI data (speed)
+ POP AF
+ PUSH AF
+ CALL L6C30
+ ADD A,#90
+ CALL L6DB4		; Transmit MIDI data (tone on)
+L6C69 POP AF
+ LD A,(LFAE1)
+ ADD A,D
+ LD (HL),A
+ CALL L6DB4		; Transmit MIDI data (note)
+ LD A,C
+ ADD A,A
+ ADD A,A
+ ADD A,A
+ CALL L6DB4		; Transmit MIDI data (speed)
+ JP L6C2E
+
+L6C7C POP AF
+ PUSH AF
+ LD HL,LFAD7
+ OR A
+L6C82 JR Z,L6C88
+ DEC A
+ INC HL
+ JR L6C82
+L6C88 LD A,(HL)
+ CP #FF
+ JP NZ,L6C92
+ POP AF
+ JP L6C2E
+L6C92 POP AF
+ CALL L6C30
+ ADD A,#90
+ CALL L6DB4		; Transmit MIDI data (tone on)
+ LD A,(HL)
+ CALL L6DB4		; Transmit MIDI data (tone)
+ XOR A
+ CALL L6DB4		; Transmit MIDI data (speed)
+ LD A,#FF
+ LD (HL),A
+ JP L6C2E
+
+L6CA9 POP AF
+ CALL L6C30
+ ADD A,#C0
+ CALL L6DB4		; Transmit MIDI data (Program Change)
+ LD A,D
+ CALL L6DB4		; Transmit MIDI data (Klank)
+ JP L6C2E
+
+L6CB9 POP AF
+ CALL L6C30
+ ADD A,#B0
+ CALL L6DB4		; Transmit MIDI data (Control Change)
+ LD A,#07
+ CALL L6DB4		; Transmit MIDI data (main vol ID)
+ LD A,D
+ CALL L6DB4		; Transmit MIDI data (value)
+ JP L668F
+
+L6CCE POP AF
+ LD HL,LFAD6
+ LD B,#01
+L6CD4 LD A,D
+ AND B
+ JR Z,L6CD9
+ LD (HL),E
+L6CD9 DEC HL
+ LD A,B
+ ADD A,A
+ LD B,A
+ CP #20
+ JR NZ,L6CD4
+ JP L6C2E
+L6CE4 LD A,D
+ OR #00
+ JR NZ,L6CF4
+ LD A,(LFAE0)
+ OR #00
+ JR NZ,L6CF4
+ POP AF
+ JP L6C2E
+L6CF4 POP AF
+ CALL L6C30
+ ADD A,#90
+ CALL L6DB4		; Transmit MIDI data (tone on)
+ LD HL,LFAD1
+ LD B,#01
+L6D02 LD A,(LFAE0)
+ AND B
+ JR Z,L6D10
+ LD A,(HL)
+ CALL L6DB4		; Transmit MIDI data
+ XOR A
+ CALL L6DB4		; Transmit MIDI data
+L6D10 DEC HL
+ LD A,B
+ ADD A,A
+ LD B,A
+ CP #20
+ JR NZ,L6D02
+ LD HL,LFAD6
+ PUSH HL
+ LD HL,LFAD1
+ LD B,#01
+L6D21 LD A,D
+ LD (LFAE0),A
+ AND B
+ JR Z,L6D32
+ LD A,(HL)
+ CALL L6DB4		; Transmit MIDI data
+ EX (SP),HL
+ LD A,(HL)
+ CALL L6DB4		; Transmit MIDI data
+ EX (SP),HL
+L6D32 DEC HL
+ EX (SP),HL
+ DEC HL
+ EX (SP),HL
+ LD A,B
+ ADD A,A
+ LD B,A
+ CP #20
+ JR NZ,L6D21
+ POP HL
+ JP L6C2E
+L6D41 POP AF
+ LD A,D
+ CALL L6DB4		; Transmit MIDI data
+ JP L6C2E
+L6D49 POP AF
+ CALL L6C30
+ ADD A,#B0
+ CALL L6DB4		; Transmit MIDI data (Control Change)
+ LD A,D
+ CALL L6DB4		; Transmit MIDI data (Control ID)
+ LD A,E
+ CALL L6DB4		; Transmit MIDI data (value)
+ JP L6C2E
+
+L6D5D PUSH BC
+ PUSH HL
+ LD HL,LFAD7
+ PUSH HL
+ LD HL,LFAC4
+ OR A
+L6D67 JR Z,L6D70
+ DEC A
+ INC HL
+ EX (SP),HL
+ INC HL
+ EX (SP),HL
+ JR L6D67
+L6D70 LD A,(HL)
+ DEC A
+ LD C,A
+ POP HL
+ LD A,(HL)
+ CP #FF
+ JR Z,L6D8A
+ LD A,#90
+ ADD A,C
+ CALL L6DB4		; Transmit MIDI data (tone on)
+ LD A,(HL)
+ CALL L6DB4		; Transmit MIDI data (tone)
+ LD A,#FF
+ LD (HL),A
+ XOR A
+ CALL L6DB4		; Transmit MIDI data (speed)
+L6D8A LD A,C
+ ADD A,#B0
+ CALL L6DB4		; Transmit MIDI data (Control Change)
+ LD A,#7B
+ CALL L6DB4		; Transmit MIDI data (All notes off)
+ XOR A
+ CALL L6DB4		; Transmit MIDI data
+ POP HL
+ POP BC
+ RET
+
+L6D9C PUSH AF
+ IN A,(#E6)
+ LD C,A
+L6DA0 IN A,(#E6)
+ SUB C
+ CP B
+ JR C,L6DA0
+ POP AF
+ RET
+
+L6DA8 PUSH AF
+ IN A,(#E7)
+ LD C,A
+L6DAC IN A,(#E7)
+ SUB C
+ CP B
+ JR C,L6DAC
+ POP AF
+ RET
+
+L6DB4 PUSH AF
+L6DB5 IN A,(#E9)
+ AND #01
+ JR Z,L6DB5		; not ready to transmit
+ POP AF
+ OUT (#E8),A		; write MIDI data
+ RET
+
+L6DBF CALL L6FF8	; Free storage space
+ CALL L7059
+ LD B,C
+ LD C,D 		; BC = ptr to string
+ LD D,E 		; D = length
+ LD A,B
+ OR C
+ JR Z,L6DD2		; zero ptr
+ LD A,D
+ OR A
+ JR Z,L6DD2		; zero length
+ PUSH BC
+ PUSH DE
+L6DD2 POP AF
+ LD (LFB3B),A		; length
+ POP HL
+ LD A,H
+ OR L
+ JP Z,L5C36		; zero pointer,
+ LD (LFB3C),HL
+L6DDF CALL L6E33	; get playstring char
+ JR Z,L6DD2
+ LD HL,(LF956)
+ CP "A"
+ JR C,L6DEF
+ CP "G"+1
+ JR C,L6DFF
+L6DEF ADD A,A
+ LD C,A
+L6DF1 LD A,(HL)
+ ADD A,A
+L6DF3 CALL Z,L6F89	; illegal function call
+ CP C
+ JR Z,L6DFE
+ INC HL
+ INC HL
+ INC HL
+ JR L6DF1
+L6DFE LD A,(HL)
+L6DFF LD BC,L6DDF
+ PUSH BC		; return address
+ LD C,A
+ ADD A,A
+ JR NC,L6E27		; b7 not set, exec
+ OR A
+ RRA
+ LD C,A
+ PUSH BC
+ PUSH HL
+ CALL L6E33		; get playstring char
+ LD DE,#0001
+ JP Z,L6E24		; end of string, take 1
+ CALL L70D3		; Check char
+ JP NC,L6E21		; illegal, no arg
+ CALL L6E6A		; eval argument
+ SCF
+ JR L6E25		; Cx set (arg), exec
+L6E21 CALL L6E59	; playstring ptr back
+L6E24 OR A
+L6E25 POP HL
+ POP BC
+L6E27 INC HL
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ LD L,A
+ JP (HL)
+
+L6E2D CALL L6E33	; get playstring char
+ JR Z,L6DF3		; end, illegal function call
+ RET
+
+L6E33 PUSH HL
+L6E34 LD HL,LFB3B
+ LD A,(HL)
+ OR A
+ JR Z,L6E65
+ DEC (HL)
+ LD HL,(LFB3C)
+ LD A,(HL)
+ INC HL
+ LD (LFB3C),HL
+ CP #20
+ JR Z,L6E34
+ POP HL
+ CALL L6E50
+ SCF
+ ADC A,A
+ RRA
+ RET
+
+L6E50 CP #61
+ RET C
+ CP #7B
+ RET NC
+ SUB #20
+ RET
+
+L6E59 PUSH HL
+ LD HL,LFB3B
+ INC (HL)
+ LD HL,(LFB3C)
+ DEC HL
+ LD (LFB3C),HL
+L6E65 POP HL
+ RET
+
+L6E67 CALL L6E2D	; get playstring char
+
+L6E6A CP "="
+ JP Z,L6EEC		; handle in var
+ CP "+"
+ JR Z,L6E67
+ CP "-"
+ JR NZ,L6E7D
+ LD DE,L6F0B
+ PUSH DE		; negative routine on stack
+ JR L6E67
+L6E7D LD DE,#0000
+L6E80 CP ","
+ JR Z,L6E59		; yes, playstring prt back
+ CP ";"
+ RET Z
+ CP "9"+1
+ JR NC,L6E59
+ CP "0"
+ JR C,L6E59		; not a number, playstring ptr back
+ LD HL,#0000
+ LD B,#0A
+L6E94 ADD HL,DE
+ JR C,L6EE5		; error
+ DJNZ L6E94		; *10
+ SUB #30
+ LD E,A
+ LD D,#00
+ ADD HL,DE		; + digit
+ JR C,L6EE5
+ EX DE,HL
+ CALL L6E33		; get playstring char
+ JR NZ,L6E80		; not the end, cont
+ RET
+
+L6EA8 CP "A"
+ RET C
+ CP "Z"+1
+ CCF
+ RET
+
+L6EAF CP "%"
+ RET Z
+ CP "!"
+ RET Z
+ CP "#"
+ RET Z
+ CP "$"
+ RET Z
+ SCF
+ RET
+
+L6EBD CALL L6E2D	; get playstring char
+ LD DE,LF55E
+ PUSH DE
+ LD B,#28
+ CALL L6EA8		; Check if letter
+ JR C,L6EE5		; no, error
+L6ECB LD (DE),A
+ INC DE
+ CALL L6EAF		; Check if vartype indicator
+ JR C,L6EDC		; no, skip
+ CALL L6E2D		; get playstring char
+ LD (DE),A
+ INC DE
+ LD A,";"
+ LD (DE),A
+ JR L6EE8
+L6EDC CP ";"
+ JR Z,L6EE8		; end of expresion, quit
+ CALL L6E2D		; get playstring char
+ DJNZ L6ECB
+L6EE5 CALL L6F89	; illegal function call
+L6EE8 POP HL
+ JP L6FA8		; Get value of var in DAC
+
+L6EEC CALL L6EBD	; evaluate "=var;"
+ CALL LF5DE
+ EX DE,HL
+ RET
+
+; PLAY X (PSG, FM, drum)
+
+L6EF4 CALL L6EBD	; evaluate "=var;"
+ LD A,(LFB3B)
+ OR A
+ JP NZ,L6F89		; not at eos, illegal function call
+ LD HL,(LFB3C)
+ EX (SP),HL
+ PUSH AF
+ LD C,#02
+ CALL L70B9
+ JP L6DBF
+
+L6F0B XOR A
+ SUB E
+ LD E,A
+ SBC A,D
+ SUB E
+ LD D,A
+ RET
+
+L6F12 CALL L6F69	; get ptr to QUETAB get/put
+ LD A,B
+ INC A
+ INC HL
+ AND (HL)		; next put pos.
+ CP C
+ RET Z			; will overwrite get, quit
+ DEC HL
+ DEC HL
+ DEC HL
+ LD (HL),A		; set new put pos.
+ INC HL
+ INC HL
+ INC HL
+ INC HL
+ LD C,A
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ LD L,A
+ LD B,#00
+ ADD HL,BC
+ LD (HL),E		; set data in queue
+ RET
+
+L6F2D CALL L6F69	; get ptr to QUETAB get/put
+ LD A,C
+ CP B
+ RET Z			; get put equal, empty
+ INC HL
+ INC A
+ AND (HL)		; next get pos.
+ DEC HL
+ DEC HL
+ LD (HL),A		; set
+ INC HL
+ INC HL
+ INC HL
+ LD C,A
+ LD A,(HL)
+ INC HL
+ LD H,(HL)
+ LD L,A
+ LD B,#00
+ ADD HL,BC
+ LD A,(HL)		; byte
+ SCF
+ ADC A,A
+ RRA			; NZ flag
+ RET
+
+L6F49 PUSH BC
+ CALL L6F71		; get ptr to QUETAB of channel
+ LD (HL),B
+ INC HL
+ LD (HL),B
+ INC HL
+ LD (HL),B
+ INC HL 		; init get,put and back
+ POP AF
+ LD (HL),A		; size
+ INC HL
+ LD (HL),E
+ INC HL
+ LD (HL),D		; base address
+ RET
+
+L6F5A CALL L6F69	; get ptr to QUETAB get/put
+ LD A,B
+ INC A
+ INC HL
+ AND (HL)		; next put pos.
+ LD B,A
+ LD A,C
+ SUB B
+ AND (HL)
+ LD L,A
+ LD H,#00		; byte free in queue
+ RET
+
+L6F69 CALL L6F71	; get ptr to QUETAB of channel
+ LD B,(HL)		; put position
+ INC HL
+ LD C,(HL)		; get position
+ INC HL
+ RET
+
+L6F71 LD HL,(LF99B)
+ ADD A,A
+ LD B,A
+ ADD A,A
+ ADD A,B		; *6
+ LD C,A
+ LD B,#00
+ ADD HL,BC
+ RET
+
+L6F7D LD E,#33		; error 51
+ DEFB #01
+L6F80 LD E,#35		; error 53
+ DEFB #01
+L6F83 LD E,#38		; error 56
+ DEFB #01
+L6F86 LD E,#02		; error 2
+ DEFB #01
+L6F89 LD E,#05		; error 5
+ DEFB #01
+L6F8C LD E,#0D		; error 13
+ DEFB #01
+L6F8F LD E,#06		; error 6
+ DEFB #01
+L6F92 LD E,#07		; error 7
+ CALL L50C6		; Check b0 set
+ PUSH DE
+ CALL NZ,L6BCF		; yes, stop music
+ POP DE
+ LD IX,L406F
+ JR L6FFC		; BASIC error handler
+
+L6FA2 LD IX,L0090
+ JR L6FFC
+L6FA8 LD IX,L4E9B
+ JR L6FFC
+L6FAE LD IX,L6A0E
+ JR L6FFC
+L6FB4 LD IX,L5EA4
+ JR L6FFC
+L6FBA LD IX,L517A
+ JR L6FFC
+L6FC0 LD IX,L46FF
+ JR L6FFC
+
+L6FC6 LD A,(HL)
+ EX (SP),HL
+ CP (HL)
+ JP NZ,L6F86		; not equal, Syntax error
+ INC HL
+ EX (SP),HL
+L6FCE LD IX,L4666
+ JR L6FFC
+L6FD4 LD IX,L4C64
+ JR L6FFC
+L6FDA LD IX,L542F
+ JR L6FFC
+L6FE0 LD IX,L5432
+ JR L6FFC
+L6FE6 LD IX,L521C
+ JR L6FFC
+L6FEC LD IX,L4601
+ JR L6FFC
+L6FF2 LD IX,L6C1C
+ JR L6FFC
+L6FF8 LD IX,L67D0
+L6FFC LD IY,(LFCC0)
+ CALL L001C
+ EI
+ RET
+
+L7005 LD L,#02
+ JR L700C
+
+L7009 LD A,(LFB38)	; channel
+L700C LD H,#00
+ PUSH DE
+ LD E,A
+ LD A,(LF991)
+ SUB E
+ SUB #04
+ JR C,L702A		; PSG channel,
+ LD A,E
+ LD DE,#01C8
+ ADD HL,DE
+ LD DE,(LF97D)
+ ADD HL,DE
+ OR A
+ JR Z,L704A		; FM-PAC channel 0, ptr good, quit
+ LD DE,#0027
+L7028 JR L7046		; calculate ptr
+L702A CPL
+ EX AF,AF'
+ LD A,L
+ OR A
+ JR NZ,L703B		; not nul, in VCB
+ EX AF,AF'
+ LD HL,LF9AF
+ ADD A,A
+ CALL L5539		; pointer in table
+ POP DE
+ XOR A
+ RET
+L703B EX AF,AF'
+ LD DE,LFB41
+ ADD HL,DE
+ OR A
+ JR Z,L704A
+ LD DE,#0025
+L7046 ADD HL,DE
+ DEC A
+ JR NZ,L7046
+L704A POP DE
+ RET
+
+L704C PUSH BC
+ EX (SP),HL
+ POP BC
+L704F CALL L70F9
+ LD A,(HL)
+ LD (BC),A
+ RET Z
+ DEC BC
+ DEC HL
+ JR L704F
+
+L7059 LD E,(HL)
+ INC HL
+ LD D,(HL)
+ INC HL
+ LD C,(HL)
+ INC HL
+ LD B,(HL)
+ INC HL
+ RET
+
+L7062 DI
+ LD HL,(LF995)
+ LD A,L
+ OR H
+ RET NZ
+ LD HL,LFB40
+ OR (HL)
+ JR Z,L708C
+ DEC (HL)
+ LD HL,LFFFF
+ LD (LFB41),HL
+ LD (LFB66),HL
+ LD (LFB8B),HL
+ INC HL
+ INC HL
+ LD (LF9AF),HL
+ LD (LF9B1),HL
+ LD (LF9B3),HL
+ LD A,#87
+ LD (LFB3F),A
+L708C LD HL,LF997
+ LD A,(HL)
+ OR A
+ RET Z
+ DEC (HL)
+ LD A,(LF992)
+ OR A
+ JR Z,L70AD
+ LD B,A
+ LD HL,(LF97D)
+ LD DE,#01C8
+ ADD HL,DE
+ LD DE,#0027
+L70A4 LD (HL),#01
+ INC HL
+ LD (HL),#00
+ DEC HL
+ ADD HL,DE
+ DJNZ L70A4
+L70AD LD HL,(LF98F)
+ LD (LF995),HL
+ LD A,#FF
+ LD (LFA26),A
+ RET
+L70B9 PUSH HL
+ LD HL,(LF6C6)
+ LD B,#00
+ ADD HL,BC
+ ADD HL,BC
+ LD A,#E5
+ LD A,#88
+ SUB L
+ LD L,A
+ LD A,#FF
+ SBC A,H
+ LD H,A
+ JR C,L70D0
+ ADD HL,SP
+ POP HL
+ RET C
+L70D0 JP L6F92		; Out of memory
+
+L70D3 CP "{"
+ RET Z
+ CP "}"
+ RET Z
+ CP ">"
+ RET Z
+ CP "<"
+ RET Z
+ CP "&"
+ RET Z
+ CP "@"
+ RET C
+ CP "Z"+1
+ CCF
+ RET
+
+L70E9 LD A,(LF663)
+ CP #08 		; DAC is double ?
+ JR NC,L70F5		; yes,
+ SUB #03
+ OR A
+ SCF
+ RET
+L70F5 SUB #03
+ OR A
+ RET
+
+L70F9 LD A,H
+ SUB D
+ RET NZ
+ LD A,L
+ SUB E
+ RET
+
+L70FF LD L,C
+ LD H,B 		; address
+ CALL L7167
+ JR L7118
+
+L7106 LD A,C
+ CP #40
+ RET NC
+ CALL L7134
+ LD (IX+7),#00
+ LD (IX+8),#00
+ CALL NZ,L715D
+L7118 PUSH BC
+ LD A,(IX+0)
+ ADD A,#20
+ LD C,A
+ CALL L7605		; read PAC register
+ AND #0F
+ LD B,A
+ POP DE
+ LD A,E
+ ADD A,A
+ ADD A,A
+ ADD A,A
+ ADD A,A
+ OR B
+ LD B,A 		; data
+ CALL L75DA		; Write PAC register
+ CALL L729D
+ RET
+
+L7134 PUSH BC
+ PUSH HL
+ LD HL,L714D
+ LD A,C
+ LD BC,#0010
+ CPIR
+ JR Z,L7144
+ POP HL
+ POP BC
+ RET
+L7144 LD A,#10
+ SUB C
+ DEC A
+ POP HL
+ POP BC
+ LD C,A
+ XOR A
+ RET
+
+L714D
+ DEFB #FF,#02,#0A,#00,#03,#04,#05,#06
+ DEFB #09,#30,#18,#0E,#10,#17,#21,#0C
+
+L715D PUSH HL
+ LD L,C
+ CALL L5A2F
+ CALL L7167
+ POP HL
+ RET
+
+L7167 LD DE,#0008
+ ADD HL,DE
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ INC HL
+ LD (IX+7),E
+ LD (IX+8),D
+ PUSH IX
+ LD IX,LFA27
+ LD B,#09		; 9 Software voices
+L717D PUSH BC
+ LD A,(IX+0)
+ ADD A,#20
+ LD C,A
+ CALL L7605		; read PAC register
+ RRCA
+ RRCA
+ RRCA
+ RRCA
+ AND #0F
+ JR NZ,L7195
+ LD (IX+7),E
+ LD (IX+8),D
+L7195 LD BC,#0010
+ ADD IX,BC
+ POP BC
+ DJNZ L717D
+ POP IX
+ LD A,(HL)
+ LD DE,#0006
+ ADD HL,DE
+ AND #0E
+ RRCA
+ LD D,A
+ LD B,(HL)		; data
+ LD C,#00
+ CALL L75DA		; Write PAC(0) register
+ INC HL
+ LD B,(HL)		; data
+ LD C,#02
+ CALL L75DA		; Write PAC(2) register
+ INC HL
+ LD B,(HL)		; data
+ LD C,#04
+ CALL L75DA		; Write PAC(4) register
+ INC HL
+ LD B,(HL)
+ LD C,#06
+ CALL L75DA		; Write PAC(6) register
+ INC HL
+ INC HL
+ INC HL
+ INC HL
+ INC HL
+ LD B,(HL)
+ LD C,#01
+ CALL L75DA		; Write PAC(1) register
+ INC HL
+ LD A,(HL)
+ AND #C0
+ OR D			; multiplier
+ LD D,A
+ LD C,#03
+ CALL L7605		; read PAC(3) register
+ AND #18
+ OR D
+ LD B,A
+ CALL L75DA		; Write PAC(3) register
+ INC HL
+ LD B,(HL)
+ LD C,#05
+ CALL L75DA		; Write PAC(5) register
+ INC HL
+ LD B,(HL)
+ LD C,#07
+ CALL L75DA		; Write PAC(7) register
+ LD C,#00
+ RET
+L71F1 LD A,E
+ RRCA
+ RRCA
+ RRCA
+ AND #07
+ LD (IX+2),A
+ PUSH HL
+ CALL L7221
+ POP HL
+ RET
+
+L7200 LD A,C
+ AND #1F
+ RET Z
+ PUSH HL
+ PUSH BC
+ LD HL,LFAB7
+ LD D,A
+ LD A,E
+ RRCA
+ RRCA
+ RRCA
+ AND #07
+ LD E,A
+ LD B,#05
+L7213 RR D
+ JR NC,L7218
+ LD (HL),E
+L7218 INC HL
+ DJNZ L7213
+ CALL L7221
+ POP BC
+ POP HL
+L7220 RET
+L7221 LD HL,LFAB7
+ LD A,(LFA89)
+ LD D,A
+ ADD A,(HL)
+ INC HL
+ RLCA
+ RLCA
+ RLCA
+ RLCA
+ LD B,A
+ LD C,#37
+ CALL L725B
+ LD A,D
+ ADD A,(HL)
+ INC HL
+ LD B,A
+ LD C,#38
+ CALL L7265
+ LD A,D
+ ADD A,(HL)
+ INC HL
+ RLCA
+ RLCA
+ RLCA
+ RLCA
+ LD B,A
+ CALL L725B
+ LD A,D
+ ADD A,(HL)
+ INC HL
+ LD B,A
+ LD C,#37
+ CALL L7265
+ LD A,D
+ ADD A,(HL)
+ INC HL
+ LD B,A
+ LD C,#36
+ CALL L7265
+ RET
+L725B CALL L7605	; read PAC register
+ AND #0F
+L7260 OR B
+ LD B,A
+ JP L75DA		; Write PAC register
+
+L7265 CALL L7605	; read PAC register
+ AND #F0
+ JR L7260
+
+L726C JP L747D
+
+L726F PUSH BC
+ PUSH DE
+ CALL L747D
+ POP DE
+ POP BC
+ LD A,#0F
+ SUB C
+ RRCA
+ AND #07
+ LD (IX+1),A
+ RES 7,D
+ LD (IX+3),E
+ LD (IX+4),D
+ CALL L729D
+ CALL L745F
+ LD A,(IX+0)
+ ADD A,#10
+ LD C,A
+ CALL L7605		; read PAC register
+ OR #10
+ LD B,A
+ CALL L75DA		; Write PAC register
+ RET
+L729D LD L,(IX+5)
+ LD H,(IX+6)
+ LD E,(IX+3)
+ LD D,(IX+4)
+ ADD HL,DE
+ LD E,(IX+7)
+ LD D,(IX+8)
+ ADD HL,DE
+ LD DE,#0529
+ ADD HL,DE
+ LD A,H
+ AND A
+ JP P,L72CA
+ CP #C4
+ JR NC,L72C5
+L72BE SUB #0C
+ JP M,L72BE
+ JR L72CA
+L72C5 ADD A,#0C
+ JP M,L72C5
+L72CA LD H,A
+ LD C,L
+ LD L,#00
+ LD DE,LF404
+ SUB #3C
+ JR C,L72D8
+ LD H,A
+ LD L,#14
+L72D8 ADD HL,DE
+ JP C,L72D8
+ SBC HL,DE
+ LD B,L
+ LD A,H
+ ADD A,H
+ ADD A,H
+ LD HL,L7351
+ CALL L5539		; pointer in table
+ LD A,B
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ INC HL
+ LD H,(HL)
+ LD L,#00
+ LD B,L
+ ADD HL,HL
+ JR NC,L72F5
+ ADD HL,BC
+L72F5 ADD HL,HL
+ JR NC,L72F9
+ ADD HL,BC
+L72F9 ADD HL,HL
+ JR NC,L72FD
+ ADD HL,BC
+L72FD ADD HL,HL
+ JR NC,L7301
+ ADD HL,BC
+L7301 ADD HL,HL
+ JR NC,L7305
+ ADD HL,BC
+L7305 ADD HL,HL
+ JR NC,L7309
+ ADD HL,BC
+L7309 ADD HL,HL
+ JR NC,L730D
+ ADD HL,BC
+L730D ADD HL,HL
+ JR NC,L7311
+ ADD HL,BC
+L7311 LD L,H
+ LD H,B
+ ADD HL,DE
+ SRL H
+ RR L
+ SRL H
+ RR L
+ JR NC,L7324
+ INC HL
+ BIT 2,H
+ JR Z,L7324
+ DEC HL
+L7324 SUB #08
+ JR NC,L7330
+L7328 SRL H
+ RR L
+ ADD A,#04
+ JR NZ,L7328
+L7330 CP #20
+ JR C,L7336
+ LD A,#1C
+L7336 OR H
+ RRA
+ LD H,A
+ RR L
+ LD C,(IX+0)
+ LD B,L
+ CALL L75DA		; Write PAC register
+ LD A,C
+ ADD A,#10
+ LD C,A
+ CALL L7605		; read PAC register
+ AND #30
+ OR H
+ LD B,A
+ CALL L75DA		; Write PAC register
+ RET
+
+L7351 NOP
+ EX AF,AF'
+ LD A,C
+ LD A,C
+ EX AF,AF'
+ ADD A,C
+ JP M,L8908
+ ADD A,E
+ ADD HL,BC
+ SUB C
+ INC D
+ LD A,(BC)
+ SBC A,C
+ XOR L
+ LD A,(BC)
+ AND E
+ LD D,B
+ DEC BC
+ XOR H
+ CALL M,LB60B
+ OR D
+ INC C
+ JP NZ,#0D74
+ CALL #0E41
+ EXX
+ LD A,(DE)
+ RRCA
+ AND x
+
+L7375 LD D,B
+ LD E,C
+ CALL L7387		; check value & get data
+ RET C
+ LD (LF99D),DE		; set
+ LD HL,(LF99F)
+ ADD HL,DE		; + Transpose value
+ EX DE,HL
+ JP L740E
+
+L7387 LD HL,LFE34
+ ADD HL,DE
+ RET C			; >459, error
+ LD HL,LFE66
+ ADD HL,DE
+ CCF
+ RET C			; <410, error
+ ADD HL,HL
+ LD DE,L739B
+ ADD HL,DE
+ LD E,(HL)
+ INC HL
+ LD D,(HL)
+ RET
+
+L739B RST 0
+ CP #D2
+ CP #DD
+ CP #E7
+ CP #F2
+ CP #FD
+ CP #07
+ RST #38
+ LD (DE),A
+ RST #38
+ DEC E
+ RST #38
+ DAA
+ RST #38
+ LD (#3CFF),A
+ RST #38
+ LD B,A
+ RST #38
+ LD D,C
+ RST #38
+ LD E,H
+ RST #38
+ LD H,(HL)
+ RST #38
+ LD (HL),C
+ RST #38
+ LD A,E
+ RST #38
+ ADD A,L
+ RST #38
+ SUB B
+ RST #38
+ SBC A,D
+ RST #38
+ AND H
+ RST #38
+ XOR A
+ RST #38
+ CP C
+ RST #38
+ JP LCDFF
+ RST #38
+ RET C
+ RST #38
+ JP PO,LECFF
+ RST #38
+ OR #FF
+ NOP
+ NOP
+ LD A,(BC)
+ NOP
+ INC D
+ NOP
+ LD E,#00
+ JR Z,L73E1
+L73E1 LD (#3C00),A
+ NOP
+ LD B,(HL)
+ NOP
+ LD D,B
+ NOP
+ LD E,D
+ NOP
+ LD H,H
+ NOP
+ LD L,L
+ NOP
+ LD (HL),A
+ NOP
+ ADD A,C
+ NOP
+ ADC A,E
+ NOP
+ SUB L
+ NOP
+ SBC A,(HL)
+ NOP
+ XOR B
+ NOP
+ OR D
+ NOP
+ CP E
+ NOP
+
+L73FF LD D,B
+ LD E,C
+ CALL L7434		; check value & calculate data
+ RET C
+ LD (LF99F),DE		; set
+ LD HL,(LF99D)
+ ADD HL,DE		; + Pitch data
+ EX DE,HL
+L740E LD IX,LFA27
+ LD B,#09
+ LD C,#0E
+ CALL L7605		; read PAC(14) register
+ AND #20
+ JR Z,L741F
+ LD B,#06
+L741F PUSH BC
+ PUSH DE
+ LD (IX+5),E
+ LD (IX+6),D
+ CALL L729D
+ LD BC,#0010
+ ADD IX,BC
+ POP DE
+ POP BC
+ DJNZ L741F
+ RET
+
+L7434 LD A,D
+ AND A
+ PUSH AF		; Save sign
+ CALL M,L7457		; Negative, make positive
+ LD A,D
+ LD H,E
+ LD L,#00
+ LD DE,#640F
+ ADD HL,HL
+ RLA			; *2
+ CP D
+ JR C,L7449
+ POP AF
+ SCF
+ RET			; >12799, error
+L7449 ADD HL,HL
+ RLA			; *2
+ CP D
+ JR C,L7450
+ SUB D
+ INC L
+L7450 DEC E
+ JP NZ,L7449
+ EX DE,HL
+ POP AF
+ RET P			; was positive, quit
+
+L7457 XOR A
+ LD H,A
+ LD L,A
+ SBC HL,DE
+ EX DE,HL
+ AND A
+ RET
+L745F LD A,(IX+2)
+ ADD A,(IX+1)
+ CP #10
+ JR C,L746B
+ LD A,#0F
+L746B LD B,A
+ LD A,(IX+0)
+ ADD A,#20
+ LD C,A
+ CALL L7605		; read PAC register
+ AND #F0
+ OR B
+ LD B,A
+ CALL L75DA		; Write PAC register
+ RET
+L747D LD A,(IX+0)
+ ADD A,#10
+ LD C,A
+ CALL L7605		; read PAC register
+ AND #2F
+ LD B,A
+ CALL L75DA		; Write PAC register
+ RET
+L748D PUSH HL
+ LD A,C
+ AND #1F
+ LD D,A
+ CPL
+ LD E,A
+ LD C,#0E
+ CALL L7605		; read PAC(14) register
+ LD L,A
+ AND E
+ LD B,A
+ CALL L75DA		; Write PAC(14) register
+ LD A,L
+ OR D
+ LD B,A
+ CALL L75DA		; Write PAC(14) register
+ POP HL
+ RET
+L74A7 PUSH HL
+ LD A,D
+ SUB #3C
+ LD H,#0C
+ JR C,L74B3
+L74AF SUB H
+ JP NC,L74AF
+L74B3 ADD A,H
+ JP NC,L74B3
+ LD HL,(LF9A1)
+ CALL L5539		; pointer in table
+ LD E,(HL)
+ POP HL
+ BIT 7,E
+ RET Z
+ DEC D
+ RET
+
+L74C4 LD A,C
+ CP #16
+ CCF
+ RET C			; >21, quit
+ PUSH HL
+ CP #0A
+ JR C,L74D2		; <10,
+ ADD A,#6E
+ JR L74D7
+L74D2 ADD A,A
+ ADD A,A
+ LD H,A
+ ADD A,A
+ ADD A,H		; *12
+L74D7 LD HL,L74F7
+ CALL L5539		; pointer in table
+ LD DE,#0009
+ ADD HL,DE
+ LD C,(HL)
+ SBC HL,DE
+ LD DE,LF9A3
+ LD (LF9A1),DE
+ LD B,#0C
+L74ED LD A,(HL)
+ SUB C
+ LD (DE),A
+ INC HL
+ INC DE
+ DJNZ L74ED
+ POP HL
+ AND A
+ RET
+
+L74F7 POP AF
+ INC D
+ EI
+ JP PO,LEC05
+ RRCA
+ OR #19
+ NOP
+ RST #20
+ LD A,(BC)
+ LD A,(DE)
+ ADD IX,BC
+ DEC (HL)
+ RST #30
+ INC HL
+ AND #12
+ CALL NC,#2C00
+ XOR #1E
+ DEC B
+ LD A,(BC)
+ RRCA
+ DEC B
+ ADD HL,DE
+ NOP
+ INC D
+ LD A,(BC)
+ NOP
+ INC D
+ LD A,(BC)
+ LD E,#05
+ LD A,(BC)
+ RRCA
+ DEC B
+ ADD HL,DE
+ NOP
+ INC D
+ LD A,(BC)
+ NOP
+ INC D
+ EI
+ NOP
+ OR #0A
+ NOP
+ OR #0A
+ NOP
+ DEC B
+ CALL PE,#0500
+ EI
+ LD A,(DE)
+ LD BC,#0B09
+ RST #30
+ DEC D
+ LD BC,#0612
+ NOP
+ DJNZ L753B
+ LD A,(DE)
+ LD BC,#0B09
+ DEC B
+ DEC D
+ LD BC,#0612
+ NOP
+ DJNZ L7555
+ RRCA
+ NOP
+ DEC B
+ LD A,(BC)
+ EI
+ INC D
+ EI
+ LD A,(BC)
+ DEC B
+ NOP
+L7555 RRCA
+ OR #1A
+ RET M
+ ADD HL,BC
+ DAA
+ RST #30
+ INC HL
+ DI
+ LD (DE),A
+ NOP 
+ NOP
+ INC L
+ XOR #00
+ NOP
+ NOP
+ NOP
+ NOP
+ NOP
+ NOP
+ NOP
+ NOP
+ NOP
+ NOP
+ NOP
+ ADD HL,HL
+ CALL C,L5233
+ DEC B
+ INC H
+ RST #10
+ LD L,#E1
+ NOP
+ LD D,(HL)
+ LD A,(BC)
+ ADD HL,HL
+ CALL C,L5233
+ DEC B
+ INC H
+ RST #10
+ LD L,#E1
+ NOP
+ LD D,(HL)
+
+L7586 XOR A
+ LD C,#00
+ LD B,#08
+ CALL L75A0		; PAC(0)-PAC(7) = 0
+L758E LD C,#0E
+ LD B,#0B
+ CALL L75A0		; PAC(14)-PAC(24) = 0
+ LD C,#20
+ LD B,#09
+ CALL L75A0		; PAC(32)-PAC(40) = 0
+ LD C,#30
+ LD B,#09		; PAC(48)-PAC(56) = 0
+L75A0 PUSH BC
+ LD B,A 		; data
+ CALL L75DA		; Write PAC register
+ EI
+ POP BC
+ INC C
+ DJNZ L75A0
+ RET
+
+L75AB LD C,#0E
+ CALL L7605		; read PAC(14) register
+ OR #20 		; set b5
+ LD B,A
+ CALL L75DA		; Write PAC(14) register
+ LD HL,L75C8
+ LD B,#09
+L75BB PUSH BC
+ LD C,(HL)
+ INC HL
+ LD B,(HL)
+ INC HL
+ CALL L75DA		; Write PAC register
+ EI
+ POP BC
+ DJNZ L75BB
+ RET
+
+L75C8 DEFB #16,#20
+ DEFB #17,#50
+ DEFB #18,#C0
+ DEFB #26,#05
+ DEFB #27,#05
+ DEFB #28,#01
+ DEFB #36,#00
+ DEFB #37,#00
+ DEFB #38,#00
+
+L75DA PUSH AF
+ LD A,C
+ CALL L7618		; Check number
+ JR C,L7602		; illegal, quit
+ PUSH HL
+ LD HL,LF9C0
+ ADD A,L
+ LD L,A
+ LD A,#00
+ ADC A,H
+ LD H,A
+ DI
+ LD (HL),B
+ LD A,C
+ OUT (#7C),A
+ LD L,#03
+ CALL L7631		; Wait 0.01 ms
+ LD A,B
+ OUT (#7D),A
+ LD L,#0D
+ CALL L7631		; Wait 0.05 ms
+ POP HL
+ POP AF
+ SCF
+ CCF
+ RET
+L7602 POP AF
+ SCF
+ RET
+
+L7605 LD A,C
+ CALL L7618	; Check registernr.
+ RET C
+ PUSH HL
+ LD HL,LF9C0
+ LD A,C
+ ADD A,L
+ LD L,A
+ LD A,#00
+ ADC A,H
+ LD H,A
+ LD A,(HL)
+ POP HL
+ RET
+
+L7618 CP #08
+ CCF
+ RET NC 	; 0-7
+ CP #0E
+ RET C
+ CP #19
+ CCF
+ RET NC 	; 14-24
+ CP #20
+ RET C
+ CP #29
+ CCF
+ RET NC 	; 32-40
+ CP #30
+ RET C
+ CP #39
+ CCF		; 48-56
+ RET
+
+L7631 IN A,(#E6)
+ LD H,A
+L7634 IN A,(#E6)
+ SUB H
+ CP L
+ JP C,L7634
+ RET
+
+L763C OUT (#E6),A
+L763E IN A,(#E7)
+ CP C
+ JP C,L763E
+ RET
+
+L7645	DEFM "Piano 1 "
+	DEFB #00,#00,#0A,#00
+	DEFB #00,#00,#00,#00
+	DEFB "1",#0E,#D9,#11
+	DEFB "0",#00,#00,#00
+	DEFB #11,#00,#B2,#F4
+	DEFB "p",#00,#00,#00
+
+	DEFM "Piano 2 "
+	DEFB #00,#0C,#08,#00
+	DEFB #00,#00,#00,#00
+	DEFB "0",#0F,#D9,#10
+	DEFB "0",#00,#00,#00
+	DEFB #10,#00,#B2,#F3
+	DEFB "p",#00,#00,#00
+
+ DEFM "Violin  "
+ DEFB #00,#0C,"n",#00
+ DEFB #00,#00,#00,#00
+ DEFB "a",#12,#B4,#14
+ DEFB #10,#00,#00,#00
+ DEFB "a",#00,"V",#17
+ DEFB #80,#00,#00,#00
+
+ DEFM "Flute   "
+ DEFB #00,#0C,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB "a"," ","l",#18
+ DEFB "@",#00,#00,#00
+ DEFB "1",#03,"C","&"
+ DEFB #80,#00,#00,#00
+
+ DEFM "Clarinet"
+ DEFB #00,#0C,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #A2,#A0,#88,#14
+ DEFB "@",#00,#00,#00
+ DEFB "0",#00,"T",#06
+ DEFB #80,#00,#00,#00
+
+ DEFM "Oboe    "
+ DEFB #00,#00,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB "1"," ","r",#0A
+ DEFB "@",#00,#00,#00
+ DEFB "4",#01,"V",#1C
+ DEFB #80,#00,#00,#00
+
+ DEFM "Trumpet "
+ DEFB #00,#00,"n",#00
+ DEFB #00,#00,#00,#00
+ DEFB "1",#16,"Q","&"
+ DEFB "@",#00,#00,#00
+ DEFB "q",#03,"R","$"
+ DEFB "`",#00,#00,#00
+
+ DEFM "PipeOrgn"
+ DEFB #01,#00,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB "4","7","P","v"
+ DEFB "0",#00,#00,#00
+ DEFB "0",#00,"0",#06
+ DEFB #80,#00,#00,#00
+
+ DEFM "Xylophon"
+ DEFB #00,#00,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB #17,#18,#88,"f"
+ DEFB #80,#00,#00,#00
+ DEFB "R",#00,#D9,"$"
+ DEFB #80,#00,#00,#00
+
+ DEFM "Organ   "
+ DEFB #00,#00,#ED,#00
+ DEFB #00,#00,#00,#00
+ DEFB #E1,#0A,#FC,"("
+ DEFB "p",#00,#00,#00
+ DEFB "c",#05,#F8,")"
+ DEFB "p",#00,#00,#00
+
+ DEFM "Guitar  "
+ DEFB #00,#00,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB #02,#15,#A3,"u"
+ DEFB " ",#00,#00,#00
+ DEFB "A",#00,#A3,#05
+ DEFB "`",#00,#00,#00
+
+ DEFM "Santool "
+ DEFB #00,#F9,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB #19,#0C,#C7,#11
+ DEFB #10,#00,#00,#00
+ DEFB "S",#03,#F5,#03
+ DEFB "`",#00,#00,#00
+
+ DEFM "Elecpian"
+ DEFB #00,#ED,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB "#",#0F,#DD,"J"
+ DEFB " ",#00,#00,#00
+ DEFB "C",#00,#BF,#05
+ DEFB "P",#00,#00,#00
+
+ DEFM "Clavicod"
+ DEFB #00,#ED,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB #03,#11,#D2,#F4
+ DEFB " ",#00,#00,#00
+ DEFB #09,#08,#B4,#F5
+ DEFB "`",#00,#00,#00
+
+ DEFM "Harpsicd"
+ DEFB #00,#0C,#0D,#00
+ DEFB #00,#00,#00,#00
+ DEFB #01,#06,#A3,#F4
+ DEFB "@",#00,#00,#00
+ DEFB #00,#19,#E2,#F4
+ DEFB #00,#00,#00,#00
+
+ DEFM "Harpscd2"
+ DEFB #00,#00,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB #01,#11,#C0,#01
+ DEFB " ",#00,#00,#00
+ DEFB #01,#08,#B4,#F6
+ DEFB #80,#00,#00,#00
+
+ DEFM "Vibraphn"
+ DEFB #00,#00,#EC,#00
+ DEFB #00,#00,#00,#00
+ DEFB #F9,"$",#95,#E5
+ DEFB #80,#00,#00,#00
+ DEFB #F1,#00,#D1,#F2
+ DEFB "p",#00,#00,#00
+
+ DEFM "Koto    "
+ DEFB #00,#00,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB #13,#0C,#FC,"3"
+ DEFB "0",#00,#00,#00
+ DEFB #11,#00,#D2,#83
+ DEFB #80,#00,#00,#00
+
+ DEFM "Taiko   "
+ DEFB #00,#F4,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #01,#0E,#CA,"D"
+ DEFB " ",#00,#00,#00
+ DEFB #10,#00,#E6,"$"
+ DEFB #80,#00,#00,#00
+
+ DEFM "Engine  "
+ DEFB #00,#E8,"n",#00
+ DEFB #00,#00,#00,#00
+ DEFB #E0,#1B,#11,#04
+ DEFB "@",#00,#00,#00
+ DEFB #F4,#80,#F0,#08
+ DEFB "P",#00,#00,#00
+
+ DEFM "UFO     "
+ DEFB #00,#0C,#EE,#00
+ DEFB #00,#00,#00,#00
+ DEFB #FF,#19,"P",#05
+ DEFB "`",#00,#00,#00
+ DEFB "p",#00,#1F,#01
+ DEFB "@",#00,#00,#00
+
+ DEFM "SynBell "
+ DEFB #00,#00,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #13,#11,#FA,"!"
+ DEFB "0",#00,#00,#00
+ DEFB #11,#00,#F2,#F4
+ DEFB #80,#00,#00,#00
+
+ DEFM "Chime   "
+ DEFB #00,#00,#EA,#00
+ DEFB #00,#00,#00,#00
+ DEFB #A6,#10,#FB,#11
+ DEFB " ",#00,#00,#00
+ DEFB "B",#0B,#B9,#02
+ DEFB "`",#00,#00,#00
+
+ DEFM "SynBass "
+ DEFB #F8,#F3,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB "@",#89,#C7,#14
+ DEFB "@",#00,#00,#00
+ DEFB "1",#00,#F9,#04
+ DEFB #80,#00,#00,#00
+
+ DEFM "Synthsiz"
+ DEFB #00,#E8,"l",#00
+ DEFB #00,#00,#00,#00
+ DEFB "B",#0B,#94,"3"
+ DEFB #00,#00,#00,#00
+ DEFB "D",#05,#B0,#F6
+ DEFB "P",#00,#00,#00
+
+ DEFM "SynPercu"
+ DEFB #00,#F4,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #01,#0B,#BA,"%"
+ DEFB "`",#00,#00,#00
+ DEFB #03,#00,#D9,#06
+ DEFB #80,#00,#00,#00
+
+ DEFM "SynRhyth"
+ DEFB #00,#0C,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB "@",#00,#FA,"7"
+ DEFB "@",#00,#00,#00
+ DEFB #00,#00,#D9,#04
+ DEFB #00,#00,#00,#00
+
+ DEFM "HarmDrum"
+ DEFB #00,#E1,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #02,#09,#CB,"9"
+ DEFB "`",#00,#00,#00
+ DEFB #03,#00,#FF,#06
+ DEFB #80,#00,#00,#00
+
+ DEFM "Cowbell "
+ DEFB #00,#F4,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB #18,#09,#F8,"&"
+ DEFB " ",#00,#00,#00
+ DEFB #11,#00,#F5,"&"
+ DEFB "`",#00,#00,#00
+
+ DEFM "ClseHiht"
+ DEFB #00,#18,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #0B,#09,#F0,#01
+ DEFB #80,#00,#00,#00
+ DEFB #04,#00,#F5,"'"
+ DEFB #80,#00,#00,#00
+
+ DEFM "SnareDrm"
+ DEFB #00,#00,"n",#00
+ DEFB #00,#00,#00,#00
+ DEFB "@",#07,#D0,#01
+ DEFB #80,#00,#00,#00
+ DEFB "@",#00,#D6,"'"
+ DEFB #80,#00,#00,#00
+
+ DEFM "BassDrum"
+ DEFB #00,#F4,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB #00,#07,#CB,"6"
+ DEFB "@",#00,#00,#00
+ DEFB #01,#00,#E3,"%"
+ DEFB #80,#00,#00,#00
+
+ DEFM "Piano 3 "
+ DEFB #00,#00,#08,#00
+ DEFB #00,#00,#00,#00
+ DEFB #11,#08,#FA," "
+ DEFB "0",#00,#00,#00
+ DEFB #11,#00,#B2,#F4
+ DEFB "p",#00,#00,#00
+
+ DEFM "Elecpia2"
+ DEFB #00,#00,#00,#00
+ DEFB #00,#00,#00,#00
+ DEFB #11,#11,#C0,#01
+ DEFB #10,#00,#00,#00
+ DEFB #11,#00,#B2,#F4
+ DEFB #80,#00,#00,#00
+
+ DEFM "Santool2"
+ DEFB #00,#ED,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #19,#15,#E7,"!"
+ DEFB #80,#00,#00,#00
+ DEFB "S",#03,#95,#03
+ DEFB "`",#00,#00,#00
+
+ DEFM "Brass   "
+ DEFB #00,#00,"n",#00
+ DEFB #00,#00,#00,#00
+ DEFB "0",#19,"B","&"
+ DEFB "@",#00,#00,#00
+ DEFB "p",#00,"b","$"
+ DEFB "`",#00,#00,#00
+
+ DEFM "Flute 2 "
+ DEFB #00,#0C,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB "b","%","d",#12
+ DEFB "@",#00,#00,#00
+ DEFB "q",#03,"C","&"
+ DEFB #80,#00,#00,#00
+
+ DEFM "Clavicd2"
+ DEFB #00,#0C,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB "!",#0B,#90,#02
+ DEFB "P",#00,#00,#00
+ DEFB #03,#03,#D4,#F5
+ DEFB "`",#00,#00,#00
+
+ DEFM "Clavicd3"
+ DEFB #00,#0C,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB #01,#0A,#90,#03
+ DEFB "@",#00,#00,#00
+ DEFB #03,#03,#A4,#F5
+ DEFB "`",#00,#00,#00
+
+ DEFM "Koto 2  "
+ DEFB #00,#ED,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB "C",#0E,#B5,#84
+ DEFB "P",#00,#00,#00
+ DEFB "S",#81,#E9,#04
+ DEFB "`",#00,#00,#00
+
+ DEFM "PipeOrg2"
+ DEFB #00,#00,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB "4","&","P","v"
+ DEFB "0",#00,#00,#00
+ DEFB "0",#00,"0",#06
+ DEFB #80,#00,#00,#00
+
+ DEFM "PohdsPLA"
+ DEFB #00,#ED,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB "s","Z",#99,#14
+ DEFB "`",#00,#00,#00
+ DEFB "3",#00,#F5,#15
+ DEFB #80,#00,#00,#00
+
+ DEFM "RohdsPRA"
+ DEFB #00,#ED,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB "s",#16,#F9,"3"
+ DEFB "`",#00,#00,#00
+ DEFB #13,#00,#F5,#03
+ DEFB "P",#00,#00,#00
+
+ DEFM "Orch L  "
+ DEFB #00,#0C,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB "a",#15,"v","#"
+ DEFB "@",#00,#00,#00
+ DEFB "!",#00,"T",#06
+ DEFB "p",#00,#00,#00
+
+ DEFM "Orch R  "
+ DEFB #00,#00,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB "c",#1B,"u","E"
+ DEFB "`",#00,#00,#00
+ DEFB "p",#00,"K",#15
+ DEFB "p",#00,#00,#00
+
+ DEFM "SynViol "
+ DEFB #00,#0C,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB "a",#0A,"v",#12
+ DEFB "@",#00,#00,#00
+ DEFB #A1,#02,"T",#07
+ DEFB #80,#00,#00,#00
+
+ DEFM "SynOrgan"
+ DEFB #00,#F4,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB "a",#0D,#85,#14
+ DEFB "@",#00,#00,#00
+ DEFB "x",#08,#F2,#03
+ DEFB "`",#00,#00,#00
+
+ DEFM "SynBrass"
+ DEFB #00,#F4,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB "1",#15,#B6,#03
+ DEFB "@",#00,#00,#00
+ DEFB "q",#00,#F9,"&"
+ DEFB "`",#00,#00,#00
+
+ DEFM "Tube    "
+ DEFB #00,#F4,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB "a",#0D,"u",#18
+ DEFB "@",#00,#00,#00
+ DEFB "q",#00,#F2,#03
+ DEFB "`",#00,#00,#00
+
+ DEFM "Shamisen"
+ DEFB #00,#ED,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB #03,#14,#A7,#13
+ DEFB "P",#00,#00,#00
+ DEFB #0C,#03,#FC,#15
+ DEFB "`",#00,#00,#00
+
+ DEFM "Magical "
+ DEFB #00,#F4,#06,#00
+ DEFB #00,#00,#00,#00
+ DEFB #13,#80," ",#03
+ DEFB "`",#00,#00,#00
+ DEFB "2",#00,#85,#AF
+ DEFB "@",#00,#00,#00
+
+ DEFM "Huwawa  "
+ DEFB #00,#00,#0A,#00
+ DEFB #00,#00,#00,#00
+ DEFB #F1,#17,"#",#14
+ DEFB " ",#00,#00,#00
+ DEFB "1",#00,"@",#09
+ DEFB #80,#00,#00,#00
+
+ DEFM "WnderFlt"
+ DEFB #00,#00,#EE,#00
+ DEFB #00,#00,#00,#00
+ DEFB #F0,#17,"Z",#06
+ DEFB "@",#00,#00,#00
+ DEFB "t","@","C",#FC
+ DEFB #80,#00,#00,#00
+
+ DEFM "Hardrock"
+ DEFB #00,#00,"l",#00
+ DEFB #00,#00,#00,#00
+ DEFB " ",#0D,#C1,"V"
+ DEFB " ",#00,#00,#00
+ DEFB "q",#02,#D5,#06
+ DEFB "`",#00,#00,#00
+
+ DEFM "Machine "
+ DEFB #00,#F4,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB "0",#06,"@",#04
+ DEFB #80,#00,#00,#00
+ DEFB "2",#00,"@","t"
+ DEFB "0",#00,#00,#00
+
+ DEFM "MachineV"
+ DEFB #00,#F4,#06,#00
+ DEFB #00,#00,#00,#00
+ DEFB "0",#03,"@",#04
+ DEFB #80,#00,#00,#00
+ DEFB "2",#00,"@","t"
+ DEFB "0",#00,#00,#00
+
+ DEFM "Comic   "
+ DEFB #00,#F4,#0E,#00
+ DEFB #00,#00,#00,#00
+ DEFB #01,#0D,"x",#7F
+ DEFB "@",#00,#00,#00
+ DEFB #08,#00,#F8,#F9
+ DEFB #00,#00,#00,#00
+
+ DEFM "SE_Comic"
+ DEFB #00,#E8,"j",#00
+ DEFB #00,#00,#00,#00
+ DEFB #C8,#0B,"v",#11
+ DEFB "@",#00,#00,#00
+ DEFB #C0,#00,#F7,#F9
+ DEFB #00,#00,#00,#00
+
+ DEFM "SE_Laser"
+ DEFB #00,"0","n",#00
+ DEFB #00,#00,#00,#00
+ DEFB "I",#0B,#B4,#FF
+ DEFB " ",#00,#00,#00
+ DEFB "@",#00,#F9,#05
+ DEFB "`",#00,#00,#00
+
+ DEFM "SE_Noise"
+ DEFB #00,"$",#AC,#00
+ DEFB #00,#00,#00,#00
+ DEFB #CD,#0C,#A2,#00
+ DEFB #80,#00,#00,#00
+ DEFB "B",#00,#F0,#01
+ DEFB #80,#00,#00,#00
+
+ DEFM "SE_Star "
+ DEFB #00,#00,"n",#00
+ DEFB #00,#00,#00,#00
+ DEFB "Q",#13,#13,"B"
+ DEFB "@",#00,#00,#00
+ DEFB "B",#00,#10,#01
+ DEFB "P",#00,#00,#00
+
+ DEFM "SE_Star2"
+ DEFB #00,"$","n",#00
+ DEFB #00,#00,#00,#00
+ DEFB "Q",#13,#13,"B"
+ DEFB "@",#00,#00,#00
+ DEFB "B",#00,#10,#01
+ DEFB "P",#00,#00,#00
+
+ DEFM "Engine 2"
+ DEFB #00,#E8,#0C,#00
+ DEFB #00,#00,#00,#00
+ DEFB "0",#12,"#","&"
+ DEFB "@",#00,#00,#00
+ DEFB "4",#07,"p",#02
+ DEFB "P",#00,#00,#00
+
+ DEFM "Silence "
+ DEFB #00,#00,#00,#00
+ DEFB #00,#00,#00,#00
+ DEFB #00,#FF,#00,#FF
+ DEFB #00,#00,#00,#00
+ DEFB #00,#FF,#00,#FF
+ DEFB #00,#00,#00,#00
+
+
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+L7FED JP L5003
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+ RST #38
+
