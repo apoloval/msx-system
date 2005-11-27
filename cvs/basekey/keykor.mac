@@ -1,0 +1,507 @@
+; *************************************
+; BEGIN OF KOREAN KEYBOARD HANDLER
+; *************************************
+;
+J01A4	EQU	01A4H	; J----
+C141F	EQU	141FH	; -C---
+J63E6	EQU	63E6H	; J----
+C7B3E	EQU	7B3EH	; -C---
+
+
+;
+; keyboard dispatch table
+
+I0DA5:	DEFB	0AH
+	DEFW	C0E67		; keys 0,1,2,3,4,5,6,7,8,9
+	DEFB	16H
+	DEFW	C0EA1		; keys -,^,yen,@,[,;,:,],komma,.,/,_
+	DEFB	30H
+	DEFW	C0E7E		; keys a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
+	DEFB	33H
+	DEFW	C0F10		; keys shift,ctrl,graph
+	DEFB	34H
+	DEFW	C0F36		; key caps
+	DEFB	35H
+	DEFB	C0F1F		; key kana
+	DEFB	3AH
+	DEFW	C1438		; keys f1,f2,f3,f4,f5
+	DEFB	3CH
+	DEFW	C0F10		; keys esc,tab
+	DEFB	3DH
+	DEFW	C0F46		; key stop
+	DEFB	41H
+	DEFW	C0F10		; keys bs,select,return,space
+	DEFB	42H
+	DEFW	C0F06		; home
+	DEFB	0FFH
+	DEFW	C0F10		; ins,del,left,up,down,right, numeric pad
+
+
+; shift table numeric keys
+
+I0DC9:	DEFB	0FFH,21H,22H,23H,24H,25H,26H,27H
+	DEFB	28H,29H
+
+
+; alfanumeric dispatch table
+
+I0DD3:	DEFW	C0F55H		; SHIFT + CTRL
+	DEFW	C0F55H		; CTRL
+	DEFW	C0E93H		; SHIFT
+	DEFW	C0E95H		; normal
+
+
+; - ^ yen @ [ ; : ] komma . / _ table
+
+I0DDB:	DEFB	0FDH,0DH,0F1H,0DH,0E5H,0DH,0D9H,0DH
+	DEFB	2DH,5EH,5CH,40H,5BH,3BH,3AH,5DH
+	DEFB	2CH,2EH
+	DEFB	2FH,0FFH,3DH,7EH,7CH,60H,7BH,2BH
+	DEFB	2AH,7DH,3CH,3EH,3FH,5FH,2DH,1EH
+	DEFB	1CH,00H,1BH,3BH,3AH,1DH,2CH,2EH
+	DEFB	2FH,0FFH,3DH,1EH,1CH,00H,1BH,2BH
+	DEFB	2AH,1DH,3CH,3EH,3FH,1FH
+
+; keycodes for keys with scancode 030H and above
+
+I0E13:	DEFB	000H,000H,000H,000H,000H,000H,000H,000H
+	DEFB	000H,000H,01BH,009H,000H,008H,018H,00DH
+	DEFB	020H,00CH,012H,07FH,01DH,01EH,01FH,01CH
+	DEFB	02AH,02BH,02FH,030H,031H,032H,033H,034H
+	DEFB	035H,036H,037H,038H,039H,02DH,02CH,02EH
+
+
+K.HAND:	LD	A,C
+	CP	0FFH
+	RET	Z
+	LD	HL,I0DA5
+	CALL	H.KEYC
+	CP	30H
+	JR	NC,J0E5C
+	LD	A,(NEWKEY+6)
+	RRCA	
+	RRCA	
+	JR	NC,J0E5B		; CTRL pressed, handle directly
+	RRCA	
+	JP	NC,J107D		; GRAPH pressed,
+	LD	A,(KANAST)
+	AND	A
+	JP	NZ,J0F83		; KANA on,
+;
+J0E5B:	LD	A,C
+J0E5C:	CP	(HL)
+	INC	HL
+	LD	E,(HL)
+	INC	HL
+	LD	D,(HL)
+	INC	HL
+	PUSH	DE
+	RET	C
+;
+	POP	DE
+	JR	J0E5C
+
+;	  Subroutine numeric key handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C0E67:	ADD	A,30H	; "0"
+	LD	B,A
+	LD	A,(NEWKEY+6)
+	RRCA	
+	LD	A,B
+	JR	C,J0E7B
+;
+	LD	B,00H
+	LD	HL,I0DC9
+	ADD	HL,BC
+	LD	A,(HL)
+	CP	0FFH
+	RET	Z
+;
+J0E7B:	JP	C0F55
+;
+;	-----------------
+C0E7E:	LD	A,(NEWKEY+6)
+	AND	03H	; 3 
+	ADD	A,A
+	LD	E,A
+	LD	D,00H
+	LD	HL,I0DD3
+	ADD	HL,DE
+	LD	A,(HL)
+	INC	HL
+	LD	H,(HL)
+	LD	L,A
+	LD	A,C
+	SUB	15H
+	JP	(HL)
+;
+;	-----------------
+C0E93:	ADD	A,20H			; lowercase
+C0E95:	LD	B,A
+	LD	A,(CAPST)
+	CPL	
+	AND	20H
+	XOR	B			; toggle case when Caps on
+	ADD	A,40H
+	JR	J0E7B
+;
+;	keys - ^ yen @ [ ; : ] komma . / _ handler
+
+C0EA1:	LD	HL,I0DDB
+	LD	A,(NEWKEY+6)
+	AND	03H	; 3 
+	ADD	A,A
+	LD	E,A
+	LD	D,00H
+	ADD	HL,DE
+	LD	A,(HL)
+	INC	HL
+	LD	H,(HL)
+	LD	L,A
+	LD	E,C
+	ADD	HL,DE
+	LD	A,(HL)
+	CP	0FFH
+	JP	NZ,C0F55
+;
+	RET	
+;
+;	-----------------
+J0EBB:	LD	A,(NEWKEY+6)
+	RRCA	
+	JR	C,J0EC5
+;
+	LD	A,C
+	ADD	A,05H	; 5 
+	LD	C,A
+J0EC5:	LD	E,C
+	LD	D,00H
+	LD	HL,FNKFLG-035H
+	ADD	HL,DE
+	LD	A,(HL)
+	AND	A
+	JR	NZ,J0EE3
+;
+J0ED0:	EX	DE,HL
+	ADD	HL,HL
+	ADD	HL,HL
+	ADD	HL,HL
+	ADD	HL,HL
+	LD	DE,FNKSTR-035H*16
+	ADD	HL,DE
+	EX	DE,HL
+J0EDA:	LD	A,(DE)
+	AND	A
+	RET	Z
+;
+	CALL	C0F55
+;
+	INC	DE
+	JR	J0EDA
+;
+;	-----------------
+J0EE3:	LD	HL,(CURLIN)
+	INC	HL
+	LD	A,H
+	OR	L
+	JR	Z,J0ED0
+;
+	LD	HL,TRPTBL+0*3-035H*3
+	ADD	HL,DE
+	ADD	HL,DE
+	ADD	HL,DE
+	LD	A,(HL)
+	AND	01H	; 1 
+	RET	Z
+;
+	LD	A,(HL)
+	OR	04H	; 4 
+	CP	(HL)
+	RET	Z
+;
+	LD	(HL),A
+	XOR	05H	; 5 
+	RET	NZ
+;
+	LD	A,(ONGSBF)
+	INC	A
+	LD	(ONGSBF),A
+	RET	
+;
+;	-----------------
+C0F06:	LD	A,(NEWKEY+6)
+	RRCA	
+	LD	A,0CH	; 12 
+	SBC	A,00H
+	JR	C0F55
+;
+;	-----------------
+C0F10:	CALL	H.KEYA
+;
+	LD	E,A
+	LD	D,00H
+	LD	HL,I0E13-030H
+	ADD	HL,DE
+	LD	A,(HL)
+	AND	A
+	RET	Z
+;
+	JR	C0F55
+
+;	  Subroutine KANA key handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C0F1F:	LD	HL,KANAST
+	LD	A,(HL)
+	CPL	
+	LD	(HL),A
+	LD	A,0FH	; 15 
+	OUT	(0A0H),A
+	IN	A,(0A2H)
+	AND	7FH
+	LD	B,A
+	LD	A,(HL)
+	CPL	
+	AND	80H
+	OR	B
+	OUT	(0A1H),A
+	RET	
+;
+;	-----------------
+C0F36:	LD	HL,CAPST
+	LD	A,(HL)
+	CPL	
+	LD	(HL),A
+	CPL	
+
+K.BCAP:	AND	A
+	LD	A,0CH	; 12 
+	JR	Z,J0F43
+;
+	INC	A
+J0F43:	OUT	(0ABH),A
+	RET	
+;
+;	-----------------
+C0F46:	LD	A,(NEWKEY+6)
+	RRCA	
+	RRCA	
+	LD	A,03H	; 3 
+	JR	NC,J0F50
+;
+	INC	A
+J0F50:	LD	(INTFLG),A
+	JR	C,J0F64
+;
+;
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+;
+C0F55:	LD	HL,(PUTPNT)
+	LD	(HL),A
+	CALL	C10C2
+;
+	LD	A,(GETPNT)
+	CP	L
+	RET	Z
+;
+	LD	(PUTPNT),HL
+J0F64:	LD	A,(CLIKSW)
+	AND	A
+	RET	Z
+;
+	LD	A,(CLIKFL)
+	AND	A
+	RET	NZ
+;
+	LD	A,0FH	; 15 
+	LD	(CLIKFL),A
+	OUT	(0ABH),A
+	LD	A,0AH	; 10 
+J0F77:	DEC	A
+	JR	NZ,J0F77
+;
+K.BSND:	AND	A
+	LD	A,0EH	; 14 
+	JR	Z,J0F80
+;
+	INC	A
+J0F80:	OUT	(0ABH),A
+	RET	
+;
+;	-----------------
+J0F83:	LD	A,(NEWKEY+6)
+	RRCA	
+	LD	HL,I0FA6
+	JR	C,J0F8F
+;
+	LD	HL,I0FD6
+J0F8F:	LD	B,00H
+	ADD	HL,BC
+	LD	A,(HL)
+	AND	A
+	RET	Z
+;
+	JP	C0F55
+
+;	-----------------
+;	korean patch routine for device STOP
+;	-----------------
+
+J0F98:	PUSH	HL
+	CALL	C141F
+	POP	HL
+	XOR	A
+	LD	SP,(SAVSTK)
+	PUSH	BC
+	JP	J63E6
+;
+;	-----------------
+I0FA6:	DEFB	30H,31H,32H,33H,34H,35H,36H,37H
+	DEFB	38H,39H,2DH,5EH,5CH,40H,5BH,3BH
+	DEFB	3AH,5DH,2CH,2EH,2FH,00H,8CH,0A4H
+	DEFB	94H,91H,89H,8BH,98H,0A1H,9BH,9DH
+	DEFB	99H,0A6H,0A5H,0A3H,9AH,9EH,8DH,86H
+	DEFB	88H,8FH,9FH,97H,92H,96H,0A2H,95H
+
+I0FD6:	DEFB	00H,21H,22H,23H,24H,25H,26H,27H
+	DEFB	28H,29H,3DH,7EH,7CH,60H,7BH,2BH
+	DEFB	2AH,7DH,3CH,3EH,3FH,5FH,00H,00H
+	DEFB	00H,00H,8AH,00H,00H,00H,00H,00H
+	DEFB	00H,00H,00H,00H,9CH,0A0H,8EH,87H
+	DEFB	00H,90H,00H,00H,93H,00H,00H,00H
+
+;	-----------------
+;	korean ´BIOS´ routine 0186H
+;	-----------------
+
+?.1006:	CALL	C1070
+	RET	Z			; no hangul rom, quit
+	PUSH	IX
+	LD	IX,04023H
+	JR	J103C
+
+;	-----------------
+;	korean ´BIOS´ routine 0189H
+;	-----------------
+
+?.1012:	CALL	C1070
+	RET	Z			; no hangul rom, quit
+	PUSH	IX
+	LD	IX,04026H
+	JR	J103C
+
+;	-----------------
+;	korean ´BIOS´ routine 018CH
+;	-----------------
+
+?.101E:	CALL	C1070
+	RET	Z			; no hangul rom, quit
+	PUSH	IX
+	LD	IX,04032H
+	JR	J103C
+
+;	-----------------
+;	korean ´BIOS´ routine 018FH
+;	-----------------
+
+?.102A:	CALL	C1070
+	RET	Z			; no hangul rom, quit
+	PUSH	IX
+	LD	IX,0402CH
+	JR	J103C
+
+;	-----------------
+;	korean ´BIOS´ routine 0192H
+;	-----------------
+
+?.1036:	PUSH	IX
+	LD	IX,04029H
+J103C:	JP	J01A4
+
+;	-----------------
+;	patch routine for reading mouse/lightpen switch
+;	korean does this via V9948 VDP
+;	-----------------
+
+?.103F:	LD	A,01H	; 1 
+	DI	
+	OUT	(99H),A
+	LD	A,8FH
+	OUT	(99H),A			; VDP(15)=1
+	IN	A,(99H)			: status register
+	PUSH	AF
+	XOR	A
+	OUT	(99H),A
+	LD	A,8FH
+	OUT	(99H),A			; VDP(15)=0
+	POP	AF
+	BIT	7,A			; FL (mouse/lightpen switch)
+	JR	Z,J105C
+	LD	HL,XSAVE+1
+	SET	7,(HL)
+J105C:	IN	A,(99H)
+	AND	A
+	RET	
+
+;	-----------------
+;	patch routine for PAD function
+;	-----------------
+
+?.1060:	CP	14H			; pad 20 or above ?
+	JR	NC,J1068		; yep, handle differently
+J1064:	CALL	C7B3E
+	RET	
+;
+;	-----------------
+J1068:	CP	18H			; pad 24 or above ?
+	JR	NC,J1064		; yep, handle normaly
+	SUB	0CH			; range 20-23 = range 8-11 (lightpen)
+	JR	J1064
+;
+;	-----------------
+;
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+;
+C.1070:	PUSH	BC
+	LD	B,A
+	LD	A,(SLTWRK+4)		; slotid hangul rom
+	CP	00H
+	LD	A,B
+	POP	BC
+	RET	
+
+	DEFS	0107DH-$,0		; unused space
+
+J107D:	LD	B,00H
+	LD	HL,I1092
+	ADD	HL,BC
+	LD	A,(HL)
+	AND	A
+	RET	Z
+;
+	CP	80H
+	PUSH	AF
+	LD	A,01H	; 1 
+	CALL	C,C0F55
+;
+	POP	AF
+	JP	C0F55
+;
+;	-----------------
+I1092:	DEFB	00H,00H,00H,00H,00H,00H,00H,00H
+	DEFB	00H,00H,57H,00H,00H,00H,84H,82H
+	DEFB	81H,85H,00H,00H,80H,83H,00H,5BH
+	DEFB	5AH,54H,58H,55H,53H,00H,56H,00H
+	DEFB	00H,00H,00H,00H,00H,50H,00H,52H
+	DEFB	00H,59H,00H,51H,00H,5CH,00H,00H
+
+; *************************************
+; END OF KOREAN KEYBOARD HANDLER
+; *************************************
