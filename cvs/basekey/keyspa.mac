@@ -3,8 +3,6 @@
 ;      Z80DIS was written by Kenneth Gielow
 ;                            Palo Alto, CA
 ;
-	.Z80
-	ORG	0DA5H
 ;
 I$01E6	EQU	01E6H	; ----I
 J$0C25	EQU	0C25H	; J----
@@ -397,4 +395,3 @@ J$10C2	EQU	$
 I$1B96:	DEFB	30H,83H,33H,10H,34H,36H,35H,10H
 	DEFB	3AH,0C3H,3CH,10H,3DH,46H,41H,10H
 	DEFB	42H,06H,0FFH,10H,38H
-	END

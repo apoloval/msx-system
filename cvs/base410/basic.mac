@@ -362,11 +362,13 @@ H.TRMN		EQU	0FF61H	; -C---
 H.FRME		EQU	0FF66H	; -C---
 H.NTPL		EQU	0FF6BH	; -C---
 H.EVAL		EQU	0FF70H	; -C---
+H.OKNO		EQU	0FF75H
 H.FING		EQU	0FF7AH	; -C---
 H.ISMI		EQU	0FF7FH	; -C---
 H.WIDT		EQU	0FF84H	; -C---
 H.LIST		EQU	0FF89H	; -C---
 H.BUFL		EQU	0FF8EH	; -C---
+H.FRQI		EQU	0FF93H
 H.SCNE		EQU	0FF98H	; -C---
 H.FRET		EQU	0FF9DH	; -C---
 H.PTRG		EQU	0FFA2H	; -C---
@@ -8023,23 +8025,25 @@ J4F21:	CALL	C4E87			; evaluate ( expression )
 ;	     Outputs ________________________
 ;
 C4F2A:	CP	1BH
+
+	IF	MSXMID EQ 0
+
+	CALL	H.OKNO
+
+	ELSE
 ;
-; MSX 1 had
-; CALL X.FF75
+; Panasonic FS-A1GT use H.OKNO for MSX-MIDI
 ;
 	NOP
 	NOP
 	NOP
-;
-;
-;
+
+	ENDIF
+
 	JR	NC,J4F37
-;
 	RST	GETYPR
-;
 	PUSH	HL
 	CALL	C,C303A			; convert DAC to double real
-;
 	POP	HL
 J4F37:	LD	DE,I4E99
 	PUSH	DE
@@ -9254,17 +9258,20 @@ C5439:	LD	BC,C2F8A
 	PUSH	BC			; convert DAC to integer
 	RST	GETYPR
 	RET	M
+
+	IF	MSXMID EQ 0
+
+	CALL	H.FRQI
+
+	ELSE
 ;
-; MSX 1 had
+; Panasonic FS-A1GT use H.FRQI for MSX-MIDI
 ;
-;	CALL	H.FRQI
-
-; H.FRQI hook not supported by Turbo-R
-
 	NOP
 	NOP
 	NOP
 
+	ENDIF
 
 	CALL	C2E71			; get sign DAC
 	RET	M
@@ -18189,12 +18196,19 @@ J7B80:	RR	C
 	EX	DE,HL
 	LD	(SLTTBL+2),HL
 	IM	1
-;
-; MSX 2 had
-;
-;	JP	C7C76
-;
+
+	IF	MSXMID EQ 0
+
+	JP	C7C76
+
+	ELSE
+
+; Panasonic FS-A1GT has MSX-MIDI build in
+; hardware must be initialized
+
 	JP	J1A31			; patch for initialize midi
+
+	ENDIF
 
 	DEFS	07BCBH-$,0		; remaining space
 
@@ -18877,8 +18891,17 @@ J7EC2:	LD	(HL),E
 ?.7ED8:	DEFB	"MSX  system"
 	DEFB	0
 
+	IF MSXMID EQ 0
+
+?.7EE4:	DEFB	"version 4.0",13,10
+	DEFB	0
+
+	ELSE
+
 ?.7EE4:	DEFB	"version 4.1",13,10
 	DEFB	0
+
+	ENDIF
 
 ?.7EF2:	DEFB	"MSX BASIC "
 	DEFB	0

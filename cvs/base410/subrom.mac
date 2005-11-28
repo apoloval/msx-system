@@ -1132,7 +1132,15 @@ J0455:	CALL	C1C83			; select bank 2 clockchip
 J0476:	CALL	C3F1C			; copy roms for R800 ROM mode
 	LD	A,80H
 	CALL	C276F			; WRRES (b7 set, next soft reset skips startup)
+
+	IF	MSXMID EQ 1
+;
+; Panasonic FS-A1GT has PCM sampler init here
+;
 	CALL	C3F5B			; initialize PCM sampler
+
+	ENDIF
+
 	CALL	C067A			; disable vdp display output
 	XOR	A
 	LD	L,A
@@ -7703,7 +7711,27 @@ J2662:	LD	A,E
 	JP	C,J274A			; illegal function call
 	POP	DE
 	POP	BC
-	DEFB	0,0
+
+; strange nop´s here
+
+	IF	MSXMID EQ 0
+
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+
+	ELSE
+
+
+	NOP
+	NOP
+
+	ENDIF
+
+; ?? looks like the following code is always on A266E ??
+
 	PUSH	HL
 	CALL	C261C
 	CALL	C1401			; S.MAPXYC
@@ -12371,6 +12399,9 @@ C3F1C:	LD	A,0FEH
 	OUT	(0A8H),A		; restore prm. slot page 1
 	RET	
 
+
+	IF	MSXMID EQ 1
+
 ;	 Subroutine initialize PCM sampler
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
@@ -12380,6 +12411,8 @@ C3F5B:	LD	A,80H
 	LD	A,03H
 	OUT	(0A5H),A
 	RET
+
+	ENDIF
 
 	DEFS	04000H-$,0
 	

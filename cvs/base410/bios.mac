@@ -2844,17 +2844,22 @@ J0C3C:	PUSH	HL
 
 ;
 ; Changed from orginal
+; Reason: expansion of interrupt routine to handle MIDI ints
+;
 
 ; MSX1 and above have:
-;	PUSH	IY
-;	PUSH	IX
+	IF	MSXMID EQ 0
 
-; Turbo-R has:
+	PUSH	IY
+	PUSH	IX
+
+	ELSE
+
+; Turbo-R with MIDI has:
 	JP	J1A70			; expansion code
 	NOP
 
-; Reason: expansion of interrupt routine to handle MIDI ints
-;
+	ENDIF
 
 ; End of change
 
@@ -3514,8 +3519,27 @@ J127A:	BIT	5,A			; R800 initialized ?
 	JR	NZ,J1295		; yep, cont
 	OR	20H
 	OUT	(0F4H),A
+
+	IF	MSXMID EQ 0
+
+; Panasonic FS-A1ST has PCM hardware init here
+
+	LD	A,80H
+	OUT	(0A4H),A
+	LD	A,3
+	OUT	(0A5H),A		; initialize PCM sampler
+	DEC	A
+	OUT	(0A7H),A
+
+	ELSE
+
+; Panasonic FS-A1GT has PCM hardware init in subrom
+
 	LD	A,02H
 	OUT	(0A7H),A		; pause led off, turbo led off, b1=1
+
+	ENDIF
+
 	LD	A,6
 	OUT	(0E4H),A
 	LD	HL,I04E5
@@ -4950,6 +4974,9 @@ J1A1F:	IN	A,(0A7H)
 J1A2D:	EX	AF,AF'
 	JP	J0C50			; resume orginal routine
 
+	IF	MSXMID EQ 1
+
+
 ;	  Subroutine patchroutine for initializing MIDI hardware
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -5000,6 +5027,9 @@ J1A70:	PUSH	IY
 	AND	80H
 	CALL	NZ,H.FRQI
 	JP	J0C4A			; resume orginal routine
+
+	ENDIF
+
 
 ;	  Subroutine patchroutine for PAL setup of VDP
 ;	     Inputs  ________________________
