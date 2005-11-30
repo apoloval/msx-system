@@ -1,9 +1,16 @@
 ;  
 ;   MSX-JE -> Source re-created by Z80DIS 2.2
 ;      Z80DIS was written by Kenneth Gielow
-;                            Palo Alto, CA
 ;
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+;
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
 	.Z80
+	ASEG
 	ORG	4000H
 ;
 C.0000	EQU	0000H	; -C--I

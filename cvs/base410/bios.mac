@@ -5,9 +5,13 @@
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
 ;
-; Source edited by Arjen Zeilemaker
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
 ;
-; version 1.0 17-11-2005 
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
 
 	.Z80
 	ASEG
@@ -193,7 +197,8 @@ H.INLI	EQU	0FDE5H
 H.ISFL	EQU	0FEDFH
 H.OUTD	EQU	0FEE4H
 H.OKNO	EQU	0FF75H
-H.FRQI	EQU	0FF93H
+H.MDIN	EQU	0FF75H
+H.MDTM	EQU	0FF93H
 H.PHYD	EQU	0FFA7H
 H.FORM	EQU	0FFACH
 H.LPTO	EQU	0FFB6H
@@ -5022,10 +5027,10 @@ J1A70:	PUSH	IY
 	PUSH	IX
 	IN	A,(0E9H)
 	AND	02H
-	CALL	NZ,H.OKNO
+	CALL	NZ,H.MDIN
 	IN	A,(0E9H)
 	AND	80H
-	CALL	NZ,H.FRQI
+	CALL	NZ,H.MDTM
 	JP	J0C4A			; resume orginal routine
 
 	ENDIF

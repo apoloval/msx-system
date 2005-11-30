@@ -5,9 +5,13 @@
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
 ;
-; Source edited by Arjen Zeilemaker
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
 ;
-; sourcefile version 0.9 25-11-2005
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
 
 
 	.Z80
