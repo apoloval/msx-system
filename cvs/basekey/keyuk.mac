@@ -3,8 +3,6 @@
 ;      Z80DIS was written by Kenneth Gielow
 ;                            Palo Alto, CA
 ;
-	.Z80
-	ORG	0DA5H
 ;
 J$0000	EQU	0000H	; J----
 I$01E6	EQU	01E6H	; ----I

@@ -1,4 +1,21 @@
+; SERIAL.MAC
+;
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+;
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+;
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
+
+	.Z80
+	ASEG
+
 	org	04000H
+
 Y0000	equ	00000H
 RDSLT	equ	0000CH
 WRSLT	equ	00014H

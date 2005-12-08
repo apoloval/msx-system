@@ -5,9 +5,13 @@
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
 ;
-; Source edited by Arjen Zeilemaker
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
 ;
-; sourcefile version 0.9 25-11-2005
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
 
 
 	.Z80
@@ -69,8 +73,6 @@ CALBAS	equ	00159H
 X003B	equ	0003BH			; helper routine in DOS memoryspace: save and change secundairy slotregister
 X0046	equ	00046H			; helper routine in DOS memoryspace: restore secundairy slotregister (RDSLT/WRSLT)
 X004B	equ	0004BH			; helper routine in DOS memoryspace: restore secundairy slotregister (CALSLT/CALLF)
-
-YC000	equ	0C000H			; bootsector transferadres
 
 XF1C9	equ	0F1C9H			; output string (BDOS 9), also start of fixed diskvars
 XF1D9	equ	0F1D9H			; XFER, transfer to DOS memory
@@ -209,9 +211,6 @@ XF377	equ	0F377H			; routine diskbasic BLOAD
 XF37A	equ	0F37AH			; routine diskbasic BSAVE
 XF37D	equ	0F37DH			; BDOS entry point
 
-YFB21	equ	0FB21H			; diskdriver table
-YFB29	equ	0FB29H			; diskdriver interrupt table
-
 RDPRIM	equ	0F380H
 WRPRIM	equ	0F385H
 CLPRIM	equ	0F38CH
@@ -246,6 +245,8 @@ FILNAM	equ	0F866H
 NLONLY	equ	0F87CH
 SAVEND	equ	0F87DH
 HOKVLD	equ	0FB20H
+YFB21	equ	0FB21H			; diskdriver table
+YFB29	equ	0FB29H			; diskdriver interrupt table
 BOTTOM	equ	0FC48H
 HIMEM	equ	0FC4AH
 FLBMEM	equ	0FCAEH
@@ -303,6 +304,12 @@ DISINT	equ	0FFCFH
 ENAINT	equ	0FFD4H
 
 YFFFF	equ	0FFFFH
+
+
+YC000	equ	0C000H		; bootsector transferadres
+YCONBF	equ	KBUF+186	; KBUF is reused for read CON device records, size 127+2
+YCONTP	equ	KBUF+58		; KBUF is reused for temporary buffer buffered input, size 128
+
 
 ; Basic routines
 
@@ -994,7 +1001,7 @@ A4348:	call	XF25E
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
-A4367:	call	A4743			; update directory of disk when needed
+A4367:	call	A4743			; flush directory buffer
 	scf
 	ret
 
@@ -1014,11 +1021,11 @@ A4376:	ld	a,0E5H
 	ld	h,(iy+01BH)
 	ld	a,h			; file has start cluster ?
 	or	l
-	call	nz,A4F9B		; yep, release chain
+	call	nz,A4F9B		; yep, release cluster chain
 	call	A42BC			; find next directoryentry
 	jr	nc,A4376		; found, delete next file
 	call	A4403			; update directory of disk (SHOULD BE: CALL A4748)
-	jp	A45CF			; write FAT (SHOULD BE: JP A45C4, write FAT when needed)
+	jp	A45CF			; write FAT buffer (SHOULD BE: JP A45C4, flush FAT buffer)
 
 ;	  Subroutine BDOS 17 (rename file)
 ;	     Inputs  
@@ -1074,11 +1081,11 @@ A43C3:	ld	(de),a
 	ldir				; restore filename (search specifier) + orginal DR byte
 	call	A42BC			; find next directoryentry
 	jr	nc,A43B3		; found, rename next file
-A4403:	call	A4743			; update directory of disk when needed 
+A4403:	call	A4743			; flush directory buffer
 	xor	a			; no error
 	ret
 ;
-A4408:	call	A4743			; update directory of disk when needed
+A4408:	call	A4743			; flush directory buffer
 A440B:	ld	a,0FFH			; error
 	ret
 
@@ -1359,7 +1366,7 @@ A456F:	push	de
 	ld	a,(YF2E1)		; current driveid
 	ld	hl,(YF241)
 	cp	l			; same drive as owner datasector buffer ?
-	call	z,A472D			; yep, write datasector buffer when needed
+	call	z,A472D			; yep, flush datasector buffer
 	call	A4555			; get pointer to DPB of current drive
 	ld	a,(iy+019H)		; direntrynumber
 	call	A4317			; get direntry
@@ -1389,7 +1396,7 @@ A456F:	push	de
 	ldir
 	call	A4748			; update directory of disk
 
-;	  Subroutine write FAT when needed
+;	  Subroutine flush FAT buffer
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -1400,7 +1407,7 @@ A45C4:	ld	l,(ix+013H)
 	cp	1			; FAT buffer changed ?
 	ret	nz			; nope, quit (?? return error if FAT buffer invalid)
 
-;	  Subroutine write FAT
+;	  Subroutine write FAT buffer
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -1504,8 +1511,8 @@ A4651:	jr	nz,A4647		; device or file with special fileattribute,
 	ld	a,h
 	or	l			; has start cluster ?
 	jr	z,A4669			; nop,
-	call	A4F9B			; release chain
-	call	A45CF			; write FAT
+	call	A4F9B			; release cluster chain
+	call	A45CF			; write FAT buffer
 A4669:	push	iy
 	pop	de
 	ld	hl,YF2B9
@@ -1552,7 +1559,7 @@ A469D:	push	iy
 ;	     Outputs ________________________ 
 
 A46A4:	push	bc
-	call	A4743			; update directory of disk when needed
+	call	A4743			; flush directory buffer
 	pop	bc
 	ld	b,(ix+000H)		; driveid
 	ld	(YF246-1),bc		; set driveid and sector dirsector buffer
@@ -1660,7 +1667,7 @@ A4720:	ld	b,h
 	ld	hl,(YF23D)		; transferadres
 	jr	A4755			; write sectors with DOS error handling
 
-;	  Subroutine write datasector buffer when needed
+;	  Subroutine flush datasector buffer
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -1675,7 +1682,7 @@ A472D:	ld	hl,YF242
 	ld	de,(YF23F)		; sectornumber of datasector buffer
 	jr	A4755			; write sector with DOS error handling
 
-;	  Subroutine write dirsector buffer when needed
+;	  Subroutine flush directory buffer
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -1763,7 +1770,7 @@ A479C:	ld	a,l
 	ld	a,(YF2DE)		; result recordoperation
 	ret
 
-;	  Subroutine BDOS 27 (random block read)
+;	  Subroutine BDOS 27 (MSXDOS random block read)
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -1773,7 +1780,7 @@ A47B2:	xor	a
 	call	A4B23			; read record(s)
 	jr	A47C8
 
-;	  Subroutine BDOS 26 (random block write)
+;	  Subroutine BDOS 26 (MSXDOS random block write)
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -1800,34 +1807,42 @@ A47D1:	push	de
 	add	a,a
 	rl	c
 	rl	b
-	rl	e
-	or	a
+	rl	e			; convert filesize to a random record number
+	or	a			; was filesize a multiply of 128 ?
 	jr	z,A47F0
 	inc	bc
 	ld	a,b
 	or	c
 	jr	nz,A47F0
-	inc	e
+	inc	e			; no, increase random record number
+
+; the following code depends on the fact that CP/M 2.2 only uses the R0 and R1 field
+; code only works when the random record (filesize) is within 65536 records of the random record (fcb)
+
 A47F0:	ld	l,(iy+021H)
-	ld	h,(iy+022H)
+	ld	h,(iy+022H)		; R1 and R0
 	sbc	hl,bc
-	jr	z,A4790
+	jr	z,A4790			; exact at end of file, random access write record and quit
 	ld	a,(iy+023H)
-	sbc	a,e
-	jr	c,A4790
-	push	hl
-	call	A4790
+	sbc	a,e			; before end of file ?
+	jr	c,A4790			; yep, random access write record and quit
+	push	hl			; save number of gap records
+	call	A4790			; random access write record (gap in filled with garbage)
 	pop	de
 	or	a
-	ret	nz
+	ret	nz			; error, quit
+
+; now the gap is filled. dirsector buffer is used for the zero filled record
+; neat code should first flush the dirsector buffer, but this is ommited
+
 	ld	hl,(YF23D)		; transferadres
 	push	hl
 	ld	hl,(YF351)
 	ld	(YF23D),hl		; tempory use dirsector buffer
-	ld	b,080H
+	ld	b,128
 A4813:	ld	(hl),a
 	inc	hl
-	djnz	A4813
+	djnz	A4813			; create a zero filed random record
 	dec	a
 	ld	(YF246),a		; invalid dirsector buffer
 	ld	l,(iy+021H)
@@ -1839,9 +1854,9 @@ A4813:	ld	(hl),a
 	ld	d,000H
 	ld	a,(iy+023H)
 	sbc	a,d
-	ld	e,a
+	ld	e,a			; start record of gap
 A482D:	push	hl
-	ld	hl,00001H
+	ld	hl,1
 	call	A4CA3			; write record
 	call	A486A			; increase recordnumber if something was writen
 	ld	c,l
@@ -1850,7 +1865,7 @@ A482D:	push	hl
 	dec	hl
 	ld	a,h
 	or	l
-	jr	nz,A482D
+	jr	nz,A482D		; next record
 	pop	hl
 	ld	(YF23D),hl		; restore transferadres
 	ret
@@ -1907,16 +1922,16 @@ A487D:	ld	(YF2E8),hl		; number of records requested
 	ld	e,a
 	or	d			; zero recordsize ?
 	jr	nz,A48A8
-	ld	e,080H
+	ld	e,128
 	ld	(iy+00EH),e		; yep, use 128 bytes default
 A48A8:	inc	d
 	dec	d
 	jr	nz,A48B1
 	ld	a,e
-	cp	040H
+	cp	64
 	jr	c,A48B5
 A48B1:	xor	a
-	ld	(YF2E4+3),a		; make sure it's a valid record
+	ld	(YF2E4+3),a		; recordsize >64, clear b31-b24 of record (use 24 bit recordnumbers)
 A48B5:	ld	hl,(YF23D)
 	ld	(YF2E2),hl		; current transferadres
 	xor	a
@@ -1930,11 +1945,11 @@ A48B5:	ld	hl,(YF23D)
 	push	bc
 	call	A4555			; get pointer to DPB of current drive
 	ld	bc,(YF2E4+0)
-	call	A4916
+	call	A4916			; multiply
 	ld	(YF2F4+0),bc
 	push	bc
 	ld	bc,(YF2E4+2)
-	call	A491C
+	call	A491C			; multiply high word
 	ld	(YF2F4+2),bc		; startbyte = startrecord * recordsize
 	ld	h,b
 	ld	l,c
@@ -1958,13 +1973,21 @@ A490F:	ld	(YF2EC),bc		; relative cluster of startbyte
 	pop	bc
 	xor	a
 	ret
-;
+
+;	  Subroutine multiply
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4916:	call	XF27C
-	ld	hl,00000H
+	ld	hl,0
+
+;	  Subroutine multiply high word
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A491C:	ld	a,b
 	ld	b,011H
 	jr	A4928
-;
 A4921:	jr	nc,A4924
 	add	hl,de
 A4924:	rr	h
@@ -1974,9 +1997,18 @@ A4928:	rra
 	djnz	A4921
 	ld	b,a
 	ret
-;
+
+;	  Subroutine divide
+;	     Inputs  
+;	     Outputs ________________________ 
+
 DIV16:
-A492F:	ld	hl,00000H
+A492F:	ld	hl,0
+
+;	  Subroutine divide
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4932:	call	XF27F
 	ld	a,b
 	ld	b,010H
@@ -1994,11 +2026,14 @@ A4947:	rl	c
 	djnz	A493B
 	ld	b,a
 	ret
-;
 A494E:	or	a
 	sbc	hl,de
 	jr	A4947
-;
+
+;	  Subroutine calculate partial sector transfers
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4953:	ld	h,b
 	ld	l,c			; bytes to transfer
 	ld	bc,(YF2F2)		; offset in sector startbyte
@@ -2016,7 +2051,7 @@ A4953:	ld	h,b
 	jr	nc,A4972		; nop, get what you can
 	add	hl,de
 	ex	de,hl
-	ld	hl,00000H
+	ld	hl,0
 A4972:	ld	(YF2F8),de		; bytes to transfer from partial sector
 	ld	c,l
 	ld	b,h			; bytes left after partial sector transfer
@@ -2026,7 +2061,11 @@ A4972:	ld	(YF2F8),de		; bytes to transfer from partial sector
 	ld	(YF2FA),hl		; partial bytes in endsector
 	ld	(YF2FC),bc		; hole sectors of transfer
 	ret
-;
+
+;	  Subroutine get absolute cluster
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4989:	call	XF282
 	ld	l,(iy+01CH)
 	ld	h,(iy+01DH)		; current cluster of file
@@ -2075,7 +2114,11 @@ A49CC:	ex	de,hl
 A49CF:	inc	bc			; BC<>0 (means not found)
 	dec	de
 	ret
-;
+
+;	  Subroutine read datasector
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A49D2:	ld	(YF2E0),a
 	ld	hl,(YF2EC)		; relative cluster
 	ld	a,(YF2DD)		; current relative sector in cluster
@@ -2091,7 +2134,7 @@ A49D2:	ld	(YF2E0),a
 	jr	z,A4A1B			; yep,
 A49F0:	push	de
 	push	ix
-	call	A472D			; write datasector buffer when needed
+	call	A472D			; flush datasector buffer
 	pop	ix
 	pop	de
 	ld	a,(YF2E0)
@@ -2120,7 +2163,11 @@ A4A1B:	ld	a,1
 	add	hl,de
 	pop	de
 	ret
-;
+
+;	  Subroutine do partical sector read if needed
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4A36:	call	XF288
 	ld	hl,(YF2F8)
 	ld	a,h
@@ -2129,7 +2176,11 @@ A4A36:	call	XF288
 	xor	a			; real read
 	call	A49D2			; read datasector
 	jp	XF1D9			; transfer to DOS memory
-;
+
+;	  Subroutine handle partial sector write
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4A46:	call	XF28B
 	ld	hl,(YF2F8)
 	ld	a,h
@@ -2149,7 +2200,11 @@ A4A46:	call	XF28B
 	ld	a,1
 	ld	(YF242),a		; flag datasector changed
 	ret
-;
+
+;	  Subroutine last partial sector ?
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4A6B:	ld	hl,0
 	ld	(YF2F2),hl
 	ld	hl,(YF2FA)
@@ -2158,6 +2213,10 @@ A4A6B:	ld	hl,0
 	or	l
 	scf
 	ret	z
+
+;	  Subroutine to next sector (only when partical read was done)
+;	     Inputs  
+;	     Outputs ________________________ 
 
 A4A7B:	ld	a,(YF2DF)
 	or	a			; flag do not increase
@@ -2180,7 +2239,9 @@ A4AA2:	inc	a
 	ld	(YF2DD),a
 	or	a
 	ret
-;
+
+; finish CON read
+
 A4AA8:	ld	a,(hl)
 	ldi
 	cp	00DH
@@ -2192,6 +2253,9 @@ A4AB1:	cp	00AH
 	or	c
 	jr	nz,A4AA8
 A4AB9:	ld	(YF300),hl
+
+; finish read record for dos devices
+
 A4ABC:	ld	(YF2E2),de		; update current transferadres
 	jp	nz,A4BE2
 	res	6,(iy+018H)
@@ -2242,18 +2306,18 @@ A4AF2:	ld	hl,(YF300)
 ; ld hl,00080H
 ;
 
-A4AF9:	ld	hl,0007FH
-	ld	a,(KBUF+186)
+A4AF9:	ld	hl,127
+	ld	a,(YCONBF+0)
 	cp	l
 	jr	z,A4B05
-	ld	(KBUF+186),hl
+	ld	(YCONBF+0),hl
 A4B05:	push	bc
 	push	de
-	ld	de,KBUF+186
+	ld	de,YCONBF
 	call	A50E0			; BDOS 0A (buffered console input)
 	pop	de
 	pop	bc
-	ld	hl,KBUF+186+2
+	ld	hl,YCONBF+2
 	ld	a,(hl)
 	cp	01AH
 	jr	nz,A4AA8
@@ -2467,7 +2531,7 @@ A4C87:	ld	c,e
 	ld	a,b
 	or	c			; found ?
 	jp	z,A4D41			; yep,
-	call	A4F12			; allocate chain
+	call	A4F12			; allocate cluster chain
 	jp	nc,A4D41		; ok, go writing
 
 A4C97:	call	XF297
@@ -2548,7 +2612,7 @@ A4D05:	call	XF29A
 	push	bc
 	ld	c,e
 	ld	b,d			; clusters to allocate
-	call	A4F12			; allocate chain
+	call	A4F12			; allocate cluster chain
 	pop	bc
 	jp	c,A4C97			; failed, quit with nothing done
 	ld	de,(YF2EA)
@@ -2658,7 +2722,7 @@ A4E03:	call	A4989			; get absolute cluster
 	ld	a,b
 	or	c			; found ?
 	jr	z,A4E26			; yep, this means chain must be shortend
-	call	A4F12			; allocate chain
+	call	A4F12			; allocate cluster chain
 	jp	c,A4C97			; failed, quit with nothing done
 A4E10:	ld	bc,0
 	ld	(YF2E8),bc		; number of records = 0
@@ -2678,7 +2742,7 @@ A4E2C:	dec	de
 ; ld a,0FFH
 ;
 
-	ld	a,001H
+	ld	a,1
 	ld	(de),a			; flag FAT buffer changed
 	jr	A4E10
 ;
@@ -2690,9 +2754,13 @@ A4E32:	ld	l,(iy+01AH)
 	xor	a
 	ld	(iy+01AH),a
 	ld	(iy+01BH),a		; file has no start cluster (empty file)
-	call	A4F9B			; release chain
-	jr	A4E2C
-;
+	call	A4F9B			; release cluster chain
+	jr	A4E2C			; mark FAT buffer changed
+
+;	  Subroutine calculate sequencial sectors
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4E48:	call	XF2A0
 	ld	d,a
 	push	hl
@@ -2777,7 +2845,7 @@ A4ECA:	add	a,b
 	ld	c,000H
 	jr	A4E78
 
-;	  Subroutine get decoded characterpair (not needed)
+;	  Subroutine get decoded characterpair (not needed, uses for secret message)
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -2788,7 +2856,9 @@ A4ED2:	call	A41FA
 	and	03FH			; first char in A
 	ret
 
-; clusternumber to sectornumber
+;	  Subroutine get sectornumber of cluster
+;	     Inputs  HL = cluster, A = relative sector in cluster
+;	     Outputs HL = sectornumber
 
 A4EDB:	call	XF2A3
 	push	bc
@@ -2807,21 +2877,27 @@ A4EED:	or	l
 	add	hl,bc			; + first datasector
 	pop	bc
 	ret
-;
+
+;	  Subroutine get recordnumber from S2,EX and CR fields
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4EF8:	push	de
 	pop	iy
 	ld	c,(iy+020H)		; CR (current record)
 	ld	b,(iy+00CH)		; EX (extent)
 	ld	e,(iy+00EH)		; S2
-	ld	d,000H
+	ld	d,0
 	sla	c
 	srl	e
 	rr	b
 	rr	c			; debc = recordnumber
-	ld	hl,00001H		; 1 record
+	ld	hl,1			; 1 record
 	ret
 
-; allocate chain
+;	  Subroutine allocate cluster chain
+;	     Inputs  
+;	     Outputs ________________________ 
 
 A4F12:	call	XF2A6
 	ld	e,(ix+013H)
@@ -2871,7 +2947,11 @@ A4F56:	dec	de
 	call	A4F5E			; try to allocate
 	ex	de,hl			; nop not free !
 	jr	A4F31			; try again
-;
+
+;	  Subroutine allocate cluster if free
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4F5E:	push	hl
 	push	de
 	call	A41F4			; cluster free ?
@@ -2913,9 +2993,16 @@ A4F94:	ex	de,hl
 	ex	de,hl
 	ret
 
-; release FAT chain
+;	  Subroutine release cluster chain
+;	     Inputs  
+;	     Outputs ________________________ 
 
-A4F9B:	ld	bc,00000H
+A4F9B:	ld	bc,0
+
+;	  Subroutine set cluster entry and release rest of cluster chain
+;	     Inputs  
+;	     Outputs ________________________ 
+
 A4F9E:	call	XF2A9
 	push	hl
 	call	A41F4			; get FAT entry content
@@ -2954,7 +3041,7 @@ A4FC4:	ld	(YF30B),a
 	jr	nz,A4FDC
 	ld	(hl),0E5H
 A4FDC:	ld	bc,00020H
-	call	XF1D9			; transfer direntry to DOS memory
+	call	XF1D9			; transfer direntry to DOS memory (?? LDIR is also sufficient)
 	call	A4439			; get max record and extent
 	ld	a,(YF30C)
 	cp	b			; orginal FCB EX byte same as max extent ?
@@ -2976,7 +3063,7 @@ A4FEF:	ld	hl,(YF23D)		; transferadres
 	ret
 ;
 A5000:	ld	a,0FFH
-	ld	(YF30B),a
+	ld	(YF30B),a		; search for next invalid
 	ret
 
 ;	  Subroutine BDOS 12 (search for next)
@@ -2999,7 +3086,7 @@ A5006:	call	A440E			; validate FCB drive and filename
 
 A501E:	call	A42A5			; validate FCB, clear S2 and find direntry
 	ld	a,0FFH
-	ret	c
+	ret	c			; error, quit
 	push	de
 	pop	ix
 	ld	a,(iy+01CH)
@@ -3009,19 +3096,19 @@ A501E:	call	A42A5			; validate FCB, clear S2 and find direntry
 	add	a,a
 	rl	c
 	rl	b
-	rl	e
-	or	a
+	rl	e			; convert filesize to random record
+	or	a			; filesize a multiply of 128 ?
 	jr	z,A5043
 	inc	bc
 	ld	a,b
 	or	c
 	jr	nz,A5043
-	inc	e
+	inc	e			; nope, increase random record
 A5043:	ld	(ix+021H),c
 	ld	(ix+022H),b
-	ld	(ix+023H),e
+	ld	(ix+023H),e		; set R2,R1 and R0
 	xor	a
-	ret
+	ret				; quit without error
 
 ;	  Subroutine BDOS 18 (return bitmap of logged-in drives)
 ;	     Inputs  
@@ -3032,7 +3119,7 @@ A504E:	ld	a,(YF347)
 	xor	a
 A5053:	scf
 	rla
-	djnz	A5053
+	djnz	A5053			; all drives all online
 	ret
 
 ;	  Subroutine BDOS 1A (set DMA address)
@@ -3042,7 +3129,7 @@ A5053:	scf
 A5058:	ld	(YF23D),de		; set transferadres
 	ret
 
-;	  Subroutine BDOS 1B
+;	  Subroutine BDOS 1B (MSXDOS get allocation)
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -3051,15 +3138,15 @@ A505D:	xor	a
 	ld	a,e
 	call	A4427			; validate fcb driveid
 	ld	a,0FFH
-	ret	c
+	ret	c			; error, quit
 	call	A44DB			; get latest FAT
 	ld	e,(ix+013H)
 	ld	d,(ix+014H)
 	push	de
 	pop	iy			; pointer to FAT buffer of drive
-	ld	hl,2
+	ld	hl,2			; start at clusterentry 2
 	ld	b,h
-	ld	c,h
+	ld	c,h			; free cluster = 0
 	ld	e,(ix+00EH)
 	ld	d,(ix+00FH)
 	dec	de			; number of clusters on disk
@@ -3070,15 +3157,15 @@ A5081:	push	de
 	pop	hl
 	pop	de
 	jr	nz,A508B
-	inc	bc
+	inc	bc			; free clusters + 1
 A508B:	inc	hl
 	dec	de
 	ld	a,e
 	or	d
-	jr	nz,A5081
+	jr	nz,A5081		; next cluster
 	ld	h,b
-	ld	l,c
-	pop	de
+	ld	l,c			; number of free clusters
+	pop	de			; number of clusters
 	ld	a,(ix+006H)
 	inc	a			; number of sectors per cluster
 	ld	c,(ix+002H)
@@ -3093,7 +3180,7 @@ A509F:	ld	hl,00080H
 	ld	(YF23D),hl		; default transferadres
 	xor	a
 	ld	(YF247),a		; default driveid 0 (A:)
-	call	A472D			; write datasector buffer when needed
+	call	A472D			; flush datasector buffer
 	ld	hl,YF355
 	ld	a,(YF347)		; all drives
 A50B2:	ld	e,(hl)
@@ -3104,7 +3191,7 @@ A50B2:	ld	e,(hl)
 	push	af
 	push	de
 	pop	ix
-	call	A45C4			; write FAT buffer when needed
+	call	A45C4			; flush FAT buffer
 	pop	af
 	pop	hl
 	dec	a
@@ -3156,7 +3243,7 @@ A50E0:	push	de
 	ld	d,a
 	ld	e,(hl)			; length of line already in buffer
 	inc	hl
-	ld	ix,KBUF+58
+	ld	ix,YCONTP
 	ld	a,e
 	cp	c			; is lengthbyte valid ?
 
@@ -3207,8 +3294,8 @@ A511E:	call	A544E			; BDOS 8 (direct input)
 	inc	a
 	cp	c
 	jr	nc,A515E		; beep
-	ld	a,001H
-	ld	(ix+000H),a
+	ld	a,1
+	ld	(ix+0),a
 	inc	ix
 	inc	b
 	call	A535D
@@ -3222,7 +3309,7 @@ A513B:	push	af
 	cp	c
 	jr	nc,A515E		; beep
 	pop	af
-	ld	(ix+000H),a
+	ld	(ix+0),a
 	inc	ix
 	inc	b
 	call	A535D
@@ -3287,7 +3374,7 @@ A518E:	call	A53A8			; console output
 	ld	b,a
 	or	c
 	jr	z,A51A3
-	ld	hl,KBUF+58
+	ld	hl,YCONTP
 	ldir
 A51A3:	pop	af
 	jr	z,A51A9
@@ -3354,7 +3441,7 @@ A51FB:	push	hl
 	inc	b
 	dec	b
 	jr	z,A521A
-	ld	hl,KBUF+58
+	ld	hl,YCONTP
 A5208:	ld	a,(hl)
 	inc	hl
 	cp	001H
@@ -3764,7 +3851,7 @@ A5454:	ld	a,e
 	xor	a
 	ret
 
-;	  Subroutine BDOS 07
+;	  Subroutine BDOS 07 (MSXDOS direct input)
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -3857,7 +3944,7 @@ A54C0:	call	A4179			; get date and time
 	ld	c,l
 	ld	b,h
 	ld	de,4*365+1
-	call	A492F
+	call	A492F			; divide
 	ld	a,c
 	add	a,a
 	add	a,a
@@ -3913,7 +4000,7 @@ A5530:	ld	(YF22B+1),a
 ;
 T5534:	defb	200,166,200,165,200,165,200,165
 
-;	  Subroutine BDOS 2A (get date)
+;	  Subroutine BDOS 2A (MSXDOS get date)
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -3966,7 +4053,7 @@ A5588:	ld	bc,(YF24C)		; days since 1-1-1980
 	ld	de,7
 	inc	bc
 	inc	bc
-	call	A492F
+	call	A492F			; divide
 	ld	a,l
 	ld	(YF24E),a
 	xor	a
@@ -4011,7 +4098,7 @@ A55D2:	dec	a
 	add	hl,bc
 	jr	A55D2
 
-;	  Subroutine BDOS 2C (get time)
+;	  Subroutine BDOS 2C (MSXDOS get time)
 ;	     Inputs  
 ;	     Outputs ________________________ 
 
@@ -4423,7 +4510,7 @@ A58A8:	call	A622D			; hook H.LOPD when H.CLEA is hooked (for register system bot
 	ld	(YF246),a		; invalid directorysector buffer
 	ld	(YF24C+1),a		; days since 1-1-1980 is 65280 (0FF00H) (somewhere in the year 2158), this is inpossible, so when no clockchip this is updated!
 	ld	a,00DH
-	ld	(KBUF+316),a		; ???
+	ld	(YCONBF+130),a		; ?? end marker con buffer
 	ld	a,7
 	ld	(YF345),a		; max number of FCB´s is 7
 	ld	hl,1461
