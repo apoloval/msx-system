@@ -11,37 +11,31 @@ I$3001	EQU	3001H	; ----I
 I.3020	EQU	3020H	; ----I
 D$3048	EQU	3048H	; --S--
 I$3180	EQU	3180H	; ----I
-I.3280	EQU	3280H	; ----I
-D$3282	EQU	3282H	; --S--
-D$3283	EQU	3283H	; --S--
-D.3284	EQU	3284H	; --SL-
+I.3280	EQU	3280H	; registers 1st Y8950
 D$32A0	EQU	32A0H	; --S--
 D.32A2	EQU	32A2H	; ---L-
 D.32A4	EQU	32A4H	; --SL-
-I.32C0	EQU	32C0H	; ----I
+I.32C0	EQU	32C0H	; registers 2nd Y8950
 D$32E0	EQU	32E0H	; --S--
 D$32E2	EQU	32E2H	; ---L-
 D.32E4	EQU	32E4H	; --SL-
-J.3300	EQU	3300H	; J---I
-C$3308	EQU	3308H	; -C---
-C$3310	EQU	3310H	; -C---
-C$3318	EQU	3318H	; -C---
-I$3340	EQU	3340H	; ----I
-D$3341	EQU	3341H	; --S--
-I$3344	EQU	3344H	; ----I
-D$3345	EQU	3345H	; --S--
-I$3348	EQU	3348H	; ----I
-I.3350	EQU	3350H	; ----I
-D$3351	EQU	3351H	; --S--
-I.3354	EQU	3354H	; ----I
-D$3355	EQU	3355H	; --S--
-D.3360	EQU	3360H	; ---LI
-D$3362	EQU	3362H	; ---L-
-D$3364	EQU	3364H	; ---L-
-D$3366	EQU	3366H	; ---L-
-D$3370	EQU	3370H	; ---L-
-D$3372	EQU	3372H	; ---L-
-D$3374	EQU	3374H	; ---L-
+J.3300	EQU	3300H	; interrupt handler
+C$3308	EQU	3308H	; ? handler
+C$3310	EQU	3310H	; ? handler
+C$3318	EQU	3318H	; ? handler
+I$3340	EQU	3340H	; TIMER-1 int
+I$3344	EQU	3344H	; TIMER-2 int
+I$3348	EQU	3348H	; VDP int
+I$334C	EQU	334CH	; user int
+I$3350	EQU	3350H	; EOS int
+I$3354	EQU	3354H	; EOS int 2nd Y8950
+D.3360	EQU	3360H	; pointer to TIMER-2 int block
+D$3362	EQU	3362H	; pointer to TIMER-1 int block
+D$3364	EQU	3364H	; pointer to VDP int block
+D$3366	EQU	3366H	; pointer to user int block
+D$3370	EQU	3370H	; AST MK
+D$3372	EQU	3372H	; AST ADPCM 1st Y8950
+D$3374	EQU	3374H	; AST ADPCM 2nd Y8950
 D.3380	EQU	3380H	; --SL-
 D.3382	EQU	3382H	; --SL-
 D$3384	EQU	3384H	; --S--
@@ -109,20 +103,17 @@ D$34A3	EQU	34A3H	; --S--
 D.34A4	EQU	34A4H	; --SL-
 D.34A5	EQU	34A5H	; --SL-
 D.34A6	EQU	34A6H	; --SL-
-C.34A8	EQU	34A8H	; JC--I
-D$34A9	EQU	34A9H	; --S--
-C$34AB	EQU	34ABH	; -C---
-D$34AC	EQU	34ACH	; --S--
-D$34AE	EQU	34AEH	; --S--
-D$34AF	EQU	34AFH	; --S--
-D$34B2	EQU	34B2H	; --S--
+C.34A8	EQU	34A8H	; write VDP cmd
+C$34AB	EQU	34ABH	; read VDP status
+C$34AE	EQU	34AEH	; write VDP data
+C$34B1	EQU	34B1H	; read VDP data
 I.3500	EQU	3500H	; ----I
 I.3600	EQU	3600H	; ----I
 I$3700	EQU	3700H	; ----I
 C$3A5A	EQU	3A5AH	; -C---
-D$3B0C	EQU	3B0CH	; ---L-
-D$3B0D	EQU	3B0DH	; ---L-
-D.3B0E	EQU	3B0EH	; ---L-
+D$3B0C	EQU	3B0CH	; VDP dataregister read
+D$3B0D	EQU	3B0DH	; VDP dataregister write
+D.3B0E	EQU	3B0EH	; slotid MSX-AUDIO
 D$3C00	EQU	3C00H	; --S--
 D$3CFF	EQU	3CFFH	; --S--
 I$3E80	EQU	3E80H	; ----I
@@ -209,100 +200,84 @@ I$FF1F	EQU	0FF1FH	; ----I
 I.FF3F	EQU	0FF3FH	; ----I
 I$FF81	EQU	0FF81H	; ----I
 D.FFFF	EQU	0FFFFH	; --SLI
-;
+
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 	JP	J.04A2
-I.0001	EQU	$-2
-;
-;	-----------------
-?.0003:	DEFB	0
-I$0004:	DEFB	0,0
-CPMADR:	DEFB	0,0
-;
+
+	DEFS	0008H-$,0
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.0008:	JP	J.03F5
-I$0009	EQU	$-2
-C.000A	EQU	$-1
-;
-;	-----------------
-?.000B:	NOP	
-;
+
+	JP	J.03F5
+
+	DEFS	000CH-$,0
+
+;	  Subroutine RDSLT
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+	JP	C.0218
+
+	DEFS	0010H-$,0
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.000C:	JP	C.0218
-C.000E	EQU	$-1
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+	JP	J.0401
+
+	DEFS	0014H-$,0
+
+;	  Subroutine WRSLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.000F:	NOP	
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-C.0010:	JP	J.0401
-;
-;	-----------------
-?.0013:	NOP	
+
 	JP	C.0233
-;
-;	-----------------
-?.0017:	NOP	
-;
-;	  Subroutine __________________________
+
+	DEFS	0018H-$,0
+
+;	  Subroutine write Y8950 register (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.0018:	JP	C.0753
-I$001A	EQU	$-1
-;
-;	-----------------
-?.001B:	NOP	
+
+	JP	C.0753
+
+	DEFS	001CH-$,0
+
+;	  Subroutine CALSLT
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 	JP	C.0273
-;
-;	-----------------
-?.001F:	NOP	
-;
-;	  Subroutine __________________________
+
+	DEFS	0020H-$,0
+
+;	  Subroutine write Y8950 register
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.0020:	JP	C.0758
-;
-;	-----------------
-?.0023:	NOP	
-	JP	C.031E
-;
-;	-----------------
-?.0027:	DEFB	0
-C$0028:	DEFB	0,0,0,0,0,0,0,0
-;
-;	  Subroutine __________________________
+
+	JP	C.0758
+
+	DEFS	0030H-$,0
+
+;	  Subroutine CALLF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.0030:	JP	J$0261
-;
-;	-----------------
-?.0033:	NOP	
-	JP	C.01C7
-I$0036	EQU	$-1
-;
-;	-----------------
-?.0037:	NOP	
-;
-;	  Subroutine __________________________
+
+	DEFS	0038H-$,0
+
+;	  Subroutine KEYINT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.0038:	JP	J.3300
 ;
 ;	-----------------
@@ -318,226 +293,79 @@ I.007F:	DEFB	0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-DBUF:	LD	B,C
-	LD	D,L
-	LD	B,H
-	LD	C,C
-	LD	C,A
+I.0080:	DEFB	"AUDIO"
+
 	DEFB	0,0,0,0,0,0,0,0,0,0,0
-	JP	J$0593
-;
-;	-----------------
-?.0093:	JP	J.03F5
-;
-;	-----------------
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-C.0096:	JP	J.0401
-;
-;	-----------------
-?.0099:	JP	C.0753
-;
-;	-----------------
-?.009C:	JP	C.0758
-;
-;	-----------------
-?.009F:	JP	J$07B4
-;
-;	-----------------
-?.00A2:	JP	C.07B9
-;
-;	-----------------
-?.00A5:	JP	C.07CE
-;
-;	-----------------
-?.00A8:	JP	C.07D1
-;
-;	-----------------
-?.00AB:	JP	J$0459
-;
-;	-----------------
-?.00AE:	JP	J.04A2
-;
-;	-----------------
-?.00B1:	JP	J$056E
-;
-;	-----------------
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-C$00B4:	JP	J$0397
-;
-;	-----------------
-I$00B7:	JP	J$0550
-;
-;	-----------------
+
+?.0090:	JP	J$0593		; initialize
+?.0093:	JP	J.03F5		; ?? di
+C.0096:	JP	J.0401		; ?? ei
+?.0099:	JP	C.0753		; write Y8950 register (EI)
+?.009C:	JP	C.0758		; write Y8950 register
+?.009F:	JP	J$07B4		; read Y8950 register (EI)
+?.00A2:	JP	C.07B9		; read Y8950 register
+?.00A5:	JP	C.07CE		; read Y8950 status (EI)
+?.00A8:	JP	C.07D1		; read Y8950 status
+?.00AB:	JP	J$0459		; ?? setup
+?.00AE:	JP	J.04A2		; ?? real
+?.00B1:	JP	J$056E		; ?? mk
+C$00B4:	JP	J$0397		; ?? irq
+I$00B7:	JP	J$0550		; TIMER-2 interrupt
 ?.00BA:	RET	
-;
-;	-----------------
-?.00BB:	RET	
-;
-;	-----------------
-?.00BC:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00BD:	RET	
-;
-;	-----------------
-?.00BE:	RET	
-;
-;	-----------------
-?.00BF:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00C0:	RET	
-;
-;	-----------------
-?.00C1:	RET	
-;
-;	-----------------
-?.00C2:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00C3:	RET	
-;
-;	-----------------
-?.00C4:	RET	
-;
-;	-----------------
-?.00C5:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00C6:	RET	
-;
-;	-----------------
-?.00C7:	RET	
-;
-;	-----------------
-?.00C8:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00C9:	RET	
-;
-;	-----------------
-?.00CA:	RET	
-;
-;	-----------------
-?.00CB:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00CC:	RET	
-;
-;	-----------------
-?.00CD:	RET	
-;
-;	-----------------
-?.00CE:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00CF:	RET	
-;
-;	-----------------
-?.00D0:	RET	
-;
-;	-----------------
-?.00D1:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00D2:	RET	
-;
-;	-----------------
-?.00D3:	RET	
-;
-;	-----------------
-?.00D4:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00D5:	RET	
-;
-;	-----------------
-?.00D6:	RET	
-;
-;	-----------------
-?.00D7:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00D8:	RET	
-;
-;	-----------------
-?.00D9:	RET	
-;
-;	-----------------
-?.00DA:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00DB:	RET	
-;
-;	-----------------
-?.00DC:	RET	
-;
-;	-----------------
-?.00DD:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00DE:	RET	
-;
-;	-----------------
-?.00DF:	RET	
-;
-;	-----------------
-?.00E0:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 I$00E1:	RET	
-;
-;	-----------------
-?.00E2:	RET	
-;
-;	-----------------
-?.00E3:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00E4:	RET	
-;
-;	-----------------
-?.00E5:	RET	
-;
-;	-----------------
-?.00E6:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00E7:	RET	
-;
-;	-----------------
-?.00E8:	RET	
-;
-;	-----------------
-?.00E9:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00EA:	RET	
-;
-;	-----------------
-?.00EB:	RET	
-;
-;	-----------------
-?.00EC:	RET	
-;
-;	-----------------
+	RET	
+	RET	
 ?.00ED:	RET	
-;
-;	-----------------
-?.00EE:	RET	
-;
-;	-----------------
-?.00EF:	RET	
-;
-;	-----------------
+	RET	
+	RET	
+
 ?.00F0:	DEFB	0,0,0,0
 J$00F4:	DEFB	0,0,0,0,0,0,0,0,0,0,0,0
 I.0100:	DEFB	0
@@ -606,7 +434,7 @@ J$01DA:	LD	A,D
 	LD	L,A
 	BIT	7,(HL)
 	POP	HL
-	 CALL	NZ,C$01EC
+	CALL	NZ,C$01EC
 ;
 	LD	A,D
 	RET	
@@ -659,7 +487,7 @@ J$0210:	LD	A,E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.0218:	 CALL	C.033E
+C.0218:	CALL	C.033E
 ;
 	JP	M,J$0228
 ;
@@ -667,18 +495,18 @@ C.0218:	 CALL	C.033E
 	LD	D,A
 	AND	C
 	OR	B
-	 CALL	C$F380
+	CALL	C$F380
 ;
 	LD	A,E
 	RET	
 ;
 ;	-----------------
 J$0228:	PUSH	HL
-	 CALL	C.0363
+	CALL	C.0363
 ;
 	EX	(SP),HL
 	PUSH	BC
-	 CALL	C.0218
+	CALL	C.0218
 ;
 	JR	J$024E
 ;
@@ -689,7 +517,7 @@ J$0228:	PUSH	HL
 ;	     Outputs ________________________
 ;
 C.0233:	PUSH	DE
-	 CALL	C.033E
+	CALL	C.033E
 ;
 	JP	M,J$0243
 ;
@@ -703,12 +531,12 @@ C.0233:	PUSH	DE
 ;	-----------------
 J$0243:	EX	(SP),HL
 	PUSH	HL
-	 CALL	C.0363
+	CALL	C.0363
 ;
 	POP	DE
 	EX	(SP),HL
 	PUSH	BC
-	 CALL	C.0233
+	CALL	C.0233
 ;
 J$024E:	POP	BC
 	EX	(SP),HL
@@ -753,7 +581,7 @@ C.0273:	EXX
 	POP	AF
 	PUSH	IX
 	POP	HL
-	 CALL	C.033E
+	CALL	C.033E
 ;
 	JP	M,J$028A
 ;
@@ -780,7 +608,7 @@ J$028A:	PUSH	AF
 	JR	Z,J$02D6
 ;
 J$029D:	POP	AF
-	 CALL	C.0363
+	CALL	C.0363
 ;
 	PUSH	AF
 	POP	IY
@@ -797,7 +625,7 @@ J$029D:	POP	AF
 	PUSH	HL
 	EX	AF,AF'
 	EXX	
-	 CALL	C.0273
+	CALL	C.0273
 ;
 	EXX	
 	EX	AF,AF'
@@ -826,12 +654,12 @@ J$02D3:	EX	AF,AF'
 ;
 ;	-----------------
 J$02D6:	LD	H,40H	; "@"
-	 CALL	C.01C7
+	CALL	C.01C7
 ;
 	PUSH	AF
 	LD	A,(D.3B0E)
 	LD	H,40H	; "@"
-	 CALL	C.031E
+	CALL	C.031E
 ;
 	POP	HL
 	POP	AF
@@ -875,7 +703,7 @@ J$02D6:	LD	H,40H	; "@"
 	PUSH	AF
 	LD	A,H
 	LD	H,40H	; "@"
-	 CALL	C.031E
+	CALL	C.031E
 ;
 	JR	J$02CE
 ;
@@ -885,7 +713,7 @@ J$02D6:	LD	H,40H	; "@"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.031E:	 CALL	C.033E
+C.031E:	CALL	C.033E
 ;
 	JP	M,J$032B
 ;
@@ -897,7 +725,7 @@ C.031E:	 CALL	C.033E
 ;
 ;	-----------------
 J$032B:	PUSH	HL
-	 CALL	C.0363
+	CALL	C.0363
 ;
 	LD	C,A
 	LD	B,00H
@@ -993,73 +821,64 @@ J$037B:	ADD	A,55H	; "U"
 	POP	AF
 	AND	03H	; 3 
 	RET	
-;
-;	-----------------
+
+;	  Subroutine interrupt handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J$0397:	DI	
 	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	LD	B,80H
-	LD	A,04H	; 4 
+	LD	A,4
 	OUT	(0C0H),A
 	LD	C,0C1H
-	IN	A,(0C0H)
-	OUT	(C),B
+	IN	A,(0C0H)		; read status
+	OUT	(C),B			; reset int
 	ADD	A,A
-	ADD	A,A
+	ADD	A,A			; TIMER-1 int ?
 	JR	NC,J$03B0
-;
 	LD	HL,I$3340
-	INC	(HL)
-J$03B0:	ADD	A,A
+	INC	(HL)			; yep, increase count
+J$03B0:	ADD	A,A			; TIMER-2 int ?
 	JR	NC,J$03B7
-;
 	LD	HL,I$3344
-	INC	(HL)
-J$03B7:	ADD	A,A
+	INC	(HL)			; yep, increase count
+J$03B7:	ADD	A,A			; EOS int ?
 	JR	NC,J$03BE
-;
-	LD	HL,I.3350
-	INC	(HL)
+	LD	HL,I$3350
+	INC	(HL)			; yep, increase count
 J$03BE:	LD	A,(D.32E4)
-	AND	02H	; 2 
+	AND	02H
 	JR	NZ,J.03D7
-;
-	LD	A,04H	; 4 
+	LD	A,4
 	OUT	(0C2H),A
 	LD	C,0C3H
-	IN	A,(0C2H)
-	OUT	(C),B
-	AND	10H	; 16 
+	IN	A,(0C2H)		; read status
+	OUT	(C),B			; reset int
+	AND	10H			; EOS int ?
 	JR	Z,J.03D7
-;
-	LD	HL,I.3354
-	INC	(HL)
-J.03D7:	 CALL	C$3308
-;
+	LD	HL,I$3354
+	INC	(HL)			; yep, increase count
+J.03D7:	CALL	C$3308
 	JR	C,J.03E6
-;
-	 CALL	C$34AB
-;
-	ADD	A,A
+	CALL	C$34AB			; read VDP status
+	ADD	A,A			; VDP int ?
 	JR	NC,J.03E6
-;
 	LD	HL,I$3348
-	INC	(HL)
-J.03E6:	 CALL	C$3310
-;
+	INC	(HL)			; yep, increase count
+J.03E6:	CALL	C$3310
 	LD	A,(D.3400)
 	AND	A
-	 CALL	Z,C.041B
-;
+	CALL	Z,C.041B
 	POP	HL
 	POP	DE
 	POP	BC
 	POP	AF
 	RET	
-;
-;	-----------------
+
 J.03F5:	DI	
 	PUSH	AF
 	LD	A,(D.3400)
@@ -1083,7 +902,7 @@ J.0401:	DI
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	 CALL	C.041B
+	CALL	C.041B
 ;
 	POP	HL
 	POP	DE
@@ -1091,45 +910,36 @@ J.0401:	DI
 J.0418:	POP	AF
 	EI	
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.041B:	LD	A,01H	; 1 
+
+C.041B:	LD	A,1
 	LD	(D.3400),A
 J$0420:	DI	
 	XOR	A
-	LD	HL,I.3350
-	OR	(HL)
-	JR	NZ,J.044A
-;
-	LD	HL,I.3354
-	OR	(HL)
-	JR	NZ,J.044A
-;
+	LD	HL,I$3350
+	OR	(HL)			; EOS int ?
+	JR	NZ,J.044A		; yep, start handler
+	LD	HL,I$3354
+	OR	(HL)			; EOS int 2nd Y8950 ?
+	JR	NZ,J.044A		; yep, start handler
 	LD	HL,(D.3360)
-	OR	(HL)
-	JR	NZ,J.044A
-;
+	OR	(HL)			; TIMER-2 int ?
+	JR	NZ,J.044A		; yep, start handler
 	LD	HL,(D$3362)
-	OR	(HL)
-	JR	NZ,J.044A
-;
+	OR	(HL)			; TIMER-1 int ?
+	JR	NZ,J.044A		; yep, start handler
 	LD	HL,(D$3364)
-	OR	(HL)
-	JR	NZ,J.044A
-;
+	OR	(HL)			; VDP int ?
+	JR	NZ,J.044A		; yep, start handler
 	LD	HL,(D$3366)
-	OR	(HL)
-	JR	NZ,J.044A
-;
+	OR	(HL)			; ??
+	JR	NZ,J.044A		; yep, start handler
 	LD	(D.3400),A
-	RET	
-;
-;	-----------------
+	RET
+
 J.044A:	DEC	(HL)
 	LD	C,(HL)
 	INC	HL
@@ -1140,11 +950,9 @@ J.044A:	DEC	(HL)
 	EI	
 	OR	H
 	LD	A,C
-	 CALL	NZ,C.01C1
-;
+	CALL	NZ,C.01C1
 	JR	J$0420
-;
-;	-----------------
+
 J$0459:	DI	
 	LD	HL,D.3402
 	BIT	1,(HL)
@@ -1161,19 +969,19 @@ J$0459:	DI
 	SET	0,(HL)
 	ADD	A,A
 	LD	HL,I$0492
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
 	LD	L,A
 	EI	
-	 CALL	C.01C1
+	CALL	C.01C1
 ;
 	EI	
 	LD	HL,D.3402
 	RES	0,(HL)
-	 CALL	C.0096
+	CALL	C.0096
 ;
 	POP	IY
 	POP	IX
@@ -1199,6 +1007,7 @@ I$0492:	ADD	A,B
 	DEC	B
 	LD	C,(HL)
 	DEC	B
+
 J.04A2:	CP	40H	; "@"
 	RET	NC
 ;
@@ -1211,19 +1020,17 @@ J.04A2:	CP	40H	; "@"
 	INC	(HL)
 	ADD	A,A
 	LD	HL,I$04CE
-	 CALL	C.01C2
-;
+	CALL	C.01C2
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
 	LD	L,A
 	EI	
-	 CALL	C.01C1
-;
+	CALL	C.01C1
 	EI	
 	LD	HL,I.3401
 	DEC	(HL)
-	 CALL	C.0096
+	CALL	C.0096
 ;
 	POP	IY
 	POP	IX
@@ -1305,7 +1112,7 @@ C$0500:	LD	H,C
 	INC	C
 	ADD	A,L
 	INC	C
-	 CALL	M,C$C60C
+	CALL	M,C$C60C
 ;
 	DEC	C
 	LD	D,0DH	; 13 
@@ -1357,8 +1164,12 @@ J$0549:	DEC	B
 	DEC	B
 	XOR	A
 	RET	
-;
-;	-----------------
+
+;	  Subroutine TIMER-2 interrupt handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+
 J$0550:	DI	
 	LD	HL,I.3401
 	INC	(HL)
@@ -1368,13 +1179,13 @@ J$0557	EQU	$-1
 	EI	
 	PUSH	IX
 	PUSH	IY
-	 CALL	C$0C63
+	CALL	C$0C63
 ;
 	POP	IY
 	POP	IX
 	LD	HL,I.3401
 	DEC	(HL)
-	 CALL	C.0096
+	CALL	C.0096
 ;
 	AND	A
 	RET	
@@ -1390,13 +1201,13 @@ J$056E:	DI
 	EI	
 	PUSH	IX
 	PUSH	IY
-	 CALL	C$1E89
+	CALL	C$1E89
 ;
 	POP	IY
 	POP	IX
 	LD	HL,D.3402
 	RES	1,(HL)
-	 CALL	C.0096
+	CALL	C.0096
 ;
 	AND	A
 	RET	
@@ -1410,70 +1221,62 @@ J$0590:	EI
 J$0593:	DI	
 	PUSH	IX
 	PUSH	IY
-	 CALL	C$05CC
-;
+	CALL	C$05CC
 	LD	IX,I.3000
 	LD	IY,I.3280
 	LD	(IY+36),04H	; 4 
-	 CALL	C.0675
-;
+	CALL	C.0675
 	LD	IX,I.3020
 	LD	IY,I.32C0
 	LD	(IY+36),05H	; 5 
-	 CALL	C$0718
-;
+	CALL	C$0718
 	JR	NC,J$05C4
-;
 	LD	(IY+36),07H	; 7 
 	LD	HL,D.3391
 	SET	0,(HL)
-J$05C4:	 CALL	C.0675
-;
+J$05C4:	CALL	C.0675
 	POP	IY
 	POP	IX
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$05CC:	LD	HL,I.3000
-	LD	DE,I$3001
-	LD	BC,I$06FF
-	LD	(HL),00H
-	LDIR	
+	LD	DE,I.3000+1
+	LD	BC,0700H-1
+	LD	(HL),0
+	LDIR				; clear 3000-36FF
 	LD	A,81H
 	LD	(D.3496),A
 	LD	(D.34A5),A
 	LD	HL,I$0641
 	LD	DE,C.34A8
-	LD	BC,C.000C
+	LD	BC,12
 	LDIR	
 	LD	A,(D$3B0C)
-	LD	(D$34B2),A
+	LD	(C$34B1+1),A
 	INC	A
-	LD	(D$34AC),A
+	LD	(C$34AB+1),A
 	LD	A,(D$3B0D)
-	LD	(D$34AF),A
+	LD	(C$34AE+1),A
 	INC	A
-	LD	(D$34A9),A
+	LD	(C.34A8+1),A		; setup VDP routines
 	LD	HL,I$064D
 	LD	DE,J.3300
-	LD	BC,C.0020
-	LDIR	
+	LD	BC,32
+	LDIR				; setup handlers
 	LD	HL,I$066D
 	LD	DE,D.3360
-	LD	BC,C.0008
-I.0612	EQU	$-2
-	LDIR	
+	LD	BC,8
+	LDIR				; setup interrupt control blocks
 	LD	HL,I$00B7
-	LD	(D$3345),HL
+	LD	(I$3344+1),HL		; setup TIMER-2 handler
 	LD	HL,I$24F6
-	LD	(D$3351),HL
+	LD	(I$3350+1),HL		; setup EOS handler
 	LD	HL,I$2503
-	LD	(D$3355),HL
+	LD	(I$3354+1),HL		; setup EOS 2nd Y8950 handler
 	LD	HL,I.1096
 	LD	(D.3380),HL
 	LD	HL,I$1516
@@ -1483,133 +1286,96 @@ I.0612	EQU	$-2
 	LD	HL,I.347B
 	LD	(D.3479),HL
 	RET	
-;
-;	-----------------
+
 I$0641:	OUT	(00H),A
 	RET	
-;
-;	-----------------
+
 ?.0644:	IN	A,(00H)
 	RET	
-;
-;	-----------------
+
 ?.0647:	OUT	(00H),A
 	RET	
-;
-;	-----------------
+
 ?.064A:	IN	A,(00H)
 	RET	
-;
-;	-----------------
-I$064D:	 CALL	C$00B4
-;
+
+I$064D:	CALL	C$00B4
 	EI	
 	RET	
-;
-;	-----------------
-?.0652:	OR	B
-	JP	NZ,J$AFFA
-;
-	RET	
-;
-;	-----------------
-?.0657:	CP	0FH	; 15 
-	JR	Z,J$067A
-;
-	LD	A,B
-	CP	0C9H
-	JR	Z,J$068F
-;
-	OR	A
-	LD	A,C
-	JR	Z,J$0668
-;
-	OR	A
+
+?.0652:	DEFB	0B0H,0C2H,0FAH
+
 	XOR	A
 	RET	
-;
-;	-----------------
-?.0667:	LD	A,B
-J$0668:	ADD	HL,DE
-	OR	90H
-	LD	(IX+68),A
-I$066D	EQU	$-1
-	INC	SP
-	LD	B,B
-	INC	SP
-	LD	C,B
-	INC	SP
-	LD	C,H
-	INC	SP
-;
+
+?.0657:	DEFB	0FEH,00FH,028H,01FH,078H,0FEH
+
+	RET
+
+	DEFB	028H,02FH,0B7H,079H,028H,004H,0B7H
+
+	XOR	A
+	RET	
+
+?.0667:	DEFB	078H,019H,0F6H,090H,0DDH,077H
+
+I$066D:	DEFW	I$3344
+	DEFW	I$3340
+	DEFW	I$3348
+	DEFW	I$334C
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.0675:	LD	A,08H	; 8 
+
+C.0675:	LD	A,08H
 	LD	C,18H
-	RST	20H
-;
+	RST	20H			; write Y8950 I/O CONTROL register
 J$067A:	INC	C
-	 CALL	C.07B9
-;
-	AND	07H	; 7 
-	OR	08H	; 8 
+	CALL	C.07B9			; read Y8950 I/O DATA register
+	AND	07H
+	OR	08H
 	LD	(IY+25),A
-	XOR	08H	; 8 
+	XOR	08H
 	LD	C,19H
-	RST	20H
-;
+	RST	20H			; write Y8950 I/O DATA register
 	XOR	A
-	LD	C,02H	; 2 
-	RST	20H
-;
+	LD	C,02H
+	RST	20H			; write Y8950 TIMER-1 register
 	LD	A,0BFH
-J$068F	EQU	$-1
 	LD	(IY+3),A
 	INC	C
-	RST	20H
-;
-	LD	A,01H	; 1 
-	LD	C,07H	; 7 
-	RST	20H
-;
+	RST	20H			; write Y8950 TIMER-2 register
+	LD	A,01H
+	LD	C,07H
+	RST	20H			; write Y8950 register
 	XOR	A
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	INC	C
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	LD	A,78H	; "x"
 	LD	(IY+4),A
 	LD	C,04H	; 4 
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	LD	A,80H
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	XOR	A
 	LD	(IY+22),A
 	LD	C,16H
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	LD	A,04H	; 4 
 	LD	(IY+23),A
 	INC	C
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	XOR	A
 	LD	C,0BDH
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	DEC	A
 	LD	C,12H	; 18 
-	RST	20H
-;
-	 CALL	C$22FE
-;
+	RST	20H			; write Y8950 register
+	CALL	C$22FE
 	LD	(IY+35),A
-	LD	B,09H	; 9 
+	LD	B,9
 	LD	C,00H
 	LD	DE,C.0040
 	LD	HL,I$070F
@@ -1622,32 +1388,25 @@ J$06CF:	PUSH	BC
 	LD	(IX+29),A
 	XOR	A
 	LD	C,0B0H
-	 CALL	C.077A
-;
+	CALL	C.077A
 	LD	A,20H	; " "
 	LD	C,20H	; " "
-	 CALL	C.077A
-;
-	LD	(IX),A
+	CALL	C.077A
+	LD	(IX+0),A
 	LD	C,23H	; "#"
-	 CALL	C.077A
-;
+	CALL	C.077A
 	LD	(IX+8),A
 	LD	A,0CH	; 12 
 	LD	C,80H
-	 CALL	C.077A
-;
+	CALL	C.077A
 	LD	(IX+3),A
-I$06FF	EQU	$-1
 	LD	C,83H
-	 CALL	C.077A
-;
+	CALL	C.077A
 	LD	(IX+11),A
 	POP	BC
 	ADD	IX,DE
 	INC	C
 	DJNZ	J$06CF
-;
 	RET	
 ;
 ;	-----------------
@@ -1665,29 +1424,25 @@ I$070F:	NOP
 ;
 C$0718:	LD	C,02H	; 2 
 	LD	A,0FCH
-	 CALL	C.0743
+	CALL	C.0743
 ;
 	LD	C,04H	; 4 
 	LD	A,78H	; "x"
-	 CALL	C.0743
+	CALL	C.0743
 ;
 	LD	A,3BH	; ";"
-J$0728:	 CALL	C.0743
+J$0728:	CALL	C.0743
 ;
 	LD	A,80H
-	 CALL	C.0743
-;
-	IN	A,(0C2H)
-	AND	40H	; "@"
-	JR	NZ,J$073F
-;
+	CALL	C.0743
+	IN	A,(0C2H)		; read status
+	AND	40H			; TIMER-1 int ?
+	JR	NZ,J$073F		; yep, quit
 	LD	B,A
 J$0737:	IN	A,(0C2H)
-	AND	40H	; "@"
-	JR	NZ,J$0741
-;
+	AND	40H			; TIMER-1 int ?
+	JR	NZ,J$0741		; yep,
 	DJNZ	J$0737
-;
 J$073F:	SCF	
 	RET	
 ;
@@ -1717,48 +1472,39 @@ C.074B:	AND	A
 ;
 	POP	HL
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine write Y8950 register (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.0753:	 CALL	C.0758
-;
+
+C.0753:	CALL	C.0758			; write Y8950 register
 	EI	
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
+
+;	  Subroutine write Y8950 register
+;	     Inputs  C = register, A = data, IY = 
 ;	     Outputs ________________________
-;
+
 C.0758:	DI	
 	AND	A
 	PUSH	AF
 	LD	A,(IY+36)
 	RRA	
 	JR	C,J$0768
-;
 	LD	A,C
 	OUT	(0C0H),A
 	POP	AF
-	OUT	(0C1H),A
+	OUT	(0C1H),A		; write Y8950 register
 	RET	
-;
-;	-----------------
+
 J$0768:	RRA	
 	JR	C,J$0772
-;
 	LD	A,C
 	OUT	(0C2H),A
 	POP	AF
-	OUT	(0C3H),A
+	OUT	(0C3H),A		; write Y8950 register
 	RET	
-;
-;	-----------------
+
 J$0772:	POP	AF
 	SCF	
 	RET	
@@ -1769,62 +1515,53 @@ J$0772:	POP	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.0775:	 CALL	C.077A
+C.0775:	CALL	C.077A
 ;
 	EI	
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.077A:	DI	
 	SCF	
 	BIT	2,(IX+27)
 	RET	NZ
-;
 	AND	A
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.0782:	PUSH	AF
 	LD	A,C
 	CP	0A0H
 	JR	NC,J.078D
-;
 	ADD	A,(IX+29)
 	JR	J.0790
-;
-;	-----------------
+
 J.078D:	ADD	A,(IX+28)
 J.0790:	BIT	0,(IX+27)
 	JR	NZ,J$079C
-;
 	OUT	(0C0H),A
 	POP	AF
-	OUT	(0C1H),A
-	RET	
-;
-;	-----------------
+	OUT	(0C1H),A		; write Y8950 register
+	RET
+
 J$079C:	OUT	(0C2H),A
 	POP	AF
-	OUT	(0C3H),A
+	OUT	(0C3H),A		; write Y8950 register
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.07A2:	ADD	A,(IX+28)
 	OUT	(0C0H),A
 	LD	A,C
-	OUT	(0C1H),A
+	OUT	(0C1H),A		; write Y8950 register
 	RET	
 ;
 ;	-----------------
@@ -1836,68 +1573,58 @@ C.07A2:	ADD	A,(IX+28)
 C.07AB:	ADD	A,(IX+28)
 	OUT	(0C2H),A
 	LD	A,C
-	OUT	(0C3H),A
+	OUT	(0C3H),A		; write Y8950 register
 	RET	
-;
-;	-----------------
-J$07B4:	 CALL	C.07B9
-;
-	EI	
-	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine read Y8950 register (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
+J$07B4:	CALL	C.07B9			; read Y8950 register
+	EI	
+	RET	
+
+;	  Subroutine read Y8950 register
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 C.07B9:	DI	
 	LD	A,(IY+36)
 	RRA	
 	JR	C,J$07C6
-;
 	LD	A,C
 	OUT	(0C0H),A
-	IN	A,(0C1H)
+	IN	A,(0C1H)		; read register
 	RET	
-;
-;	-----------------
+
 J$07C6:	RRA	
 	RET	C
-;
 	LD	A,C
 	OUT	(0C2H),A
-	IN	A,(0C3H)
+	IN	A,(0C3H)		; read register
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine read Y8950 status (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.07CE:	EI	
 	JR	J$07D2
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine read Y8950 status
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.07D1:	DI	
 J$07D2:	LD	A,(IY+36)
 	RRA	
 	JR	C,J$07DB
-;
-	IN	A,(0C0H)
+	IN	A,(0C0H)		; read status
 	RET	
-;
-;	-----------------
+
 J$07DB:	RRA	
 	RET	C
-;
-	IN	A,(0C2H)
+	IN	A,(0C2H)		; read status
 	RET	
 ;
 ;	-----------------
@@ -1911,19 +1638,16 @@ C$07E0:	LD	IY,I.3280
 	LD	C,63H	; "c"
 	RRA	
 	JR	NC,J$07EC
-;
 	RES	6,C
 J$07EC:	RRA	
 	JR	NC,J$07F1
-;
 	RES	5,C
-J$07F1:	LD	A,(D.3284)
+J$07F1:	LD	A,(I.3280+4)
 	AND	1CH
 	OR	C
-	LD	(D.3284),A
+	LD	(I.3280+4),A
 	LD	C,04H	; 4 
-	RST	18H
-;
+	RST	18H			; write Y8950 register (EI)
 	AND	A
 	RET	
 ;
@@ -1936,11 +1660,9 @@ J$07F1:	LD	A,(D.3284)
 C.07FF:	LD	IY,I.3280
 I$0802	EQU	$-1
 	LD	A,C
-	LD	(D$3282),A
+	LD	(I.3280+2),A
 	LD	C,02H	; 2 
-I$0808	EQU	$-1
-	RST	18H
-;
+	RST	18H			; write Y8950 register (EI)
 	AND	A
 	RET	
 ;
@@ -1948,14 +1670,14 @@ I$0808	EQU	$-1
 ?.080C:	LD	A,C
 	SRL	A
 	LD	HL,I$0823
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	C,(HL)
 	LD	IY,I.3280
 	LD	A,C
-	LD	(D$3283),A
+	LD	(I.3280+3),A
 	LD	C,03H	; 3 
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	AND	A
 	RET	
@@ -2021,7 +1743,7 @@ I$0823:	DEFB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;	-----------------
 ?.086B:	JP	Z,J$CBCA
 ;
-	 CALL	Z,C$CDCD
+	CALL	Z,C$CDCD
 ;
 	ADC	A,0CFH
 	RST	08H
@@ -2034,7 +1756,7 @@ I$0823:	DEFB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	POP	DE
 	JP	NC,J$D3D3
 ;
-	 CALL	NC,C$D5D4
+	CALL	NC,C$D5D4
 ;
 	PUSH	DE
 	SUB	0D6H
@@ -2052,7 +1774,7 @@ I$0823:	DEFB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;
 	IN	A,(0DBH)
 	IN	A,(0DCH)
-	 CALL	C,C$DDDC
+	CALL	C,C$DDDC
 ;
 	DEFB	0DDH		; << Illegal Op Code Byte >>
 	DEFB	0DDH		; << Illegal Op Code Byte >>
@@ -2086,18 +1808,17 @@ C$08A3:	LD	IY,I.3280
 	LD	A,(D.32A2)
 	AND	0E0H
 	LD	C,0BDH
-	RST	18H
-;
+	RST	18H			; write Y8950 register (EI)
 	LD	IY,I.32C0
 	LD	A,(D$32E2)
 	AND	0E0H
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	B,09H	; 9 
 	LD	IX,I.3000
 J$08BF:	PUSH	BC
 	PUSH	IX
-	 CALL	C.0C1F
+	CALL	C.0C1F
 ;
 	POP	IX
 	POP	BC
@@ -2122,7 +1843,7 @@ C.08D1:	LD	A,C
 	OR	C
 	LD	(IY+34),A
 	LD	C,0BDH
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	AND	A
 	RET	
@@ -2150,7 +1871,7 @@ C.08E3:	LD	(IY+32),E
 ;
 	LD	IX,I.3020
 J.0901:	PUSH	BC
-	 CALL	C.0EAB
+	CALL	C.0EAB
 ;
 	POP	BC
 	LD	DE,C.0040
@@ -2168,7 +1889,7 @@ J.090D:	AND	A
 	LD	E,A
 	LD	C,0BDH
 	LD	IY,I.3280
-	 CALL	C$0922
+	CALL	C$0922
 ;
 	LD	IY,I.32C0
 ;
@@ -2179,12 +1900,12 @@ J.090D:	AND	A
 C$0922:	LD	A,(IY+34)
 	LD	B,A
 	AND	E
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,B
 	OR	D
 	LD	(IY+34),A
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	AND	A
 	RET	
@@ -2197,24 +1918,24 @@ C$0922:	LD	A,(IY+34)
 	PUSH	BC
 	LD	BC,I.01C0
 	RRCA	
-	 CALL	C,C.095F
+	CALL	C,C.095F
 ;
 	LD	BC,I.0200
 	RRCA	
-	 CALL	C,C.095B
+	CALL	C,C.095B
 ;
 	RRCA	
-	 CALL	C,C.095F
+	CALL	C,C.095F
 ;
 	LD	BC,I.01C0
 	RRCA	
-	 CALL	C,C.095B
+	CALL	C,C.095B
 ;
 	LD	BC,I.0180
 	RRCA	
-	 CALL	C,C.095F
+	CALL	C,C.095F
 ;
-	 CALL	C,C.095B
+	CALL	C,C.095B
 ;
 	POP	BC
 	OR	A
@@ -2239,13 +1960,13 @@ C.095F:	LD	D,05H	; 5
 J$0961:	PUSH	AF
 	PUSH	IX
 	ADD	IX,BC
-	 CALL	C.0977
+	CALL	C.0977
 ;
 	PUSH	BC
-	LD	BC,C.0020
+	LD	BC,32
 	ADD	IX,BC
 	POP	BC
-	 CALL	C.0977
+	CALL	C.0977
 ;
 	POP	IX
 	POP	AF
@@ -2260,7 +1981,7 @@ J$0961:	PUSH	AF
 C.0977:	PUSH	BC
 	PUSH	DE
 	LD	C,D
-	 CALL	C.0DC6
+	CALL	C.0DC6
 ;
 	POP	DE
 	POP	BC
@@ -2275,7 +1996,7 @@ C.0977:	PUSH	BC
 	AND	3FH	; "?"
 	LD	E,A
 J$098A:	LD	(D.3403),DE
-	LD	HL,I.0001
+	LD	HL,1
 	LD	(D.3405),HL
 	LD	HL,I.3407
 	LD	(D.348C),HL
@@ -2312,11 +2033,11 @@ J$09D0:	LD	A,(IX+27)
 	ADD	IX,DE
 	DJNZ	J$09D0
 ;
-J$09DB:	 CALL	C$08A3
+J$09DB:	CALL	C$08A3
 ;
-	 CALL	C.0AF1
+	CALL	C.0AF1
 ;
-	 CALL	C.193A
+	CALL	C.193A
 ;
 	POP	BC
 	PUSH	BC
@@ -2328,7 +2049,7 @@ J$09DB:	 CALL	C$08A3
 	LD	IX,I.3000
 J$09F2:	PUSH	IX
 	PUSH	BC
-	 CALL	C.0CFC
+	CALL	C.0CFC
 ;
 	POP	BC
 	POP	IX
@@ -2346,7 +2067,7 @@ J$0A02:	POP	BC
 	LD	IX,I.3020
 J$0A10:	PUSH	IX
 	PUSH	BC
-	 CALL	C.0CFC
+	CALL	C.0CFC
 ;
 	POP	BC
 	POP	IX
@@ -2418,25 +2139,25 @@ J$0A7C:	LD	B,0C0H
 	LD	(D.3392),A
 	LD	A,(IX+34)
 	LD	C,0BDH
-	 CALL	C.0753
+	CALL	C.0753			; write Y8950 AM/VIB DEPTH/RHYTHM register
 ;
 	LD	IY,I.3280
 	LD	C,00H
-	 CALL	C.08D1
+	CALL	C.08D1
 ;
 	LD	DE,X.0000
-	 CALL	C.08E3
+	CALL	C.08E3
 ;
 	LD	IY,I.32C0
 	LD	C,00H
-	 CALL	C.08D1
+	CALL	C.08D1
 ;
 	LD	DE,X.0000
-	 CALL	C.08E3
+	CALL	C.08E3
 ;
-	 CALL	C.0AF1
+	CALL	C.0AF1
 ;
-	 CALL	C.193A
+	CALL	C.193A
 ;
 	LD	A,(D.32A2)
 	AND	20H	; " "
@@ -2447,19 +2168,19 @@ J$0A7C:	LD	B,0C0H
 	LD	IX,I$3180
 J$0AD1:	PUSH	IX
 	PUSH	BC
-	 CALL	C.0CFC
+	CALL	C.0CFC
 ;
 	POP	BC
 	POP	IX
-	LD	DE,C.0020
+	LD	DE,32
 	ADD	IX,DE
 	PUSH	IX
 	PUSH	BC
-	 CALL	C.0CFC
+	CALL	C.0CFC
 ;
 	POP	BC
 	POP	IX
-	LD	DE,C.0020
+	LD	DE,32
 	ADD	IX,DE
 	INC	C
 	DJNZ	J$0AD1
@@ -2476,7 +2197,7 @@ C.0AF1:	LD	B,09H	; 9
 	LD	IX,I.3000
 J$0AF7:	PUSH	BC
 	PUSH	IX
-	 CALL	C.0B08
+	CALL	C.0B08
 ;
 	POP	IX
 	POP	BC
@@ -2494,14 +2215,14 @@ J$0AF7:	PUSH	BC
 ;
 C.0B08:	PUSH	IX
 I.0B09	EQU	$-1
-	 CALL	C.0C1F
+	CALL	C.0C1F
 ;
 	POP	IX
-	 CALL	C.0B1C
+	CALL	C.0B1C
 ;
-	LD	DE,C.0020
+	LD	DE,32
 	ADD	IX,DE
-	 CALL	C.0B1C
+	CALL	C.0B1C
 ;
 	AND	A
 	RET	
@@ -2514,23 +2235,23 @@ I.0B09	EQU	$-1
 ;
 C.0B1C:	LD	C,15H
 	LD	E,08H	; 8 
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	LD	C,17H
 	LD	E,00H
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	LD	C,14H	; 20 
 	LD	E,00H
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	LD	C,18H
 	LD	DE,D.4000
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	LD	C,12H	; 18 
 	LD	DE,X.0000
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	LD	C,00H
 	JP	C.0CFC
@@ -2541,18 +2262,18 @@ C.0B1C:	LD	C,15H
 	PUSH	IX
 	LD	IY,I.3280
 	PUSH	DE
-	 CALL	C.0B6D
+	CALL	C.0B6D
 ;
-	LD	DE,C.0020
+	LD	DE,32
 	ADD	IX,DE
 	POP	DE
 	LD	IY,I.32C0
-	 CALL	C.0B6D
+	CALL	C.0B6D
 ;
-	 CALL	C.0EAE
+	CALL	C.0EAE
 ;
 	POP	IX
-	 CALL	C.0EAE
+	CALL	C.0EAE
 ;
 	EI	
 	AND	A
@@ -2579,14 +2300,14 @@ J$0B7D:	LD	B,00H
 	LD	IY,I.3280
 	PUSH	BC
 	PUSH	DE
-	 CALL	C.0BD6
+	CALL	C.0BD6
 ;
-	LD	DE,C.0020
+	LD	DE,32
 	ADD	IX,DE
 	POP	DE
 	POP	BC
 	LD	IY,I.32C0
-	 CALL	C.0BD6
+	CALL	C.0BD6
 ;
 	BIT	2,(IX+27)
 	JR	NZ,J$0BB6
@@ -2595,11 +2316,11 @@ J$0B7D:	LD	B,00H
 	SET	5,(IX+20)
 	LD	C,(IX+20)
 	LD	A,0B0H
-	 CALL	C.07AB
+	CALL	C.07AB
 ;
 	LD	C,(IX+31)
 	LD	A,0A0H
-	 CALL	C.07AB
+	CALL	C.07AB
 ;
 J$0BB6:	POP	IX
 	BIT	2,(IX+27)
@@ -2609,11 +2330,11 @@ J$0BB6:	POP	IX
 	SET	5,(IX+20)
 	LD	C,(IX+20)
 	LD	A,0B0H
-	 CALL	C.07A2
+	CALL	C.07A2
 ;
 	LD	C,(IX+31)
 	LD	A,0A0H
-	 CALL	C.07A2
+	CALL	C.07A2
 ;
 J$0BD3:	EI	
 	AND	A
@@ -2635,16 +2356,16 @@ C.0BD6:	BIT	2,(IX+27)
 	LD	(IX+24),E
 	LD	(IX+25),D
 	DI	
-	 CALL	C.0C50
+	CALL	C.0C50
 ;
 	EI	
-	 CALL	C.0EC6
+	CALL	C.0EC6
 ;
-	 CALL	C.0FAC
+	CALL	C.0FAC
 ;
 	LD	A,(IX+3)
 	LD	C,80H
-	 CALL	C.077A
+	CALL	C.077A
 ;
 	LD	A,(IX+11)
 	LD	C,83H
@@ -2659,11 +2380,11 @@ D$0C00	EQU	$-1
 ;
 C.0C04:	LD	(IX+30),00H
 	DI	
-	 CALL	C.0C17
+	CALL	C.0C17
 ;
-	LD	DE,C.0020
+	LD	DE,32
 	ADD	IX,DE
-	 CALL	C.0C17
+	CALL	C.0C17
 ;
 	EI	
 	AND	A
@@ -2687,11 +2408,11 @@ C.0C17:	BIT	2,(IX+27)
 ;	     Outputs ________________________
 ;
 C.0C1F:	LD	(IX+30),00H
-	 CALL	C.0C31
+	CALL	C.0C31
 ;
-	LD	DE,C.0020
+	LD	DE,32
 	ADD	IX,DE
-	 CALL	C.0C31
+	CALL	C.0C31
 ;
 	EI	
 	AND	A
@@ -2714,11 +2435,11 @@ C.0C31:	BIT	2,(IX+27)
 	LD	C,80H
 	LD	E,(IX+29)
 	DI	
-	 CALL	C.0C5D
+	CALL	C.0C5D
 ;
 	LD	A,D
 	LD	C,83H
-	 CALL	C.0C5D
+	CALL	C.0C5D
 ;
 ;
 ;	  Subroutine __________________________
@@ -2759,7 +2480,7 @@ J$0C69:	LD	A,(IX+30)
 ;
 	PUSH	BC
 	PUSH	IX
-	 CALL	C.0C04
+	CALL	C.0C04
 ;
 	POP	IX
 	POP	BC
@@ -2775,7 +2496,7 @@ J.0C7D:	LD	DE,C.0040
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.0C85:	 CALL	C.074B
+C.0C85:	CALL	C.074B
 ;
 	LD	A,C
 	CP	19H
@@ -2803,10 +2524,10 @@ I$0C92:	IN	A,(0DH)
 	IN	A,(0DH)
 	IN	A,(0DH)
 	IN	A,(0DH)
-	 CALL	NZ,C$DB0C
+	CALL	NZ,C$DB0C
 ;
 	DEC	C
-	 CALL	Z,C$E00C
+	CALL	Z,C$E00C
 ;
 	INC	C
 	IN	A,(0DH)
@@ -2853,7 +2574,7 @@ J$0CF9:	JP	C.0EAB
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.0CFC:	 CALL	C.074B
+C.0CFC:	CALL	C.074B
 ;
 	LD	A,C
 	BIT	7,A
@@ -2877,7 +2598,7 @@ C.0CFC:	 CALL	C.074B
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$0D16:	 CALL	C.074B
+C$0D16:	CALL	C.074B
 ;
 	PUSH	BC
 	POP	IY
@@ -2906,45 +2627,45 @@ J.0D32:	ADD	A,A
 J$0D3D:	LD	E,(IY+8)
 	LD	D,(IY+9)
 	LD	C,10H	; 16 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	BIT	0,(IY+10)
 	LD	E,0FFH
 	LD	C,03H	; 3 
-	 CALL	NZ,C.0DBE
+	CALL	NZ,C.0DBE
 ;
 	LD	E,(IY+16)
 	LD	C,00H
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	E,(IY+24)
 	LD	C,08H	; 8 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	E,(IY+17)
 	LD	C,01H	; 1 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	E,(IY+25)
 	LD	C,09H	; 9 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	E,(IY+18)
 J$0D74	EQU	$-2
 	LD	C,02H	; 2 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	E,(IY+26)
 	LD	C,0AH	; 10 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	E,(IY+19)
 	LD	C,03H	; 3 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	E,(IY+27)
 	LD	C,0BH	; 11 
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	LD	A,(IY+20)
 	AND	0F0H
@@ -2960,7 +2681,7 @@ J$0D74	EQU	$-2
 	LD	(IX+13),A
 	LD	E,(IY+10)
 	LD	C,16H
-	 CALL	C.0DBE
+	CALL	C.0DBE
 ;
 	JP	C.0FAC
 ;
@@ -2971,7 +2692,7 @@ J$0D74	EQU	$-2
 ;	     Outputs ________________________
 ;
 C.0DBE:	PUSH	IY
-	 CALL	C.0DC6
+	CALL	C.0DC6
 ;
 	POP	IY
 	RET	
@@ -2982,7 +2703,7 @@ C.0DBE:	PUSH	IY
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.0DC6:	 CALL	C.074B
+C.0DC6:	CALL	C.074B
 ;
 	LD	A,C
 	CP	19H
@@ -2990,13 +2711,13 @@ C.0DC6:	 CALL	C.074B
 ;
 	LD	HL,I$0DDD
 J$0DD0:	ADD	A,A
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
 	LD	L,A
-	 CALL	C.01C1
+	CALL	C.01C1
 ;
 	AND	A
 	RET	
@@ -3122,7 +2843,7 @@ J.0E80:	JP	C.0FAC
 ?.0E8B:	LD	A,E
 	LD	(IX+22),A
 	LD	C,0C0H
-	 CALL	C.0775
+	CALL	C.0775
 ;
 	BIT	5,A
 	JR	Z,C.0EAB
@@ -3135,14 +2856,14 @@ J.0E80:	JP	C.0FAC
 	JR	Z,J$0EA8
 ;
 	LD	IY,I.32C0
-J$0EA8:	 CALL	C.08D1
+J$0EA8:	CALL	C.08D1
 ;
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.0EAB:	 CALL	C.0EC6
+C.0EAB:	CALL	C.0EC6
 ;
 ;
 ;	  Subroutine __________________________
@@ -3155,7 +2876,7 @@ C.0EAE:	BIT	2,(IX+27)
 	LD	A,(IX+20)
 	LD	C,0B0H
 	DI	
-	 CALL	C$0EC1
+	CALL	C$0EC1
 ;
 	LD	A,(IX+31)
 	LD	C,0A0H
@@ -3233,7 +2954,7 @@ J.0F1B:	ADD	HL,DE
 	ADD	A,H
 	ADD	A,H
 	LD	HL,I$0F88
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	A,B
 	LD	E,(HL)
@@ -3331,13 +3052,13 @@ I$0F88:	NOP
 	LD	D,B
 	DEC	BC
 	XOR	H
-	 CALL	M,C$B60B
+	CALL	M,C$B60B
 ;
 	OR	D
 	INC	C
 	JP	NZ,J$0D74
 ;
-	 CALL	C$0E41
+	CALL	C$0E41
 ;
 	EXX	
 	LD	A,(DE)
@@ -3351,7 +3072,7 @@ C.0FAC	EQU	$-1
 	LD	A,E
 	OR	(IX+4)
 	LD	HL,I.1006
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	A,(HL)
 	ADD	A,(IX+5)
@@ -3370,12 +3091,12 @@ J$0FD0:	LD	C,A
 	LD	(IX+1),A
 	LD	C,40H	; "@"
 	DI	
-	 CALL	C.0782
+	CALL	C.0782
 ;
 	LD	A,E
 	OR	(IX+12)
 	LD	HL,I.1006
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	A,(HL)
 	ADD	A,(IX+13)
@@ -3390,7 +3111,7 @@ J$0FF5:	LD	C,A
 	OR	C
 	LD	(IX+9),A
 	LD	C,43H	; "C"
-	 CALL	C.0782
+	CALL	C.0782
 ;
 	AND	A
 	RET	
@@ -3542,7 +3263,7 @@ J$109F:	NOP
 	LD	DE,C.0030
 	DEFB	0,0
 	LD	DE,I.B200
-	 CALL	P,C.0070
+	CALL	P,C.0070
 ;
 	DEFB	0,0
 	LD	D,B
@@ -3745,7 +3466,7 @@ J$11BF:	NOP
 	DEFB	0,0,0,0,0
 	POP	HL
 	LD	A,(BC)
-	 CALL	M,C$7028
+	CALL	M,C$7028
 ;
 	DEFB	0,0,0
 	LD	H,E
@@ -3853,7 +3574,7 @@ J$122C:	DEFB	0,0
 	INC	BC
 	DEC	BC
 	AND	D
-	 CALL	P,C.0020
+	CALL	P,C.0020
 ;
 	DEFB	0,0
 	ADD	HL,BC
@@ -3875,7 +3596,7 @@ J$122C:	DEFB	0,0
 	DEC	C
 	DEFB	0,0,0,0,0
 	LD	BC,I$A306
-	 CALL	P,C.0040
+	CALL	P,C.0040
 ;
 	DEFB	0,0,0
 	ADD	HL,DE
@@ -3907,7 +3628,7 @@ J$122C:	DEFB	0,0
 	LD	L,B
 	LD	L,(HL)
 	DEFB	0,0
-	 CALL	PE,X.0000
+	CALL	PE,X.0000
 ;
 	DEFB	0,0,0
 	LD	SP,HL
@@ -3956,7 +3677,7 @@ J$12DC	EQU	$-1
 	JR	NZ,J$12DF
 J$12DE	EQU	$-1
 ;
-J$12DF:	 CALL	P,C.000E
+J$12DF:	CALL	P,C.000E
 ;
 	DEFB	0,0,0,0
 	LD	BC,I$AA09
@@ -3988,7 +3709,7 @@ J$12FD	EQU	$-1
 	EXX	
 	LD	DE,I$4004
 	DEFB	0,0,0
-	 CALL	P,C$F080
+	CALL	P,C$F080
 ;
 	EX	AF,AF'
 	LD	D,B
@@ -4034,7 +3755,7 @@ J$133F:	NOP
 	LD	HL,C.0030
 	DEFB	0,0
 	LD	DE,I$F200
-	 CALL	P,DBUF
+	CALL	P,DBUF
 ;
 	DEFB	0,0
 	LD	B,E
@@ -4116,7 +3837,7 @@ J$137D:	JR	NZ,J$1377
 	LD	H,E
 	LD	(HL),L
 	NOP	
-	 CALL	P,C.000E
+	CALL	P,C.000E
 ;
 	DEFB	0,0,0,0
 	LD	BC,I$BA09
@@ -4180,7 +3901,7 @@ J$137D:	JR	NZ,J$1377
 	LD	L,H
 	JR	NZ,J$141F
 ;
-J$141F:	 CALL	P,C.000A
+J$141F:	CALL	P,C.000A
 ;
 	DEFB	0,0,0,0
 	JR	J$1431
@@ -4249,7 +3970,7 @@ J$144F:	NOP
 	LD	(HL),L
 	LD	L,L
 	NOP	
-	 CALL	P,C.000C
+	CALL	P,C.000C
 ;
 	DEFB	0,0,0,0,0
 	RLCA	
@@ -4367,7 +4088,7 @@ J$151F:	NOP
 ;
 	DEFB	0,0,0
 	LD	DE,I.B200
-	 CALL	P,C.0070
+	CALL	P,C.0070
 ;
 	DEFB	0,0
 	LD	B,L
@@ -4384,7 +4105,7 @@ J$151F:	NOP
 	DEFB	0,0
 	LD	DE,I.B200
 J$1550	EQU	$-1
-	 CALL	P,DBUF
+	CALL	P,DBUF
 ;
 	DEFB	0,0
 	LD	D,E
@@ -4474,7 +4195,7 @@ J$159F:	INC	C
 	DEFB	0,0,0
 	INC	BC
 J$15CF:	INC	BC
-	 CALL	NC,C$60F5
+	CALL	NC,C$60F5
 ;
 	DEFB	0,0,0
 	LD	B,E
@@ -4680,7 +4401,7 @@ J$16C8:	HALT
 	LD	H,C
 	LD	L,(HL)
 	NOP	
-	 CALL	P,C.000A
+	CALL	P,C.000A
 ;
 	DEFB	0,0,0,0
 	LD	H,C
@@ -4703,7 +4424,7 @@ J$16F0:	JP	P,J.6003
 	LD	(HL),E
 	LD	(HL),E
 	NOP	
-	 CALL	P,C.000F
+	CALL	P,C.000F
 ;
 	DEFB	0,0,0,0
 	LD	SP,I$B609
@@ -4724,7 +4445,7 @@ J$16F0:	JP	P,J.6003
 	JR	NZ,J$173E
 ;
 	NOP	
-	 CALL	P,C.000A
+	CALL	P,C.000A
 ;
 	DEFB	0,0,0,0
 	LD	H,C
@@ -4761,7 +4482,7 @@ J$173E:	NOP
 	DEFB	0,0,0
 	INC	C
 	INC	BC
-	 CALL	M,C$6015
+	CALL	M,C$6015
 ;
 	DEFB	0,0,0
 	LD	C,L
@@ -4773,7 +4494,7 @@ J$173E:	NOP
 	LD	L,H
 	JR	NZ,J$175F
 ;
-J$175F:	 CALL	P,C.000F
+J$175F:	CALL	P,C.000F
 ;
 	DEFB	0,0,0,0
 	INC	DE
@@ -4830,7 +4551,7 @@ J$179E:	DEFB	0,0
 	LD	(HL),H
 	LD	B,B
 	LD	B,E
-	 CALL	M,DBUF
+	CALL	M,DBUF
 ;
 	DEFB	0,0
 	LD	C,B
@@ -4865,7 +4586,7 @@ J$17D1:	LD	B,60H	; "`"
 	LD	H,L
 	JR	NZ,J$17DF
 ;
-J$17DF:	 CALL	P,C.000C
+J$17DF:	CALL	P,C.000C
 ;
 	DEFB	0,0,0,0
 	JR	NC,J$17E8
@@ -4888,7 +4609,7 @@ J$17F4:	DEFB	0,0
 	LD	H,L
 	LD	D,(HL)
 	NOP	
-	 CALL	P,CPMADR
+	CALL	P,CPMADR
 ;
 	DEFB	0,0,0,0
 	JR	NC,J$1808
@@ -4911,7 +4632,7 @@ J$1814:	DEFB	0,0
 ;
 	JR	NZ,J$181F
 ;
-J$181F:	 CALL	P,C.000F
+J$181F:	CALL	P,C.000F
 ;
 	DEFB	0,0,0,0
 	LD	BC,I$7809
@@ -4989,7 +4710,7 @@ J$186C:	DEFB	0,0
 	INC	H
 	XOR	H
 	DEFB	0,0,0,0,0
-	 CALL	C$A209
+	CALL	C$A209
 ;
 	NOP	
 	ADD	A,B
@@ -5093,7 +4814,7 @@ J$1910:	NOP
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.1916:	LD	HL,I.0001
+C.1916:	LD	HL,1
 	LD	IX,I.3000
 	RET	
 ;
@@ -5146,36 +4867,36 @@ J$1935:	ADD	HL,HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.193A:	 CALL	C.1916
+C.193A:	CALL	C.1916
 ;
-J$193D:	 CALL	C.191E
+J$193D:	CALL	C.191E
 ;
 	JR	Z,J$194B
 ;
 	PUSH	IX
 	PUSH	HL
-	 CALL	C.0B08
+	CALL	C.0B08
 ;
 	POP	HL
 	POP	IX
-J$194B:	 CALL	C.1930
+J$194B:	CALL	C.1930
 ;
 	JR	C,J$193D
 ;
 	LD	C,00H
-	 CALL	C$1C23
+	CALL	C$1C23
 ;
 	LD	DE,X.0000
-	 CALL	C$1C12
+	CALL	C$1C12
 ;
 	XOR	A
 	RET	
 ;
 ;	-----------------
-?.195D:	 CALL	C.1916
+?.195D:	CALL	C.1916
 ;
 	LD	BC,X.0000
-J$1963:	 CALL	C.191E
+J$1963:	CALL	C.191E
 ;
 	JR	Z,J$1979
 ;
@@ -5185,12 +4906,12 @@ J$1963:	 CALL	C.191E
 	LD	HL,I.3407
 	ADD	HL,BC
 	LD	(HL),00H
-	 CALL	C.0C1F
+	CALL	C.0C1F
 ;
 	POP	BC
 	POP	HL
 	POP	IX
-J$1979:	 CALL	C.192F
+J$1979:	CALL	C.192F
 ;
 	JR	C,J$1963
 ;
@@ -5202,10 +4923,10 @@ J$1979:	 CALL	C.192F
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.197F:	 CALL	C.1916
+C.197F:	CALL	C.1916
 ;
 	LD	BC,X.0000
-J$1985:	 CALL	C.191E
+J$1985:	CALL	C.191E
 ;
 	JR	Z,J$199B
 ;
@@ -5215,12 +4936,12 @@ J$1985:	 CALL	C.191E
 	LD	HL,I.3407
 	ADD	HL,BC
 	LD	(HL),00H
-	 CALL	C.0C04
+	CALL	C.0C04
 ;
 	POP	BC
 	POP	HL
 	POP	IX
-J$199B:	 CALL	C.192F
+J$199B:	CALL	C.192F
 ;
 	JR	C,J$1985
 ;
@@ -5237,7 +4958,7 @@ C$19A1:	LD	HL,(D.3403)
 	OR	H
 	RET	Z
 ;
-	LD	HL,I.0001
+	LD	HL,1
 	LD	BC,I.3407
 J$19AD:	LD	A,(D.3403)
 	AND	L
@@ -5282,7 +5003,7 @@ J$19E1:	INC	BC
 	JR	C,J$19EE
 ;
 	LD	BC,I.3407
-	LD	HL,I.0001
+	LD	HL,1
 J$19EE:	LD	A,(D.3405)
 	CP	L
 	JR	NZ,J$19D1
@@ -5302,7 +5023,7 @@ J.19F4:	LD	A,(D.3403)
 	JR	C,J.19F4
 ;
 	LD	BC,I.3407
-	LD	HL,I.0001
+	LD	HL,1
 	JR	J.19F4
 ;
 ;	-----------------
@@ -5314,7 +5035,7 @@ J.1A0F:	PUSH	BC
 	JR	C,J$1A1D
 ;
 	LD	BC,I.3407
-	LD	HL,I.0001
+	LD	HL,1
 J$1A1D:	LD	(D.3405),HL
 	LD	(D.348C),BC
 	POP	BC
@@ -5337,7 +5058,7 @@ J$1A25:	LD	H,B
 	AND	A
 	JP	P,C.0C04
 ;
-	 CALL	C$1A48
+	CALL	C$1A48
 ;
 	JP	J$0B7D
 ;
@@ -5387,9 +5108,9 @@ J$1A6F:	ADD	A,A
 	ADD	A,A
 	ADD	A,H
 J$1A74:	LD	HL,I$1B1F
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
-	LD	DE,I$0009
+	LD	DE,9
 	ADD	HL,DE
 	LD	C,(HL)
 	SBC	HL,DE
@@ -5407,7 +5128,7 @@ J$1A8A:	LD	A,(HL)
 	RET	
 ;
 ;	-----------------
-?.1A93:	 CALL	C.1B0B
+?.1A93:	CALL	C.1B0B
 ;
 	RET	C
 ;
@@ -5415,10 +5136,10 @@ J$1A8A:	LD	A,(HL)
 	LD	(D.3490),DE
 	LD	IY,I.32C0
 	LD	HL,(D.3494)
-	 CALL	C.1AB6
+	CALL	C.1AB6
 ;
 	POP	DE
-	 CALL	C.1B0B
+	CALL	C.1B0B
 ;
 	RET	C
 ;
@@ -5435,7 +5156,7 @@ C.1AB6:	ADD	HL,DE
 	JP	C.08E3
 ;
 ;	-----------------
-?.1ABB:	 CALL	C.1AE0
+?.1ABB:	CALL	C.1AE0
 ;
 	RET	C
 ;
@@ -5443,10 +5164,10 @@ C.1AB6:	ADD	HL,DE
 	LD	(D.3494),DE
 	LD	IY,I.32C0
 	LD	HL,(D.3490)
-	 CALL	C.1AB6
+	CALL	C.1AB6
 ;
 	POP	DE
-	 CALL	C.1AE0
+	CALL	C.1AE0
 ;
 	RET	C
 ;
@@ -5464,7 +5185,7 @@ C.1AB6:	ADD	HL,DE
 C.1AE0:	LD	A,D
 	AND	A
 	PUSH	AF
-	 CALL	M,C$1B03
+	CALL	M,C$1B03
 ;
 	LD	A,D
 	LD	H,E
@@ -5549,7 +5270,7 @@ I$1B1F:	POP	AF
 ;
 	INC	HL
 	AND	12H	; 18 
-	 CALL	NC,C$2C00
+	CALL	NC,C$2C00
 ;
 	XOR	1EH
 	DEC	B
@@ -5580,7 +5301,7 @@ I$1B1F:	POP	AF
 	OR	0AH	; 10 
 	NOP	
 	DEC	B
-	 CALL	PE,C$0500
+	CALL	PE,C$0500
 ;
 	EI	
 	LD	A,(DE)
@@ -5630,7 +5351,7 @@ J$1B7D:	RRCA
 	XOR	00H
 	DEFB	0,0,0,0,0,0,0,0,0,0,0
 	ADD	HL,HL
-	 CALL	C,C.5233
+	CALL	C,C.5233
 ;
 	DEC	B
 	INC	H
@@ -5641,7 +5362,7 @@ J$1B7D:	RRCA
 	LD	D,(HL)
 	LD	A,(BC)
 	ADD	HL,HL
-	 CALL	C,C.5233
+	CALL	C,C.5233
 ;
 	DEC	B
 	INC	H
@@ -5780,9 +5501,9 @@ J$1C3C:	SLA	E
 ;
 	LD	(D.3413),HL
 	EX	DE,HL
-	 CALL	C.1916
+	CALL	C.1916
 ;
-J$1C49:	 CALL	C.191E
+J$1C49:	CALL	C.191E
 ;
 	JR	Z,J$1C77
 ;
@@ -5793,7 +5514,7 @@ J$1C49:	 CALL	C.191E
 	ADD	HL,DE
 I$1C56:	EX	DE,HL
 	LD	C,12H	; 18 
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	POP	DE
 	POP	HL
@@ -5801,18 +5522,18 @@ I$1C56:	EX	DE,HL
 	PUSH	IX
 	PUSH	HL
 	PUSH	DE
-	LD	BC,C.0020
+	LD	BC,32
 	ADD	IX,BC
 	LD	HL,(D.3417)
 	ADD	HL,DE
 	EX	DE,HL
 	LD	C,12H	; 18 
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	POP	DE
 	POP	HL
 	POP	IX
-J$1C77:	 CALL	C.1928
+J$1C77:	CALL	C.1928
 ;
 	JR	C,J$1C49
 ;
@@ -5831,26 +5552,26 @@ J$1C77:	 CALL	C.1928
 ;
 ;	-----------------
 J$1C88:	PUSH	IY
-	 CALL	C.1916
+	CALL	C.1916
 ;
 	BIT	0,(IY+36)
 	JR	Z,J.1C97
 ;
 	LD	IX,I.3020
 J.1C97:	PUSH	DE
-	 CALL	C.191E
+	CALL	C.191E
 ;
 	JR	Z,J$1CA8
 ;
 	PUSH	IX
 	PUSH	HL
 	PUSH	BC
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	POP	BC
 	POP	HL
 	POP	IX
-J$1CA8:	 CALL	C.1930
+J$1CA8:	CALL	C.1930
 ;
 	POP	DE
 	JR	C,J.1C97
@@ -5873,8 +5594,8 @@ J$1CC3:	LD	(D.3417),DE
 J$1CCB:	LD	HL,(D.3413)
 	ADD	HL,DE
 	EX	DE,HL
-	LD	HL,I.0001
-J$1CD3:	 CALL	C.191E
+	LD	HL,1
+J$1CD3:	CALL	C.191E
 ;
 	JR	Z,J$1CE5
 ;
@@ -5882,12 +5603,12 @@ J$1CD3:	 CALL	C.191E
 	PUSH	HL
 	PUSH	DE
 	LD	C,12H	; 18 
-	 CALL	C.0C85
+	CALL	C.0C85
 ;
 	POP	DE
 	POP	HL
 	POP	IX
-J$1CE5:	 CALL	C.1928
+J$1CE5:	CALL	C.1928
 ;
 	JR	C,J$1CD3
 ;
@@ -5896,25 +5617,25 @@ J$1CE5:	 CALL	C.1928
 ;
 ;	-----------------
 ?.1CED:	PUSH	IY
-	 CALL	C.1916
+	CALL	C.1916
 ;
 	BIT	0,(IY+36)
 	JR	Z,J.1CFC
 ;
 	LD	IX,I.3020
-J.1CFC:	 CALL	C.191E
+J.1CFC:	CALL	C.191E
 ;
 	JR	Z,J$1D0C
 ;
 	PUSH	IX
 	PUSH	HL
 	PUSH	BC
-	 CALL	C.0CFC
+	CALL	C.0CFC
 ;
 	POP	BC
 	POP	HL
 	POP	IX
-J$1D0C:	 CALL	C.1930
+J$1D0C:	CALL	C.1930
 ;
 	JR	C,J.1CFC
 ;
@@ -5923,26 +5644,26 @@ J$1D0C:	 CALL	C.1930
 ;
 ;	-----------------
 ?.1D14:	PUSH	IY
-	 CALL	C.1916
+	CALL	C.1916
 ;
 	BIT	0,(IY+36)
 	JR	Z,J.1D23
 ;
 	LD	IX,I.3020
 J.1D23:	PUSH	DE
-	 CALL	C.191E
+	CALL	C.191E
 ;
 	JR	Z,J$1D34
 ;
 	PUSH	IX
 	PUSH	HL
 	PUSH	BC
-	 CALL	C.0DC6
+	CALL	C.0DC6
 ;
 	POP	BC
 	POP	HL
 	POP	IX
-J$1D34:	 CALL	C.1930
+J$1D34:	CALL	C.1930
 ;
 	POP	DE
 	JR	C,J.1D23
@@ -5952,25 +5673,25 @@ J$1D34:	 CALL	C.1930
 ;
 ;	-----------------
 ?.1D3D:	PUSH	IY
-	 CALL	C.1916
+	CALL	C.1916
 ;
 	BIT	0,(IY+36)
 	JR	Z,J.1D4C
 ;
 	LD	IX,I.3020
-J.1D4C:	 CALL	C.191E
+J.1D4C:	CALL	C.191E
 ;
 	JR	Z,J$1D5C
 ;
 	PUSH	IX
 	PUSH	HL
 	PUSH	BC
-	 CALL	C$0D16
+	CALL	C$0D16
 ;
 	POP	BC
 	POP	HL
 	POP	IX
-J$1D5C:	 CALL	C.1930
+J$1D5C:	CALL	C.1930
 ;
 	JR	C,J.1D4C
 ;
@@ -6023,7 +5744,7 @@ I$1D76:	ADD	A,B
 ;
 	LD	DE,D.3497
 J$1D9D:	PUSH	DE
-	 CALL	C$1DA7
+	CALL	C$1DA7
 ;
 	POP	HL
 	LD	E,(HL)
@@ -6058,7 +5779,7 @@ C$1DA7:	DI
 	POP	HL
 J$1DCA:	BIT	3,(HL)
 	RES	3,(HL)
-	 CALL	NZ,C.197F
+	CALL	NZ,C.197F
 ;
 	AND	A
 	RET	
@@ -6081,9 +5802,9 @@ J$1DCA:	BIT	3,(HL)
 	POP	BC
 	PUSH	IY
 	POP	DE
-	 CALL	NZ,C$1E1A
+	CALL	NZ,C$1E1A
 ;
-	 CALL	NC,C$1DF4
+	CALL	NC,C$1DF4
 ;
 	POP	BC
 	RET	
@@ -6158,9 +5879,9 @@ J$1E2E:	CP	(HL)
 	POP	BC
 	PUSH	IY
 	POP	DE
-	 CALL	NZ,C$1E46
+	CALL	NZ,C$1E46
 ;
-	 CALL	C$1E4F
+	CALL	C$1E4F
 ;
 	POP	BC
 	RET	
@@ -6197,7 +5918,7 @@ C$1E4F:	DI
 	JR	NC,J$1E71
 ;
 	PUSH	BC
-	 CALL	C.197F
+	CALL	C.197F
 ;
 	POP	BC
 J$1E71:	LD	A,C
@@ -6207,7 +5928,7 @@ J$1E71:	LD	A,C
 	LD	(HL),B
 	LD	HL,I.341B
 	LD	DE,I$341C
-	LD	BC,I$001A
+	LD	BC,26
 	XOR	A
 	LD	(HL),A
 	LDIR	
@@ -6221,14 +5942,14 @@ J$1E71:	LD	A,C
 ;
 C$1E89:	LD	DE,I.341B
 	LD	IY,I.3280
-	 CALL	C.1F12
+	CALL	C.1F12
 ;
 	LD	A,(D.3391)
 	RRA	
 	JR	C,J$1EA0
 ;
 	LD	IY,I.32C0
-	 CALL	C.1F12
+	CALL	C.1F12
 ;
 J$1EA0:	LD	IX,I.341B
 	LD	D,54H	; "T"
@@ -6244,11 +5965,11 @@ J$1EAB:	LD	A,(IX)
 	PUSH	IX
 	LD	C,A
 	AND	L
-	 CALL	NZ,C.1ED4
+	CALL	NZ,C.1ED4
 ;
 	XOR	C
 	SET	7,D
-	 CALL	NZ,C.1ED4
+	CALL	NZ,C.1ED4
 ;
 	POP	IX
 J$1EC9:	INC	IX
@@ -6271,28 +5992,28 @@ C.1ED4:	PUSH	AF
 	PUSH	DE
 	RLA	
 	RLA	
-	 CALL	C,C.1EFA
+	CALL	C,C.1EFA
 ;
 	DEC	D
 	RLA	
-	 CALL	C,C.1EFA
+	CALL	C,C.1EFA
 ;
 	DEC	D
 	RLA	
-	 CALL	C,C.1EFA
+	CALL	C,C.1EFA
 ;
 	DEC	D
 	RLA	
 	RLA	
-	 CALL	C,C.1EFA
+	CALL	C,C.1EFA
 ;
 	DEC	D
 	RLA	
-	 CALL	C,C.1EFA
+	CALL	C,C.1EFA
 ;
 	DEC	D
 	RLA	
-	 CALL	C,C.1EFA
+	CALL	C,C.1EFA
 ;
 	POP	DE
 	POP	BC
@@ -6311,14 +6032,14 @@ C.1EFA:	PUSH	AF
 	JR	NC,J$1F06
 ;
 	PUSH	DE
-	 CALL	C$19A1
+	CALL	C$19A1
 ;
 	POP	DE
 J$1F06:	PUSH	DE
 	LD	HL,(D$3370)
 	LD	A,L
 	OR	H
-	 CALL	NZ,C.01C1
+	CALL	NZ,C.01C1
 ;
 	POP	DE
 	POP	AF
@@ -6332,26 +6053,22 @@ J$1F06:	PUSH	DE
 ;
 C.1F12:	LD	B,80H
 J$1F14:	LD	A,B
-	LD	C,06H	; 6 
-	 CALL	C.0758
-;
+	LD	C,6
+	CALL	C.0758			; write Y8950 KEYBOARD OUT register
 	JR	J$1F1C
-;
-;	-----------------
+
 J$1F1C:	DEC	C
-	 CALL	C.07B9
-;
+	CALL	C.07B9			; read Y8950 register
 	CPL	
 	LD	H,A
-	AND	77H	; "w"
+	AND	77H
 	LD	(DE),A
 	INC	DE
 	RR	B
 	JP	NZ,J$1F14
-;
 	LD	A,H
 	RRCA	
-	AND	40H	; "@"
+	AND	40H
 	LD	(DE),A
 	INC	DE
 	RET	
@@ -6377,7 +6094,7 @@ C.1F37:	PUSH	BC
 J$1F3A:	PUSH	IX
 	POP	HL
 	LD	DE,D.3438
-	LD	BC,C.0010
+	LD	BC,16
 	PUSH	BC
 	LDIR	
 	POP	BC
@@ -6407,11 +6124,11 @@ C.1F52:	LD	A,(IY+52)
 ;
 	LD	A,3FH	; "?"
 J.1F67:	LD	HL,I$1F85
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	A,(HL)
 	LD	C,12H	; 18 
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	RET	
 ;
@@ -6426,14 +6143,14 @@ J.1F67:	LD	HL,I$1F85
 ;
 C$1F78:	XOR	A
 	LD	C,15H
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,(IY+23)
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	AND	A
 	RET	
@@ -6527,7 +6244,7 @@ J.1FCF:	LD	A,C
 	LD	(IY+25),A
 	XOR	08H	; 8 
 	LD	C,19H
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	RET	
 ;
@@ -6540,9 +6257,7 @@ J.1FCF:	LD	A,C
 C.1FE5:	BIT	1,(IY+36)
 	SCF	
 	RET	NZ
-;
-	 CALL	C.07CE
-;
+	CALL	C.07CE			; read Y8950 status (EI)
 	RRA	
 	RET	C
 ;
@@ -6554,8 +6269,7 @@ C.1FE5:	BIT	1,(IY+36)
 ;
 C.1FF3:	CP	02H	; 2 
 	JR	NC,J$1FFB
-;
-	IN	A,(0C0H)
+	IN	A,(0C0H)		; read status
 	RRA	
 	RET	
 ;
@@ -6570,7 +6284,7 @@ I$2001	EQU	$-2
 	BIT	1,A
 	RET	NZ
 ;
-	IN	A,(0C2H)
+	IN	A,(0C2H)		; read status
 	RRA	
 	RET	
 ;
@@ -6580,7 +6294,7 @@ J$200A:	CP	05H	; 5
 	RET	NZ
 ;
 	DI	
-	 CALL	C$3318
+	CALL	C$3318
 ;
 	EI	
 	RET	
@@ -6591,11 +6305,11 @@ J$200A:	CP	05H	; 5
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.2014:	 CALL	C.1FC5
+C.2014:	CALL	C.1FC5
 ;
-	 CALL	C.1F52
+	CALL	C.1F52
 ;
-	 CALL	C$2025
+	CALL	C$2025
 ;
 	JR	J$2052
 ;
@@ -6605,9 +6319,9 @@ C.2014:	 CALL	C.1FC5
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.201F:	 CALL	C.1FC5
+C.201F:	CALL	C.1FC5
 ;
-	 CALL	C$1F78
+	CALL	C$1F78
 ;
 ;
 ;	  Subroutine __________________________
@@ -6617,7 +6331,7 @@ C.201F:	 CALL	C.1FC5
 C$2025:	LD	BC,I$9E99
 	LD	HL,I$0036
 	LD	DE,(D.343E)
-	 CALL	C.2066
+	CALL	C.2066
 ;
 	DEC	HL
 	DEC	HL
@@ -6634,11 +6348,11 @@ J$203E:	LD	HL,I$F801
 	LD	DE,C.07FF
 J$2047:	LD	A,E
 	LD	C,0DH	; 13 
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,D
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	RET	
 ;
@@ -6650,15 +6364,15 @@ J$2047:	LD	A,E
 J$2052:	LD	HL,(D.343E)
 J$2055:	LD	BC,X.0000
 	LD	DE,I$C234
-	 CALL	C.2066
+	CALL	C.2066
 ;
 	LD	A,L
 	LD	C,10H	; 16 
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,H
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	RET	
 ;
@@ -6744,7 +6458,7 @@ J$209A:	PUSH	IY
 	LD	D,(HL)
 	LD	(D.348A),DE
 	EX	DE,HL
-	 CALL	C.01C1
+	CALL	C.01C1
 ;
 	POP	IY
 	POP	IX
@@ -6779,7 +6493,7 @@ I$20EF:	INC	BC
 	INC	HL
 	LD	(D$2223),HL
 	INC	L
-	LD	(D$34AE),HL
+	LD	(C$34AE),HL
 	ADC	A,20H	; " "
 	ADC	A,20H	; " "
 I$210F:	DEC	(HL)
@@ -6821,7 +6535,7 @@ I$2137:	LD	IY,I.32C0
 ;
 ;	-----------------
 I$213D:	LD	IY,I.3280
-J$2141:	 CALL	C.2191
+J$2141:	CALL	C.2191
 ;
 	JR	J$2153
 ;
@@ -6831,17 +6545,16 @@ J$2141:	 CALL	C.2191
 ;
 ;	-----------------
 ?.214C:	LD	IY,I.3280
-J$2150:	 CALL	C.21AD
+J$2150:	CALL	C.21AD
 ;
 J$2153:	LD	A,20H	; " "
 	LD	(IY+7),A
 	LD	C,07H	; 7 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-	LD	C,0FH	; 15 
-	 CALL	C.07B9
-;
-	 CALL	C.07B9
+	LD	C,0FH
+	CALL	C.07B9			; read Y8950 register
+	CALL	C.07B9			; read Y8950 register
 ;
 	JR	J.2189
 ;
@@ -6851,7 +6564,7 @@ I$2165:	LD	IY,I.32C0
 ;
 ;	-----------------
 I$216B:	LD	IY,I.3280
-J$216F:	 CALL	C.2191
+J$216F:	CALL	C.2191
 ;
 	JR	J$2181
 ;
@@ -6861,14 +6574,14 @@ J$216F:	 CALL	C.2191
 ;
 ;	-----------------
 ?.217A:	LD	IY,I.3280
-J$217E:	 CALL	C.21AD
+J$217E:	CALL	C.21AD
 ;
 J$2181:	LD	A,60H	; "`"
 	LD	(IY+7),A
 	LD	C,07H	; 7 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-J.2189:	 CALL	C.07D1
+J.2189:	CALL	C.07D1			; read Y8950 status
 ;
 	BIT	3,A
 	JR	Z,J.2189
@@ -6886,7 +6599,7 @@ C.2191:	LD	A,(IY+8)
 	OR	01H	; 1 
 	LD	(IY+8),A
 	LD	C,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	L,(IX+2)
 	LD	H,(IX+3)
@@ -6908,7 +6621,7 @@ C.21AD:	LD	A,(IY+8)
 	AND	40H	; "@"
 	LD	(IY+8),A
 	LD	C,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	L,(IX+2)
 	LD	H,(IX+3)
@@ -6920,18 +6633,18 @@ C.21AD:	LD	A,(IY+8)
 	ADD	HL,HL
 J$21C4:	LD	A,L
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,H
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,0FFH
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	JP	C.24D7
 ;
@@ -6952,30 +6665,27 @@ J$21E3:	LD	L,(IX+2)
 	ADD	HL,HL
 	ADD	HL,HL
 	LD	A,H
-	AND	07H	; 7 
-	 CALL	C.34A8
-;
+	AND	07H
+	CALL	C.34A8			; write VDP cmd
 	LD	A,8EH
-	 CALL	C.34A8
-;
+	CALL	C.34A8			; write VDP cmd
 	XOR	A
-	 CALL	C.34A8
-;
+	CALL	C.34A8			; write VDP cmd
 	LD	A,(IX+2)
-	AND	3FH	; "?"
+	AND	3FH
 	OR	C
-	JP	C.34A8
+	JP	C.34A8			; write VDP cmd
 ;
 ;	-----------------
-D$2203:	LD	A,0FH	; 15 
+D$2203:	LD	A,15
 	OUT	(0C0H),A
-	IN	A,(0C1H)
+	IN	A,(0C1H)		; read register
 	RET	
 ;
 ;	-----------------
-D$220A:	LD	A,0FH	; 15 
+D$220A:	LD	A,15
 	OUT	(0C2H),A
-	IN	A,(0C3H)
+	IN	A,(0C3H)		; read register
 	RET	
 ;
 ;	-----------------
@@ -6987,18 +6697,18 @@ D$220A:	LD	A,0FH	; 15
 ;
 ;	-----------------
 D$221A:	LD	H,A
-	LD	A,0FH	; 15 
+	LD	A,15
 	OUT	(0C0H),A
 	LD	A,H
-	OUT	(0C1H),A
+	OUT	(0C1H),A		; write register
 	RET	
 ;
 ;	-----------------
 D$2223:	LD	H,A
-	LD	A,0FH	; 15 
+	LD	A,15
 	OUT	(0C2H),A
 	LD	A,H
-	OUT	(0C3H),A
+	OUT	(0C3H),A		; write register
 	RET	
 ;
 ;	-----------------
@@ -7019,23 +6729,22 @@ D.223D:	PUSH	IY
 J$2243:	LD	A,(IY+7)
 	OR	01H	; 1 
 	LD	C,07H	; 7 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	XOR	A
 	LD	(IY+7),A
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-	 CALL	C.24DB
+	CALL	C.24DB
 ;
 	POP	IY
 	RET	
 ;
 ;	-----------------
 ?.2256:	XOR	A
-	 CALL	C.34A8
-;
+	CALL	C.34A8			; write VDP cmd
 	LD	A,8EH
-	JP	C.34A8
+	JP	C.34A8			; write VDP cmd
 ;
 ;	-----------------
 ;
@@ -7047,7 +6756,7 @@ C.225F:	PUSH	DE
 	PUSH	BC
 	PUSH	HL
 	LD	DE,I.3500
-	 CALL	C.2271
+	CALL	C.2271
 ;
 	POP	HL
 	POP	BC
@@ -7056,7 +6765,7 @@ C.225F:	PUSH	DE
 ;
 ;	-----------------
 ?.226C:	PUSH	DE
-	 CALL	C.1F32
+	CALL	C.1F32
 ;
 	POP	DE
 ;
@@ -7075,23 +6784,23 @@ C.2271:	LD	A,(D.3438)
 	JR	J$229D
 ;
 ;	-----------------
-J$2283:	 CALL	C.1FF3
+J$2283:	CALL	C.1FF3
 ;
 	RET	C
 ;
 	DI	
 	PUSH	DE
-	 CALL	C.2089
+	CALL	C.2089
 ;
 	POP	DE
 	LD	B,00H
-J$228F:	 CALL	C.212F
+J$228F:	CALL	C.212F
 ;
 	LD	(DE),A
 	INC	DE
 	DJNZ	J$228F
 ;
-	 CALL	C.2133
+	CALL	C.2133
 ;
 	LD	HL,(D.343A)
 	INC	HL
@@ -7123,7 +6832,7 @@ C.22B0:	PUSH	DE
 	LD	DE,I.3500
 J$22B4:	PUSH	BC
 	PUSH	HL
-	 CALL	C.22C2
+	CALL	C.22C2
 ;
 	POP	HL
 	POP	BC
@@ -7132,7 +6841,7 @@ J$22B4:	PUSH	BC
 ;
 ;	-----------------
 D$22BD:	PUSH	DE
-	 CALL	C.1F32
+	CALL	C.1F32
 ;
 	POP	DE
 ;
@@ -7153,23 +6862,23 @@ C.22C2:	LD	A,(D.3448)
 	JR	J$22F1
 ;
 ;	-----------------
-J$22D7:	 CALL	C.1FF3
+J$22D7:	CALL	C.1FF3
 ;
 	RET	C
 ;
 	DI	
 	PUSH	DE
-	 CALL	C.2092
+	CALL	C.2092
 ;
 	POP	DE
 	LD	B,00H
 J$22E3:	LD	A,(DE)
 	INC	DE
-	 CALL	C.212F
+	CALL	C.212F
 ;
 	DJNZ	J$22E3
 ;
-	 CALL	C.2133
+	CALL	C.2133
 ;
 	LD	HL,(D.344A)
 	INC	HL
@@ -7198,7 +6907,7 @@ C$22FE:	XOR	A
 	DEC	HL
 J$230E:	PUSH	HL
 	LD	DE,D.3438
-	LD	BC,C.0010
+	LD	BC,16
 	PUSH	BC
 	LDIR	
 	POP	BC
@@ -7206,7 +6915,7 @@ J$230E:	PUSH	HL
 	LDIR	
 	LD	B,08H	; 8 
 	LD	C,00H
-J$2320:	 CALL	C.236B
+J$2320:	CALL	C.236B
 ;
 	PUSH	AF
 	INC	C
@@ -7215,17 +6924,17 @@ J$2320:	 CALL	C.236B
 	LD	B,08H	; 8 
 	LD	C,00H
 J$232B:	XOR	A
-	 CALL	C.237F
+	CALL	C.237F
 ;
-	 CALL	C.236B
+	CALL	C.236B
 ;
 	AND	A
 	JR	NZ,J.2342
 ;
 	CPL	
-	 CALL	C.237F
+	CALL	C.237F
 ;
-	 CALL	C.236B
+	CALL	C.236B
 ;
 	INC	A
 	JR	NZ,J.2342
@@ -7241,13 +6950,13 @@ J.2342:	LD	A,C
 	DEC	C
 	PUSH	BC
 J$2349:	LD	A,C
-	 CALL	C.237F
+	CALL	C.237F
 ;
 	DEC	C
 	DJNZ	J$2349
 ;
 	POP	BC
-J$2351:	 CALL	C.236B
+J$2351:	CALL	C.236B
 ;
 	CP	C
 	JR	Z,J$235A
@@ -7259,7 +6968,7 @@ J$235A:	INC	C
 J$235B:	LD	B,C
 	LD	C,07H	; 7 
 J$235E:	POP	AF
-	 CALL	C.237F
+	CALL	C.237F
 ;
 	LD	A,C
 	AND	A
@@ -7278,16 +6987,16 @@ J$2369:	LD	A,B
 ;	     Outputs ________________________
 ;
 C.236B:	PUSH	BC
-	 CALL	C.2393
+	CALL	C.2393
 ;
 	LD	(D.343A),HL
-	 CALL	C.2089
+	CALL	C.2089
 ;
-	 CALL	C.212F
+	CALL	C.212F
 I$2376	EQU	$-2
 ;
 	PUSH	AF
-	 CALL	C.2133
+	CALL	C.2133
 ;
 	POP	AF
 	POP	BC
@@ -7301,15 +7010,15 @@ I$2376	EQU	$-2
 ;
 C.237F:	PUSH	BC
 	PUSH	AF
-	 CALL	C.2393
+	CALL	C.2393
 ;
 	LD	(D.344A),HL
-	 CALL	C.2092
+	CALL	C.2092
 ;
 	POP	AF
-	 CALL	C.212F
+	CALL	C.212F
 ;
-	 CALL	C.2133
+	CALL	C.2133
 ;
 	POP	BC
 	RET	
@@ -7341,7 +7050,7 @@ I$239B:	DEFB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;	-----------------
 ?.23B7:	LD	A,68H	; "h"
 J.23B9:	PUSH	AF
-	 CALL	C.1F37
+	CALL	C.1F37
 ;
 	LD	A,(D.3438)
 	CP	04H	; 4 
@@ -7358,13 +7067,13 @@ J.23B9:	PUSH	AF
 ;	-----------------
 J$23D0:	JR	Z,J.242C
 ;
-J$23D2:	 CALL	C.1FE5
+J$23D2:	CALL	C.1FE5
 ;
 	JR	C,J.242C
 ;
-	 CALL	C.2014
+	CALL	C.2014
 ;
-	 CALL	C$2431
+	CALL	C$2431
 ;
 	JR	C,J.242C
 ;
@@ -7378,7 +7087,7 @@ J$23D2:	 CALL	C.1FE5
 	CP	68H	; "h"
 	JR	NZ,J$23FC
 ;
-	 CALL	C.2BEB
+	CALL	C.2BEB
 ;
 	JR	NC,J$23F9
 ;
@@ -7388,18 +7097,18 @@ J$23D2:	 CALL	C.1FE5
 	RET	
 ;
 ;	-----------------
-J$23F9:	 CALL	C.24DB
+J$23F9:	CALL	C.24DB
 ;
 J$23FC:	POP	AF
 	PUSH	AF
 	LD	(IY+7),A
 D$2400	EQU	$-1
 	LD	C,07H	; 7 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+8)
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+4)
 	AND	63H	; "c"
@@ -7413,12 +7122,12 @@ D$2400	EQU	$-1
 	OR	18H
 J$2419:	LD	(IY+4),A
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	SET	7,(IY+7)
 	LD	A,(IY+7)
 	LD	C,07H	; 7 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	AND	A
 	EI	
@@ -7455,11 +7164,11 @@ C$2431:	LD	HL,(D.343A)
 	ADD	HL,HL
 	LD	A,L
 	LD	C,09H	; 9 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,H
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	EX	DE,HL
 	ADD	HL,HL
@@ -7472,11 +7181,11 @@ C$2431:	LD	HL,(D.343A)
 	DEC	HL
 	LD	A,L
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,H
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+8)
 	AND	40H	; "@"
@@ -7489,12 +7198,12 @@ J$2467:	ADD	HL,HL
 	ADD	HL,HL
 	LD	A,L
 	LD	C,09H	; 9 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,H
 	AND	1FH
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	EX	DE,HL
 	ADD	HL,HL
@@ -7504,12 +7213,12 @@ J$2467:	ADD	HL,HL
 	DEC	HL
 	LD	A,L
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,H
 	AND	1FH
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+8)
 	AND	40H	; "@"
@@ -7525,13 +7234,11 @@ J$2467:	ADD	HL,HL
 ;
 C.248C:	DI	
 	BIT	1,(IY+36)
-	JR	NZ,J$24CA
-;
+	JR	NZ,J$24CA		; quit
 	LD	A,(IY+7)
 	AND	0C0H
 	CP	0C0H
 	JR	Z,J$24A3
-;
 	LD	A,(IY+8)
 	AND	0CH	; 12 
 	CP	08H	; 8 
@@ -7540,45 +7247,34 @@ J$24A3:	PUSH	AF
 	AND	40H	; "@"
 	LD	(IY+8),A
 	LD	C,08H	; 8 
-	RST	20H
-;
+	RST	20H			; write Y8950 register
 	LD	A,(IY+7)
-	OR	01H	; 1 
+	OR	01H			; set RESET bit
 	DEC	C
-	RST	20H
-;
-	AND	0BFH
-	RST	20H
-;
-	 CALL	C.24DB
-;
+	RST	20H			; write Y8950 register
+	AND	0BFH			; clear REC bit
+	RST	20H			; write Y8950 register
+	CALL	C.24DB
 	POP	AF
-	 CALL	Z,C$24CD
-;
+	CALL	Z,C$24CD		; wait
 	XOR	A
 	LD	(IY+7),A
-	LD	C,07H	; 7 
-	RST	20H
-;
-	 CALL	C.1FCD
-;
+	LD	C,07H
+	RST	20H			; write Y8950 register
+	CALL	C.1FCD
 J$24CA:	AND	A
 	EI	
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$24CD:	LD	L,64H	; "d"
+
+C$24CD:	LD	L,64H
 	LD	B,00H
 J.24D1:	DJNZ	J.24D1
-;
 	DEC	L
 	JR	NZ,J.24D1
-;
 	RET	
 ;
 ;	-----------------
@@ -7602,28 +7298,33 @@ J$24DD:	LD	A,(IY+4)
 	OR	C
 	LD	(IY+4),A
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	(IY+52),00H
 	LD	(IY+50),00H
 	LD	(IY+51),3FH	; "?"
 	RET	
-;
-;	-----------------
+
+;	  Subroutine EOS interrupt handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I$24F6:	PUSH	IX
 	PUSH	IY
 	LD	HL,(D$3372)
 	LD	IY,I.3280
 	JR	J$250E
-;
-;	-----------------
+
+;	  Subroutine EOS interrupt 2nd Y8950 handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I$2503:	PUSH	IX
 	PUSH	IY
 	LD	HL,(D$3374)
 	LD	IY,I.32C0
 J$250E:	PUSH	HL
-	 CALL	C.248C
-;
+	CALL	C.248C
 	LD	L,(IY+37)
 	LD	H,(IY+38)
 	PUSH	HL
@@ -7631,37 +7332,36 @@ J$250E:	PUSH	HL
 	POP	HL
 	LD	A,L
 	OR	H
-	 CALL	NZ,C.01C1
-;
+	CALL	NZ,C.01C1
 	POP	IY
 	POP	IX
 	RET	
 ;
 ;	-----------------
-?.2526:	 CALL	C.2603
+?.2526:	CALL	C.2603
 ;
 	LD	A,01H	; 1 
 	RET	C
 ;
-	 CALL	C.2014
+	CALL	C.2014
 ;
 	DI	
-	 CALL	C.24D7
+	CALL	C.24D7
 ;
-	 CALL	C.2089
+	CALL	C.2089
 ;
 	LD	(IY+7),80H
-	 CALL	C.260F
+	CALL	C.260F
 ;
-	 CALL	C.212F
+	CALL	C.212F
 ;
 	LD	B,C
 	LD	C,0FH	; 15 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	C,B
 	LD	B,0FFH
-J.2547:	 CALL	C.212F
+J.2547:	CALL	C.212F
 ;
 	LD	H,A
 J$254B:	IN	A,(C)
@@ -7681,7 +7381,7 @@ J$254B:	IN	A,(C)
 	DEC	C
 	DJNZ	J.2547
 ;
-	 CALL	C.2C3A
+	CALL	C.2C3A
 ;
 	JR	Z,J.257E
 ;
@@ -7690,7 +7390,7 @@ J$254B:	IN	A,(C)
 	OR	E
 	JR	NZ,J.2547
 ;
-	 CALL	C.2585
+	CALL	C.2585
 ;
 	JR	C,J.2547
 I$2574	EQU	$-1
@@ -7700,16 +7400,16 @@ I$2574	EQU	$-1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.2575:	 CALL	C.2133
+C.2575:	CALL	C.2133
 ;
-	 CALL	C.248C
+	CALL	C.248C
 ;
 	AND	A
 	EI	
 	RET	
 ;
 ;	-----------------
-J.257E:	 CALL	C.2575
+J.257E:	CALL	C.2575
 ;
 	SCF	
 	LD	A,03H	; 3 
@@ -7730,7 +7430,7 @@ C.2585:	LD	A,(D.3489)
 	PUSH	IX
 	LD	IX,D.3438
 	LD	HL,(D.348A)
-	 CALL	C.01C1
+	CALL	C.01C1
 ;
 	POP	IX
 	POP	IY
@@ -7740,37 +7440,37 @@ C.2585:	LD	A,(D.3489)
 	RET	
 ;
 ;	-----------------
-?.25A4:	 CALL	C.2603
+?.25A4:	CALL	C.2603
 ;
 	LD	A,01H	; 1 
 	RET	C
 ;
-	 CALL	C.2014
+	CALL	C.2014
 ;
 	DI	
-	 CALL	C.24D7
+	CALL	C.24D7
 ;
-	 CALL	C.2092
+	CALL	C.2092
 ;
-	 CALL	C.2BEB
+	CALL	C.2BEB
 ;
 	JP	C,J.257E
 ;
 	LD	(IY+7),0C8H
-	 CALL	C.260F
+	CALL	C.260F
 ;
 	LD	B,C
 	LD	C,0FH	; 15 
-	 CALL	C.07B9
+	CALL	C.07B9			; read Y8950 register
 ;
-J$25C7:	 CALL	C.07D1
+J$25C7:	CALL	C.07D1			; read Y8950 status
 ;
 	AND	08H	; 8 
 	JR	Z,J$25C7
 ;
 	LD	A,80H
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	C,B
 	LD	B,00H
@@ -7790,11 +7490,11 @@ J.25D6:	IN	A,(C)
 	OUT	(C),A
 	DEC	C
 	LD	A,H
-	 CALL	C.212F
+	CALL	C.212F
 ;
 	DJNZ	J.25D6
 ;
-	 CALL	C.2C3A
+	CALL	C.2C3A
 ;
 	JP	Z,J.257E
 ;
@@ -7811,7 +7511,7 @@ J.25D6:	IN	A,(C)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.2603:	 CALL	C.1F37
+C.2603:	CALL	C.1F37
 ;
 	LD	A,(D.3438)
 	CP	04H	; 4 
@@ -7829,30 +7529,30 @@ C.260F:	LD	A,(IY+8)
 	AND	40H	; "@"
 	LD	(IY+8),A
 	LD	C,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+7)
 	DEC	C
 	JP	J$26F6
 ;
 ;	-----------------
-?.2621:	 CALL	C.26DA
+?.2621:	CALL	C.26DA
 ;
 	LD	A,01H	; 1 
 	RET	C
 ;
-	 CALL	C.201F
+	CALL	C.201F
 ;
 	DI	
-	 CALL	C.24D7
+	CALL	C.24D7
 ;
-	 CALL	C.2089
+	CALL	C.2089
 ;
 	LD	DE,C.000C
-	 CALL	C.26E0
+	CALL	C.26E0
 ;
 	LD	B,00H
-J.2639:	 CALL	C.212F
+J.2639:	CALL	C.212F
 ;
 	LD	H,A
 	LD	A,04H	; 4 
@@ -7872,7 +7572,7 @@ J$2641:	IN	A,(C)
 	DEC	C
 	DJNZ	J.2639
 ;
-	 CALL	C.2C3A
+	CALL	C.2C3A
 ;
 	JR	Z,J.268D
 ;
@@ -7886,9 +7586,9 @@ J$2641:	IN	A,(C)
 	JR	NC,J$2682
 ;
 	PUSH	BC
-	 CALL	C.2133
+	CALL	C.2133
 ;
-	 CALL	C.2585
+	CALL	C.2585
 ;
 	JR	NC,J$2689
 ;
@@ -7897,13 +7597,13 @@ J$2641:	IN	A,(C)
 	OR	0CH	; 12 
 	LD	(IY+8),A
 	LD	C,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	POP	BC
 	JR	J.2639
 ;
 ;	-----------------
-J$2682:	 CALL	C.2585
+J$2682:	CALL	C.2585
 ;
 	JR	C,J.2639
 ;
@@ -7917,24 +7617,24 @@ J$268A:	JP	C.2575
 J.268D:	JP	J.257E
 ;
 ;	-----------------
-?.2690:	 CALL	C.26DA
+?.2690:	CALL	C.26DA
 ;
 	LD	A,01H	; 1 
 	RET	C
 ;
-	 CALL	C.201F
+	CALL	C.201F
 ;
 	DI	
-	 CALL	C.24D7
+	CALL	C.24D7
 ;
-	 CALL	C.2092
+	CALL	C.2092
 ;
-	 CALL	C.2BEB
+	CALL	C.2BEB
 ;
 	JP	C,J.268D
 ;
 	LD	DE,I$0808
-	 CALL	C.26E0
+	CALL	C.26E0
 ;
 	LD	B,00H
 J.26AE:	LD	A,04H	; 4 
@@ -7952,11 +7652,11 @@ J$26B2:	IN	A,(C)
 	INC	C
 	IN	A,(C)
 	DEC	C
-	 CALL	C.212F
+	CALL	C.212F
 ;
 	DJNZ	J.26AE
 ;
-	 CALL	C.2C3A
+	CALL	C.2C3A
 ;
 	JP	Z,J.268D
 ;
@@ -7973,7 +7673,7 @@ J$26B2:	IN	A,(C)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.26DA:	 CALL	C.1F37
+C.26DA:	CALL	C.1F37
 ;
 	JP	C.1FE5
 ;
@@ -7988,14 +7688,14 @@ C.26E0:	LD	A,(IY+7)
 	OR	D
 	LD	(IY+7),A
 	LD	C,07H	; 7 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+8)
 	AND	40H	; "@"
 	OR	E
 	LD	(IY+8),A
 	INC	C
-J$26F6:	RST	20H
+J$26F6:	RST	20H			; write Y8950 register
 ;
 	LD	DE,(D.343C)
 ;
@@ -8011,7 +7711,7 @@ C$26FB:	LD	C,0C0H
 	RET	
 ;
 ;	-----------------
-?.2705:	 CALL	C.1F32
+?.2705:	CALL	C.1F32
 ;
 	LD	A,04H	; 4 
 	CP	(IX)
@@ -8034,9 +7734,9 @@ C$26FB:	LD	C,0C0H
 J$272E:	CP	(IY)
 	JR	Z,J.2760
 ;
-J$2733:	 CALL	C.225F
+J$2733:	CALL	C.225F
 ;
-	 CALL	NC,C.22B0
+	CALL	NC,C.22B0
 ;
 	JR	C,J.277E
 ;
@@ -8052,7 +7752,7 @@ J.2744:	LD	DE,(D.343A)
 	INC	D
 	LD	(D.343A),DE
 	DEC	D
-	 CALL	C.22C2
+	CALL	C.22C2
 ;
 	JR	C,J.277E
 ;
@@ -8067,7 +7767,7 @@ J.2744:	LD	DE,(D.343A)
 ;
 ;	-----------------
 J.2760:	LD	DE,(D.344A)
-	 CALL	C.2271
+	CALL	C.2271
 ;
 	JR	C,J.277E
 ;
@@ -8088,15 +7788,15 @@ J.277E:	LD	HL,(D.344C)
 	RET	
 ;
 ;	-----------------
-?.2788:	 CALL	C.27EF
+?.2788:	CALL	C.27EF
 ;
-J$278B:	 CALL	C.225F
+J$278B:	CALL	C.225F
 ;
 	JR	C,J$27A1
 ;
 	LD	HL,I.3500
 J$2793:	LD	A,(HL)
-	 CALL	C.287D
+	CALL	C.287D
 ;
 	INC	L
 	JR	NZ,J$2793
@@ -8123,19 +7823,19 @@ C$27AA:	LD	HL,(D.3462)
 	RET	
 ;
 ;	-----------------
-?.27BD:	 CALL	C.27EF
+?.27BD:	CALL	C.27EF
 ;
-J$27C0:	 CALL	C.225F
+J$27C0:	CALL	C.225F
 ;
 	JR	C,J.27DC
 ;
 	LD	DE,I.3500
 	LD	HL,I.3600
-	 CALL	C.27E1
+	CALL	C.27E1
 ;
 	JR	C,J.27DC
 ;
-	 CALL	C.27E1
+	CALL	C.27E1
 ;
 	JR	C,J.27DC
 ;
@@ -8144,7 +7844,7 @@ J$27C0:	 CALL	C.225F
 	OR	H
 	JR	NZ,J$27C0
 ;
-J.27DC:	 CALL	C$27AA
+J.27DC:	CALL	C$27AA
 ;
 	JR	J$2842
 ;
@@ -8156,7 +7856,7 @@ J.27DC:	 CALL	C$27AA
 ;
 C.27E1:	LD	A,(DE)
 	INC	E
-	 CALL	C.287D
+	CALL	C.287D
 ;
 	LD	(HL),B
 	INC	L
@@ -8172,7 +7872,7 @@ C.27E1:	LD	A,(DE)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.27EF:	 CALL	C.1F32
+C.27EF:	CALL	C.1F32
 ;
 	LD	DE,I.8000
 	LD	HL,I.007F
@@ -8186,23 +7886,23 @@ C.27EF:	 CALL	C.1F32
 	RET	
 ;
 ;	-----------------
-?.280B:	 CALL	C$2861
+?.280B:	CALL	C$2861
 ;
-J$280E:	 CALL	C.225F
+J$280E:	CALL	C.225F
 ;
 	JR	C,J.2830
 ;
 	LD	HL,I.3500
 	LD	DE,I.3600
-	 CALL	C.2855
+	CALL	C.2855
 ;
-	 CALL	C.225F
+	CALL	C.225F
 ;
 	JR	C,J.2830
 ;
-	 CALL	C.2855
+	CALL	C.2855
 ;
-	 CALL	C.22AA
+	CALL	C.22AA
 ;
 	JR	C,J.2830
 ;
@@ -8234,7 +7934,7 @@ J$2842:	LD	HL,(D.344C)
 C.2855:	LD	B,(HL)
 	INC	L
 	LD	C,(HL)
-	 CALL	C.2890
+	CALL	C.2890
 ;
 	LD	(DE),A
 	INC	E
@@ -8249,7 +7949,7 @@ C.2855:	LD	B,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$2861:	 CALL	C.1F32
+C$2861:	CALL	C.1F32
 ;
 	LD	DE,I.8000
 	LD	HL,I.007F
@@ -8275,11 +7975,11 @@ C.287D:	PUSH	DE
 	RRA	
 	RRA	
 	RRA	
-	 CALL	C.28DF
+	CALL	C.28DF
 ;
 	LD	B,A
 	POP	AF
-	 CALL	C.28DF
+	CALL	C.28DF
 ;
 	LD	C,A
 	POP	HL
@@ -8295,16 +7995,16 @@ C.287D:	PUSH	DE
 C.2890:	PUSH	DE
 	PUSH	HL
 	LD	A,B
-	 CALL	C.28AB
+	CALL	C.28AB
 ;
 	LD	B,A
-	 CALL	C.28DF
+	CALL	C.28DF
 ;
 	LD	A,C
-	 CALL	C.28AB
+	CALL	C.28AB
 ;
 	LD	C,A
-	 CALL	C.28DF
+	CALL	C.28DF
 ;
 	LD	A,B
 	ADD	A,A
@@ -8329,9 +8029,8 @@ C.28AB:	XOR	80H
 	LD	DE,(D.3462)
 	SBC	HL,DE
 	JR	NC,J$28BE
-;
 	EX	DE,HL
-	LD	HL,I.0001
+	LD	HL,1
 	SBC	HL,DE
 J$28BE:	RLA	
 	LD	DE,(D.3464)
@@ -8434,7 +8133,7 @@ J$2927:	DJNZ	J$291F
 J.2943:	LD	HL,I$6000
 J.2946:	LD	(D.3464),HL
 	LD	HL,(D.3462)
-	LD	DE,DBUF
+	LD	DE,0080H
 	ADD	HL,DE
 	JR	NC,J$2953
 ;
@@ -8461,7 +8160,7 @@ I$2957:	ADD	HL,SP
 	LD	DE,I.3600
 	LD	BC,I.0100
 	LDIR	
-	LD	BC,C.000F
+	LD	BC,15
 	LD	HL,D.3448
 	LD	DE,I$3449
 	LD	(HL),00H
@@ -8471,19 +8170,19 @@ I$2957:	ADD	HL,SP
 ;
 	LD	A,02H	; 2 
 	LD	(D.3448),A
-J$2989:	 CALL	C.248C
+J$2989:	CALL	C.248C
 ;
 	LD	C,01H	; 1 
-	 CALL	C.29A4
+	CALL	C.29A4
 ;
 	LD	C,02H	; 2 
-	 CALL	C.29A4
+	CALL	C.29A4
 ;
 	LD	C,04H	; 4 
-	 CALL	C.29A4
+	CALL	C.29A4
 ;
 	LD	C,08H	; 8 
-	 CALL	C.29A4
+	CALL	C.29A4
 ;
 	XOR	A
 	RET	
@@ -8505,21 +8204,21 @@ C.29A4:	LD	HL,I.8000
 	LD	B,08H	; 8 
 	LD	DE,I.3600
 	LD	HL,I.3500
-J.29B8:	 CALL	C.29CF
+J.29B8:	CALL	C.29CF
 ;
 	PUSH	BC
 	LD	B,A
-	 CALL	C.29CF
+	CALL	C.29CF
 ;
 	LD	C,A
-	 CALL	C.2890
+	CALL	C.2890
 ;
 	POP	BC
 	LD	(HL),A
 	INC	L
 	JR	NZ,J.29B8
 ;
-	 CALL	C.22B0
+	CALL	C.22B0
 ;
 	DJNZ	J.29B8
 ;
@@ -8545,12 +8244,12 @@ D$29D4:	BIT	1,(IY+36)
 	JP	Z,J$2BBE
 ;
 	PUSH	DE
-	 CALL	C.248C
+	CALL	C.248C
 ;
 	LD	C,(IY+39)
 	LD	HL,I$3E80
 	LD	(D.343E),HL
-	 CALL	C.1FC5
+	CALL	C.1FC5
 ;
 	POP	AF
 	AND	7FH
@@ -8576,7 +8275,7 @@ J.2A04:	CP	2BH	; "+"
 ;	-----------------
 J$2A0C:	SUB	2BH	; "+"
 	LD	HL,I.2A65
-	LD	DE,I$0004
+	LD	DE,4
 J$2A14:	CP	0CH	; 12 
 	JR	C,J.2A1D
 ;
@@ -8589,21 +8288,21 @@ J.2A1D:	PUSH	AF
 	LD	A,(HL)
 	INC	HL
 	LD	C,09H	; 9 
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,(HL)
 	INC	HL
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,(HL)
 	INC	HL
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,(HL)
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	POP	AF
 	ADD	A,A
@@ -8614,28 +8313,28 @@ J.2A1D:	PUSH	AF
 	LD	A,(HL)
 	INC	HL
 	LD	C,10H	; 16 
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
 	LD	A,(HL)
 	INC	C
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
-	 CALL	C$2B5F
+	CALL	C$2B5F
 ;
 	DI	
 	LD	A,(IY+8)
 	AND	40H	; "@"
 	LD	(IY+8),A
 	LD	C,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,30H	; "0"
 	DEC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	SET	7,A
 	LD	(IY+7),A
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	EI	
 	XOR	A
@@ -8681,11 +8380,11 @@ I$2A75:	LD	(HL),E
 	LD	B,0D8H
 	RST	18H
 ;
-	 CALL	PO,C$F27B
+	CALL	PO,C$F27B
 ;
 	CP	E
 	LD	D,L
-	 CALL	NC,C$3A5A
+	CALL	NC,C$3A5A
 ;
 	LD	H,B
 	DI	
@@ -8703,31 +8402,31 @@ I$2A75:	LD	(HL),E
 	LD	A,(DE)
 	INC	DE
 	LD	(IY+40),A
-	 CALL	C.2AE9
+	CALL	C.2AE9
 ;
 	LD	(IY+41),C
 	LD	(IY+42),B
-	 CALL	C.2AE9
+	CALL	C.2AE9
 ;
 	LD	(IY+43),C
 	LD	(IY+44),B
 	LD	A,(DE)
 	INC	DE
 	LD	(IY+45),A
-	 CALL	C.2AE9
+	CALL	C.2AE9
 ;
 	LD	(IY+46),C
 	LD	(IY+47),B
-	 CALL	C.2AE9
+	CALL	C.2AE9
 ;
 	LD	(IY+48),C
 	LD	(IY+49),B
 	POP	BC
-	 CALL	C.07FF
+	CALL	C.07FF
 ;
 	LD	HL,I$2B39
-	LD	(D$3341),HL
-	LD	A,(D.3284)
+	LD	(I$3340+1),HL
+	LD	A,(I.3280+4)
 	RLCA	
 	RLCA	
 	RLCA	
@@ -8735,7 +8434,7 @@ I$2A75:	LD	(HL),E
 	AND	03H	; 3 
 	OR	01H	; 1 
 	LD	C,A
-	 CALL	C$07E0
+	CALL	C$07E0
 ;
 	XOR	A
 	RET	
@@ -8820,12 +8519,17 @@ J$2B36:	JR	NC,J$2B37
 J$2B37	EQU	$-1
 ;
 	CCF	
+
+;	  Subroutine TIMER-1 interrupt handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I$2B39:	PUSH	IY
 	LD	IY,I.3280
-	 CALL	C.2B4C
+	CALL	C.2B4C
 ;
 	LD	IY,I.32C0
-	 CALL	C.2B4C
+	CALL	C.2B4C
 ;
 	POP	IY
 	RET	
@@ -8936,16 +8640,16 @@ C.2BEB:	LD	A,(D$3488)
 ;
 	LD	C,07H	; 7 
 	LD	A,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	INC	C
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-	 CALL	C.24D7
+	CALL	C.24D7
 ;
-	 CALL	C$26FB
+	CALL	C$26FB
 ;
-	 CALL	C$2C11
+	CALL	C$2C11
 ;
 ;
 ;	  Subroutine __________________________
@@ -8955,16 +8659,16 @@ C.2BEB:	LD	A,(D$3488)
 C$2C00:	PUSH	AF
 	LD	C,08H	; 8 
 	XOR	A
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	POP	AF
 	RET	NC
 ;
 	DEC	C
 	LD	A,(IY+7)
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-	 CALL	C.24DB
+	CALL	C.24DB
 ;
 	SCF	
 	RET	
@@ -8998,7 +8702,7 @@ J$2C1A:	IN	A,(C)
 	CCF	
 	RET	NC
 ;
-	 CALL	C.2C3A
+	CALL	C.2C3A
 ;
 	JP	NZ,J$2C16
 ;
@@ -9043,53 +8747,53 @@ C.2C3A:	IN	A,(0AAH)
 	AND	3FH	; "?"
 	LD	(D.346C),A
 	LD	(D.346F),DE
-	 CALL	C.1FC5
+	CALL	C.1FC5
 ;
 	DI	
 	XOR	A
 	LD	C,0BDH
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	(D.346E),A
 	LD	A,80H
 	LD	(D.346D),A
-	 CALL	C.2CEE
+	CALL	C.2CEE
 ;
 	JR	C,J.2CC6
 ;
-	 CALL	C.2D89
+	CALL	C.2D89
 ;
 	LD	A,78H	; "x"
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,80H
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+8)
 	AND	40H	; "@"
 	OR	80H
 	LD	C,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,1BH
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-J.2CA0:	 CALL	C.07D1
+J.2CA0:	CALL	C.07D1			; read Y8950 status
 ;
 	BIT	5,A
 	JR	Z,J.2CA0
 ;
 	LD	A,80H
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-	 CALL	C.2CEE
+	CALL	C.2CEE
 ;
 	JR	C,J.2CC6
 ;
-J$2CB1:	 CALL	C.07D1
+J$2CB1:	CALL	C.07D1			; read Y8950 status
 ;
 	BIT	5,A
 	JR	NZ,J.2CA0
@@ -9099,38 +8803,38 @@ J$2CB1:	 CALL	C.07D1
 ;
 	LD	A,80H
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
-	 CALL	C.2D89
+	CALL	C.2D89
 ;
 	JR	J.2CA0
 ;
 ;	-----------------
 J.2CC6:	LD	A,(IY+34)
 	LD	C,0BDH
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+8)
 	LD	C,08H	; 8 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+2)
 	LD	C,02H	; 2 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+3)
 	LD	C,03H	; 3 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(IY+4)
 	LD	C,04H	; 4 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,80H
 	LD	C,04H	; 4 
-	RST	18H
+	RST	18H			; write Y8950 register (EI)
 ;
-	 CALL	C.1FCD
+	CALL	C.1FCD
 ;
 	AND	A
 	RET	
@@ -9156,7 +8860,7 @@ C.2CEE:	LD	HL,(D.346F)
 	LD	A,(HL)
 	INC	HL
 	LD	C,03H	; 3 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 J$2D06:	LD	A,(HL)
 	INC	HL
@@ -9164,30 +8868,30 @@ J$2D06:	LD	A,(HL)
 	LD	A,(HL)
 	INC	HL
 	LD	C,02H	; 2 
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	LD	A,(D.346C)
 	LD	B,A
 	LD	C,40H	; "@"
-	 CALL	C.2D45
+	CALL	C.2D45
 ;
-	 CALL	C.2D45
+	CALL	C.2D45
 ;
-	 CALL	C.2D45
+	CALL	C.2D45
 ;
 	LD	C,48H	; "H"
-	 CALL	C.2D45
+	CALL	C.2D45
 ;
-	 CALL	C.2D51
+	CALL	C.2D51
 ;
 	LD	(D.3471),DE
-	 CALL	C.2D51
+	CALL	C.2D51
 ;
 	LD	(D$3473),DE
-	 CALL	C.2D51
+	CALL	C.2D51
 ;
 	LD	(D$3475),DE
-	 CALL	C.2D51
+	CALL	C.2D51
 ;
 	LD	(D$3477),DE
 	LD	(D.346F),HL
@@ -9207,7 +8911,7 @@ C.2D45:	LD	A,(HL)
 	JR	C,J$2D4E
 ;
 	LD	A,3FH	; "?"
-J$2D4E:	RST	20H
+J$2D4E:	RST	20H			; write Y8950 register
 ;
 	INC	C
 	RET	
@@ -9225,7 +8929,7 @@ C.2D51:	LD	A,(HL)
 	AND	0FH	; 15 
 	ADD	A,A
 	LD	HL,I$2D69
-	 CALL	C.01C2
+	CALL	C.01C2
 ;
 	LD	E,(HL)
 	INC	HL
@@ -9270,11 +8974,11 @@ I$2D69:	LD	L,L
 C.2D89:	LD	HL,D.3471
 	LD	D,0B0H
 	LD	E,0A0H
-	 CALL	C.2D99
+	CALL	C.2D99
 ;
-	 CALL	C.2D99
+	CALL	C.2D99
 ;
-	 CALL	C.2D99
+	CALL	C.2D99
 ;
 ;
 ;	  Subroutine __________________________
@@ -9283,12 +8987,12 @@ C.2D89:	LD	HL,D.3471
 ;
 C.2D99:	LD	A,(HL)
 	LD	C,E
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	INC	HL
 	LD	A,(HL)
 	LD	C,D
-	RST	20H
+	RST	20H			; write Y8950 register
 ;
 	INC	HL
 	INC	E
@@ -9324,7 +9028,7 @@ C.2D99:	LD	A,(HL)
 	LD	A,(D$7B31)
 	SUB	B
 	LD	B,A
-	 CALL	C.4010
+	CALL	C.4010
 ;
 	RET	Z
 ;
@@ -9340,7 +9044,7 @@ C.2D99:	LD	A,(HL)
 	LD	A,D
 	AND	1FH
 	LD	(HL),A
-	 CALL	C.4010
+	CALL	C.4010
 ;
 	DEC	HL
 	LD	(HL),A
@@ -9348,22 +9052,22 @@ C.2D99:	LD	A,(HL)
 J.2F92:	DEC	C
 	RET	Z
 ;
-	 CALL	C.4010
+	CALL	C.4010
 ;
 	LD	D,A
 	AND	0C0H
 	JR	NZ,J$2FAD
 ;
-	 CALL	C.4010
+	CALL	C.4010
 ;
 	LD	E,A
 	LD	A,B
 	RLCA	
-	 CALL	C.2FF4
+	CALL	C.2FF4
 ;
 	INC	A
 	LD	E,D
-	 CALL	C.2FF4
+	CALL	C.2FF4
 ;
 	DEC	C
 	JR	J.2F92
@@ -9376,29 +9080,29 @@ J$2FAD:	LD	H,A
 	LD	E,D
 	LD	A,B
 	ADD	A,08H	; 8 
-	 CALL	C.2FF4
+	CALL	C.2FF4
 ;
 	LD	A,E
 	AND	10H	; 16 
 	LD	A,0DH	; 13 
-	 CALL	NZ,C.2FF4
+	CALL	NZ,C.2FF4
 ;
 J$2FC1:	LD	A,H
 	AND	40H	; "@"
 	JR	Z,J.2F92
 ;
-	 CALL	C.4010
+	CALL	C.4010
 ;
 	LD	D,A
-	 CALL	C.4010
+	CALL	C.4010
 ;
 	LD	E,A
 	LD	A,0BH	; 11 
-	 CALL	C.2FF4
+	CALL	C.2FF4
 ;
 	INC	A
 	LD	E,D
-	 CALL	C.2FF4
+	CALL	C.2FF4
 ;
 	DEC	C
 	DEC	C
@@ -9408,7 +9112,7 @@ J$2FC1:	LD	A,H
 J$2FDC:	LD	A,B
 	ADD	A,08H	; 8 
 	LD	E,00H
-	 CALL	C.2FF4
+	CALL	C.2FF4
 ;
 	INC	B
 	DI	

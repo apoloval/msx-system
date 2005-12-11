@@ -10,7 +10,7 @@ X.0000	EQU	0000H	; -CS-I
 I.0001	EQU	0001H	; ----I
 I.0004	EQU	0004H	; ----I
 BDOS	EQU	0005H	; ----I
-CPMADR	EQU	0006H	; -C-LI
+M.0006	EQU	0006H	; -C-LI
 I.0007	EQU	0007H	; ----I
 C.0008	EQU	0008H	; -C--I
 I.0009	EQU	0009H	; ----I
@@ -113,6 +113,7 @@ D$ED00	EQU	0ED00H	; --S--
 I$F020	EQU	0F020H	; ----I
 I$F030	EQU	0F030H	; ----I
 I$F03E	EQU	0F03EH	; ----I
+
 C.F37D	EQU	0F37DH	; JC---
 C$F398	EQU	0F398H	; -C---
 D$F3F3	EQU	0F3F3H	; ---L-
@@ -167,7 +168,7 @@ D.FB38	EQU	0FB38H	; --SL-
 D.FB39	EQU	0FB39H	; --SL-
 D.FB3B	EQU	0FB3BH	; --SLI
 D.FB3C	EQU	0FB3CH	; --SL-
-D.FB3F	EQU	0FB3FH	; --SL-
+MUSICF	EQU	0FB3FH	; --SL-
 D.FB40	EQU	0FB40H	; --S-I
 D.FB41	EQU	0FB41H	; --S-I
 D$FB66	EQU	0FB66H	; --S--
@@ -175,27 +176,15 @@ D$FB8B	EQU	0FB8BH	; --S--
 D$FBB1	EQU	0FBB1H	; ---L-
 D.FC9B	EQU	0FC9BH	; --SL-
 D.FCC0	EQU	0FCC0H	; ---L-
-D.FCC1	EQU	0FCC1H	; ---LI
-I$FCC5	EQU	0FCC5H	; ----I
-I.FD00	EQU	0FD00H	; ----I
-C$FD66	EQU	0FD66H	; -C---
-I$FD89	EQU	0FD89H	; ----I
-I$FD9A	EQU	0FD9AH	; ----I
-D$FD9B	EQU	0FD9BH	; --S--
-I$FE97	EQU	0FE97H	; ----I
-C$FF00	EQU	0FF00H	; -C---
-J$FF42	EQU	0FF42H	; J----
-D$FFA7	EQU	0FFA7H	; ---L-
-J.FFB1	EQU	0FFB1H	; J---I
-D$FFB2	EQU	0FFB2H	; --S--
-I$FFC5	EQU	0FFC5H	; ----I
-D$FFC6	EQU	0FFC6H	; --S--
-I.FFCA	EQU	0FFCAH	; ----I
-D.FFCB	EQU	0FFCBH	; --S-I
-I$FFE0	EQU	0FFE0H	; ----I
-I$FFE7	EQU	0FFE7H	; ----I
-I$FFF6	EQU	0FFF6H	; ----I
-I$FFF7	EQU	0FFF7H	; ----I
+EXPTBL	EQU	0FCC1H	; ---LI
+SLTTBL	EQU	0FCC5H	; ----I
+PROCNM	EQU	0FD89H	; ----I
+
+H.KEYI	EQU	0FD9AH	; ----I
+H.PHYD	EQU	0FFA7H	; ---L-
+H.ERRO	EQU	0FFB1H	; J---I
+H.PLAY	EQU	0FFC5H	; ----I
+EXTBIO	EQU	0FFCAH	; ----I
 D.FFFF	EQU	0FFFFH	; --S-I
 ;
 D.4000:	DEFB	"AB"
@@ -245,7 +234,7 @@ D$4002:	DEFW	C$403E
 C$403E:	XOR	A
 	LD	(D.7FFE),A		; select segment 0
 	CALL	C$5CD8			; check number of Y8950's
-	PUSH	DE
+	PUSH	DE			; save number of Y8950's
 	LD	B,1
 	CALL	C.4E23			; get slotid of page 1 (my slot)
 	LD	(D.7B0E),A
@@ -256,8 +245,8 @@ C$403E:	XOR	A
 	LD	E,L
 	INC	DE
 	LD	BC,10-1
-	LDIR	
-	LD	HL,(CPMADR)
+	LDIR				; looks like 2 ´hooks´ are intialized
+	LD	HL,(M.0006)
 	LD	(D$7B0C),HL
 	CALL	C.4D83			; MSX-AUDIO in page 0
 	CALL	C.0090			; ?
@@ -266,7 +255,7 @@ C$403E:	XOR	A
 	LD	BC,I.0400
 	LDIR	
 	CALL	C.4D8F			; restore page 0
-	POP	DE
+	POP	DE			; number of Y8950's
 	XOR	A
 	LD	(D.7B13),A
 	DI	
@@ -276,474 +265,259 @@ C$403E:	XOR	A
 	EX	(SP),HL
 	IN	A,(0C1H)		; read Y8950 I/O-DATA
 	AND	04H			; b2 set ?
-	JR	NZ,J.4092		; yep, start synthe
+	JR	NZ,J.4092		; yep, start synthesizer software
 	LD	A,E
 	AND	01H			; Y8950 on I/O adres 0C0H ?
 	RET	Z			; nope, quit
-	JP	J$5C13			; initialize EXTBIO
+	JP	J$5C13			; initialize EXTBIO and quit
 
 J.4092:	DI	
 	LD	HL,I$40A1
 	LD	DE,X.F55E
-	LD	BC,I$000E
+	LD	BC,C$40AF-I$40A1
 	LDIR	
 	JP	X.F55E
-;
-;	-----------------
+
 I$40A1:	LD	A,1
 	LD	(D.7FFE),A		; select segment 1
 	EX	(SP),HL
 	EX	(SP),HL
-	JP	Z,J$750B
+	JP	Z,J$750B		; invoked by CALL SYNTHE,
 	LD	HL,(D$4002)
 	JP	(HL)
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$40AF:	DI	
 	LD	HL,D.7B13
 	BIT	0,(HL)
 	RET	NZ
-;
 	SET	0,(HL)
-	LD	HL,I$FD9A
+	LD	HL,H.KEYI
 	LD	DE,J.7F9A
 	PUSH	HL
 	CALL	C.40DC
-;
 	LD	HL,I$40E2
 	POP	DE
 	CALL	C.40DC
-;
-	LD	A,(D.7B0E)
-	LD	(D$FD9B),A
+	LD	A,(D.7B0E)		; slotid MSX-AUDIO
+	LD	(H.KEYI+1),A
 	LD	HL,I$40E7
-	LD	DE,I$FFC5
+	LD	DE,H.PLAY
 	CALL	C.40DC
-;
-	LD	(D$FFC6),A
+	LD	(H.PLAY+1),A
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.40DC:	LD	BC,BDOS
+
+C.40DC:	LD	BC,5
 	LDIR	
 	RET	
-;
-;	-----------------
+
 I$40E2:	RST	30H
-;
-	NOP	
-	LD	E,(HL)
-	LD	C,L
+	DEFB	0
+	DEFW	C$4D5E
 	RET	
-;
-;	-----------------
+
 I$40E7:	RST	30H
-;
-	NOP	
-	ADC	A,(HL)
-	LD	E,A
+	DEFB	0
+	DEFW	C$5F8E
 	RET	
-;
-;	-----------------
-?.40EC:	EI	
+
+C$40EC:	EI	
 	PUSH	HL
-	LD	HL,I$FD89
+	LD	HL,PROCNM
 	CALL	C$4267
-;
 	POP	HL
 	RET	C
-;
 	PUSH	HL
 	LD	HL,I$4308
 	OR	A
 	SBC	HL,DE
 	POP	HL
 	JR	Z,J.4111
-;
 	PUSH	HL
 	LD	HL,I$42EA
 	OR	A
 	SBC	HL,DE
 	POP	HL
 	JR	Z,J.4111
-;
 	LD	A,(D.7B13)
 	AND	01H	; 1 
 	SCF	
 	RET	Z
-;
 J.4111:	CALL	C$411C
-;
 	CALL	C$411A
-;
 	EI	
 	OR	A
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$411A:	PUSH	DE
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$411C:	PUSH	HL
 	PUSH	DE
-	LD	HL,I.FD00
+	LD	HL,-768
 	ADD	HL,SP
 	JP	NC,J.6EB4
-;
 	LD	DE,(D.F6C6)
 	OR	A
 	SBC	HL,DE
 	JP	C,J.6EB4
-;
 	POP	DE
 	POP	HL
 	RET	
 ;
 ;	-----------------
-I$4132:	NOP	
-	INC	H
-	ADD	HL,HL
-	INC	HL
-	INC	HL
-	INC	HL
-	INC	HL
-	INC	HL
-	LD	B,A
-	INC	HL
-	LD	C,L
-	LD	E,L
-	LD	H,A
-	INC	HL
-	INC	HL
-	POP	AF
-	INC	HL
-	SUB	A
-	XOR	(HL)
-	CALL	C$DF23
-;
-I$4148:	LD	D,L
-	LD	B,H
-	LD	C,C
-	RST	08H
-;
-	EX	AF,AF'
-	LD	B,E
-	LD	D,L
-	LD	B,H
-	LD	D,D
-	LD	B,L
-	RST	00H
-;
-	CP	D
-	LD	C,B
-	LD	D,B
-	LD	D,B
-	LD	B,L
-	LD	C,(HL)
-	LD	B,H
-	RST	38H
-	LD	C,L
-	RES	0,C
-	LD	C,C
-	LD	D,B
-	LD	B,L
-	LD	B,L
-	SRA	D
-	LD	C,D
-	LD	D,B
-	LD	C,A
-	LD	C,E
-	PUSH	BC
-	LD	D,4AH	; "J"
-	RST	38H
-	LD	B,A
-	CALL	C$43FB
-;
-	RST	38H
-	LD	C,A
-	LD	C,(HL)
-	LD	D,H
-	RST	38H
-	LD	C,L
-	RES	6,D
-	LD	C,B
-	LD	C,A
-	LD	D,B
-	LD	E,C
-	RST	38H
-	LD	D,B
-	LD	B,E
-	CALL	C$45AB
-;
-	LD	C,A
-	LD	C,(HL)
-	LD	D,(HL)
-	RET	NC
-;
-	INC	BC
-	LD	B,(HL)
-	LD	C,A
-	LD	C,(HL)
-	LD	D,(HL)
-	POP	BC
-	POP	AF
-	LD	B,L
-	RST	38H
-	LD	C,(HL)
-	LD	C,L
-	RES	4,H
-	LD	C,D
-	RST	38H
-	LD	B,L
-	LD	E,C
-	RST	38H
-	LD	C,A
-	ADC	A,08H	; 8 
-	LD	B,H
-	LD	B,L
-	LD	E,C
-	RST	38H
-	LD	C,A
-	LD	B,(HL)
-	ADD	A,2DH	; "-"
-	LD	B,H
-	RST	38H
-	LD	C,A
-	LD	B,C
-	LD	B,H
-	RST	38H
-	LD	D,B
-	LD	B,E
-	CALL	C$57F1
-;
-	RST	38H
-	LD	C,E
-	RST	38H
-	LD	D,(HL)
-	LD	C,A
-	LD	C,C
-	LD	B,E
-	PUSH	BC
-	RST	10H
-;
-	LD	E,(HL)
-	LD	C,E
-	RST	38H
-	LD	D,(HL)
-	LD	B,L
-	CALL	Z,C$4462
-;
-	LD	C,E
-	RST	38H
-	LD	D,(HL)
-	LD	C,A
-	CALL	Z,C$447F
-;
-	LD	C,E
-	RST	38H
-	LD	D,H
-	LD	B,L
-	LD	C,L
-	LD	D,B
-	RST	08H
-;
-	RST	18H
-;
-	LD	B,H
-	LD	C,E
-	RST	38H
-	LD	D,E
-	LD	D,H
-	LD	B,C
-	CALL	NC,C$4A0E
-;
-	LD	C,E
-	RST	38H
-	LD	D,B
-	LD	B,E
-	CALL	C$452E
-;
-	RST	38H
-	LD	B,L
-	LD	B,E
-	RST	38H
-	LD	C,L
-	RES	3,D
-	LD	C,C
-	LD	B,L
-	LD	B,E
-	LD	C,L
-	LD	C,A
-	CALL	NZ,C$456C
-;
-	LD	B,L
-	LD	B,E
-	RST	38H
-	LD	D,B
-	LD	B,E
-	CALL	C$514C
-;
-	RST	38H
-	LD	D,H
-	LD	C,A
-	LD	D,B
-	CALL	C$4879
-;
-	LD	B,L
-	LD	D,H
-	RST	38H
-	LD	D,B
-	LD	B,E
-	CALL	C$5021
-;
-	LD	B,C
-	LD	D,(HL)
-	LD	B,L
-	RST	38H
-	LD	D,B
-	LD	B,E
-	CALL	C$57EE
-;
-	LD	E,C
-	LD	C,(HL)
-	LD	D,H
-	LD	C,B
-	PUSH	BC
-	JP	PE,J$FF42
-;
-	LD	D,D
-	LD	B,C
-	LD	C,(HL)
-	LD	D,E
-	LD	D,B
-	LD	C,A
-	LD	D,E
-	PUSH	BC
-	ADD	A,D
-	LD	C,D
-	LD	B,L
-	LD	C,L
-	LD	D,B
-	LD	B,L
-	JP	NC,J$4A92
-;
-	RST	38H
-	LD	C,A
-	LD	C,C
-	LD	B,E
-	PUSH	BC
-	LD	B,D
-	LD	E,L
-	LD	C,A
-	LD	C,C
-	LD	B,E
-	LD	B,L
-	RST	38H
-	LD	B,E
-	LD	C,A
-	LD	D,B
-	EXX	
-	POP	HL
-	LD	E,L
-	RST	38H
-	LD	C,H
-	LD	B,C
-	EXX	
-	LD	(HL),5FH	; "_"
-	LD	C,H
-	LD	B,C
-	LD	E,C
-	RST	38H
-	LD	D,B
-	LD	B,E
-	CALL	C$5157
-;
-	LD	B,E
-	LD	C,L
-	RST	38H
-	LD	B,(HL)
-	LD	D,D
-	LD	B,L
-	POP	DE
-	ADD	A,C
-	LD	B,L
-	LD	B,E
-	LD	C,L
-	RST	38H
-	LD	D,(HL)
-	LD	C,A
-	CALL	Z,C$44A8
-;
-	LD	C,H
-	LD	B,C
-	LD	E,C
-	RST	38H
-	LD	C,L
-	RES	4,(HL)
-	LD	C,C
-	LD	C,C
-	LD	D,H
-	LD	B,E
-	RET	Z
-;
-	LD	A,A
-	LD	C,D
-	RST	38H
-;
+I$4132:	DEFB	I.ST_A-I$4148		; A
+	DEFB	I.ST_B-I$4148		; B
+	DEFB	I.ST_C-I$4148		; C
+	DEFB	I.ST__-I$4148		; D
+	DEFB	I.ST__-I$4148		; E
+	DEFB	I.ST__-I$4148		; F
+	DEFB	I.ST__-I$4148		; G
+	DEFB	I.ST__-I$4148		; H
+	DEFB	I.ST_I-I$4148		; I
+	DEFB	I.ST__-I$4148		; J
+	DEFB	I.ST_K-I$4148		; K
+	DEFB	I.ST_L-I$4148		; L
+	DEFB	I.ST_M-I$4148		; M
+	DEFB	I.ST__-I$4148		; N
+	DEFB	I.ST__-I$4148		; O
+	DEFB	I.ST_P-I$4148		; P
+	DEFB	I.ST__-I$4148		; Q
+	DEFB	I.ST_R-I$4148		; R
+	DEFB	I.ST_S-I$4148		; S
+	DEFB	I.ST_T-I$4148		; T
+	DEFB	I.ST__-I$4148		; U
+	DEFB	I.ST_V-I$4148		; V
+
+I$4148:
+I.ST_A:	DCI	"UDIO"
+	DEFW	C$4308
+	DCI	"UDREG"			; AUDREG
+	DEFW	C$48BA
+	DCI	"PPEND",0FFH,"MK"	; APPEND MK
+	DEFW	C$4981
+	DCI	"PEEK"			; APEEK
+	DEFW	C$4A2A
+	DCI	"POKE"			; APOKE
+	DEFW	C$4A16
+I.ST__:	DEFB	0FFH
+I.ST_B:	DCI	"GM"			; BGM
+	DEFW	C$43FB
+	DEFB	0FFH
+I.ST_C:	DCI	"ONT",0FFH,"MK"		; CONT MK
+	DEFW	C$48B2
+	DCI	"OPY",0FFH,"PCM"	; COPY PCM
+	DEFW	C$45AB
+	DCI	"ONVP"			; CONVP
+	DEFW	C$4603
+	DCI	"ONVA"			; CONVA
+	DEFW	C$45F1
+	DEFB	0FFH
+I.ST_I:	DCI	"NMK"			; INMK
+	DEFW	C$4AA4
+	DEFB	0FFH
+I.ST_K:	DCI	"EY",0FFH,"ON"		; KEY ON
+	DEFW	C$4408
+	DCI	"EY",0FFH,"OFF"		; KEY OFF
+	DEFW	C$442D
+	DEFB	0FFH
+I.ST_L:	DCI	"OAD",0FFH,"PCM"	; LOAD PCM
+	DEFW	C$57F1
+	DEFB	0FFH
+I.ST_M:	DCI	"K",0FFH,"VOICE"	; MK VOICE
+	DEFW	C$5ED7
+	DCI	"K",0FFH,"VEL"		; MK VEL
+	DEFW	C$4462
+	DCI	"K",0FFH,"VOL"		; MK VOL
+	DEFW	C$447F
+	DCI	"K",0FFH,"TEMPO"	; MK TEMPO
+	DEFW	C$44DF
+	DCI	"K",0FFH,"STAT"		; MK STAT
+	DEFW	C$4A0E
+	DCI	"K",0FFH,"PCM"		; MK PCM
+	DEFW	C$452E
+	DEFB	0FFH
+I.ST_R:	DCI	"EC",0FFH,"MK"		; REC MK
+	DEFW	C$499A
+	DCI	"ECMOD"			; RECMOD
+	DEFW	C$456C
+	DCI	"EC",0FFH,"PCM"		; REC PCM
+	DEFW	C$514C
+	DEFB	0FFH
+I.ST_S:	DCI	"TOPM"			; STOPM
+	DEFW	C$4879
+	DCI	"ET",0FFH,"PCM"		; SET PCM
+	DEFW	C$5021
+	DCI	"AVE",0FFH,"PCM"	; SAVE PCM
+	DEFW	C$57EE
+	DCI	"YNTHE"			; SYNTHE
+	DEFW	C$42EA
+	DEFB	0FFH
+I.ST_T:	DCI	"RANSPOSE"		; TRANSPOSE
+	DEFW	C$4A82
+	DCI	"EMPER"			; TEMPER
+	DEFW	C$4A92
+	DEFB	0FFH
+I.ST_V:	DCI	"OICE"			; VOICE
+	DEFW	C$5D42
+	DCI	"OICE",0FFH,"COPY"	; VOICE COPY
+	DEFW	C$5DE1
+	DEFB	0FFH
+I.ST_P:	DCI	"LAY"			; PLAY
+	DEFW	C$5F36
+	DCI	"LAY",0FFH,"PCM"	; PLAY PCM
+	DEFW	C$5157
+	DCI	"CM",0FFH,"FREQ"	; PCM FREQ
+	DEFW	C$4581
+	DCI	"CM",0FFH,"VOL"		; PCM VOL
+	DEFW	C$44A8
+	DCI	"LAY",0FFH,"MK"		; PLAY MK
+	DEFW	C$49A6
+	DCI	"ITCH"			; PITCH
+	DEFW	C$4A7F
+	DEFB	0FFH 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$4267:	LD	A,(HL)
 	SUB	41H	; "A"
 	RET	C
-;
 	CP	16H
 	CCF	
 	RET	C
-;
 	INC	HL
 	PUSH	HL
 	LD	HL,I$4132
 	CALL	C.457C
-;
 	LD	A,(HL)
 	LD	HL,I$4148
 	CALL	C.457C
-;
 	EX	DE,HL
 	POP	HL
 J$4280:	PUSH	HL
 	LD	A,(DE)
 	INC	A
 	JR	Z,J$4290
-;
 	CALL	C.4293
-;
 	POP	HL
 	JR	NZ,J$4280
-;
 	EX	DE,HL
 	LD	E,(HL)
 	INC	HL
@@ -872,9 +646,8 @@ I$42EA:	CALL	C.42C4
 ;	     Outputs ________________________
 ;
 C.42F3:	LD	A,(D.7B13)
-	AND	01H	; 1 
-	JP	Z,J.4092
-;
+	AND	01H
+	JP	Z,J.4092		; nope, start synthesizer software
 	RET	
 ;
 ;	-----------------
@@ -882,6 +655,7 @@ I$42FC:	INC	BC
 	LD	BC,I$0103
 	LD	BC,I.0001
 	DEFB	0,0,0,0,0
+
 I$4308:	PUSH	HL
 	LD	HL,I$42FC
 	LD	DE,X.F55E
@@ -1184,7 +958,7 @@ C$446E:	CP	10H	; 16
 	LD	B,01H	; 1 
 	LD	A,03H	; 3 
 	LD	HL,C.00AB
-	CALL	C.4D6D
+	CALL	C.4D6D			; start routine in MSX-AUDIO BIOS
 ;
 	AND	A
 	RET	
@@ -1350,11 +1124,11 @@ C.4502:	CALL	C.4FB4
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.4514:	LD	HL,I$FE97
+C.4514:	LD	HL,-361
 	ADD	HL,DE
 	RET	C
 ;
-	LD	HL,I$FFE7
+	LD	HL,-25
 	ADD	HL,DE
 	CCF	
 	RET	C
@@ -1796,7 +1570,7 @@ J.4719:	PUSH	AF
 ;	-----------------
 J$4721:	LD	A,33H	; "3"
 	LD	(D.7EDF),A
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	A,0AH	; 10 
 	LD	IY,I.3280
@@ -1816,7 +1590,7 @@ J$4721:	LD	A,33H	; "3"
 	LD	C,00H
 	RST	00H
 ;
-J$4749:	CALL	C.4D8F
+J$4749:	CALL	C.4D8F			; restore page 0
 ;
 	XOR	A
 	LD	(D.7EDF),A
@@ -2102,7 +1876,7 @@ C$4879:	CALL	C.4A0A
 C.488C:	PUSH	HL
 	CALL	C.6CDC
 ;
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	IY,I.3280
 	LD	A,0AH	; 10 
@@ -2119,7 +1893,7 @@ C.488C:	PUSH	HL
 	LD	E,01H	; 1 
 	RST	00H
 ;
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 	POP	HL
 	OR	A
@@ -2167,7 +1941,7 @@ J$48E9:	POP	DE
 	LD	A,E
 	PUSH	HL
 	LD	HL,I$0099
-	CALL	C.4D6D
+	CALL	C.4D6D			; start routine in MSX-AUDIO BIOS
 ;
 	POP	HL
 	RET	
@@ -2179,7 +1953,7 @@ J$48E9:	POP	DE
 ;	     Outputs ________________________
 ;
 C$48F5:	LD	C,08H	; 8 
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	A,D
 	OR	E
@@ -2220,7 +1994,7 @@ J$4902:	PUSH	BC
 ;
 	LD	HL,D.3496
 	SET	7,(HL)
-J$4932:	JP	C.4D8F
+J$4932:	JP	C.4D8F			; restore page 0
 ;
 ;	-----------------
 ;
@@ -2474,11 +2248,11 @@ J$4A33:	PUSH	DE
 	CALL	C.6ED8
 ;
 	EX	(SP),HL
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	L,(HL)
 	LD	H,00H
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 J.4A41:	CALL	C.4A49
 ;
@@ -2753,20 +2527,16 @@ C.4B7C:	LD	HL,D.7496
 ;
 ;	-----------------
 I$4B82:	CALL	C$7B05
-;
 	CALL	C$4B3B
-;
 	LD	A,D
 	LD	(D$7EDC),A
 	LD	A,(D.3496)
 	BIT	4,A
 	PUSH	AF
 	CALL	NZ,C.4BC1
-;
 	POP	AF
 	BIT	2,A
 	RET	Z
-;
 	BIT	0,A
 	RET	Z
 ;
@@ -2861,7 +2631,7 @@ J$4BFF:	PUSH	HL
 	PUSH	DE
 	LD	DE,I$7ECA
 	PUSH	DE
-	LD	BC,CPMADR
+	LD	BC,6
 	LDIR	
 	POP	IX
 	LD	HL,D.7EE0
@@ -2999,6 +2769,11 @@ I$4CA0:	LD	(HL),63H	; "c"
 	OR	B
 	LD	C,D
 	CP	E
+
+;	  Subroutine TIMER-2 handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I$4CB8:	LD	A,(D.3496)
 	BIT	2,A
 	CALL	NZ,C$4CED
@@ -3135,60 +2910,54 @@ J.4D52:	LD	HL,D.3496
 	RST	00H
 ;
 	RET	
-;
-;	-----------------
-?.4D5E:	DI	
+
+;	  Subroutine H.KEYI handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4D5E:	DI	
 	PUSH	HL
 	LD	HL,C.00B4
-	CALL	C.4D6D
-;
+	CALL	C.4D6D			; start routine in MSX-AUDIO BIOS
 	POP	HL
-	JP	J.7F9A
-;
-;	-----------------
-;
+	JP	J.7F9A			; continue in old H.KEYI
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
 C.4D6A:	LD	HL,I$00AE
-;
-;	  Subroutine __________________________
+
+;	  Subroutine start routine in MSX-AUDIO BIOS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4D6D:	EX	AF,AF'
 	EXX	
 	CALL	C.4D9B			; select MSX-AUDIO in page 0
 	DI	
-	PUSH	BC
+	PUSH	BC			; save slotregisters
 	EXX	
 	EX	AF,AF'
 	CALL	C$4D82
-;
 	EX	AF,AF'
 	EXX	
-	POP	BC
-	CALL	C.4DD0
-;
+	POP	BC			; saved slotregisters
+	CALL	C.4DD0			; restore page 0
 	EXX	
 	EX	AF,AF'
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$4D82:	JP	(HL)
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine save current page 0 and select MSX-AUDIO in page 0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4D83:	EX	AF,AF'
 	EXX	
 	CALL	C.4D9B			; select MSX-AUDIO in page 0
@@ -3196,13 +2965,11 @@ C.4D83:	EX	AF,AF'
 	EXX	
 	EX	AF,AF'
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine restore page 0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4D8F:	EX	AF,AF'
 	EXX	
 	LD	BC,(D.7F98)
@@ -3249,13 +3016,11 @@ J.4DCC:	POP	AF
 	RET	PO
 	EI	
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4DD0:	LD	A,I
 	DI	
 	LD	A,(D.7F94)
@@ -3273,7 +3038,7 @@ J$4DE6:	LD	A,B
 	EI	
 	RET	
 
-;	  Subroutine __________________________
+;	  Subroutine get slotmasks of page 1 (my slot)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -3285,7 +3050,7 @@ C$4DEC:	LD	E,A
 	LD	(D.7F93),A		; primairy slot OR mask for MSX-AUDIO page 0 and 1
 	LD	B,A
 	AND	03H 
-	LD	HL,I$FCC5
+	LD	HL,SLTTBL
 	ADD	A,L
 	LD	L,A
 	LD	(D.7F95),HL		; SLTTBL entry for MSX-AUDIO
@@ -3307,33 +3072,30 @@ C$4DEC:	LD	E,A
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4E1A:	AND	0FCH
 	LD	D,A
 	RRCA	
 	RRCA	
-	AND	03H	; 3 
+	AND	03H
 	OR	D
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
+
+;	  Subroutine get slotid of page
+;	     Inputs  B = page
 ;	     Outputs ________________________
-;
+
 C.4E23:	IN	A,(0A8H)
 	CALL	C.4E45
 	AND	03H	; 3 
 	LD	E,A
 	LD	D,00H
-	LD	HL,D.FCC1
+	LD	HL,EXPTBL
 	ADD	HL,DE
 	LD	A,(HL)
 	AND	80H
 	OR	E
 	RET	P
-;
 	LD	E,A
 	INC	HL
 	INC	HL
@@ -3357,16 +3119,13 @@ C.4E23:	IN	A,(0A8H)
 C.4E45:	INC	B
 	DEC	B
 	RET	Z
-;
 	PUSH	BC
 J$4E49:	RRCA	
 	RRCA	
 	DJNZ	J$4E49
-;
 	POP	BC
 	RET	
-;
-;	-----------------
+
 I$4E4F:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
@@ -3376,9 +3135,8 @@ I$4E4F:	PUSH	AF
 	PUSH	IX
 	PUSH	IY
 	LD	IX,C.0038
-	LD	IY,(D.FCC0)
+	LD	IY,(EXPTBL+0-1)
 	CALL	C.001C
-;
 	POP	IY
 	POP	IX
 	EX	AF,AF'
@@ -3410,14 +3168,12 @@ I$4E70:	INC	B
 ;
 C$4E89:	PUSH	DE
 	DI	
-	CALL	C.4D83
-;
+	CALL	C.4D83			; MSX-AUDIO in page 0
 	CALL	C.0090
-;
 	LD	HL,I$4E4F
 	LD	DE,I$7E89
 	LD	BC,I$0021
-	LDIR	
+	LDIR				; copy interrupt handler
 I$4E9B	EQU	$-1
 	LD	HL,I$4E70
 	LD	DE,D.7EDA
@@ -3426,13 +3182,13 @@ I$4E9B	EQU	$-1
 	LD	A,0C3H
 	LD	(D$7300),A
 	LD	HL,I$3E89
-	LD	(D$7301),HL
-	LD	HL,I$C937
-	LD	(D$7308),HL
+	LD	(D$7300+1),HL		; interrupt handler
+	LD	HL,0C937H
+	LD	(D$7308),HL		; SCF RET
 	LD	HL,I$6828
-	LD	(D$7341),HL
+	LD	(D$7340+1),HL		; TIMER-1 handler
 	LD	HL,I$4CB8
-	LD	(D$7345),HL
+	LD	(D$7344+1),HL		; TIMER-2 handler
 	LD	HL,I$4B82
 	LD	(D$7370),HL
 	LD	HL,I$4CDF
@@ -3470,7 +3226,7 @@ J$4F04:	LD	A,(D$FAFC)
 ;
 	INC	H
 J.4F14:	LD	(D.7EEE),HL
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 	LD	HL,I.7F13
 	LD	E,L
@@ -3499,7 +3255,7 @@ J.4F14:	LD	(D.7EEE),HL
 	POP	DE
 	CALL	C$48F5
 ;
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	A,11H	; 17 
 	LD	C,98H
@@ -3513,7 +3269,7 @@ J.4F14:	LD	(D.7EEE),HL
 	LD	C,03H	; 3 
 	RST	00H
 ;
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 	CALL	C$4F7C
 ;
@@ -3544,12 +3300,10 @@ C.4F6D:	LD	A,(D.7EDA)
 	LD	C,A
 	LD	A,04H	; 4 
 	RST	00H
-;
 	LD	A,(D$7EDB)
 	LD	C,A
 	LD	A,07H	; 7 
 	RST	00H
-;
 	RET	
 ;
 ;	-----------------
@@ -3646,14 +3400,12 @@ C.4FBE:	CALL	C.6EE4
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.4FC3:	LD	B,02H	; 2 
-	CALL	C.4E23
-;
+C.4FC3:	LD	B,2
+	CALL	C.4E23			; get slotid of page 2
 	PUSH	AF
 	LD	A,(D.7B0E)
 	LD	H,80H
-	CALL	C.0024
-;
+	CALL	C.0024			; MSX-AUDIO on page 2
 	POP	AF
 	LD	L,A
 	EX	(SP),HL
@@ -5061,7 +4813,7 @@ J$5689:	LD	(D.7EAA),A
 	LD	(IX+4),D
 	LD	(IX+5),00H
 	PUSH	HL
-	LD	BC,CPMADR
+	LD	BC,6
 	ADD	HL,BC
 	LD	A,(HL)
 	LD	(IX+6),A
@@ -5663,17 +5415,15 @@ C.59CE:	PUSH	AF
 	PUSH	DE
 	PUSH	HL
 	DI	
-	LD	HL,J.FFB1
+	LD	HL,H.ERRO
 	PUSH	HL
 	LD	DE,I.7B2A
 	CALL	C.40DC
-;
 	LD	HL,I$59ED
 	POP	DE
 	CALL	C.40DC
-;
-	LD	A,(D.7B0E)
-	LD	(D$FFB2),A
+	LD	A,(D.7B0E)		; slotid MSX-AUDIO
+	LD	(H.ERRO+1),A
 	JP	J.4E6A
 ;
 ;	-----------------
@@ -5696,7 +5446,7 @@ I$59ED:	RST	30H
 	POP	DE
 	POP	BC
 	POP	AF
-	JP	J.FFB1
+	JP	H.ERRO
 ;
 ;	-----------------
 ;
@@ -5706,7 +5456,7 @@ I$59ED:	RST	30H
 ;
 C$5A07:	DI	
 	LD	HL,I.7B2A
-	LD	DE,J.FFB1
+	LD	DE,H.ERRO
 	JP	C.40DC
 ;
 ;	-----------------
@@ -5824,7 +5574,7 @@ J.5A95:	CALL	C.5BB6
 	LD	(HL),A
 	LD	DE,(D.F567)
 	PUSH	HL
-	LD	BC,CPMADR
+	LD	BC,6
 	ADD	HL,BC
 	LD	(HL),E
 	INC	HL
@@ -5919,7 +5669,7 @@ C.5AFD:	INC	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5B21:	LD	A,(D$FFA7)
+C.5B21:	LD	A,(H.PHYD+0)
 	CP	0C9H
 	JP	Z,C.6EAB
 ;
@@ -6065,88 +5815,34 @@ C.5BB6:	XOR	A
 ;	  Table      EXTBIO
 
 ?.5BC2:	DEFB	0,0,0
-	JP	J$5CC9
-;
-;	-----------------
-?.5BC8:	JP	C.43AA
-;
-;	-----------------
-?.5BCB:	JP	C.42F3
-;
-;	-----------------
-?.5BCE:	JP	C.5F50
-;
-;	-----------------
-?.5BD1:	JP	J$4403
-;
-;	-----------------
-?.5BD4:	JP	C.4514
-;
-;	-----------------
-?.5BD7:	JP	J$5CBD
-;
-;	-----------------
-?.5BDA:	JP	J$5CC3
-;
-;	-----------------
-?.5BDD:	JP	C.488C
-;
-;	-----------------
-?.5BE0:	JP	J$48B5
-;
-;	-----------------
-?.5BE3:	JP	C.4576
-;
-;	-----------------
-?.5BE6:	JP	C.6CDC
-;
-;	-----------------
-?.5BE9:	JP	C.51BA
-;
-;	-----------------
-?.5BEC:	JP	C.5535
-;
-;	-----------------
-?.5BEF:	JP	C.571C
-;
-;	-----------------
-?.5BF2:	JP	C.458D
-;
-;	-----------------
-?.5BF5:	JP	C.4551
-;
-;	-----------------
-?.5BF8:	JP	C.44B4
-;
-;	-----------------
-?.5BFB:	JP	C.581C
-;
-;	-----------------
-?.5BFE:	JP	C.5823
-;
-;	-----------------
-?.5C01:	JP	C.463F
-;
-;	-----------------
-?.5C04:	JP	C.4705
-;
-;	-----------------
-?.5C07:	JP	C.46E8
-;
-;	-----------------
-?.5C0A:	JP	C.5D86
-;
-;	-----------------
-?.5C0D:	JP	C.5E5C
-;
-;	-----------------
-?.5C10:	RET	
-;
-;	-----------------
-?.5C11:	RET	
-;
-;	-----------------
-?.5C12:	RET	
+	JP	J$5CC9		; start routine in AUDIO-BIOS
+	JP	C.43AA
+	JP	C.42F3
+	JP	C.5F50
+	JP	J$4403
+	JP	C.4514
+	JP	J$5CBD
+	JP	J$5CC3
+	JP	C.488C
+	JP	J$48B5
+	JP	C.4576
+	JP	C.6CDC
+	JP	C.51BA
+	JP	C.5535
+	JP	C.571C
+	JP	C.458D
+	JP	C.4551
+	JP	C.44B4
+	JP	C.581C
+	JP	C.5823
+	JP	C.463F
+	JP	C.4705
+	JP	C.46E8
+	JP	C.5D86
+	JP	C.5E5C
+	RET	
+	RET	
+	RET	
 
 ;	  Subroutine initialize EXTBIO
 ;	     Inputs  ________________________
@@ -6157,20 +5853,20 @@ J$5C13:	DI
 	BIT	0,(HL)
 	JR	NZ,J$5C2A
 	SET	0,(HL)
-	LD	HL,I.FFCA
-	LD	DE,D.FFCB
-	LD	BC,C.001C
+	LD	HL,EXTBIO+0
+	LD	DE,EXTBIO+1
+	LD	BC,29-1
 	LD	(HL),0C9H
 	LDIR	
 J$5C2A:	LD	DE,J.7E7C
-	LD	HL,I.FFCA
+	LD	HL,EXTBIO
 	LD	BC,5
 	LDIR				; save current EXTBIO
 	LD	HL,I$5C46
-	LD	DE,I.FFCA
+	LD	DE,EXTBIO
 	CALL	C.40DC			; MSX-AUDIO EXTBIO
-	LD	A,(D.7B0E)
-	LD	(D.FFCB),A
+	LD	A,(D.7B0E)		; slotid MSX-AUDIO
+	LD	(EXTBIO+1),A
 	EI	
 	RET	
 
@@ -6237,7 +5933,7 @@ J$5C9F:	PUSH	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.5CA2:	LD	A,(D.7B0E)
+C.5CA2:	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 	CALL	C.5CB3
 	LD	A,LOW C$5BC2
 	CALL	C.5CB3
@@ -6270,11 +5966,9 @@ J$5CBD:	CALL	C.5CCF
 J$5CC3:	CALL	C.5CCF
 ;
 	JP	C.49D0
-;
-;	-----------------
+
 J$5CC9:	CALL	C.5CCF
-;
-	JP	C.4D6D
+	JP	C.4D6D			; start routine in MSX-AUDIO BIOS
 ;
 ;	-----------------
 ;
@@ -6285,13 +5979,11 @@ J$5CC9:	CALL	C.5CCF
 C.5CCF:	LD	IX,(X.F55E)
 	LD	IY,(D.F560)
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5CD8:	DI	
 	LD	HL,I$7FFF
 	XOR	A
@@ -6458,7 +6150,7 @@ J$5D8A:	LD	A,(HL)
 	INC	HL
 	LD	B,(HL)
 	PUSH	HL
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	A,29H	; ")"
 	CALL	C.5DC7
@@ -6475,7 +6167,7 @@ J$5DA8:	LD	C,(HL)
 ;
 	INC	HL
 	PUSH	HL
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 J$5DB3:	LD	A,27H	; "'"
 	CALL	C.5DC7
@@ -6483,7 +6175,7 @@ J$5DB3:	LD	A,27H	; "'"
 	LD	A,27H	; "'"
 J$5DBA:	CALL	C.5DC7
 ;
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 	POP	HL
 	INC	HL
@@ -6663,10 +6355,10 @@ J$5E6C:	PUSH	HL
 J$5E7D:	POP	DE
 	LD	BC,C.0020
 J$5E81:	DI	
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LDIR	
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 	OR	A
 	EI	
@@ -6870,45 +6562,40 @@ J.5F61:	SRL	H
 	JR	J.5F5E
 ;
 ;	-----------------
-I$5F6B:	LD	A,(D.7B0E)
+I$5F6B:	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	LD	A,(D.FCC1)
-	LD	H,40H	; "@"
+	LD	A,(EXPTBL+0)
+	LD	H,40H
 	CALL	C.0024
-;
 	POP	HL
 	POP	DE
 	POP	BC
 	CALL	C$2F8A
-;
 	POP	AF
 	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	LD	H,40H	; "@"
+	LD	H,40H
 	CALL	C.0024
-;
 	JP	J.4E6A
 ;
 ;	-----------------
-I.5F8D:	JR	NZ,J$5F5C
-;
-	INC	E
-	LD	B,C
+I.5F8D:	DEFB	" "
+
+
+C$5F8E:	CALL	C$411C
 	CALL	C$5FC5
-;
 	PUSH	HL
-	LD	A,(D.7B0E)
+	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 	DI	
 	ADD	A,A
-	LD	HL,C.0008
+	LD	HL,8
 	JR	NC,J$5FA1
-;
-	LD	L,10H	; 16 
+	LD	L,8+8
 J$5FA1:	ADD	HL,SP
 	PUSH	HL
 	LD	E,(HL)
@@ -6918,70 +6605,55 @@ J$5FA1:	ADD	HL,SP
 	OR	A
 	SBC	HL,DE
 	JP	NZ,J$6E9F
-;
 	POP	HL
 	DEC	HL
 	LD	D,H
 	LD	E,L
 	INC	DE
 	INC	DE
-	LD	A,(D.7B0E)
+	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 	ADD	A,A
-	LD	BC,C.0008
+	LD	BC,8
 	JR	NC,J$5FC0
-;
-	LD	C,10H	; 16 
+	LD	C,8+8
 J$5FC0:	LDDR	
 	POP	HL
 	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$5FC5:	CP	23H	; "#"
-	JP	NZ,J.5FE5
-;
-	CALL	C.6EEC
-;
-	CALL	C.6EFE
-;
+
+C$5FC5:	CP	"#"			; playdevice specified ?
+	JP	NZ,J.5FE5		; no, use PSG
+	CALL	C.6EEC			; read "#" char
+	CALL	C.6EFE			; evaluate byte operand
 	PUSH	AF
-	CALL	C.4FB4
-;
+	CALL	C.4FB4			; check for ","
 	POP	AF
 	OR	A
-	JR	Z,J.5FE5
-;
+	JR	Z,J.5FE5		; 0, use PSG
 	DEC	A
-	JR	Z,J$5FE2
-;
-	SUB	03H	; 3 
-	JR	C,J$6018
-;
+	JR	Z,J$5FE2		; 1, use MIDI
+	SUB	3
+	JR	C,J$6018		; 2-3, use AUDIO/PSG
 	JP	C.6EAB
-;
-;	-----------------
-J$5FE2:	INC	A
+
+J$5FE2:	INC	A			; MIDI
 	JR	J$6019
-;
-;	-----------------
-J.5FE5:	XOR	A
+
+J.5FE5:	XOR	A			; no MIDI
 	LD	(D.7B0F),A
 	PUSH	HL
 	LD	A,(D.7B23)
 	OR	A
 	JR	Z,J$600E
-;
 	LD	B,A
 J$5FF1:	PUSH	BC
 	LD	A,B
 	DEC	A
 	CALL	C.6F0F
-;
 	LD	DE,I.5F8D
 	LD	(HL),01H	; 1 
 	INC	HL
@@ -7008,12 +6680,12 @@ C$6015	EQU	$-1
 	JR	J$6020
 ;
 ;	-----------------
-J$6018:	XOR	A
+J$6018:	XOR	A			; no MIDI
 J$6019:	LD	(D.7B0F),A
 	XOR	A
 	LD	(D.FB35),A
 J$6020:	PUSH	HL
-	LD	HL,I$FFF6
+	LD	HL,-10
 	ADD	HL,SP
 	LD	(D.FB36),HL
 	POP	HL
@@ -7166,18 +6838,15 @@ J.60B8:	LD	(D.F956),HL
 ;	     Outputs ________________________
 ;
 C$60F5:	JR	NZ,J.6108
-;
-	LD	A,(D.7B0F)
+	LD	A,(D.7B0F)		; PLAY MIDI
 	LD	HL,D.7B10
 	CP	(HL)
 	JR	Z,J.6108
-;
 	LD	(HL),A
 	LD	A,88H
 	OR	(HL)
 	LD	E,A
 	CALL	C.61AB
-;
 J.6108:	JP	J.6D1A
 ;
 ;	-----------------
@@ -7694,7 +7363,7 @@ J.6348:	POP	HL
 	CALL	C$667B
 ;
 	EX	DE,HL
-	LD	BC,I$FFF7
+	LD	BC,-9
 	POP	HL
 	PUSH	HL
 	ADD	HL,BC
@@ -8420,7 +8089,7 @@ J$668C:	SRL	H
 	LD	H,00H
 	ADD	HL,DE
 	LD	(IX),L
-	LD	DE,I$FFE0
+	LD	DE,-32
 	ADD	HL,DE
 	JR	NC,J$66AD
 ;
@@ -8736,27 +8405,27 @@ I$67EC:	POP	BC
 ;
 ;	-----------------
 J.6825:	JP	C.6EAB
-;
-;	-----------------
+
+;	  Subroutine TIMER-1 handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I$6828:	PUSH	AF
 	DI	
 	LD	HL,D.7B30
 	LD	A,(D.7B14)
 	OR	A
 	JR	NZ,J$6845
-;
 J$6833:	CPL	
 	LD	(D.7B14),A
 	PUSH	HL
 	CALL	C$6848
-;
 	POP	HL
 	DI	
 	XOR	A
 	LD	(D.7B14),A
 	DEC	(HL)
 	JP	P,J$6833
-;
 J$6845:	INC	(HL)
 	POP	AF
 	RET	
@@ -8767,7 +8436,7 @@ J$6845:	INC	(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$6848:	LD	A,(D.FB3F)
+C$6848:	LD	A,(MUSICF)
 	OR	A
 	JR	Z,J$6858
 ;
@@ -8775,7 +8444,7 @@ C$6848:	LD	A,(D.FB3F)
 ;
 	JR	NZ,J$6865
 ;
-	LD	A,(D.FB3F)
+	LD	A,(MUSICF)
 	AND	7FH
 J$6858:	LD	HL,(D.7B26)
 	OR	L
@@ -8794,7 +8463,7 @@ J$6865:	LD	BC,(D.7B26)
 ;
 	LD	HL,(D.7F98)
 	PUSH	HL
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	HL,(D.7F98)
 	PUSH	HL
@@ -8815,7 +8484,7 @@ J$6879:	SRL	B
 	DI	
 	POP	HL
 	LD	(D.7F98),HL
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 	POP	HL
 	LD	(D.7F98),HL
@@ -9537,15 +9206,14 @@ C.6B8D:	LD	A,(D$FBB1)
 ;
 ;	-----------------
 J$6B99:	LD	B,00H
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.6B9B:	LD	A,(D.7B31)
 	PUSH	HL
 	CALL	C.7B00
-;
 	POP	HL
 	RET	
 ;
@@ -9628,29 +9296,27 @@ J$6BFD:	SCF
 ;
 	LD	(D.7B20),HL
 	LD	A,(D.7B23)
-	ADD	A,31H	; "1"
+	ADD	A,LOW I$6C31
 	LD	L,A
 	LD	A,00H
-	ADC	A,6CH	; "l"
+	ADC	A,HIGH I$6C31
 	LD	H,A
 	LD	A,(HL)
 	LD	(D.7B25),A
 	LD	HL,I$7B34
 	LD	(D.7B32),HL
-	LD	A,(D.FCC1)
+	LD	A,(EXPTBL+0)
 	LD	HL,I$002B
 	CALL	C.000C
-;
 	AND	80H
-	LD	HL,I$3840
+	LD	HL,14400
 	JR	Z,J$6C2D
-;
-	LD	HL,I$2EE0
+	LD	HL,12000
 J$6C2D:	LD	(D$7B0A),HL
 	RET	
 ;
 ;	-----------------
-?.6C31:	NOP	
+I$6C31:	NOP	
 	RST	38H
 	LD	A,A
 	LD	A,A
@@ -9718,7 +9384,7 @@ J$6C84:	PUSH	BC
 	DJNZ	J$6C84
 ;
 J$6C98:	XOR	A
-	LD	(D.FB3F),A
+	LD	(MUSICF),A
 	JP	J$6EC6
 ;
 ;	-----------------
@@ -9734,11 +9400,11 @@ C.6C9F:	LD	A,(D.7B1F)
 	LD	A,(D$6CBF)
 	LD	E,A
 	LD	A,1FH
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	CALL	C.6B07
 ;
-	CALL	C.4D8F
+	CALL	C.4D8F			; restore page 0
 ;
 	RET	
 ;
@@ -9761,12 +9427,12 @@ C.6CDC:	CALL	C.6C3C
 ;
 	CALL	C.6C9F
 ;
-	CALL	C.4D83
+	CALL	C.4D83			; MSX-AUDIO in page 0
 ;
 	LD	A,(D.7B23)
 	CALL	C.6CEE
 ;
-	JP	C.4D8F
+	JP	C.4D8F			; restore page 0
 ;
 ;	-----------------
 ;
@@ -10327,7 +9993,7 @@ C.6EFE:	LD	IX,I$521C
 ;	     Outputs ________________________
 ;
 C.6F04:	LD	IX,J.67D0
-J.6F08:	LD	IY,(D.FCC0)
+J.6F08:	LD	IY,(EXPTBL+0-1)
 	JP	C.001C
 ;
 ;	-----------------
@@ -10461,7 +10127,7 @@ C.6F66:	DI
 	LD	(D$7E78),HL
 	LD	(D$7E7A),HL
 	LD	A,87H
-	LD	(D.FB3F),A
+	LD	(MUSICF),A
 J$6F90:	LD	HL,D.7B28
 	LD	A,(HL)
 	OR	A
