@@ -65,7 +65,7 @@ MAXFIL	EQU	0F85FH	; --SL-
 FILTAB	EQU	0F860H	; --S--
 MCLTAB	EQU	0F956H	; --SL-
 
-I$F975	EQU	0F975H	; hook for MIDI in orginal FM-PAC
+I$F975	EQU	0F975H	; hook for MIDI in orginal FM-PAC, not used in this version
 D.F97A	EQU	0F97AH	; (120*4*int freq)/2
 D.F97C	EQU	0F97CH	; slotid MSX-MUSIC
 D.F97D	EQU	0F97DH	; start MSX-MUSIC workarea
@@ -186,7 +186,7 @@ I.4018:	DEFB	"APRLOPLL"	; internal MSX-MUSIC indentifier
 
 I.4100:	DEFB	"V1.3 1988 04 26",0	; looks like a version string
 
-; looks like BIOS jumptable
+; looks like a BIOS jumptable
 
 ?.4110:	JP	J.4140		; WRTOPL
 ?.4113:	JP	J$4192		; INIOPL
@@ -3570,6 +3570,8 @@ J$5DBE:	LD	A,E
 	OR	E
 	JR	Z,J.5DB7		; tempo value 0, illegal function call
 	LD	(HL),A			; tempo
+	LD	C,A
+
 
 ; now some buggy MIDI code
 ; it never checks if playvoice 0 is a FM/MIDI voice, so if there are only PSG playvoices,
@@ -3577,11 +3579,13 @@ J$5DBE:	LD	A,E
 ;
 ; The following code should be inserted:
 ;
-;	LD	A,(D.F992)
+;	LD	A,(D.F97F)		; PLAY MIDI ?
 ;	OR	A
-;	RET	Z
+;	RET	Z			; nope, quit
+;	LD	A,(D.F992)
+;	OR	A			; any MIDI playvoices ?
+;	RET	Z			; nope, quit
 
-	LD	C,A
 	LD	A,(VOICEN)		; current playvoice
 	CP	0			; playvoice 0 ?
 	RET	NZ			; nope, quit
@@ -4056,13 +4060,12 @@ C$6039:	CALL	C.6E2D
 	CALL	C.6E6A			; evaluate number in MCL
 	CALL	C.5F87			; check for byte value
 	LD	A,(D.F97F)
-	CP	01H			; MIDI playdevice ?
+	CP	01H			; PLAY MIDI ?
 	LD	A,E
 	JR	Z,J$606C		; nope,
-	CP	40H	; "@"
+	CP	64
 	JR	J$606E
-;
-;	-----------------
+
 J$606C:	CP	80H
 J$606E:	JR	NC,J.60C4
 	LD	C,A
@@ -4080,27 +4083,24 @@ J.6083:	LD	E,84H
 	LD	E,C
 	POP	BC
 	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
-;
-;	-----------------
+
+;	  Subroutine FM MCL "@V"
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J.608D:	CALL	C.6E2D
-;
 	CALL	C.60E5
-;
 	JR	C,J.60C4
-;
 	CALL	C.6E6A			; evaluate number in MCL
-;
 	LD	A,(D.F97F)
 	CP	01H			; MIDI playdevice ?
 	JR	Z,J$60A8		; yep,
 	LD	A,7FH
 	SUB	E
 	JP	M,J.60C4
-;
 	RRA	
 	JR	J$60AD
-;
-;	-----------------
+
 J$60A8:	LD	A,E
 	CP	80H
 	JR	NC,J.60C4
@@ -4111,19 +4111,18 @@ J$60AD:	LD	C,A
 	LD	E,C
 	POP	BC
 	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
-;
-;	-----------------
+
+;	  Subroutine FM MCL "@W"
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J$60BB:	POP	DE
 	CALL	C$60C7
-;
 	LD	E,83H
 	JP	J.62F9
-;
-;	-----------------
+
 J.60C4:	JP	C.6F89			; illegal function call
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -4214,11 +4213,13 @@ C$6127:	JR	NC,J.616C
 	LD	E,C
 	POP	BC
 	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
-;
-;	-----------------
+
 J$613F:	JP	C.5F87			; check for byte value
-;
-;	-----------------
+
+;	  Subroutine FM MCL "@S"
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J$6142:	CALL	C.6E2D
 	CALL	C.60E5
 	JP	C,J.60C4
@@ -4236,14 +4237,15 @@ J$6142:	CALL	C.6E2D
 	LD	E,C
 	POP	BC
 	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
-;
-;	-----------------
+
 J$6169:	JP	C.5F87			; check for byte value
-;
-;	-----------------
+
 J.616C:	JP	C.6F89			; illegal function call
-;
-;	-----------------
+
+;	  Subroutine FM MCL "@C"
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J.616F:	CALL	C.6E2D
 	CALL	C.60E5
 	JP	C,J.60C4
@@ -4274,12 +4276,14 @@ J.616F:	CALL	C.6E2D
 	POP	DE
 	POP	BC
 	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
-;
-;	-----------------
+
 J$61AF:	POP	AF
 	JP	C.5F87			; check for byte value
-;
-;	-----------------
+
+;	  Subroutine FM MCL "@H"
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J.61B3:	CALL	C.6E2D
 	CALL	C.60E5
 	JP	C,J.60C4
@@ -4301,8 +4305,7 @@ J.61B3:	CALL	C.6E2D
 	LD	E,C
 	POP	BC
 	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
-;
-;	-----------------
+
 J$61DE:	POP	AF
 	JP	C.5F87			; check for byte value
 
@@ -6085,9 +6088,9 @@ C.6BCF:	CALL	C.6B30
 ;
 ; The following code should be inserted:
 ;
-;	LD	A,(D.F992)
+;	LD	A,(D.F992)		; any OPLL/MIDI playvoices ?
 ;	OR	A
-;	RET	Z
+;	RET	Z			; nope, quit
 
 
 	LD	A,(D.F98E)

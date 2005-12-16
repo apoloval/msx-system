@@ -4,83 +4,43 @@
 ;                            Palo Alto, CA
 ;
 	.Z80
+	ASEG
 	ORG	4000H
 ;
-X.0000	EQU	0000H	; -CS-I
-I.0001	EQU	0001H	; ----I
-I.0004	EQU	0004H	; ----I
-BDOS	EQU	0005H	; ----I
-M.0006	EQU	0006H	; -C-LI
-I.0007	EQU	0007H	; ----I
-C.0008	EQU	0008H	; -C--I
-I.0009	EQU	0009H	; ----I
-C.000A	EQU	000AH	; -C---
-I.000B	EQU	000BH	; ----I
-C.000C	EQU	000CH	; -C--I
-I$000E	EQU	000EH	; ----I
-C.000F	EQU	000FH	; -C--I
-C.0010	EQU	0010H	; -C--I
-I$0013	EQU	0013H	; ----I
-C$0014	EQU	0014H	; -C---
-I$0017	EQU	0017H	; ----I
-C$0018	EQU	0018H	; -C---
-I$0019	EQU	0019H	; ----I
-C.001C	EQU	001CH	; JC--I
-I$001E	EQU	001EH	; ----I
-C.0020	EQU	0020H	; -C--I
-I$0021	EQU	0021H	; ----I
-I$0022	EQU	0022H	; ----I
-C.0024	EQU	0024H	; JC---
-I$0025	EQU	0025H	; ----I
-I.0027	EQU	0027H	; ----I
-C$0028	EQU	0028H	; -C---
-I$002B	EQU	002BH	; ----I
-C.0030	EQU	0030H	; -C---
-C.0038	EQU	0038H	; -C--I
-I$003F	EQU	003FH	; ----I
-C.0040	EQU	0040H	; -C--I
-C$0070	EQU	0070H	; -C---
-C$0075	EQU	0075H	; -C---
-I.007F	EQU	007FH	; ----I
-DBUF	EQU	0080H	; -C--I
-C.0090	EQU	0090H	; -C--I
-I$0099	EQU	0099H	; ----I
+M0006	EQU	0006H	; -C-LI
+RDSLT	EQU	000CH	; -C--I
+WRSLT	EQU	0014H	; -C---
+CALSLT	EQU	001CH	; JC--I
+ENASLT	EQU	0024H	; JC---
+M002B	EQU	002BH	; ----I
+KEYINT	EQU	0038H	; -C--I
+GICINI	EQU	0090H	; -C--I
+M2F8A	EQU	2F8AH	; -C---
+M406F	EQU	406FH
+M4666	EQU	4666H
+M4C64	EQU	4C64H
+M4E9B	EQU	4E9BH
+M517A	EQU	517AH
+M521C	EQU	521CH
+M542F	EQU	542FH
+M5EA4	EQU	5EA4H
+M67D0	EQU	67D0H
+M6A0E	EQU	6A0EH
+M73E5	EQU	73E5H
+
+C$0090	EQU	0090H
+C$0099	EQU	0099H	; ----I
 C$009C	EQU	009CH	; -C---
-C.00AB	EQU	00ABH	; -C--I
-I$00AE	EQU	00AEH	; ----I
+C$00AB	EQU	00ABH	; -C--I
+C$00AE	EQU	00AEH	; ----I
 C$00B1	EQU	00B1H	; -C---
-C.00B4	EQU	00B4H	; -C--I
-I.00FF	EQU	00FFH	; ----I
-I.0100	EQU	0100H	; ----I
-I$0103	EQU	0103H	; ----I
-I$0116	EQU	0116H	; ----I
-I$013E	EQU	013EH	; ----I
-I$021E	EQU	021EH	; ----I
+C$00B4	EQU	00B4H	; -C--I
 J$0312	EQU	0312H	; J----
-I.0400	EQU	0400H	; ----I
-I$051E	EQU	051EH	; ----I
-I.053E	EQU	053EH	; ----I
-I$061E	EQU	061EH	; ----I
-I.0707	EQU	0707H	; ----I
-I$071E	EQU	071EH	; ----I
-I$0818	EQU	0818H	; ----I
-D$0C00	EQU	0C00H	; --S--
-I$0D1E	EQU	0D1EH	; ----I
-I$0F02	EQU	0F02H	; ----I
-I$0F03	EQU	0F03H	; ----I
-I$186A	EQU	186AH	; ----I
-I$1F3E	EQU	1F3EH	; ----I
-I$1F40	EQU	1F40H	; ----I
-I$2376	EQU	2376H	; ----I
-D$2400	EQU	2400H	; --S--
-I$2574	EQU	2574H	; ----I
-I$2EE0	EQU	2EE0H	; ----I
 J$2F70	EQU	2F70H	; J----
-C$2F8A	EQU	2F8AH	; -C---
-I.3000	EQU	3000H	; ----I
-I$3180	EQU	3180H	; ----I
-I.3280	EQU	3280H	; ----I
-I.32C0	EQU	32C0H	; ----I
+
+I.3000	EQU	3000H	; channel
+I.3280	EQU	3280H	; control registers 1st Y8950
+I.32C0	EQU	32C0H	; control registers 2nd Y8950
 D.3496	EQU	3496H	; ---LI
 D.3497	EQU	3497H	; --SL-
 D$349B	EQU	349BH	; --S--
@@ -88,94 +48,131 @@ D.349D	EQU	349DH	; --SL-
 D$34A1	EQU	34A1H	; --S--
 D.34A3	EQU	34A3H	; --S-I
 I.34A4	EQU	34A4H	; ----I
-I$351E	EQU	351EH	; ----I
-I$381E	EQU	381EH	; ----I
-I$3840	EQU	3840H	; ----I
-I$3DCB	EQU	3DCBH	; ----I
-I$3E80	EQU	3E80H	; ----I
-I$3E89	EQU	3E89H	; ----I
+I$3E89	EQU	3E89H	; general interrupt routine
+
+D$72A3	EQU	72A3H	; ?? 1st Y8950
+D$72E3	EQU	72E3H	; ?? 2nd Y8950
+D$7300	EQU	7300H	; general interrupt handler
+D$7308	EQU	7308H	; should VDP interrupts handled routine
+D$7340	EQU	7340H	; TIMER-1 block
+D$7344	EQU	7344H	; TIMER-2 block
+D$7370	EQU	7370H	; AST MK
+D$7372	EQU	7372H	; AST ADPCM 1st Y8950
+D$7374	EQU	7374H	; AST ADPCM 2nd Y8950
+D$7380	EQU	7380H	; pointer to predefined instrument definitions (00-31)
+D.7382	EQU	7382H	; pointer to programable instrument definitions (32-63)
+D$7384	EQU	7384H	; pointer to predefined instrument definitions (32-63)
+D.7391	EQU	7391H	; 2nd Y8950 available
+D$7488	EQU	7488H
+D$7489	EQU	7489H
+D.7496	EQU	7496H
+I.7500	EQU	7500H
+I$7510	EQU	7510H
+C.7B00	EQU	7B00H
+C$7B05	EQU	7B05H
+D$7B0A	EQU	7B0AH
+D$7B0C	EQU	7B0CH
+D.7B0E	EQU	7B0EH	; slotid MSX-AUDIO
+D.7B0F	EQU	7B0FH
+D.7B10	EQU	7B10H
+D.7B11	EQU	7B11H
+D.7B12	EQU	7B12H
+D.7B13	EQU	7B13H	; audio basic initialized
+D.7B14	EQU	7B14H
+D.7B15	EQU	7B15H
+I.7B16	EQU	7B16H	; number of channels per FM-AUDIO playvoice
+D.7B1F	EQU	7B1FH	; audio mode (0-7)
+D.7B20	EQU	7B20H
+D.7B22	EQU	7B22H
+D.7B23	EQU	7B23H
+D.7B24	EQU	7B24H
+D.7B25	EQU	7B25H
+D.7B26	EQU	7B26H
+D.7B28	EQU	7B28H
+D.7B29	EQU	7B29H
+I.7B2A	EQU	7B2AH
+D.7B2F	EQU	7B2FH
+D.7B30	EQU	7B30H
+D.7B31	EQU	7B31H
+D.7B32	EQU	7B32H
+I$7B34	EQU	7B34H
+I$7B70	EQU	7B70H
+I.7CF0	EQU	7CF0H
+D.7E76	EQU	7E76H
+D$7E78	EQU	7E78H
+D$7E7A	EQU	7E7AH
+J.7E7C	EQU	7E7CH
+D.7E82	EQU	7E82H
+D.7E84	EQU	7E84H
+D.7E86	EQU	7E86H
+D.7E87	EQU	7E87H
+D.7E88	EQU	7E88H
+I$7E89	EQU	7E89H	; general interrupt routine
+D.7EAA	EQU	7EAAH
+D.7EAC	EQU	7EACH
+D.7EAE	EQU	7EAEH
+D.7EBA	EQU	7EBAH
+D.7EBC	EQU	7EBCH
+I$7ECA	EQU	7ECAH
+D$7ED0	EQU	7ED0H
+D.7EDA	EQU	7EDAH
+D$7EDB	EQU	7EDBH
+D$7EDC	EQU	7EDCH
+D.7EDD	EQU	7EDDH
+D.7EDE	EQU	7EDEH
+D.7EDF	EQU	7EDFH
+D.7EE0	EQU	7EE0H
+D$7EE1	EQU	7EE1H
+I$7EE2	EQU	7EE2H
+D.7EE3	EQU	7EE3H
+D.7EE4	EQU	7EE4H
+D.7EE8	EQU	7EE8H
+D$7EEA	EQU	7EEAH
+D.7EEE	EQU	7EEEH	; VRAM mask
+D.7EF0	EQU	7EF0H
+D$7EF1	EQU	7EF1H
+I.7F13	EQU	7F13H
+D.7F93	EQU	7F93H
+D.7F94	EQU	7F94H
+D.7F95	EQU	7F95H
+D.7F97	EQU	7F97H
+D.7F98	EQU	7F98H
+J.7F9A	EQU	7F9AH
+I.7FC4	EQU	7FC4H
+I$7FC6	EQU	7FC6H
+D.7FFE	EQU	7FFEH
+I$7FFF	EQU	7FFFH
+
+J$750B	EQU	750BH	; SYNTHE
+
 I.8000	EQU	8000H	; ----I
-J$8007	EQU	8007H	; J----
-D$8500	EQU	8500H	; --S--
-I$9005	EQU	9005H	; ----I
-I$9006	EQU	9006H	; ----I
-C$A209	EQU	0A209H	; -C---
-I$ABC3	EQU	0ABC3H	; ----I
-J$AFFA	EQU	0AFFAH	; J----
-I.B200	EQU	0B200H	; ----I
-I$B609	EQU	0B609H	; ----I
-I$C011	EQU	0C011H	; ----I
-I$C234	EQU	0C234H	; ----I
-I$C937	EQU	0C937H	; ----I
-J$C959	EQU	0C959H	; J----
-C$DF23	EQU	0DF23H	; -C---
-D$ED00	EQU	0ED00H	; --S--
-I$F020	EQU	0F020H	; ----I
-I$F030	EQU	0F030H	; ----I
-I$F03E	EQU	0F03EH	; ----I
 
 C.F37D	EQU	0F37DH	; JC---
-C$F398	EQU	0F398H	; -C---
-D$F3F3	EQU	0F3F3H	; ---L-
-X.F55E	EQU	0F55EH	; J-SLI
-D.F55F	EQU	0F55FH	; --SLI
-D.F560	EQU	0F560H	; --SLI
-D.F561	EQU	0F561H	; --SLI
-D.F562	EQU	0F562H	; --SL-
-D.F563	EQU	0F563H	; --SL-
-D.F564	EQU	0F564H	; --SLI
-D.F565	EQU	0F565H	; --SL-
-D.F566	EQU	0F566H	; --SL-
-D.F567	EQU	0F567H	; --SL-
-D.F569	EQU	0F569H	; --S--
-D.F56B	EQU	0F56BH	; --S--
-D.F56D	EQU	0F56DH	; --SL-
-D.F56E	EQU	0F56EH	; --SLI
-D.F570	EQU	0F570H	; --SL-
-I$F571	EQU	0F571H	; ----I
-D.F572	EQU	0F572H	; --SL-
-D.F573	EQU	0F573H	; --SL-
-D$F574	EQU	0F574H	; --S--
-D.F575	EQU	0F575H	; ---L-
-D.F577	EQU	0F577H	; --SL-
-D$F578	EQU	0F578H	; ---L-
-I.F579	EQU	0F579H	; ----I
-D.F57D	EQU	0F57DH	; --SL-
-I.F57E	EQU	0F57EH	; ----I
-D.F580	EQU	0F580H	; --SL-
-D.F582	EQU	0F582H	; ---L-
-D$F587	EQU	0F587H	; --S--
-D.F58E	EQU	0F58EH	; --SLI
-D$F590	EQU	0F590H	; --S--
-D$F592	EQU	0F592H	; --S--
-C.F5DE	EQU	0F5DEH	; -C--I
-D.F65C	EQU	0F65CH	; --SL-
-D.F663	EQU	0F663H	; ---LI
-D.F6A5	EQU	0F6A5H	; --S--
-D.F6C6	EQU	0F6C6H	; --SL-
-I$F7F6	EQU	0F7F6H	; ----I
-D.F7F8	EQU	0F7F8H	; --S-I
-D.F862	EQU	0F862H	; --SL-
-I$F866	EQU	0F866H	; ----I
-I$F8F8	EQU	0F8F8H	; ----I
-D.F956	EQU	0F956H	; --SL-
-I$FA09	EQU	0FA09H	; ----I
-D$FAFC	EQU	0FAFCH	; ---L-
-I$FB20	EQU	0FB20H	; ----I
-D.FB35	EQU	0FB35H	; --SLI
-D.FB36	EQU	0FB36H	; --SL-
-D.FB38	EQU	0FB38H	; --SL-
-D.FB39	EQU	0FB39H	; --SL-
-D.FB3B	EQU	0FB3BH	; --SLI
-D.FB3C	EQU	0FB3CH	; --SL-
+CLPRM1	EQU	0F398H	; -C---
+QUEUES	EQU	0F3F3H	; ---L-
+BUF	EQU	0F55EH	; J-SLI
+VALTYP	EQU	0F663H	; ---LI
+SUBFLG	EQU	0F6A5H	; --S--
+STREND	EQU	0F6C6H	; --SL-
+DAC	EQU	0F7F6H	; ----I
+NULBUF	EQU	0F862H	; --SL-
+FILNAM	EQU	0F866H	; ----I
+MCLTAB	EQU	0F956H	; --SL-
+MODE	EQU	0FAFCH	; ---L-
+HOKVLD	EQU	0FB20H	; ----I
+PRSCNT	EQU	0FB35H	; --SLI
+SAVSP	EQU	0FB36H	; --SL-
+VOICEN	EQU	0FB38H	; --SL-
+SAVVOL	EQU	0FB39H	; --SL-
+MCLLEN	EQU	0FB3BH	; --SLI
+MCLPTR	EQU	0FB3CH	; --SL-
 MUSICF	EQU	0FB3FH	; --SL-
-D.FB40	EQU	0FB40H	; --S-I
-D.FB41	EQU	0FB41H	; --S-I
-D$FB66	EQU	0FB66H	; --S--
-D$FB8B	EQU	0FB8BH	; --S--
-D$FBB1	EQU	0FBB1H	; ---L-
-D.FC9B	EQU	0FC9BH	; --SL-
-D.FCC0	EQU	0FCC0H	; ---L-
+PLYCNT	EQU	0FB40H	; --S-I
+VCBA	EQU	0FB41H	; --S-I
+VCBB	EQU	0FB66H	; --S--
+VCBC	EQU	0FB8BH	; --S--
+BASROM	EQU	0FBB1H	; ---L-
+INTFLG	EQU	0FC9BH	; --SL-
 EXPTBL	EQU	0FCC1H	; ---LI
 SLTTBL	EQU	0FCC5H	; ----I
 PROCNM	EQU	0FD89H	; ----I
@@ -186,6 +183,31 @@ H.ERRO	EQU	0FFB1H	; J---I
 H.PLAY	EQU	0FFC5H	; ----I
 EXTBIO	EQU	0FFCAH	; ----I
 D.FFFF	EQU	0FFFFH	; --S-I
+
+
+KEYWRD	MACRO	X,Y
+G	ASET	0
+Q	ASET	0
+	IRPC	D,<X>
+	IF	G EQ 0
+G	ASET	1
+	ELSE
+	IF	Q NE 0
+	IF	Q EQ " "
+	DEFB	0FFH
+	ELSE
+	DEFB	Q
+	ENDIF
+	ENDIF
+Q	ASET	"&D"
+	ENDIF
+	ENDM
+	DEFB	Q+128
+	DEFW	Y
+	ENDM
+
+
+
 ;
 D.4000:	DEFB	"AB"
 D$4002:	DEFW	C$403E
@@ -195,12 +217,13 @@ D$4002:	DEFW	C$403E
 
 	DEFS	6,0
 
-?.4010:	JP	C.6B64
-;
-;	-----------------
-?.4013:	JP	J$69EA
-;
-;	-----------------
+?.4010:	JP	C.6B64			; get from voicequeue serviced
+?.4013:	JP	J$69EA			; clear playvoice bit voicequeue serviced
+
+;	  Subroutine helper routine CALSLT
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 ?.4016:	LD	(D.FFFF),A
 	LD	A,C
 	OUT	(0A8H),A
@@ -212,8 +235,7 @@ D$4002:	DEFW	C$403E
 	PUSH	BC
 	EXX	
 	EX	AF,AF'
-	CALL	C$F398
-;
+	CALL	CLPRM1
 	EX	AF,AF'
 	EXX	
 	POP	BC
@@ -229,8 +251,11 @@ D$4002:	DEFW	C$403E
 	LD	A,C
 	OUT	(0A8H),A
 	JP	J$0312
-;
-;	-----------------
+
+;	  Subroutine cartridge INIT
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 C$403E:	XOR	A
 	LD	(D.7FFE),A		; select segment 0
 	CALL	C$5CD8			; check number of Y8950's
@@ -246,18 +271,18 @@ C$403E:	XOR	A
 	INC	DE
 	LD	BC,10-1
 	LDIR				; looks like 2 ´hooks´ are intialized
-	LD	HL,(M.0006)
+	LD	HL,(M0006)
 	LD	(D$7B0C),HL
 	CALL	C.4D83			; MSX-AUDIO in page 0
-	CALL	C.0090			; ?
-	LD	HL,(D$7384)
-	LD	DE,(D.7382)
-	LD	BC,I.0400
-	LDIR	
+	CALL	C$0090			; ?
+	LD	HL,(D$7384)		; pointer to predefined instrument definitions (32-63)
+	LD	DE,(D.7382)		; pointer to programable instrument definitions (32-63)
+	LD	BC,32*32
+	LDIR				; initialize instrument definitions (32-63)
 	CALL	C.4D8F			; restore page 0
 	POP	DE			; number of Y8950's
 	XOR	A
-	LD	(D.7B13),A
+	LD	(D.7B13),A		; AUDIO-BASIC not initialized
 	DI	
 	LD	A,19H
 	OUT	(0C0H),A
@@ -273,10 +298,10 @@ C$403E:	XOR	A
 
 J.4092:	DI	
 	LD	HL,I$40A1
-	LD	DE,X.F55E
+	LD	DE,BUF
 	LD	BC,C$40AF-I$40A1
 	LDIR	
-	JP	X.F55E
+	JP	BUF
 
 I$40A1:	LD	A,1
 	LD	(D.7FFE),A		; select segment 1
@@ -292,9 +317,9 @@ I$40A1:	LD	A,1
 
 C$40AF:	DI	
 	LD	HL,D.7B13
-	BIT	0,(HL)
-	RET	NZ
-	SET	0,(HL)
+	BIT	0,(HL)			; AUDIO-BASIC already initialized ?
+	RET	NZ			; nope, quit
+	SET	0,(HL)			; flag AUDIO-BASIC initialized
 	LD	HL,H.KEYI
 	LD	DE,J.7F9A
 	PUSH	HL
@@ -328,6 +353,10 @@ I$40E7:	RST	30H
 	DEFW	C$5F8E
 	RET	
 
+;	  Subroutine cartridge STATEMENT handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 C$40EC:	EI	
 	PUSH	HL
 	LD	HL,PROCNM
@@ -335,21 +364,21 @@ C$40EC:	EI
 	POP	HL
 	RET	C
 	PUSH	HL
-	LD	HL,I$4308
+	LD	HL,C$4308
 	OR	A
 	SBC	HL,DE
 	POP	HL
 	JR	Z,J.4111
 	PUSH	HL
-	LD	HL,I$42EA
+	LD	HL,C$42EA
 	OR	A
 	SBC	HL,DE
 	POP	HL
 	JR	Z,J.4111
 	LD	A,(D.7B13)
-	AND	01H	; 1 
+	AND	01H			; AUDIO-BASIC initialized ?
 	SCF	
-	RET	Z
+	RET	Z			; nope, quit and flag "call statement not recognized"
 J.4111:	CALL	C$411C
 	CALL	C$411A
 	EI	
@@ -372,7 +401,7 @@ C$411C:	PUSH	HL
 	LD	HL,-768
 	ADD	HL,SP
 	JP	NC,J.6EB4
-	LD	DE,(D.F6C6)
+	LD	DE,(STREND)
 	OR	A
 	SBC	HL,DE
 	JP	C,J.6EB4
@@ -405,91 +434,54 @@ I$4132:	DEFB	I.ST_A-I$4148		; A
 	DEFB	I.ST_V-I$4148		; V
 
 I$4148:
-I.ST_A:	DCI	"UDIO"
-	DEFW	C$4308
-	DCI	"UDREG"			; AUDREG
-	DEFW	C$48BA
-	DCI	"PPEND",0FFH,"MK"	; APPEND MK
-	DEFW	C$4981
-	DCI	"PEEK"			; APEEK
-	DEFW	C$4A2A
-	DCI	"POKE"			; APOKE
-	DEFW	C$4A16
+I.ST_A:	KEYWRD	<AUDIO>,C$4308
+	KEYWRD	<AUDREG>,C$48BA
+	KEYWRD	<APPEND MK>,C$4981
+	KEYWRD	<APEEK>,C$4A2A
+	KEYWRD	<APOKE>,C$4A16
 I.ST__:	DEFB	0FFH
-I.ST_B:	DCI	"GM"			; BGM
-	DEFW	C$43FB
+I.ST_B:	KEYWRD	<BGM>,C$43FB
 	DEFB	0FFH
-I.ST_C:	DCI	"ONT",0FFH,"MK"		; CONT MK
-	DEFW	C$48B2
-	DCI	"OPY",0FFH,"PCM"	; COPY PCM
-	DEFW	C$45AB
-	DCI	"ONVP"			; CONVP
-	DEFW	C$4603
-	DCI	"ONVA"			; CONVA
-	DEFW	C$45F1
+I.ST_C:	KEYWRD	<CONT MK>,C$48B2
+	KEYWRD	<COPY PCM>,C$45AB
+	KEYWRD	<CONVP>,C$4603
+	KEYWRD	<CONVA>,C$45F1
 	DEFB	0FFH
-I.ST_I:	DCI	"NMK"			; INMK
-	DEFW	C$4AA4
+I.ST_I:	KEYWRD	<INMK>,C$4AA4
 	DEFB	0FFH
-I.ST_K:	DCI	"EY",0FFH,"ON"		; KEY ON
-	DEFW	C$4408
-	DCI	"EY",0FFH,"OFF"		; KEY OFF
-	DEFW	C$442D
+I.ST_K:	KEYWRD	<KEY ON>,C$4408
+	KEYWRD	<KEY OFF>,C$442D
 	DEFB	0FFH
-I.ST_L:	DCI	"OAD",0FFH,"PCM"	; LOAD PCM
-	DEFW	C$57F1
+I.ST_L:	KEYWRD	<LOAD PCM>,C$57F1
 	DEFB	0FFH
-I.ST_M:	DCI	"K",0FFH,"VOICE"	; MK VOICE
-	DEFW	C$5ED7
-	DCI	"K",0FFH,"VEL"		; MK VEL
-	DEFW	C$4462
-	DCI	"K",0FFH,"VOL"		; MK VOL
-	DEFW	C$447F
-	DCI	"K",0FFH,"TEMPO"	; MK TEMPO
-	DEFW	C$44DF
-	DCI	"K",0FFH,"STAT"		; MK STAT
-	DEFW	C$4A0E
-	DCI	"K",0FFH,"PCM"		; MK PCM
-	DEFW	C$452E
+I.ST_M:	KEYWRD	<MK VOICE>,C$5ED7
+	KEYWRD	<MK VEL>,C$4462
+	KEYWRD	<MK VOL>,C$447F
+	KEYWRD	<MK TEMPO>,C$44DF
+	KEYWRD	<MK STAT>,C$4A0E
+	KEYWRD	<MK PCM>,C$452E
 	DEFB	0FFH
-I.ST_R:	DCI	"EC",0FFH,"MK"		; REC MK
-	DEFW	C$499A
-	DCI	"ECMOD"			; RECMOD
-	DEFW	C$456C
-	DCI	"EC",0FFH,"PCM"		; REC PCM
-	DEFW	C$514C
+I.ST_R:	KEYWRD	<REC MK>,C$499A
+	KEYWRD	<RECMOD>,C$456C
+	KEYWRD	<REC PCM>,C$514C
 	DEFB	0FFH
-I.ST_S:	DCI	"TOPM"			; STOPM
-	DEFW	C$4879
-	DCI	"ET",0FFH,"PCM"		; SET PCM
-	DEFW	C$5021
-	DCI	"AVE",0FFH,"PCM"	; SAVE PCM
-	DEFW	C$57EE
-	DCI	"YNTHE"			; SYNTHE
-	DEFW	C$42EA
+I.ST_S:	KEYWRD	<STOPM>,C$4879
+	KEYWRD	<SET PCM>,C$5021
+	KEYWRD	<SAVE PCM>,C$57EE
+	KEYWRD	<SYNTHE>,C$42EA
 	DEFB	0FFH
-I.ST_T:	DCI	"RANSPOSE"		; TRANSPOSE
-	DEFW	C$4A82
-	DCI	"EMPER"			; TEMPER
-	DEFW	C$4A92
+I.ST_T:	KEYWRD	<TRANSPOSE>,C$4A82
+	KEYWRD	<TEMPER>,C$4A92
 	DEFB	0FFH
-I.ST_V:	DCI	"OICE"			; VOICE
-	DEFW	C$5D42
-	DCI	"OICE",0FFH,"COPY"	; VOICE COPY
-	DEFW	C$5DE1
+I.ST_V:	KEYWRD	<VOICE>,C$5D42
+	KEYWRD	<VOICE COPY>,C$5DE1
 	DEFB	0FFH
-I.ST_P:	DCI	"LAY"			; PLAY
-	DEFW	C$5F36
-	DCI	"LAY",0FFH,"PCM"	; PLAY PCM
-	DEFW	C$5157
-	DCI	"CM",0FFH,"FREQ"	; PCM FREQ
-	DEFW	C$4581
-	DCI	"CM",0FFH,"VOL"		; PCM VOL
-	DEFW	C$44A8
-	DCI	"LAY",0FFH,"MK"		; PLAY MK
-	DEFW	C$49A6
-	DCI	"ITCH"			; PITCH
-	DEFW	C$4A7F
+I.ST_P:	KEYWRD	<PLAY>,C$5F36
+	KEYWRD	<PLAY PCM>,C$5157
+	KEYWRD	<PCM FREQ>,C$4581
+	KEYWRD	<PCM VOL>,C$44A8
+	KEYWRD	<PLAY MK>,C$49A6
+	KEYWRD	<PITCH>,C$4A7F
 	DEFB	0FFH 
 
 ;	  Subroutine __________________________
@@ -576,337 +568,280 @@ J.42B2:	LD	A,(DE)
 	INC	DE
 	INC	DE
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine check for "(" and evaluate byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.42BE:	CALL	C.4FB9
-;
-	JP	C.6EFE
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+C.42BE:	CALL	C.4FB9			; check for "("
+	JP	C.6EFE			; evaluate byte operand 
+
+;	  Subroutine check for end of statement
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.42C4:	CALL	C.4A0A
-;
+
+C.42C4:	CALL	C.4A0A			; end of statement ?
 	JP	NZ,J.6EA8
-;
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine evaluate parenthesized byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.42CB:	PUSH	BC
-	CALL	C.42BE
-;
+	CALL	C.42BE			; check for "(" and evaluate byte operand
 	JR	J$42E4
-;
-;	-----------------
+
+;	  Subroutine evaluate parenthesized adres operand (unused code)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 ?.42D1:	PUSH	BC
-	CALL	C.4FB9
-;
+	CALL	C.4FB9			; check for "("
 	JR	J$42E1
-;
-;	-----------------
-?.42D7:	CALL	C.4FB9
-;
-	CALL	C.6EF8
-;
+
+;	  Subroutine evaluate two parenthesized adres operands (unused code)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+?.42D7:	CALL	C.4FB9			; check for "("
+	CALL	C.6EF8			; evaluate adres operand
 	PUSH	DE
-	CALL	C.4FB4
-;
-J$42E1:	CALL	C.6EF8
-;
-J$42E4:	CALL	C.4FBE
-;
+	CALL	C.4FB4			; check for ","
+J$42E1:	CALL	C.6EF8			; evaluate adres operand
+J$42E4:	CALL	C.4FBE			; check for ")"
 	POP	BC
 	LD	A,E
 	RET	
-;
-;	-----------------
-I$42EA:	CALL	C.42C4
-;
-	CALL	C.42F3
-;
-	JP	C.6EAB
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL SYNTHE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
+C$42EA:	CALL	C.42C4			; check for end of statement
+	CALL	C.42F3			; try to start synthesizer software
+	JP	C.6EAB			; AUDIO-BASIC initialized, illegal function call
+
+;	  Subroutine try to start synthesizer software
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 C.42F3:	LD	A,(D.7B13)
-	AND	01H
+	AND	01H			; AUDIO-BASIC initialized ?
 	JP	Z,J.4092		; nope, start synthesizer software
 	RET	
-;
-;	-----------------
-I$42FC:	INC	BC
-	LD	BC,I$0103
-	LD	BC,I.0001
-	DEFB	0,0,0,0,0
 
-I$4308:	PUSH	HL
+I$42FC:	DEFB	3			; number of FM-AUDIO playvoices
+	DEFB	1			; mode 1
+	DEFB	3			; keyboard channels
+	DEFB	1,1,1,0,0,0,0,0,0
+
+;	  Subroutine CALL AUDIO
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4308:	PUSH	HL
 	LD	HL,I$42FC
-	LD	DE,X.F55E
-	LD	BC,C.000C
-	LDIR	
+	LD	DE,BUF
+	LD	BC,12
+	LDIR				; set defaults
 	POP	HL
-	CALL	C.4A0A
-;
-	JR	Z,J$4386
-;
+	CALL	C.4A0A			; end of statement ?
+	JR	Z,J$4386		; yep, use defaults
 	PUSH	HL
-	LD	HL,X.F55E
-	LD	DE,D.F55F
-	LD	BC,I.000B
+	LD	HL,BUF+0
+	LD	DE,BUF+1
+	LD	BC,12-1
 	LD	(HL),00H
-	LDIR	
+	LDIR				; no defaults
 	POP	HL
-	CALL	C.4FB9
-;
-	CP	2CH	; ","
-	JR	Z,J$4340
-;
-	CALL	C.6EFE
-;
-	CP	08H	; 8 
-	JP	NC,C.6EAB
-;
-	LD	(D.F55F),A
+	CALL	C.4FB9			; check for "("
+	CP	","			; mode parameter not specified ?
+	JR	Z,J$4340		; yep, use 0
+	CALL	C.6EFE			; evaluate byte operand 
+	CP	8			; 0-7 ?
+	JP	NC,C.6EAB		; nope, illegal function call
+	LD	(BUF+1),A
 	LD	A,(HL)
-	CP	29H	; ")"
-	JR	Z,J.4380
-;
-J$4340:	CALL	C.4FB4
-;
-	CP	2CH	; ","
-	JR	Z,J$4357
-;
-	CALL	C.6EFE
-;
-	CP	0AH	; 10 
-J.434C:	JP	NC,C.6EAB
-;
-	LD	(D.F560),A
+	CP	")"			; end of statement ?
+	JR	Z,J.4380		; yep,
+J$4340:	CALL	C.4FB4			; check for ","
+	CP	","			; keyboard parameter not specified ?
+	JR	Z,J$4357		; yep, use 0
+	CALL	C.6EFE			; evaluate byte operand 
+	CP	10			; 0-9 ?
+J.434C:	JP	NC,C.6EAB		; nope, illegal function call
+	LD	(BUF+2),A
 	LD	A,(HL)
-	CP	29H	; ")"
+	CP	")"			; end of statement ?
 	JR	Z,J.4380
-;
-J$4357:	LD	B,09H	; 9 
+J$4357:	LD	B,9			; 9 FM-AUDIO playvoices max
 	PUSH	HL
-	LD	HL,D.F561
+	LD	HL,BUF+3
 	EX	(SP),HL
-	LD	C,00H
-J$4360:	CALL	C.4FB4
-;
+	LD	C,0			; start with playvoice 0
+J$4360:	CALL	C.4FB4			; check for ","
 	PUSH	BC
-	CALL	C.6EFE
-;
+	CALL	C.6EFE			; evaluate byte operand 
 	POP	BC
-	OR	A
-	JR	Z,J.434C
-;
-	CP	0AH	; 10 
-	JR	NC,J.434C
-;
+	OR	A			; 0 channels ?
+	JR	Z,J.434C		; yep, illegal function call
+	CP	10			; more as 9 channels ?
+	JR	NC,J.434C		; yep, illegal function call
 	EX	(SP),HL
 	LD	(HL),A
 	INC	HL
 	INC	C
 	EX	(SP),HL
 	LD	A,(HL)
-	CP	29H	; ")"
-	JR	Z,J$437B
-;
+	CP	")"			; end of statement ?
+	JR	Z,J$437B		; yep,
 	DJNZ	J$4360
-;
 J$437B:	LD	A,C
-	LD	(X.F55E),A
+	LD	(BUF+0),A		; number of FM-AUDIO playvoices
 	POP	BC
-J.4380:	CALL	C.4FBE
-;
+J.4380:	CALL	C.4FBE			; check for ")"
 	JP	NZ,J.6EA8
-;
 J$4386:	PUSH	HL
-	LD	HL,D.F55F
+	LD	HL,BUF+1
 	LD	A,(HL)
-	AND	01H	; 1 
+	AND	01H
 	LD	D,A
 	ADD	A,A
-	ADD	A,D
+	ADD	A,D			; drum mode uses 3 channels
 	INC	HL
-	ADD	A,(HL)
+	ADD	A,(HL)			; channels use by keyboard
 	INC	HL
 	LD	D,A
-	LD	A,(X.F55E)
+	LD	A,(BUF+0)
 	LD	B,A
-	OR	A
-	JR	Z,J$43A0
-;
+	OR	A			; zero FM-AUDIO playvoices ?
+	JR	Z,J$43A0		; yep, skip
 	XOR	A
 J$439C:	ADD	A,(HL)
 	INC	HL
-	DJNZ	J$439C
-;
+	DJNZ	J$439C			; add the number of channels per playvoice
 J$43A0:	ADD	A,D
-	CP	0AH	; 10 
-	JR	NC,J.434C
-;
+	CP	10			; total of channels 9 or less ?
+	JR	NC,J.434C		; nope, illegal function call
 	CALL	C.43AA
-;
 	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.43AA:	DI	
-	LD	HL,X.F55E
+	LD	HL,BUF
 	LD	A,(HL)
-	LD	(D.7B15),A
+	LD	(D.7B15),A		; number of FM-AUDIO playvoices
 	INC	HL
 	PUSH	HL
 	INC	HL
 	INC	HL
 	LD	DE,I.7B16
-	LD	BC,I.0009
-	LDIR	
+	LD	BC,9
+	LDIR				; channels per FM-AUDIO playvoice
 	POP	HL
-	LD	B,(HL)
+	LD	B,(HL)			; mode
 	INC	HL
-	LD	A,(HL)
-	LD	HL,X.0000
+	LD	A,(HL)			; number of keyboard channels
+	LD	HL,0
 	OR	A
 J$43C6:	JR	Z,J$43D0
-;
 	SCF	
 	RR	H
 	RR	L
 	DEC	A
 	JR	J$43C6
-;
-;	-----------------
 J$43D0:	ADD	HL,HL
 	RL	A
 	LD	L,H
-	LD	H,A
+	LD	H,A			; HL = keyboard channel mask
 	LD	A,B
-	LD	(D.7B1F),A
-	AND	01H	; 1 
-	JR	Z,J$43E9
-;
+	LD	(D.7B1F),A		; mode
+	AND	01H			; drum mode ?
+	JR	Z,J$43E9		; nope,
 	SRL	H
 	RR	L
 	SRL	H
 	RR	L
 	SRL	H
-	RR	L
+	RR	L			; remove 3 channels from the keyboard channel mask
 J$43E9:	EX	DE,HL
 	PUSH	DE
 	CALL	C$6BD8
-;
 	CALL	C.6C3C
-;
-	CALL	C$40AF
-;
-	POP	DE
+	CALL	C$40AF			; hook H.KEYI/H.PLAY
+	POP	DE			; keyboard channel mask
 	CALL	C$4E89
-;
 	JP	C.6C9F
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL BGM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$43FB:	CALL	C.42CB
-;
-	CP	02H	; 2 
-	JP	NC,C.6EAB
-;
+
+C$43FB:	CALL	C.42CB			; evaluate parenthesized byte operand
+	CP	2			; 0-1 ?
+	JP	NC,C.6EAB		; nope, illegal function call
 J$4403:	DEC	A
 	LD	(D.7B29),A
 	RET	
-;
-;	-----------------
-?.4408:	CALL	C.42BE
-;
+
+;	  Subroutine CALL KEY ON
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4408:	CALL	C.42BE			; check for "(" and evaluate byte operand
 	LD	A,E
-	OR	A
-	JP	M,C.6EAB
-;
+	OR	A			; 0-127 ?
+	JP	M,C.6EAB		; nope, illegal function call
 	PUSH	DE
 	LD	A,(HL)
-	CP	29H	; ")"
-	LD	E,08H	; 8 
+	CP	")"
+	LD	E,8
 	JR	Z,J$4423
-;
-	CALL	C.4FB4
-;
-	CALL	C.6EFE
-;
-	CP	10H	; 16 
-	JP	NC,C.6EAB
-;
-J$4423:	CALL	C.4FBE
-;
+	CALL	C.4FB4			; check for ","
+	CALL	C.6EFE			; evaluate byte operand 
+	CP	16			; 0-15 ?
+	JP	NC,C.6EAB		; nope, illegal function call
+J$4423:	CALL	C.4FBE			; check for ")"
 	POP	BC
 	PUSH	HL
 	LD	A,C
-	OR	80H
+	OR	80H			; b7 set (key on)
 	JR	J$4439
-;
-;	-----------------
-?.442D:	CALL	C.42CB
-;
-	OR	A
-	JP	M,C.6EAB
-;
+
+;	  Subroutine CALL KEY OFF
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$442D:	CALL	C.42CB			; evaluate parenthesized byte operand
+	OR	A			; 0-127 ?
+	JP	M,C.6EAB		; nope, illegal function call
 	AND	7FH
 	PUSH	HL
-	LD	E,08H	; 8 
+	LD	E,8
 J$4439:	LD	D,A
-	LD	A,32H	; "2"
-	CALL	C.4D6A
-;
+	LD	A,50
+	CALL	C.4D6A			; AUDIO BIOS function
 	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.4441:	CALL	C.4FB9
-;
-	CALL	C.6EF8
-;
+
+C.4441:	CALL	C.4FB9			; check for "("
+	CALL	C.6EF8			; evaluate adres operand
 	LD	A,(HL)
-	CP	29H	; ")"
+	CP	")"
 	PUSH	DE
 	JR	Z,J$4453
-;
-	CALL	C.4FB4
-;
-	CALL	C.6EF8
-;
-J$4453:	CALL	C.4FBE
+	CALL	C.4FB4			; check for ","
+	CALL	C.6EF8			; evaluate adres operand
+J$4453:	CALL	C.4FBE			; check for ")"
 ;
 	POP	BC
 	LD	A,E
@@ -927,20 +862,15 @@ C.4459:	LD	A,D
 	CP	40H	; "@"
 	CCF	
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL MK VEL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$4462:	CALL	C.42CB
-;
+
+C$4462:	CALL	C.42CB			; evaluate parenthesized byte operand
 	PUSH	HL
 	CALL	C$446E
-;
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	POP	HL
 	RET	
 ;
@@ -957,73 +887,56 @@ C$446E:	CP	10H	; 16
 	LD	C,A
 	LD	B,01H	; 1 
 	LD	A,03H	; 3 
-	LD	HL,C.00AB
+	LD	HL,C$00AB
 	CALL	C.4D6D			; start routine in MSX-AUDIO BIOS
 ;
 	AND	A
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL MK VOL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$447F:	CALL	C.4441
-;
 	PUSH	HL
 	CALL	C$448B
-;
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$448B:	PUSH	BC
 	LD	IY,I.32C0
 	CALL	C$4499
-;
 	POP	DE
 	RET	C
-;
 	LD	IY,I.3280
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$4499:	CALL	C.4459
-;
 	RET	C
-;
 	CPL	
 	LD	E,A
 	LD	C,15H
-	LD	A,35H	; "5"
-J.44A3:	CALL	C.4D6A
-;
+	LD	A,53
+J.44A3:	CALL	C.4D6A			; AUDIO BIOS function
 	AND	A
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL PCM VOL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$44A8:	CALL	C.4441
-;
 	PUSH	HL
 	CALL	C.44B4
-;
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	POP	HL
 	RET	
 ;
@@ -1036,68 +949,57 @@ C$44A8:	CALL	C.4441
 C.44B4:	PUSH	BC
 	LD	IY,I.32C0
 	CALL	C$44C2
-;
 	POP	DE
 	RET	C
-;
 	LD	IY,I.3280
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$44C2:	CALL	C.4459
-;
 	RET	C
-;
 	PUSH	AF
 	CPL	
-	AND	3FH	; "?"
+	AND	3FH
 	LD	C,A
-	LD	A,07H	; 7 
-	CALL	C.4D6A
-;
+	LD	A,7
+	CALL	C.4D6A			; AUDIO BIOS function
 	POP	AF
-	AND	38H	; "8"
+	AND	38H
 	RRA	
 	RRA	
 	RRA	
 	JR	NZ,J$44D9
-;
 	INC	A
 J$44D9:	LD	C,A
-	LD	A,04H	; 4 
-	JP	J.44A3
-;
-;	-----------------
-?.44DF:	CALL	C.4FB9
-;
+	LD	A,4
+	JP	J.44A3			; AUDIO BIOS function and quit
+
+;	  Subroutine CALL MK TEMPO
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+
+C$44DF:	CALL	C.4FB9			; check for "("
 	LD	A,(HL)
-	CP	2CH	; ","
+	CP	","
 	JR	Z,C.4502
-;
-	CALL	C.6EF8
-;
+	CALL	C.6EF8			; evaluate adres operand
 	LD	A,(HL)
-	CP	29H	; ")"
+	CP	")"
 	JR	Z,J$44F6
-;
 	PUSH	DE
 	CALL	C.4502
-;
 	POP	DE
 	JR	J$44F9
-;
-;	-----------------
-J$44F6:	CALL	C.4FBE
-;
+
+J$44F6:	CALL	C.4FBE			; check for ")"
 J$44F9:	PUSH	HL
 	CALL	C.4514
-;
 	POP	HL
 	RET	NC
-;
-J$44FF:	JP	C.6EAB
+J$44FF:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
 ;
@@ -1105,16 +1007,12 @@ J$44FF:	JP	C.6EAB
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.4502:	CALL	C.4FB4
-;
-	CALL	C.6EFE
-;
-	CALL	C.4FBE
-;
+C.4502:	CALL	C.4FB4			; check for ","
+	CALL	C.6EFE			; evaluate byte operand 
+	CALL	C.4FBE			; check for ")"
 	LD	A,E
-	CP	20H	; " "
+	CP	32
 	JR	NC,J$44FF
-;
 	LD	(D.7EE3),A
 	RET	
 ;
@@ -1133,88 +1031,65 @@ C.4514:	LD	HL,-361
 	CCF	
 	RET	C
 ;
-	LD	HL,I$186A
+	LD	HL,0186AH
 	EX	DE,HL
 	CALL	C.63B9
 ;
 	XOR	A
 	SUB	E
 	LD	C,A
-	LD	A,12H	; 18 
+	LD	A,18
 	JP	J.44A3
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL MK PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$452E:	CALL	C.4FB9
-;
-	CP	0EBH
+
+C$452E:	CALL	C.4FB9			; check for "("
+	CP	0EBH			; OFF token ?
 	LD	E,0FFH
 	JR	Z,J$4540
-;
-	CALL	C.6EFE
-;
+	CALL	C.6EFE			; evaluate byte operand 
 	INC	A
-	JP	Z,C.6EAB
-;
+	JP	Z,C.6EAB		; illegal function call
 	JR	J$4543
-;
-;	-----------------
+
 J$4540:	CALL	C.6EEC
-;
-J$4543:	CALL	C.4FBE
-;
+J$4543:	CALL	C.4FBE			; check for ")"
 	JP	NZ,J.6EA8
-;
 	LD	A,E
 	CALL	C.4551
-;
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4551:	CP	0FFH
 	JR	Z,J$4564
-;
-	CP	10H	; 16 
+	CP	10H
 	CCF	
 	RET	C
-;
 	PUSH	HL
 	LD	(D.7EDE),A
 	CALL	C.4B7C
-;
 	SET	4,(HL)
 J$4562:	POP	HL
 	RET	
-;
-;	-----------------
+
 J$4564:	PUSH	HL
 	LD	HL,D.7496
 	RES	4,(HL)
 	JR	J$4562
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL RECMOD
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$456C:	CALL	C.42CB
-;
+
+C$456C:	CALL	C.42CB			; evaluate parenthesized byte operand
 	CALL	C.4576
-;
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	RET	
 ;
 ;	-----------------
@@ -1239,14 +1114,17 @@ C.457C:	ADD	A,L
 ;
 	INC	H
 	RET	
-;
-;	-----------------
-?.4581:	CALL	C.4441
+
+;	  Subroutine CALL PCM FREQ
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4581:	CALL	C.4441
 ;
 	PUSH	HL
 	CALL	C.458D
 ;
-	JP	C,C.6EAB
+	JP	C,C.6EAB		; illegal function call
 ;
 	POP	HL
 	RET	
@@ -1270,92 +1148,89 @@ C.458D:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$459B:	LD	HL,I$3DCB
+C$459B:	LD	HL,03DCBH
 	ADD	HL,DE
 	RET	C
-;
-	LD	HL,I$F8F8
+	LD	HL,0F8F8H
 	ADD	HL,DE
 	CCF	
 	RET	C
-;
 	LD	A,2BH	; "+"
 	JP	J.44A3
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL COPY PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$45AB:	CALL	C.4618
-;
 	LD	A,(HL)
 	CP	29H	; ")"
 	JR	Z,J.45E8
-;
-	CALL	C.4FB4
-;
+	CALL	C.4FB4			; check for ","
 	CP	2CH	; ","
 	JR	Z,J$45C6
-;
-	CALL	C.6EF8
-;
-	LD	(D.F560),DE
+	CALL	C.6EF8			; evaluate adres operand
+	LD	(BUF+2),DE
 	LD	A,(HL)
 	CP	29H	; ")"
 	JR	Z,J.45E8
 ;
-J$45C6:	CALL	C.4FB4
+J$45C6:	CALL	C.4FB4			; check for ","
 ;
 	CP	2CH	; ","
 	JR	Z,J$45DE
 ;
-	CALL	C.6EF8
+	CALL	C.6EF8			; evaluate adres operand
 ;
 	LD	A,D
 	OR	E
-	JP	Z,C.6EAB
+	JP	Z,C.6EAB		; illegal function call
 ;
-	LD	(D.F562),DE
+	LD	(BUF+4),DE
 	LD	A,(HL)
 	CP	29H	; ")"
 	JR	Z,J.45E8
 ;
-J$45DE:	CALL	C.4FB4
+J$45DE:	CALL	C.4FB4			; check for ","
 ;
-	CALL	C.6EF8
+	CALL	C.6EF8			; evaluate adres operand
 ;
-	LD	(D.F564),DE
-J.45E8:	CALL	C.4FBE
+	LD	(BUF+6),DE
+J.45E8:	CALL	C.4FBE			; check for ")"
 ;
 	PUSH	HL
 	CALL	C.463F
 ;
 	JR	J.4613
+
+;	  Subroutine CALL CONVA
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$45F1:	CALL	C.4618
 ;
-;	-----------------
-?.45F1:	CALL	C.4618
-;
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	OR	A
 	JR	NZ,J.4615
 ;
-	CALL	C.4FBE
+	CALL	C.4FBE			; check for ")"
 ;
 	PUSH	HL
 	CALL	C.46E8
 ;
 	JR	J.4613
+
+;	  Subroutine CALL CONVP
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4603:	CALL	C.4618
 ;
-;	-----------------
-?.4603:	CALL	C.4618
-;
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	OR	A
 	JR	NZ,J.4615
 ;
-	CALL	C.4FBE
+	CALL	C.4FBE			; check for ")"
 ;
 	PUSH	HL
 	CALL	C.4705
@@ -1363,7 +1238,7 @@ J.45E8:	CALL	C.4FBE
 J.4613:	POP	HL
 	RET	NC
 ;
-J.4615:	JP	C.6EAB
+J.4615:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
 ;
@@ -1371,29 +1246,29 @@ J.4615:	JP	C.6EAB
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.4618:	LD	DE,X.F55E
+C.4618:	LD	DE,BUF
 	LD	B,09H	; 9 
 	XOR	A
 J$461E:	LD	(DE),A
 	INC	DE
 	DJNZ	J$461E
 ;
-	CALL	C.4FB9
+	CALL	C.4FB9			; check for "("
 ;
 	CP	23H	; "#"
 	JR	NZ,J$462F
 ;
-	LD	(D.F566),A
+	LD	(BUF+8),A
 	CALL	C.6EEC
 ;
-J$462F:	CALL	C.6EFE
+J$462F:	CALL	C.6EFE			; evaluate byte operand 
 ;
-	LD	(X.F55E),A
-	CALL	C.4FB4
+	LD	(BUF+0),A
+	CALL	C.4FB4			; check for ","
 ;
-	CALL	C.6EFE
+	CALL	C.6EFE			; evaluate byte operand 
 ;
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	RET	
 ;
 ;	-----------------
@@ -1402,7 +1277,7 @@ J$462F:	CALL	C.6EFE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.463F:	LD	A,(D.F566)
+C.463F:	LD	A,(BUF+8)
 	OR	A
 	JR	NZ,J$468D
 ;
@@ -1411,18 +1286,18 @@ C.463F:	LD	A,(D.F566)
 	RET	C
 ;
 J$4649:	EX	DE,HL
-	LD	DE,(D.F560)
+	LD	DE,(BUF+2)
 	SCF	
 	SBC	HL,DE
 	RET	C
 ;
 	INC	HL
 	PUSH	HL
-	LD	HL,D.F56E
+	LD	HL,BUF+16
 	CALL	C.486A
 ;
 	POP	HL
-	LD	DE,(D.F562)
+	LD	DE,(BUF+4)
 	LD	A,D
 	OR	E
 	JR	Z,J$468A
@@ -1430,20 +1305,20 @@ J$4649:	EX	DE,HL
 	SBC	HL,DE
 	RET	C
 ;
-J.4666:	LD	(D.F572),DE
-	LD	DE,(D.F564)
-	LD	HL,(D.F582)
+J.4666:	LD	(BUF+20),DE
+	LD	DE,(BUF+6)
+	LD	HL,(BUF+36)
 	SCF	
 	SBC	HL,DE
 	RET	C
 ;
 	INC	HL
 	PUSH	HL
-	LD	HL,I.F57E
+	LD	HL,BUF+32
 	CALL	C.486A
 ;
 	POP	HL
-	LD	DE,(D.F572)
+	LD	DE,(BUF+20)
 	SBC	HL,DE
 	LD	A,00H
 	JP	NC,J.4719
@@ -1457,39 +1332,39 @@ J$468A:	EX	DE,HL
 ;	-----------------
 J$468D:	LD	A,(D.7E88)
 	LD	B,A
-	LD	A,(X.F55E)
+	LD	A,(BUF+0)
 	CP	B
 	CCF	
 	RET	C
 ;
 	LD	HL,I$4FDD
-	LD	DE,C.F5DE
-	LD	BC,I$0017
+	LD	DE,BUF+128
+	LD	BC,E$4FDD-I$4FDD
 	LDIR	
 	DI	
-	LD	(D.F65C),SP
+	LD	(BUF+254),SP
 	LD	SP,I.7FC4
 	CALL	C.4FC3
 ;
-	LD	HL,(X.F55E)
+	LD	HL,(BUF+0)
 	LD	H,00H
 	ADD	HL,HL
 	ADD	HL,HL
 	ADD	HL,HL
-	LD	BC,C.0010
+	LD	BC,16
 	ADD	HL,BC
-	LD	DE,D.F56E
-	LD	BC,C.0008
-	CALL	C.F5DE
+	LD	DE,BUF+16
+	LD	BC,8
+	CALL	BUF+128
 ;
 	CALL	C.4FD5
 ;
-	LD	SP,(D.F65C)
-	LD	A,(D.F56E)
+	LD	SP,(BUF+254)
+	LD	A,(BUF+16)
 	OR	01H	; 1 
-	LD	(D.F56E),A
-	LD	A,(D.F55F)
-	LD	HL,I.F57E
+	LD	(BUF+16),A
+	LD	A,(BUF+1)
+	LD	HL,BUF+32
 	CALL	C.4839
 ;
 	RET	C
@@ -1497,7 +1372,7 @@ J$468D:	LD	A,(D.7E88)
 	LD	A,(HL)
 	AND	05H	; 5 
 	DEC	A
-	LD	DE,(D.F572)
+	LD	DE,(BUF+20)
 	JP	NZ,J$4649
 ;
 	SCF	
@@ -1568,30 +1443,24 @@ J.4719:	PUSH	AF
 	RET	
 ;
 ;	-----------------
-J$4721:	LD	A,33H	; "3"
+J$4721:	LD	A,33H
 	LD	(D.7EDF),A
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
-	LD	A,0AH	; 10 
+	LD	A,10
 	LD	IY,I.3280
 	RST	00H
-;
-	LD	A,0AH	; 10 
+	LD	A,10
 	LD	IY,I.32C0
 	RST	00H
-;
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	OR	A
 	JR	NZ,J$4751
-;
 	POP	AF
-	LD	IX,D.F56E
-	LD	IY,I.F57E
+	LD	IX,BUF+16
+	LD	IY,BUF+32
 	LD	C,00H
 	RST	00H
-;
 J$4749:	CALL	C.4D8F			; restore page 0
-;
 	XOR	A
 	LD	(D.7EDF),A
 	RET	
@@ -1599,42 +1468,41 @@ J$4749:	CALL	C.4D8F			; restore page 0
 ;	-----------------
 J$4751:	POP	AF
 	LD	A,04H	; 4 
-	LD	(D.F58E),A
-	LD	HL,(D.F862)
-	LD	(D$F590),HL
-	LD	HL,(D.F570)
+	LD	(BUF+48),A
+	LD	HL,(NULBUF)
+	LD	(BUF+50),HL
+	LD	HL,(BUF+18)
 	LD	H,L
 	LD	L,00H
-	LD	(D.F570),HL
-J$4766:	LD	HL,I.0001
-	LD	(D$F592),HL
+	LD	(BUF+18),HL
+J$4766:	LD	HL,1
+	LD	(BUF+52),HL
 	DI	
-	LD	(D.F65C),SP
+	LD	(BUF+254),SP
 	LD	SP,I.7FC4
 	CALL	C.4FC3
 ;
-	LD	HL,(D.F570)
-	LD	DE,(D.F862)
-	LD	BC,I.0100
-	CALL	C.F5DE
+	LD	HL,(BUF+18)
+	LD	DE,(NULBUF)
+	LD	BC,256
+	CALL	BUF+128
 ;
 	CALL	C.4FD5
 ;
-	LD	SP,(D.F65C)
+	LD	SP,(BUF+254)
 	EI	
-	LD	IX,D.F58E
-	LD	IY,I.F57E
-	LD	A,00H
+	LD	IX,BUF+48
+	LD	IY,BUF+32
+	LD	A,0
 	RST	00H
-;
-	LD	HL,I$F571
+	LD	HL,BUF+19
 	INC	(HL)
-	LD	HL,(D.F580)
+	LD	HL,(BUF+34)
 	INC	HL
-	LD	(D.F580),HL
-	LD	HL,(D.F572)
+	LD	(BUF+34),HL
+	LD	HL,(BUF+20)
 	DEC	HL
-	LD	(D.F572),HL
+	LD	(BUF+20),HL
 	LD	A,H
 	OR	L
 	JR	NZ,J$4766
@@ -1654,7 +1522,7 @@ C.47AF:	LD	A,(HL)
 	JR	NZ,J$47EB
 ;
 	LD	A,B
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	CALL	C.5428
 ;
 	RET	C
@@ -1667,25 +1535,25 @@ C.47AF:	LD	A,(HL)
 	LD	(HL),B
 	CALL	C.47FF
 ;
-	LD	A,(D.F56E)
+	LD	A,(BUF+16)
 	LD	B,A
-	LD	A,(D.F55F)
+	LD	A,(BUF+1)
 	CP	B
 	JR	NZ,J$47DB
 ;
-	LD	HL,(D.F58E)
-	LD	DE,D.F56E
+	LD	HL,(BUF+48)
+	LD	DE,BUF+16
 	CALL	C.47DF
 ;
 J$47DB:	POP	HL
-	LD	DE,I.F57E
+	LD	DE,BUF+32
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
 C.47DF:	PUSH	DE
-	LD	BC,C.0008
+	LD	BC,8
 	LDIR	
 	POP	HL
 	LD	A,(HL)
@@ -1695,7 +1563,7 @@ C.47DF:	PUSH	DE
 ;
 ;	-----------------
 J$47EB:	PUSH	HL
-	LD	HL,(D.F582)
+	LD	HL,(BUF+36)
 	SBC	HL,DE
 	POP	HL
 	RET	C
@@ -1719,7 +1587,7 @@ J$47EB:	PUSH	HL
 ;
 C.47FF:	CALL	C$4806
 ;
-J$4802:	LD	DE,(D$F574)
+J$4802:	LD	DE,(BUF+22)
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1737,7 +1605,7 @@ C$4806:	INC	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.480B:	LD	DE,(X.F55E)
+C.480B:	LD	DE,(BUF+0)
 	LD	A,D
 	CP	E
 	SCF	
@@ -1748,15 +1616,15 @@ C.480B:	LD	DE,(X.F55E)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$4813:	LD	A,(X.F55E)
-	LD	HL,D.F56E
+C$4813:	LD	A,(BUF+0)
+	LD	HL,BUF+16
 	CALL	C.4839
 ;
 	RET	C
 ;
 	PUSH	HL
-	LD	A,(D.F55F)
-	LD	HL,I.F57E
+	LD	A,(BUF+1)
+	LD	HL,BUF+32
 	CALL	C.4839
 ;
 	POP	DE
@@ -1766,8 +1634,8 @@ C$4813:	LD	A,(X.F55E)
 	AND	05H	; 5 
 	DEC	A
 	LD	A,(DE)
-	LD	(D.F58E),DE
-	LD	DE,(D.F572)
+	LD	(BUF+48),DE
+	LD	DE,(BUF+20)
 	RET	NZ
 ;
 	SCF	
@@ -1782,19 +1650,15 @@ C$4813:	LD	A,(X.F55E)
 C.4839:	CP	10H	; 16 
 	CCF	
 	RET	C
-;
 	PUSH	HL
 	CALL	C.54F4
-;
 	POP	DE
 	PUSH	HL
 	CALL	C.47DF
-;
 	INC	HL
 	INC	HL
 	CP	04H	; 4 
 	JR	NZ,J$4861
-;
 	PUSH	HL
 	CALL	C.4935
 ;
@@ -1846,24 +1710,17 @@ J$4875:	INC	HL
 	ADC	A,(HL)
 	LD	(HL),A
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL STOPM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$4879:	CALL	C.4A0A
-;
+
+C$4879:	CALL	C.4A0A			; end of statement ?
 	JR	Z,C.488C
-;
-	CALL	C.4FB9
-;
+	CALL	C.4FB9			; check for "("
 	CALL	C.488C
-;
 	PUSH	DE
 	CALL	C.6ED8
-;
 	EX	(SP),HL
 	JP	J.4A41
 ;
@@ -1875,61 +1732,52 @@ C$4879:	CALL	C.4A0A
 ;
 C.488C:	PUSH	HL
 	CALL	C.6CDC
-;
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
 	LD	IY,I.3280
-	LD	A,0AH	; 10 
+	LD	A,10
 	RST	00H
-;
 	LD	IY,I.32C0
-	LD	A,0AH	; 10 
+	LD	A,10
 	RST	00H
-;
 	DI	
 	LD	HL,D.7EDF
 	LD	(HL),00H
-	LD	A,39H	; "9"
+	LD	A,57
 	LD	E,01H	; 1 
 	RST	00H
-;
 	CALL	C.4D8F			; restore page 0
-;
 	POP	HL
 	OR	A
 	RET	
-;
-;	-----------------
-?.48B2:	CALL	C.42C4
-;
-J$48B5:	LD	E,02H	; 2 
+
+;	  Subroutine CALL CONT MK
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$48B2:	CALL	C.42C4			; check for end of statement
+J$48B5:	LD	E,2
 	JP	C.49FF
-;
-;	-----------------
-?.48BA:	CALL	C.4FB9
-;
-	CALL	C.6EFE
-;
+
+;	  Subroutine CALL AUDREG
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$48BA:	CALL	C.4FB9			; check for "("
+	CALL	C.6EFE			; evaluate byte operand 
 	PUSH	DE
-	CALL	C.4FB4
-;
-	CALL	C.6EFE
-;
+	CALL	C.4FB4			; check for ","
+	CALL	C.6EFE			; evaluate byte operand 
 	PUSH	DE
 	LD	A,(HL)
 	CP	29H	; ")"
 	LD	E,00H
 	JR	Z,J$48D5
-;
-	CALL	C.4FB4
-;
-	CALL	C.6EFE
-;
-J$48D5:	CALL	C.4FBE
-;
+	CALL	C.4FB4			; check for ","
+	CALL	C.6EFE			; evaluate byte operand 
+J$48D5:	CALL	C.4FBE			; check for ")"
 	LD	A,E
 	CP	02H	; 2 
-	JP	NC,C.6EAB
+	JP	NC,C.6EAB		; illegal function call
 ;
 	LD	IY,I.3280
 	AND	A
@@ -1940,58 +1788,50 @@ J$48E9:	POP	DE
 	POP	BC
 	LD	A,E
 	PUSH	HL
-	LD	HL,I$0099
+	LD	HL,C$0099
 	CALL	C.4D6D			; start routine in MSX-AUDIO BIOS
 ;
 	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$48F5:	LD	C,08H	; 8 
+
+C$48F5:	LD	C,08H
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
 	LD	A,D
-	OR	E
+	OR	E			; no keyboard channels ?
 	PUSH	AF
-	LD	B,00H
-	JR	Z,J$4902
-;
+	LD	B,0
+	JR	Z,J$4902		; yep,
 	INC	B
 J$4902:	PUSH	BC
 	LD	HL,D.3496
 	RES	7,(HL)
-	LD	A,(D.7B1F)
+	LD	A,(D.7B1F)		; mode
 	PUSH	AF
-	AND	04H	; 4 
+	AND	04H			; b4
 	LD	C,A
 	RRCA	
 	OR	C
 	RRCA	
-	LD	C,A
+	LD	C,A			; 0 for mode 0-3, 3 for mode 4-7
 	POP	AF
 	ADD	A,A
 	ADD	A,A
-	AND	04H	; 4 
+	AND	04H			; drum mode
 	OR	C
 	LD	C,A
-	LD	A,00H
-	CALL	C.00AB
-;
-	POP	BC
-	LD	A,03H	; 3 
-	CALL	C.00AB
-;
-	LD	A,02H	; 2 
-	CALL	C.00AB
-;
+	LD	A,0
+	CALL	C$00AB
+	POP	BC			; B has keyboard mode
+	LD	A,3
+	CALL	C$00AB
+	LD	A,2
+	CALL	C$00AB
 	POP	AF
 	JR	Z,J$4932
-;
 	LD	HL,D.3496
 	SET	7,(HL)
 J$4932:	JP	C.4D8F			; restore page 0
@@ -2003,15 +1843,15 @@ J$4932:	JP	C.4D8F			; restore page 0
 ;	     Outputs ________________________
 ;
 C.4935:	LD	A,01H	; 1 
-	LD	(D.F6A5),A
+	LD	(SUBFLG),A
 	CALL	C.6ED8
 ;
-	JP	NZ,C.6EAB
+	JP	NZ,C.6EAB		; illegal function call
 ;
-	LD	(D.F6A5),A
-	LD	A,(D.F663)
-	CP	03H	; 3 
-	JP	Z,C.6EAB
+	LD	(SUBFLG),A
+	LD	A,(VALTYP)
+	CP	3			; string ?
+	JP	Z,C.6EAB		; yep, illegal function call
 ;
 	EX	DE,HL
 	ADD	HL,BC
@@ -2033,27 +1873,19 @@ C.4935:	LD	A,01H	; 1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.4957:	CALL	C.4A0A
-;
+C.4957:	CALL	C.4A0A			; end of statement ?
 	RET	Z
-;
-	CALL	C.4FB9
-;
+	CALL	C.4FB9			; check for "("
 	PUSH	HL
-	CALL	C.6EF8
-;
+	CALL	C.6EF8			; evaluate adres operand
 	LD	A,(HL)
 	CP	29H	; ")"
 	JR	Z,J$4976
-;
 	POP	AF
 	PUSH	DE
-	CALL	C.4FB4
-;
-	CALL	C.6EF8
-;
-	CALL	C.4FBE
-;
+	CALL	C.4FB4			; check for ","
+	CALL	C.6EF8			; evaluate adres operand
+	CALL	C.4FBE			; check for ")"
 	POP	BC
 	XOR	A
 	INC	A
@@ -2062,16 +1894,17 @@ C.4957:	CALL	C.4A0A
 ;	-----------------
 J$4976:	POP	HL
 	CALL	C.4935
-;
-	CALL	C.4FBE
-;
+	CALL	C.4FBE			; check for ")"
 	SCF	
 	ADC	A,A
 	RRA	
 	RET	
-;
-;	-----------------
-?.4981:	CALL	C.4957
+
+;	  Subroutine CALL APPEND MK
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4981:	CALL	C.4957
 ;
 	JR	Z,J.4997
 ;
@@ -2088,10 +1921,13 @@ J$4993:	CALL	C.49D0
 ;
 	RET	NC
 ;
-J.4997:	JP	C.6EAB
-;
-;	-----------------
-?.499A:	CALL	C.4957
+J.4997:	JP	C.6EAB			; illegal function call
+
+;	  Subroutine CALL REC MK
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$499A:	CALL	C.4957
 ;
 	JR	Z,J.4997
 ;
@@ -2099,39 +1935,33 @@ J.4997:	JP	C.6EAB
 	POP	IX
 	LD	B,00H
 	JR	J$498B
-;
-;	-----------------
-?.49A6:	CALL	C.4957
-;
+
+;	  Subroutine CALL PLAY MK
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$49A6:	CALL	C.4957
 	PUSH	BC
 	POP	IX
 	PUSH	DE
 	POP	IY
 	LD	B,0FFH
 	JR	Z,J$49B4
-;
 	INC	B
-J$49B4:	LD	C,00H
+J$49B4:	LD	C,0
 	JR	C,J.49B9
-;
 	DEC	C
-J.49B9:	LD	E,04H	; 4 
+J.49B9:	LD	E,4
 	CALL	C.49E8
-;
 	RET	C
-;
 	RET	NZ
-;
 J$49C0:	EI	
-	CALL	C.6B8D
-;
+	CALL	C.6B8D			; CTRL-STOP pressed ?
 	DI	
-	JR	Z,J$49DC
-;
+	JR	Z,J$49DC		; yep,
 	LD	A,(D.7496)
 	BIT	3,A
 	JR	NZ,J$49C0
-;
 	OR	A
 	RET	
 ;
@@ -2143,17 +1973,12 @@ J$49C0:	EI
 ;
 C.49D0:	LD	E,03H	; 3 
 	CALL	C.49E8
-;
 	RET	C
-;
 	RET	NZ
-;
 J$49D7:	EI	
-	CALL	C.6B8D
-;
+	CALL	C.6B8D			; CTRL-STOP pressed ?
 	DI	
 J$49DC:	JP	Z,C.488C
-;
 	LD	A,(D.7496)
 	BIT	2,A
 	JR	NZ,J$49D7
@@ -2191,58 +2016,52 @@ J$49F8:	CALL	C.49FF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.49FF:	LD	A,39H	; "9"
+C.49FF:	LD	A,57
 	PUSH	HL
 	CALL	C.4B7C
-;
-	CALL	C.4D6A
-;
+	CALL	C.4D6A			; AUDIO BIOS function
 	POP	HL
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine end of statement ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4A0A:	DEC	HL
 	JP	C.6EEC
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL MK STAT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$4A0E:	CALL	C.4FB9
-;
+
+C$4A0E:	CALL	C.4FB9			; check for "("
 	LD	DE,D.3496
 	JR	J$4A33
-;
-;	-----------------
-?.4A16:	CALL	C.4FB9
-;
-	CALL	C.6EF8
-;
+
+;	  Subroutine CALL APOKE
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4A16:	CALL	C.4FB9			; check for "("
+	CALL	C.6EF8			; evaluate adres operand
 	PUSH	DE
-	CALL	C.4FB4
-;
-	CALL	C.6EFE
-;
-	CALL	C.4FBE
-;
+	CALL	C.4FB4			; check for ","
+	CALL	C.6EFE			; evaluate byte operand 
+	CALL	C.4FBE			; check for ")"
 	LD	A,E
 	POP	DE
 	LD	(DE),A
 	RET	
+
+;	  Subroutine CALL APEEK
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4A2A:	CALL	C.4FB9			; check for "("
 ;
-;	-----------------
-?.4A2A:	CALL	C.4FB9
+	CALL	C.6EF8			; evaluate adres operand
 ;
-	CALL	C.6EF8
-;
-	CALL	C.4FB4
+	CALL	C.4FB4			; check for ","
 ;
 J$4A33:	PUSH	DE
 	CALL	C.6ED8
@@ -2254,196 +2073,167 @@ J$4A33:	PUSH	DE
 	LD	H,00H
 	CALL	C.4D8F			; restore page 0
 ;
-J.4A41:	CALL	C.4A49
-;
+J.4A41:	CALL	C.4A49			; put in DAC and convert
 	POP	HL
-	CALL	C.4FBE
+	CALL	C.4FBE			; check for ")"
 ;
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine put in DAC and convert
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.4A49:	LD	(D.F7F8),HL
-	LD	HL,D.F663
+
+C.4A49:	LD	(DAC+2),HL
+	LD	HL,VALTYP
 	LD	A,(HL)
-	CP	02H	; 2 
+	CP	2
 	JR	Z,J$4A75
-;
-	CP	04H	; 4 
+	CP	4
 	JR	Z,J$4A67
-;
-	CP	08H	; 8 
+	CP	8
 	JP	NZ,J$6EAE
-;
-	LD	(HL),02H	; 2 
+	LD	(HL),2
 	PUSH	DE
-	CALL	C.6EDE
-;
-	LD	C,08H	; 8 
+	CALL	C.6EDE			; convert DAC
+	LD	C,8
 	JR	J$4A6F
-;
-;	-----------------
-J$4A67:	LD	(HL),02H	; 2 
+
+J$4A67:	LD	(HL),2
 	PUSH	DE
-	CALL	C.6EDE
-;
-	LD	C,04H	; 4 
+	CALL	C.6EDE			; convert DAC
+	LD	C,4
 J$4A6F:	POP	DE
-	LD	HL,I$F7F6
+	LD	HL,DAC+0
 	JR	J$4A7A
-;
-;	-----------------
-J$4A75:	LD	HL,D.F7F8
-	LD	C,02H	; 2 
-J$4A7A:	LD	B,00H
+
+J$4A75:	LD	HL,DAC+2
+	LD	C,2
+J$4A7A:	LD	B,0
 	LDIR	
 	RET	
-;
-;	-----------------
-?.4A7F:	LD	A,1EH
-	LD	BC,I$1F3E
+
+;	  Subroutine CALL PITCH
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4A7F:	LD	A,30
+	DEFB	1
+
+;	  Subroutine CALL TRANSPOSE
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4A82:	LD	A,31
 	PUSH	AF
 	CALL	C.4441
-;
 	POP	AF
 J$4A89:	PUSH	HL
-	CALL	C.4D6A
-;
+	CALL	C.4D6A			; AUDIO BIOS function
 	POP	HL
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	RET	
-;
-;	-----------------
-J$4A92:	CALL	C.42CB
-;
+
+;	  Subroutine CALL TEMPER
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4A92:	CALL	C.42CB			; evaluate parenthesized byte operand
 	LD	C,A
-	LD	A,1DH
+	LD	A,29
 	JR	J$4A89
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$4A9A:	PUSH	AF
 	PUSH	HL
-	LD	A,1CH
-	CALL	C.4D6A
-;
+	LD	A,28
+	CALL	C.4D6A			; AUDIO BIOS function
 	POP	HL
 	POP	AF
 	RET	
-;
-;	-----------------
-?.4AA4:	EX	DE,HL
+
+;	  Subroutine CALL INMK
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$4AA4:	EX	DE,HL
 	CALL	C.4B7C
-;
-	LD	HL,X.0000
-	LD	(X.F55E),HL
-	LD	(D.F560),HL
-	LD	(D.F562),HL
+	LD	HL,0
+	LD	(BUF+0),HL
+	LD	(BUF+2),HL
+	LD	(BUF+4),HL
 	EX	DE,HL
-	CALL	C.4A0A
-;
-	JR	NZ,J$4AC4
-;
+	CALL	C.4A0A			; end of statement ?
+	JR	NZ,J$4AC4		; nope, evaluate
 	DI	
 	LD	(D.7EF0),DE
 	LD	(D$7EF1),DE
 	RET	
-;
-;	-----------------
-J$4AC4:	CALL	C.4FB9
-;
-	CP	2CH	; ","
+
+J$4AC4:	CALL	C.4FB9			; check for "("
+	CP	","
 	JR	Z,J$4AD7
-;
 	CALL	C.6ED8
-;
-	LD	(X.F55E),DE
+	LD	(BUF+0),DE
 	LD	A,(HL)
-	CP	29H	; ")"
+	CP	")"
 	JR	Z,J.4AF4
-;
-J$4AD7:	CALL	C.4FB4
-;
-	CP	2CH	; ","
+J$4AD7:	CALL	C.4FB4			; check for ","
+	CP	","
 	JR	Z,J$4AEA
-;
 	CALL	C.6ED8
-;
-	LD	(D.F560),DE
+	LD	(BUF+2),DE
 	LD	A,(HL)
-	CP	29H	; ")"
+	CP	")"
 	JR	Z,J.4AF4
-;
-J$4AEA:	CALL	C.4FB4
-;
+J$4AEA:	CALL	C.4FB4			; check for ","
 	CALL	C.6ED8
-;
-	LD	(D.F562),DE
-J.4AF4:	CALL	C.4FBE
-;
+	LD	(BUF+4),DE
+J.4AF4:	CALL	C.4FBE			; check for ")"
 	EX	DE,HL
 	CALL	C$4B59
-;
 	EX	DE,HL
 	LD	E,13H	; 19 
 	JP	C,J.6EB6
-;
-	LD	DE,(X.F55E)
+	LD	DE,(BUF+0)
 	INC	D
 	DEC	D
 	JR	Z,J$4B10
-;
 	PUSH	AF
 	AND	7FH
 	CALL	C.4B32
-;
 	POP	AF
-J$4B10:	LD	DE,(D.F560)
+J$4B10:	LD	DE,(BUF+2)
 	INC	D
 	DEC	D
 	JR	Z,J$4B20
-;
 	PUSH	AF
 	RLCA	
 	AND	01H	; 1 
 	CALL	C.4B32
-;
 	POP	AF
-J$4B20:	LD	DE,(D.F562)
+J$4B20:	LD	DE,(BUF+4)
 	INC	D
 	DEC	D
 	RET	Z
-;
 	AND	A
 	JR	Z,C.4B32
-;
 	PUSH	HL
 	CALL	C$4C73
-;
 	LD	H,B
 	LD	L,C
 	JR	J$4B36
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4B32:	PUSH	HL
 	LD	L,A
 	LD	H,00H
-J$4B36:	CALL	C.4A49
-;
+J$4B36:	CALL	C.4A49			; put in DAC and convert
 	POP	HL
 	RET	
 ;
@@ -2524,8 +2314,11 @@ J$4B74:	INC	HL
 C.4B7C:	LD	HL,D.7496
 	SET	7,(HL)
 	RET	
-;
-;	-----------------
+
+;	  Subroutine AST MK
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I$4B82:	CALL	C$7B05
 	CALL	C$4B3B
 	LD	A,D
@@ -2539,12 +2332,11 @@ I$4B82:	CALL	C$7B05
 	RET	Z
 	BIT	0,A
 	RET	Z
-;
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$4B9C:	LD	HL,I.34A4
 	LD	A,(HL)
 	LD	(HL),00H
@@ -2555,7 +2347,6 @@ C$4B9C:	LD	HL,I.34A4
 	INC	HL
 	BIT	7,D
 	JR	Z,J$4BAF
-;
 	LD	(HL),E
 	INC	HL
 J$4BAF:	LD	(D.3497),HL
@@ -2564,7 +2355,6 @@ J$4BAF:	LD	(D.3497),HL
 	AND	A
 	SBC	HL,BC
 	RET	C
-;
 	LD	HL,D.3496
 	RES	2,(HL)
 	RET	
@@ -2584,12 +2374,10 @@ C.4BC1:	LD	A,(D.7EDD)
 	LD	A,(D.7EDE)
 J$4BCF:	PUSH	DE
 	CALL	C.54F4
-;
 	POP	DE
 	LD	A,(HL)
 	OR	A
 	RET	M
-;
 	AND	05H	; 5 
 	JR	Z,J$4BDD
 ;
@@ -2646,13 +2434,11 @@ J$4BFF:	PUSH	HL
 ;
 ;	-----------------
 J$4C27:	SET	0,(HL)
-J$4C29:	LD	A,0AH	; 10 
+J$4C29:	LD	A,10
 	RST	00H
-;
 	LD	C,07H	; 7 
-	LD	A,0BH	; 11 
+	LD	A,11
 	RST	00H
-;
 	POP	DE
 	RET	
 ;
@@ -2667,11 +2453,9 @@ J$4C3A:	PUSH	DE
 	PUSH	AF
 	AND	01H	; 1 
 	JR	Z,J$4C57
-;
-	LD	A,0AH	; 10 
+	LD	A,10
 	LD	IY,I.3280
 	RST	00H
-;
 	DI	
 	LD	HL,D.7EDF
 	LD	A,0F0H
@@ -2683,7 +2467,7 @@ J$4C57:	POP	AF
 	AND	02H	; 2 
 	JR	Z,J$4C70
 ;
-	LD	A,0AH	; 10 
+	LD	A,10
 	LD	IY,I.32C0
 	RST	00H
 ;
@@ -2711,30 +2495,24 @@ C$4C72:	LD	A,D
 ;
 C$4C73:	ADD	A,A
 	LD	HL,I$4CA0
-	LD	BC,I$0818
+	LD	BC,0818H
 	CP	0A8H
 	JR	C,J.4C8C
-;
 	SUB	0A8H
 J$4C80:	SUB	C
 	JP	NC,J$4C80
-;
 	ADD	A,C
 	CALL	C.457C
-;
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)
 	RET	
-;
-;	-----------------
+
 J.4C8C:	DEC	B
 	SUB	C
 	JP	NC,J.4C8C
-;
 	ADD	A,C
 	CALL	C.457C
-;
 	LD	C,(HL)
 	INC	HL
 	LD	A,(HL)
@@ -2742,33 +2520,21 @@ J$4C98:	AND	A
 	RRA	
 	RR	C
 	DJNZ	J$4C98
-;
 	LD	B,A
 	RET	
-;
-;	-----------------
-I$4CA0:	LD	(HL),63H	; "c"
-	DEC	E
-	LD	L,C
-	LD	E,L
-	LD	L,A
-	CALL	M,C$0075
-;
-	LD	A,L
-	LD	L,A
-	ADD	A,H
-	LD	C,A
-	ADC	A,H
-	AND	A
-	SUB	H
-	LD	A,L
-	SBC	A,L
-	IN	A,(0A6H)
-	RST	00H
-;
-	OR	B
-	LD	C,D
-	CP	E
+
+I$4CA0:	DEFW	06336H
+	DEFW	0691DH
+	DEFW	06F5DH
+	DEFW	075FCH
+	DEFW	07D00H
+	DEFW	0846FH
+	DEFW	08C4FH
+	DEFW	094A7H
+	DEFW	09D7DH
+	DEFW	0A6DBH
+	DEFW	0B0C7H
+	DEFW	0BB4AH
 
 ;	  Subroutine TIMER-2 handler
 ;	     Inputs  ________________________
@@ -2777,34 +2543,36 @@ I$4CA0:	LD	(HL),63H	; "c"
 I$4CB8:	LD	A,(D.3496)
 	BIT	2,A
 	CALL	NZ,C$4CED
-;
 	PUSH	AF
 	OR	A
 	CALL	M,C$00B1
-;
 	POP	AF
 	BIT	3,A
 	CALL	NZ,C$4D01
-;
 	LD	HL,I$7EE2
 	DEC	(HL)
 	RET	NZ
-;
 	LD	(HL),1EH
 	LD	A,(D.7EE3)
 	AND	A
 	RET	Z
-;
 	LD	C,A
-	LD	A,15H
+	LD	A,21
 	RST	00H
-;
 	RET	
-;
-;	-----------------
-I$4CDC:	LD	A,0FH	; 15 
-	LD	HL,I$F03E
-I$4CDF	EQU	$-2
+
+;	  Subroutine AST ADPCM 2nd Y8950
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$4CDC:	LD	A,0FH
+	DEFB	021H
+
+;	  Subroutine AST ADPCM 1st Y8950
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$4CDF:	LD	A,0F0H
 	LD	HL,D.7EDF
 	DI	
 	AND	(HL)
@@ -2882,10 +2650,8 @@ J$4D19:	LD	(D.349D),HL
 	POP	AF
 J$4D37:	BIT	4,A
 	CALL	NZ,C.4BC1
-;
-	LD	A,32H	; "2"
+	LD	A,50
 	RST	00H
-;
 	DI	
 	POP	HL
 	AND	A
@@ -2905,10 +2671,8 @@ J.4D52:	LD	HL,D.3496
 	RES	3,(HL)
 	BIT	2,(HL)
 	RET	NZ
-;
-	LD	A,31H	; "1"
+	LD	A,49
 	RST	00H
-;
 	RET	
 
 ;	  Subroutine H.KEYI handler
@@ -2917,16 +2681,16 @@ J.4D52:	LD	HL,D.3496
 
 C$4D5E:	DI	
 	PUSH	HL
-	LD	HL,C.00B4
+	LD	HL,C$00B4
 	CALL	C.4D6D			; start routine in MSX-AUDIO BIOS
 	POP	HL
 	JP	J.7F9A			; continue in old H.KEYI
 
-;	  Subroutine __________________________
+;	  Subroutine start AUDIO BIOS function
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.4D6A:	LD	HL,I$00AE
+C.4D6A:	LD	HL,C$00AE
 
 ;	  Subroutine start routine in MSX-AUDIO BIOS
 ;	     Inputs  ________________________
@@ -3134,9 +2898,9 @@ I$4E4F:	PUSH	AF
 	EX	AF,AF'
 	PUSH	IX
 	PUSH	IY
-	LD	IX,C.0038
+	LD	IX,KEYINT
 	LD	IY,(EXPTBL+0-1)
-	CALL	C.001C
+	CALL	CALSLT
 	POP	IY
 	POP	IX
 	EX	AF,AF'
@@ -3146,20 +2910,15 @@ J.4E6A:	POP	HL
 	POP	BC
 	POP	AF
 	EI	
-	RET	
-;
-;	-----------------
-I$4E70:	INC	B
-	DEFB	0,0,0,0,0,0
-	LD	BC,I$001E
-	ADD	A,B
-	NOP	
-	RST	38H
-	RST	38H
+	RET
+E$4E4F:	
+
+I$4E70:	DEFB	004H,000H,0,0,0,0,0
+	DEFB	1,01EH,0,080H,0
+	DEFB	0FFH,0FFH
 	DEFB	0,0,0,0
-	RST	38H
-	RST	38H
-	LD	B,B
+	DEFB	0FFH,0FFH
+	DEFB	040H
 	DEFB	0,0,0,0
 ;
 ;	  Subroutine __________________________
@@ -3169,71 +2928,62 @@ I$4E70:	INC	B
 C$4E89:	PUSH	DE
 	DI	
 	CALL	C.4D83			; MSX-AUDIO in page 0
-	CALL	C.0090
+	CALL	C$0090
 	LD	HL,I$4E4F
 	LD	DE,I$7E89
-	LD	BC,I$0021
-	LDIR				; copy interrupt handler
-I$4E9B	EQU	$-1
+	LD	BC,E$4E4F-I$4E4F
+	LDIR				; copy general interrupt handler
 	LD	HL,I$4E70
 	LD	DE,D.7EDA
-	LD	BC,I$0019
+	LD	BC,25
 	LDIR	
 	LD	A,0C3H
-	LD	(D$7300),A
+	LD	(D$7300+0),A
 	LD	HL,I$3E89
-	LD	(D$7300+1),HL		; interrupt handler
+	LD	(D$7300+1),HL		; general interrupt handler
 	LD	HL,0C937H
-	LD	(D$7308),HL		; SCF RET
+	LD	(D$7308),HL		; VDP interrupts are not handled
 	LD	HL,I$6828
 	LD	(D$7340+1),HL		; TIMER-1 handler
 	LD	HL,I$4CB8
 	LD	(D$7344+1),HL		; TIMER-2 handler
 	LD	HL,I$4B82
-	LD	(D$7370),HL
+	LD	(D$7370),HL		; AST MK
 	LD	HL,I$4CDF
-	LD	(D$7372),HL
+	LD	(D$7372),HL		; AST ADPCM 1st Y8950
 	LD	HL,I$4CDC
-	LD	(D$7374),HL
+	LD	(D$7374),HL		; AST ADPCM 2nd Y8950
 	LD	IY,I.3280
 	CALL	C.4F6D
-;
 	LD	IY,I.32C0
 	CALL	C.4F6D
-;
 	LD	DE,D.FFFF
 	LD	A,(D$72A3)
 	CALL	C.4F64
-;
 	LD	(D.7EE4),HL
 	LD	A,(D.7391)
-	BIT	0,A
-	JR	NZ,J$4F04
-;
+	BIT	0,A			; 2nd Y8950 found ?
+	JR	NZ,J$4F04		; nope,
 	LD	A,(D$72E3)
 	CALL	C.4F64
-;
 	LD	(D.7EE8),HL
 	LD	(D$7EEA),DE
-J$4F04:	LD	A,(D$FAFC)
-	LD	HL,I$003F
-	AND	06H	; 6 
-	JR	Z,J.4F14
-;
+J$4F04:	LD	A,(MODE)
+	LD	HL,63
+	AND	06H
+	JR	Z,J.4F14		; 16 KB VRAM, 63
 	LD	L,E
-	CP	02H	; 2 
-	JR	Z,J.4F14
-;
-	INC	H
-J.4F14:	LD	(D.7EEE),HL
+	CP	02H
+	JR	Z,J.4F14		; 64 KB VRAM, 255
+	INC	H			; 128 KB VRAM, 511
+J.4F14:	LD	(D.7EEE),HL		; VRAM mask
 	CALL	C.4D8F			; restore page 0
-;
 	LD	HL,I.7F13
 	LD	E,L
 	LD	D,H
 	INC	DE
 	PUSH	DE
-	LD	BC,I.007F
+	LD	BC,128-1
 	LD	(HL),00H
 	LDIR	
 	POP	HL
@@ -3243,29 +2993,25 @@ J.4F14:	LD	(D.7EEE),HL
 	LD	(HL),80H
 	INC	HL
 	INC	HL
-	LD	(HL),40H	; "@"
+	LD	(HL),40H
 	INC	HL
 	LD	(HL),1FH
-	LD	HL,I.007F
+	LD	HL,127
 	LD	(D.7E82),HL
 	LD	HL,D.FFFF
 	LD	(D.7E84),HL
 	LD	A,1EH
 	LD	(D.7E88),A
-	POP	DE
+	POP	DE			; keyboard channel mask
 	CALL	C$48F5
-;
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
-	LD	A,11H	; 17 
+	LD	A,17
 	LD	C,98H
 	RST	00H
-;
-	LD	A,12H	; 18 
+	LD	A,18
 	LD	C,0CCH
 	RST	00H
-;
-	LD	A,10H	; 16 
+	LD	A,16
 	LD	C,03H	; 3 
 	RST	00H
 ;
@@ -3285,7 +3031,7 @@ J.4F14:	LD	(D.7EEE),HL
 C.4F64:	AND	A
 	RRA	
 	LD	H,A
-	LD	L,00H
+	LD	L,0
 	RR	L
 	DEC	HL
 	RET	
@@ -3298,11 +3044,11 @@ C.4F64:	AND	A
 ;
 C.4F6D:	LD	A,(D.7EDA)
 	LD	C,A
-	LD	A,04H	; 4 
+	LD	A,4
 	RST	00H
 	LD	A,(D$7EDB)
 	LD	C,A
-	LD	A,07H	; 7 
+	LD	A,7
 	RST	00H
 	RET	
 ;
@@ -3343,7 +3089,7 @@ C.4F8D:	CALL	C.550A
 	CP	42H	; "B"
 	JR	NZ,J.4FB2
 ;
-	LD	BC,I$0013
+	LD	BC,19
 	ADD	HL,BC
 J$4FA4:	LD	A,(HL)
 	INC	HL
@@ -3351,7 +3097,7 @@ J$4FA4:	LD	A,(HL)
 	JR	Z,J$4FB0
 ;
 	INC	D
-	LD	BC,I.0007
+	LD	BC,7
 	ADD	HL,BC
 	JR	J$4FA4
 ;
@@ -3362,36 +3108,29 @@ J$4FB0:	LD	A,D
 ;	-----------------
 J.4FB2:	XOR	A
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine check for ","
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4FB4:	CALL	C.6EE4
-;
-	INC	L
+	DEFB	","
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine check for "("
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.4FB9:	CALL	C.6EE4
-;
-	JR	Z,J$4F87
-;
-;
-;	  Subroutine __________________________
+	DEFB	"("
+	RET
+
+;	  Subroutine check for ")"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
 C.4FBE:	CALL	C.6EE4
-;
-	ADD	HL,HL
+	DEFB	")"
 	RET	
 ;
 ;	-----------------
@@ -3405,7 +3144,7 @@ C.4FC3:	LD	B,2
 	PUSH	AF
 	LD	A,(D.7B0E)
 	LD	H,80H
-	CALL	C.0024			; MSX-AUDIO on page 2
+	CALL	ENASLT			; MSX-AUDIO on page 2
 	POP	AF
 	LD	L,A
 	EX	(SP),HL
@@ -3421,9 +3160,8 @@ C.4FD5:	POP	HL
 	EX	(SP),HL
 	LD	A,L
 	LD	H,80H
-	JP	C.0024
-;
-;	-----------------
+	JP	ENASLT
+
 I$4FDD:	LD	A,H
 	AND	80H
 	RES	7,H
@@ -3438,14 +3176,13 @@ I$4FDD:	LD	A,H
 	XOR	A
 	LD	(D.7FFE),A		; select segment 0
 	RET	
-;
-;	-----------------
-;
+E$4FDD:
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.4FF4:	CALL	C.4FB4
+C.4FF4:	CALL	C.4FB4			; check for ","
 ;
 	CP	2CH	; ","
 	LD	DE,D.FFFF
@@ -3457,11 +3194,9 @@ C.4FF4:	CALL	C.4FB4
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$4FFE:	CALL	C.6EFE
-;
+C$4FFE:	CALL	C.6EFE			; evaluate byte operand 
 	CP	0FFH
 	RET	NZ
-;
 	JR	J.5016
 ;
 ;	-----------------
@@ -3470,20 +3205,20 @@ C$4FFE:	CALL	C.6EFE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5006:	CALL	C.4FB4
+C.5006:	CALL	C.4FB4			; check for ","
 ;
 	CP	2CH	; ","
 	LD	DE,D.FFFF
 	RET	Z
 ;
-	CALL	C.6EF8
+	CALL	C.6EF8			; evaluate adres operand
 ;
 	LD	A,E
 	AND	D
 	INC	A
 	RET	NZ
 ;
-J.5016:	JP	C.6EAB
+J.5016:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
 ;
@@ -3497,30 +3232,28 @@ C.5019:	LD	A,(HL)
 ;
 	POP	DE
 	JP	J.5082
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL SET PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5021:	PUSH	HL
-	LD	HL,D.F560
-	LD	DE,D.F561
-	LD	BC,I.0007
+	LD	HL,BUF+2
+	LD	DE,BUF+2+1
+	LD	BC,8-1
 	LD	(HL),0FFH
 	LDIR	
 	POP	HL
-	CALL	C.4FB9
+	CALL	C.4FB9			; check for "("
 ;
-	CALL	C.6EFE
+	CALL	C.6EFE			; evaluate byte operand 
 ;
-	LD	(X.F55E),A
-	CALL	C.4FB4
+	LD	(BUF+0),A
+	CALL	C.4FB4			; check for ","
 ;
-	CALL	C.6EFE
+	CALL	C.6EFE			; evaluate byte operand 
 ;
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	OR	A
 	JR	Z,J.5057
 ;
@@ -3546,27 +3279,27 @@ J.5057:	CALL	C.5019
 ;
 	CALL	C.4FF4
 ;
-	LD	(D.F560),A
+	LD	(BUF+2),A
 	CALL	C.5019
 ;
-	CALL	C.4FB4
+	CALL	C.4FB4			; check for ","
 ;
 J$5066:	CALL	C.5006
 ;
-	LD	(D.F563),DE
+	LD	(BUF+5),DE
 J.506D:	CALL	C.5019
 ;
 	CALL	C.5006
 ;
-	LD	(D.F565),DE
+	LD	(BUF+7),DE
 	CALL	C.5019
 ;
 	CALL	C.4FF4
 ;
 	JR	Z,J.5016
 ;
-	LD	(D.F567),A
-J.5082:	CALL	C.4FBE
+	LD	(BUF+9),A
+J.5082:	CALL	C.4FBE			; check for ")"
 ;
 	JP	NZ,J.6EA8
 ;
@@ -3579,29 +3312,29 @@ J.5082:	CALL	C.4FBE
 	RET	
 ;
 ;	-----------------
-J.5090:	CALL	C.4FB4
+J.5090:	CALL	C.4FB4			; check for ","
 ;
-	CALL	C.4FB4
+	CALL	C.4FB4			; check for ","
 ;
-	CALL	C.6EFE
+	CALL	C.6EFE			; evaluate byte operand 
 ;
-	LD	(D.F561),A
+	LD	(BUF+3),A
 	CALL	C.5019
 ;
 	JR	J$5066
 ;
 ;	-----------------
 J$50A1:	LD	A,04H	; 4 
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	CALL	C.4FF4
 ;
-	LD	(D.F560),A
-	CALL	C.4FB4
+	LD	(BUF+2),A
+	CALL	C.4FB4			; check for ","
 ;
 	CALL	C$50F4
 ;
 	PUSH	HL
-	LD	HL,D.F564
+	LD	HL,BUF+6
 	LD	A,3AH	; ":"
 	LD	(HL),A
 	DEC	HL
@@ -3622,26 +3355,26 @@ J$50C6:	LD	(HL),E
 	CP	29H	; ")"
 	JR	Z,J.5082
 ;
-	CALL	C.4FB4
+	CALL	C.4FB4			; check for ","
 ;
 	JR	J.506D
 ;
 ;	-----------------
 J$50D2:	LD	A,05H	; 5 
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	CALL	C.4FF4
 ;
-	LD	(D.F560),A
-	CALL	C.4FB4
+	LD	(BUF+2),A
+	CALL	C.4FB4			; check for ","
 ;
-	CALL	C.6EF8
+	CALL	C.6EF8			; evaluate adres operand
 ;
-	LD	(D.F561),DE
-	CALL	C.4FB4
+	LD	(BUF+3),DE
+	CALL	C.4FB4			; check for ","
 ;
-	CALL	C.6EF8
+	CALL	C.6EF8			; evaluate adres operand
 ;
-	LD	(D.F563),DE
+	LD	(BUF+5),DE
 	JP	J.506D
 ;
 ;	-----------------
@@ -3718,28 +3451,25 @@ C.5132:	LD	A,D
 	INC	A
 	JR	NZ,J$513B
 ;
-	LD	DE,I$1F40
+	LD	DE,01F40H
 	RET	
 ;
 ;	-----------------
 J$513B:	PUSH	HL
-	LD	HL,I$3E80
+	LD	HL,3E80H
 	AND	A
 	SBC	HL,DE
 	JR	C,J$514A
-;
-	LD	HL,I.0707
+	LD	HL,0707H
 	SBC	HL,DE
 	CCF	
 J$514A:	POP	HL
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL REC PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$514C:	CALL	C.516B
 ;
 	PUSH	HL
@@ -3749,20 +3479,15 @@ C$514C:	CALL	C.516B
 ;
 	POP	HL
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL PLAY PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5157:	CALL	C.516B
-;
 	PUSH	HL
 	CALL	C.571C
-;
-J$515E:	JP	C,C.6EAB
-;
+J$515E:	JP	C,C.6EAB		; illegal function call
 	POP	HL
 	RET	
 ;
@@ -3786,46 +3511,46 @@ C.5163:	LD	A,(HL)
 ;	     Outputs ________________________
 ;
 C.516B:	PUSH	HL
-	LD	HL,D.F55F
+	LD	HL,BUF+1
 	LD	B,08H	; 8 
 J$5171:	LD	(HL),0FFH
 	INC	HL
 	DJNZ	J$5171
 ;
 	POP	HL
-	CALL	C.4FB9
+	CALL	C.4FB9			; check for "("
 ;
-I$517A:	CALL	C.6EFE
+I$517A:	CALL	C.6EFE			; evaluate byte operand 
 ;
-	LD	(X.F55E),A
+	LD	(BUF+0),A
 	CALL	C.5163
 ;
 	CALL	C.4FF4
 ;
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	CALL	C.5163
 ;
 	CALL	C.5006
 ;
-	LD	(D.F560),DE
+	LD	(BUF+2),DE
 	CALL	C.5163
 ;
 	CALL	C.5006
 ;
-	LD	(D.F562),DE
+	LD	(BUF+4),DE
 	CALL	C.5163
 ;
 	CALL	C.5006
 ;
-	LD	(D.F564),DE
+	LD	(BUF+6),DE
 	CALL	C.5163
 ;
-	CALL	C.4FB4
+	CALL	C.4FB4			; check for ","
 ;
 	CALL	C$4FFE
 ;
-	LD	(D.F566),A
-J$51B3:	CALL	C.4FBE
+	LD	(BUF+8),A
+J$51B3:	CALL	C.4FBE			; check for ")"
 ;
 	JP	NZ,J.6EA8
 ;
@@ -3837,21 +3562,21 @@ J$51B3:	CALL	C.4FBE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.51BA:	LD	A,(X.F55E)
+C.51BA:	LD	A,(BUF+0)
 	CP	10H	; 16 
 	CCF	
 	RET	C
 ;
-	LD	DE,(D.F565)
-	LD	A,(D.F55F)
+	LD	DE,(BUF+7)
+	LD	A,(BUF+1)
 	AND	05H	; 5 
 	DEC	A
 	CALL	NZ,C.5132
 ;
 	RET	C
 ;
-	LD	(D.F565),DE
-	LD	DE,(D.F563)
+	LD	(BUF+7),DE
+	LD	DE,(BUF+5)
 	LD	A,E
 	OR	D
 	SCF	
@@ -3883,10 +3608,10 @@ C.51BA:	LD	A,(X.F55E)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$51FC:	LD	A,(X.F55E)
+C$51FC:	LD	A,(BUF+0)
 	CALL	C.54F4
 ;
-	LD	A,(D.F55F)
+	LD	A,(BUF+1)
 	OR	A
 	JR	Z,J$5239
 ;
@@ -3918,20 +3643,16 @@ C.521D:	DI
 	LD	A,(D.7EDF)
 	OR	A
 	JR	Z,J$522B
-;
 	EI	
-	CALL	C.6B8D
-;
+	CALL	C.6B8D			; CTRL-STOP pressed ?
 	JR	NZ,C.521D
-;
 	RET	
-;
-;	-----------------
+
 J$522B:	INC	A
 	RET	
 ;
 ;	-----------------
-J$522D:	LD	A,(D.F567)
+J$522D:	LD	A,(BUF+9)
 	CP	0FFH
 	JR	Z,J.5241
 ;
@@ -3942,7 +3663,7 @@ J$522D:	LD	A,(D.F567)
 	JR	J.5241
 ;
 ;	-----------------
-J$5239:	LD	A,(D.F567)
+J$5239:	LD	A,(BUF+9)
 	LD	B,A
 	RRCA	
 	CP	B
@@ -3953,17 +3674,17 @@ J.5241:	CALL	C.54B9
 ;
 	RET	C
 ;
-	LD	DE,(D.F563)
+	LD	DE,(BUF+5)
 	CALL	C.5428
 ;
 	RET	C
 ;
-	LD	(D.F561),BC
+	LD	(BUF+3),BC
 	EX	DE,HL
-	LD	(D.F563),HL
-J.5255:	LD	HL,D.F55F
+	LD	(BUF+5),HL
+J.5255:	LD	HL,BUF+1
 	PUSH	HL
-	LD	BC,C.0008
+	LD	BC,8
 	LDIR	
 	POP	HL
 	LD	A,(HL)
@@ -3977,8 +3698,8 @@ J.5255:	LD	HL,D.F55F
 ;
 	PUSH	HL
 	LD	HL,I.7500
-	LD	DE,I$7501
-	LD	BC,I.00FF
+	LD	DE,I.7500+1
+	LD	BC,256-1
 	LD	(HL),00H
 	LDIR	
 	POP	HL
@@ -4002,12 +3723,12 @@ J.5255:	LD	HL,D.F55F
 	LD	HL,I.7500
 	LD	(D.7EAC),HL
 J$529B:	LD	(D.7EBC),DE
-	LD	HL,I.0001
+	LD	HL,1
 	LD	(D.7EAE),HL
 	PUSH	BC
 	PUSH	DE
-	LD	A,00H
-	CALL	C.4D6A
+	LD	A,0
+	CALL	C.4D6A			; AUDIO BIOS function
 ;
 	POP	DE
 	POP	BC
@@ -4020,7 +3741,7 @@ J$529B:	LD	(D.7EBC),DE
 	RET	
 ;
 ;	-----------------
-J$52B5:	LD	A,(D.F567)
+J$52B5:	LD	A,(BUF+9)
 	CP	0FFH
 	JR	Z,J$52BF
 ;
@@ -4032,7 +3753,7 @@ J$52BF:	LD	A,(D.7E87)
 	JR	J$52CF
 ;
 ;	-----------------
-J$52C4:	LD	A,(D.F567)
+J$52C4:	LD	A,(BUF+9)
 	LD	B,A
 	RRCA	
 	CP	B
@@ -4041,7 +3762,7 @@ J$52C4:	LD	A,(D.F567)
 ;
 	LD	A,(D.7E86)
 J$52CF:	LD	B,A
-	LD	A,(D.F561)
+	LD	A,(BUF+3)
 	CP	B
 	CCF	
 	RET	C
@@ -4049,39 +3770,39 @@ J$52CF:	LD	B,A
 	CALL	C$54FF
 ;
 	PUSH	HL
-	LD	A,(D.F55F)
+	LD	A,(BUF+1)
 	CALL	C.550A
 ;
 	POP	HL
-	LD	A,(D.F560)
+	LD	A,(BUF+2)
 	INC	A
 	SCF	
 	RET	NZ
 ;
-	LD	A,(D.F55F)
+	LD	A,(BUF+1)
 	OR	(HL)
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	XOR	A
-	LD	(D.F560),A
+	LD	(BUF+2),A
 	INC	HL
 	INC	HL
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
-	LD	(D.F561),DE
+	LD	(BUF+3),DE
 	INC	HL
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	PUSH	HL
-	LD	HL,(D.F563)
+	LD	HL,(BUF+5)
 	LD	A,L
 	AND	H
 	INC	A
 	JR	NZ,J$530F
 ;
 	POP	HL
-	LD	(D.F563),DE
+	LD	(BUF+5),DE
 	JR	J$5314
 ;
 ;	-----------------
@@ -4090,7 +3811,7 @@ J$530F:	EX	DE,HL
 	POP	HL
 	RET	C
 ;
-J$5314:	LD	DE,(D.F565)
+J$5314:	LD	DE,(BUF+7)
 	LD	A,E
 	AND	D
 	INC	A
@@ -4104,8 +3825,8 @@ J$5321:	CALL	C.5132
 ;
 	RET	C
 ;
-	LD	(D.F565),DE
-	LD	A,(X.F55E)
+	LD	(BUF+7),DE
+	LD	A,(BUF+0)
 	CALL	C.54F4
 ;
 	PUSH	HL
@@ -4120,7 +3841,7 @@ J$5337:	CALL	C.54B9
 	RET	C
 ;
 	PUSH	HL
-	LD	HL,D.F561
+	LD	HL,BUF+3
 	CALL	C.5E52
 ;
 	POP	HL
@@ -4139,14 +3860,14 @@ J$5349:	CALL	C.54B9
 	PUSH	HL
 	LD	HL,(D.7EEE)
 	PUSH	HL
-	LD	BC,(D.F561)
+	LD	BC,(BUF+3)
 	OR	A
 	SBC	HL,BC
 	POP	DE
 	JR	C,J.5372
 ;
 	INC	DE
-	LD	HL,(D.F563)
+	LD	HL,(BUF+5)
 	ADD	HL,BC
 	JR	C,J.5372
 ;
@@ -4174,7 +3895,7 @@ J.5372:	POP	HL
 ;
 C.5374:	LD	A,(HL)
 	AND	07H	; 7 
-	LD	(D.F57D),A
+	LD	(BUF+31),A
 	AND	05H	; 5 
 	RET	NZ
 ;
@@ -4204,7 +3925,7 @@ J$5394:	PUSH	AF
 	LD	A,(HL)
 	AND	07H	; 7 
 	LD	E,A
-	LD	A,(D.F57D)
+	LD	A,(BUF+31)
 	CP	E
 	JR	NZ,J.53C2
 ;
@@ -4246,7 +3967,7 @@ J.53C2:	POP	AF
 	CALL	C$53E8
 ;
 	POP	BC
-	LD	A,(D.F57D)
+	LD	A,(BUF+31)
 	OR	A
 	JR	NZ,J$53DE
 ;
@@ -4274,7 +3995,7 @@ C$53E8:	LD	E,L
 	PUSH	DE
 	PUSH	HL
 	EX	DE,HL
-	LD	A,(D.F57D)
+	LD	A,(BUF+31)
 	OR	A
 	LD	HL,(D.7E82)
 	JR	Z,J$53FA
@@ -4293,15 +4014,14 @@ I$5400:	POP	DE
 	DI	
 	LD	IX,D.7EAA
 	LD	IY,D.7EBA
-	LD	A,(D.F57D)
-	LD	(IX),A
-	LD	(IY),A
+	LD	A,(BUF+31)
+	LD	(IX+0),A
+	LD	(IY+0),A
 	LD	(D.7EAC),HL
 	LD	(D.7EAE),BC
 	LD	(D.7EBC),DE
-	LD	A,00H
-	CALL	C.4D6A
-;
+	LD	A,0
+	CALL	C.4D6A			; AUDIO BIOS function
 	EI	
 	RET	
 ;
@@ -4321,7 +4041,7 @@ I$542F:	AND	D
 	INC	A
 	JR	Z,J$547D
 ;
-	LD	A,(D.F55F)
+	LD	A,(BUF+1)
 	AND	07H	; 7 
 	LD	BC,(D.7E82)
 	JR	Z,J$5442
@@ -4343,7 +4063,7 @@ J$544C:	ADD	HL,BC
 ;
 J$544F:	LD	C,L
 	LD	B,H
-	LD	A,(D.F55F)
+	LD	A,(BUF+1)
 	AND	07H	; 7 
 	JR	NZ,J$5469
 ;
@@ -4371,7 +4091,7 @@ J.547B:	POP	HL
 	RET	
 ;
 ;	-----------------
-J$547D:	LD	A,(D.F55F)
+J$547D:	LD	A,(BUF+1)
 	AND	07H	; 7 
 	JR	NZ,J$549E
 ;
@@ -4419,7 +4139,7 @@ J$54B6:	INC	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.54B9:	LD	A,(D.F560)
+C.54B9:	LD	A,(BUF+2)
 	INC	A
 	ADD	A,0FDH
 	RET	C
@@ -4428,10 +4148,10 @@ C.54B9:	LD	A,(D.F560)
 	DEC	A
 	AND	80H
 	LD	B,A
-	LD	A,(D.F55F)
+	LD	A,(BUF+1)
 	LD	C,A
 	AND	05H	; 5 
-	LD	A,(D.F567)
+	LD	A,(BUF+9)
 	JR	NZ,J$54DC
 ;
 	INC	A
@@ -4454,21 +4174,19 @@ J$54DD:	ADD	A,0FDH
 	DEC	A
 	AND	40H	; "@"
 	LD	C,A
-J$54E5:	LD	A,(D.F55F)
+J$54E5:	LD	A,(BUF+1)
 	AND	07H	; 7 
 	OR	B
 	OR	C
-	LD	(D.F55F),A
+	LD	(BUF+1),A
 	XOR	A
-	LD	(D.F560),A
+	LD	(BUF+2),A
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.54F4:	ADD	A,A
 	ADD	A,A
 	ADD	A,A
@@ -4502,8 +4220,8 @@ C$54FF:	LD	L,A
 C.550A:	DI	
 	LD	IX,D.7EAA
 	LD	IY,D.7EBA
-	LD	(IX),A
-	LD	(IY),04H	; 4 
+	LD	(IX+0),A
+	LD	(IY+0),04H	; 4 
 	XOR	A
 	LD	(IX+2),A
 	LD	(IX+3),A
@@ -4511,9 +4229,8 @@ C.550A:	DI
 	LD	(IX+5),A
 	LD	HL,I.7500
 	LD	(D.7EBC),HL
-	LD	A,00H
-	CALL	C.4D6A
-;
+	LD	A,0
+	CALL	C.4D6A			; AUDIO BIOS function
 	EI	
 	RET	
 ;
@@ -4523,22 +4240,22 @@ C.550A:	DI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5535:	LD	A,(X.F55E)
+C.5535:	LD	A,(BUF+0)
 	CP	10H	; 16 
 	CCF	
 	RET	C
 ;
 	LD	A,11H	; 17 
-	LD	(D.F567),A
-	LD	HL,(D.F560)
+	LD	(BUF+9),A
+	LD	HL,(BUF+2)
 	LD	A,L
 	AND	H
 	INC	A
 	JR	NZ,J$554D
 ;
 	INC	HL
-	LD	(D.F560),HL
-J$554D:	LD	A,(D.F55F)
+	LD	(BUF+2),HL
+J$554D:	LD	A,(BUF+1)
 	LD	B,A
 	RRCA	
 	SUB	B
@@ -4551,10 +4268,10 @@ J$554D:	LD	A,(D.F55F)
 ;
 	XOR	A
 J$555A:	LD	(D$7488),A
-	LD	A,(X.F55E)
+	LD	A,(BUF+0)
 	CALL	C.54F4
 ;
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	CP	0FFH
 	JR	NZ,J$5572
 ;
@@ -4562,7 +4279,7 @@ J$555A:	LD	(D$7488),A
 	AND	40H	; "@"
 	RLCA	
 	RLCA	
-	LD	(D.F566),A
+	LD	(BUF+8),A
 J$5572:	AND	0FEH
 	SCF	
 	RET	NZ
@@ -4600,7 +4317,7 @@ J$5592:	CALL	C.5674
 	LD	A,(HL)
 	LD	B,A
 	AND	07H	; 7 
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	JR	NZ,J$55A6
 ;
 	OR	A
@@ -4631,32 +4348,25 @@ J.55B1:	CALL	C.56C0
 ;
 	DI	
 J$55BD:	LD	IY,I.3280
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	OR	A
 	JR	Z,J$55CB
-;
 	LD	IY,I.32C0
 J$55CB:	CALL	C$5640
-;
 	CCF	
 	RET	NC
-;
 	PUSH	BC
 	CALL	C.5717
-;
 	POP	BC
 	PUSH	BC
 	LD	A,C
-	LD	C,00H
-	CALL	C.4D6A
-;
+	LD	C,0
+	CALL	C.4D6A			; AUDIO BIOS function
 	POP	BC
 	JR	NC,J$55E8
-;
-	CP	03H	; 3 
+	CP	3
 	JR	NZ,J$55E6
-;
-	LD	(D.FC9B),A
+	LD	(INTFLG),A
 J$55E6:	LD	C,09H	; 9 
 J$55E8:	PUSH	IY
 	POP	HL
@@ -4665,15 +4375,12 @@ J$55E8:	PUSH	IY
 	SBC	HL,DE
 	LD	D,0F0H
 	JR	Z,J$55F7
-;
-	LD	D,0FH	; 15 
+	LD	D,00FH
 J$55F7:	LD	A,C
 	CP	0CH	; 12 
 	JR	Z,J.5608
-;
 	CP	0BH	; 11 
 	JR	Z,J.5608
-;
 	DI	
 	LD	A,(D.7EDF)
 	AND	D
@@ -4682,28 +4389,23 @@ J.5608:	EI
 	LD	A,(D.7B29)
 	OR	A
 	RET	Z
-;
 	LD	A,D
 	CPL	
 	LD	D,A
-J$5611:	CALL	C.6B8D
-;
-	RET	Z
-;
+J$5611:	CALL	C.6B8D			; CTRL-STOP pressed ?
+	RET	Z			; yep, quit
 	LD	A,(D.7EDF)
 	AND	D
 	JR	NZ,J$5611
-;
 	RET	
-;
-;	-----------------
+
 J.561C:	SCF	
 	RET	
 ;
 ;	-----------------
-J$561E:	LD	A,04H	; 4 
-	LD	BC,I.053E
-J$5621	EQU	$-2
+J$561E:	LD	A,4
+	DEFB	1
+J$5621:	LD	A,5
 	CALL	C.5674
 ;
 	CALL	C.57DB
@@ -4742,25 +4444,21 @@ C$5640:	PUSH	HL
 	OR	A
 	SBC	HL,DE
 	POP	HL
-	LD	DE,I$0F02
+	LD	DE,00F02H
 	JR	Z,J.5653
-;
-	LD	DE,I$F020
+	LD	DE,0F020H
 J.5653:	DI	
 	LD	A,(D.7EDF)
 	AND	D
 	JR	Z,J$5662
-;
 	EI	
-	CALL	C.6B8D
-;
+	CALL	C.6B8D			; CTRL-STOP pressed ?
 	SCF	
 	RET	Z
-;
 	JR	J.5653
 ;
 ;	-----------------
-J$5662:	LD	A,(D.F567)
+J$5662:	LD	A,(BUF+9)
 	AND	D
 	OR	E
 	LD	E,A
@@ -4784,7 +4482,7 @@ C.5674:	CP	04H	; 4
 	PUSH	DE
 	LD	(DE),A
 	INC	DE
-	LD	BC,I.0007
+	LD	BC,7
 	PUSH	HL
 	INC	HL
 	LDIR	
@@ -4797,11 +4495,11 @@ J$5689:	LD	(D.7EAA),A
 	PUSH	HL
 	INC	HL
 	INC	HL
-	LD	DE,I.F57E
+	LD	DE,BUF+32
 	LD	A,3AH	; ":"
 	LD	(DE),A
 	INC	DE
-	LD	BC,I.0004
+	LD	BC,4
 	PUSH	DE
 	LDIR	
 	POP	HL
@@ -4840,13 +4538,13 @@ C.56C0:	LD	A,(IX+6)
 ;	     Outputs ________________________
 ;
 C.56C7:	LD	DE,(D.7EAE)
-	LD	HL,(D.F560)
+	LD	HL,(BUF+2)
 	OR	A
 	SBC	HL,DE
 	CCF	
 	RET	C
 ;
-	LD	HL,(D.F562)
+	LD	HL,(BUF+4)
 	LD	A,H
 	OR	L
 	RET	Z
@@ -4856,14 +4554,14 @@ C.56C7:	LD	DE,(D.7EAE)
 	INC	A
 	JR	NZ,J$56E9
 ;
-	LD	HL,(D.F560)
+	LD	HL,(BUF+2)
 	PUSH	DE
 	EX	DE,HL
 	SBC	HL,DE
-	LD	(D.F562),HL
+	LD	(BUF+4),HL
 	POP	DE
 J$56E9:	PUSH	DE
-	LD	DE,(D.F560)
+	LD	DE,(BUF+2)
 	ADD	HL,DE
 	POP	DE
 	RET	C
@@ -4873,7 +4571,7 @@ J$56E9:	PUSH	DE
 	RET	C
 ;
 	LD	HL,(D.7EAC)
-	LD	DE,(D.F560)
+	LD	DE,(BUF+2)
 	LD	A,(D.7EAA)
 	CP	04H	; 4 
 	JR	NZ,J$570A
@@ -4887,11 +4585,18 @@ J$56E9:	PUSH	DE
 	LD	E,00H
 J$570A:	ADD	HL,DE
 	LD	(D.7EAC),HL
-	LD	HL,(D.F562)
+	LD	HL,(BUF+4)
 	LD	(D.7EAE),HL
 	XOR	A
 	INC	A
 	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.5717:	LD	A,10
+	JP	C.4D6A			; AUDIO BIOS function
 ;
 ;	-----------------
 ;
@@ -4899,77 +4604,55 @@ J$570A:	ADD	HL,DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5717:	LD	A,0AH	; 10 
-	JP	C.4D6A
-;
-;	-----------------
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-C.571C:	LD	A,(X.F55E)
-	CP	10H	; 16 
+C.571C:	LD	A,(BUF+0)
+	CP	16
 	CCF	
 	RET	C
-;
 	XOR	A
-	LD	(D.F567),A
-	LD	HL,(D.F560)
+	LD	(BUF+9),A
+	LD	HL,(BUF+2)
 	LD	A,L
 	AND	H
 	INC	A
 	JR	NZ,J$5733
-;
 	INC	HL
-	LD	(D.F560),HL
-J$5733:	LD	A,(D.F55F)
+	LD	(BUF+2),HL
+J$5733:	LD	A,(BUF+1)
 	LD	B,A
 	RRCA	
 	SUB	B
 	JR	Z,J$5740
-;
 	DEC	B
 	SCF	
 	RET	NZ
-;
 	LD	A,0FFH
 J$5740:	LD	(D$7489),A
-	LD	A,(X.F55E)
+	LD	A,(BUF+0)
 	CALL	C.54F4
-;
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	CP	0FFH
 	JR	NZ,J$5758
-;
 	LD	A,(HL)
 	AND	40H	; "@"
 	RLCA	
 	RLCA	
-	LD	(D.F566),A
+	LD	(BUF+8),A
 J$5758:	AND	0FEH
 	SCF	
 	RET	NZ
-;
 	LD	A,(HL)
 	AND	07H	; 7 
 	JR	Z,J.5774
-;
 	DEC	A
 	JR	Z,J$57BE
-;
 	DEC	A
 	JR	Z,J$5772
-;
 	DEC	A
 	JR	Z,J$57C0
-;
 	DEC	A
 	JR	Z,J$57C4
-;
 	DEC	A
 	JR	Z,J$57C7
-;
 	SCF	
 	RET	
 ;
@@ -4988,21 +4671,21 @@ J.5774:	CALL	C.5674
 	JR	J.57A3
 ;
 ;	-----------------
-J$5782:	LD	DE,(D.F564)
+J$5782:	LD	DE,(BUF+6)
 	LD	A,E
 	AND	D
 	INC	A
 	JR	Z,J.57A3
 ;
 	PUSH	HL
-	LD	HL,I$C234
+	LD	HL,0C234H
 	AND	A
 	SBC	HL,DE
 	POP	HL
 	RET	C
 ;
 	PUSH	HL
-	LD	HL,I.0707
+	LD	HL,0707H
 	SBC	HL,DE
 	CCF	
 	POP	HL
@@ -5013,7 +4696,7 @@ J$5782:	LD	DE,(D.F564)
 J.57A3:	LD	A,(HL)
 	LD	B,A
 	AND	02H	; 2 
-	LD	A,(D.F566)
+	LD	A,(BUF+8)
 	JR	NZ,J$57B0
 ;
 	OR	A
@@ -5038,9 +4721,9 @@ J$57C0:	ADD	A,03H	; 3
 	JR	J.5774
 ;
 ;	-----------------
-J$57C4:	LD	A,04H	; 4 
-	LD	BC,I.053E
-J$57C7	EQU	$-2
+J$57C4:	LD	A,4
+	DEFB	1
+J$57C7:	LD	A,5
 	CALL	C.5674
 ;
 	CALL	C.57DB
@@ -5060,7 +4743,7 @@ J$57D8:	JP	J.5632
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.57DB:	LD	DE,(D.F564)
+C.57DB:	LD	DE,(BUF+6)
 	LD	A,E
 	AND	D
 	INC	A
@@ -5073,47 +4756,39 @@ C.57DB:	LD	DE,(D.F564)
 	LD	(IX+6),E
 	LD	(IX+7),D
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL SAVE PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$57EE:	LD	D,00H
-	LD	BC,I$0116
-C$57F1	EQU	$-2
-	CALL	C.4FB9
-;
+	DEFB	1
+
+;	  Subroutine CALL LOAD PCM
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$57F1:	LD	D,01H
+	CALL	C.4FB9			; check for "("
 	PUSH	HL
 	PUSH	DE
 	CALL	C.6EF2
-;
 	PUSH	HL
 	CALL	C.6F04
-;
 	POP	HL
-	CALL	C.4FB4
-;
-	CALL	C.6EFE
-;
-	CALL	C.4FBE
-;
+	CALL	C.4FB4			; check for ","
+	CALL	C.6EFE			; evaluate byte operand 
+	CALL	C.4FBE			; check for ")"
 	JP	NZ,J.6EA8
-;
 	POP	AF
 	EX	(SP),HL
 	OR	A
 	LD	A,E
 	JR	Z,J$5817
-;
 	CALL	C.5823
-;
 	JR	J$581A
-;
-;	-----------------
+
 J$5817:	CALL	C.581C
-;
 J$581A:	POP	HL
 	RET	
 ;
@@ -5125,7 +4800,7 @@ J$581A:	POP	HL
 ;
 C.581C:	CALL	C$5849
 ;
-J$581F:	JP	C,C.6EAB
+J$581F:	JP	C,C.6EAB		; illegal function call
 ;
 	RET	
 ;
@@ -5158,11 +4833,11 @@ C.5828:	CP	10H	; 16
 	CP	09H	; 9 
 	JP	NC,J$6EA5
 ;
-	LD	(D.F56D),A
+	LD	(BUF+15),A
 	POP	AF
 	CALL	C.54F4
 ;
-	LD	(D.F573),HL
+	LD	(BUF+21),HL
 	LD	B,(HL)
 	CALL	C$5938
 ;
@@ -5181,22 +4856,21 @@ C$5849:	CALL	C.5828
 	RET	Z
 ;
 	LD	A,0FEH
-	LD	(X.F55E),A
+	LD	(BUF+0),A
 	PUSH	BC
 	PUSH	HL
-	LD	HL,X.0000
-	LD	(D.F55F),HL
+	LD	HL,0
+	LD	(BUF+1),HL
 	CALL	C.5717
 ;
 	POP	HL
 	POP	BC
 	LD	A,B
 	BIT	7,A
-	LD	DE,X.0000
+	LD	DE,0
 	JR	Z,J$586A
-;
 	LD	E,01H	; 1 
-J$586A:	LD	(D.F563),DE
+J$586A:	LD	(BUF+5),DE
 	AND	07H	; 7 
 	CP	04H	; 4 
 	JP	Z,J$595F
@@ -5218,40 +4892,40 @@ J$586A:	LD	(D.F563),DE
 	SCF	
 	RET	Z
 ;
-	LD	(D.F565),DE
+	LD	(BUF+7),DE
 	LD	A,D
 	LD	D,E
 	LD	E,08H	; 8 
 	OR	A
 	JR	Z,J$5898
 ;
-	LD	DE,X.0000
+	LD	DE,0
 J$5898:	DEC	DE
-	LD	(D.F561),DE
+	LD	(BUF+3),DE
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
-	LD	(D.F567),DE
-	LD	HL,X.0000
-	LD	(D.F569),HL
-	LD	(D.F56B),HL
-	LD	A,(D.F563)
+	LD	(BUF+9),DE
+	LD	HL,0
+	LD	(BUF+11),HL
+	LD	(BUF+13),HL
+	LD	A,(BUF+5)
 	OR	A
 	JR	Z,J$58BF
 ;
 	LD	HL,I.8000
-	LD	(D.F569),HL
-	LD	HL,I.007F
-	LD	(D.F56B),HL
-J$58BF:	LD	HL,X.F55E
-	LD	DE,(D.F862)
+	LD	(BUF+11),HL
+	LD	HL,127
+	LD	(BUF+13),HL
+J$58BF:	LD	HL,BUF
+	LD	DE,(NULBUF)
 	PUSH	DE
-	LD	BC,C.000F
+	LD	BC,15
 	LDIR	
 	POP	BC
-	LD	HL,I.0100
+	LD	HL,256
 	LD	E,01H	; 1 
-	LD	A,(D.F56D)
+	LD	A,(BUF+15)
 	LD	D,A
 	CALL	C.59CE
 ;
@@ -5259,13 +4933,13 @@ J$58BF:	LD	HL,X.F55E
 ;
 	LD	A,0FFH
 	LD	(D.7B2F),A
-	LD	HL,C.000F
+	LD	HL,15
 	CALL	C.5B95
 ;
-	LD	BC,(D.F565)
+	LD	BC,(BUF+7)
 	LD	A,04H	; 4 
 	LD	(D.7EBA),A
-	LD	HL,(D.F862)
+	LD	HL,(NULBUF)
 	LD	(D.7EBC),HL
 J$58F6:	PUSH	BC
 	CALL	C$591D
@@ -5285,19 +4959,17 @@ J$5903:	CALL	C.5BB6
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5906:	LD	HL,(D.F573)
+C.5906:	LD	HL,(BUF+21)
 	LD	A,(HL)
 	AND	40H	; "@"
 	LD	A,0F0H
 	JR	Z,J$5912
-;
 	LD	A,0FH	; 15 
 J$5912:	DI	
 	LD	HL,D.7EDF
 	AND	(HL)
 	LD	(HL),A
-	CALL	C$5A07
-;
+	CALL	C$5A07			; restore orginal H.ERRO
 	EI	
 	RET	
 ;
@@ -5308,11 +4980,11 @@ J$5912:	DI
 ;	     Outputs ________________________
 ;
 C$591D:	LD	IX,D.7EAA
-	LD	HL,I.0001
+	LD	HL,1
 	LD	(D.7EAE),HL
 	LD	IY,D.7EBA
-	LD	A,00H
-	CALL	C.4D6A
+	LD	A,0
+	CALL	C.4D6A			; AUDIO BIOS function
 ;
 	LD	HL,(D.7EAC)
 	INC	HL
@@ -5326,22 +4998,18 @@ C$591D:	LD	IX,D.7EAA
 ;	     Outputs ________________________
 ;
 C$5938:	BIT	6,B
-	LD	DE,I$0F03
+	LD	DE,00F03H
 	LD	IY,I.3280
 	JR	Z,J.594A
-;
-	LD	DE,I$F030
+	LD	DE,0F030H
 	LD	IY,I.32C0
 J.594A:	EI	
-	CALL	C.6B8D
-;
-	RET	Z
-;
+	CALL	C.6B8D			; CTRL-STOP pressed ?
+	RET	Z			; yep, quit
 	DI	
 	LD	A,(D.7EDF)
 	AND	D
 	JR	NZ,J.594A
-;
 	LD	A,(D.7EDF)
 	OR	E
 	LD	(D.7EDF),A
@@ -5354,10 +5022,10 @@ J$595F:	CALL	C.5AFD
 	RET	C
 ;
 	LD	E,07H	; 7 
-	LD	(D.F561),DE
+	LD	(BUF+3),DE
 	LD	E,D
 	LD	D,00H
-	LD	(D.F565),DE
+	LD	(BUF+7),DE
 	INC	HL
 	INC	HL
 	INC	HL
@@ -5365,27 +5033,27 @@ J$595F:	CALL	C.5AFD
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
-	LD	(D.F567),DE
-	LD	HL,X.0000
-	LD	(D.F569),HL
-	LD	(D.F56B),HL
-	LD	A,(D.F563)
+	LD	(BUF+9),DE
+	LD	HL,0
+	LD	(BUF+11),HL
+	LD	(BUF+13),HL
+	LD	A,(BUF+5)
 	OR	A
 	JR	Z,J$5996
 ;
 	LD	HL,I.8000
-	LD	(D.F569),HL
-	LD	HL,I.007F
-	LD	(D.F56B),HL
-J$5996:	LD	HL,X.F55E
-	LD	DE,(D.F862)
+	LD	(BUF+11),HL
+	LD	HL,127
+	LD	(BUF+13),HL
+J$5996:	LD	HL,BUF
+	LD	DE,(NULBUF)
 	PUSH	DE
-	LD	BC,C.000F
+	LD	BC,15
 	LDIR	
 	POP	BC
-	LD	HL,I.0100
+	LD	HL,256
 	LD	E,01H	; 1 
-	LD	A,(D.F56D)
+	LD	A,(BUF+15)
 	LD	D,A
 	CALL	C.59CE
 ;
@@ -5393,11 +5061,11 @@ J$5996:	LD	HL,X.F55E
 ;
 	LD	A,0FFH
 	LD	(D.7B2F),A
-	LD	HL,C.000F
+	LD	HL,15
 	CALL	C.5B95
 ;
-	LD	DE,(D.F56E)
-	LD	HL,(D.F570)
+	LD	DE,(BUF+16)
+	LD	HL,(BUF+18)
 	CALL	C.5B6C
 ;
 	CALL	C.5B92
@@ -5418,53 +5086,47 @@ C.59CE:	PUSH	AF
 	LD	HL,H.ERRO
 	PUSH	HL
 	LD	DE,I.7B2A
-	CALL	C.40DC
+	CALL	C.40DC			; save H.ERRO
 	LD	HL,I$59ED
 	POP	DE
-	CALL	C.40DC
+	CALL	C.40DC			; install new H.ERRO
 	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 	LD	(H.ERRO+1),A
-	JP	J.4E6A
+	JP	J.4E6A			; quit
 ;
 ;	-----------------
 I$59ED:	RST	30H
-;
-	NOP	
-	JP	P,J$C959
-;
-	PUSH	AF
+	DEFB	0
+	DEFW	C$59F2
+	RET
+
+C$59F2:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	CALL	C.5906
-;
 	LD	A,(D.7B2F)
 	OR	A
 	CALL	NZ,C.5BB6
-;
 	POP	HL
 	POP	DE
 	POP	BC
 	POP	AF
-	JP	H.ERRO
-;
-;	-----------------
-;
+	JP	H.ERRO			; to orginal H.ERRO hook
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5A07:	DI	
 	LD	HL,I.7B2A
 	LD	DE,H.ERRO
 	JP	C.40DC
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5A11:	CALL	C.5828
 ;
 	RET	C
@@ -5475,11 +5137,11 @@ C$5A11:	CALL	C.5828
 	PUSH	HL
 	CALL	C.5717
 ;
-	LD	BC,X.F55E
-	LD	HL,C.000F
+	LD	BC,BUF
+	LD	HL,15
 	PUSH	HL
 	LD	E,00H
-	LD	A,(D.F56D)
+	LD	A,(BUF+15)
 	LD	D,A
 	CALL	C.59CE
 ;
@@ -5497,7 +5159,7 @@ C$5A11:	CALL	C.5828
 	SCF	
 	RET	NZ
 ;
-	LD	A,(X.F55E)
+	LD	A,(BUF+0)
 	CP	0FEH
 	SCF	
 	RET	NZ
@@ -5529,7 +5191,7 @@ C$5A11:	CALL	C.5828
 	SCF	
 	RET	Z
 ;
-	LD	HL,(D.F565)
+	LD	HL,(BUF+7)
 	OR	A
 	EX	DE,HL
 	PUSH	HL
@@ -5543,8 +5205,8 @@ J$5A73:	PUSH	HL
 ;
 	POP	BC
 	XOR	A
-	LD	(D.F577),A
-	LD	HL,(D.F575)
+	LD	(BUF+25),A
+	LD	HL,(BUF+23)
 	LD	(D.7EAC),HL
 	LD	A,04H	; 4 
 	LD	(D.7EAA),A
@@ -5563,8 +5225,8 @@ J$5A87:	LD	A,B
 ;	-----------------
 J.5A95:	CALL	C.5BB6
 ;
-	LD	HL,(D.F573)
-	LD	A,(D.F563)
+	LD	HL,(BUF+21)
+	LD	A,(BUF+5)
 	AND	01H	; 1 
 	RRCA	
 	LD	B,A
@@ -5572,7 +5234,7 @@ J.5A95:	CALL	C.5BB6
 	AND	7FH
 	OR	B
 	LD	(HL),A
-	LD	DE,(D.F567)
+	LD	DE,(BUF+9)
 	PUSH	HL
 	LD	BC,6
 	ADD	HL,BC
@@ -5588,7 +5250,7 @@ J.5A95:	CALL	C.5BB6
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$5AB7:	LD	A,(D$F578)
+C$5AB7:	LD	A,(BUF+26)
 	LD	L,A
 	LD	H,00H
 	OR	A
@@ -5602,10 +5264,10 @@ C$5AB7:	LD	A,(D$F578)
 J$5AC6:	LD	IX,D.7EAA
 	LD	(D.7EAE),HL
 	LD	IY,D.7EBA
-	LD	A,00H
+	LD	A,0
 	PUSH	BC
 	PUSH	HL
-	CALL	C.4D6A
+	CALL	C.4D6A			; AUDIO BIOS function
 ;
 	POP	HL
 	PUSH	HL
@@ -5625,8 +5287,8 @@ J$5AEA:	CALL	C.5AFD
 ;
 	RET	C
 ;
-	LD	DE,(D.F56E)
-	LD	HL,(D.F570)
+	LD	DE,(BUF+16)
+	LD	HL,(BUF+18)
 	CALL	C.5B6C
 ;
 	CALL	C.5BA3
@@ -5642,20 +5304,20 @@ J$5AEA:	CALL	C.5AFD
 C.5AFD:	INC	HL
 	INC	HL
 	PUSH	HL
-	LD	DE,D.F56E
+	LD	DE,BUF+16
 	LD	A,3AH	; ":"
 	LD	(DE),A
 	INC	DE
-	LD	BC,I.0004
+	LD	BC,4
 	PUSH	DE
 	LDIR	
 	POP	HL
 	CALL	C.5E52
 ;
 	POP	HL
-	LD	(D.F56E),BC
+	LD	(BUF+16),BC
 	LD	E,00H
-	LD	(D.F570),DE
+	LD	(BUF+18),DE
 	LD	A,D
 	OR	A
 	RET	NZ
@@ -5670,12 +5332,11 @@ C.5AFD:	INC	HL
 ;	     Outputs ________________________
 ;
 C.5B21:	LD	A,(H.PHYD+0)
-	CP	0C9H
-	JP	Z,C.6EAB
-;
+	CP	0C9H			; MSX disksystem ?
+	JP	Z,C.6EAB		; nope, illegal function call
 	PUSH	BC
 	PUSH	HL
-	LD	HL,I.F579
+	LD	HL,BUF+27
 	PUSH	HL
 	LD	(HL),D
 	LD	A,E
@@ -5683,8 +5344,8 @@ C.5B21:	LD	A,(H.PHYD+0)
 	PUSH	AF
 	EX	DE,HL
 	INC	DE
-	LD	HL,I$F866
-	LD	BC,I.000B
+	LD	HL,FILNAM
+	LD	BC,11
 	LDIR	
 	XOR	A
 	LD	B,19H
@@ -5695,10 +5356,9 @@ J$5B40:	LD	(DE),A
 	POP	AF
 	POP	DE
 	PUSH	AF
-	LD	C,0FH	; 15 
+	LD	C,0FH			; OPEN (FCB)
 	JR	Z,J$5B4D
-;
-	LD	C,16H
+	LD	C,16H			; CREATE (FCB)
 J$5B4D:	CALL	C.F37D
 ;
 	INC	A
@@ -5711,8 +5371,8 @@ J$5B4D:	CALL	C.F37D
 	JP	J.6EB6
 ;
 ;	-----------------
-J$5B5C:	LD	HL,I.0001
-	LD	(D$F587),HL
+J$5B5C:	LD	HL,1
+	LD	(BUF+41),HL
 	POP	AF
 	POP	HL
 	POP	DE
@@ -5732,9 +5392,9 @@ C$5B69:	CALL	C$5B78
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5B6C:	LD	(D.F575),DE
-	LD	(D.F577),HL
-	LD	C,1AH
+C.5B6C:	LD	(BUF+23),DE
+	LD	(BUF+25),HL
+	LD	C,1AH			; SETDMA
 	JP	C.F37D
 ;
 ;	-----------------
@@ -5743,11 +5403,11 @@ C.5B6C:	LD	(D.F575),DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C$5B78:	LD	HL,I.FD00
+C$5B78:	LD	HL,-768
 	ADD	HL,SP
 	JR	NC,J.5B8A
 ;
-	LD	DE,(D.F6C6)
+	LD	DE,(STREND)
 	AND	A
 	SBC	HL,DE
 	JR	C,J.5B8A
@@ -5756,8 +5416,8 @@ C$5B78:	LD	HL,I.FD00
 	AND	A
 	RET	NZ
 ;
-J.5B8A:	LD	DE,(D.F862)
-	LD	HL,I.0100
+J.5B8A:	LD	DE,(NULBUF)
+	LD	HL,256
 	RET	
 ;
 ;	-----------------
@@ -5766,19 +5426,17 @@ J.5B8A:	LD	DE,(D.F862)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5B92:	LD	HL,(D.F577)
+C.5B92:	LD	HL,(BUF+25)
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5B95:	LD	DE,I.F579
-	LD	C,26H	; "&"
+C.5B95:	LD	DE,BUF+27
+	LD	C,26H			; random block write
 	CALL	C.F37D
-;
 	AND	A
 	RET	Z
-;
 	LD	E,42H	; "B"
 	JR	J$5BB3
 ;
@@ -5788,11 +5446,10 @@ C.5B95:	LD	DE,I.F579
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5BA3:	LD	HL,(D.F577)
-	LD	DE,I.F579
-	LD	C,27H	; "'"
+C.5BA3:	LD	HL,(BUF+25)
+	LD	DE,BUF+27
+	LD	C,27H			; random block read
 	CALL	C.F37D
-;
 	LD	A,L
 	OR	H
 	RET	NZ
@@ -5808,38 +5465,38 @@ J$5BB3:	JP	J.6EB6
 ;
 C.5BB6:	XOR	A
 	LD	(D.7B2F),A
-	LD	DE,I.F579
-	LD	C,10H	; 16 
+	LD	DE,BUF+27
+	LD	C,10H			; CLOSE (FCB)
 	JP	C.F37D
 
 ;	  Table      EXTBIO
 
-?.5BC2:	DEFB	0,0,0
+I$5BC2:	DEFB	0,0,0
 	JP	J$5CC9		; start routine in AUDIO-BIOS
-	JP	C.43AA
-	JP	C.42F3
-	JP	C.5F50
-	JP	J$4403
-	JP	C.4514
-	JP	J$5CBD
-	JP	J$5CC3
-	JP	C.488C
-	JP	J$48B5
-	JP	C.4576
+	JP	C.43AA		; ´CALL AUDIO´
+	JP	C.42F3		; ´CALL SYNTHE´
+	JP	C.5F50		; playvoice active ?
+	JP	J$4403		; set BGM
+	JP	C.4514		; mk tempo
+	JP	J$5CBD		; mk play
+	JP	J$5CC3		; mk append
+	JP	C.488C		; stopm ?
+	JP	J$48B5		; mk cont
+	JP	C.4576		; recmod
 	JP	C.6CDC
 	JP	C.51BA
-	JP	C.5535
-	JP	C.571C
-	JP	C.458D
-	JP	C.4551
-	JP	C.44B4
-	JP	C.581C
-	JP	C.5823
-	JP	C.463F
-	JP	C.4705
-	JP	C.46E8
-	JP	C.5D86
-	JP	C.5E5C
+	JP	C.5535		; rec pcm
+	JP	C.571C		; play pcm
+	JP	C.458D		; freq pcm
+	JP	C.4551		; mk pcm
+	JP	C.44B4		; vol pcm
+	JP	C.581C		; save pcm
+	JP	C.5823		; load pcm
+	JP	C.463F		; copy pcm
+	JP	C.4705		; convp
+	JP	C.46E8		; conva
+	JP	C.5D86		; set voice
+	JP	C.5E5C		; copy voice
 	RET	
 	RET	
 	RET	
@@ -5849,7 +5506,7 @@ C.5BB6:	XOR	A
 ;	     Outputs ________________________
 
 J$5C13:	DI	
-	LD	HL,I$FB20
+	LD	HL,HOKVLD
 	BIT	0,(HL)
 	JR	NZ,J$5C2A
 	SET	0,(HL)
@@ -5919,13 +5576,13 @@ J$5C89:	CALL	C.5CA2			; write slotid and jumptable adres
 	JR	J.5C58			; control to next EXTBIO handler
 
 J$5C93:	POP	AF
-	INC	A
+	INC	A			; increase number of Y8950
 	PUSH	HL
 	LD	HL,D.7391
-	BIT	0,(HL)
+	BIT	0,(HL)			; 2nd Y8950 found ?
 	POP	HL
-	JR	NZ,J$5C9F
-	INC	A
+	JR	NZ,J$5C9F		; nope,
+	INC	A			; increase number of Y8950
 J$5C9F:	PUSH	AF
 	JR	J.5C58			; control to next EXTBIO handler
 
@@ -5935,9 +5592,9 @@ J$5C9F:	PUSH	AF
 
 C.5CA2:	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 	CALL	C.5CB3
-	LD	A,LOW C$5BC2
+	LD	A,LOW I$5BC2
 	CALL	C.5CB3
-	LD	A,HIGH C$5BC2
+	LD	A,HIGH I$5BC2
 	CALL	C.5CB3
 	RET	
 ;
@@ -5950,8 +5607,7 @@ C.5CA2:	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 C.5CB3:	PUSH	BC
 	LD	E,A
 	LD	A,B
-	CALL	C$0014
-;
+	CALL	WRSLT
 	EI	
 	INC	HL
 	POP	BC
@@ -5959,7 +5615,6 @@ C.5CB3:	PUSH	BC
 ;
 ;	-----------------
 J$5CBD:	CALL	C.5CCF
-;
 	JP	J.49B9
 ;
 ;	-----------------
@@ -5976,8 +5631,8 @@ J$5CC9:	CALL	C.5CCF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.5CCF:	LD	IX,(X.F55E)
-	LD	IY,(D.F560)
+C.5CCF:	LD	IX,(BUF+0)
+	LD	IY,(BUF+2)
 	RET	
 
 ;	  Subroutine __________________________
@@ -6068,252 +5723,197 @@ J$5D38:	IN	A,(C)
 	DJNZ	J$5D38
 	OR	A
 	RET	
-;
-;	-----------------
-?.5D42:	CALL	C.6EE4
-;
-	JR	Z,J$5D58
-;
-	LD	E,(HL)
-	PUSH	AF
-	LD	B,09H	; 9 
+
+;	  Subroutine CALL VOICE
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$5D42:	CALL	C.6EE4
+	DEFB	"("			; check for "("
+	LD	DE,BUF
+	LD	B,9
 J$5D4B:	LD	A,(HL)
-	CP	2CH	; ","
+	CP	","
 	JR	Z,J$5D6F
-;
 	PUSH	BC
-	LD	A,09H	; 9 
+	LD	A,9
 	SUB	B
-	LD	(DE),A
+	LD	(DE),A			; channelnumber
 	INC	DE
 	PUSH	DE
 	LD	A,(HL)
-J$5D58:	CALL	C.5E28
-;
-	LD	A,00H
-	JR	C,J$5D60
-;
-	CPL	
+J$5D58:	CALL	C.5E28			; evaluate instrument operand
+	LD	A,0
+	JR	C,J$5D60		; instrument number,
+	CPL				; variable
 J$5D60:	EX	(SP),HL
 	LD	(HL),A
 	INC	HL
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
-	INC	HL
+	INC	HL			; instrument or address variable
 	EX	(SP),HL
 	POP	DE
 	POP	BC
 	LD	A,(HL)
-	CP	29H	; ")"
+	CP	")"
 	JR	Z,J$5D75
-;
 J$5D6F:	CALL	C.6EE4
-;
-	INC	L
+	DEFB	","
 	DJNZ	J$5D4B
-;
 J$5D75:	CALL	C.6EE4
-;
-	ADD	HL,HL
+	DEFB	")"
 	JP	NZ,J.6EA8
-;
 	LD	A,0FFH
-	LD	(DE),A
+	LD	(DE),A			; end marker
 	CALL	C.5D86
-;
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.5D86:	PUSH	HL
-	LD	HL,X.F55E
+	LD	HL,BUF
 J$5D8A:	LD	A,(HL)
 	CP	0FFH
 	JR	Z,J$5DC4
-;
 	INC	HL
-	CALL	C$5DD0
-;
+	CALL	C$5DD0			; get pointer to channel
 	LD	A,(HL)
 	INC	HL
 	OR	A
 	JR	Z,J$5DA8
-;
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)
 	PUSH	HL
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
-	LD	A,29H	; ")"
-	CALL	C.5DC7
-;
-	LD	A,29H	; ")"
+	LD	A,29H
+	CALL	C.5DC7			; do AUDIO function and next
+	LD	A,29H
 	JR	J$5DBA
-;
-;	-----------------
+
 J$5DA8:	LD	C,(HL)
 	LD	A,C
-	CP	40H	; "@"
+	CP	64
 	CCF	
 	RET	C
-;
 	INC	HL
 	PUSH	HL
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
-J$5DB3:	LD	A,27H	; "'"
-	CALL	C.5DC7
-;
-	LD	A,27H	; "'"
-J$5DBA:	CALL	C.5DC7
-;
+J$5DB3:	LD	A,27H
+	CALL	C.5DC7			; do AUDIO function and next
+	LD	A,27H
+J$5DBA:	CALL	C.5DC7			; do AUDIO function and next
 	CALL	C.4D8F			; restore page 0
-;
 	POP	HL
 	INC	HL
-	JR	J$5D8A
-;
-;	-----------------
+	JR	J$5D8A			; next channel
+
 J$5DC4:	POP	HL
 	OR	A
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine do AUDIO function
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.5DC7:	PUSH	BC
 	RST	00H
-;
-	LD	BC,C.0020
+	LD	BC,32
 	ADD	IX,BC
 	POP	BC
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine get pointer to channel
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5DD0:	LD	IX,I.3000
 	OR	A
 	RET	Z
-;
 	PUSH	BC
-	LD	BC,C.0040
+	LD	BC,64
 J$5DDA:	ADD	IX,BC
 	DEC	A
 	JR	NZ,J$5DDA
-;
 	POP	BC
 	RET	
-;
-;	-----------------
-?.5DE1:	CALL	C.6EE4
-;
-	JR	Z,J$5DB3
-;
-	JR	Z,J$5E46
-;
-	CCF	
-	SBC	A,A
-	LD	(X.F55E),A
-	LD	(D.F55F),DE
-	LD	(D.F561),BC
-	CALL	C.6EE4
-;
-	INC	L
-	CALL	C.5E28
-;
-	CCF	
-	SBC	A,A
-	LD	(D.F563),A
-	LD	(D.F564),DE
-	LD	(D.F566),BC
-	JR	NZ,J$5E10
-;
-	LD	A,E
-	CP	20H	; " "
-	JR	C,J.5E41
-;
-J$5E10:	CALL	C.6EE4
-;
-	ADD	HL,HL
-	JP	NZ,J.6EA8
-;
-	PUSH	HL
-	LD	HL,X.F55E
-	LD	A,(D.F563)
-	AND	(HL)
-	JR	NZ,J.5E41
-;
-	CALL	C.5E5C
-;
-	JR	C,J.5E41
-;
-	POP	HL
-	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CALL VOICE COPY
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.5E28:	CP	40H	; "@"
-	JR	Z,J$5E38
-;
-	CP	0F3H
-	JR	NZ,J$5E44
-;
-	CALL	C.6EEC
-;
-	LD	DE,I.00FF
-	SCF	
+
+C$5DE1:	CALL	C.6EE4
+	DEFB	"("
+	CALL	C.5E28			; evaluate instrument operand
+	CCF	
+	SBC	A,A
+	LD	(BUF+0),A		; instrumentnumber or variable
+	LD	(BUF+1),DE		; instrumentnumber or address of variable
+	LD	(BUF+3),BC		; variablesize
+	CALL	C.6EE4
+	DEFB	","			; check for ","
+	CALL	C.5E28			; evaluate instrument operand
+	CCF	
+	SBC	A,A
+	LD	(BUF+5),A		; instrumentnumber or variable
+	LD	(BUF+6),DE		; instrumentnumber or address of variable
+	LD	(BUF+8),BC		; variablesize
+	JR	NZ,J$5E10		; destination a variable, skip
+	LD	A,E
+	CP	32			; destination a readonly instrument ?
+	JR	C,J.5E41		; yep, illegal function call
+J$5E10:	CALL	C.6EE4
+	DEFB	")"			; check for ")"
+	JP	NZ,J.6EA8
+	PUSH	HL
+	LD	HL,BUF+0
+	LD	A,(BUF+5)
+	AND	(HL)			; source and destination both variables ?
+	JR	NZ,J.5E41		; yep, illegal function call
+	CALL	C.5E5C			; copy instrument definition
+	JR	C,J.5E41		; error, illegal function call
+	POP	HL
 	RET	
-;
-;	-----------------
-J$5E38:	CALL	C.6EEC
-;
-	CALL	C.6EFE
-;
-	CP	40H	; "@"
+
+;	  Subroutine evaluate instrument operand
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.5E28:	CP	"@"
+	JR	Z,J$5E38
+	CP	0F3H			; * token ?
+	JR	NZ,J$5E44
+	CALL	C.6EEC			; read * token
+	LD	DE,255			; indicates all changable instruments
+	SCF
+	RET	
+
+J$5E38:	CALL	C.6EEC			; read "@" char
+	CALL	C.6EFE			; evaluate byte operand 
+	CP	64
 	RET	C
-;
-J.5E41:	JP	C.6EAB
-;
-;	-----------------
+J.5E41:	JP	C.6EAB			; illegal function call
+
 J$5E44:	CALL	C.5E52
-J$5E46	EQU	$-1
-;
 	LD	A,E
 	AND	0E0H
 	OR	D
 	JR	Z,J.5E41
-;
 	PUSH	DE
 	LD	E,C
 	LD	D,B
 	POP	BC
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.5E52:	CALL	C.4935
 ;
 	EX	DE,HL
@@ -6322,93 +5922,74 @@ C.5E52:	CALL	C.4935
 	INC	HL
 	EX	DE,HL
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine copy instrument definition
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.5E5C:	LD	A,(D.F563)
-	LD	HL,(D.F564)
-	OR	A
-	JR	NZ,J$5E6C
-;
+
+C.5E5C:	LD	A,(BUF+5)
+	LD	HL,(BUF+6)
+	OR	A			; destination a variable ?
+	JR	NZ,J$5E6C		; yep, already a address
 	LD	A,L
-	INC	A
-	JR	Z,J$5EA6
-;
-	CALL	C.5EBB
-;
+	INC	A			; instrument 255 ?
+	JR	Z,J$5EA6		; yep, destination is all instrument definitions 32-63
+	CALL	C.5EBB			; get pointer to instrument definition
 J$5E6C:	PUSH	HL
-	LD	A,(X.F55E)
-	LD	HL,(D.F55F)
-	OR	A
-	JR	NZ,J$5E7D
-;
+	LD	A,(BUF+0)
+	LD	HL,(BUF+1)
+	OR	A			; source a variable ?
+	JR	NZ,J$5E7D		; yep, already a address
 	LD	A,L
-	INC	A
-	JR	Z,J$5E8D
-;
-	CALL	C.5EBB
-;
+	INC	A			; instrument 255 ?
+	JR	Z,J$5E8D		; yep, source is all instrument definitions 32-63
+	CALL	C.5EBB			; get pointer to instrument definition
 J$5E7D:	POP	DE
-	LD	BC,C.0020
+	LD	BC,32
 J$5E81:	DI	
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
-	LDIR	
+	LDIR				; copy instrument definition
 	CALL	C.4D8F			; restore page 0
-;
 	OR	A
 	EI	
 	RET	
-;
-;	-----------------
-J$5E8D:	POP	HL
-	LD	A,(D.F563)
-	OR	A
+
+J$5E8D:	POP	HL			; clean stack
+	LD	A,(BUF+5)
+	OR	A			; destination a instrument ?
 	SCF	
-	RET	Z
-;
-	LD	A,(D.F567)
-	CP	04H	; 4 
-	RET	C
-;
-	LD	HL,(D.7382)
-	LD	DE,(D.F564)
-J$5EA1:	LD	BC,I.0400
-I$5EA4:	JR	J$5E81
-;
-;	-----------------
-J$5EA6:	LD	A,(X.F55E)
-J$5EA9:	OR	A
+	RET	Z			; yep, quit with error
+	LD	A,(BUF+9)
+	CP	HIGH (32*32)		; variablesize big enough ?
+	RET	C			; nope, quit with error
+	LD	HL,(D.7382)		; pointer to programable instrument definitions (32-63)
+	LD	DE,(BUF+6)		; destination
+J$5EA1:	LD	BC,32*32
+I$5EA4:	JR	J$5E81			; copy instrument definitions
+
+J$5EA6:	LD	A,(BUF+0)
+	OR	A			; source a instrument ?
 	SCF	
-	RET	Z
-;
-	LD	A,(D.F562)
-	CP	04H	; 4 
-	RET	C
-;
-	LD	HL,(D.F55F)
-	LD	DE,(D.7382)
-	JR	J$5EA1
-;
-;	-----------------
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
+	RET	Z			; yep, quit with error
+	LD	A,(BUF+4)
+	CP	HIGH (32*32)		; variablesize big enough ?
+	RET	C			; nope, quit with error
+	LD	HL,(BUF+1)
+	LD	DE,(D.7382)		; pointer to programable instrument definitions (32-63)
+	JR	J$5EA1			; copy instrument definitions
+
+;	  Subroutine get pointer to instrument definition
+;	     Inputs  L = instrumentnumber
+;	     Outputs HL = pointer
+
 C.5EBB:	LD	A,L
-	CP	20H	; " "
-	LD	HL,(D$7380)
+	CP	32
+	LD	HL,(D$7380)		; pointer to predefined instrument definitions (00-31)
 	JR	C,J$5ECC
-;
-	LD	HL,(D.7382)
-	LD	DE,D.4000
-	ADD	HL,DE
-	SUB	20H	; " "
+	LD	HL,(D.7382)		; pointer to programable instrument definitions (32-63)
+	LD	DE,4000H
+	ADD	HL,DE			; page 1 based
+	SUB	32
 J$5ECC:	EX	DE,HL
 	ADD	A,A
 	ADD	A,A
@@ -6419,14 +6000,14 @@ J$5ECC:	EX	DE,HL
 	ADD	HL,HL
 	ADD	HL,DE
 	RET	
-;
-;	-----------------
-?.5ED7:	CALL	C.6EE4
-;
-	JR	Z,J$5EA9
-;
-	JR	Z,J$5F3C
-;
+
+;	  Subroutine CALL MK VOICE
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$5ED7:	CALL	C.6EE4
+	DEFB	"("
+	CALL	C.5E28
 	CCF	
 	SBC	A,A
 	PUSH	DE
@@ -6434,42 +6015,33 @@ J$5ECC:	EX	DE,HL
 	PUSH	DE
 	PUSH	AF
 	LD	A,(HL)
-	CP	29H	; ")"
+	CP	")"
 	JR	Z,J$5EF6
-;
 	POP	AF
 	POP	DE
 	CALL	C.6EE4
-;
-	INC	L
+	DEFB	","
 	CALL	C.5E28
-;
 	CCF	
 	SBC	A,A
 	PUSH	DE
 	PUSH	AF
 J$5EF6:	CALL	C.6EE4
-;
-	ADD	HL,HL
+	DEFB	")"
 	JP	NZ,J.6EA8
-;
 	POP	AF
 	POP	DE
 	POP	BC
 	EX	(SP),HL
 	CALL	C$5F09
-;
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5F09:	PUSH	AF
 	PUSH	DE
 	PUSH	BC
@@ -6478,57 +6050,48 @@ C$5F09:	PUSH	AF
 	POP	AF
 	LD	IY,I.3280
 	CALL	C$5F1E
-;
 	JR	C,J$5F32
-;
 	POP	BC
 	POP	AF
 	LD	IY,I.32C0
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$5F1E:	DI	
 	OR	A
-	LD	A,38H	; "8"
+	LD	A,56
 	JR	NZ,J$5F2F
-;
 	LD	A,B
 	OR	A
 	SCF	
 	RET	NZ
-;
 	LD	A,C
-	CP	40H	; "@"
+	CP	40H
 	CCF	
 	RET	C
-;
-	LD	A,36H	; "6"
-J$5F2F:	JP	C.4D6A
-;
-;	-----------------
+	LD	A,54
+J$5F2F:	JP	C.4D6A			; AUDIO BIOS function
 J$5F32:	POP	BC
 	POP	AF
 	SCF	
 	RET	
-;
-;	-----------------
-?.5F36:	CALL	C.42BE
-;
+
+;	  Subroutine CALL PLAY
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$5F36:	CALL	C.42BE			; check for "(" and evaluate byte operand
 	LD	A,(D.7B22)
 J$5F3C:	CP	E
-	JP	C,C.6EAB
-;
+	JP	C,C.6EAB		; illegal function call
 	LD	A,E
 	PUSH	HL
 	CALL	C.5F50
-;
 	EX	(SP),HL
-	CALL	C.4FB4
-;
+	CALL	C.4FB4			; check for ","
 	CALL	C.6ED8
-;
 	EX	(SP),HL
 	JP	J.4A41
 ;
@@ -6541,23 +6104,19 @@ J$5F3C:	CP	E
 C.5F50:	LD	HL,(D.7B26)
 	OR	A
 	JR	NZ,J.5F61
-;
 	LD	A,H
 	AND	1FH
 	OR	L
 	JR	Z,J.5F5E
-;
 J$5F5C:	LD	A,0FFH
 J.5F5E:	LD	L,A
 	LD	H,A
 	RET	
-;
-;	-----------------
+
 J.5F61:	SRL	H
 	RR	L
 	DEC	A
 	JR	NZ,J.5F61
-;
 	SBC	A,A
 	JR	J.5F5E
 ;
@@ -6569,23 +6128,26 @@ I$5F6B:	LD	A,(D.7B0E)		; slotid MSX-AUDIO
 	PUSH	HL
 	LD	A,(EXPTBL+0)
 	LD	H,40H
-	CALL	C.0024
+	CALL	ENASLT
 	POP	HL
 	POP	DE
 	POP	BC
-	CALL	C$2F8A
+	CALL	M2F8A
 	POP	AF
 	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	LD	H,40H
-	CALL	C.0024
+	CALL	ENASLT
 	JP	J.4E6A
 ;
 ;	-----------------
 I.5F8D:	DEFB	" "
 
+;	  Subroutine PLAY statement handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 C$5F8E:	CALL	C$411C
 	CALL	C$5FC5
@@ -6601,7 +6163,7 @@ J$5FA1:	ADD	HL,SP
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
-	LD	HL,I$73E8
+	LD	HL,M73E5+3
 	OR	A
 	SBC	HL,DE
 	JP	NZ,J$6E9F
@@ -6621,7 +6183,7 @@ J$5FC0:	LDDR
 	POP	HL
 	RET	
 
-;	  Subroutine __________________________
+;	  Subroutine execute PLAY statement
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -6638,7 +6200,7 @@ C$5FC5:	CP	"#"			; playdevice specified ?
 	JR	Z,J$5FE2		; 1, use MIDI
 	SUB	3
 	JR	C,J$6018		; 2-3, use AUDIO/PSG
-	JP	C.6EAB
+	JP	C.6EAB			; illegal function call
 
 J$5FE2:	INC	A			; MIDI
 	JR	J$6019
@@ -6663,7 +6225,7 @@ J$5FF1:	PUSH	BC
 	INC	HL
 	LD	D,H
 	LD	E,L
-J.6003:	LD	BC,C.001C
+J.6003:	LD	BC,28
 	ADD	HL,BC
 	EX	DE,HL
 	LD	(HL),E
@@ -6674,7 +6236,7 @@ J.6003:	LD	BC,C.001C
 ;
 J$600E:	POP	HL
 	XOR	A
-	LD	(D.FB35),A
+	LD	(PRSCNT),A
 	LD	A,(D.7B23)
 C$6015	EQU	$-1
 	JR	J$6020
@@ -6683,17 +6245,17 @@ C$6015	EQU	$-1
 J$6018:	XOR	A			; no MIDI
 J$6019:	LD	(D.7B0F),A
 	XOR	A
-	LD	(D.FB35),A
+	LD	(PRSCNT),A
 J$6020:	PUSH	HL
 	LD	HL,-10
 	ADD	HL,SP
-	LD	(D.FB36),HL
+	LD	(SAVSP),HL
 	POP	HL
 	PUSH	AF
 J$602A:	PUSH	HL
 	LD	HL,I$5F6B
-	LD	DE,C.F5DE
-	LD	BC,I$0022
+	LD	DE,BUF+128
+	LD	BC,0022H
 	LDIR	
 	POP	HL
 	CALL	C.6EF2
@@ -6730,7 +6292,7 @@ J$604D:	POP	AF
 	INC	HL
 	LD	D,H
 	LD	E,L
-	LD	BC,C.001C
+	LD	BC,28
 	ADD	HL,BC
 	EX	DE,HL
 	LD	(HL),E
@@ -6750,13 +6312,13 @@ J$604D:	POP	AF
 	JR	Z,J.6081
 ;
 	PUSH	BC
-	CALL	C.4FB4
+	CALL	C.4FB4			; check for ","
 ;
 	JR	J$602A
 ;
 ;	-----------------
 J.6081:	LD	A,B
-	LD	(D.FB38),A
+	LD	(VOICEN),A
 	CALL	C.6191
 ;
 	INC	B
@@ -6773,43 +6335,36 @@ J$6090:	DEC	HL
 	PUSH	HL
 J$6098:	XOR	A
 J$6099:	PUSH	AF
-	LD	(D.FB38),A
+	LD	(VOICEN),A
 	LD	C,A
 	LD	A,(D.7B22)
 	SUB	C
 	SUB	04H	; 4 
 	LD	HL,I$61C8
 	JR	C,J.60B8
-;
 	LD	HL,I$6454
 	JR	NZ,J.60B8
-;
 	LD	A,(D.7B1F)
-	AND	01H	; 1 
-	JR	Z,J.60B8
-;
+	AND	01H			; drum mode ?
+	JR	Z,J.60B8		; nope,
 	LD	HL,I$676F
-J.60B8:	LD	(D.F956),HL
+J.60B8:	LD	(MCLTAB),HL
 	LD	A,C
 	LD	B,A
 	CALL	C.61BB
-;
 	JP	C,J.6153
-;
 	LD	A,B
 	CALL	C.6F0F
-;
 	LD	A,(HL)
 	OR	A
 	JP	Z,J.6153
-;
-	LD	(D.FB3B),A
+	LD	(MCLLEN),A
 	INC	HL
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	INC	HL
-	LD	(D.FB3C),DE
+	LD	(MCLPTR),DE
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
@@ -6819,7 +6374,7 @@ J.60B8:	LD	(D.F956),HL
 	CALL	C.6F13
 ;
 	PUSH	HL
-	LD	HL,(D.FB36)
+	LD	HL,(SAVSP)
 	DEC	HL
 	POP	BC
 	DI	
@@ -6830,7 +6385,7 @@ J.60B8:	LD	(D.F956),HL
 	LD	L,C
 	LD	SP,HL
 	EI	
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	OR	A
 ;
 ;	  Subroutine __________________________
@@ -6850,26 +6405,26 @@ C$60F5:	JR	NZ,J.6108
 J.6108:	JP	J.6D1A
 ;
 ;	-----------------
-J.610B:	LD	A,(D.FB3B)
+J.610B:	LD	A,(MCLLEN)
 	OR	A
 	JR	NZ,J$6114
 ;
 J$6111:	CALL	C.6191
 ;
-J$6114:	LD	A,(D.FB38)
+J$6114:	LD	A,(VOICEN)
 	CALL	C.6F0F
 ;
-	LD	A,(D.FB3B)
+	LD	A,(MCLLEN)
 	LD	(HL),A
 	INC	HL
-	LD	DE,(D.FB3C)
+	LD	DE,(MCLPTR)
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
-	LD	HL,X.0000
+	LD	HL,0
 	ADD	HL,SP
 	EX	DE,HL
-	LD	HL,(D.FB36)
+	LD	HL,(SAVSP)
 	DI	
 	LD	SP,HL
 	POP	BC
@@ -6883,7 +6438,7 @@ J$6114:	LD	A,(D.FB38)
 	LD	A,0F0H
 	AND	L
 	OR	H
-	JP	NZ,C.6EAB
+	JP	NZ,C.6EAB		; illegal function call
 ;
 	LD	L,24H	; "$"
 	CALL	C.6F13
@@ -6908,24 +6463,21 @@ J.6153:	EI
 	LD	HL,D.7B22
 	CP	(HL)
 	JP	C,J$6099
-;
 	DI	
-	CALL	C.6B8D
-;
-	JR	Z,J$618B
-;
-	LD	A,(D.FB35)
+	CALL	C.6B8D			; CTRL-STOP pressed ?
+	JR	Z,J$618B		; yep,
+	LD	A,(PRSCNT)
 	RLCA	
 	JR	C,J$6174
 ;
 	LD	HL,D.7B28
 	INC	(HL)
 	LD	A,(HL)
-	LD	(D.FB40),A
+	LD	(PLYCNT),A
 	CALL	C.6F66
 ;
 J$6174:	EI	
-	LD	HL,D.FB35
+	LD	HL,PRSCNT
 	SET	7,(HL)
 	LD	A,(HL)
 	LD	HL,D.7B24
@@ -6950,9 +6502,9 @@ J$618F:	POP	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.6191:	LD	A,(D.FB35)
+C.6191:	LD	A,(PRSCNT)
 	INC	A
-	LD	(D.FB35),A
+	LD	(PRSCNT),A
 	LD	E,0FFH
 ;
 ;	  Subroutine __________________________
@@ -6962,7 +6514,7 @@ C.6191:	LD	A,(D.FB35)
 C$619A:	PUSH	HL
 	PUSH	BC
 J$619C:	PUSH	DE
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	DI	
 	CALL	C.6E25
 ;
@@ -6983,7 +6535,7 @@ J$61A8:	POP	BC
 C.61AB:	PUSH	HL
 	PUSH	BC
 J$61AD:	PUSH	DE
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	DI	
 	CALL	C.6E25
 ;
@@ -6999,98 +6551,65 @@ J$61AD:	PUSH	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.61BB:	LD	A,(D.FB38)
+C.61BB:	LD	A,(VOICEN)
 	PUSH	BC
 	DI	
 	CALL	C$6E6D
-;
 	EI	
 	POP	BC
-	CP	08H	; 8 
+	CP	8
 	RET	
-;
-;	-----------------
-I$61C8:	LD	B,C
-	INC	BC
-	LD	H,E
-	CALL	C$623A
-;
-	SUB	23H	; "#"
-	LD	H,D
-	OUT	(5CH),A
-	LD	H,D
-	ADC	A,0C0H
-	LD	H,D
-	RST	08H
-;
-	ADC	A,H
-	LD	H,D
-	JP	NC,J$629B
-;
-	CALL	NC,C.627F
-;
-	CALL	Z,C.6266
-;
-	LD	E,B
-	DEC	BC
-	LD	L,(HL)
-	LD	A,7AH	; "z"
-	LD	H,L
-	INC	A
-	ADD	A,A
-	LD	H,L
-	EXX	
-	RET	PE
-;
-	LD	H,E
-	POP	DE
-	CP	63H	; "c"
-	LD	B,B
-	DEC	C
-	LD	H,H
-	LD	H,0E7H
-	LD	H,E
-	JP	C,J$6409
-;
-	NOP	
-I.61FC:	DJNZ	J$6210
-;
-	INC	D
-	LD	D,00H
-	NOP	
-	LD	(BC),A
-	INC	B
-	LD	B,08H	; 8 
-	LD	A,(BC)
-	LD	A,(BC)
-	INC	C
-	LD	C,10H	; 16 
-I$620B:	LD	E,L
-	DEC	C
-	SBC	A,H
-	INC	C
-	RST	20H
-;
-J$6210:	DEC	BC
-	INC	A
-	DEC	BC
-	SBC	A,E
-	LD	A,(BC)
-	LD	(BC),A
-	LD	A,(BC)
-	LD	(HL),E
-	ADD	HL,BC
-	EX	DE,HL
-	EX	AF,AF'
-	LD	L,E
-	EX	AF,AF'
-	JP	P,J$8007
-;
-	RLCA	
-	INC	D
-	RLCA	
-	JR	C,J$6227
-;
+
+;	  Table      MCL PSG
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$61C8:	DEFB	"A"
+	DEFW	C$6303
+	DEFB	"M"+128
+	DEFW	C$623A
+	DEFB	"V"+128
+	DEFW	C$6223
+	DEFB	"S"+128
+	DEFW	C$625C
+	DEFB	"N"+128
+	DEFW	C$62C0
+	DEFB	"O"+128
+	DEFW	C$628C
+	DEFB	"R"+128
+	DEFW	C$629B
+	DEFB	"T"+128
+	DEFW	C$627F
+	DEFB	"L"+128
+	DEFW	C$6266
+	DEFB	"X"
+	DEFW	C$6E0B
+	DEFB	">"
+	DEFW	C$657A
+	DEFB	"<"
+	DEFW	C$6587
+	DEFB	"Y"+128
+	DEFW	C$63E8
+	DEFB	"Q"+128
+	DEFW	C$63FE
+	DEFB	"@"
+	DEFW	C$640D
+	DEFB	"&"
+	DEFW	C$63E7
+	DEFB	"Z"+128
+	DEFW	C$6409
+	DEFB	0
+
+I.61FC:	DEFB	010H,012H,014H,016H
+	DEFB	000H,000H,002H,004H
+	DEFB	006H,008H,00AH,00AH
+	DEFB	00CH,00EH,010H
+
+I$620B:	DEFW	3421,3228,3047,2876,2715,2562
+	DEFW	2419,2283,2155,2034,1920,1812
+
+
+C$6223:	JR	C,J$6227
 	LD	E,08H	; 8 
 J$6227:	LD	A,0FH	; 15 
 	CP	E
@@ -7144,12 +6663,10 @@ J$6240:	OR	D
 	OR	(HL)
 	LD	(HL),A
 	RET	
-;
-;	-----------------
-?.625C:	LD	A,E
+
+C$625C:	LD	A,E
 	CP	10H	; 16 
 	JR	NC,J.627C
-;
 	OR	10H	; 16 
 	LD	E,A
 	JR	J$622C
@@ -7160,7 +6677,7 @@ J$6240:	OR	D
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.6266:	JR	C,J$626A
+C$6266:	JR	C,J$626A
 ;
 	LD	E,04H	; 4 
 J$626A:	LD	A,E
@@ -7179,7 +6696,7 @@ J.6271:	CALL	C.6F13
 	RET	
 ;
 ;	-----------------
-J.627C:	JP	C.6EAB
+J.627C:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
 ;
@@ -7187,7 +6704,7 @@ J.627C:	JP	C.6EAB
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.627F:	JR	C,J$6283
+C$627F:	JR	C,J$6283
 ;
 	LD	E,78H	; "x"
 J$6283:	LD	A,E
@@ -7198,7 +6715,7 @@ J$6283:	LD	A,E
 	JR	J.6271
 ;
 ;	-----------------
-?.628C:	JR	C,J$6290
+C$628C:	JR	C,J$6290
 ;
 	LD	E,04H	; 4 
 J$6290:	LD	A,E
@@ -7211,7 +6728,7 @@ J$6290:	LD	A,E
 ;	-----------------
 J$6299:	XOR	A
 	LD	D,A
-J$629B:	JR	C,J.629F
+C$629B:	JR	C,J.629F
 ;
 	LD	E,04H	; 4 
 J.629F:	XOR	A
@@ -7224,7 +6741,7 @@ J.629F:	XOR	A
 	CP	41H	; "A"
 	JR	NC,J.627C
 ;
-J$62AA:	LD	HL,X.0000
+J$62AA:	LD	HL,0
 	PUSH	HL
 	LD	L,10H	; 16 
 	CALL	C.6F13
@@ -7233,14 +6750,14 @@ J$62AA:	LD	HL,X.0000
 	INC	HL
 	INC	HL
 	LD	A,(HL)
-	LD	(D.FB39),A
+	LD	(SAVVOL),A
 	LD	(HL),80H
 	DEC	HL
 	DEC	HL
 	JR	J$633C
 ;
 ;	-----------------
-?.62C0:	JR	NC,J.627C
+C$62C0:	JR	NC,J.627C
 ;
 	CALL	C.6425
 ;
@@ -7304,7 +6821,7 @@ J.6301:	DEC	C
 	RET	
 ;
 ;	-----------------
-?.6303:	CALL	C.62DC
+C$6303:	CALL	C.62DC
 ;
 	LD	L,0FH	; 15 
 	CALL	C.6F13
@@ -7328,7 +6845,7 @@ J$631B:	DEC	A
 	JR	J$631B
 ;
 ;	-----------------
-J$6324:	CALL	C.6EAB
+J$6324:	CALL	C.6EAB			; illegal function call
 ;
 J$6327:	ADC	A,E
 	LD	E,A
@@ -7430,9 +6947,9 @@ J$6386:	LD	L,07H	; 7
 	JR	NZ,J$63A6
 ;
 	PUSH	HL
-	LD	A,(D.FB39)
+	LD	A,(SAVVOL)
 	OR	80H
-	LD	BC,I.000B
+	LD	BC,11
 	ADD	HL,BC
 	LD	(HL),A
 	POP	HL
@@ -7490,7 +7007,7 @@ J$63CF:	RL	C
 ;	     Outputs ________________________
 ;
 C.63D7:	LD	E,08H	; 8 
-	LD	HL,X.0000
+	LD	HL,0
 J$63DC:	ADD	HL,HL
 	RLA	
 	JR	NC,J$63E3
@@ -7500,10 +7017,10 @@ J$63DC:	ADD	HL,HL
 J$63E3:	DEC	E
 	JP	NZ,J$63DC
 ;
-	RET	
+C$63E7:	RET	
 ;
 ;	-----------------
-?.63E8:	JR	NC,J.6428
+C$63E8:	JR	NC,J.6428
 ;
 	LD	A,E
 	CP	0C9H
@@ -7521,7 +7038,7 @@ J$63E3:	DEC	E
 	JR	C.6425
 ;
 ;	-----------------
-?.63FE:	JR	C,J$6402
+C$63FE:	JR	C,J$6402
 ;
 	LD	E,08H	; 8 
 J$6402:	LD	A,E
@@ -7531,12 +7048,12 @@ J$6402:	LD	A,E
 	JR	C.6425
 ;
 ;	-----------------
-J$6409:	JR	NC,J.6428
+C$6409:	JR	NC,J.6428
 ;
 	JR	C.6425
 ;
 ;	-----------------
-?.640D:	CALL	C.6D68
+C$640D:	CALL	C.6D68
 ;
 	CP	56H	; "V"
 	JR	Z,J$642B
@@ -7563,7 +7080,7 @@ C.6425:	LD	A,D
 	OR	A
 	RET	Z
 ;
-J.6428:	JP	C.6EAB
+J.6428:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
 J$642B:	CALL	C.6D6E
@@ -7599,59 +7116,52 @@ J$643E:	CALL	C.6D6E
 J$644E:	CALL	C.6D94
 ;
 J$6451:	JP	J$6299
-;
-;	-----------------
-I$6454:	LD	B,C
-	CP	H
-	LD	H,L
-	LD	H,0DBH
-	LD	H,(HL)
-	LD	A,E
-	CALL	PO,C$FD66
-;
-	LD	H,E
-	LD	H,A
-	EXX	
-	DEFB	0FDH		; << Illegal Op Code Byte >>
-;	-----------------
-;
-	LD	H,H
-	CALL	Z,C.6266
-;
-	POP	DE
-	LD	L,H
-	LD	H,L
-	SUB	33H	; "3"
-	LD	H,L
-	RST	08H
-;
-	ADC	A,H
-	LD	H,D
-	LD	A,7AH	; "z"
-	LD	H,L
-	INC	A
-	ADD	A,A
-	LD	H,L
-	JP	C,J$6529
-;
-	LD	E,B
-	DEC	BC
-	LD	L,(HL)
-	JP	NC,J.6592
-;
-	ADC	A,0AFH
-	LD	H,L
-	CALL	NC,C.627F
-;
-	LD	B,B
-	ADC	A,(HL)
-	LD	H,H
-	CALL	C$655D
-;
-	OUT	(64H),A
-	LD	H,L
-	NOP	
-	CALL	C.6D68
+
+;	  Table      MCL FM
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$6454:	DEFB	"A"
+	DEFW	C$65BC
+	DEFB	"&"
+	DEFW	C$66DB
+	DEFB	"{"
+	DEFW	C$66E4
+	DEFB	"}"+128
+	DEFW	C$6763
+	DEFB	"Y"+128
+	DEFW	C$64FD
+	DEFB	"L"+128
+	DEFW	C$6266
+	DEFB	"Q"+128
+	DEFW	C$656C
+	DEFB	"V"+128
+	DEFW	C$6533
+	DEFB	"O"+128
+	DEFW	C$628C
+	DEFB	">"
+	DEFW	C$657A	
+	DEFB	"<"
+	DEFW	C$6587
+	DEFB	"Z"+128
+	DEFW	C$6529
+	DEFB	"X"
+	DEFW	C$6E0B
+	DEFB	"R"+128
+	DEFW	C$6592
+	DEFB	"N"+128
+	DEFW	C$65AF
+	DEFB	"T"+128
+	DEFW	C$627F
+	DEFB	"@"
+	DEFW	C$648E
+	DEFB	"M"+128
+	DEFW	C$655D
+	DEFB	"S"+128
+	DEFW	C$6564
+	DEFB	0
+
+C$648E:	CALL	C.6D68
 ;
 	CP	56H	; "V"
 	JR	Z,J.64C1
@@ -7672,7 +7182,7 @@ I$6454:	LD	B,C
 	JR	NC,J.64EA
 ;
 	LD	C,A
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	CALL	C.696D
 ;
 	JR	NC,J$64B7
@@ -7720,7 +7230,7 @@ J$64E1:	POP	DE
 	JP	J.6631
 ;
 ;	-----------------
-J.64EA:	JP	C.6EAB
+J.64EA:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
 ;
@@ -7745,7 +7255,7 @@ C.64ED:	CP	2BH	; "+"
 	RET	
 ;
 ;	-----------------
-?.64FD:	JR	NC,J.6526
+C$64FD:	JR	NC,J.6526
 ;
 	LD	A,E
 	CP	0C9H
@@ -7777,10 +7287,10 @@ C.64ED:	CP	2BH	; "+"
 	JP	J.6646
 ;
 ;	-----------------
-J.6526:	JP	C.6EAB
+J.6526:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
-J$6529:	JR	NC,J.6526
+C$6529:	JR	NC,J.6526
 ;
 	CALL	C.6425
 ;
@@ -7789,7 +7299,7 @@ J$6529:	JR	NC,J.6526
 	JR	J$6542
 ;
 ;	-----------------
-?.6533:	JR	C,J$6537
+C$6533:	JR	C,J$6537
 ;
 	LD	E,08H	; 8 
 J$6537:	CALL	C.6425
@@ -7807,7 +7317,7 @@ J$6542:	CALL	C.61AB
 	JP	J.6646
 ;
 ;	-----------------
-?.654A:	JR	C,J$654E
+C$654A:	JR	C,J$654E
 ;
 	LD	E,08H	; 8 
 J$654E:	CALL	C.6425
@@ -7834,17 +7344,17 @@ C$655D:	RET	NC
 	OR	D
 	RET	NZ
 ;
-J.6561:	JP	C.6EAB
+J.6561:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
-?.6564:	LD	A,E
+C$6564:	LD	A,E
 	CP	10H	; 16 
 	JR	NC,J.6561
 ;
 	JP	C.6425
 ;
 ;	-----------------
-?.656C:	JR	C,J$6570
+C$656C:	JR	C,J$6570
 ;
 	LD	E,08H	; 8 
 J$6570:	LD	A,E
@@ -7855,7 +7365,7 @@ J$6570:	LD	A,E
 	JP	J.6271
 ;
 ;	-----------------
-?.657A:	LD	L,0FH	; 15 
+C$657A:	LD	L,0FH	; 15 
 	CALL	C.6F13
 ;
 	LD	A,(HL)
@@ -7867,7 +7377,7 @@ J$6570:	LD	A,E
 	RET	
 ;
 ;	-----------------
-?.6587:	LD	L,0FH	; 15 
+C$6587:	LD	L,0FH	; 15 
 	CALL	C.6F13
 ;
 	LD	A,(HL)
@@ -7878,7 +7388,7 @@ J$6570:	LD	A,E
 	RET	
 ;
 ;	-----------------
-J.6592:	JR	C,J$6596
+C$6592:	JR	C,J$6596
 ;
 	LD	E,04H	; 4 
 J$6596:	CALL	C.6425
@@ -7900,7 +7410,7 @@ J$6596:	CALL	C.6425
 	JP	J.666D
 ;
 ;	-----------------
-?.65AF:	JR	NC,J.6561
+C$65AF:	JR	NC,J.6561
 ;
 	CALL	C.6425
 ;
@@ -7908,10 +7418,10 @@ J$6596:	CALL	C.6425
 	CP	61H	; "a"
 	JR	C,J$65D6
 ;
-	JP	C.6EAB
+	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
-?.65BC:	CALL	C.62DC
+C$65BC:	CALL	C.62DC
 ;
 	LD	L,0FH	; 15 
 	CALL	C.6F13
@@ -7955,7 +7465,7 @@ J$65EB:	LD	L,26H	; "&"
 	POP	DE
 	PUSH	DE
 	LD	B,A
-	LD	HL,X.0000
+	LD	HL,0
 J$65FB:	ADD	HL,DE
 	DJNZ	J$65FB
 ;
@@ -8071,16 +7581,14 @@ C$667B:	LD	A,(HL)
 	CALL	C.63D7
 ;
 	PUSH	HL
-	LD	DE,I$7080
+	LD	DE,7080H
 	CALL	C.63B9
-;
 	EX	DE,HL
 	EX	(SP),HL
 	LD	B,05H	; 5 
 J$668C:	SRL	H
 	RR	L
 	DJNZ	J$668C
-;
 	CALL	C.63B9
 ;
 	CALL	C.66CC
@@ -8130,7 +7638,7 @@ J.66CB:	RET
 ;	     Outputs ________________________
 ;
 C.66CC:	PUSH	BC
-	LD	A,(D.FB38)
+	LD	A,(VOICEN)
 	LD	C,A
 	LD	B,00H
 	LD	IX,I$7FC6
@@ -8139,24 +7647,24 @@ C.66CC:	PUSH	BC
 	RET	
 ;
 ;	-----------------
-?.66DB:	LD	E,87H
+C$66DB:	LD	E,87H
 	POP	BC
 	JP	J.6646
 ;
 ;	-----------------
-J.66E1:	JP	C.6EAB
+J.66E1:	JP	C.6EAB			; illegal function call
 ;
 ;	-----------------
-?.66E4:	LD	L,09H	; 9 
+C$66E4:	LD	L,09H	; 9 
 	CALL	C.6F13
 ;
 	LD	A,(HL)
 	JR	NZ,J.66E1
 ;
 	LD	C,00H
-	LD	HL,(D.FB3C)
+	LD	HL,(MCLPTR)
 	PUSH	HL
-	LD	A,(D.FB3B)
+	LD	A,(MCLLEN)
 	PUSH	AF
 J.66F6:	CALL	C.6D68
 ;
@@ -8238,71 +7746,55 @@ J.673C:	LD	A,40H	; "@"
 	POP	AF
 	LD	(HL),A
 	POP	AF
-	LD	(D.FB3B),A
+	LD	(MCLLEN),A
 	POP	HL
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 	RET	
 ;
 ;	-----------------
-?.6763:	LD	L,09H	; 9 
+C$6763:	LD	L,09H	; 9 
 	CALL	C.6F13
-;
 	LD	A,(HL)
 	OR	A
 	JR	Z,J.679B
-;
 	LD	(HL),00H
 	RET	
-;
-;	-----------------
-I$676F:	LD	B,D
-	SBC	A,(HL)
-	LD	H,A
-	LD	D,E
-	SBC	A,(HL)
-	LD	H,A
-	LD	C,L
-	SBC	A,(HL)
-	LD	H,A
-	LD	B,E
-	SBC	A,(HL)
-	LD	H,A
-	LD	C,B
-	SBC	A,(HL)
-	LD	H,A
-	JP	NC,J.6592
-;
-	LD	B,B
-	RST	30H
-;
-	LD	H,A
-	CALL	NC,C.627F
-;
-	EXX	
-	DEFB	0FDH		; << Illegal Op Code Byte >>
-;	-----------------
-;
-	LD	H,H
-	SUB	4AH	; "J"
-	LD	H,L
-	LD	E,B
-	DEC	BC
-	LD	L,(HL)
-	NOP	
-I$6791:	LD	B,D
-	LD	D,E
-	LD	C,L
-	LD	B,E
-	LD	C,B
-	DJNZ	J$67A0
-;
-	INC	B
-	LD	(BC),A
-	LD	BC,I$ABC3
-J.679B	EQU	$-2
-	LD	L,(HL)
-	LD	BC,X.0000
-J$67A0	EQU	$-1
+
+;	  Table      MCL drum
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$676F:	DEFB	"B"
+	DEFW	C$679E
+	DEFB	"S"
+	DEFW	C$679E
+	DEFB	"M"
+	DEFW	C$679E
+	DEFB	"C"
+	DEFW	C$679E
+	DEFB	"H"
+	DEFW	C$679E
+	DEFB	"R"+128
+	DEFW	C$6592
+	DEFB	"@"
+	DEFW	C$67F7
+	DEFB	"T"+128
+	DEFW	C$627F
+	DEFB	"Y"+128
+	DEFW	C$64FD
+	DEFB	"V"+128
+	DEFW	C$654A
+	DEFB	"X"
+	DEFW	C$6E0B
+	DEFB	0
+
+I$6791:	DEFB "B","S","M","C","H"
+	DEFB 010H,008H,004H,002H,001H
+
+
+J.679B:	JP	C.6EAB			; illegal function call
+
+C$679E:	LD	BC,0
 	CALL	C.6D94
 ;
 J$67A4:	CALL	C.6D68
@@ -8313,7 +7805,7 @@ J$67A4:	CALL	C.6D68
 ;
 	PUSH	BC
 	LD	HL,I$6791
-	LD	BC,BDOS
+	LD	BC,5
 	CPIR	
 	JR	NZ,J.679B
 ;
@@ -8370,7 +7862,7 @@ I$67EC:	POP	BC
 	JP	J.6631
 ;
 ;	-----------------
-?.67F7:	CALL	C.6D68
+C$67F7:	CALL	C.6D68
 ;
 	CP	56H	; "V"
 	JP	Z,J.64C1
@@ -8404,7 +7896,7 @@ I$67EC:	POP	BC
 	JP	J.6646
 ;
 ;	-----------------
-J.6825:	JP	C.6EAB
+J.6825:	JP	C.6EAB			; illegal function call
 
 ;	  Subroutine TIMER-1 handler
 ;	     Inputs  ________________________
@@ -8439,11 +7931,8 @@ J$6845:	INC	(HL)
 C$6848:	LD	A,(MUSICF)
 	OR	A
 	JR	Z,J$6858
-;
-	CALL	C.6B8D
-;
-	JR	NZ,J$6865
-;
+	CALL	C.6B8D			; CTRL-STOP pressed ?
+	JR	NZ,J$6865		; nope,
 	LD	A,(MUSICF)
 	AND	7FH
 J$6858:	LD	HL,(D.7B26)
@@ -8489,14 +7978,12 @@ J$6879:	SRL	B
 	POP	HL
 	LD	(D.7F98),HL
 J$6897:	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine service playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$6898:	LD	(D.7B31),A
+
+C$6898:	LD	(D.7B31),A		; current playvoice serviced
 	DI	
 	LD	L,00H
 	CALL	C.6F16
@@ -8519,11 +8006,11 @@ C$6898:	LD	(D.7B31),A
 	INC	HL
 J$68B0:	LD	A,(D.7B23)
 	LD	B,A
-	LD	A,(D.7B31)
+	LD	A,(D.7B31)		; current playvoice serviced
 	CP	B
 	JP	NC,J$2F70
 ;
-J.68BB:	CALL	C.6B64
+J.68BB:	CALL	C.6B64			; get from voicequeue serviced
 ;
 	RET	Z
 ;
@@ -8542,10 +8029,10 @@ J.68BF:	INC	A
 	LD	(HL),A
 	POP	HL
 	LD	D,A
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	C,A
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 	DEC	HL
@@ -8575,10 +8062,9 @@ J.68BF:	INC	A
 ;
 J$68FE:	PUSH	BC
 	PUSH	DE
-	LD	A,23H	; "#"
+	LD	A,35
 	RST	00H
-;
-	LD	BC,C.0040
+	LD	BC,64
 	ADD	IX,BC
 	POP	DE
 	POP	BC
@@ -8599,7 +8085,7 @@ C.690D:	PUSH	HL
 	RET	
 ;
 ;	-----------------
-?.6915:	CALL	C.6B64
+C$6915:	CALL	C.6B64			; get from voicequeue serviced
 ;
 	RET	Z
 ;
@@ -8618,10 +8104,10 @@ C.690D:	PUSH	HL
 	POP	HL
 	JR	NZ,J.68BF
 ;
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	C,A
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 	DEC	HL
@@ -8673,42 +8159,35 @@ J$6954:	CALL	C.690D
 	CALL	C.69B2
 ;
 J$695D:	PUSH	BC
-	LD	A,25H	; "%"
+	LD	A,37
 	RST	00H
-;
-	LD	BC,C.0040
+	LD	BC,64
 	ADD	IX,BC
 	POP	BC
 	DJNZ	J$695D
-;
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.696A:	LD	A,(D.7B31)
-;
-;	  Subroutine __________________________
+
+C.696A:	LD	A,(D.7B31)		; current playvoice serviced
+
+;	  Subroutine get playvoice type
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.696D:	LD	HL,D.7B15
-	CP	(HL)
+	CP	(HL)			; number of FM-AUDIO playvoices
 	CCF	
-	RET	NC
-;
+	RET	NC			; FM-AUDIO playvoice
 	PUSH	AF
 	LD	A,(D.7B1F)
-	DEC	A
-	JR	Z,J$697C
-;
+	DEC	A			; audio mode 1 ?
+	JR	Z,J$697C		; yep,
 	POP	AF
 	RET	
-;
-;	-----------------
+
 J$697C:	POP	AF
 	ADC	A,A
 	RRA	
@@ -8739,22 +8218,19 @@ J$6990:	PUSH	BC
 	POP	DE
 	LD	C,E
 J$6996:	PUSH	BC
-	LD	A,22H	; """
+	LD	A,34
 	RST	00H
-;
 	POP	BC
 	PUSH	BC
-	LD	A,27H	; "'"
+	LD	A,39
 	RST	00H
-;
-	LD	BC,C.0020
+	LD	BC,32
 	ADD	IX,BC
 	POP	BC
 	PUSH	BC
-	LD	A,27H	; "'"
+	LD	A,39
 	RST	00H
-;
-	LD	BC,C.0020
+	LD	BC,32
 	ADD	IX,BC
 	POP	BC
 	DJNZ	J$6996
@@ -8767,56 +8243,47 @@ J$6996:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.69B2:	LD	A,(D.7B31)
+C.69B2:	LD	A,(D.7B31)		; current playvoice serviced
 	CALL	C.696D
 ;
 	JR	NC,J.69C3
 ;
 	JR	Z,J.69C3
 ;
-	LD	IX,I$3180
-	LD	B,03H	; 3 
+	LD	IX,I.3000+6*64
+	LD	B,3
 	RET	
-;
-;	-----------------
+
 J.69C3:	LD	HL,I.7B16
-	OR	A
-	JR	Z,J$69CF
-;
+	OR	A			; first AUDIO playvoice ?
+	JR	Z,J$69CF		; yep, first channel = 0
 	LD	B,A
 	XOR	A
 J$69CB:	ADD	A,(HL)
 	INC	HL
-	DJNZ	J$69CB
-;
-J$69CF:	LD	IX,I.3000
-	OR	A
+	DJNZ	J$69CB			; calculate first channel of AUDIO playvoice
+J$69CF:	LD	IX,I.3000		; buffer channel 0
+	OR	A			; channel 0 ?
 	JR	Z,J$69DE
-;
-	LD	BC,C.0040
+	LD	BC,64
 J$69D9:	ADD	IX,BC
 	DEC	A
-	JR	NZ,J$69D9
-;
+	JR	NZ,J$69D9		; get pointer to channel buffer
 J$69DE:	LD	B,(HL)
 	RET	
-;
-;	-----------------
+
 J$69E0:	CALL	C.6945
-;
 	LD	L,0DH	; 13 
 	CALL	C.6B72
-;
 	LD	(HL),00H
-J$69EA:	LD	A,(D.7B31)
-	LD	HL,I.0001
+
+J$69EA:	LD	A,(D.7B31)		; current playvoice serviced
+	LD	HL,1
 	LD	B,A
 	OR	A
 	JR	Z,J$69F7
-;
 J$69F4:	ADD	HL,HL
 	DJNZ	J$69F4
-;
 J$69F7:	EX	DE,HL
 	DI	
 	LD	HL,(D.7B26)
@@ -8835,16 +8302,14 @@ J$69F7:	EX	DE,HL
 J$6A0A:	LD	E,A
 	AND	0C0H
 	CP	0C0H
-I$6A0E	EQU	$-1
 	JP	Z,J$6B1D
-;
 	LD	A,E
 	ADD	A,A
 	EX	DE,HL
-	ADD	A,23H	; "#"
+	ADD	A,LOW I$6A23
 	LD	L,A
-	LD	A,00H
-	ADC	A,6AH	; "j"
+	LD	A,0
+	ADC	A,HIGH I$6A23
 	LD	H,A
 	LD	C,(HL)
 	INC	HL
@@ -8852,49 +8317,33 @@ I$6A0E	EQU	$-1
 	EX	DE,HL
 	PUSH	BC
 	RET	
-;
-;	-----------------
-?.6A23:	LD	B,E
-	LD	L,D
-	LD	B,(HL)
-	LD	L,D
-	LD	(HL),E
-	LD	L,D
-	ADD	A,B
-	LD	L,D
-	ADC	A,E
-	LD	L,D
-	SUB	L
-	LD	L,D
-	RET	P
-;
-	LD	L,D
-	DEC	D
-	LD	L,C
-	ADD	HL,SP
-	LD	L,D
-	DEC	SP
-	LD	L,D
-	RET	NC
-;
-	LD	L,E
-	XOR	A
-	LD	BC,I$013E
+
+I$6A23:	DEFW	C$6A43
+	DEFW	C$6A46
+	DEFW	C$6A73
+	DEFW	C$6A80
+	DEFW	C$6A8B
+	DEFW	C$6A95
+	DEFW	C$6AF0
+	DEFW	C$6915
+	DEFW	C$6A39
+	DEFW	C$6A3B
+	DEFW	C$6BD0
+
+C$6A39:	XOR	A
+	DEFB	1
+
+C$6A3B:	LD	A,1
 	LD	(D.7B11),A
 	JP	J.68BB
-;
-;	-----------------
-?.6A43:	JP	C.6945
-;
-;	-----------------
-?.6A46:	PUSH	HL
+
+C$6A43:	JP	C.6945
+
+C$6A46:	PUSH	HL
 	CALL	C.696A
-;
 	POP	HL
 	JR	NC,J$6A52
-;
 	JP	NZ,J$6AD8
-;
 	JR	J$6A60
 ;
 ;	-----------------
@@ -8902,7 +8351,7 @@ J$6A52:	PUSH	HL
 	LD	L,12H	; 18 
 	CALL	C.6B72
 ;
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 J.6A5C:	POP	HL
@@ -8913,7 +8362,7 @@ J$6A60:	PUSH	HL
 	LD	L,12H	; 18 
 	CALL	C.6B72
 ;
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 	ADD	A,A
@@ -8924,21 +8373,21 @@ J$6A60:	PUSH	HL
 	JR	J.6A5C
 ;
 ;	-----------------
-?.6A73:	PUSH	HL
-	CALL	C.6B64
+C$6A73:	PUSH	HL
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	C,A
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	CALL	C$009C
 ;
 	JR	J.6A5C
 ;
 ;	-----------------
-?.6A80:	CALL	C.6B64
+C$6A80:	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	C,A
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 	DEC	HL
@@ -8946,8 +8395,8 @@ J$6A60:	PUSH	HL
 	RET	
 ;
 ;	-----------------
-?.6A8B:	PUSH	HL
-	CALL	C.6B64
+C$6A8B:	PUSH	HL
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	C,A
 	CALL	C$6980
@@ -8955,7 +8404,7 @@ J$6A60:	PUSH	HL
 	JR	J.6A5C
 ;
 ;	-----------------
-?.6A95:	CALL	C.690D
+C$6A95:	CALL	C.690D
 ;
 	JP	NZ,J$6BAD
 ;
@@ -8968,7 +8417,7 @@ J$6A60:	PUSH	HL
 ;
 J$6AA3:	CALL	C.69B2
 ;
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	E,A
 	LD	C,15H
@@ -8988,17 +8437,16 @@ J$6AAC:	CALL	C.6AB6
 ;
 C.6AB6:	PUSH	BC
 	PUSH	DE
-	LD	A,26H	; "&"
+	LD	A,38
 	RST	00H
-;
-	LD	BC,C.0020
+	LD	BC,32
 	ADD	IX,BC
 	POP	DE
 	POP	BC
 	RET	
 ;
 ;	-----------------
-J$6AC3:	CALL	C.6B64
+J$6AC3:	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	E,A
 	LD	A,3FH	; "?"
@@ -9025,7 +8473,7 @@ J$6AD8:	PUSH	HL
 	LD	L,0AH	; 10 
 	CALL	C.6B72
 ;
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 	LD	E,A
@@ -9039,11 +8487,11 @@ J$6AD8:	PUSH	HL
 	JP	J.6A5C
 ;
 ;	-----------------
-?.6AF0:	PUSH	HL
+C$6AF0:	PUSH	HL
 	LD	L,0CH	; 12 
 	CALL	C.6B72
 ;
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 	LD	E,A
@@ -9071,22 +8519,21 @@ C.6B07:	AND	1FH
 	PUSH	BC
 	PUSH	DE
 	LD	C,A
-	LD	A,2CH	; ","
+	LD	A,44
 	LD	IX,I.3000
 	RST	00H
-;
 	POP	DE
 	POP	BC
 	RET	
 ;
 ;	-----------------
-J$6B1D:	CALL	C.6B64
+J$6B1D:	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	D,A
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	C,A
-	CALL	C.6B64
+	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	(HL),A
 	DEC	HL
@@ -9133,24 +8580,21 @@ J$6B55:	POP	HL
 ;
 	JP	NZ,J$6BCB
 ;
-	LD	A,15H
+	LD	A,21
 	RST	00H
 ;
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine get from voicequeue serviced
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.6B64:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	A,(D.7B31)
+	LD	A,(D.7B31)		; current playvoice serviced
 	DI	
 	CALL	C$6E40
-;
 	POP	BC
 	POP	DE
 	POP	HL
@@ -9162,22 +8606,18 @@ C.6B64:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.6B72:	LD	A,(D.7B31)
+C.6B72:	LD	A,(D.7B31)		; current playvoice serviced
 	DI	
 	JP	C.6F16
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.6B79:	EI	
-	CALL	C.6B8D
-;
+	CALL	C.6B8D			; CTRL-STOP pressed ?
 	SCF	
-	RET	Z
-;
+	RET	Z			; yep, quit
 	DI	
 	LD	HL,(D.7B26)
 	LD	A,L
@@ -9185,22 +8625,18 @@ C.6B79:	EI
 	LD	HL,D.7B28
 	OR	(HL)
 	JR	NZ,C.6B79
-;
 	EI	
 	RET	
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine CTRL-STOP pressed ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6B8D:	LD	A,(D$FBB1)
+
+C.6B8D:	LD	A,(BASROM)
 	OR	A
 	RET	NZ
-;
-	LD	A,(D.FC9B)
-	SUB	03H	; 3 
+	LD	A,(INTFLG)
+	SUB	3
 	OR	A
 	RET	
 ;
@@ -9211,7 +8647,7 @@ J$6B99:	LD	B,00H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.6B9B:	LD	A,(D.7B31)
+C.6B9B:	LD	A,(D.7B31)		; current playvoice serviced
 	PUSH	HL
 	CALL	C.7B00
 	POP	HL
@@ -9227,7 +8663,7 @@ J$6BA8:	LD	B,02H	; 2
 	JR	C.6B9B
 ;
 ;	-----------------
-J$6BAD:	CALL	C.6B64
+J$6BAD:	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	D,A
 	PUSH	HL
@@ -9259,41 +8695,36 @@ J$6BCB:	LD	B,06H	; 6
 	JR	C.6B9B
 ;
 ;	-----------------
-?.6BD0:	CALL	C.6B64
+C$6BD0:	CALL	C.6B64			; get from voicequeue serviced
 ;
 	LD	D,A
 	LD	B,07H	; 7 
 	JR	C.6B9B
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$6BD8:	XOR	A
 	LD	(D.7B29),A
-	LD	A,(D.7B15)
+	LD	A,(D.7B15)		; number of FM-AUDIO playvoices
 	LD	HL,D.7B1F
-	BIT	0,(HL)
+	BIT	0,(HL)			; drum mode ?
 	JR	Z,J$6BE7
-;
-	INC	A
-J$6BE7:	BIT	1,(HL)
+	INC	A			; yep, extra playvoice
+J$6BE7:	BIT	1,(HL)			; sample mode ?
 	JR	Z,J$6BEC
-;
-	INC	A
-J$6BEC:	LD	(D.7B23),A
-	ADD	A,03H	; 3 
-	LD	(D.7B22),A
+	INC	A			; yep, extra playvoice
+J$6BEC:	LD	(D.7B23),A		; number of AUDIO playvoices
+	ADD	A,3			; and 3 playvoices for PSG
+	LD	(D.7B22),A		; total number of playvoices
 	LD	B,A
 	OR	80H
 	LD	(D.7B24),A
-	LD	HL,X.0000
+	LD	HL,0
 J$6BFD:	SCF	
 	ADC	HL,HL
 	DJNZ	J$6BFD
-;
 	LD	(D.7B20),HL
 	LD	A,(D.7B23)
 	ADD	A,LOW I$6C31
@@ -9301,32 +8732,21 @@ J$6BFD:	SCF
 	LD	A,00H
 	ADC	A,HIGH I$6C31
 	LD	H,A
-	LD	A,(HL)
+	LD	A,(HL)			; voicequeue size
 	LD	(D.7B25),A
 	LD	HL,I$7B34
 	LD	(D.7B32),HL
 	LD	A,(EXPTBL+0)
-	LD	HL,I$002B
-	CALL	C.000C
-	AND	80H
+	LD	HL,M002B
+	CALL	RDSLT
+	AND	80H			; VDP interrupt frequency
 	LD	HL,14400
-	JR	Z,J$6C2D
-	LD	HL,12000
+	JR	Z,J$6C2D		; 60 Hz
+	LD	HL,12000		; 50 Hz
 J$6C2D:	LD	(D$7B0A),HL
 	RET	
-;
-;	-----------------
-I$6C31:	NOP	
-	RST	38H
-	LD	A,A
-	LD	A,A
-	CCF	
-	CCF	
-	CCF	
-	RRA	
-	RRA	
-	RRA	
-	RRA	
+
+I$6C31:	DEFB	000H,0FFH,07FH,07FH,03FH,03FH,03FH,01FH,01FH,01FH,01FH
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -9341,23 +8761,21 @@ C.6C3C:	DI
 	LD	(D.7B10),A
 	LD	(D.7B11),A
 	LD	(D.7B12),A
-	LD	HL,X.0000
+	LD	HL,0
 	LD	(D.7B26),HL
 	LD	A,(D.7B23)
 	OR	A
 	JR	Z,J$6C98
-;
 	LD	B,A
 	LD	DE,I$7B70
 J$6C63:	PUSH	BC
 	PUSH	DE
 	LD	A,(D.7B23)
 	SUB	B
-	LD	(D.7B31),A
+	LD	(D.7B31),A		; current playvoice serviced
 	LD	HL,D.7B25
 	LD	B,(HL)
 	CALL	C$6E5C
-;
 	POP	DE
 	POP	BC
 	LD	A,(D.7B25)
@@ -9367,7 +8785,6 @@ J$6C63:	PUSH	BC
 	ADD	HL,DE
 	EX	DE,HL
 	DJNZ	J$6C63
-;
 	LD	A,(D.7B23)
 	LD	B,A
 J$6C84:	PUSH	BC
@@ -9375,63 +8792,55 @@ J$6C84:	PUSH	BC
 	DEC	A
 	LD	L,00H
 	CALL	C.6F16
-;
 	EX	DE,HL
 	LD	HL,I$6CB5
-	LD	BC,I.0027
+	LD	BC,39
 	LDIR	
 	POP	BC
 	DJNZ	J$6C84
-;
 J$6C98:	XOR	A
 	LD	(MUSICF),A
 	JP	J$6EC6
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
 C.6C9F:	LD	A,(D.7B1F)
-	AND	01H	; 1 
-	RET	Z
-;
-	LD	A,(D$6CBF)
+	AND	01H			; drum mode ?
+	RET	Z			; nope, quit
+	LD	A,(I$6CB5+10)
 	LD	E,A
 	LD	A,1FH
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
 	CALL	C.6B07
-;
 	CALL	C.4D8F			; restore page 0
-;
 	RET	
-;
-;	-----------------
-I$6CB5:	DEFB	0,0,0,0,0,0,0,0,0,0
-D$6CBF:	LD	C,00H
-	DEFB	0,0,0
-	INC	B
-	INC	B
-	LD	A,B
-	EX	AF,AF'
-	DEFB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	EX	AF,AF'
+
+I$6CB5:	DEFW	0			; +0 , duration counter
+	DEFB	0			; +2 , stringlength
+	DEFW	0			; +3 , stringadres
+	DEFW	0			; +5 , stackdata
+	DEFB	0			; +7 , music packet length
+	DEFB	0,0,14,0,0,0,0		; +8 , music packet
+	DEFB	4			; +15, octave
+	DEFB	4			; +16, length
+	DEFB	120			; +17, tempo
+	DEFB	8			; +18, volume
+	DEFW	0			; +19, envelope period
+	DEFB	0,0,0			; stack
+	DEFB	0,0,0,0,0,0,0,0
+	DEFB	0,0,0,0,0,0,8
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.6CDC:	CALL	C.6C3C
-;
 	CALL	C.6C9F
-;
 	CALL	C.4D83			; MSX-AUDIO in page 0
-;
 	LD	A,(D.7B23)
 	CALL	C.6CEE
-;
 	JP	C.4D8F			; restore page 0
 ;
 ;	-----------------
@@ -9443,7 +8852,7 @@ C.6CDC:	CALL	C.6C3C
 C.6CEE:	DEC	A
 	RET	M
 ;
-	LD	(D.7B31),A
+	LD	(D.7B31),A		; current playvoice serviced
 	PUSH	AF
 	CALL	C.6945
 ;
@@ -9469,18 +8878,18 @@ J$6CFA:	CALL	C.6F04
 	PUSH	BC
 	PUSH	DE
 J.6D0D:	POP	AF
-	LD	(D.FB3B),A
+	LD	(MCLLEN),A
 	POP	HL
 	LD	A,H
 	OR	L
 	JP	Z,J$6111
 ;
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 J.6D1A:	CALL	C.6D6E
 ;
 	JR	Z,J.6D0D
 ;
-	LD	HL,(D.F956)
+	LD	HL,(MCLTAB)
 	CP	41H	; "A"
 	JR	C,J$6D2A
 ;
@@ -9491,7 +8900,7 @@ J$6D2A:	ADD	A,A
 	LD	C,A
 J$6D2C:	LD	A,(HL)
 	ADD	A,A
-J$6D2E:	CALL	Z,C.6EAB
+J$6D2E:	CALL	Z,C.6EAB		; illegal function call
 ;
 	CP	C
 	JR	Z,J$6D39
@@ -9516,7 +8925,7 @@ J$6D3A:	LD	BC,J.6D1A
 	PUSH	HL
 	CALL	C.6D6E
 ;
-	LD	DE,I.0001
+	LD	DE,1
 	JP	Z,J$6D5F
 ;
 	CALL	C.6FCE
@@ -9560,16 +8969,16 @@ C.6D68:	CALL	C.6D6E
 ;	     Outputs ________________________
 ;
 C.6D6E:	PUSH	HL
-J$6D6F:	LD	HL,D.FB3B
+J$6D6F:	LD	HL,MCLLEN
 	LD	A,(HL)
 	OR	A
 	JR	Z,J$6DA0
 ;
 	DEC	(HL)
-	LD	HL,(D.FB3C)
+	LD	HL,(MCLPTR)
 	LD	A,(HL)
 	INC	HL
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 	CP	20H	; " "
 	JR	Z,J$6D6F
 ;
@@ -9603,11 +9012,11 @@ C$6D8B:	CP	61H	; "a"
 ;	     Outputs ________________________
 ;
 C.6D94:	PUSH	HL
-	LD	HL,D.FB3B
+	LD	HL,MCLLEN
 	INC	(HL)
-	LD	HL,(D.FB3C)
+	LD	HL,(MCLPTR)
 	DEC	HL
-	LD	(D.FB3C),HL
+	LD	(MCLPTR),HL
 J$6DA0:	POP	HL
 	RET	
 ;
@@ -9638,7 +9047,7 @@ C.6DA5:	CP	3DH	; "="
 	JR	C.6DA2
 ;
 ;	-----------------
-J$6DB8:	LD	DE,X.0000
+J$6DB8:	LD	DE,0
 J$6DBB:	CP	2CH	; ","
 	JR	Z,C.6D94
 ;
@@ -9651,7 +9060,7 @@ J$6DBB:	CP	2CH	; ","
 	CP	30H	; "0"
 	JR	C,C.6D94
 ;
-	LD	HL,X.0000
+	LD	HL,0
 	LD	B,0AH	; 10 
 J$6DCF:	ADD	HL,DE
 	JR	C,J.6DFC
@@ -9679,7 +9088,7 @@ J$6DCF:	ADD	HL,DE
 ;
 C.6DE3:	CALL	C.6D68
 ;
-	LD	DE,X.F55E
+	LD	DE,BUF
 	PUSH	DE
 	LD	B,28H	; "("
 	CALL	C.6FCE
@@ -9695,7 +9104,7 @@ J$6DF1:	LD	(DE),A
 ;
 	DJNZ	J$6DF1
 ;
-J.6DFC:	CALL	C.6EAB
+J.6DFC:	CALL	C.6EAB			; illegal function call
 ;
 J$6DFF:	POP	HL
 	JP	J$6ECC
@@ -9703,16 +9112,16 @@ J$6DFF:	POP	HL
 ;	-----------------
 J$6E03:	CALL	C.6DE3
 ;
-	CALL	C.F5DE
+	CALL	BUF+128
 ;
 	EX	DE,HL
 	RET	
 ;
 ;	-----------------
-?.6E0B:	CALL	C.6DE3
+C$6E0B:	CALL	C.6DE3
 ;
-	LD	A,(D.FB3B)
-	LD	HL,(D.FB3C)
+	LD	A,(MCLLEN)
+	LD	HL,(MCLPTR)
 	EX	(SP),HL
 	PUSH	AF
 	LD	C,02H	; 2 
@@ -9852,20 +9261,17 @@ C.6E7C:	CALL	C.6E84
 	LD	C,(HL)
 	INC	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.6E84:	LD	C,A
 	LD	A,(D.7B22)
 	SUB	C
 	SUB	04H	; 4 
-	LD	HL,(D$F3F3)
+	LD	HL,(QUEUES)
 	JR	C,J$6E95
-;
 	LD	HL,(D.7B32)
 	LD	A,C
 	CPL	
@@ -9878,123 +9284,108 @@ J$6E95:	CPL
 	LD	B,00H
 	ADD	HL,BC
 	RET	
-;
-;	-----------------
-J$6E9F:	LD	E,33H	; "3"
-	LD	BC,I$351E
-J$6EA2	EQU	$-2
-	LD	BC,I$381E
-J$6EA5	EQU	$-2
-	LD	BC,I$021E
-J.6EA8	EQU	$-2
-	LD	BC,I$051E
-C.6EAB	EQU	$-2
-	LD	BC,I$0D1E
-J$6EAE	EQU	$-2
-	LD	BC,I$061E
-	LD	BC,I$071E
-J.6EB4	EQU	$-2
+
+J$6E9F:	LD	E,33H
+	DEFB	1
+J$6EA2:	LD	E,35H
+	DEFB	1
+J$6EA5:	LD	E,38H
+	DEFB	1
+J.6EA8:	LD	E,02H
+	DEFB	1
+C.6EAB:	LD	E,05H
+	DEFB	1
+J$6EAE:	LD	E,0DH
+	DEFB	1
+	LD	E,06H
+	DEFB	1
+J.6EB4:	LD	E,07H
 J.6EB6:	LD	A,(D.7B13)
-	AND	01H	; 1 
+	AND	01H			; AUDIO-BASIC initialized ?
 	PUSH	DE
-	CALL	NZ,C.6CDC
-;
+	CALL	NZ,C.6CDC		; yep,
 	POP	DE
-	LD	IX,I$406F
+	LD	IX,M406F
 	JR	J.6F08
-;
-;	-----------------
-J$6EC6:	LD	IX,C.0090
+
+J$6EC6:	LD	IX,GICINI
 	JR	J.6F08
-;
-;	-----------------
-J$6ECC:	LD	IX,I$4E9B
+
+J$6ECC:	LD	IX,M4E9B
 	JR	J.6F08
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C$6ED2:	LD	IX,I$6A0E
+
+C$6ED2:	LD	IX,M6A0E
 	JR	J.6F08
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6ED8:	LD	IX,I$5EA4
+
+C.6ED8:	LD	IX,M5EA4
 	JR	J.6F08
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine convert DAC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6EDE:	LD	IX,I$517A
+
+C.6EDE:	LD	IX,M517A
 	JR	J.6F08
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine check for
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.6EE4:	LD	A,(HL)
 	EX	(SP),HL
 	CP	(HL)
 	JP	NZ,J.6EA8
-;
 	INC	HL
 	EX	(SP),HL
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6EEC:	LD	IX,J.4666
+
+C.6EEC:	LD	IX,M4666
 	JR	J.6F08
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6EF2:	LD	IX,I$4C64
+
+C.6EF2:	LD	IX,M4C64
 	JR	J.6F08
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine evaluate adres operand 
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6EF8:	LD	IX,I$542F
+
+C.6EF8:	LD	IX,M542F
 	JR	J.6F08
-;
-;	-----------------
-;
-;	  Subroutine __________________________
+
+;	  Subroutine evaluate byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6EFE:	LD	IX,I$521C
+
+C.6EFE:	LD	IX,M521C
 	JR	J.6F08
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C.6F04:	LD	IX,J.67D0
+
+C.6F04:	LD	IX,M67D0
+
+;	  Subroutine start MAIN-ROM routine
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J.6F08:	LD	IY,(EXPTBL+0-1)
-	JP	C.001C
+	JP	CALSLT
 ;
 ;	-----------------
 ;
@@ -10011,7 +9402,7 @@ C.6F0F:	LD	L,02H	; 2
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 ;
-C.6F13:	LD	A,(D.FB38)
+C.6F13:	LD	A,(VOICEN)
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -10031,7 +9422,7 @@ C.6F16:	LD	H,00H
 	OR	A
 	JR	Z,J.6F4E
 ;
-	LD	DE,I.0027
+	LD	DE,39
 	JR	J.6F4A
 ;
 ;	-----------------
@@ -10052,12 +9443,12 @@ J$6F2F:	CPL
 ;
 ;	-----------------
 J$6F3F:	EX	AF,AF'
-	LD	DE,D.FB41
+	LD	DE,VCBA
 	ADD	HL,DE
 	OR	A
 	JR	Z,J.6F4E
 ;
-	LD	DE,I$0025
+	LD	DE,37
 J.6F4A:	ADD	HL,DE
 	DEC	A
 	JR	NZ,J.6F4A
@@ -10112,15 +9503,15 @@ C.6F66:	DI
 	OR	H
 	RET	NZ
 ;
-	LD	HL,D.FB40
+	LD	HL,PLYCNT
 	OR	(HL)
 	JR	Z,J$6F90
 ;
 	DEC	(HL)
 	LD	HL,D.FFFF
-	LD	(D.FB41),HL
-	LD	(D$FB66),HL
-	LD	(D$FB8B),HL
+	LD	(VCBA+0),HL
+	LD	(VCBB+0),HL
+	LD	(VCBC+0),HL
 	INC	HL
 	INC	HL
 	LD	(D.7E76),HL
@@ -10140,7 +9531,7 @@ J$6F90:	LD	HL,D.7B28
 ;
 	LD	B,A
 	LD	HL,I.7CF0
-	LD	DE,I.0027
+	LD	DE,39
 J$6FA4:	LD	(HL),01H	; 1 
 	INC	HL
 	LD	(HL),00H
@@ -10159,7 +9550,7 @@ J$6FAD:	LD	HL,(D.7B20)
 ;	     Outputs ________________________
 ;
 C$6FB4:	PUSH	HL
-	LD	HL,(D.F6C6)
+	LD	HL,(STREND)
 	LD	B,00H
 	ADD	HL,BC
 	ADD	HL,BC
@@ -10207,7 +9598,7 @@ C.6FCE:	CP	7BH	; "{"
 	RET	
 ;
 ;	-----------------
-?.6FE4:	LD	A,(D.F663)
+?.6FE4:	LD	A,(VALTYP)
 	CP	08H	; 8 
 	JR	NC,J$6FF0
 ;
@@ -10234,14 +9625,6 @@ C.6FF4:	LD	A,H
 	LD	A,L
 	SUB	E
 	RET	
-;
-;	-----------------
-?.6FFA:	RST	38H
-	RST	38H
-	RST	38H
-	RST	38H
-	RST	38H
-	RST	38H
 
 	DEFS	08000H-$,0
 
