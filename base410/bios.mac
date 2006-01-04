@@ -1,16 +1,15 @@
 ; BIOS.MAC
-;
+
 ; MSX BIOS ROM
-;
+
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
-;
+
 ; Code Copyrighted by ASCII and maybe others
 ; Source comments by Arjen Zeilemaker
-;
+
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
-;
 
 
 	.Z80
@@ -55,7 +54,6 @@ S.BEEP		EQU	017Dh
 S.NEWPAD	EQU	01ADh
 S.CHGMDP	EQU	01B5h
 
-;
 M409B	EQU	409BH	; Warm start msx basic
 M4666	EQU	4666H	; CHRGTR routine in basicrom
 M558C	EQU	558CH	; SYNCHR routine in basicrom
@@ -209,13 +207,10 @@ RG25SA	EQU	0FFFAH
 
 D.FFFD	EQU	0FFFDH	; used to store SP register during CPU change
 D.FFFF	EQU	0FFFFH	; secundairy slotregister
-;
 CHKRAM:	DI
 
 ; MSX2 and above had
-;
 ;	JP	J0416
-;
 ; Changed to initialize R800/Z80
 
 	JP	J126B
@@ -277,7 +272,6 @@ CALLF:	JP	C02C6
 
 	DEFS	00034H-$
 
-;
 ;	The next bytes are used by the diskrom, to initialize the double byte header char
 ;	table (0F30FH). I have not seen a MSX with anything other than four zero's, meaning
 ;	no double byte chars.
@@ -286,231 +280,118 @@ D0034:	DEFB	0,0			; double byte header char range 1
 	DEFB	0,0			; double byte header char range 2
 
 KEYINT:	JP	J0C3C
-;
 INITIO:	JP	J0592
-;
 INIFNK:	JP	J13A0
-;
 DISSCR:	JP	J060A
-;
 ENASCR:	JP	J0603
-;
 WRTVDP:	JP	J0612
-;
 RDVRM:	JP	C07E1
-;
 WRTVRM:	JP	C07D7
-;
 SETRD:	JP	C0808
-;
 SETWRT:	JP	C07F4
-;
 FILVRM:	JP	J083B
-;
 LDIRMV:	JP	C073D
-;
 LDIRVM:	JP	C0780
-;
 CHGMOD:	JP	J08B1
-;
 CHGCLR:	JP	J081A
-;
 	DEFS	00066H-$		; align to Z80 NMI entry at 0066H
-;
 NMI:	JP	J139B
-;
 CLRSPR:	JP	J067F
-;
 INITXT:	JP	J063E
-;
 INIT32:	JP	J0647
-;
 INIGRP:	JP	J064F
-;
 INIMLT:	JP	J0657
-;
 SETTXT:	JP	J065F
-;
 SETT32:	JP	J0667
-;
 SETGRP:	JP	J066F
-;
 SETMLT:	JP	J0677
-;
 CALPAT:	JP	J06EC
-;
 CALATR:	JP	J0701
-;
 GSPSIZ:	JP	C070C
-;
 GRPPRT:	JP	J150E
-;
 GICINI:	JP	C05B2
-;
 WRTPSG:	JP	C1102
-;
 RDPSG:	JP	C110E
-;
 STRTMS:	JP	J11BA
-;
 CHSNS:	JP	C0D6A
-;
 CHGET:	JP	C10CB
-;
 CHPUT:	JP	J0919
-;
 LPTOUT:	JP	C08BA
-;
 LPTSTT:	JP	C08E1
-;
 CNVCHR:	JP	C08FA
-;
 PINLIN:	JP	J23BF
-;
 INLIN:	JP	J23D5
-;
 QINLIN:	JP	J23CC
-;
 BREAKX:	JP	C0564
-;
 ISCNTC:	JP	C04F0
-;
 CKCNTC:	JP	J10F9
-;
 BEEP:	JP	C1113
-;
 CLS:	JP	J0897
-;
 POSIT:	JP	C08EB
-;
 FNKSB:	JP	J0B3A
-;
 ERAFNK:	JP	J0B29
-;
 DSPFNK:	JP	C0B3F
-;
 TOTEXT:	JP	C089E
-;
 GTSTCK:	JP	J11E4
-;
 GTTRIG:	JP	J1249
-;
 GTPAD:	JP	J12A2
-;
 GTPDL:	JP	J1269
-;
 TAPION:	JP	J19DD
-;
 TAPIN:	JP	J19DD
-;
 TAPIOF:	JP	J19DD
-;
 TAPOON:	JP	J19DD
-;
 TAPOUT:	JP	J19DD
-;
 TAPOOF:	JP	J19DD
-;
 STMOTR:	JP	J1387
-;
 LFTQ:	JP	J14E9
-;
 PUTQ:	JP	J1490
-;
 RIGHTC:	JP	C1756
-;
 LEFTC:	JP	J1790
-;
 UPC:	JP	J181F
-;
 TUPC:	JP	J17F6
-;
 DOWNC:	JP	J17DC
-;
 TDOWNC:	JP	C17B4
-;
 SCALXY:	JP	C15A5
-;
 MAPXYC:	JP	C1604
-;
 FETCHC:	JP	C1651
-;
 STOREC:	JP	C1658
-;
 SETATR:	JP	J1692
-;
 READC:	JP	C165F
-;
 SETC:	JP	C16C3
-;
 NSETCX:	JP	C1843
-;
 GTASPC:	JP	J1901
-;
 PNTINI:	JP	J1909
-;
 SCANR:	JP	J191E
-;
 SCANL:	JP	J1994
-;
 CHGCAP:	JP	K.BCAP
-;
 CHGSND:	JP	K.BSND
-;
 RSLREG:	JP	J140E
-;
 WSLREG:	JP	J1411
-;
 RDVDP:	JP	J140B
-;
 SNSMAT:	JP	J0BEC
-;
 PHYDIO:	JP	J1414
-;
 FORMAT:	JP	J1418
-;
 ISFLIO:	JP	C0BF9
-;
 OUTDLP:	JP	C1B63
-;
 GETVCP:	JP	C0C0A
-;
 GETVC2:	JP	J0C0E
-;
 KILBUF:	JP	C055D
-;
 CALBAS:	JP	C02BF
-;
 SUBROM:	JP	J0295
-;
 EXTROM:	JP	C029B
-;
 CHKSLZ:	JP	J03AC
-;
 CHKNEW:	JP	C06A9
-;
 EOL:	JP	C0B05
-;
 BIGFIL:	JP	C0838
-;
 NSETRD:	JP	C06C5
-;
 NSTWRT:	JP	C06B3
-;
 NRDVRM:	JP	J07E9
-;
 NWRVRM:	JP	J0769
-;
 RDBTST:	JP	J146A
-;
 WRBTST:	JP	J146E
-;
 CHGCPU:	JP	C046A
-;
 GETCPU:	JP	C04D2
-;
 PCMPLY:	JP	J19DF
-;
 PCMREC:	JP	J19E8
 
 	DEFS	001B6H-$
@@ -518,6 +399,7 @@ PCMREC:	JP	J19E8
 ;	  Subroutine CALSLT for expanded slot 0 page 0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  this is done by this special routine, otherwise calslt crashes
 ;	             Turbo-R ignores secundairy slot, always secundairy slot 0 (main-bios)
 ;	             MSX2 and above had code to handle a interslot call to the subrom in a secundairy
@@ -526,7 +408,7 @@ PCMREC:	JP	J19E8
 ;	             MSX2 code used 01B6H - 01F4H
 
 J01B6:	POP	AF
-	EXX	
+	EXX
 	EX	AF,AF'
 	JP	(IX)
 
@@ -536,6 +418,7 @@ J01B6:	POP	AF
 ;	  Subroutine patch routine for PRINT USING, kanji characters
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C01BB:	CALL	M6246			; print + if needed
 	CALL	C01C9			; print kanji (handles 2 byte chars)
@@ -547,6 +430,7 @@ C01BB:	CALL	M6246			; print + if needed
 ;	  Subroutine print kanji char
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C01C9:	RST	18H
 	CP	81H
@@ -574,13 +458,14 @@ J01D7:	LD	A,(HOKVLD)
 	DEC	B
 	RET	P
 	INC	B
-	RET	
+	RET
 
 	DEFS	001F5H-$
 
 ;	  Subroutine RDSLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C01F5:	CALL	C0353			; calculate masks
 	JP	M,J0205			; handle expanded slot
@@ -590,11 +475,12 @@ C01F5:	CALL	C0353			; calculate masks
 	OR	B
 	CALL	RDPRIM
 	LD	A,E
-	RET	
+	RET
 
 ;	  Subroutine RDSLT for expanded slot
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0205:	CALL	C028C			; prm. slot 0, page 0 ?
 	JR	NZ,J021A		; nop, use ´old´ method
@@ -609,6 +495,7 @@ J0205:	CALL	C028C			; prm. slot 0, page 0 ?
 ;	  Subroutine CALSLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  Just a jump at this adres to have same entry point as MSX1
 
 C0217:	JP	J02D8
@@ -617,6 +504,7 @@ C0217:	JP	J02D8
 ;	  Subroutine RDSLT for expanded slot, not slot 0 page 0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J021A:	PUSH	HL
 	CALL	C0378			; adjust secundairy slotregister
@@ -628,6 +516,7 @@ J021A:	PUSH	HL
 ;	  Subroutine WRSLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0225:	PUSH	DE
 	CALL	C0353			; calculate masks
@@ -642,6 +531,7 @@ C0225:	PUSH	DE
 ;	  Subroutine WRSLT for expanded slot
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0235:	CALL	C028C			; prm. slot 0, page 0 ?
 	JP	NZ,J026E		; nope, use ´old´ method
@@ -661,11 +551,12 @@ J0244:	EX	(SP),HL
 	OUT	(0A8H),A
 	POP	AF
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine basicrom on page 1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0255:	PUSH	AF
 	IN	A,(0A8H)
@@ -673,7 +564,7 @@ C0255:	PUSH	AF
 	AND	3FH
 	OUT	(0A8H),A		; page 3 = prm. slot 0 (for access to sec. slotreg)
 	LD	A,(D.FFFF)
-	CPL	
+	CPL
 	LD	H,A
 	AND	0F3H
 	LD	(D.FFFF),A		; page 1 = sec. slot 0
@@ -681,11 +572,12 @@ C0255:	PUSH	AF
 	AND	0F3H
 	OUT	(0A8H),A		; restore page 3 prm. slot 0, page 1 = prm. slot 0
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine WRSLT for expanded slot, not slot 0 page 0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J026E:	EX	(SP),HL
 	PUSH	HL
@@ -707,7 +599,7 @@ J0279:	POP	BC
 	OUT	(0A8H),A
 	POP	AF
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine check if primary slot 0,page 0
 ;	     Inputs  ________________________
@@ -720,21 +612,23 @@ C028C:	INC	D
 	LD	A,E
 	CP	03H			; page 0 ?
 	LD	A,B
-	RET	
+	RET
 
 ;	  Subroutine SUBROM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0295:	CALL	C029B			; EXTROM
 	POP	IX
-	RET	
+	RET
 
 ;	  Subroutine EXTROM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C029B:	EXX	
+
+C029B:	EXX
 	EX	AF,AF'
 	PUSH	HL
 	PUSH	DE
@@ -742,14 +636,14 @@ C029B:	EXX
 	PUSH	AF
 	LD	A,I
 	PUSH	AF			; store interrupt state
-	EXX	
+	EXX
 	EX	AF,AF'
 	PUSH	IY
 	LD	IY,(EXBRSA-1)		; slotid subrom
 	CALL	C0217			; CALSLT
 	POP	IY
 	EX	AF,AF'
-	EXX	
+	EXX
 	POP	AF
 	JP	PO,J02B8
 	EI				; restore interrupt state
@@ -757,13 +651,14 @@ J02B8:	POP	AF
 	POP	BC
 	POP	DE
 	POP	HL
-	EXX	
+	EXX
 	EX	AF,AF'
-	RET	
+	RET
 
 ;	  Subroutine CALBAS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C02BF:	LD	IY,(EXPTBL+0-1)		; slotid basicrom
 	JP	C0217			; CALSLT
@@ -771,6 +666,7 @@ C02BF:	LD	IY,(EXPTBL+0-1)		; slotid basicrom
 ;	  Subroutine CALLF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C02C6:	EX	(SP),HL
 	PUSH	AF
@@ -793,7 +689,8 @@ C02C6:	EX	(SP),HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J02D8:	EXX	
+
+J02D8:	EXX
 	EX	AF,AF'
 	PUSH	IY
 	POP	AF
@@ -805,12 +702,13 @@ J02D8:	EXX
 	PUSH	AF
 	AND	C
 	OR	B
-	EXX	
+	EXX
 	JP	CLPRIM
 
 ;	  Subroutine CALSLT for expanded slot
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J02EF:	PUSH	AF
 	AND	03H			; primary slot 0 ?
@@ -834,9 +732,9 @@ J02FA:	POP	AF
 	LD	(HL),A			; update SLTTBL
 	PUSH	HL
 	EX	AF,AF'
-	EXX	
+	EXX
 	CALL	C0217			; do a CALSLT on only the primary slot
-	EXX	
+	EXX
 	EX	AF,AF'
 	POP	HL
 	POP	BC
@@ -846,7 +744,7 @@ J02FA:	POP	AF
 	LD	A,B
 	AND	3FH
 	OR	C
-	DI	
+	DI
 	OUT	(0A8H),A
 	LD	A,E
 	LD	(D.FFFF),A		; restore secundairy slotregister
@@ -858,11 +756,12 @@ J02FA:	POP	AF
 	EI				; restore interrupt state
 J0330:	EX	AF,AF'
 	EXX
-	RET	
+	RET
 
 ;	  Subroutine ENASLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0333:	CALL	C0353			; calculate masks
 	JP	M,J0340			; expanded slot,
@@ -870,11 +769,12 @@ C0333:	CALL	C0353			; calculate masks
 	AND	C
 	OR	B
 	OUT	(0A8H),A
-	RET	
+	RET
 
 ;	  Subroutine ENASLT for expanded slot
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0340:	PUSH	HL
 	CALL	C0378			; adjust secundairy slotregister
@@ -895,20 +795,20 @@ J0340:	PUSH	HL
 ;	     Outputs P set if expanded slot, A=slotid, D=PPPPPPPP, E=page select mask
 ;	             B=primairy slot or mask, C=page clear mask
 
-C0353:	DI	
+C0353:	DI
 	PUSH	AF
 	LD	A,H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	AND	03H
 	LD	E,A			; page
 	LD	A,0C0H
-J035D:	RLCA	
-	RLCA	
+J035D:	RLCA
+	RLCA
 	DEC	E
 	JP	P,J035D
 	LD	E,A			; page select mask
-	CPL	
+	CPL
 	LD	C,A			; page clear mask
 	POP	AF
 	PUSH	AF
@@ -923,7 +823,7 @@ J036E:	ADD	A,55H
 	LD	B,A			; prim. slot select
 	POP	AF
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine Adjust secundairy slotregister
 ;	     Inputs  A=slotid, D=, E=
@@ -942,8 +842,8 @@ C0378:	PUSH	AF
 	OR	C
 	OUT	(0A8H),A		; set page 3 to requested primary slot (to access sec. slotreg)
 	LD	A,D
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	AND	03H
 	LD	D,A
 	LD	A,0ABH
@@ -953,10 +853,10 @@ J0390:	ADD	A,55H
 	AND	E
 	LD	D,A
 	LD	A,E
-	CPL	
+	CPL
 	LD	H,A
 	LD	A,(D.FFFF)
-	CPL	
+	CPL
 	LD	L,A
 	AND	H
 	OR	D
@@ -965,13 +865,14 @@ J0390:	ADD	A,55H
 	OUT	(0A8H),A		; restore primary slotreg
 	POP	AF
 	AND	03H
-	RET	
+	RET
 
 ;	  Subroutine CHKSLZ
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J03AC:	DI	
+
+J03AC:	DI
 	LD	BC,SUBSID		; Turbo-R has subrom always in slot 3-1
 	LD	HL,2
 	CALL	M7E1A			; read INIT entry of subrom
@@ -1008,15 +909,11 @@ J03AC:	DI
 	OUT	(0FEH),A
 	JP	J1472
 
-;
 ; because of simplfied search routine for Turbo-R, some space is unused
-;
 
 	DEFS	0416H-$			; unused space
 
-;
 ; orginal init MSX2 and above
-;
 
 J0416:	XOR	A
 	OUT	(0FFH),A
@@ -1079,30 +976,29 @@ J044D:	LD	A,B
 
 
 
-;
 ; MSX2 has must longer init (detecting ram), remaining space (0468H-04EFH) used for cpu bios calls
-;
 
 J0468:	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine CHGCPU
 ;	     Inputs  A(b6-b0) = cpumode, A(b7) = update turboled
 ;	     Outputs ________________________
+
 
 C046A:	PUSH	AF
 	AND	7FH
 	CP	03H
 	JR	NC,J0468		; invalid cpumode, quit
 	POP	AF
-	DI	
+	DI
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
 	PUSH	IX
 	PUSH	IY
-	EXX	
+	EXX
 	EX	AF,AF'
 	PUSH	HL
 	PUSH	DE
@@ -1137,9 +1033,9 @@ J04A2:	LD	(HL),A
 	JR	Z,J04B5
 	INC	B
 J04B5:	LD	C,0E5H
-	OTIR	
-	DI	
-	NOP	
+	OTIR
+	DI
+	NOP
 	LD	SP,(D.FFFD)		; restore stackpointer
 	POP	AF
 	LD	I,A			; restore interrupttable pointer
@@ -1147,7 +1043,7 @@ J04B5:	LD	C,0E5H
 	POP	BC
 	POP	DE
 	POP	HL
-	EXX	
+	EXX
 	EX	AF,AF'
 	POP	IY
 	POP	IX
@@ -1155,12 +1051,13 @@ J04B5:	LD	C,0E5H
 	POP	BC
 	POP	DE
 	POP	HL			; restore all Z80 registers
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine GETCPU
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C04D2:	LD	A,6
 	OUT	(0E4H),A
@@ -1173,7 +1070,7 @@ C04D2:	LD	A,6
 	INC	A
 	RET	C
 	INC	A
-	RET	
+	RET
 
 I04E3:	DEFB	060H,060H		; Z80
 I04E5:	DEFB	040H,060H		; R800 ROM
@@ -1188,14 +1085,15 @@ I04E5:	DEFB	040H,060H		; R800 ROM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C04F0:	LD	A,(BASROM)
 	AND	A
 	RET	NZ			; execute extension ROM with BASIC text, quit
 	PUSH	HL
 	LD	HL,INTFLG
-	DI	
+	DI
 	LD	A,(HL)
-	EI	
+	EI
 	LD	(HL),0			; reset STOP status
 	POP	HL
 	AND	A
@@ -1207,9 +1105,9 @@ C04F0:	LD	A,(BASROM)
 	PUSH	BC
 	CALL	C0A37			; display cursor when disabled
 	LD	HL,INTFLG
-J050E:	DI	
+J050E:	DI
 	LD	A,(HL)
-	EI	
+	EI
 	LD	(HL),0			; reset STOP status
 	AND	A
 	JR	Z,J050E			; STOP or CTRL/STOP not pressed yet, keep waiting
@@ -1230,7 +1128,7 @@ J0521:	PUSH	HL
 	CALL	C0EF1			; flag STOP condition
 	EI
 	POP	HL
-	RET	
+	RET
 
 J0534:	CALL	C089E			; TOTEXT (force textmode)
 	LD	A,(EXPTBL+0)
@@ -1246,6 +1144,7 @@ J0534:	CALL	C089E			; TOTEXT (force textmode)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0549:	LD	A,(TRPTBL+10*3+0)
 	RRCA
 	RET	NC			; ON STOP not ON, quit
@@ -1259,19 +1158,21 @@ C0549:	LD	A,(TRPTBL+10*3+0)
 	OR	L
 	RET	Z			; basic interpeter in direct mode, quit
 	SCF				; flag execute ON STOP GOSUB valid
-	RET	
+	RET
 
 ;	  Subroutine KILBUF (clears keyboardbuffer)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C055D:	LD	HL,(PUTPNT)
 	LD	(GETPNT),HL
-	RET	
+	RET
 
 ;	  Subroutine BREAKX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0564:	IN	A,(0AAH)
 	AND	0F0H
@@ -1301,12 +1202,13 @@ C0564:	IN	A,(0AAH)
 	ENDIF
 
 	LD	(REPCNT),A		; reset REPCNT
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine INITIO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0592:	LD	A,7
 	LD	E,80H
@@ -1326,6 +1228,7 @@ J0592:	LD	A,7
 ;	  Subroutine GICINI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C05B2:	PUSH	HL
 	PUSH	DE
@@ -1356,7 +1259,7 @@ J05C8:	PUSH	HL
 	EX	DE,HL
 	LD	HL,I05FD
 	LD	BC,6
-	LDIR	
+	LDIR
 	POP	AF
 	POP	BC
 	POP	HL
@@ -1377,6 +1280,7 @@ I05FD:	DEFB	004H,004H,078H,088H,0FFH,000H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0603:	LD	A,(RG1SAV)
 	OR	40H
 	JR	J060F
@@ -1384,6 +1288,7 @@ J0603:	LD	A,(RG1SAV)
 ;	  Subroutine DISSCR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J060A:	LD	A,(RG1SAV)
 	AND	0BFH
@@ -1394,12 +1299,13 @@ J060F:	LD	B,A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0612:	LD	A,C
 	AND	A
 	JR	NZ,J061D
 	LD	A,(RG0SAV)
 	XOR	B
-	RRCA	
+	RRCA
 	JR	NC,J0629		; external vdp input bit unchanged, old way
 					; otherwise A>=080H and due next code handled by the subrom
 J061D:	CP	08H
@@ -1409,11 +1315,11 @@ J061D:	CP	08H
 	JR	J0644			; others are handled by the subrom routine
 
 J0629:	LD	A,B
-	DI	
+	DI
 	OUT	(99H),A
 	LD	A,C
 	OR	80H
-	EI	
+	EI
 	OUT	(99H),A
 	PUSH	HL
 	LD	A,B
@@ -1426,6 +1332,7 @@ J0629:	LD	A,B
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J063E:	PUSH	IX
 	LD	IX,S.INITXT
 J0644:	JP	J0295			; INITXT handled by SUBROM
@@ -1433,6 +1340,7 @@ J0644:	JP	J0295			; INITXT handled by SUBROM
 ;	  Subroutine INIT32
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0647:	PUSH	IX
 	LD	IX,S.INIT32
@@ -1442,6 +1350,7 @@ J0647:	PUSH	IX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J064F:	PUSH	IX
 	LD	IX,S.INIGRP
 	JR	J0644			; INIGRP handled by SUBROM
@@ -1449,6 +1358,7 @@ J064F:	PUSH	IX
 ;	  Subroutine INIMLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0657:	PUSH	IX
 	LD	IX,S.INIMLT
@@ -1458,6 +1368,7 @@ J0657:	PUSH	IX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J065F:	PUSH	IX
 	LD	IX,S.SETTXT
 	JR	J0644			; SETTXT handled by SUBROM
@@ -1465,6 +1376,7 @@ J065F:	PUSH	IX
 ;	  Subroutine SETT32
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0667:	PUSH	IX
 	LD	IX,S.SETT32
@@ -1474,6 +1386,7 @@ J0667:	PUSH	IX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J066F:	PUSH	IX
 	LD	IX,S.SETGRP
 	JR	J0644			; SETGRP handled by SUBROM
@@ -1482,6 +1395,7 @@ J066F:	PUSH	IX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0677:	PUSH	IX
 	LD	IX,S.SETMLT
 	JR	J0644			; SETMLT handled by SUBROM
@@ -1489,6 +1403,7 @@ J0677:	PUSH	IX
 ;	  Subroutine CLRSPR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J067F:	PUSH	IX
 	LD	IX,S.CLRSPR
@@ -1505,7 +1420,7 @@ C0687:	EX	DE,HL
 	LD	B,C
 	RET	Z			; low byte size zero, quit
 	INC	A			; extra loop for mod 256
-	RET	
+	RET
 
 ;	  Subroutine convert base vram adres to screenpage vram adres
 ;	     Inputs  HL = base vram adres, D = active screenpage
@@ -1519,21 +1434,22 @@ C068F:	EX	DE,HL
 	LD	A,H
 	JR	NZ,J069D		; screenmode 7 and 8 (and MSX2+ screenmodes), screensize 64Kb
 	RRA				; extra shift for screensize 32Kb
-J069D:	RRA	
+J069D:	RRA
 	LD	H,A
 	LD	A,0
 	LD	L,A
 	ADC	A,A
 	ADD	HL,DE
 	LD	D,A
-	RET	
+	RET
 
 J06A6:	LD	D,0
-	RET	
+	RET
 
 ;	  Subroutine CHKNEW (check if new style screenmode)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C06A9:	PUSH	BC
 	LD	B,A
@@ -1541,11 +1457,12 @@ C06A9:	PUSH	BC
 	CP	5
 	LD	A,B
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine NSTWRT
 ;	     Inputs  HL=vram adres (range:0-0FFFFH)
 ;	     Outputs ________________________
+
 
 C06B3:	PUSH	BC
 	PUSH	DE
@@ -1563,6 +1480,7 @@ C06B3:	PUSH	BC
 ;	     Inputs  HL=vram adres (range:0-0FFFFH)
 ;	     Outputs ________________________
 
+
 C06C5:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
@@ -1576,25 +1494,26 @@ J06D3:	PUSH	AF
 	LD	A,H
 	AND	0C0H
 	OR	D
-	RLCA	
-	RLCA	
-	DI	
+	RLCA
+	RLCA
+	DI
 	OUT	(99H),A
 	LD	A,128+14
 	OUT	(99H),A			; vdp register 14 (setup A16-A14 of vram adres)
 	LD	A,L
 	OUT	(99H),A
 	POP	AF
-	EI	
+	EI
 	OUT	(99H),A
 	POP	HL
 	POP	DE
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine CALPAT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J06EC:	LD	L,A
 	LD	H,00H
@@ -1609,11 +1528,12 @@ J06EC:	LD	L,A
 J06FB:	EX	DE,HL
 	LD	HL,(PATBAS)
 	ADD	HL,DE
-	RET	
+	RET
 
 ;	  Subroutine CALATR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0701:	LD	L,A
 	LD	H,00H
@@ -1622,11 +1542,12 @@ J0701:	LD	L,A
 	EX	DE,HL
 	LD	HL,(ATRBAS)
 	ADD	HL,DE
-	RET	
+	RET
 
 ;	  Subroutine GSPSIZ
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C070C:	LD	A,(RG1SAV)
 	RRCA
@@ -1634,11 +1555,12 @@ C070C:	LD	A,(RG1SAV)
 	LD	A,8
 	RET	NC
 	LD	A,32
-	RET	
+	RET
 
 ;	  Subroutine Initialize character pattern table
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  Unused code, same code is in subrom
 ;	             code was used in INITXT and INIT32, but these too are moved in subrom
 
@@ -1652,9 +1574,9 @@ C070C:	LD	A,(RG1SAV)
 J072A:	POP	AF
 	PUSH	AF
 	PUSH	BC
-	DI	
+	DI
 	CALL	C01F5			; RDSLT
-	EI	
+	EI
 	POP	BC
 	OUT	(98H),A
 	INC	HL
@@ -1663,11 +1585,12 @@ J072A:	POP	AF
 	OR	B
 	JR	NZ,J072A
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine LDIRMV (vram to memory)
 ;	     Inputs  HL = vram adres, DE = ram adres, BC = size
 ;	     Outputs ________________________
+
 
 C073D:	LD	A,(SCRMOD)
 	CP	4
@@ -1685,20 +1608,21 @@ J0750:	IN	A,(98H)
 	LD	A,C
 	OR	B
 	JR	NZ,J0750
-	RET	
+	RET
 
 J075A:	CALL	C06C5			; NSETRD
 	CALL	C0687			; setup for INIR
 	LD	C,98H
-J0762:	INIR	
+J0762:	INIR
 	DEC	A
 	JR	NZ,J0762
 	EX	DE,HL
-	RET	
+	RET
 
 ;	  Subroutine NWRVRM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0769:	PUSH	AF
 	CALL	C06B3			; NSTWRT
@@ -1706,16 +1630,16 @@ J0769:	PUSH	AF
 	EX	(SP),HL
 	POP	AF
 	OUT	(98H),A
-	RET	
+	RET
 
 
 	DEFS	0777H-$
 
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 ;	This routine has same entrypoint as MSX1
 
 C0777:	PUSH	IX
@@ -1725,6 +1649,7 @@ C0777:	PUSH	IX
 ;	  Subroutine LDIRVM (memory to vram)
 ;	     Inputs  HL = RAM adres, DE = VRAM adres, BC = size
 ;	     Outputs ________________________
+
 
 C0780:	EX	DE,HL
 	LD	A,(SCRMOD)
@@ -1741,20 +1666,21 @@ J0792:	LD	A,(DE)
 	LD	A,C
 	OR	B
 	JR	NZ,J0792
-	RET	
+	RET
 
 J079C:	CALL	C06B3			; NSTWRT
 	CALL	C0687			; setup for OTIR
 	LD	C,98H
-J07A4:	OTIR	
+J07A4:	OTIR
 	DEC	A
 	JR	NZ,J07A4
 	EX	DE,HL
-	RET	
+	RET
 
 ;	  Subroutine copy charpattern to PATWRK
 ;	     Inputs  A = charcode
 ;	     Outputs ________________________
+
 
 C07AB:	LD	H,0
 	LD	L,A
@@ -1771,7 +1697,7 @@ J07BB:	PUSH	HL
 	PUSH	BC
 	LD	A,(CGPNT+0)
 	CALL	C01F5			; RDSLT
-	EI	
+	EI
 	POP	BC
 	POP	DE
 	POP	HL
@@ -1779,11 +1705,12 @@ J07BB:	PUSH	HL
 	INC	DE
 	INC	HL
 	DJNZ	J07BB
-	RET	
+	RET
 
 ;	  Subroutine do cls
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C07CE:	PUSH	IX
 	LD	IX,S.CLRTXT
@@ -1793,37 +1720,41 @@ C07CE:	PUSH	IX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C07D7:	PUSH	AF
 	CALL	C07F4			; SETWRT
 	EX	(SP),HL
 	EX	(SP),HL
 	POP	AF
 	OUT	(98H),A
-	RET	
+	RET
 
 ;	  Subroutine RDVRM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C07E1:	CALL	C0808			; SETRD
 	EX	(SP),HL
 	EX	(SP),HL
 	IN	A,(98H)
-	RET	
+	RET
 
 ;	  Subroutine NRDVRM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J07E9:	CALL	C06C5			; NSETRD
 	EX	(SP),HL
 	EX	(SP),HL
 	IN	A,(98H)
-	RET	
+	RET
 
 ;	  Subroutine set VDP for VRAM write at screenlocation
 ;	     Inputs  H=x pos, L=y pos
 ;	     Outputs ________________________
+
 
 C07F1:	CALL	C0B98			; convert screenlocation to VRAM adres
 
@@ -1831,8 +1762,9 @@ C07F1:	CALL	C0B98			; convert screenlocation to VRAM adres
 ;	     Inputs  HL=vram adres
 ;	     Outputs ________________________
 
+
 C07F4:	XOR	A
-	DI	
+	DI
 	OUT	(99H),A
 	LD	A,128+14
 	OUT	(99H),A			; vdp register 14 = 0 (adres the first 16 Kb vram)
@@ -1842,15 +1774,16 @@ C07F4:	XOR	A
 	AND	3FH
 	OR	40H
 	OUT	(99H),A			; setup vdp for writing
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine SETRD
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0808:	XOR	A
-	DI	
+	DI
 	OUT	(99H),A
 	LD	A,128+14
 	OUT	(99H),A			; vdp register 14 = 0 (adres the first 16 Kb vram)
@@ -1859,12 +1792,13 @@ C0808:	XOR	A
 	LD	A,H
 	AND	3FH
 	OUT	(99H),A
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine CHGCLR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J081A:	LD	A,(SCRMOD)
 	DEC	A
@@ -1887,12 +1821,14 @@ J081A:	LD	A,(SCRMOD)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0838:	PUSH	AF
 	JR	J0841
 
 ;	  Subroutine FILVRM
 ;	     Inputs  HL=vram adres,BC=size,A=data
 ;	     Outputs ________________________
+
 
 J083B:	PUSH	AF
 	CALL	C06A9			; CHKNEW (check if new style screenmode)
@@ -1907,7 +1843,7 @@ J084A:	OUT	(98H),A
 	DEC	C
 	JP	NZ,J084A
 	DJNZ	J084A
-	RET	
+	RET
 
 J0853:	POP	AF
 	PUSH	HL
@@ -1943,7 +1879,7 @@ J087A:	LD	A,E			; data
 	CALL	C0838			; BIGFIL
 	POP	DE
 	POP	HL
-	RET	
+	RET
 
 
 J0881:	LD	A,(FORCLR)
@@ -1955,9 +1891,11 @@ J0881:	LD	A,(FORCLR)
 	OR	(HL)
 	JR	J0891
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C088E:	LD	A,(BDRCLR)
 J0891:	LD	B,A
@@ -1968,15 +1906,17 @@ J0891:	LD	B,A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0897:	RET	NZ
 	PUSH	HL
 	CALL	C0777
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine TOTEXT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C089E:	CALL	C0B4E			; check if screen is in textmode
 	RET	C			; yep, do nothing
@@ -1990,6 +1930,7 @@ C089E:	CALL	C0B4E			; check if screen is in textmode
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J08B1:	PUSH	IX
 	LD	IX,S.CHGMOD
 	JP	J0295			; CHGMOD is in SUBROM
@@ -1997,6 +1938,7 @@ J08B1:	PUSH	IX
 ;	  Subroutine LPTOUT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C08BA:	CALL	H.LPTO
 	PUSH	AF
@@ -2010,6 +1952,7 @@ J08BE:	CALL	C0564			; BREAKX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C08C9:	PUSH	AF
 	OUT	(91H),A
 	XOR	A
@@ -2018,31 +1961,33 @@ C08C9:	PUSH	AF
 	OUT	(90H),A
 	POP	AF
 	AND	A
-	RET	
+	RET
 
 J08D5:	XOR	A
 	LD	(LPTPOS),A
 	LD	A,0DH
 	CALL	C08C9			; write CR to printerport
 	POP	AF
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine LPTSTT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C08E1:	CALL	H.LPTS
 	IN	A,(90H)
-	RRCA	
-	RRCA	
-	CCF	
+	RRCA
+	RRCA
+	CCF
 	SBC	A,A
-	RET	
+	RET
 
 ;	  Subroutine POSIT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C08EB:	LD	A,1BH
 	RST	18H
@@ -2054,11 +1999,12 @@ C08EB:	LD	A,1BH
 	LD	A,H
 	ADD	A,1FH
 	RST	18H
-	RET	
+	RET
 
 ;	  Subroutine CNVCHR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C08FA:	PUSH	HL
 	PUSH	AF
@@ -2067,30 +2013,27 @@ C08FA:	PUSH	HL
 	CP	(HL)
 	LD	(HL),A
 	JR	Z,J0911
-;
 	POP	AF
 	SUB	40H	; "@"
 	CP	20H	; " "
 	JR	C,J090F
-;
 	ADD	A,40H	; "@"
 J090D:	CP	A
-	SCF	
+	SCF
 J090F:	POP	HL
-	RET	
-;
+	RET
 ;	-----------------
 J0911:	POP	AF
 	CP	01H	; 1 
 	JR	NZ,J090D
-;
 	LD	(HL),A
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine CHPUT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0919:	PUSH	HL
 	PUSH	DE
@@ -2111,14 +2054,13 @@ J0937:	POP	AF
 J0938:	POP	BC
 	POP	DE
 	POP	HL
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C093C:	CALL	C08FA			; CNVCHR
 	RET	NC
 	LD	C,A
@@ -2144,6 +2086,7 @@ J0950:	LD	HL,(CSRY)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0965:	CALL	C0ABE			; cursor down if possible
 	RET	NZ			; possible, quit
 	CALL	C0AC6			; update cursorpos
@@ -2153,9 +2096,11 @@ C0965:	CALL	C0ABE			; cursor down if possible
 J0971:	LD	HL,D098C-2
 	LD	C,12
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0976:	INC	HL
 	INC	HL
@@ -2171,14 +2116,15 @@ C0976:	INC	HL
 	LD	HL,(CSRY)
 	CALL	C098A
 	XOR	A
-	RET	
+	RET
 
 ;	  Subroutine call subroutine
 ;	     Inputs  BC = adres of subroutine
 ;	     Outputs ________________________
 
+
 C098A:	PUSH	BC
-	RET	
+	RET
 
 D098C:	DEFB	7
 	DEFW	C1113			; BEEP
@@ -2257,7 +2203,7 @@ C09E3:	LD	A,4
 
 C09E6:	LD	A,0FFH
 	LD	(ESCCNT),A		; mark start of ESC sequence
-	RET	
+	RET
 
 J09EC:	JP	P,J09FA			; esc sequence with parameter, handle
 	LD	(HL),0			; esc sequence ends
@@ -2287,7 +2233,7 @@ J0A10:	LD	B,A
 	RET	C			; yep, quit
 	LD	A,B
 	LD	(DE),A			; nope, use the max
-	RET	
+	RET
 
 ; ESC x handler
 
@@ -2307,17 +2253,18 @@ J0A25:	LD	(HL),A			; esc sequence ends
 	JR	NZ,J0A30
 	INC	A			; ESC y4, "insert" cursor
 J0A2C:	LD	(CSTYLE),A
-	RET	
+	RET
 
 J0A30:	DEC	A
 	RET	NZ			; other ESC y, ignore
 	INC	A			; ESC y5, enable cursor
 J0A33:	LD	(CSRSW),A
-	RET	
+	RET
 
 ;	  Subroutine display cursor when disabled
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0A37:	LD	A,(CSRSW)
 	AND	A
@@ -2327,6 +2274,7 @@ C0A37:	LD	A,(CSRSW)
 ;	  Subroutine display cursor when enabled
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0A3E:	LD	A,(CSRSW)
 	AND	A
@@ -2355,7 +2303,7 @@ J0A43:	CALL	H.DSPC
 	JR	Z,J0A70			; "block" cursor
 	LD	B,3 			; "insert" cursor
 J0A70:	LD	A,(HL)
-	CPL	
+	CPL
 	LD	(HL),A
 	DEC	HL
 	DJNZ	J0A70
@@ -2371,6 +2319,7 @@ J0A70:	LD	A,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0A84:	LD	A,(CSRSW)
 	AND	A
 	RET	NZ			; cursor enabled, quit
@@ -2379,6 +2328,7 @@ C0A84:	LD	A,(CSRSW)
 ;	  Subroutine remove cursor when enabled
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0A8B:	LD	A,(CSRSW)
 	AND	A
@@ -2395,6 +2345,7 @@ J0A90:	CALL	H.ERAC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0AA1:	LD	A,(LINLEN)
 	CP	H
 	RET	Z			; already at end of line, quit
@@ -2404,6 +2355,7 @@ C0AA1:	LD	A,(LINLEN)
 ;	  Subroutine move cursor left with linewarp
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0AA9:	CALL	C0AB2			; cursor left if possible
 	RET	NZ			; was possible, quit
@@ -2415,12 +2367,14 @@ C0AA9:	CALL	C0AB2			; cursor left if possible
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0AB2:	DEC	H
 	DEFB	03EH			; LD A,xx (skip next instruction)
 
 ;	  Subroutine move cursor up if possible
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0AB4:	DEC	L
 	RET	Z			; already at top of screen, quit
@@ -2430,6 +2384,7 @@ C0AB4:	DEC	L
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0AB8:	CALL	C0AA1			; cursor right if possible
 	RET	NZ			; was possible, quit
 	LD	H,1			; start of line and linedown
@@ -2438,35 +2393,33 @@ C0AB8:	CALL	C0AA1			; cursor right if possible
 ;	     Inputs  
 ;	     Outputs ________________________
 
+
 C0ABE:	CALL	C0BE2			; get max linenumber
 	CP	L
 	RET	Z			; already at the bottom of screen, quit
 	JR	C,J0ACA
 	INC	L			; cursor down
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0AC6:	LD	(CSRY),HL
-	RET	
-;
+	RET
 ;	-----------------
 J0ACA:	DEC	L
 	XOR	A
 	JR	C0AC6			; update cursorpos
-;
 ;	-----------------
 C0ACE:	LD	A,20H	; " "
 	CALL	C093C
-;
 	LD	A,(CSRX)
 	DEC	A
 	AND	07H	; 7 
 	JR	NZ,C0ACE
-;
-	RET	
-;
+	RET
 ;	-----------------
 C0ADC:	LD	L,01H	; 1 
 
@@ -2474,29 +2427,26 @@ C0ADC:	LD	L,01H	; 1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0ADE:	LD	H,1
 	JR	C0AC6			; update cursorpos
-;
 ;	-----------------
 C0AE2:	CALL	C0ADE
-;
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0AE5:	PUSH	IX
 	LD	IX,S.DELLNO
 	JP	J0295			; SUBROM
-;
 ;	-----------------
 C0AEE:	CALL	C0ADE
-;
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0AF1:	PUSH	IX
 	LD	IX,S.INSLNO
 	JP	J0295			; SUBROM
@@ -2505,18 +2455,18 @@ J0AFA:	CALL	C0AA9			; cursor left with warp
 	RET	Z
 	LD	C," "
 	JP	C0B8D			; write char at screenlocation
-;
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0B03:	LD	H,1
 
 ;	  Subroutine EOL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0B05:	CALL	C0BD9			; unmark line as succession
 	PUSH	HL
@@ -2528,19 +2478,15 @@ J0B0D:	LD	A," "
 	LD	A,(LINLEN)
 	CP	H
 	JR	NC,J0B0D		; write blanks until the end of line
-	RET	
+	RET
 
 C0B19:	PUSH	HL
 	CALL	C0B05			; EOL
-;
 	POP	HL
 	CALL	C0BE2			; get max linenumber
-;
 	CP	L
 	RET	C
-;
 	RET	Z
-;
 	LD	H,01H	; 1 
 	INC	L
 	JR	C0B19
@@ -2549,23 +2495,21 @@ C0B19:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0B29:	CALL	H.ERAF
-;
 	XOR	A
 	CALL	C0B4B
-;
 	RET	NC
-;
 	PUSH	HL
 	LD	HL,(CRTCNT)
 	CALL	C0B03
-;
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine FNKSB
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0B3A:	LD	A,(CNSDFG)
 	AND	A
@@ -2575,18 +2519,17 @@ J0B3A:	LD	A,(CNSDFG)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0B3F:	CALL	H.DSPF
-;
 	PUSH	IX
 	LD	IX,S.DSPFNK
 	JP	J0295			; SUBROM
-;
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0B4B:	LD	(CNSDFG),A
 
 ;	  Subroutine check if in textmode
@@ -2595,11 +2538,12 @@ C0B4B:	LD	(CNSDFG),A
 
 C0B4E:	LD	A,(SCRMOD)
 	CP	02H
-	RET	
+	RET
 
 ;	  Subroutine copy 8 bytes of vram to LINWRK
 ;	     Inputs  HL=vram adres
 ;	     Outputs ________________________
+
 
 C0B54:	PUSH	HL
 	LD	C,8
@@ -2608,6 +2552,7 @@ C0B54:	PUSH	HL
 ;	  Subroutine copy screenline to LINWRK
 ;	     Inputs  L=linenumber
 ;	     Outputs ________________________
+
 ;	     Remark  Unused code, code is in subrom
 ;	             This code will not even work if screen is in 80 kol mode because LINWRK is only 40 bytes!
 
@@ -2619,11 +2564,12 @@ J0B61:	LD	B,00H
 	LD	DE,LINWRK
 	CALL	C073D			; LDIRMV (copy to LINWRK)
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine copy 8 bytes from LINWRK to vram
 ;	     Inputs  HL=vram adres
 ;	     Outputs ________________________
+
 
 C0B6B:	PUSH	HL
 	LD	C,8
@@ -2632,6 +2578,7 @@ C0B6B:	PUSH	HL
 ;	  Subroutine copy LINWRK to screenline
 ;	     Inputs  L=linenumber
 ;	     Outputs ________________________
+
 ;	     Remark  Unused code, code is in subrom
 ;	             This code will not even work if screen is in 80 kol mode because LINWRK is only 40 bytes!
 
@@ -2644,7 +2591,7 @@ J0B78:	LD	B,00H
 	LD	HL,LINWRK
 	CALL	C0780			; LDIRVM
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine read char from screenlocation
 ;	     Inputs  H=x pos, L=y pos
@@ -2655,18 +2602,19 @@ C0B83:	PUSH	HL
 	CALL	C07E1			; RDVRM
 	LD	C,A
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine write char at screenlocation
 ;	     Inputs  H=x pos, L=y pos, C=char
 ;	     Outputs ________________________
+
 
 C0B8D:	PUSH	HL
 	CALL	C07F1			; set VDP for VRAM write at screenlocation
 	LD	A,C
 	OUT	(98H),A
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine convert linenumber to VRAM adres
 ;	     Inputs  L=y pos
@@ -2708,7 +2656,7 @@ J0BB3:	CP	29H
 J0BBD:	ADD	HL,BC			; y pos*40
 	SBC	A,40+2
 J0BC0:	ADD	HL,DE
-	CPL	
+	CPL
 	AND	A
 	RRA				; /2
 	LD	E,A
@@ -2717,7 +2665,7 @@ J0BC0:	ADD	HL,DE
 	LD	HL,(NAMBAS)
 	ADD	HL,DE
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine get LINTTB entry
 ;	     Inputs  L = linenumber
@@ -2731,53 +2679,57 @@ C0BCD:	PUSH	HL
 	EX	DE,HL
 	POP	HL
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine unmark line as succession
 ;	     Inputs  L = linenumber
 ;	     Outputs ________________________
 
+
 C0BD9:	DEFB	03EH			; LD A,xx (skip next instruction)
 C0BDA:	XOR	A
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0BDB:	PUSH	AF
 	CALL	C0BCD			; get LINTTB entry
 	POP	AF
 	LD	(DE),A
-	RET	
+	RET
 
 ;	  Subroutine get max linenumber
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0BE2:	LD	A,(CNSDFG)
 	PUSH	HL
 	LD	HL,CRTCNT
 	ADD	A,(HL)
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine SNSMAT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0BEC:	LD	C,A
-	DI	
+	DI
 	IN	A,(0AAH)
 	AND	0F0H
 	ADD	A,C
 	OUT	(0AAH),A
-	EI	
+	EI
 	IN	A,(0A9H)
-	RET	
+	RET
 
 ;	  Subroutine ISFLIO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0BF9:	CALL	H.ISFL
 	PUSH	HL
@@ -2785,22 +2737,24 @@ C0BF9:	CALL	H.ISFL
 	LD	A,L
 	OR	H
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine DCOMPR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0C04:	LD	A,H
 	SUB	D
 	RET	NZ
 	LD	A,L
 	SUB	E
-	RET	
+	RET
 
 ;	  Subroutine GETVCP
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0C0A:	LD	L,2
 	JR	C0C11
@@ -2809,11 +2763,14 @@ C0C0A:	LD	L,2
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J0C0E:	LD	A,(VOICEN)
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0C11:	PUSH	DE
 	LD	DE,VCBA
@@ -2826,16 +2783,14 @@ J0C1E:	ADD	HL,DE
 	DEC	A
 	JR	NZ,J0C1E
 J0C22:	POP	DE
-	RET	
-;
+	RET
 ; The following NOP really puzzels me
 ; It has nothing to do with compatibility to MSX1 or so
 ; Maybe is just leftover space and 0C25 was pushed against 0C3C
-;
 	DEFS	0C25H-$,0
 
 J0C25:	LD	A,(NEWKEY+6)
-	RRCA	
+	RRCA
 	JR	C,J0C34			; SHIFT not pressed, just a KANA ON
 	XOR	A
 	LD	(CHRCNT),A
@@ -2851,23 +2806,22 @@ J0C39:	JP	J0F29			; KANA led
 ;	  Subroutine KEYINT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ; 	     Remark  Entry at the same adres as MSX1
 
 J0C3C:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
-	EXX	
+	EXX
 	EX	AF,AF'
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
 
-;
 ; Changed from orginal
 ; Reason: expansion of interrupt routine to handle MIDI ints
-;
 
 ; MSX1 and above have:
 	IF	MSXMID EQ 0
@@ -2886,10 +2840,8 @@ J0C3C:	PUSH	HL
 ; End of change
 
 J0C4A:	CALL	H.KEYI
-;
 ; Changed from orginal
 ; MSX1 and above have:
-;
 ;	IN	A,(099H)
 ;	AND	A
 
@@ -2897,14 +2849,10 @@ J0C4A:	CALL	H.KEYI
 	JP	J1A0B			; expansion code
 
 ; Reason: expansion of interrupt routine to handle pause key
-;
-;
 ;	-----------------
 J0C50:	JP	P,J0D02
-;
 	CALL	H.TIMI
-;
-	EI	
+	EI
 	LD	(STATFL),A
 	AND	20H
 	LD	HL,TRPTBL+11*3
@@ -2950,8 +2898,8 @@ J0C82:	RR	C
 	LD	A,1
 	CALL	C1202
 	AND	30H			; read joystick 1 trigger status
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	POP	BC
 	OR	B
 	PUSH	AF
@@ -2965,7 +2913,7 @@ J0C82:	RR	C
 	AND	(HL)
 	LD	(HL),C
 	LD	C,A
-	RRCA	
+	RRCA
 	LD	HL,TRPTBL+12*3
 	CALL	C,C0EF1			; space key pressed, flag TRIG(0) condition
 	RL	C
@@ -3001,13 +2949,13 @@ J0D02:	POP	IX
 	POP	DE
 	POP	HL
 	EX	AF,AF'
-	EXX	
+	EXX
 	POP	AF
 	POP	BC
 	POP	DE
 	POP	HL
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine scan keyboard and translate to keycodes
 ;	     Inputs  ________________________
@@ -3046,7 +2994,7 @@ J0D3F:	DEC	DE
 	JR	C0D4E
 
 J0D49:
-	IF INTHZ EQ 60	
+	IF INTHZ EQ 60
 	LD	A,14H			; autorepeat at 20 keyboardscans (= 666 ms)
 	ELSE
 	LD	A,20H			; autorepeat at 32 keyboardscans (= 640 ms)
@@ -3057,6 +3005,7 @@ J0D49:
 ;	  Subroutine scan for transitions and translate to keycodes
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0D4E:	LD	B,0BH
 	LD	HL,OLDKEY
@@ -3075,18 +3024,19 @@ J0D56:	LD	A,(DE)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0D62:	LD	HL,(GETPNT)
 	LD	A,(PUTPNT)
 	SUB	L
-	RET	
+	RET
 
-;
 ;	  Subroutine CHSNS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  Entry at the same adres as MSX1
 
-C0D6A:	EI	
+C0D6A:	EI
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
@@ -3097,17 +3047,18 @@ C0D6A:	EI
 	XOR	(HL)
 	LD	HL,CNSDFG
 	AND	(HL)
-	RRCA	
+	RRCA
 	CALL	C,C0B3F			; DSPFNK
 J0D82:	CALL	C0D62			; check keyboardbuffer is empty
 	POP	BC
 	POP	DE
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine convert to scancode and handle
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  Entry at the same adres as MSX1
 
 C0D89:	PUSH	HL
@@ -3122,7 +3073,7 @@ C0D89:	PUSH	HL
 	LD	C,A
 	LD	B,8
 	POP	AF
-J0D97:	RRA	
+J0D97:	RRA
 	PUSH	BC
 	PUSH	AF
 	CALL	C,K.HAND
@@ -3170,16 +3121,18 @@ J0D97:	RRA
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C10C2:	INC	HL			; increase pointer
 	LD	A,L
 	CP	(KEYBUF+40) AND 255
 	RET	NZ			; not the end of buffer, quit
 	LD	HL,KEYBUF		; warp around to start of buffer
-	RET	
+	RET
 
 ;	  Subroutine CHGET
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C10CB:	PUSH	HL
 	PUSH	DE
@@ -3195,7 +3148,6 @@ J10E1:	LD	HL,INTFLG
 	LD	A,(HL)
 	CP	04H	; 4 
 	JR	NZ,J10EB
-;
 	LD	(HL),00H
 J10EB:	LD	HL,(GETPNT)
 	LD	C,(HL)
@@ -3208,28 +3160,32 @@ J10EB:	LD	HL,(GETPNT)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J10F9:	PUSH	HL
 	LD	HL,0
 	CALL	C04F0			; ISCNTC
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine WRTPSG
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C1102:	DI	
+
+C1102:	DI
 	OUT	(0A0H),A
 	PUSH	AF
 	LD	A,E
-	EI	
+	EI
 	OUT	(0A1H),A
 	POP	AF
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C110C:	LD	A,0EH
 
@@ -3237,13 +3193,15 @@ C110C:	LD	A,0EH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C110E:	OUT	(0A0H),A
 	IN	A,(0A2H)
-	RET	
+	RET
 
 ;	  Subroutine BEEP
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1113:	PUSH	IX
 	LD	IX,S.BEEP
@@ -3262,15 +3220,16 @@ J111C:	PUSH	AF
 	XOR	A
 J112D:	OR	B
 	OUT	(0A1H),A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1131:	LD	B,A
 	CALL	C0C0A			; GETVCP
-;
 	DEC	HL
 	LD	D,(HL)
 	DEC	HL
@@ -3282,100 +3241,78 @@ C1131:	LD	B,A
 	LD	A,D
 	OR	E
 	RET	NZ
-;
 	LD	A,B
 	LD	(QUEUEN),A
 	CALL	C11D8
-;
 	CP	0FFH
 	JR	Z,J11A6
-;
 	LD	D,A
 	AND	0E0H
-	RLCA	
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
+	RLCA
 	LD	C,A
 	LD	A,D
 	AND	1FH
 	LD	(HL),A
 	CALL	C11D8
-;
 	DEC	HL
 	LD	(HL),A
 	INC	C
 J115C:	DEC	C
 	RET	Z
-;
 	CALL	C11D8
-;
 	LD	D,A
 	AND	0C0H
 	JR	NZ,J1177
-;
 	CALL	C11D8
-;
 	LD	E,A
 	LD	A,B
-	RLCA	
+	RLCA
 	CALL	C1102			; WRTPSG
-;
 	INC	A
 	LD	E,D
 	CALL	C1102			; WRTPSG
-;
 	DEC	C
 	JR	J115C
-;
 ;	-----------------
 J1177:	LD	H,A
 	AND	80H
 	JR	Z,J118B
-;
 	LD	E,D
 	LD	A,B
 	ADD	A,08H	; 8 
 	CALL	C1102			; WRTPSG
-;
 	LD	A,E
 	AND	10H	; 16 
 	LD	A,0DH	; 13 
 	CALL	NZ,C1102		; WRTPSG
-;
 J118B:	LD	A,H
 	AND	40H	; "@"
 	JR	Z,J115C
-;
 	CALL	C11D8
-;
 	LD	D,A
 	CALL	C11D8
-;
 	LD	E,A
 	LD	A,0BH	; 11 
 	CALL	C1102			; WRTPSG
-;
 	INC	A
 	LD	E,D
 	CALL	C1102			; WRTPSG
-;
 	DEC	C
 	DEC	C
 	JR	J115C
-;
 ;	-----------------
 J11A6:	LD	A,B
 	ADD	A,08H	; 8 
 	LD	E,00H
 	CALL	C1102			; WRTPSG
-;
 	INC	B
 	LD	HL,MUSICF
 	XOR	A
-	SCF	
-J11B4:	RLA	
+	SCF
+J11B4:	RLA
 	DJNZ	J11B4
-;
 	AND	(HL)
 	XOR	(HL)
 	LD	(HL),A
@@ -3384,15 +3321,14 @@ J11B4:	RLA
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J11BA:	LD	A,(MUSICF)
 	OR	A
 	RET	NZ
-;
 	LD	HL,PLYCNT
 	LD	A,(HL)
 	OR	A
 	RET	Z
-;
 	DEC	(HL)
 	LD	HL,1
 	LD	(VCBA+0),HL
@@ -3400,14 +3336,13 @@ J11BA:	LD	A,(MUSICF)
 	LD	(VCBC+0),HL
 	LD	A,07H	; 7 
 	LD	(MUSICF),A
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C11D8:	LD	A,(QUEUEN)
 	PUSH	HL
 	PUSH	DE
@@ -3419,6 +3354,7 @@ C11D8:	LD	A,(QUEUEN)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J11E4:	DEC	A
 	JP	M,J11F6
 	CALL	C1202
@@ -3428,23 +3364,25 @@ J11EE:	AND	0FH	; 15
 	LD	D,00H
 	ADD	HL,DE
 	LD	A,(HL)
-	RET	
+	RET
 
 J11F6:	CALL	C121C			; read keyboard row 8
-	RRCA	
-	RRCA	
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
+	RRCA
+	RRCA
 	LD	HL,I1239
 	JR	J11EE
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1202:	LD	B,A
 	LD	A,15
-	DI	
+	DI
 	CALL	C110E			; RDPSG
 	DJNZ	J1211
 	AND	0DFH
@@ -3455,20 +3393,21 @@ J1211:	AND	0AFH
 	OR	03H
 J1215:	OUT	(0A1H),A
 	CALL	C110C			; read PSG register 14
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine read keyboard row 8
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C121C:	DI	
+
+C121C:	DI
 	IN	A,(0AAH)
 	AND	0F0H
 	ADD	A,08H	; 8 
 	OUT	(0AAH),A
 	IN	A,(0A9H)
-	EI	
+	EI
 	RET
 
 I1229:	DEFB	000H,005H,001H,000H
@@ -3485,6 +3424,7 @@ I1239:	DEFB	000H,003H,005H,004H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1249:	DEC	A
 	JP	M,J1262
 	PUSH	AF
@@ -3499,7 +3439,7 @@ J1249:	DEC	A
 J125D:	AND	B
 J125E:	SUB	01H
 	SBC	A,A
-	RET	
+	RET
 
 J1262:	CALL	C121C
 	AND	01H
@@ -3508,27 +3448,25 @@ J1262:	CALL	C121C
 ;	  Subroutine GTPDL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  Paddles are not supported by Turbo-R
 
 J1269:	XOR	A
-	RET	
+	RET
 
-;
 ; GTPDL not supported with Turbo-R, remaining space (126BH-12A1) used otherwise
-;
 
-;
 ;	-----------------
 ;	extra init routine for Z80/R800, used before original init routine
 ;	-----------------
 
-J126B:	NOP	
+J126B:	NOP
 	IN	A,(0F4H)
 	BIT	7,A			; ´cold´ boot ?
 	JR	Z,J127A			; yep,
 	LD	A,80H
 	CALL	C046A			; CHGCPU: Z80 mode, led changed
-	DI	
+	DI
 	JR	J1292			; start init
 
 J127A:	BIT	5,A			; R800 initialized ?
@@ -3575,6 +3513,7 @@ J1295:	IM	1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J12A2:	CP	08H	; 8 
 	JR	C,J12AF
 	PUSH	IX
@@ -3584,11 +3523,11 @@ J12A2:	CP	08H	; 8
 J12AF:	JP	J19EE			; patch routine for old style pads (use Z80)
 
 	DEFS	12B4H-$			; unused space
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C12B4:	JR	C,J12BB
 	LD	DE,03D3H
 	SUB	04H	; 4 
@@ -3603,11 +3542,11 @@ J12C8:	PUSH	AF
 	EX	DE,HL
 	LD	(FILNAM+0),HL
 	SBC	A,A
-	CPL	
+	CPL
 	AND	40H
 	LD	C,A
 	LD	A,15
-	DI	
+	DI
 	CALL	C110E			; RDPSG
 	AND	0BFH
 	OR	C
@@ -3615,11 +3554,11 @@ J12C8:	PUSH	AF
 	POP	AF
 	JP	M,J12EB
 	CALL	C110C
-	EI	
+	EI
 	AND	08H
 	SUB	01H
 	SBC	A,A
-	RET	
+	RET
 
 J12EB:	LD	C,00H
 	CALL	C1335
@@ -3634,14 +3573,14 @@ J12EB:	LD	C,00H
 	LD	A,B
 	SUB	D
 	JR	NC,J1307
-	CPL	
+	CPL
 	INC	A
 J1307:	CP	05H	; 5 
 	JR	NC,J12EB
 	LD	A,C
 	SUB	E
 	JR	NC,J1311
-	CPL	
+	CPL
 	INC	A
 J1311:	CP	05H	; 5 
 	JR	NC,J12EB
@@ -3649,15 +3588,17 @@ J1311:	CP	05H	; 5
 	LD	(PADX),A
 	LD	A,E
 	LD	(PADY),A
-J131D:	EI	
+J131D:	EI
 	LD	A,H
 	SUB	01H	; 1 
 	SBC	A,A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1323:	LD	C,0AH	; 10 
 	CALL	C1335
@@ -3670,11 +3611,13 @@ C1323:	LD	C,0AH	; 10
 	LD	E,L
 	XOR	A
 	LD	H,A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1335:	CALL	C135E
 	LD	B,8
@@ -3684,9 +3627,9 @@ J133B:	RES	0,D
 	CALL	C1370
 	CALL	C110C
 	LD	H,A
-	RRA	
-	RRA	
-	RRA	
+	RRA
+	RRA
+	RRA
 	RL	L
 	SET	0,D
 	SET	2,D
@@ -3696,12 +3639,14 @@ J133B:	RES	0,D
 	SET	5,D
 	CALL	C1370
 	LD	A,H
-	RRA	
-	RET	
+	RRA
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C135E:	LD	A,35H	; "5"
 	OR	C
@@ -3713,15 +3658,17 @@ J1365:	CALL	C110C
 	RES	4,D
 	RES	5,D
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1370:	PUSH	HL
 	PUSH	DE
 	LD	HL,(FILNAM+0)
 	LD	A,L
-	CPL	
+	CPL
 	AND	D
 	LD	D,A
 	LD	A,15
@@ -3733,11 +3680,12 @@ C1370:	PUSH	HL
 	OUT	(0A1H),A
 	POP	DE
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine STMOTR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  Cassette interface not supported by Turbo-R
 
 J1387:	RET
@@ -3748,12 +3696,14 @@ J1387:	RET
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J139B:	CALL	H.NMI
 	RETN
 
 ;	  Subroutine INIFNK
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J13A0:	LD	HL,FNKSTR
 	LD	B,9FH
@@ -3778,9 +3728,7 @@ J13B3:	LD	A,(DE)
 	ADD	HL,BC
 	POP	BC
 	DJNZ	J13B1
-;
-	RET	
-;
+	RET
 ;	-----------------
 I13C3:	DEFM	'color ',0
 	DEFM	'auto ',0
@@ -3805,26 +3753,30 @@ I13C3:	DEFM	'color ',0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J140B:	IN	A,(99H)
-	RET	
+	RET
 
 ;	  Subroutine RSLREG
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J140E:	IN	A,(0A8H)
-	RET	
+	RET
 
 ;	  Subroutine WSLREG
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1411:	OUT	(0A8H),A
-	RET	
+	RET
 
 ;	  Subroutine PHYDIO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J1414:	CALL	H.PHYD
 	RET
@@ -3833,26 +3785,31 @@ J1414:	CALL	H.PHYD
 ;	     Inputs  ________________________
 ;	     Outputs ________________________;
 
+
 J1418:	CALL	H.FORM
-	RET	
+	RET
 
 
 ; MSX2 has unused space at 141CH-1479H
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C141C:	LD	A,(MODE)
 	AND	10H
 	LD	E,212
 	RET	Z
 	LD	DE,256
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1428:	LD	HL,(CLOC)
 	LD	A,(RG25SA)
@@ -3885,14 +3842,14 @@ J1440:	LD	(HL),A			; update RGSAV
 	LD	L,A
 	LD	A,(RG25SA)		; YAE and YJK
 	AND	18H
-	RLCA	
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
+	RLCA
 	OR	L
 	OUT	(0F3H),A
 	LD	A,H
 	POP	HL
-	RET	
+	RET
 
 	DEFS	146AH-$			; unused space, align to MSX2+ code
 
@@ -3900,18 +3857,19 @@ J1440:	LD	(HL),A			; update RGSAV
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J146A:	IN	A,(0F4H)
-	NOP	
-	RET	
+	NOP
+	RET
 
 ;	  Subroutine WRBTST
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J146E:	NOP	
+
+J146E:	NOP
 	OUT	(0F4H),A
-	RET	
-;
+	RET
 ;	-----------------
 J1472:	NOP
 	NOP
@@ -3926,6 +3884,7 @@ J1472:	NOP
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1490:	CALL	C14F8
 	LD	A,B
 	INC	A
@@ -3933,7 +3892,6 @@ J1490:	CALL	C14F8
 	AND	(HL)
 	CP	C
 	RET	Z
-;
 	PUSH	HL
 	DEC	HL
 	DEC	HL
@@ -3950,23 +3908,19 @@ J1490:	CALL	C14F8
 	LD	(HL),E
 	POP	HL
 	LD	(HL),C
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C14AB:	CALL	C14F8
-;
 	LD	(HL),00H
 	JR	NZ,J14CF		; putback flag set,
-;
 	LD	A,C
 	CP	B
 	RET	Z
-;
 	INC	HL
 	INC	A
 	AND	(HL)
@@ -3988,25 +3942,22 @@ C14AB:	CALL	C14F8
 	LD	(HL),C
 	OR	A
 	RET	NZ
-;
 	INC	A
 	LD	A,00H
-	RET	
-;
+	RET
 ;	-----------------
 J14CF:	LD	C,A
 	LD	B,00H
 	LD	HL,QUEBAK-1
 	ADD	HL,BC
 	LD	A,(HL)
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C14D8:	PUSH	BC
 	CALL	C1502			; get control blok queue
 	LD	(HL),B
@@ -4021,14 +3972,14 @@ C14D8:	PUSH	BC
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
-	RET	
+	RET
 
 ;	  Subroutine LFTQ
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J14E9:	CALL	C14F8
-;
 	LD	A,B
 	INC	A
 	INC	HL
@@ -4039,14 +3990,13 @@ J14E9:	CALL	C14F8
 	AND	(HL)
 	LD	L,A
 	LD	H,00H
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C14F8:	CALL	C1502			; get controlblok queue
 	LD	B,(HL)			; put pos
 	INC	HL
@@ -4054,27 +4004,27 @@ C14F8:	CALL	C1502			; get controlblok queue
 	INC	HL
 	LD	A,(HL)			; putback flag
 	OR	A
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C1502:	RLCA	
+
+C1502:	RLCA
 	LD	B,A
-	RLCA	
+	RLCA
 	ADD	A,B			; *6
 	LD	C,A
 	LD	B,00H
 	LD	HL,(QUEUES)
 	ADD	HL,BC
-	RET	
+	RET
 
 ;	  Subroutine GRPPRT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J150E:	CALL	C06A9			; CHKNEW (check if new style screenmode)
 	JR	C,J151C			; nope,
@@ -4156,6 +4106,7 @@ J15A0:	LD	(GRPACY),A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C15A5:	PUSH	HL
 	PUSH	BC
 	LD	B,1
@@ -4203,15 +4154,16 @@ J15E5:	POP	DE
 	SRL	E
 	SRL	E			; screenmode 3, divide coordinates by 4
 J15F5:	LD	A,B
-	RRCA	
+	RRCA
 	LD	B,H
 	LD	C,L
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine check if screenmode 2 or 4
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C15FB:	LD	A,(SCRMOD)
 	CP	4
@@ -4223,13 +4175,12 @@ C15FB:	LD	A,(SCRMOD)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1604:	LD	A,(SCRMOD)
 	CP	05H	; 5 
 	JR	NC,J163E
-;
 	CP	03H	; 3 
 	JR	Z,J1648
-;
 	PUSH	BC
 	LD	D,C
 	LD	A,C
@@ -4240,9 +4191,9 @@ C1604:	LD	A,(SCRMOD)
 	LD	A,(HL)
 	LD	(CMASK),A
 	LD	A,E
-	RRCA	
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
+	RRCA
 	AND	1FH
 	LD	B,A
 	LD	A,D
@@ -4256,8 +4207,7 @@ C1604:	LD	A,(SCRMOD)
 	ADD	HL,BC
 	LD	(CLOC),HL
 	POP	BC
-	RET	
-;
+	RET
 ;	-----------------
 I1636:	DEFB	080H,040H,020H,010H,008H,004H,002H,001H
 
@@ -4266,8 +4216,7 @@ J163E:	LD	H,B
 	LD	(CLOC),HL
 	LD	A,E
 	LD	(CMASK),A
-	RET	
-;
+	RET
 ;	-----------------
 J1648:	PUSH	IX
 	LD	IX,S.MAPXYC
@@ -4277,21 +4226,24 @@ J1648:	PUSH	IX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1651:	LD	A,(CMASK)
 	LD	HL,(CLOC)
-	RET	
+	RET
 
 ;	  Subroutine STOREC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1658:	LD	(CMASK),A
 	LD	(CLOC),HL
-	RET	
+	RET
 
 ;	  Subroutine READC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C165F:	CALL	C06A9			; CHKNEW (check if new style screenmode)
 	JR	C,J166D			; nope,
@@ -4315,23 +4267,24 @@ J166D:	CALL	C15FB			; check if screenmode 2 or 4
 	POP	AF
 	LD	A,B
 	JR	Z,J168D
-	RRCA	
-	RRCA	
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
+	RRCA
+	RRCA
 J168D:	AND	0FH
 	POP	HL
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine SETATR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1692:	CALL	C169A
 	RET	C
 	LD	(ATRBYT),A
-	RET	
+	RET
 
 ;	  Subroutine validate graphical attribute
 ;	     Inputs  A = attribute
@@ -4354,7 +4307,7 @@ J16AB:	POP	AF
 
 J16AE:	POP	AF
 	CP	20H
-	CCF	
+	CCF
 	RET	C
 	CP	10H
 	JR	C,J16BA
@@ -4374,6 +4327,7 @@ J16BA:	AND	03H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C16C3:	LD	A,(SCRMOD)
 	CP	05H
 	JR	NC,J16E7		; new style screenmode, use VDP command
@@ -4388,7 +4342,7 @@ C16C3:	LD	A,(SCRMOD)
 	POP	DE
 	POP	BC
 	POP	HL
-	RET	
+	RET
 
 J16DE:	PUSH	IX
 	LD	IX,S.SETC
@@ -4397,7 +4351,7 @@ J16DE:	PUSH	IX
 J16E7:	CALL	C1428
 	LD	A,(CMASK)
 	PUSH	AF
-J16EE:	DI	
+J16EE:	DI
 	LD	A,02H
 	OUT	(99H),A
 	LD	A,8FH
@@ -4411,10 +4365,10 @@ J16EE:	DI
 	LD	A,8FH
 	OUT	(99H),A
 	POP	AF
-	EI	
-	RRCA	
+	EI
+	RRCA
 	JR	C,J16EE
-	DI	
+	DI
 	LD	A,24H
 	OUT	(99H),A
 	LD	A,91H
@@ -4437,12 +4391,13 @@ J16EE:	DI
 	OUT	(9BH),A
 	LD	A,50H
 	OUT	(9BH),A
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine pixel pos right if possible
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1735:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J1743			; yep,
@@ -4465,6 +4420,7 @@ J1743:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1756:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J1764			; yep,
 	PUSH	IX
@@ -4473,7 +4429,7 @@ C1756:	CALL	C15FB			; check if screenmode 2 or 4
 
 J1764:	PUSH	HL
 	CALL	C1651			; FETCHC
-	RRCA	
+	RRCA
 	JR	NC,J17AE
 J176B:	PUSH	DE
 	LD	DE,8
@@ -4483,6 +4439,7 @@ J176B:	PUSH	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1771:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J177F
 	PUSH	IX
@@ -4491,7 +4448,7 @@ C1771:	CALL	C15FB			; check if screenmode 2 or 4
 
 J177F:	PUSH	HL
 	CALL	C1651			; FETCHC
-	RLCA	
+	RLCA
 	JR	NC,J17AE
 	LD	A,L
 	AND	0F8H
@@ -4503,6 +4460,7 @@ J177F:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1790:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J179E
 	PUSH	IX
@@ -4511,7 +4469,7 @@ J1790:	CALL	C15FB			; check if screenmode 2 or 4
 
 J179E:	PUSH	HL
 	CALL	C1651			; FETCHC
-	RLCA	
+	RLCA
 	JR	NC,J17AE
 J17A5:	PUSH	DE
 	LD	DE,-8
@@ -4521,11 +4479,12 @@ J17A9:	ADD	HL,DE
 J17AE:	LD	(CMASK),A
 	AND	A
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine TDOWNC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C17B4:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J17C2
@@ -4554,6 +4513,7 @@ J17C2:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J17DC:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J17EA
 	PUSH	IX
@@ -4571,6 +4531,7 @@ J17EF:	INC	HL
 ;	  Subroutine TUPC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J17F6:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J1804
@@ -4593,13 +4554,14 @@ J1804:	PUSH	HL
 	AND	07H	; 7 
 	JR	NZ,J1832
 J181B:	POP	DE
-J181C:	SCF	
+J181C:	SCF
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine UPC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J181F:	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J182D
@@ -4620,29 +4582,26 @@ J183C:	LD	(CLOC),HL
 	AND	A
 	POP	DE
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine NSETCX
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1843:	CALL	C15FB			; check if screenmode 2 or 4
-;
 	JP	NZ,J18F5
-;
 	PUSH	HL
 	CALL	C1651			; FETCHC
-;
 	EX	(SP),HL
 	ADD	A,A
 	JR	C,J1869
-;
 	PUSH	AF
 	LD	BC,-1
-	RRCA	
+	RRCA
 J1856:	ADD	HL,BC
 	JR	NC,J189E
-	RRCA	
+	RRCA
 	JR	NC,J1856
 	POP	AF
 	DEC	A
@@ -4657,11 +4616,11 @@ J1869:	LD	A,L
 	AND	07H	; 7 
 	LD	C,A
 	LD	A,H
-	RRCA	
+	RRCA
 	LD	A,L
-	RRA	
-	RRCA	
-	RRCA	
+	RRA
+	RRCA
+	RRCA
 	AND	3FH	; "?"
 	POP	HL
 	LD	B,A
@@ -4687,16 +4646,18 @@ I1897:	DEFB	080H,0C0H,0E0H,0F0H,0F8H,0FCH,0FEH
 
 J189E:	ADD	A,A
 	DEC	A
-	CPL	
+	CPL
 	LD	B,A
 	POP	AF
 	DEC	A
 	AND	B
 J18A5:	POP	HL
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C18A6:	LD	B,A
 	CALL	C07E1			; RDVRM
@@ -4734,15 +4695,17 @@ C18A6:	LD	B,A
 	JR	J18F2
 
 J18D8:	LD	A,B
-	CPL	
+	CPL
 	AND	C
 	DEFB	011H			; LD DE,xxxx (skip next 2 instructions)
 C18DC:	LD	A,B
 	OR	C
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C18DE:	LD	DE,2000H
 	ADD	HL,DE
@@ -4750,11 +4713,10 @@ C18DE:	LD	DE,2000H
 
 J18E4:	POP	AF
 	LD	A,B
-	CPL	
+	CPL
 	PUSH	HL
 	PUSH	DE
 	CALL	C18DE
-;
 	POP	DE
 	POP	HL
 	LD	A,(ATRBYT)
@@ -4767,38 +4729,41 @@ J18F5:	PUSH	HL
 	POP	HL
 	DEC	L
 	JR	NZ,J18F5
-	RET	
+	RET
 
 ;	  Subroutine GTASPC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1901:	LD	HL,(ASPCT1)
 	EX	DE,HL
 	LD	HL,(ASPCT2)
-	RET	
+	RET
 
 ;	  Subroutine PNTINI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J1909:	PUSH	AF
 	CALL	C15FB			; check if screenmode 2 or 4
 	JR	Z,J1915
 	POP	AF
 	CP	10H
-	CCF	
+	CCF
 	JR	J191A
 
 J1915:	POP	AF
 	LD	A,(ATRBYT)
 	AND	A
 J191A:	LD	(BDRATR),A
-	RET	
+	RET
 
 ;	  Subroutine SCANR
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J191E:	LD	HL,0
 	LD	C,L
@@ -4824,7 +4789,7 @@ J193C:	CALL	C165F			; READC
 	CALL	C1735			; pixel pos right if possible
 	JR	NC,J193C		; is possible,
 	LD	DE,0
-	RET	
+	RET
 
 J194F:	CALL	C19D1
 	PUSH	DE
@@ -4864,6 +4829,7 @@ J1970:	PUSH	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1994:	LD	HL,0
 	LD	C,L
 	CALL	C15FB			; check if screenmode 2 or 4
@@ -4893,11 +4859,13 @@ J19C2:	PUSH	HL
 	POP	HL
 J19CC:	LD	A,(FILNAM+3)
 	LD	C,A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C19D1:	PUSH	HL
 	LD	HL,ATRBYT
@@ -4906,15 +4874,16 @@ C19D1:	PUSH	HL
 	RET	Z
 	INC	A
 	LD	(FILNAM+3),A
-	RET	
+	RET
 
 ;	  Subroutine TAPION,TAPIN,TAPIOF,TAPOON,TAPOUT,TAPOOF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  Cassette interface not supported with Turbo-R
 ;	             all routines just quit with error flag
 
-J19DD:	SCF	
+J19DD:	SCF
 	RET				; error!
 
 
@@ -4926,14 +4895,16 @@ J19DD:	SCF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J19DF:	LD	IX,M71DB
 J19E3:	CALL	C02BF			; CALBAS
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine PCMREC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J19E8:	LD	IX,M7042
 	JR	J19E3			; call routine in basicrom
@@ -4941,6 +4912,7 @@ J19E8:	LD	IX,M7042
 ;	  Subroutine patchroutine GTPAD
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J19EE:	PUSH	AF
 	CALL	C04D2			; GETCPU
@@ -4958,11 +4930,12 @@ J19EE:	PUSH	AF
 	LD	A,L
 	CALL	C046A			; CHGCPU: restore cpu mode
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine patchroutine for supporting PAUSE key
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J1A0B:	IN	A,(99H)
 	AND	A			; orginal code at patchlocation
@@ -4976,7 +4949,7 @@ J1A0B:	IN	A,(99H)
 	LD	A,01H
 	OUT	(0A5H),A		; sound off
 J1A1F:	IN	A,(0A7H)
-	RRCA	
+	RRCA
 	JR	C,J1A1F			; wait until pause key pressed again
 	LD	A,(CASPRV)
 	OUT	(0A7H),A		; pause led off
@@ -4991,6 +4964,7 @@ J1A2D:	EX	AF,AF'
 ;	  Subroutine patchroutine for initializing MIDI hardware
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1A31:	XOR	A
 	OUT	(0E9H),A
@@ -5029,6 +5003,7 @@ J1A6D:	JP	M7C76			; resume orginal routine
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1A70:	PUSH	IY
 	PUSH	IX
 	IN	A,(0E9H)
@@ -5045,6 +5020,7 @@ J1A70:	PUSH	IY
 ;	  Subroutine patchroutine for PAL setup of VDP
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	     Remark  This was not in the orginal Turbo-R code
 ;	             Added by UltraSoft to support PAL countries
 
@@ -5067,6 +5043,7 @@ PTCPA1:	DEC	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J1B45:	PUSH	AF
 	CALL	H.OUTD
 	CALL	C0BF9			; ISFLIO
@@ -5087,6 +5064,7 @@ J1B56:	LD	A,(PRTFLG)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1B63:	PUSH	AF
 	CP	09H
 	JR	NZ,J1B76
@@ -5096,7 +5074,7 @@ J1B68:	LD	A," "
 	AND	07H
 	JR	NZ,J1B68
 	POP	AF
-	RET	
+	RET
 
 J1B76:	SUB	0DH
 	JR	Z,J1B84			; CR, lptpos=0
@@ -5154,7 +5132,6 @@ J1BB7:	LD	A," "
 
 J1BBB:	POP	AF
 	JP	J0919			; CHPUT
-;
 ;	-----------------
 ;	Characterset goes here
 ;	BEGIN
@@ -5189,7 +5166,6 @@ D1BBF:
 	ENDIF
 
 
-;
 ;	-----------------
 ;	Characterset goes here
 ;	END
@@ -5198,6 +5174,7 @@ D1BBF:
 ;	  Subroutine PINLIN
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J23BF:	CALL	H.PINL
 	LD	A,(AUTFLG)
@@ -5210,6 +5187,7 @@ J23BF:	CALL	H.PINL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J23CC:	CALL	H.QINL
 	LD	A,"?"
 	RST	18H
@@ -5219,6 +5197,7 @@ J23CC:	CALL	H.QINL
 ;	  Subroutine INLIN
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J23D5:	CALL	H.INLI
 	LD	HL,(CSRY)
@@ -5244,9 +5223,11 @@ J23E7:	CALL	C10CB			; CHGET
 
 C23FE:	RET
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C23FF:	PUSH	AF
 	CP	09H
@@ -5258,7 +5239,7 @@ J2405:	LD	A," "
 	DEC	A
 	AND	07H
 	JR	NZ,J2405
-	RET	
+	RET
 
 J2413:	POP	AF
 	LD	HL,INSFLG
@@ -5272,7 +5253,7 @@ J2413:	POP	AF
 	CALL	NZ,C24F2
 	POP	AF
 J2426:	RST	18H
-	RET	
+	RET
 
 J2428:	LD	(HL),00H
 	RST	18H
@@ -5282,11 +5263,13 @@ J2428:	LD	(HL),00H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J242C:	DEFB	03EH			; LD A,xx (skip next instruction)
 
 ;	  Subroutine change to "block" cursor
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C242D:	XOR	A
 	PUSH	AF
@@ -5385,9 +5368,9 @@ J24B2:	PUSH	AF
 	XOR	A
 	LD	(INSFLG),A
 	POP	AF
-	SCF	
+	SCF
 	POP	HL
-	RET	
+	RET
 
 J24C4:	INC	L
 
@@ -5418,9 +5401,11 @@ C24E5:	LD	HL,INSFLG
 	JP	Z,C242D			; change to "block" cursor
 	JP	J242C			; change to "insert" cursor
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C24F2:	CALL	C0A8B			; remove cursor when enabled
 	LD	HL,(CSRY)
@@ -5630,34 +5615,36 @@ J263D:	LD	HL,(CSRY)
 	PUSH	DE
 	CALL	C0B83			; read char from screenlocation
 	CP	"0"
-	CCF	
+	CCF
 	RET	NC
 	CP	"9"+1
 	RET	C
 	CP	"A"
-	CCF	
+	CCF
 	RET	NC
 	CP	"Z"+1
 	RET	C
 	CP	"a"
-	CCF	
+	CCF
 	RET	NC
 	CP	"z"+1
 	RET	C
 	CP	86H
-	CCF	
+	CCF
 	RET	NC
 	CP	0A0H
 	RET	C
 	CP	0A6H
-	CCF	
+	CCF
 I2668:	LD	A,0
 	INC	A			; flag NZ
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C266C:	DEC	L
 	JR	Z,J2674			; at the top line,
@@ -5672,9 +5659,7 @@ J2674:	INC	L
 	RET				; yep, begin at position where input begun
 
 
-;
 ; Some sort of jumptable for routines in basicrom
-;
 
 
 ; entrypoint for 2nd part of the init routine

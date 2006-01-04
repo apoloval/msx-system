@@ -1,16 +1,15 @@
 ; AUDIO00.MAC
-;
+
 ; MSX AUDIO BIOS ROM
-;
+
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
-;
+
 ; Code Copyrighted by ASCII and maybe others
 ; Source comments by Arjen Zeilemaker
-;
+
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
-;
 
 
 	.Z80
@@ -177,6 +176,7 @@ DFFFF	EQU	0FFFFH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0000:	JP	J04A2
 
 	DEFS	0008H-$,0
@@ -184,6 +184,7 @@ C0000:	JP	J04A2
 ;	  Subroutine suspend interrupt processing
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0008:	JP	J03F5
 
@@ -193,6 +194,7 @@ C0008:	JP	J03F5
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C000C:	JP	C0218
 
 	DEFS	0010H-$,0
@@ -200,6 +202,7 @@ C000C:	JP	C0218
 ;	  Subroutine resume interrupt processing
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0010:	JP	J0401
 
@@ -209,6 +212,7 @@ C0010:	JP	J0401
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0014:	JP	C0233
 
 	DEFS	0018H-$,0
@@ -216,6 +220,7 @@ C0014:	JP	C0233
 ;	  Subroutine write Y8950 register (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0018:	JP	C0753
 
@@ -225,6 +230,7 @@ C0018:	JP	C0753
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C001C:	JP	C0273
 
 	DEFS	0020H-$,0
@@ -233,6 +239,7 @@ C001C:	JP	C0273
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0020:	JP	C0758
 
 	DEFS	0024H-$,0
@@ -240,6 +247,7 @@ C0020:	JP	C0758
 ;	  Subroutine ENASLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0024:	JP	C031E
 
@@ -250,6 +258,7 @@ C0024:	JP	C031E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0030:	JP	J0261
 
 	DEFS	0034H-$,0
@@ -257,6 +266,7 @@ C0030:	JP	J0261
 ;	  Subroutine get slotid
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0034:	JP	C01C7
 
@@ -266,11 +276,12 @@ C0034:	JP	C01C7
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0038:	JP	J3300
 
 	DEFS	0066H-$,0
 
-C0066:	RETN	
+C0066:	RETN
 
 	DEFS	0080H-$,0
 
@@ -292,66 +303,67 @@ C0096:	JP	J0401		; resume interrupt processing
 ?00B1:	JP	J056E		; audio keyboard
 C00B4:	JP	J0397		; H.KEYI interrupt handler
 I00B7:	JP	J0550		; TIMER-2 interrupt
-?00BA:	RET	
-	RET	
-	RET	
-?00BD:	RET	
-	RET	
-	RET	
-?00C0:	RET	
-	RET	
-	RET	
-?00C3:	RET	
-	RET	
-	RET	
-?00C6:	RET	
-	RET	
-	RET	
-?00C9:	RET	
-	RET	
-	RET	
-?00CC:	RET	
-	RET	
-	RET	
-?00CF:	RET	
-	RET	
-	RET	
-?00D2:	RET	
-	RET	
-	RET	
-?00D5:	RET	
-	RET	
-	RET	
-?00D8:	RET	
-	RET	
-	RET	
-?00DB:	RET	
-	RET	
-	RET	
-?00DE:	RET	
-	RET	
-	RET	
-I00E1:	RET	
-	RET	
-	RET	
-?00E4:	RET	
-	RET	
-	RET	
-?00E7:	RET	
-	RET	
-	RET	
-?00EA:	RET	
-	RET	
-	RET	
-?00ED:	RET	
-	RET	
-	RET	
+?00BA:	RET
+	RET
+	RET
+?00BD:	RET
+	RET
+	RET
+?00C0:	RET
+	RET
+	RET
+?00C3:	RET
+	RET
+	RET
+?00C6:	RET
+	RET
+	RET
+?00C9:	RET
+	RET
+	RET
+?00CC:	RET
+	RET
+	RET
+?00CF:	RET
+	RET
+	RET
+?00D2:	RET
+	RET
+	RET
+?00D5:	RET
+	RET
+	RET
+?00D8:	RET
+	RET
+	RET
+?00DB:	RET
+	RET
+	RET
+?00DE:	RET
+	RET
+	RET
+I00E1:	RET
+	RET
+	RET
+?00E4:	RET
+	RET
+	RET
+?00E7:	RET
+	RET
+	RET
+?00EA:	RET
+	RET
+	RET
+?00ED:	RET
+	RET
+	RET
 
 	DEFS	01C1H-$,0
 
 ;	  Subroutine start routine
 ;	     Inputs  HL = adres routine
 ;	     Outputs ________________________
+
 
 C01C1:	JP	(HL)
 
@@ -363,25 +375,25 @@ C01C2:	ADD	A,L
 	LD	L,A
 	RET	NC
 	INC	H
-	RET	
+	RET
 
 ;	  Subroutine get slotid
 ;	     Inputs  HL = adres
 ;	     Outputs A = slotid
 
-C01C7:	DI	
+C01C7:	DI
 	IN	A,(0A8H)
 	LD	C,A
 	LD	D,A
 	LD	A,H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	AND	03H			; page 0 ?
 	JR	Z,J01DA			; yep,
 	LD	B,A
 	LD	A,D
-J01D5:	RRCA	
-	RRCA	
+J01D5:	RRCA
+	RRCA
 	DJNZ	J01D5
 	LD	D,A
 J01DA:	LD	A,D
@@ -395,15 +407,17 @@ J01DA:	LD	A,D
 	POP	HL
 	CALL	NZ,C01EC		; yep,
 	LD	A,D
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C01EC:	LD	A,D
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	AND	0C0H
 	LD	E,A
 	LD	A,C
@@ -416,15 +430,15 @@ C01EC:	LD	A,D
 	LD	A,C
 	OUT	(0A8H),A
 	LD	A,H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	DEC	A
 	AND	03H
 	JR	Z,J0210
 	LD	B,A
 	LD	A,E
-J020B:	RRCA	
-	RRCA	
+J020B:	RRCA
+	RRCA
 	DJNZ	J020B
 	LD	E,A
 J0210:	LD	A,E
@@ -432,11 +446,12 @@ J0210:	LD	A,E
 	OR	80H
 	OR	D
 	LD	D,A
-	RET	
+	RET
 
 ;	  Subroutine RDSLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0218:	CALL	C033E
 	JP	M,J0228
@@ -446,7 +461,7 @@ C0218:	CALL	C033E
 	OR	B
 	CALL	RDPRIM
 	LD	A,E
-	RET	
+	RET
 
 J0228:	PUSH	HL
 	CALL	C0363
@@ -458,6 +473,7 @@ J0228:	PUSH	HL
 ;	  Subroutine WRSLT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0233:	PUSH	DE
 	CALL	C033E
@@ -489,11 +505,12 @@ J024E:	POP	BC
 	OUT	(0A8H),A
 	POP	AF
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine CALLF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J0261:	EX	(SP),HL
 	PUSH	AF
@@ -516,7 +533,8 @@ J0261:	EX	(SP),HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C0273:	EXX	
+
+C0273:	EXX
 	EX	AF,AF'
 	PUSH	IY
 	POP	AF
@@ -528,7 +546,7 @@ C0273:	EXX
 	PUSH	AF
 	AND	C
 	OR	B
-	EXX	
+	EXX
 	JP	CLPRIM
 
 J028A:	PUSH	AF
@@ -559,9 +577,9 @@ J029D:	POP	AF
 	LD	(HL),A
 	PUSH	HL
 	EX	AF,AF'
-	EXX	
+	EXX
 	CALL	C0273
-	EXX	
+	EXX
 	EX	AF,AF'
 	POP	HL
 	POP	BC
@@ -571,7 +589,7 @@ J029D:	POP	AF
 	LD	A,B
 	AND	3FH
 	OR	C
-	DI	
+	DI
 	OUT	(0A8H),A
 	LD	A,E
 	LD	(DFFFF),A
@@ -580,10 +598,10 @@ J029D:	POP	AF
 	LD	(HL),E
 J02CE:	POP	AF
 	JP	PO,J02D3
-	EI	
+	EI
 J02D3:	EX	AF,AF'
-	EXX	
-	RET	
+	EXX
+	RET
 
 J02D6:	LD	H,40H
 	CALL	C01C7			; get slotid page 1
@@ -603,8 +621,8 @@ J02D6:	LD	H,40H
 	LD	L,A
 	POP	AF
 	EX	(SP),HL
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	LD	D,A
 	IN	A,(0A8H)
 	LD	C,A
@@ -613,12 +631,12 @@ J02D6:	LD	H,40H
 	LD	H,A
 	OUT	(0A8H),A
 	LD	A,(DFFFF)
-	CPL	
+	CPL
 	LD	B,A
 	LD	A,L
 	AND	0CH
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	LD	E,A
 	LD	A,B
 	AND	0FCH
@@ -639,13 +657,14 @@ J0312:	LD	(HL),B
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C031E:	CALL	C033E
 	JP	M,J032B
 	IN	A,(0A8H)
 	AND	C
 	OR	B
 	OUT	(0A8H),A
-	RET	
+	RET
 
 J032B:	PUSH	HL
 	CALL	C0363
@@ -665,20 +684,21 @@ J032B:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C033E:	DI	
+
+C033E:	DI
 	PUSH	AF
 	LD	A,H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	AND	03H
 	LD	E,A
 	LD	A,0C0H
-J0348:	RLCA	
-	RLCA	
+J0348:	RLCA
+	RLCA
 	DEC	E
 	JP	P,J0348
 	LD	E,A
-	CPL	
+	CPL
 	LD	C,A
 	POP	AF
 	PUSH	AF
@@ -693,11 +713,12 @@ J0359:	ADD	A,55H
 	LD	B,A
 	POP	AF
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine change secundairy slotregister
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0363:	PUSH	AF
 	LD	A,D
@@ -712,8 +733,8 @@ C0363:	PUSH	AF
 	OR	C
 	OUT	(0A8H),A
 	LD	A,D
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	AND	03H
 	LD	D,A
 	LD	A,0ABH
@@ -723,10 +744,10 @@ J037B:	ADD	A,55H
 	AND	E
 	LD	D,A
 	LD	A,E
-	CPL	
+	CPL
 	LD	H,A
 	LD	A,(DFFFF)
-	CPL	
+	CPL
 	LD	L,A
 	AND	H
 	OR	D
@@ -735,13 +756,14 @@ J037B:	ADD	A,55H
 	OUT	(0A8H),A
 	POP	AF
 	AND	03H
-	RET	
+	RET
 
 ;	  Subroutine H.KEYI interrupt handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J0397:	DI	
+
+J0397:	DI
 	PUSH	AF
 	PUSH	BC
 	PUSH	DE
@@ -792,26 +814,28 @@ J03E6:	CALL	C3310
 	POP	DE
 	POP	BC
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine suspend interrupt processing
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J03F5:	DI	
+
+J03F5:	DI
 	PUSH	AF
 	LD	A,(D3400)
 	INC	A
 	LD	(D3400),A
 	POP	AF
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine resume interrupt processing
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J0401:	DI	
+
+J0401:	DI
 	PUSH	AF
 	LD	A,(D3400)
 	AND	A			; interrupts suspended ?
@@ -827,16 +851,18 @@ J0401:	DI
 	POP	DE
 	POP	BC
 J0418:	POP	AF
-	EI	
-	RET	
+	EI
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C041B:	LD	A,1
 	LD	(D3400),A		; suspend interrupt processing
-J0420:	DI	
+J0420:	DI
 	XOR	A
 	LD	HL,I3350
 	OR	(HL)			; EOS int 1st Y8950 ?
@@ -866,13 +892,13 @@ J044A:	DEC	(HL)
 	INC	HL
 	LD	H,(HL)
 	LD	L,A
-	EI	
+	EI
 	OR	H
 	LD	A,C
 	CALL	NZ,C01C1		; start routine
 	JR	J0420
 
-J0459:	DI	
+J0459:	DI
 	LD	HL,D3402
 	BIT	1,(HL)
 	JR	NZ,J048E
@@ -891,20 +917,20 @@ J0459:	DI
 	INC	HL
 	LD	H,(HL)
 	LD	L,A
-	EI	
+	EI
 	CALL	C01C1			; start routine
-	EI	
+	EI
 	LD	HL,D3402
 	RES	0,(HL)
 	CALL	C0096			; resume interrupt processing
 	POP	IY
 	POP	IX
-	RET	
+	RET
 
 J048E:	XOR	A
-	CCF	
-	EI	
-	RET	
+	CCF
+	EI
+	RET
 
 I0492:	DEFW	C0980			; 0, setup audio
 	DEFW	C0B08			; 1, initialize channel for audio keyboard both Y8950
@@ -919,9 +945,10 @@ I0492:	DEFW	C0980			; 0, setup audio
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J04A2:	CP	64
 	RET	NC
-	DI	
+	DI
 	PUSH	IX
 	PUSH	IY
 	LD	HL,D3400
@@ -935,15 +962,15 @@ J04A2:	CP	64
 	INC	HL
 	LD	H,(HL)
 	LD	L,A
-	EI	
+	EI
 	CALL	C01C1			; start routine
-	EI	
+	EI
 	LD	HL,I3401
 	DEC	(HL)
 	CALL	C0096			; resume interrupt processing
 	POP	IY
 	POP	IX
-	RET	
+	RET
 
 I04CE:	DEFW	C2705			; 0, transfer sample data
 	DEFW	C2788			; 1, test convert ADPCM sample data to PCM sample data
@@ -1011,19 +1038,20 @@ I04CE:	DEFW	C2705			; 0, transfer sample data
 	DEFW	C054E
 
 C054E:	XOR	A
-	RET	
+	RET
 
 ;	  Subroutine TIMER-2 interrupt handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J0550:	DI	
+
+J0550:	DI
 	LD	HL,I3401
 	INC	(HL)
 	LD	HL,D3400
 	INC	(HL)			; suspend interrupt processing
-	EI	
+	EI
 	PUSH	IX
 	PUSH	IY
 	CALL	C0C63
@@ -1033,19 +1061,20 @@ J0550:	DI
 	DEC	(HL)
 	CALL	C0096			; resume interrupt processing
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine scan audio keyboard
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J056E:	DI	
+
+J056E:	DI
 	LD	A,(D3402)
 	AND	02H
 	JR	NZ,J0590
 	LD	HL,D3400
 	INC	(HL)			; suspend interrupt processing
-	EI	
+	EI
 	PUSH	IX
 	PUSH	IY
 	CALL	C1E89			; scan AUDIO keyboard
@@ -1055,13 +1084,13 @@ J056E:	DI
 	RES	1,(HL)
 	CALL	C0096			; resume interrupt processing
 	AND	A
-	RET	
+	RET
 
-J0590:	EI	
-	SCF	
-	RET	
+J0590:	EI
+	SCF
+	RET
 
-J0593:	DI	
+J0593:	DI
 	PUSH	IX
 	PUSH	IY
 	CALL	C05CC
@@ -1080,11 +1109,13 @@ J0593:	DI
 J05C4:	CALL	C0675
 	POP	IY
 	POP	IX
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C05CC:	LD	HL,I3000
 	LD	DE,I3000+1
@@ -1097,7 +1128,7 @@ C05CC:	LD	HL,I3000
 	LD	HL,I0641
 	LD	DE,C34A8
 	LD	BC,12
-	LDIR	
+	LDIR
 	LD	A,(D3B0C)
 	LD	(C34B1+1),A
 	INC	A
@@ -1128,44 +1159,47 @@ C05CC:	LD	HL,I3000
 	LD	(D3382),HL		; instruments 32-63 (RAM)
 	LD	HL,I347B
 	LD	(D3479),HL
-	RET	
+	RET
 
 I0641:	OUT	(00H),A
-	RET	
+	RET
 
 ?0644:	IN	A,(00H)
-	RET	
+	RET
 
 ?0647:	OUT	(00H),A
-	RET	
+	RET
 
 ?064A:	IN	A,(00H)
-	RET	
+	RET
 
 ;	  Subroutine general interrupt handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	Remark copied to 3300
 
 I064D:	CALL	C00B4
-	EI	
-	RET	
+	EI
+	RET
 
 ?0652:	DEFB	0B0H,0C2H,0FAH
 
 ;	  Subroutine should VDP interrupts handled
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	Remark copied to 3308
 
 	XOR	A			; do handle VDP interrupts
-	RET	
+	RET
 
 ?0657:	DEFB	0FEH,00FH,028H,01FH,078H,0FEH
 
 ;	  Subroutine unknown purpose interrupt routine
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	Remark copied to 3310
 
 	RET
@@ -1175,10 +1209,11 @@ I064D:	CALL	C00B4
 ;	  Subroutine VRAM ready routine
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 ;	Remark copied to 3318
 
 	XOR	A
-	RET	
+	RET
 
 ?0667:	DEFB	078H,019H,0F6H,090H,0DDH,077H
 
@@ -1187,9 +1222,11 @@ I066D:	DEFW	I3344
 	DEFW	I3348
 	DEFW	I334C
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0675:	LD	A,08H			; b3 is output, b2-b0 is input
 	LD	C,18H
@@ -1270,7 +1307,7 @@ J06CF:	PUSH	BC
 	ADD	IX,DE
 	INC	C
 	DJNZ	J06CF
-	RET	
+	RET
 
 I070F:	DEFB	0
 	DEFB	1
@@ -1285,6 +1322,7 @@ I070F:	DEFB	0
 ;	  Subroutine check if 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0718:	LD	C,2
 	LD	A,0FCH			; 0.32 ms
@@ -1309,40 +1347,45 @@ J073F:	SCF
 
 J0741:	LD	A,78H			; mask T1,T2,EOS,BUF RDY, stop T2,T1
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0743:	PUSH	AF
 	LD	A,C
 	OUT	(0C2H),A
 	POP	AF
 	OUT	(0C3H),A
-	RET	
+	RET
 
 ;	  Subroutine quit if channel disabled
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C074B:	AND	A
 	BIT	2,(IX+27)		; channel enabled ?
 	RET	Z			; yep, quit
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine write Y8950 register (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0753:	CALL	C0758			; write Y8950 register
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine write Y8950 register
 ;	     Inputs  C = register, A = data, IY = 
 ;	     Outputs ________________________
 
-C0758:	DI	
+
+C0758:	DI
 	AND	A
 	PUSH	AF
 	LD	A,(IY+36)
@@ -1352,7 +1395,7 @@ C0758:	DI
 	OUT	(0C0H),A
 	POP	AF
 	OUT	(0C1H),A		; write Y8950 register
-	RET	
+	RET
 
 J0768:	RRA				; 2nd Y8950 found ?
 	JR	C,J0772			; nope, quit with error
@@ -1360,26 +1403,28 @@ J0768:	RRA				; 2nd Y8950 found ?
 	OUT	(0C2H),A
 	POP	AF
 	OUT	(0C3H),A		; write Y8950 register
-	RET	
+	RET
 
 J0772:	POP	AF
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine write register if channel enabled (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0775:	CALL	C077A			; write register if channel enabled
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine write register if channel enabled (DI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C077A:	DI	
-	SCF	
+
+C077A:	DI
+	SCF
 	BIT	2,(IX+27)		; channel disabled ?
 	RET	NZ			; yep, quit with error
 	AND	A
@@ -1387,6 +1432,7 @@ C077A:	DI
 ;	  Subroutine write register
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0782:	PUSH	AF
 	LD	A,C
@@ -1399,6 +1445,7 @@ C0782:	PUSH	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J078D:	ADD	A,(IX+28)		; offset channel registers
 J0790:	BIT	0,(IX+27)		; use 1st Y8950 ?
 	JR	NZ,J079C		; nope, use 2nd Y8950
@@ -1410,90 +1457,97 @@ J0790:	BIT	0,(IX+27)		; use 1st Y8950 ?
 J079C:	OUT	(0C2H),A
 	POP	AF
 	OUT	(0C3H),A		; write Y8950 register
-	RET	
+	RET
 
 ;	  Subroutine write channel register 1st Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C07A2:	ADD	A,(IX+28)		; offset channel register
 	OUT	(0C0H),A
 	LD	A,C
 	OUT	(0C1H),A		; write Y8950 register
-	RET	
+	RET
 
 ;	  Subroutine write channel register 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C07AB:	ADD	A,(IX+28)		; offset channel register
 	OUT	(0C2H),A
 	LD	A,C
 	OUT	(0C3H),A		; write Y8950 register
-	RET	
+	RET
 
 ;	  Subroutine read Y8950 register (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J07B4:	CALL	C07B9			; read Y8950 register
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine read Y8950 register
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C07B9:	DI	
+
+C07B9:	DI
 	LD	A,(IY+36)
 	RRA				; use 1st Y8950 ?
 	JR	C,J07C6			; nope,
 	LD	A,C
 	OUT	(0C0H),A
 	IN	A,(0C1H)		; read register
-	RET	
+	RET
 
 J07C6:	RRA				; 2nd Y8950 found ?
 	RET	C			; nope, quit with error
 	LD	A,C
 	OUT	(0C2H),A
 	IN	A,(0C3H)		; read register
-	RET	
+	RET
 
 ;	  Subroutine read Y8950 status (EI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C07CE:	EI	
+
+C07CE:	EI
 	JR	J07D2
 
 ;	  Subroutine read Y8950 status
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C07D1:	DI	
+
+C07D1:	DI
 J07D2:	LD	A,(IY+36)
 	RRA				; use 1st Y8950 ?
 	JR	C,J07DB			; nope,
 	IN	A,(0C0H)		; read status
-	RET	
+	RET
 
 J07DB:	RRA				; 2nd Y8950 found ?
 	RET	C			; nope, quit with error
 	IN	A,(0C2H)		; read status
-	RET	
+	RET
 
 ;	  Subroutine start T1,T2 and set masks
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C07E0:	LD	IY,I3280		; control registers 1st Y8950
 	LD	A,C
 	LD	C,63H			; mask T1,T2 start T2,T1
-	RRA	
+	RRA
 	JR	NC,J07EC
 	RES	6,C			; do not mask T1
-J07EC:	RRA	
+J07EC:	RRA
 	JR	NC,J07F1
 	RES	5,C			; do not mask T2
 J07F1:	LD	A,(I3280+4)
@@ -1503,11 +1557,12 @@ J07F1:	LD	A,(I3280+4)
 	LD	C,4
 	RST	18H			; write Y8950 register (EI)
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine set TIMER-1 counter
 ;	     Inputs  C = 256 - (number of microseconds)/80
 ;	     Outputs ________________________
+
 
 C07FF:	LD	IY,I3280
 	LD	A,C
@@ -1515,11 +1570,12 @@ C07FF:	LD	IY,I3280
 	LD	C,2
 	RST	18H			; write Y8950 register (EI)
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine set TIMER-2 counter
 ;	     Inputs  C = value
 ;	     Outputs ________________________
+
 
 C080C:	LD	A,C
 	SRL	A
@@ -1531,13 +1587,14 @@ C080C:	LD	A,C
 ;	     Inputs  C = 256 - (number of microseconds)/320
 ;	     Outputs ________________________
 
+
 C0816:	LD	IY,I3280
 	LD	A,C
 	LD	(I3280+3),A
 	LD	C,3
 	RST	18H			; write Y8950 register (EI)
 	AND	A
-	RET	
+	RET
 
 I0823:	DEFB	000H,000H,000H,000H,000H,000H,000H,000H
 	DEFB	000H,000H,000H,000H,000H,000H,000H,000H
@@ -1561,6 +1618,7 @@ I0823:	DEFB	000H,000H,000H,000H,000H,000H,000H,000H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C08A3:	LD	IY,I3280		; control registers 1st Y8950
 	LD	A,(D32A2)
 	AND	0E0H			; all rhythm off
@@ -1581,11 +1639,12 @@ J08BF:	PUSH	BC
 	ADD	IX,DE
 	DJNZ	J08BF			; next channel
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine set AM and VIB depth
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C08D1:	LD	A,C
 	AND	0C0H
@@ -1597,11 +1656,12 @@ C08D1:	LD	A,C
 	LD	C,0BDH
 	RST	18H			; write Y8950 register (EI)
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine set pitch/transpose all channels
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C08E3:	LD	(IY+32),E
 	LD	(IY+33),D
@@ -1623,25 +1683,28 @@ J0901:	PUSH	BC
 	ADD	IX,DE
 	DJNZ	J0901			; next channel
 J090D:	AND	A
-	RET	
+	RET
 
 ;	  Subroutine function 21, play percussion
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C090F:	LD	A,C
 	AND	1FH
 	LD	D,A			; drum instrument SET mask
-	CPL	
+	CPL
 	LD	E,A			; drum instrument RESET mask
 	LD	C,0BDH
 	LD	IY,I3280
 	CALL	C0922
 	LD	IY,I32C0
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0922:	LD	A,(IY+34)
 	LD	B,A
@@ -1652,38 +1715,40 @@ C0922:	LD	A,(IY+34)
 	LD	(IY+34),A
 	RST	18H			; write Y8950 register (EI)
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine function 44, set percursion volume
 ;	     Inputs  C = percursion selector, E = volume
 ;	     Outputs ________________________
+
 
 C0930:	LD	A,C
 	AND	1FH
 	RET	Z
 	PUSH	BC
 	LD	BC,7*64
-	RRCA	
+	RRCA
 	CALL	C,C095F			; set TOTAL LEVEL add 1st operator both Y8950
 	LD	BC,8*64
-	RRCA	
+	RRCA
 	CALL	C,C095B			; set TOTAL LEVEL add 2nd operator both Y8950
-	RRCA	
+	RRCA
 	CALL	C,C095F			; set TOTAL LEVEL add 1st operator both Y8950
 	LD	BC,7*64
-	RRCA	
+	RRCA
 	CALL	C,C095B			; set TOTAL LEVEL add 2nd operator both Y8950
 	LD	BC,6*64
-	RRCA	
+	RRCA
 	CALL	C,C095F			; set TOTAL LEVEL add 1st operator both Y8950
 	CALL	C,C095B			; set TOTAL LEVEL add 2nd operator both Y8950
 	POP	BC
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine set TOTAL LEVEL add 2nd operator both Y8950
 ;	     Inputs  BC = channel offset
 ;	     Outputs ________________________
+
 
 C095B:	LD	D,13			; set TOTAL LEVEL add 2nd operator
 	JR	J0961
@@ -1691,6 +1756,7 @@ C095B:	LD	D,13			; set TOTAL LEVEL add 2nd operator
 ;	  Subroutine set TOTAL LEVEL add 1st operator both Y8950
 ;	     Inputs  BC = channel offset
 ;	     Outputs ________________________
+
 
 C095F:	LD	D,5			; set TOTAL LEVEL add 1st operator
 J0961:	PUSH	AF
@@ -1704,11 +1770,12 @@ J0961:	PUSH	AF
 	CALL	C0977			; FM function 2nd Y8950
 	POP	IX
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine FM function
 ;	     Inputs  D = function
 ;	     Outputs ________________________
+
 
 C0977:	PUSH	BC
 	PUSH	DE
@@ -1718,9 +1785,11 @@ C0977:	PUSH	BC
 	POP	BC
 	RET
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0980:	BIT	2,C			; drum mode ?
 	JR	Z,J098A			; nope,
@@ -1797,8 +1866,8 @@ J0A10:	PUSH	IX
 J0A20:	POP	BC
 	LD	A,C
 	AND	01H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	LD	H,A			; b0 set, enable channels 1st Y8950
 	LD	A,(D32A4)
 	AND	02H
@@ -1807,7 +1876,7 @@ J0A20:	POP	BC
 	LD	H,A
 	LD	A,C
 	AND	02H
-	RLCA	
+	RLCA
 	LD	L,A			; b1 set, enable channels 2nd Y8950
 	LD	A,(D32E4)
 	AND	02H
@@ -1891,11 +1960,12 @@ J0AD1:	PUSH	IX
 	ADD	IX,DE
 	INC	C			; next rhythm instrument
 	DJNZ	J0AD1
-	RET	
+	RET
 
 ;	  Subroutine initialize all channels for audio keyboard both Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0AF1:	LD	B,9
 	LD	IX,I3000
@@ -1907,11 +1977,12 @@ J0AF7:	PUSH	BC
 	LD	DE,64
 	ADD	IX,DE
 	DJNZ	J0AF7
-	RET	
+	RET
 
 ;	  Subroutine initialize channel for audio keyboard both Y8950
 ;	     Inputs  IX = channel pointer
 ;	     Outputs ________________________
+
 
 C0B08:	PUSH	IX
 	CALL	C0C1F			; both Y8950: operators sustain level 0, key off
@@ -1921,11 +1992,12 @@ C0B08:	PUSH	IX
 	ADD	IX,DE
 	CALL	C0B1C			; initialize channel for audio keyboard 2nd Y8950
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine initialize channel for audio keyboard
 ;	     Inputs  IX = channel pointer
 ;	     Outputs ________________________
+
 
 C0B1C:	LD	C,21			; audio keyboard volume
 	LD	E,8			; volume 8
@@ -1959,13 +2031,14 @@ C0B48:	LD	(IX+30),B
 	CALL	C0EAE			; write KEY/BLOCK/F-NUMBER (2nd Y8950)
 	POP	IX
 	CALL	C0EAE			; write KEY/BLOCK/F-NUMBER (1st Y8950)
-	EI	
+	EI
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine set add2 word BLOCK/F-NUMBER
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0B6D:	BIT	2,(IX+27)		; channel enabled ?
 	RET	NZ			; nope, quit
@@ -1977,6 +2050,7 @@ C0B6D:	BIT	2,(IX+27)		; channel enabled ?
 ;	  Subroutine key on both Y8950
 ;	     Inputs  C = volume, DE = key
 ;	     Outputs ________________________
+
 
 C0B7D:	LD	B,0			; NO key off down counter
 C0B7F:	LD	(IX+30),B
@@ -1993,7 +2067,7 @@ C0B7F:	LD	(IX+30),B
 	CALL	C0BD6			; key off and set new key
 	BIT	2,(IX+27)		; channel enabled ?
 	JR	NZ,J0BB6		; nope,
-	DI	
+	DI
 	SET	5,(IX+20)		; KEY ON
 	LD	C,(IX+20)
 	LD	A,0B0H
@@ -2004,7 +2078,7 @@ C0B7F:	LD	(IX+30),B
 J0BB6:	POP	IX
 	BIT	2,(IX+27)		; channel enabled ?
 	JR	NZ,J0BD3		; nope, quit
-	DI	
+	DI
 	SET	5,(IX+20)		; KEY ON
 	LD	C,(IX+20)
 	LD	A,0B0H
@@ -2012,13 +2086,14 @@ J0BB6:	POP	IX
 	LD	C,(IX+31)
 	LD	A,0A0H
 	CALL	C07A2			; write channel register 1st Y8950
-J0BD3:	EI	
+J0BD3:	EI
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine key off and set new key
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0BD6:	BIT	2,(IX+27)		; channel enabled ?
 	RET	NZ			; nope, quit
@@ -2028,9 +2103,9 @@ C0BD6:	BIT	2,(IX+27)		; channel enabled ?
 	RES	7,D
 	LD	(IX+24),E
 	LD	(IX+25),D		; add2 word BLOCK/F-NUMBER
-	DI	
+	DI
 	CALL	C0C50			; KEY OFF
-	EI	
+	EI
 	CALL	C0EC6			; calculate BLOCK/F-NUMBER
 	CALL	C0FAC			; write TOTAL LEVEL both operators
 	LD	A,(IX+3)
@@ -2044,19 +2119,21 @@ C0BD6:	BIT	2,(IX+27)		; channel enabled ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0C04:	LD	(IX+30),0		; NO key off down counter
-	DI	
+	DI
 	CALL	C0C17			; KEY OFF when channel is enabled
 	LD	DE,32
 	ADD	IX,DE
 	CALL	C0C17			; KEY OFF when channel is enabled
-	EI	
+	EI
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine KEY OFF when channel is enabled
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0C17:	BIT	2,(IX+27)		; channel enabled ?
 	RET	NZ			; nope, quit
@@ -2066,18 +2143,20 @@ C0C17:	BIT	2,(IX+27)		; channel enabled ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0C1F:	LD	(IX+30),0		; NO key off down counter
 	CALL	C0C31			; operators sustain level 0, key off
 	LD	DE,32
 	ADD	IX,DE
 	CALL	C0C31			; operators sustain level 0, key off
-	EI	
+	EI
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine operators sustain level 0, key off
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0C31:	BIT	2,(IX+27)		; channel enabled ?
 	RET	NZ			; nope, quit
@@ -2088,7 +2167,7 @@ C0C31:	BIT	2,(IX+27)		; channel enabled ?
 	OR	0FH			; sustain level 0
 	LD	C,80H
 	LD	E,(IX+29)		; operator offset
-	DI	
+	DI
 	CALL	C0C5D			; write first operator register
 	LD	A,D
 	LD	C,83H
@@ -2097,6 +2176,7 @@ C0C31:	BIT	2,(IX+27)		; channel enabled ?
 ;	  Subroutine KEY OFF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0C50:	RES	5,(IX+20)		; KEY OFF
 	LD	A,(IX+20)
@@ -2108,14 +2188,17 @@ C0C50:	RES	5,(IX+20)		; KEY OFF
 ;	     Inputs  C = base register, E = offset, A = data
 ;	     Outputs ________________________
 
+
 C0C5D:	PUSH	AF
 	LD	A,C
 	ADD	A,E
 	JP	J0790			; write register
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0C63:	LD	B,9
 	LD	IX,I3000
@@ -2132,11 +2215,12 @@ J0C69:	LD	A,(IX+30)
 J0C7D:	LD	DE,64
 	ADD	IX,DE
 	DJNZ	J0C69			; next channel
-	RET	
+	RET
 
 ;	  Subroutine FM function for audio keyboard
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0C85:	CALL	C074B			; quit if channel disabled
 	LD	A,C
@@ -2202,6 +2286,7 @@ J0CF9:	JP	C0EAB			; calculate and write BLOCK/F-NUMBER
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0CFC:	CALL	C074B			; quit if channel disabled
 	LD	A,C
 	BIT	7,A			; b7 set ?
@@ -2219,6 +2304,7 @@ C0CFC:	CALL	C074B			; quit if channel disabled
 ;	  Subroutine set custom made instrument
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0D16:	CALL	C074B			; quit if channel disabled
 	PUSH	BC
@@ -2295,14 +2381,16 @@ J0D3D:	LD	E,(IY+8)
 ;	     Inputs  C = function
 ;	     Outputs ________________________
 
+
 C0DBE:	PUSH	IY
 	CALL	C0DC6			; FM function
 	POP	IY
-	RET	
+	RET
 
 ;	  Subroutine FM function
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0DC6:	CALL	C074B			; quit if channel disabled
 	LD	A,C
@@ -2317,7 +2405,7 @@ J0DD0:	ADD	A,A
 	LD	L,A
 	CALL	C01C1			; start routine
 C0DDB:	AND	A
-	RET	
+	RET
 
 I0DDD:	DEFW	C0E0F			; 0, AM/VIB/EG/KSR/MULTI first operator
 	DEFW	C0E20			; 1, KSL first operator
@@ -2438,17 +2526,19 @@ J0EA8:	CALL	C08D1			; set AM and VIB depth
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0EAB:	CALL	C0EC6			; calculate BLOCK/F-NUMBER
 
 ;	  Subroutine write KEY/BLOCK/F-NUMBER
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C0EAE:	BIT	2,(IX+27)		; channel enabled ?
 	RET	NZ			; nope, quit
 	LD	A,(IX+20)
 	LD	C,0B0H
-	DI	
+	DI
 	CALL	C0EC1			; write channel register
 	LD	A,(IX+31)
 	LD	C,0A0H
@@ -2458,6 +2548,7 @@ C0EAE:	BIT	2,(IX+27)		; channel enabled ?
 ;	     Inputs  C = base register
 ;	     Outputs ________________________
 
+
 C0EC1:	PUSH	AF
 	LD	A,C
 	JP	J078D			; write channel register
@@ -2465,6 +2556,7 @@ C0EC1:	PUSH	AF
 ;	  Subroutine calculate BLOCK/F-NUMBER
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0EC6:	AND	A
 	LD	C,(IX+27)
@@ -2574,7 +2666,7 @@ J0F79:	OR	H
 	OR	H			; BLOCK/F-NUMBER
 	LD	(IX+20),A
 	LD	(IX+31),L		; F-NUMBER
-	RET	
+	RET
 
 I0F88:	DEFB	000H,008H,079H
 	DEFB	079H,008H,081H
@@ -2592,6 +2684,7 @@ I0F88:	DEFB	000H,008H,079H
 ;	  Subroutine write TOTAL LEVEL both operators
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C0FAC:	CALL	C074B
 	LD	D,(IX+21)		; audio keyboard volume
@@ -2614,7 +2707,7 @@ J0FD0:	LD	C,A
 	OR	C			; new TOTAL LEVEL
 	LD	(IX+1),A
 	LD	C,40H
-	DI	
+	DI
 	CALL	C0782			; write register
 	LD	A,E
 	OR	(IX+12)			; volume selector 2nd operator
@@ -2634,7 +2727,7 @@ J0FF5:	LD	C,A
 	LD	C,43H
 	CALL	C0782			; write register
 	AND	A
-	RET	
+	RET
 
 I1006:	DEFB	07H,07H,07H,07H,07H,07H,07H,07H
 	DEFB	07H,07H,07H,07H,07H,07H,07H,07H
@@ -2943,24 +3036,27 @@ I1516:	DEFB	"Piano 3 "
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1916:	LD	HL,1
 	LD	IX,I3000
-	RET	
+	RET
 
 ;	  Subroutine keyboard channel ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C191E:	LD	A,(D3403+0)
 	AND	L
 	RET	NZ
 	LD	A,(D3403+1)
 	AND	H
-	RET	
+	RET
 
 ;	  Subroutine get next channel parameters
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1928:	LD	BC,64
 	ADD	IX,BC
@@ -2970,22 +3066,24 @@ C1928:	LD	BC,64
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C192F:	INC	C
-;
 ;	  Subroutine get next channel parameters
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C1930:	LD	DE,64
 	ADD	IX,DE
 J1935:	ADD	HL,HL
 	LD	A,H
 	CP	HIGH 0200H
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C193A:	CALL	C1916			; get first channel parameters
 J193D:	CALL	C191E			; keyboard channel ?
@@ -3002,7 +3100,7 @@ J194B:	CALL	C1930			; get next channel parameters
 	LD	DE,0
 	CALL	C1C12			; audio keyboard FM play ?
 	XOR	A
-	RET	
+	RET
 
 C195D:	CALL	C1916			; get first channel parameters
 	LD	BC,0			; channel counter
@@ -3020,11 +3118,12 @@ J1963:	CALL	C191E			; keyboard channel ?
 	POP	IX
 J1979:	CALL	C192F			; get next channel parameters with channel counter
 	JR	C,J1963
-	RET	
+	RET
 
 ;	  Subroutine key off on all audio keyboard channels
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C197F:	CALL	C1916			; get first channel parameters
 	LD	BC,0
@@ -3042,11 +3141,12 @@ J1985:	CALL	C191E			; keyboard channel ?
 	POP	IX
 J199B:	CALL	C192F			; get next channel parameters with channel counter
 	JR	C,J1985
-	RET	
+	RET
 
 ;	  Subroutine audio keyboard key on/key off
 ;	     Inputs  D = keynumber, E = velocity
 ;	     Outputs ________________________
+
 
 C19A1:	LD	HL,(D3403)
 	LD	A,L
@@ -3127,9 +3227,9 @@ J1A25:	LD	H,B
 	XOR	A
 	SBC	HL,BC
 	SRL	L
-	RRA	
+	RRA
 	SRL	L
-	RRA	
+	RRA
 	LD	B,L
 	LD	C,A			; channel*64
 	LD	IX,I3000
@@ -3144,6 +3244,7 @@ J1A25:	LD	H,B
 ;	  Subroutine convert audio keyboard key to key value
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1A48:	LD	A,D
 	SUB	0BCH
@@ -3160,15 +3261,16 @@ J1A53:	ADD	A,H
 	BIT	7,E
 	RET	Z
 	DEC	D
-	RET	
+	RET
 
 ;	  Subroutine TEMPER
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1A62:	LD	A,C
 	CP	22
-	CCF	
+	CCF
 	RET	C
 	CP	10
 	JR	C,J1A6F
@@ -3196,11 +3298,12 @@ J1A8A:	LD	A,(HL)
 	INC	DE
 	DJNZ	J1A8A
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine PITCH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1A93:	CALL	C1B0B
 	RET	C
@@ -3216,9 +3319,11 @@ C1A93:	CALL	C1B0B
 	LD	IY,I3280
 	LD	HL,(D3492)		; transpose value 1st Y8950
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1AB6:	ADD	HL,DE
 	EX	DE,HL
@@ -3227,6 +3332,7 @@ C1AB6:	ADD	HL,DE
 ;	  Subroutine TRANSPOSE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1ABB:	CALL	C1AE0
 	RET	C
@@ -3243,10 +3349,11 @@ C1ABB:	CALL	C1AE0
 	LD	HL,(D348E)		; pitch value 1st Y8950
 	JR	C1AB6
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C1AE0:	LD	A,D
 	AND	A
 	PUSH	AF
@@ -3256,15 +3363,15 @@ C1AE0:	LD	A,D
 	LD	L,00H
 	LD	DE,640FH
 	ADD	HL,HL
-	RLA	
+	RLA
 	CP	D
 	JR	C,J1AF5
 	POP	AF
-	SCF	
-	RET	
+	SCF
+	RET
 
 J1AF5:	ADD	HL,HL
-	RLA	
+	RLA
 	CP	D
 	JR	C,J1AFC
 	SUB	D
@@ -3275,9 +3382,11 @@ J1AFC:	DEC	E
 	POP	AF
 	RET	P
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1B03:	XOR	A
 	LD	H,A
@@ -3285,18 +3394,20 @@ C1B03:	XOR	A
 	SBC	HL,DE
 	EX	DE,HL
 	AND	A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1B0B:	LD	HL,0FE34H
 	ADD	HL,DE
 	RET	C
 	LD	HL,0FE66H
 	ADD	HL,DE
-	CCF	
+	CCF
 	RET	C
 	ADD	HL,HL
 	LD	DE,I1BAE
@@ -3304,7 +3415,7 @@ C1B0B:	LD	HL,0FE34H
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
-	RET	
+	RET
 
 I1B1F:	DEFB	0F1H,014H,0FBH,0E2H,005H,0ECH,00FH,0F6H,019H,000H,0E7H,00AH
 	DEFB	01AH,0DDH,009H,035H,0F7H,023H,0E6H,012H,0D4H,000H,02CH,0EEH
@@ -3376,9 +3487,10 @@ I1BAE:	DEFW	0FEC7H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1C12:	LD	A,D
 	RLC	E
-	RLA	
+	RLA
 	LD	H,0
 	JR	NC,J1C1C
 	LD	H,0FFH
@@ -3390,6 +3502,7 @@ J1C1C:	LD	L,A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1C23:	LD	A,C
 	AND	0FH
 	LD	(D3412),A
@@ -3399,7 +3512,7 @@ J1C2C:	LD	DE,(D3410)
 	LD	HL,0
 	LD	A,(D3412)
 	LD	B,4
-J1C38:	RRA	
+J1C38:	RRA
 	JR	NC,J1C3C
 	ADD	HL,DE
 J1C3C:	SLA	E
@@ -3436,11 +3549,12 @@ J1C49:	CALL	C191E			; keyboard channel ?
 	POP	IX
 J1C77:	CALL	C1928			; get next channel parameters
 	JR	C,J1C49			; next channel
-	RET	
+	RET
 
 ;	  Subroutine audio keyboard FM play parameters
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1C7D:	LD	A,C
 	CP	18
@@ -3448,7 +3562,7 @@ C1C7D:	LD	A,C
 	CP	21
 	JR	Z,J1C88			; set audio keyboard volume
 	AND	A
-	RET	
+	RET
 
 J1C88:	PUSH	IY
 	CALL	C1916			; get first channel parameters
@@ -3469,11 +3583,12 @@ J1CA8:	CALL	C1930			; get next channel parameters
 	POP	DE
 	JR	C,J1C97
 	POP	IY
-	RET	
+	RET
 
 ;	  Subroutine set add1 word part A all audio keyboard channels
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J1CB1:	PUSH	IY
 	BIT	0,(IY+36)		; use 1st Y8950 ?
@@ -3501,11 +3616,12 @@ J1CD3:	CALL	C191E			; keyboard channel ?
 J1CE5:	CALL	C1928			; get next channel parameters
 	JR	C,J1CD3
 	POP	IY
-	RET	
+	RET
 
 ;	  Subroutine set predefined instrument audio keyboard channels
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1CED:	PUSH	IY
 	CALL	C1916			; get first channel parameters
@@ -3524,11 +3640,12 @@ J1CFC:	CALL	C191E			; keyboard channel ?
 J1D0C:	CALL	C1930			; get next channel parameters
 	JR	C,J1CFC
 	POP	IY
-	RET	
+	RET
 
 ;	  Subroutine FM function on all audio keyboard channels
 ;	     Inputs  C = function
 ;	     Outputs ________________________
+
 
 C1D14:	PUSH	IY
 	CALL	C1916			; get first channel parameters
@@ -3549,11 +3666,12 @@ J1D34:	CALL	C1930			; get next channel parameters
 	POP	DE
 	JR	C,J1D23
 	POP	IY
-	RET	
+	RET
 
 ;	  Subroutine set custom made instrument audio keyboard channels
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1D3D:	PUSH	IY
 	CALL	C1916			; get first channel parameters
@@ -3572,15 +3690,16 @@ J1D4C:	CALL	C191E			; keyboard channel ?
 J1D5C:	CALL	C1930			; get next channel parameters
 	JR	C,J1D4C
 	POP	IY
-	RET	
+	RET
 
 ;	  Subroutine audio keyboard
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1D64:	LD	A,E
 	CP	5
-	CCF	
+	CCF
 	RET	C
 	ADD	A,A
 	LD	E,A
@@ -3603,16 +3722,17 @@ I1D76:	DEFW	C1D80			; 0, set recording mode
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1D80:	LD	A,C
 	CP	4
-	CCF	
+	CCF
 	RET	C
-	DI	
+	DI
 	LD	A,(D3496)
 	AND	0FCH
 	OR	C
 	LD	(D3496),A
-	RET	
+	RET
 
 C1D90:	LD	A,(D3496)
 	BIT	2,A			; recording ?
@@ -3626,13 +3746,14 @@ J1D9D:	PUSH	DE
 	INC	HL
 	LD	D,(HL)
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine stop audio keyboard replay/recording
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C1DA7:	DI	
+
+C1DA7:	DI
 	LD	HL,D3496
 	LD	A,(HL)
 	LD	(D34A5),A		; save audio keyboard state
@@ -3653,11 +3774,12 @@ J1DCA:	BIT	3,(HL)			; replaying ?
 	RES	3,(HL)			; replaying stopped
 	CALL	NZ,C197F		; yep, key off on all audio keyboard channels
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine continue audio keyboard recording
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1DD3:	LD	A,(D34A5)
 	LD	(D3496),A		; restore audio keyboard state
@@ -3665,11 +3787,12 @@ C1DD3:	LD	A,(D34A5)
 	RET	Z			; nope, quit
 	LD	HL,(D34A6)		; saved end of recording buffer
 	LD	(D349B),HL		; end of recording buffer
-	RET	
+	RET
 
 ;	  Subroutine (append) audio keyboard recording
 ;	     Inputs  B = append mode (0 = new, <>0 = append)
 ;	     Outputs ________________________
+
 
 C1DE3:	LD	A,B
 	OR	A
@@ -3681,11 +3804,12 @@ C1DE3:	LD	A,B
 	CALL	NZ,C1E1A		; search end audio keyboard recording
 	CALL	NC,C1DF4		; end found OR new recording, set recording buffer
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine set recording buffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1DF4:	LD	H,B
 	LD	L,C
@@ -3694,10 +3818,10 @@ C1DF4:	LD	H,B
 	JR	Z,J1E2C
 	DEC	DE
 	SBC	HL,DE
-	CCF	
+	CCF
 	RET	C
 	INC	DE
-	DI	
+	DI
 	LD	(D3497),BC		; put pointer recording buffer
 	LD	(D3499),BC		; start recording buffer
 	LD	(D349B),DE		; end recording buffer
@@ -3706,11 +3830,12 @@ C1DF4:	LD	H,B
 	LD	A,(D3496)
 	SET	2,A
 	LD	(D3496),A		; start recording
-	RET	
+	RET
 
 ;	  Subroutine search end audio keyboard recording
 ;	     Inputs  BC = start of recording, DE = end of recording
 ;	     Outputs ________________________
+
 
 C1E1A:	LD	H,B
 	LD	L,C
@@ -3725,19 +3850,20 @@ J1E24:	INC	HL
 	SBC	HL,DE
 	POP	HL
 	JR	C,J1E1E
-J1E2C:	SCF	
-	RET	
+J1E2C:	SCF
+	RET
 
 J1E2E:	CP	(HL)
 	JR	NZ,J1E24
 	DEC	HL
 	LD	B,H
 	LD	C,L
-	RET	
+	RET
 
 ;	  Subroutine play mk
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1E35:	LD	A,B
 	OR	A
@@ -3749,21 +3875,25 @@ C1E35:	LD	A,B
 	CALL	NZ,C1E46		; yep, use recording buffer for replay
 	CALL	C1E4F			; set replay buffer
 	POP	BC
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1E46:	LD	BC,(D3499)		; start of recording buffer
 	LD	DE,(D349B)		; end of recording buffer
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C1E4F:	DI	
+
+C1E4F:	DI
 	LD	(D349D),BC		; get pointer replay buffer
 	LD	(D349F),BC		; start replay buffer
 	LD	(D34A1),DE		; end replay buffer
@@ -3771,7 +3901,7 @@ C1E4F:	DI
 	LD	(D34A3),A		; initialize audio keyboard replay timer
 	LD	HL,D3496
 	SET	3,(HL)			; start replaying
-	RET	
+	RET
 
 C1E66:	LD	A,(D3437)
 	RRA				; audio keyboard fm play was enabled ?
@@ -3789,12 +3919,13 @@ J1E71:	LD	A,C
 	LD	BC,27-1
 	XOR	A
 	LD	(HL),A
-	LDIR	
-	RET	
+	LDIR
+	RET
 
 ;	  Subroutine scan AUDIO keyboard
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1E89:	LD	DE,I341B
 	LD	IY,I3280
@@ -3828,16 +3959,17 @@ J1EC9:	INC	IX
 	SUB	6
 	LD	D,A
 	DJNZ	J1EAB			; next
-	RET	
+	RET
 
 ;	  Subroutine call handler for each key which state has changed
 ;	     Inputs  D = base keynumber for row, E = velocity, A = changed state
 ;	     Outputs ________________________
 
+
 C1ED4:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
-	RLA	
+	RLA
 	RLA				; b6 ?
 	CALL	C,C1EFA
 	DEC	D
@@ -3847,7 +3979,7 @@ C1ED4:	PUSH	AF
 	RLA				; b4 ?
 	CALL	C,C1EFA
 	DEC	D
-	RLA	
+	RLA
 	RLA				; b2 ?
 	CALL	C,C1EFA
 	DEC	D
@@ -3859,11 +3991,12 @@ C1ED4:	PUSH	AF
 	POP	DE
 	POP	BC
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine audio keyboard key pressed/released
 ;	     Inputs  D = keynumber, E = velocity
 ;	     Outputs ________________________
+
 
 C1EFA:	PUSH	AF
 	LD	A,(D3437)
@@ -3879,11 +4012,12 @@ J1F06:	PUSH	DE
 	CALL	NZ,C01C1		; start routine
 	POP	DE
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine scan AUDIO keyboard
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1F12:	LD	B,80H			; row 7
 J1F14:	LD	A,B
@@ -3893,7 +4027,7 @@ J1F14:	LD	A,B
 
 J1F1C:	DEC	C
 	CALL	C07B9			; read Y8950 KEYBOARD IN register
-	CPL	
+	CPL
 	LD	H,A
 	AND	77H			; discharge b7 and b3
 	LD	(DE),A
@@ -3901,15 +4035,16 @@ J1F1C:	DEC	C
 	RR	B
 	JP	NZ,J1F14		; next row
 	LD	A,H
-	RRCA	
+	RRCA
 	AND	40H
 	LD	(DE),A			; b7 row 0
 	INC	DE
-	RET	
+	RET
 
 ;	  Subroutine initialize source and destination for operation
 ;	     Inputs  IX = pointer to source, IY = pointer to destination
 ;	     Outputs ________________________
+
 
 C1F32:	PUSH	BC
 	PUSH	IY
@@ -3919,6 +4054,7 @@ C1F32:	PUSH	BC
 ;	     Inputs  IX = pointer to source
 ;	     Outputs ________________________
 
+
 C1F37:	PUSH	BC
 	PUSH	IX
 J1F3A:	PUSH	IX
@@ -3926,16 +4062,17 @@ J1F3A:	PUSH	IX
 	LD	DE,D3438
 	LD	BC,16
 	PUSH	BC
-	LDIR	
+	LDIR
 	POP	BC
 	POP	HL
-	LDIR	
+	LDIR
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine PCM VOL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1F4C:	LD	A,C
 	AND	3FH
@@ -3944,6 +4081,7 @@ C1F4C:	LD	A,C
 ;	  Subroutine set AD output level
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1F52:	LD	A,(IY+52)
 	AND	A			; in ?? mode ?
@@ -3959,11 +4097,12 @@ J1F67:	LD	HL,I1F85
 	LD	A,(HL)
 	LD	C,18
 	RST	18H			; write Y8950 register (EI)
-	RET	
+	RET
 
 ;	  Subroutine set PCM sample volume
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1F72:	LD	A,C
 	AND	07H
@@ -3972,6 +4111,7 @@ C1F72:	LD	A,C
 ;	  Subroutine write DAC-DATA
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1F78:	XOR	A
 	LD	C,21
@@ -3982,7 +4122,7 @@ C1F78:	XOR	A
 	INC	C
 	RST	18H			; write Y8950 DAC-DATA register (EI)
 	AND	A
-	RET	
+	RET
 
 I1F85:	DEFB	0FFH,0EBH,0D7H,0C5H,0B5H,0A6H,098H,08CH
 	DEFB	080H,075H,06CH,063H,05BH,053H,04CH,046H
@@ -3997,6 +4137,7 @@ I1F85:	DEFB	0FFH,0EBH,0D7H,0C5H,0B5H,0A6H,098H,08CH
 ;	     Inputs  C(b2)=0 disable DAC output, C(b2)=1,C(b0)=enable/disable
 ;	     Outputs ________________________
 
+
 C1FC5:	BIT	2,C
 	JR	NZ,J1FCF
 	LD	C,0
@@ -4005,6 +4146,7 @@ C1FC5:	BIT	2,C
 ;	  Subroutine enable DAC output
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1FCD:	LD	C,1
 J1FCF:	LD	A,C
@@ -4020,14 +4162,15 @@ J1FCF:	LD	A,C
 	XOR	08H
 	LD	C,19H
 	RST	18H			; write Y8950 register (EI)
-	RET	
+	RET
 
 ;	  Subroutine source ready for transfer ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C1FE5:	BIT	1,(IY+36)		; Y8950 found ?
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	CALL	C07CE			; read Y8950 status (EI)
 	RRA				; PCM.BSY ?
@@ -4037,6 +4180,7 @@ C1FE5:	BIT	1,(IY+36)		; Y8950 found ?
 ;	  Subroutine ready for transfer ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C1FF3:	CP	2			; sample RAM/ROM 1st Y8950 ?
 	JR	NC,J1FFB
@@ -4055,25 +4199,29 @@ J1FFB:	CP	4			; RAM ?
 	RET
 
 J200A:	CP	5			; VRAM ?
-	SCF	
+	SCF
 	RET	NZ			; nope, quit
-	DI	
+	DI
 	CALL	C3318
-	EI	
-	RET	
+	EI
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2014:	CALL	C1FC5			; enable/disable DAC output
 	CALL	C1F52			; set ADPCM output level
 	CALL	C2025			; setup sampling rate for recording
 	JR	J2052			; setup sampling rate for playing
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C201F:	CALL	C1FC5			; enable/disable DAC output
 	CALL	C1F78			; write DAC-DATA for DA conversion
@@ -4081,6 +4229,7 @@ C201F:	CALL	C1FC5			; enable/disable DAC output
 ;	  Subroutine setup sampling rate for recording
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2025:	LD	BC,40601
 	LD	HL,54
@@ -4103,11 +4252,12 @@ J2047:	LD	A,E
 	LD	A,D
 	INC	C			; PRESCALE MSB
 	RST	18H			; write Y8950 register (EI)
-	RET	
+	RET
 
 ;	  Subroutine setup sampling rate for playing
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C204F:	EX	DE,HL
 	JR	J2055
@@ -4115,6 +4265,7 @@ C204F:	EX	DE,HL
 ;	  Subroutine setup sampling rate for playing
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J2052:	LD	HL,(D3438+6)		; sample frequency
 J2055:	LD	BC,0
@@ -4126,11 +4277,13 @@ J2055:	LD	BC,0
 	LD	A,H
 	INC	C			; DELTA-N MSB
 	RST	18H			; write Y8950 register (EI)
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2066:	XOR	A
 	SUB	E
@@ -4141,27 +4294,28 @@ C2066:	XOR	A
 	LD	A,B
 	LD	B,16
 	SLA	C
-	RLA	
+	RLA
 J2073:	ADC	HL,HL
 	JR	C,J2085
 	ADD	HL,DE
 	JR	C,J207C
 	SBC	HL,DE
 J207C:	RL	C
-	RLA	
+	RLA
 	DJNZ	J2073
 	EX	DE,HL
 	LD	H,A
 	LD	L,C
-	RET	
+	RET
 
 J2085:	ADD	HL,DE
-	SCF	
+	SCF
 	JR	J207C
 
 ;	  Subroutine start source operation
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2089:	PUSH	IX
 	LD	IX,D3438
@@ -4171,6 +4325,7 @@ C2089:	PUSH	IX
 ;	  Subroutine start destination operation
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2092:	PUSH	IX
 	LD	IX,D3448
@@ -4203,7 +4358,7 @@ J209A:	PUSH	IY
 	CALL	C01C1			; start routine
 	POP	IY
 	POP	IX
-C20CE:	RET	
+C20CE:	RET
 
 I20CF:	DEFW	C214C			; 0, start sample RAM read 1st Y8950
 	DEFW	C213D			; 1, start sample ROM read 1st Y8950
@@ -4259,9 +4414,11 @@ I210F:	DEFW	C2235
 	DEFW	C20CE
 	DEFW	C20CE
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C212F:	LD	HL,(D3466)
 	JP	(HL)
@@ -4269,6 +4426,7 @@ C212F:	LD	HL,(D3466)
 ;	  Subroutine finish operation
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2133:	LD	HL,(D346A)
 	JP	(HL)
@@ -4313,11 +4471,13 @@ J2181:	LD	A,60H			; REC+MEMORY DATA
 J2189:	CALL	C07D1			; read Y8950 status
 	BIT	3,A
 	JR	Z,J2189
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2191:	LD	A,(IY+8)
 	AND	40H
@@ -4335,9 +4495,11 @@ C2191:	LD	A,(IY+8)
 	LD	H,A
 	JR	J21C4
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C21AD:	LD	A,(IY+8)
 	AND	40H
@@ -4368,7 +4530,7 @@ J21C4:	LD	A,L
 C21D3:	LD	L,(IX+2)
 	LD	H,(IX+3)
 	LD	(D3468),HL
-	RET	
+	RET
 
 C21DD:	LD	C,00H
 	JR	J21E3
@@ -4394,53 +4556,57 @@ J21E3:	LD	L,(IX+2)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2203:	LD	A,15
 	OUT	(0C0H),A
 	IN	A,(0C1H)		; read register
-	RET	
+	RET
 
 ;	  Subroutine read ADPCM data 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C220A:	LD	A,15
 	OUT	(0C2H),A
 	IN	A,(0C3H)		; read register
-	RET	
+	RET
 
 C2211:	LD	HL,(D3468)
 	LD	A,(HL)
 	INC	HL
 	LD	(D3468),HL
-	RET	
+	RET
 
 ;	  Subroutine write ADPCM data 1st Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C221A:	LD	H,A
 	LD	A,15
 	OUT	(0C0H),A
 	LD	A,H
 	OUT	(0C1H),A		; write register
-	RET	
+	RET
 
 ;	  Subroutine write ADPCM data 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2223:	LD	H,A
 	LD	A,15
 	OUT	(0C2H),A
 	LD	A,H
 	OUT	(0C3H),A		; write register
-	RET	
+	RET
 
 C222C:	LD	HL,(D3468)
 	LD	(HL),A
 	INC	HL
 	LD	(D3468),HL
-	RET	
+	RET
 
 C2235:	PUSH	IY
 	LD	IY,I3280
@@ -4457,7 +4623,7 @@ J2243:	LD	A,(IY+7)
 	RST	20H			; write Y8950 register
 	CALL	C24DB			; disable EOS and BUF.RDY
 	POP	IY
-	RET	
+	RET
 
 C2256:	XOR	A
 	CALL	C34A8			; write VDP cmd
@@ -4468,6 +4634,7 @@ C2256:	XOR	A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C225F:	PUSH	DE
 	PUSH	BC
 	PUSH	HL
@@ -4476,11 +4643,12 @@ C225F:	PUSH	DE
 	POP	HL
 	POP	BC
 	POP	DE
-	RET	
+	RET
 
 ;	  Subroutine transfer from source to RAM
 ;	     Inputs  IX = source info block, DE = RAM address
 ;	     Outputs ________________________
+
 
 C226C:	PUSH	DE
 	CALL	C1F32			; initialize source and destination for operation
@@ -4490,18 +4658,19 @@ C226C:	PUSH	DE
 ;	     Inputs  DE = destination
 ;	     Outputs ________________________
 
+
 C2271:	LD	A,(D3438+0)
 	CP	4			; source RAM ?
 	JR	NZ,J2283		; nope,
-	DI	
+	DI
 	LD	HL,(D3438+2)		; source start
 	LD	BC,256
-	LDIR	
+	LDIR
 	JR	J229D			; new source start, decrease blocks
 
 J2283:	CALL	C1FF3			; ready for transfer ?
 	RET	C			; not ready, quit
-	DI	
+	DI
 	PUSH	DE
 	CALL	C2089			; start source operation
 	POP	DE
@@ -4517,13 +4686,14 @@ J229D:	LD	(D3438+2),HL
 	LD	HL,(D3438+4)
 	DEC	HL
 	LD	(D3438+4),HL
-	EI	
+	EI
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine transfer from temp2 buffer to destination
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C22AA:	PUSH	DE
 	LD	DE,I3600
@@ -4533,6 +4703,7 @@ C22AA:	PUSH	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C22B0:	PUSH	DE
 	LD	DE,I3500
 J22B4:	PUSH	BC
@@ -4541,11 +4712,12 @@ J22B4:	PUSH	BC
 	POP	HL
 	POP	BC
 	POP	DE
-	RET	
+	RET
 
 ;	  Subroutine transfer from RAM to destination
 ;	     Inputs  DE = RAM address, IY = destination info block
 ;	     Outputs ________________________
+
 
 C22BD:	PUSH	DE
 	CALL	C1F32			; initialize source and destination for operation
@@ -4555,20 +4727,21 @@ C22BD:	PUSH	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C22C2:	LD	A,(D3448+0)
 	CP	4			; RAM ?
 	JR	NZ,J22D7		; nope,
-	DI	
+	DI
 	EX	DE,HL
 	LD	DE,(D3448+2)
 	LD	BC,256
-	LDIR	
+	LDIR
 	EX	DE,HL
 	JR	J22F1
 
 J22D7:	CALL	C1FF3			; ready for transfer ?
 	RET	C			; not ready, quit
-	DI	
+	DI
 	PUSH	DE
 	CALL	C2092			; start destination operation
 	POP	DE
@@ -4584,13 +4757,14 @@ J22F1:	LD	(D3448+2),HL
 	LD	HL,(D3448+4)
 	INC	HL
 	LD	(D3448+4),HL
-	EI	
+	EI
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine get size of sample RAM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C22FE:	XOR	A
 	BIT	1,(IY+36)		; Y8950 found ?
@@ -4620,7 +4794,7 @@ J232B:	XOR	A
 	CALL	C236B			; read sample RAM
 	AND	A			; still a 0 byte ?
 	JR	NZ,J2342		; nope, no RAM
-	CPL	
+	CPL
 	CALL	C237F			; write 0FFH byte to sample RAM
 	CALL	C236B			; read sample RAM
 	INC	A			; still a 0FFH byte ?
@@ -4654,11 +4828,12 @@ J235E:	POP	AF
 	DEC	C
 	JR	NC,J235E		; next block
 J2369:	LD	A,B
-	RET	
+	RET
 
 ;	  Subroutine read sample ram
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C236B:	PUSH	BC
 	CALL	C2393
@@ -4669,11 +4844,12 @@ C236B:	PUSH	BC
 	CALL	C2133			; finish operation
 	POP	AF
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine write sample ram
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C237F:	PUSH	BC
 	PUSH	AF
@@ -4684,18 +4860,20 @@ C237F:	PUSH	BC
 	CALL	C212F			; write operation
 	CALL	C2133			; finish operation
 	POP	BC
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2393:	LD	H,C
 	XOR	A
 	SRL	H
-	RRA	
+	RRA
 	LD	L,A
-	RET	
+	RET
 
 I239A:	DEFB	2
 	DEFB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -4703,6 +4881,7 @@ I239A:	DEFB	2
 ;	  Subroutine function 11, play ADPCM sample from sample memory
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C23AB:	LD	A,(D3489)
 	AND	A			; repeat flag set ?
@@ -4713,12 +4892,14 @@ C23AB:	LD	A,(D3489)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C23B3:	LD	A,30H			; MEMORY DATA+REPEAT
 	JR	J23B9
 
 ;	  Subroutine function 12, record ADPCM sample to sample memory
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C23B7:	LD	A,68H			; REC+MEMORY DATA+SP-OFF
 J23B9:	PUSH	AF
@@ -4742,7 +4923,7 @@ J23D2:	CALL	C1FE5			; sample memory ready for transfer ?
 	POP	HL
 	LD	(IY+37),L
 	LD	(IY+38),H		; save pointer to orginal info block
-	DI	
+	DI
 	POP	AF
 	PUSH	AF
 	CP	68H			; record sample ?
@@ -4751,8 +4932,8 @@ J23D2:	CALL	C1FE5			; sample memory ready for transfer ?
 	JR	NC,J23F9		; ok, continue
 	POP	HL
 	LD	A,3
-	EI	
-	RET	
+	EI
+	RET
 
 J23F9:	CALL	C24DB			; disable EOS and BUF.RDY
 J23FC:	POP	AF
@@ -4780,23 +4961,25 @@ J2419:	LD	(IY+4),A
 	LD	C,7
 	RST	20H			; write Y8950 register
 	AND	A
-	EI	
-	RET	
+	EI
+	RET
 
 J242C:	POP	AF
 	LD	A,1
-	SCF	
-	RET	
+	SCF
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2431:	LD	HL,(D3438+2)
 	LD	DE,(D3438+4)
 	LD	A,E
 	OR	D
-	SCF	
+	SCF
 	RET	Z
 	LD	A,(D3438+0)
 	RRA				; sample ROM ?
@@ -4831,8 +5014,7 @@ C2431:	LD	HL,(D3438+2)
 	LD	A,(IY+8)
 	AND	40H			; RAM
 	LD	(IY+8),A
-	RET	
-;
+	RET
 ;	-----------------
 J2467:	ADD	HL,HL
 	ADD	HL,HL
@@ -4840,12 +5022,10 @@ J2467:	ADD	HL,HL
 	LD	A,L
 	LD	C,9
 	RST	20H			; write Y8950 register
-;
 	LD	A,H
 	AND	1FH
 	INC	C
 	RST	20H			; write Y8950 register
-;
 	EX	DE,HL
 	ADD	HL,HL
 	ADD	HL,HL
@@ -4855,23 +5035,22 @@ J2467:	ADD	HL,HL
 	LD	A,L
 	INC	C
 	RST	20H			; write Y8950 register
-;
 	LD	A,H
 	AND	1FH
 	INC	C
 	RST	20H			; write Y8950 register
-;
 	LD	A,(IY+8)
 	AND	40H
 	OR	01H			; ROM
 	LD	(IY+8),A
-	RET	
+	RET
 
 ;	  Subroutine abort sampling
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C248C:	DI	
+
+C248C:	DI
 	BIT	1,(IY+36)		; Y8950 found ?
 	JR	NZ,J24CA		; nope, quit
 	LD	A,(IY+7)
@@ -4902,23 +5081,26 @@ J24A3:	PUSH	AF
 	RST	20H			; write Y8950 register
 	CALL	C1FCD			; enable DAC output
 J24CA:	AND	A
-	EI	
-	RET	
+	EI
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C24CD:	LD	L,64H
 	LD	B,0
 J24D1:	DJNZ	J24D1
 	DEC	L
 	JR	NZ,J24D1
-	RET	
+	RET
 
 ;	  Subroutine do not mask EOS and BUF.RDY
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C24D7:	LD	C,00H
 	JR	J24DD
@@ -4926,6 +5108,7 @@ C24D7:	LD	C,00H
 ;	  Subroutine mask EOS and BUF.RDY
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C24DB:	LD	C,18H			; 
 J24DD:	LD	A,(IY+4)
@@ -4937,11 +5120,12 @@ J24DD:	LD	A,(IY+4)
 	LD	(IY+52),0		; not in ?? mode
 	LD	(IY+50),LOW 03F00H
 	LD	(IY+51),HIGH 03F00H	; variable volume offset -> volume 0
-	RET	
+	RET
 
 ;	  Subroutine EOS interrupt 1st Y8950 handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 I24F6:	PUSH	IX
 	PUSH	IY
@@ -4952,6 +5136,7 @@ I24F6:	PUSH	IX
 ;	  Subroutine EOS interrupt 2nd Y8950 handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 I2503:	PUSH	IX
 	PUSH	IY
@@ -4969,17 +5154,18 @@ J250E:	PUSH	HL
 	CALL	NZ,C01C1		; start routine
 	POP	IY
 	POP	IX
-	RET	
+	RET
 
 ;	  Subroutine function 8, play ADPCM sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2526:	CALL	C2603
 	LD	A,1 
 	RET	C
 	CALL	C2014
-	DI	
+	DI
 	CALL	C24D7			; enable EOS and BUF.RDY
 	CALL	C2089			; start source operation
 	LD	(IY+7),80H		; START
@@ -5016,24 +5202,28 @@ J254B:	IN	A,(C)
 	CALL	C2585
 	JR	C,J2547
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2575:	CALL	C2133			; finish operation
 	CALL	C248C			; abort sampling
 	AND	A
-	EI	
-	RET	
+	EI
+	RET
 
 J257E:	CALL	C2575
-	SCF	
+	SCF
 	LD	A,3
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2585:	LD	A,(D3489)
 	AND	A
@@ -5048,18 +5238,19 @@ C2585:	LD	A,(D3489)
 	POP	IY
 	LD	DE,(D3438+4)
 	POP	BC
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine function 9, record ADPCM sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C25A4:	CALL	C2603
 	LD	A,1
 	RET	C
 	CALL	C2014
-	DI	
+	DI
 	CALL	C24D7			; enable EOS and BUF.RDY
 	CALL	C2092			; start destination operation
 	CALL	C2BEB
@@ -5102,9 +5293,11 @@ J25D6:	IN	A,(C)
 	JR	NZ,J25D6
 	JP	C2575
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2603:	CALL	C1F37			; initialize source and destination with same operation
 	LD	A,(D3438+0)
@@ -5112,9 +5305,11 @@ C2603:	CALL	C1F37			; initialize source and destination with same operation
 	RET	C			; yep, quit
 	JP	C1FE5			; source ready for transfer ?
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C260F:	LD	A,(IY+8)
 	AND	40H
@@ -5129,11 +5324,12 @@ C260F:	LD	A,(IY+8)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2621:	CALL	C26DA
 	LD	A,1
 	RET	C
 	CALL	C201F
-	DI	
+	DI
 	CALL	C24D7			; enable EOS and BUF.RDY
 	CALL	C2089			; start source operation
 	LD	DE,000CH		; 7 nothing , 8 set SAMPL+DA/AD
@@ -5184,7 +5380,6 @@ J2682:	CALL	C2585
 
 J2689:	POP	BC
 J268A:	JP	C2575
-;
 ;	-----------------
 J268D:	JP	J257E
 
@@ -5192,11 +5387,12 @@ J268D:	JP	J257E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2690:	CALL	C26DA
 	LD	A,1
 	RET	C
 	CALL	C201F
-	DI	
+	DI
 	CALL	C24D7			; enable EOS and BUF.RDY
 	CALL	C2092			; start destination operation
 	CALL	C2BEB
@@ -5228,16 +5424,20 @@ J26B2:	IN	A,(C)
 	JR	NZ,J26AE
 	JP	C2575
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C26DA:	CALL	C1F37			; initialize source and destination with same operation
 	JP	C1FE5			; source ready for transfer ?
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C26E0:	LD	A,(IY+7)
 	AND	60H
@@ -5257,15 +5457,17 @@ J26F6:	RST	20H			; write Y8950 register
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C26FB:	LD	C,0C0H
 	BIT	0,(IY+36)		; use 1st Y8950 ?
 	RET	Z			; yep, I/O adres 0C0H
 	LD	C,0C2H			; nope, I/O adres 0C2H
-	RET	
+	RET
 
 ;	  Subroutine function 0, transfer sample data
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2705:	CALL	C1F32			; initialize source and destination for operation
 	LD	A,4
@@ -5324,11 +5526,12 @@ J2760:	LD	DE,(D3448+2)		; destination start
 J277E:	LD	HL,(D3448+4)
 	LD	(IX+4),L
 	LD	(IX+5),H		; update source start
-	RET	
+	RET
 
 ;	  Subroutine function 1,
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2788:	CALL	C27EF
 J278B:	CALL	C225F			; transfer from source to temp buffer
@@ -5346,9 +5549,11 @@ J27A1:	LD	HL,(D3438+2)
 	LD	(IX+2),L
 	LD	(IX+3),H
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C27AA:	LD	HL,(D3462)
 	LD	(IX+8),L
@@ -5356,11 +5561,12 @@ C27AA:	LD	HL,(D3462)
 	LD	HL,(D3464)
 	LD	(IX+10),L
 	LD	(IX+11),H
-	RET	
+	RET
 
 ;	  Subroutine function 2, convert ADPCM sample data to PCM sample data
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C27BD:	CALL	C27EF
 J27C0:	CALL	C225F			; transfer from source to temp buffer
@@ -5382,6 +5588,7 @@ J27DC:	CALL	C27AA
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C27E1:	LD	A,(DE)
 	INC	E
 	CALL	C287D			; convert ADPCM byte to PCM bytes
@@ -5392,9 +5599,11 @@ C27E1:	LD	A,(DE)
 	JR	NZ,C27E1
 	JP	C22AA			; transfer from temp2 buffer to destination
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C27EF:	CALL	C1F32			; initialize source and destination for operation
 	LD	DE,8000H
@@ -5405,11 +5614,12 @@ C27EF:	CALL	C1F32			; initialize source and destination for operation
 	LD	HL,(D3438+10)
 	LD	(D3462),DE
 	LD	(D3464),HL
-	RET	
+	RET
 
 ;	  Subroutine function 3, convert PCM sample data to ADPCM sample data
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C280B:	CALL	C2861			; initialize ?? sample, source and destination for operation
 J280E:	CALL	C225F			; transfer from source to temp buffer
@@ -5438,11 +5648,12 @@ J2842:	LD	HL,(D3448+4)
 	LD	HL,(D3438+6)		; sample frequency
 	LD	(IY+6),L
 	LD	(IY+7),H
-	RET	
+	RET
 
 ;	  Subroutine convert PCM to ADPCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2855:	LD	B,(HL)
 	INC	L
@@ -5452,11 +5663,13 @@ C2855:	LD	B,(HL)
 	INC	E
 	INC	L
 	JR	NZ,C2855
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2861:	CALL	C1F32			; initialize source and destination for operation
 	LD	DE,8000H
@@ -5467,18 +5680,19 @@ C2861:	CALL	C1F32			; initialize source and destination for operation
 	LD	HL,(D3448+10)
 J2875:	LD	(D3462),DE
 	LD	(D3464),HL
-	RET	
+	RET
 
 ;	  Subroutine convert 1 ADPCM byte to 2 PCM bytes
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C287D:	PUSH	DE
 	PUSH	HL
 	PUSH	AF
-	RRA	
-	RRA	
-	RRA	
+	RRA
+	RRA
+	RRA
 	RRA				; high nibble
 	CALL	C28DF			; convert ADPCM nibble to PCM byte
 	LD	B,A
@@ -5487,11 +5701,12 @@ C287D:	PUSH	DE
 	LD	C,A
 	POP	HL
 	POP	DE
-	RET	
+	RET
 
 ;	  Subroutine convert 2 PCM bytes to 1 ADPCM byte
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2890:	PUSH	DE
 	PUSH	HL
@@ -5511,11 +5726,12 @@ C2890:	PUSH	DE
 	OR	C
 	POP	HL
 	POP	DE
-	RET	
+	RET
 
 ;	  Subroutine convert PCM byte to ADPCM nibble
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C28AB:	XOR	80H
 	LD	H,A
@@ -5527,30 +5743,31 @@ C28AB:	XOR	80H
 	EX	DE,HL
 	LD	HL,1
 	SBC	HL,DE
-J28BE:	RLA	
+J28BE:	RLA
 	LD	DE,(D3464)
 	SBC	HL,DE
 	JR	NC,J28C8
 	ADD	HL,DE
-J28C8:	RLA	
+J28C8:	RLA
 	SRL	D
 	RR	E
 	AND	A
 	SBC	HL,DE
 	JR	NC,J28D3
 	ADD	HL,DE
-J28D3:	RLA	
+J28D3:	RLA
 	SRL	D
 	RR	E
 	AND	A
 	SBC	HL,DE
-	RLA	
+	RLA
 	XOR	07H
-	RET	
+	RET
 
 ;	  Subroutine convert ADPCM nibble to PCM byte
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C28DF:	PUSH	BC
 	AND	0FH
@@ -5561,12 +5778,12 @@ C28DF:	PUSH	BC
 	LD	B,3
 J28EB:	SRL	H
 	RR	L
-	RRA	
+	RRA
 	JR	NC,J28F3
 	ADD	HL,DE
 J28F3:	DJNZ	J28EB
 	LD	DE,(D3462)
-	RRA	
+	RRA
 	JR	C,J2904
 	ADD	HL,DE
 	JR	NC,J290D
@@ -5589,12 +5806,12 @@ J290D:	LD	(D3462),HL
 	LD	B,8
 J291F:	SRL	H
 	RR	L
-	RRA	
+	RRA
 	JR	NC,J2927
 	ADD	HL,DE
 J2927:	DJNZ	J291F
 	JR	C,J2943
-	RLA	
+	RLA
 	ADC	HL,HL
 	JR	C,J2943
 	EX	DE,HL
@@ -5618,7 +5835,7 @@ J2946:	LD	(D3464),HL
 J2953:	LD	A,H
 	XOR	E
 	POP	BC
-	RET	
+	RET
 
 I2957:	DEFB	039H
 	DEFB	039H
@@ -5632,6 +5849,7 @@ I2957:	DEFB	039H
 ;	  Subroutine function 13
 ;	     Inputs  DE = pointer to ?, C = , IY = control register pointer
 ;	     Outputs ________________________
+
 
 C295F:	BIT	1,(IY+36)		; Y8950 found ?
 	JR	NZ,J29A2		; nope, quit with error
@@ -5659,14 +5877,16 @@ J2989:	CALL	C248C			; abort sampling
 	LD	C,8
 	CALL	C29A4
 	XOR	A
-	RET	
+	RET
 
-J29A2:	SCF	
-	RET	
+J29A2:	SCF
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C29A4:	LD	HL,8000H
 	LD	(D3462),HL
@@ -5687,21 +5907,24 @@ J29B8:	CALL	C29CF
 	JR	NZ,J29B8
 	CALL	C22B0			; transfer from temp buffer to destination
 	DJNZ	J29B8
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C29CF:	LD	A,E
 	ADD	A,C
 	LD	E,A
 	LD	A,(DE)
-	RET	
+	RET
 
 ;	  Subroutine function 15
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C29D4:	BIT	1,(IY+36)		; Y8950 found ?
 	JP	NZ,J2A5B		; nope, quit with error
@@ -5768,7 +5991,7 @@ J2A1D:	PUSH	AF
 	INC	C			; DELTA-N MSB
 	RST	18H			; write Y8950 register (EI)
 	CALL	C2B5F
-	DI	
+	DI
 	LD	A,(IY+8)
 	AND	40H			; reset CSM, MUSIC output, RAM
 	LD	(IY+8),A
@@ -5780,12 +6003,12 @@ J2A1D:	PUSH	AF
 	SET	7,A			; START
 	LD	(IY+7),A
 	RST	20H			; write Y8950 register
-	EI	
+	EI
 	XOR	A
-	RET	
+	RET
 
-J2A5B:	SCF	
-	RET	
+J2A5B:	SCF
+	RET
 
 J2A5D:	SUB	18H
 	LD	HL,I2A65
@@ -5796,7 +6019,7 @@ I2A65:	DEFW	0000H,01FFH
 	DEFW	0200H,03FFH
 	DEFW	0400H,05FFH
 	DEFW	0600H,07FFH
-	
+
 I2A75:	DEFW	08073H
 	DEFW	08816H
 	DEFW	0902EH
@@ -5820,6 +6043,7 @@ I2A75:	DEFW	08073H
 ;	  Subroutine function 14
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2A9B:	LD	A,(DE)
 	INC	DE
@@ -5848,8 +6072,8 @@ C2A9B:	LD	A,(DE)
 	LD	HL,I2B39
 	LD	(I3340+1),HL		; TIMER-1 interrupt handler
 	LD	A,(I3280+4)
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	RLCA				; T1 and T2 mask
 	XOR	03H			; if a timer is masked, then timer is switched off
 	AND	03H			; all mask bits off
@@ -5857,11 +6081,13 @@ C2A9B:	LD	A,(DE)
 	LD	C,A
 	CALL	C07E0			; start T1,T2 and set masks
 	XOR	A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2AE9:	LD	A,(DE)
 	INC	DE
@@ -5874,7 +6100,7 @@ C2AE9:	LD	A,(DE)
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)
-	RET	
+	RET
 
 I2AF9:	DEFW	00000H
 	DEFW	00001H
@@ -5913,17 +6139,20 @@ I2AF9:	DEFW	00000H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 I2B39:	PUSH	IY
 	LD	IY,I3280
 	CALL	C2B4C
 	LD	IY,I32C0
 	CALL	C2B4C
 	POP	IY
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2B4C:	LD	A,(IY+52)
 	AND	A			; in ?? mode ?
@@ -5936,9 +6165,11 @@ C2B4C:	LD	A,(IY+52)
 	JR	Z,J2BAB
 	JR	J2BC2
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2B5F:	LD	(IY+52),1		; increase volume state
 	LD	(IY+50),LOW 03F00H
@@ -5998,9 +6229,11 @@ J2BDC:	LD	(IY+52),0		; stop ?? mode
 	LD	(IY+51),HIGH 03FFFH	; variable volume offset -> volume 0
 	JP	C248C			; abort sampling
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2BEB:	LD	A,(D3488)
 	AND	A			; mic sync flag set ?
@@ -6023,12 +6256,14 @@ C2BEB:	LD	A,(D3488)
 	LD	A,(IY+7)
 	RST	20H			; write Y8950 register
 	CALL	C24DB			; disable EOS and BUF.RDY
-	SCF	
-	RET	
+	SCF
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2C11:	LD	DE,1080H		; EOS flag
 	LD	B,1AH
@@ -6048,16 +6283,17 @@ J2C1A:	IN	A,(C)
 	CP	90H
 	RET	NC
 	CP	70H
-	CCF	
+	CCF
 	RET	NC
 	CALL	C2C3A			; check if CTRL-STOP pressed
 	JP	NZ,J2C16
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine check if CTRL-STOP pressed
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2C3A:	IN	A,(0AAH)
 	AND	0F0H
@@ -6078,13 +6314,14 @@ C2C3A:	IN	A,(0AAH)
 	LD	(OLDKEY+7),A
 	LD	A,(BASROM)
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine function 25, speech synthesis
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C2C61:	SCF	
+
+C2C61:	SCF
 	BIT	1,(IY+36)		; Y8950 found ?
 	RET	NZ			; nope, quit with error
 	LD	A,B
@@ -6092,7 +6329,7 @@ C2C61:	SCF
 	LD	(D346C),A		; volume
 	LD	(D346F),DE		; buffer
 	CALL	C1FC5			; enable/disable DAC output
-	DI	
+	DI
 	XOR	A
 	LD	C,0BDH
 	RST	20H			; write Y8950 register
@@ -6154,18 +6391,20 @@ J2CC6:	LD	A,(IY+34)
 	RST	18H			; write Y8950 register (EI)
 	CALL	C1FCD			; enable DAC output
 	AND	A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2CEE:	LD	HL,(D346F)
 	LD	A,(D346D)
-	RLA	
+	RLA
 	JR	NC,J2D06
 	LD	A,(D346E)
-	RLA	
+	RLA
 	RET	C
 	LD	A,(HL)
 	INC	HL
@@ -6199,11 +6438,12 @@ J2D06:	LD	A,(HL)
 	LD	(D3471+6),DE
 	LD	(D346F),HL
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine write TOTAL LEVEL, KSL=0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2D45:	LD	A,(HL)
 	INC	HL
@@ -6213,11 +6453,13 @@ C2D45:	LD	A,(HL)
 	LD	A,3FH
 J2D4E:	RST	20H			; write Y8950 register
 	INC	C
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2D51:	LD	A,(HL)
 	INC	HL
@@ -6230,13 +6472,13 @@ C2D51:	LD	A,(HL)
 	LD	E,(HL)
 	INC	HL
 	LD	A,D
-	RRA	
-	RRA	
+	RRA
+	RRA
 	AND	1CH
 	OR	(HL)
 	LD	D,A
 	POP	HL
-	RET	
+	RET
 
 I2D69:	DEFB	06DH,001H
 	DEFB	083H,001H
@@ -6259,6 +6501,7 @@ I2D69:	DEFB	06DH,001H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C2D89:	LD	HL,D3471
 	LD	D,0B0H
 	LD	E,0A0H
@@ -6271,6 +6514,7 @@ C2D89:	LD	HL,D3471
 ;	     Inputs  E = register1, D = register2, HL = table
 ;	     Outputs ________________________
 
+
 C2D99:	LD	A,(HL)
 	LD	C,E
 	RST	20H			; write Y8950 register
@@ -6281,13 +6525,14 @@ C2D99:	LD	A,(HL)
 	INC	HL
 	INC	E
 	INC	D
-	RET	
+	RET
 
 	DEFS	02F70H-$,0
 
 ;	  Subroutine service PSG playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C2F70:	LD	A,(D7B23)
 	LD	B,A
@@ -6300,9 +6545,9 @@ C2F70:	LD	A,(D7B23)
 	JR	Z,J2FDC
 	LD	D,A
 	AND	0E0H
-	RLCA	
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
+	RLCA
 	LD	C,A
 	LD	A,D
 	AND	1FH
@@ -6320,7 +6565,7 @@ J2F92:	DEC	C
 	CALL	C4010			; get from voicequeue serviced
 	LD	E,A
 	LD	A,B
-	RLCA	
+	RLCA
 	CALL	C2FF4
 	INC	A
 	LD	E,D
@@ -6360,28 +6605,30 @@ J2FDC:	LD	A,B
 	LD	E,00H
 	CALL	C2FF4
 	INC	B
-	DI	
+	DI
 	LD	HL,MUSICF
 	XOR	A
-	SCF	
-J2FEB:	RLA	
+	SCF
+J2FEB:	RLA
 	DJNZ	J2FEB
 	AND	(HL)
 	XOR	(HL)
 	LD	(HL),A
 	JP	J4013			; clear playvoice bit voicequeue serviced
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C2FF4:	DI	
+
+C2FF4:	DI
 	OUT	(0A0H),A
 	PUSH	AF
 	LD	A,E
 	OUT	(0A1H),A
 	POP	AF
-	RET	
+	RET
 
 	DEFS	04000H-$,0
 

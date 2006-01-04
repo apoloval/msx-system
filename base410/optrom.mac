@@ -1,16 +1,15 @@
 ; OPTROM.MAC
-;
+
 ; MSX Option ROM, displays opening screen
-;
+
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
-;
+
 ; Code Copyrighted by ASCII and maybe others
 ; Source comments by Arjen Zeilemaker
-;
+
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
-;
 
 
 
@@ -18,43 +17,47 @@
 
 	.Z80
 	ORG	OPTENT
-;
 CHGCPU	EQU	0180H
 BUF	EQU	0F55EH
 
-;
 ?.7900:	CALL	C790E			; R800 ROM
-	DI	
+	DI
 	CALL	C7A7D
 	CALL	C7917
 	CALL	C7912			; Z80
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C790E:	LD	A,1
 	JR	J7913
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C7912:	XOR	A
 J7913:	CALL	CHGCPU
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C7917:	LD	HL,00FFH
 	LD	(BUF),HL
 	LD	HL,BUF
 	LD	DE,BUF+2
 	LD	BC,00A8H
-	LDIR	
+	LDIR
 	LD	HL,00FFH
 	CALL	C7A54
 	LD	E,H
@@ -105,7 +108,7 @@ J7984:	LD	(IX),L
 	CALL	C7B4C			; vdp (19)
 	LD	DE,021FH
 	CALL	C7B4C			; vdp (2)
-	RET	
+	RET
 
 I79A2:	DEFB	13H,0DH,15H,12H,14H,0EH,10H,17H
 	DEFB	13H,11H,15H,11H,0EH,0DH,11H,15H
@@ -119,9 +122,11 @@ I79A2:	DEFB	13H,0DH,15H,12H,14H,0EH,10H,17H
 	DEFB	0FH,17H,0CH,0DH,16H,0CH,11H,0EH
 	DEFB	12H,14H,0DH,11H,17H,0DH
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C79F8:	LD	HL,BUF
 	LD	BC,559BH
@@ -132,15 +137,15 @@ J79FE:	LD	E,(HL)
 	DEC	DE
 	LD	A,E
 	SRL	D
-	RRA	
-	RRCA	
-	RRCA	
+	RRA
+	RRCA
+	RRCA
 	INC	A
 	AND	3FH	; "?"
 	LD	D,A
 	INC	E
 	LD	A,E
-	NEG	
+	NEG
 	AND	07H	; 7 
 	LD	E,A
 	LD	A,1AH
@@ -158,11 +163,13 @@ J7A1E:	IN	A,(99H)
 	CALL	C7B4C			; vdp (26)
 	LD	DE,1B00H
 	CALL	C7B4C			; vdp (27)
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C7A38:	LD	A,02H	; 2 
 	OUT	(99H),A
@@ -171,123 +178,99 @@ C7A38:	LD	A,02H	; 2
 J7A40:	IN	A,(99H)
 	AND	40H	; "@"
 	JR	Z,J7A40
-;
 J7A46:	IN	A,(99H)
 	AND	40H	; "@"
 	JR	NZ,J7A46
-;
 	XOR	A
 	OUT	(99H),A
 	LD	A,8FH
 	OUT	(99H),A
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C7A54:	RET	
-;
+
+C7A54:	RET
 ;	-----------------
 I7A55:	DEFB	1CH,0E8H,00H,00H,1CH,0E8H,00H,00H
 	DEFB	3CH,0E8H,00H,00H,3CH,0E8H,00H,00H
 	DEFB	5CH,0E8H,00H,00H,5CH,0E8H,00H,00H
 	DEFB	1CH,00H,04H,00H,3CH,00H,04H,00H
 	DEFB	5CH,00H,04H,00H,0D8H,00H,00H,00H
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7A7D:	CALL	C7A38
-;
 	LD	DE,0123H
 	CALL	C7B4C			; vdp(1)
 	CALL	C7C28
-;
 	LD	A,55H	; "U"
 	LD	HL,0
 	LD	C,L
 	LD	B,L
 	CALL	C7B75
-;
 	CALL	C7BE1
-;
 	LD	DE,0705H
 	CALL	C7B4C			; vdp(7)
-;
 	LD	HL,7800H
 	LD	BC,0030H
 	LD	A,0FFH
 	CALL	C7B75
-;
 	LD	HL,7830H
 	LD	BC,0010H
 	LD	A,0F0H
 	CALL	C7B75
-;
 	LD	HL,7400H
 	LD	A,05H	; 5 
 	LD	BC,0200H
 	CALL	C7B75
-;
 	LD	HL,I7A55
 	LD	DE,7600H
 	LD	BC,0028H
 	CALL	C7B88
-;
 	LD	DE,1903H
 	CALL	C7B4C			; vdp(25)
-;
 	LD	DE,023FH
 	CALL	C7B4C			; vdp(2)
-;
 	LD	DE,2D00H
 	CALL	C7B4C			; vdp(45)
-;
 	LD	D,2AH	; "*"
 	CALL	C7B4C			; vdp(42)
-;
 	INC	D
 	CALL	C7B4C			; vdp(43)
-;
 	LD	D,27H	; "'"
 	CALL	C7B4C			; vdp(39)
-;
 	LD	E,20H	; " "
 	LD	HL,I7CDE
-	EXX	
+	EXX
 	LD	HL,I7C57
-	EXX	
+	EXX
 J7AF3:	LD	A,03H	; 3 
 	PUSH	AF
 	LD	BC,002DH
 	LD	D,26H	; "&"
 	CALL	C7B4C			; vdp(38)=
-;
-	EXX	
+	EXX
 	LD	B,08H	; 8 
 	LD	C,(HL)
 	INC	HL
-	EXX	
+	EXX
 J7B04:	CALL	C7BBB				; VDP(36)=C, VDP(37)=B
-;
 	LD	A,(HL)
 	INC	HL
 	CP	0FEH
 	JR	Z,J7B44
-;
 	PUSH	HL
 	PUSH	BC
 	LD	BC,01A6H
 	JR	NC,J7B17
-;
 	LD	B,00H
 	LD	C,A
 J7B17:	CALL	C7BB7				; VDP(40)=C, VDP(41)=B
-;
 	POP	HL
 	ADD	HL,BC
 	LD	C,L
@@ -296,43 +279,35 @@ J7B17:	CALL	C7BB7				; VDP(40)=C, VDP(41)=B
 	POP	AF
 	XOR	03H	; 3 
 	CALL	C7BC6				; VDP(44)=A
-;
 	PUSH	AF
 	CALL	C7BCF				; execute ??
-;
-	EXX	
+	EXX
 	SLA	C
 	DJNZ	J7B32
-;
 	LD	B,08H	; 8 
 	LD	C,(HL)
 	INC	HL
-J7B32:	EXX	
+J7B32:	EXX
 	JR	NC,J7B04
-;
 	DEC	BC
 	CALL	C7BBB			; VDP(36)=C, VDP(37)=B
-;
 	INC	BC
 	LD	A,02H	; 2 
 	CALL	C7BC6			; VDP(44)=A
-;
 	CALL	C7BDC			; execute ??
-;
 	JR	J7B04
-;
 ;	-----------------
 J7B44:	INC	E
 	POP	AF
 	LD	A,(HL)
 	CP	0FEH
 	JR	NZ,J7AF3
-;
-	RET	
+	RET
 
 ;	  Subroutine write vdp register
 ;	     Inputs  D = reg, E = data
 ;	     Outputs ________________________
+
 
 C7B4C:	PUSH	AF
 	LD	A,E
@@ -341,22 +316,26 @@ C7B4C:	PUSH	AF
 	OR	80H
 	OUT	(99H),A
 	POP	AF
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C7B57:	LD	A,2
 	CALL	C7B61
-	RRCA	
+	RRCA
 	JR	C,C7B57
-	RLCA	
-	RET	
+	RLCA
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C7B61:	OUT	(99H),A
 	LD	A,8FH
@@ -370,40 +349,33 @@ C7B61:	OUT	(99H),A
 	LD	A,8FH
 	OUT	(99H),A
 	POP	AF
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7B75:	PUSH	AF
 	CALL	C7B9D
-;
 	LD	A,C
 	OR	A
 	JR	Z,J7B7E
-;
 	INC	B
 J7B7E:	POP	AF
 J7B7F:	OUT	(98H),A
 	DEC	C
 	JP	NZ,J7B7F
-;
 	DJNZ	J7B7F
-;
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7B88:	EX	DE,HL
 	CALL	C7B9D
-;
 	EX	DE,HL
 	LD	A,C
 	OR	A
@@ -411,29 +383,26 @@ C7B88:	EX	DE,HL
 	LD	B,C
 	LD	C,98H
 	JR	Z,J7B96
-;
 	INC	A
-J7B96:	OTIR	
+J7B96:	OTIR
 	DEC	A
 	JR	NZ,J7B96
-;
 	EX	DE,HL
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7B9D:	LD	A,H
 	AND	3FH	; "?"
 	OR	40H	; "@"
 	EX	AF,AF'
 	LD	A,H
 	AND	0C0H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	OUT	(99H),A
 	LD	A,8EH
 	OUT	(99H),A
@@ -443,20 +412,21 @@ C7B9D:	LD	A,H
 	OUT	(99H),A
 	EX	(SP),HL
 	EX	(SP),HL
-	RET	
-;
+	RET
 ;	-----------------
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-C7BB7:	LD	D,28H			; vdp(40)
-	JR	J7BBD
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
+C7BB7:	LD	D,28H			; vdp(40)
+	JR	J7BBD
+
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 
 C7BBB:	LD	D,24H			; vdp(36)
 J7BBD:	PUSH	DE
@@ -465,50 +435,46 @@ J7BBD:	PUSH	DE
 	LD	E,B
 	INC	D
 	JR	J7BCA
-;
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7BC6:	PUSH	DE
 	LD	E,A
 	LD	D,2CH			; vdp (44)
 J7BCA:	CALL	C7B4C
 	POP	DE
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7BCF:	PUSH	DE
 	LD	E,70H	; "p"
 J7BD2:	LD	D,2EH	; "."
 	CALL	C7B4C			; vdp(46)
 	CALL	C7B57
 	POP	DE
-	RET	
-;
+	RET
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7BDC:	PUSH	DE
 	LD	E,50H	; "P"
 	JR	J7BD2
-;
 ;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7BE1:	LD	A,0DH	; 13 
 	OUT	(0B4H),A
 	IN	A,(0B5H)
@@ -518,8 +484,8 @@ C7BE1:	LD	A,0DH	; 13
 	LD	A,0BH	; 11 
 	OUT	(0B4H),A
 	IN	A,(0B5H)
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	AND	0CH	; 12 
 	LD	C,A
 	LD	B,00H
@@ -542,11 +508,11 @@ C7BE1:	LD	A,0DH	; 13
 	LD	HL,0444H
 	CALL	C7C1D
 	LD	HL,0777H
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C7C1D:	PUSH	BC
 	LD	C,9AH
 	OUT	(C),L
@@ -554,11 +520,13 @@ C7C1D:	PUSH	BC
 	EX	(SP),HL
 	OUT	(C),H
 	POP	BC
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C7C28:	LD	B,8
 	LD	HL,I7C37
@@ -568,8 +536,7 @@ J7C2D:	LD	D,(HL)
 	INC	HL
 	CALL	C7B4C			; write vdp reg
 	DJNZ	J7C2D
-	RET	
-;
+	RET
 ;	-----------------
 I7C37:	DEFB	00H,08H
 	DEFB	01H,23H

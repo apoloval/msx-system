@@ -1,16 +1,15 @@
 ; DOS1.MAC
-;
+
 ; DOS 1.x kernel
-;
+
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
-;
+
 ; Code Copyrighted by ASCII and maybe others
 ; Source comments by Arjen Zeilemaker
-;
+
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
-;
 
 
 
@@ -20,7 +19,7 @@
 
 
 ; symbols which must be defined by the diskdriver
-;
+
 ;	EXTRN	INIHRD
 ;	EXTRN	DRIVES
 ;	EXTRN	INIENV
@@ -36,7 +35,7 @@
 ;	EXTRN	DEFDPB
 
 ; symbols of routines which can be used by the diskdriver
-;
+
 ;	PUBLIC	PROMPT
 ;	PUBLIC	SETINT
 ;	PUBLIC	PRVINT
@@ -88,7 +87,7 @@ YF239	equ	0F239H			; lineinput insert flag
 YF23A	equ	0F23AH			; lineinput secret message flag
 YF23B	equ	0F23BH			; console output to printer flag
 YF23C	equ	0F23CH			; directory buffer changed flag
-YF23D	equ	0F23DH			; transferadres
+YF23D	equ	0F23DH			; transferaddress
 YF23F	equ	0F23FH			; sectornumber in data buffer
 YF241	equ	0F241H			; driveid of sector in data buffer
 YF242	equ	0F242H			; data buffer changed flag
@@ -101,6 +100,7 @@ YF249	equ	0F249H			; current month (1..12)
 YF24A	equ	0F24AH			; current year (offset to 1980)
 YF24C	equ	0F24CH			; current days since 1-1-1980
 YF24E	equ	0F24EH			; current day of week (0=sunday)
+
 XF24F	equ	0F24FH			; prompt for disk hook
 XF252	equ	0F252H			; get fat entry content hook
 XF255	equ	0F255H			; check if devicename hook
@@ -136,6 +136,7 @@ XF2AC	equ	0F2ACH			; lineinput headloop hook
 XF2AF	equ	0F2AFH			; console output hook
 XF2B2	equ	0F2B2H			; get time and date for direntry hook
 XF2B5	equ	0F2B5H			; setup days in februari hook
+
 YF2B8	equ	0F2B8H			; current direntry number
 YF2B9	equ	0F2B9H			; filename1
 YF2C4	equ	0F2C4H			; original DR byte FCB
@@ -147,7 +148,7 @@ YF2DE	equ	0F2DEH			; result of recordoperation
 YF2DF	equ	0F2DFH			; flag increase current relative sector in cluster (0 means not)
 YF2E0	equ	0F2E0H			; flag flake read (0 means real read)
 YF2E1	equ	0F2E1H			; current driveid
-YF2E2	equ	0F2E2H			; transferadres for recordoperation
+YF2E2	equ	0F2E2H			; transferaddress for recordoperation
 YF2E4	equ	0F2E4H			; start record (32 bit) for recordoperation
 YF2E8	equ	0F2E8H			; number of records for recordoperation
 YF2EA	equ	0F2EAH			; current relative cluster of file
@@ -194,7 +195,7 @@ YF345	equ	0F345H			; maximum number of diskbasic FCB's
 YF346	equ	0F346H			; flag MSXDOS has been running (0 = no MSXDOS yet)
 YF347	equ	0F347H			; number of drives in disksystem
 YF348	equ	0F348H			; slotid disksytem rom
-YF349	equ	0F349H			; disksystem bottom (lowest adres used by the disksystem)
+YF349	equ	0F349H			; disksystem bottom (lowest address used by the disksystem)
 YF34B	equ	0F34BH			; msxdos system bottom
 $SECBUF equ	0F34DH			; pointer to sectorbuffer, can be used by the diskdriver
 YF34F	equ	0F34FH			; pointer to datasectorbuffer
@@ -306,68 +307,66 @@ ENAINT	equ	0FFD4H
 YFFFF	equ	0FFFFH
 
 
-YC000	equ	0C000H		; bootsector transferadres
+YC000	equ	0C000H		; bootsector transferaddress
 YCONBF	equ	KBUF+186	; KBUF is reused for read CON device records, size 127+2
 YCONTP	equ	KBUF+58		; KBUF is reused for temporary buffer buffered input, size 128
 
 
 ; Basic routines
 
-M.4173	equ	04173H		; return to after statement
-DECSUB	equ	0268CH		; dbl subtract
-DECADD	equ	0269AH		; dbl add
-DECDIV	equ	0289FH		; dbl divide
-VMOVE	equ	02EF3H		; copy variable
-VMOVFM	equ	02F08H		; copy variable
-M.2F10	equ	02F10H		; copy variable
-M.2F99	equ	02F99H		; integer to DAC
-M.3042	equ	03042H		; convert sgn to dbl
-M.30D1	equ	030D1H		; dbl to integer
-M.325C	equ	0325CH		; sgn multiply
-ACLOSE	equ	06C1CH		; close all channels
-EXECLP	equ	04601H		; execution loop
-BADRES	equ	06F0BH		; evaluate adres operand
-GETVAR	equ	05EA4H		; get variable pointer
-GETYPR	equ	05597H		; get operand type
-FRETMP	equ	067D0H		; free temporary string
-EVFSPC	equ	06A0EH		; evaluate filespec
-EVADR	equ	0542FH		; evaluate adres operand
-CNVADR	equ	05432H		; convert to adres
-EVWORD	equ	04756H		; evaluate word operand
-NEVBYT	equ	0521BH		; evaluate next byte operand
-EVBYTE	equ	0521CH		; evaluate byte operand
-CNVBYT	equ	0521FH		; convert to byte
-OUTNL	equ	07328H		; newline to OUTDO
-PTOLN	equ	054F7H		; convert pointers to linenumbers
-CLOCHN	equ	06B24H		; close channel
-MKPTRS	equ	04253H		; recalc linepointers
-OPNCHN	equ	06AFAH		; open channel
-SCROUT	equ	04AFFH		; output back to screen
-EVEXPR	equ	04C64H		; evaluate expression
-GTCHNP	equ	06A6DH		; get channel pointer
-EVLEXP	equ	04C5FH		; evaluate =expression
-ALSSPC	equ	0668EH		; allocate stringspace
-ALTSTR	equ	06627H		; allocate temp string
-CNVDAC	equ	0517AH		; convert DAC to other type
-CSNG	equ	046FFH		; convert to SNG
-COUTNL	equ	07323H		; newline to OUTDO if not at start of line
-ERROR	equ	0406FH		; error
-CHRGTR	equ	04666H		; CHRGTR
-EXEBAS	equ	0409BH		; restart BASIC
-QUITLD	equ	0739AH		; quit loading & start (headloop/executing)
-SKPCHK	equ	06F1DH		; skip strong cassette devicecheck
-M.6E41	equ	06E41H		; resume character putback routine
+M268C	equ	0268CH		; dbl subtract
+M269A	equ	0269AH		; dbl add
+M289F	equ	0289FH		; dbl divide
+M2EF3	equ	02EF3H		; copy variable content
+M2F08	equ	02F08H		; copy variable content to DAC
+M2F10	equ	02F10H		; copy variable content from DAC
+M2F99	equ	02F99H		; integer to DAC
+M3042	equ	03042H		; convert DAC from sgn to dbl
+M30D1	equ	030D1H		; dbl to integer
+M325C	equ	0325CH		; sgn multiply
+M406F	equ	0406FH		; BASIC error
+M409B	equ	0409BH		; restart BASIC
+M4173	equ	04173H		; execute statement
+M4253	equ	04253H		; recalculate linepointers
+M4601	equ	04601H		; execution loop
+M4666	equ	04666H		; CHRGTR
+M46FF	equ	046FFH		; convert to SNG
+M4756	equ	04756H		; evaluate word operand
+M4AFF	equ	04AFFH		; output back to screen
+M4C5F	equ	04C5FH		; evaluate =expression
+M4C64	equ	04C64H		; evaluate expression
+M517A	equ	0517AH		; convert DAC to other type
+M521B	equ	0521BH		; evaluate next byte operand
+M521C	equ	0521CH		; evaluate byte operand
+M521F	equ	0521FH		; convert to byte
+M542F	equ	0542FH		; evaluate address operand
+M5432	equ	05432H		; convert address to integer
+M54F7	equ	054F7H		; convert pointers to linenumbers
+M5597	equ	05597H		; GETYPR
+M5EA4	equ	05EA4H		; get address of variable
+M6627	equ	06627H		; allocate temp string
+M668E	equ	0668EH		; allocate stringspace
+M67D0	equ	067D0H		; free temporary string
+M6A0E	equ	06A0EH		; evaluate filespecification
+M6A6D	equ	06A6DH		; get i/o channel pointer
+M6AFA	equ	06AFAH		; open i/o channel
+M6B24	equ	06B24H		; close i/o channel
+M6C1C	equ	06C1CH		; close all i/o channels
+M6E41	equ	06E41H		; resume character putback routine
+M6E92	equ	06E92H		; start of BSAVE routine
+M6EC6	equ	06EC6H		; start of BLOAD routine
+M6EF4	equ	06EF4H		; finish BLOAD
+M6F0B	equ	06F0BH		; evaluate address operand (BLOAD/SAVE)
+M6F1D	equ	06F1DH		; skip strong cassette devicecheck
+M7323	equ	07323H		; newline to OUTDO if not at start of line
+M7328	equ	07328H		; newline to OUTDO
+M739A	equ	0739AH		; quit loading & start (headloop/executing)
+M7D17	equ	07D17H		; start MSX-BASIC
+M7D2F	equ	07D2FH		; address init screen for BASIC
+M7D31	equ	07D31H		; BASIC initscreen (without INITXT & CNSDFG)
+M7E14	equ	07E14H		; start MSX-BASIC program in ROM
 
-BASSCR	equ	07D2FH		; adres init screen for BASIC
-SKPROM	equ	07D17H		; start MSX-BASIC
-RSTCLR	equ	07E14H		; start MSX-BASIC program in ROM
-TXTINI	equ	07D31H		; BASIC initscreen (without INITXT & CNSDFG)
-
-CALBSV	equ	06E92H		; start of BSAVE routine
-CALBLD	equ	06EC6H		; start of BLOAD routine
-EXEBLD	equ	06EF4H		; finish BLOAD
-
-RETRTN	equ	0F38BH		; adres with a RET instruction, allways available
+RETRTN	equ	WRPRIM+6	; address with a RET instruction, allways available
 
 
 ; FCB structure
@@ -419,14 +418,14 @@ A4025:	scf				; format disk entrypoint (workarea must be supplied)
 A4029:	jp	A620D			; stop all disks entry point
 
 ; Unused code ??
-;
+
 	nop
 
 A402D:	jp	A5FB3			; get slotid entrypoint
 
 ;	  Subroutine get MSX-DOS system bottom
 ;	     Inputs  -
-;	     Outputs HL = lowest adres used by the base MSX-DOS system
+;	     Outputs HL = lowest address used by the base MSX-DOS system
 
 A4030:	ld	hl,(YF34B)
 	ret
@@ -434,7 +433,6 @@ A4030:	ld	hl,(YF34B)
 ;	  Subroutine check if keyboardinput available
 ;	     Inputs  -
 ;	     Outputs Zx set if no input, Zx reset if input, A = input
-
 
 A4034:	push	ix
 	ld	ix,BREAKX
@@ -446,7 +444,7 @@ A4034:	push	ix
 	ld	(YF337),a		; CTRL-C
 	and	a			; flag NZ
 	ret
-;
+
 A404B:	ld	a,(YF336)
 	and	a			; saved input available ?
 	ld	a,(YF337)
@@ -497,6 +495,7 @@ A408F:	push	ix
 	call	A40AB			; CHPUT BIOS call
 	pop	ix
 	ret
+
 ;	  Subroutine output to printer
 ;	     Inputs  A = output
 ;	     Outputs -
@@ -509,9 +508,10 @@ A409B:	push	ix
 
 ;	  Subroutine BDOS 00 (system reset)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A40A7:	ld	ix,EXEBAS
+
+A40A7:	ld	ix,M409B		; restart BASIC
 
 ;	  Subroutine MSX-BIOS call
 ;	     Inputs  IX = bios call, others depends on the bios call
@@ -712,17 +712,16 @@ A41B5:	ld	d,a
 	ld	d,a
 	ret
 
-;
 ; Identification string (not used)
-;
 
-	defb	" MSX-DOS ver. 2.2 Copyright 1984 by Microsoft "
+?41C1:	defb	" MSX-DOS ver. 2.2 Copyright 1984 by Microsoft "
 
 ;	  Subroutine BDOS 0C (return version number)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A41EF:	ld	b,000H
+
+A41EF:	ld	b,000H			; machinetype 8080, plain CP/M
 	ld	a,022H			; CP/M version 2.2
 	ret
 
@@ -730,8 +729,8 @@ A41EF:	ld	b,000H
 ;	     Inputs  HL = clusternumber, IX = pointer to DPB
 ;	     Outputs HL = clusterentry content, Zx set if entry is free, DE = pointer to FAT buffer
 
-A41F4:	ld	e,(ix+013H)
-	ld	d,(ix+014H)		; pointer to FAT buffer of drive
+A41F4:	ld	e,(ix+19)
+	ld	d,(ix+20)		; pointer to FAT buffer of drive
 A41FA:	call	XF252
 	push	de
 	ld	e,l
@@ -821,7 +820,7 @@ A4252:	ld	a,(de)
 
 ;	  Subroutine check if devicename
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A425A:	call	XF255
 	ld	hl,YF1F7		; table with devicenames
@@ -866,22 +865,24 @@ A42A3:	scf
 
 ;	  Subroutine validate FCB, clear S2 and find direntry
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
+
 
 A42A5:	push	de
-	ld	hl,0000EH
+	ld	hl,14
 	add	hl,de
 	ld	(hl),0			; FCB S2 (extent high byte)
 	call	A42B1			; validate FCB drive and filename and find direntry
 	pop	de
 	ret
-;
+
 A42B1:	call	A440E			; validate FCB drive and filename
 	ret	c			; invalid, quit
 
 ;	  Subroutine find first directoryentry
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
+
 
 A42B5:	call	A425A			; check if devicename
 	ret	nc			; yep, quit with pointer to fake device direntry
@@ -889,7 +890,7 @@ A42B5:	call	A425A			; check if devicename
 
 ;	  Subroutine find next directoryentry
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A42BC:	call	XF258
 	call	A430E			; get next direntry
@@ -914,7 +915,7 @@ A42DC:	pop	hl
 	xor	080H
 	bit	7,a
 	ret	z			; orginal FCB DR byte had b7 set, ignore direntryattribute
-	ld	a,(iy+00BH)
+	ld	a,(iy+11)
 	and	01EH
 	ret	z			; files with archive or read-only bit set are ok, quit
 	ld	a,(YF2DC)
@@ -940,23 +941,23 @@ A4308:	ld	a,(hl)
 
 ;	  Subroutine get next direntry (at start of search)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A430E:	ld	a,(YF2B8)
 	inc	a
-	cp	(ix+00BH)		; last direntry ?
+	cp	(ix+11)			; last direntry ?
 	jr	nc,A4367		; yep, update directory of disk when needed and quit
 
 ;	  Subroutine get direntry
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4317:	call	XF25B
 	ld	(YF2B8),a
 	ld	c,a
-	and	(ix+004H)		; dirmask
+	and	(ix+4)			; dirmask
 	ld	l,a
-	ld	h,000H
+	ld	h,0
 	add	hl,hl
 	add	hl,hl
 	add	hl,hl
@@ -964,14 +965,14 @@ A4317:	call	XF25B
 	add	hl,hl
 	ld	de,(YF351)		; dirsector buffer
 	add	hl,de
-	ld	b,(ix+005H)		; dirshift
+	ld	b,(ix+5)		; dirshift
 A4331:	srl	c
 	djnz	A4331
 	ld	a,(YF245)
 	cp	c			; same as dirsector currently in buffer ?
 	jr	nz,A4342		; nope, go get it
 	ld	a,(YF246)
-	cp	(ix+000H)		; same driveid as dirsector buffer owner ?
+	cp	(ix+0)		; same driveid as dirsector buffer owner ?
 	ret	z			; yep, do nothing
 A4342:	push	hl
 	call	A46A4			; read dirsector
@@ -980,17 +981,17 @@ A4342:	push	hl
 
 ;	  Subroutine get next direntry (while searching)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4348:	call	XF25E
 	ld	a,(YF2B8)
 	inc	a
-	cp	(ix+00BH)		; last direntry ?
+	cp	(ix+11)			; last direntry ?
 	jr	nc,A4367		; yep, update directory of disk when needed and quit
 	ld	(YF2B8),a
 	ld	de,00020H
 	add	hl,de
-	and	(ix+004H)		; dirmask
+	and	(ix+4)			; dirmask
 	ret	nz
 	inc	c
 	call	A46A4			; read dirsector
@@ -999,7 +1000,7 @@ A4348:	call	XF25E
 
 ;	  Subroutine at end of directory
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4367:	call	A4743			; flush directory buffer
 	scf
@@ -1007,7 +1008,7 @@ A4367:	call	A4743			; flush directory buffer
 
 ;	  Subroutine BDOS 13 (delete file)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A436C:	call	A440E			; validate FCB drive and filename
 	call	nc,A42B5		; valid, find first directoryentry
@@ -1017,8 +1018,8 @@ A436C:	call	A440E			; validate FCB drive and filename
 A4376:	ld	a,0E5H
 	ld	(YF23C),a		; flag directory buffer changed
 	ld	(hl),a			; deleted direntry
-	ld	l,(iy+01AH)
-	ld	h,(iy+01BH)
+	ld	l,(iy+26)
+	ld	h,(iy+27)
 	ld	a,h			; file has start cluster ?
 	or	l
 	call	nz,A4F9B		; yep, release cluster chain
@@ -1029,7 +1030,7 @@ A4376:	ld	a,0E5H
 
 ;	  Subroutine BDOS 17 (rename file)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4392:	call	A440E			; validate FCB drive and filename
 	jr	c,A440B			; invalid, quit with error
@@ -1050,7 +1051,7 @@ A43B3:	ld	hl,YF2C5		; new filename
 A43BB:	ld	a,(hl)
 	cp	"?"			; wildcard char ?
 	jr	nz,A43C3		; nope, use the char of the new filename
-	ld	a,(iy+000H)		; yep, use the char of the orginal filename
+	ld	a,(iy+0)		; yep, use the char of the orginal filename
 A43C3:	ld	(de),a
 	inc	hl
 	inc	de
@@ -1084,14 +1085,14 @@ A43C3:	ld	(de),a
 A4403:	call	A4743			; flush directory buffer
 	xor	a			; no error
 	ret
-;
+
 A4408:	call	A4743			; flush directory buffer
 A440B:	ld	a,0FFH			; error
 	ret
 
 ;	  Subroutine validate FCB drive and filename
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A440E:	call	XF261
 	xor	a
@@ -1108,7 +1109,7 @@ A440E:	call	XF261
 
 ;	  Subroutine Validate driveid (FCB style)
 ;	     Inputs  A = driveid
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4427:	ld	c,a
 	ld	a,(YF347)
@@ -1123,14 +1124,14 @@ A4435:	ld	(YF2E1),a		; set current driveid
 
 ;	  Subroutine get max record and extent
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A4439:	ld	a,(iy+01FH)
+A4439:	ld	a,(iy+31)
 	or	a
 	jr	nz,A445E		; filesize > 16777215, use max value
-	ld	a,(iy+01CH)
-	ld	c,(iy+01DH)
-	ld	b,(iy+01EH)
+	ld	a,(iy+28)
+	ld	c,(iy+29)
+	ld	b,(iy+30)
 	add	a,a
 	rl	c
 	rl	b			; number of records (128 bytes)
@@ -1151,7 +1152,7 @@ A445E:	ld	bc,0FF7FH		; extent 255, record 127
 
 ;	  Subroutine BDOS 0F (open file)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4462:	call	A42A5			; validate FCB, clear S2 and find direntry
 	jr	c,A440B			; error, quit with error
@@ -1186,23 +1187,23 @@ A4488:	ld	(hl),c			; RC
 	add	hl,bc
 	ldi
 	ldi				; creation time
-	ld	a,(iy+00BH)
+	ld	a,(iy+11)
 	bit	7,a
 	jr	nz,A44AE		; device,
-	ld	a,(ix+000H)		; driveid
+	ld	a,(ix+0)		; driveid
 	or	040H			; flag diskfile unchanged
 A44AE:	ld	(de),a			; devicecode
 	inc	de
 	ld	a,(YF2B8)
 	ld	(de),a			; direntry number
 	inc	de
-	ld	a,(iy+01AH)
+	ld	a,(iy+26)
 	ld	(de),a
 	inc	de
 	inc	de
 	ld	(de),a
 	dec	de
-	ld	a,(iy+01BH)
+	ld	a,(iy+27)
 	ld	(de),a
 	inc	de
 	inc	de
@@ -1216,7 +1217,7 @@ A44AE:	ld	(de),a			; devicecode
 
 ;	  Subroutine handle DSKCHG error
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A44CA:	ld	c,a
 	ld	a,(YF2E1)		; current driveid
@@ -1225,7 +1226,7 @@ A44CA:	ld	c,a
 
 ;	  Subroutine reset direntry search and get latest FAT
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A44D3:	ld	a,0FFH
 	ld	(YF2B8),a		; invalid latest direntry (search from the begin)
@@ -1233,19 +1234,19 @@ A44D3:	ld	a,0FFH
 
 ;	  Subroutine get latest FAT
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A44DB:	call	XF267
 	call	A4555			; get pointer to DPB of current drive
 	ld	a,(YF2E1)		; current driveid
-	ld	c,(ix+001H)		; mediadesciptor
+	ld	c,(ix+1)		; mediadesciptor
 	ld	b,0
 	or	a
 	call	A6067			; DSKCHG
 	jr	c,A44CA			; error,
 	call	A4536			; update DPBTBL entry current drive
-	ld	l,(ix+013H)
-	ld	h,(ix+014H)
+	ld	l,(ix+19)
+	ld	h,(ix+20)
 	dec	hl
 	ld	a,b			; DSKCHG status
 	or	(hl)			; combined with the FAT buffer status
@@ -1263,10 +1264,8 @@ A450A:	sub	l			; current drive same as datasector buffer owner ?
 	ld	h,a
 
 ; VERSION 1.1 CHANGE
-;
 ; ld (YF23F),hl is removed, because it is not explicit needed
 ; room is used later on to fix the FAT reading bug when one of the other FAT copies is used (when first FAT read generates a error)
-;
 
 	dec	l
 	ld	(YF241),hl		; invalid datasector buffer
@@ -1282,7 +1281,7 @@ A4522:	push	af
 	pop	af
 A4529:	ld	b,(hl)			; mediabyte of FAT sector
 	ld	a,(YF2E1)		; current driveid
-	ld	c,(ix+001H)		; mediadescriptor
+	ld	c,(ix+1)		; mediadescriptor
 	push	ix
 	pop	hl
 	call	A606F			; GETDPB
@@ -1294,7 +1293,7 @@ A4536:	push	hl
 	inc	hl
 	ld	(hl),d
 	ret
-;
+
 A4541:	ld	a,e
 	add	a,c
 	ld	e,a
@@ -1303,9 +1302,7 @@ A4541:	ld	a,e
 A4547:	pop	af			; adjust first FAT sector to the first FAT sector of the next FAT copy
 
 ; VERSION 1.1 BUGFIX
-;
 ; Begin of change
-;
 
 	ld	b,c			; restore sectors per FAT (B is destroyed by the DSKIO)
 
@@ -1318,9 +1315,9 @@ A4547:	pop	af			; adjust first FAT sector to the first FAT sector of the next FA
 	call	A46C5			; read FAT sectors with DOS error handling
 	pop	hl
 	jr	A4529			; use FAT buffer
-;
+
 ; CHANGED, TO KEEP ROUTINES ALIGNED WITH PREVIOUS VERSION
-;
+
 	defs	04555H-044CAH-($-A44CA),0
 
 ;	  Subroutine get pointer to DPB of current drive
@@ -1338,8 +1335,8 @@ A4555:	call	XF26A
 	ret
 
 ;	  Subroutine get DPBTBL entry of current drive
-;	     Inputs  HL = adres of pointer
-;	     Outputs ________________________ 
+;	     Inputs  HL = address of pointer
+;	     Outputs ________________________
 
 A4563:	ld	a,(YF2E1)		; current driveid
 	ld	hl,YF355
@@ -1352,14 +1349,14 @@ A4563:	ld	a,(YF2E1)		; current driveid
 
 ;	  Subroutine BDOS 10 (close file)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A456F:	push	de
 	pop	iy
 	call	A440E			; validate FCB drive and filename
 	ld	a,0FFH
 	ret	c			; invalid, quit with error
-	ld	a,(iy+018H)
+	ld	a,(iy+24)
 	and	0C0H
 	ld	a,0			; ok
 	ret	nz			; device OR unchanged diskfile, quit
@@ -1368,7 +1365,7 @@ A456F:	push	de
 	cp	l			; same drive as owner datasector buffer ?
 	call	z,A472D			; yep, flush datasector buffer
 	call	A4555			; get pointer to DPB of current drive
-	ld	a,(iy+019H)		; direntrynumber
+	ld	a,(iy+25)		; direntrynumber
 	call	A4317			; get direntry
 	ld	b,11
 	call	A424F			; compare with filename1
@@ -1398,10 +1395,10 @@ A456F:	push	de
 
 ;	  Subroutine flush FAT buffer
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A45C4:	ld	l,(ix+013H)
-	ld	h,(ix+014H)
+A45C4:	ld	l,(ix+19)
+	ld	h,(ix+20)
 	dec	hl
 	ld	a,(hl)
 	cp	1			; FAT buffer changed ?
@@ -1409,7 +1406,7 @@ A45C4:	ld	l,(ix+013H)
 
 ;	  Subroutine write FAT buffer
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A45CF:	call	XF26D
 	call	A45FA			; get FAT parameters
@@ -1436,10 +1433,10 @@ A45E9:	pop	af
 
 ;	  Subroutine make FAT buffer unchanged and quit with error
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A45EE:	ld	l,(ix+013H)
-	ld	h,(ix+014H)
+A45EE:	ld	l,(ix+19)
+	ld	h,(ix+20)
 	dec	hl
 	ld	(hl),0			; FAT buffer unchanged
 	ld	a,0FFH			; error
@@ -1449,21 +1446,21 @@ A45EE:	ld	l,(ix+013H)
 ;	     Inputs  IX = pointer to DPB
 ;	     Outputs A = number of FATs, DE = first FAT sector, B = number sectors per FAT, HL = pointer to FAT buffer
 
-A45FA:	ld	a,(ix+00AH)		; number of FATs
-	ld	l,(ix+013H)
-	ld	h,(ix+014H)		; pointer to FAT buffer
-	ld	b,(ix+010H)		; number of sectors per FAT
-	ld	e,(ix+008H)
-	ld	d,(ix+009H)		; first FAT sector
+A45FA:	ld	a,(ix+10)		; number of FATs
+	ld	l,(ix+19)
+	ld	h,(ix+20)		; pointer to FAT buffer
+	ld	b,(ix+16)		; number of sectors per FAT
+	ld	e,(ix+8)
+	ld	d,(ix+9)		; first FAT sector
 	ret
 
 ;	  Subroutine get dir parameters
 ;	     Inputs  IX = pointer to DPB, A = relative dirsector, DE = first dirsector
 ;	     Outputs DE = dirsector, B = 1, HL = pointer to dirsector buffer
 
-A460D:	add	a,(ix+011H)
+A460D:	add	a,(ix+17)
 	ld	e,a
-	ld	d,(ix+012H)
+	ld	d,(ix+18)
 	jr	nc,A4617
 	inc	d			; + first dir sector
 A4617:	ld	hl,(YF351)		; dirsector buffer
@@ -1472,7 +1469,7 @@ A4617:	ld	hl,(YF351)		; dirsector buffer
 
 ;	  Subroutine BDOS 16 (create file)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A461D:	push	de
 T461E:	call	A440E			; validate FCB drive and filename
@@ -1494,8 +1491,8 @@ T461E:	call	A440E			; validate FCB drive and filename
 	push	hl
 	pop	iy
 	jr	A4669			; setup direntry
-;
-A4647:	bit	7,(iy+00BH)
+
+A4647:	bit	7,(iy+11)
 	jr	nz,A469D		; device, treat as open file
 					; file with special fileattribute, quit with error
 A464D:	pop	de
@@ -1506,8 +1503,8 @@ A4651:	jr	nz,A4647		; device or file with special fileattribute,
 	ld	a,(YF30C)		; orginal FCB EX byte
 	or	a
 	jr	nz,A469D		; is not zero, just open the file
-	ld	l,(iy+01AH)
-	ld	h,(iy+01BH)
+	ld	l,(iy+26)
+	ld	h,(iy+27)
 	ld	a,h
 	or	l			; has start cluster ?
 	jr	z,A4669			; nop,
@@ -1556,12 +1553,12 @@ A469D:	push	iy
 
 ;	  Subroutine read dirsector
 ;	     Inputs  C = relative dir sector
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A46A4:	push	bc
 	call	A4743			; flush directory buffer
 	pop	bc
-	ld	b,(ix+000H)		; driveid
+	ld	b,(ix+0)		; driveid
 	ld	(YF246-1),bc		; set driveid and sector dirsector buffer
 	push	bc
 	ld	a,c			; relative dirsector
@@ -1572,17 +1569,17 @@ A46A4:	push	bc
 
 ;	  Subroutine BDOS 2F (read logical sector)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A46BA:	ld	b,h
 	ld	a,l
 	ld	(YF2E1),a		; set current driveid
 	call	A4555			; get pointer to DPB of current drive
-	ld	hl,(YF23D)		; transferadres
+	ld	hl,(YF23D)		; transferaddress
 
 ;	  Subroutine read sectors with DOS error handling
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A46C5:	call	XF270
 	xor	a
@@ -1596,10 +1593,10 @@ A46C5:	call	XF270
 
 ;	  Subroutine read sectors
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A46D7:	ld	a,(ix+000H)		; driveid
-	ld	c,(ix+001H)		; mediadescriptor
+A46D7:	ld	a,(ix+0)		; driveid
+	ld	c,(ix+1)		; mediadescriptor
 	push	hl
 	push	de
 	push	bc
@@ -1612,7 +1609,7 @@ A46D7:	ld	a,(ix+000H)		; driveid
 
 ;	  Subroutine adjust parameters to restart at error sector and start diskerror handler
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A46E8:	push	af
 	ld	a,c
@@ -1624,8 +1621,8 @@ A46E8:	push	af
 	add	hl,bc
 	push	hl
 	push	de
-	ld	e,(ix+002H)
-	ld	d,(ix+003H)		; sectorsize
+	ld	e,(ix+2)
+	ld	d,(ix+3)		; sectorsize
 	call	A4916			; multiply
 	pop	hl
 	pop	de
@@ -1636,11 +1633,11 @@ A46E8:	push	af
 	ld	a,(YF2FF)		; type of diskoperation
 	or	c
 	ld	c,a
-	ld	a,(ix+000H)		; driveid
+	ld	a,(ix+0)		; driveid
 
 ;	  Subroutine start diskerror handler
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A470A:	call	XF273
 	push	bc
@@ -1658,18 +1655,18 @@ A470A:	call	XF273
 
 ;	  Subroutine BDOS 30 (write logical sector)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4720:	ld	b,h
 	ld	a,l
 	ld	(YF2E1),a		; set current driveid
 	call	A4555			; get pointer to DPB of current drive
-	ld	hl,(YF23D)		; transferadres
+	ld	hl,(YF23D)		; transferaddress
 	jr	A4755			; write sectors with DOS error handling
 
 ;	  Subroutine flush datasector buffer
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A472D:	ld	hl,YF242
 	xor	a
@@ -1684,7 +1681,7 @@ A472D:	ld	hl,YF242
 
 ;	  Subroutine flush directory buffer
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4743:	ld	a,(YF23C)
 	or	a			; directory buffer changed ?
@@ -1692,7 +1689,7 @@ A4743:	ld	a,(YF23C)
 
 ;	  Subroutine write dirsector buffer
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4748:	call	XF276
 	xor	a
@@ -1702,13 +1699,13 @@ A4748:	call	XF276
 
 ;	  Subroutine write sectors with DOS error handling
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4755:	call	XF279
 	ld	a,1
 	ld	(YF2FF),a		; flag write disk operation
-	ld	a,(ix+000H)		; driveid
-	ld	c,(ix+001H)		; mediadescriptor
+	ld	a,(ix+0)		; driveid
+	ld	c,(ix+1)		; mediadescriptor
 	push	hl
 	push	de
 	push	bc
@@ -1725,7 +1722,7 @@ A4755:	call	XF279
 
 ;	  Subroutine BDOS 14 (read next record)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4775:	call	A4EF8			; get recordnumber from CR,EX and S2 fields
 	call	A4B23			; read record
@@ -1733,7 +1730,7 @@ A4775:	call	A4EF8			; get recordnumber from CR,EX and S2 fields
 
 ;	  Subroutine BDOS 15 (write next record)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A477D:	call	A4EF8			; get recordnumber from CR,EX and S2 fields
 	call	A4CA3			; write record
@@ -1742,18 +1739,18 @@ A4783:	call	A486A			; increase recordnumber if something was read/written
 
 ;	  Subroutine BDOS 21 (random access read record)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4788:	call	A4857			; get recordnumber from Rx fields, 1 record
 	call	A4B23			; read record
 	jr	A4799			; update Rx, CR,EX and S2 field
-;
+
 A4790:	push	iy
 	pop	de
 
 ;	  Subroutine BDOS 22 (random access write record)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4793:	call	A4857			; get recordnumber from Rx fields, 1 record
 	call	A4CA3			; write record
@@ -1761,18 +1758,18 @@ A4799:	call	A4844			; update Rx fields
 
 A479C:	ld	a,l
 	and	07FH
-	ld	(iy+020H),a		; CR
+	ld	(iy+32),a		; CR
 	sla	l
 	rl	h
-	ld	(iy+00CH),h		; S2
+	ld	(iy+12),h		; S2
 	rl	e
-	ld	(iy+00EH),e		; EX
+	ld	(iy+14),e		; EX
 	ld	a,(YF2DE)		; result recordoperation
 	ret
 
 ;	  Subroutine BDOS 27 (MSXDOS random block read)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A47B2:	xor	a
 	ld	(YF306),a		; no CP/M call
@@ -1782,7 +1779,7 @@ A47B2:	xor	a
 
 ;	  Subroutine BDOS 26 (MSXDOS random block write)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A47BE:	xor	a
 	ld	(YF306),a		; no CP/M call
@@ -1796,14 +1793,14 @@ A47C8:	call	A486A			; increase recordnumber if something was read/written
 
 ;	  Subroutine BDOS 28 (write random with zero fill)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A47D1:	push	de
 	pop	iy
-	ld	a,(iy+010H)
-	ld	c,(iy+011H)
-	ld	b,(iy+012H)
-	ld	e,(iy+013H)
+	ld	a,(iy+16)
+	ld	c,(iy+17)
+	ld	b,(iy+18)
+	ld	e,(iy+19)
 	add	a,a
 	rl	c
 	rl	b
@@ -1819,11 +1816,11 @@ A47D1:	push	de
 ; the following code depends on the fact that CP/M 2.2 only uses the R0 and R1 field
 ; code only works when the random record (filesize) is within 65536 records of the random record (fcb)
 
-A47F0:	ld	l,(iy+021H)
-	ld	h,(iy+022H)		; R1 and R0
+A47F0:	ld	l,(iy+33)
+	ld	h,(iy+34)		; R1 and R0
 	sbc	hl,bc
 	jr	z,A4790			; exact at end of file, random access write record and quit
-	ld	a,(iy+023H)
+	ld	a,(iy+35)
 	sbc	a,e			; before end of file ?
 	jr	c,A4790			; yep, random access write record and quit
 	push	hl			; save number of gap records
@@ -1835,7 +1832,7 @@ A47F0:	ld	l,(iy+021H)
 ; now the gap is filled. dirsector buffer is used for the zero filled record
 ; neat code should first flush the dirsector buffer, but this is ommited
 
-	ld	hl,(YF23D)		; transferadres
+	ld	hl,(YF23D)		; transferaddress
 	push	hl
 	ld	hl,(YF351)
 	ld	(YF23D),hl		; tempory use dirsector buffer
@@ -1845,14 +1842,14 @@ A4813:	ld	(hl),a
 	djnz	A4813			; create a zero filed random record
 	dec	a
 	ld	(YF246),a		; invalid dirsector buffer
-	ld	l,(iy+021H)
-	ld	h,(iy+022H)
+	ld	l,(iy+33)
+	ld	h,(iy+34)
 	sbc	hl,de
 	ld	c,l
 	ld	b,h
 	ex	de,hl
 	ld	d,000H
-	ld	a,(iy+023H)
+	ld	a,(iy+35)
 	sbc	a,d
 	ld	e,a			; start record of gap
 A482D:	push	hl
@@ -1867,28 +1864,28 @@ A482D:	push	hl
 	or	l
 	jr	nz,A482D		; next record
 	pop	hl
-	ld	(YF23D),hl		; restore transferadres
+	ld	(YF23D),hl		; restore transferaddress
 	ret
-;
+
 A4844:	ld	a,(YF2DE)		; result recordoperation
-	ld	(iy+021H),l
-	ld	(iy+022H),h
-	ld	(iy+023H),e
+	ld	(iy+33),l
+	ld	(iy+34),h
+	ld	(iy+35),e
 	inc	d
 	dec	d
 	ret	z
-	ld	(iy+024H),d
+	ld	(iy+36),d
 	ret
-;
+
 A4857:	ld	hl,1			; 1 record
 A485A:	push	de
 	pop	iy
-	ld	c,(iy+021H)		; R0
-	ld	b,(iy+022H)		; R1
-	ld	e,(iy+023H)		; R2
-	ld	d,(iy+024H)		; R3
+	ld	c,(iy+33)		; R0
+	ld	b,(iy+34)		; R1
+	ld	e,(iy+35)		; R2
+	ld	d,(iy+36)		; R3
 	ret
-;
+
 A486A:	ret	z
 	inc	hl
 	ld	a,h
@@ -1896,7 +1893,7 @@ A486A:	ret	z
 	ret	nz
 	inc	de
 	ret
-;
+
 A4871:	pop	hl
 	ld	l,c
 	ld	h,b
@@ -1906,24 +1903,24 @@ A4871:	pop	hl
 	ld	c,a
 	ld	b,a
 	ret
-;
+
 A487D:	ld	(YF2E8),hl		; number of records requested
 	ld	(YF2E4+0),bc
 	ld	(YF2E4+2),de		; startrecord
-	ld	a,(iy+000H)
+	ld	a,(iy+0)
 	call	A4427			; validate fcb driveid
 	jr	c,A4871
 	ld	de,00080H
 	ld	a,(YF306)
 	or	a			; Random Block ?
 	jr	nz,A48A8
-	ld	a,(iy+00EH)
-	ld	d,(iy+00FH)		; yep, use user set recordsize
+	ld	a,(iy+14)
+	ld	d,(iy+15)		; yep, use user set recordsize
 	ld	e,a
 	or	d			; zero recordsize ?
 	jr	nz,A48A8
 	ld	e,128
-	ld	(iy+00EH),e		; yep, use 128 bytes default
+	ld	(iy+14),e		; yep, use 128 bytes default
 A48A8:	inc	d
 	dec	d
 	jr	nz,A48B1
@@ -1933,13 +1930,13 @@ A48A8:	inc	d
 A48B1:	xor	a
 	ld	(YF2E4+3),a		; recordsize >64, clear b31-b24 of record (use 24 bit recordnumbers)
 A48B5:	ld	hl,(YF23D)
-	ld	(YF2E2),hl		; current transferadres
+	ld	(YF2E2),hl		; current transferaddress
 	xor	a
 	ld	(YF2DE),a		; no error in recordoperation
 	ld	(YF2DF),a		; flag do not increase sector
 	ld	bc,(YF2E8)		; number of records requested
 	call	A4916			; * recordsize
-	ld	a,(iy+018H)
+	ld	a,(iy+24)
 	or	a
 	ret	m			; DOS device, quit
 	push	bc
@@ -1954,21 +1951,21 @@ A48B5:	ld	hl,(YF23D)
 	ld	h,b
 	ld	l,c
 	pop	bc			; BCHL = startbyte
-	ld	e,(ix+002H)
-	ld	d,(ix+003H)
+	ld	e,(ix+2)
+	ld	d,(ix+3)
 	call	A4932			; / sectorsize
 	ld	(YF2F2),hl		; offset in sector of startbyte
 	ld	(YF2EE),bc		; relative sector of startbyte
-	ld	a,(ix+006H)
+	ld	a,(ix+6)
 	and	c			; clustermask
 	ld	(YF2DD),a		; current relative sector in cluster (of startbyte)
-	ld	a,(ix+007H)		; clustershift
+	ld	a,(ix+7)		; clustershift
 A4906:	dec	a
 	jr	z,A490F
 	srl	b
 	rr	c
 	jr	A4906
-;
+
 A490F:	ld	(YF2EC),bc		; relative cluster of startbyte
 	pop	bc
 	xor	a
@@ -1976,18 +1973,19 @@ A490F:	ld	(YF2EC),bc		; relative cluster of startbyte
 
 ;	  Subroutine multiply
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4916:	call	XF27C
 	ld	hl,0
 
 ;	  Subroutine multiply high word
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A491C:	ld	a,b
 	ld	b,011H
 	jr	A4928
+
 A4921:	jr	nc,A4924
 	add	hl,de
 A4924:	rr	h
@@ -2000,14 +1998,14 @@ A4928:	rra
 
 ;	  Subroutine divide
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 DIV16:
 A492F:	ld	hl,0
 
 ;	  Subroutine divide
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4932:	call	XF27F
 	ld	a,b
@@ -2026,13 +2024,14 @@ A4947:	rl	c
 	djnz	A493B
 	ld	b,a
 	ret
+
 A494E:	or	a
 	sbc	hl,de
 	jr	A4947
 
 ;	  Subroutine calculate partial sector transfers
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4953:	ld	h,b
 	ld	l,c			; bytes to transfer
@@ -2042,8 +2041,8 @@ A4953:	ld	h,b
 	ld	e,a
 	ld	d,a
 	jr	z,A4972			; at start sector, no partial start
-	ld	e,(ix+002H)
-	ld	d,(ix+003H)
+	ld	e,(ix+2)
+	ld	d,(ix+3)
 	ex	de,hl			; sectorsize
 	sbc	hl,bc
 	ex	de,hl			; bytes left in sector
@@ -2055,8 +2054,8 @@ A4953:	ld	h,b
 A4972:	ld	(YF2F8),de		; bytes to transfer from partial sector
 	ld	c,l
 	ld	b,h			; bytes left after partial sector transfer
-	ld	e,(ix+002H)
-	ld	d,(ix+003H)
+	ld	e,(ix+2)
+	ld	d,(ix+3)
 	call	A492F			; / sectorsize
 	ld	(YF2FA),hl		; partial bytes in endsector
 	ld	(YF2FC),bc		; hole sectors of transfer
@@ -2064,13 +2063,13 @@ A4972:	ld	(YF2F8),de		; bytes to transfer from partial sector
 
 ;	  Subroutine get absolute cluster
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4989:	call	XF282
-	ld	l,(iy+01CH)
-	ld	h,(iy+01DH)		; current cluster of file
-	ld	e,(iy+01EH)
-	ld	d,(iy+01FH)		; current relative cluster of file
+	ld	l,(iy+28)
+	ld	h,(iy+29)		; current cluster of file
+	ld	e,(iy+30)
+	ld	d,(iy+31)		; current relative cluster of file
 	ld	a,l
 	or	h
 	jr	z,A49CF			; file has no start cluster,
@@ -2084,8 +2083,8 @@ A4989:	call	XF282
 	jr	nc,A49B0		; requested cluster behind current, search from current cluster
 	pop	bc
 	ld	de,0			; relative cluster 0
-	ld	l,(iy+01AH)
-	ld	h,(iy+01BH)		; start cluster of file
+	ld	l,(iy+26)
+	ld	h,(iy+27)		; start cluster of file
 	push	af
 A49B0:	pop	af
 A49B1:	call	XF285
@@ -2106,18 +2105,18 @@ A49C7:	pop	de
 	inc	de
 	dec	bc
 	jr	A49B1
-;
+
 A49CC:	ex	de,hl
 	pop	de
 	ret
-;
+
 A49CF:	inc	bc			; BC<>0 (means not found)
 	dec	de
 	ret
 
 ;	  Subroutine read datasector
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A49D2:	ld	(YF2E0),a
 	ld	hl,(YF2EC)		; relative cluster
@@ -2157,7 +2156,7 @@ A4A1B:	ld	a,1
 	push	hl
 	ld	bc,(YF2F8)
 	add	hl,bc
-	ld	(YF2E2),hl		; update current transferadres
+	ld	(YF2E2),hl		; update current transferaddress
 	ld	hl,(YF34F)		; datasector buffer
 	ld	de,(YF2F2)
 	add	hl,de
@@ -2166,7 +2165,7 @@ A4A1B:	ld	a,1
 
 ;	  Subroutine do partical sector read if needed
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4A36:	call	XF288
 	ld	hl,(YF2F8)
@@ -2179,7 +2178,7 @@ A4A36:	call	XF288
 
 ;	  Subroutine handle partial sector write
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4A46:	call	XF28B
 	ld	hl,(YF2F8)
@@ -2203,7 +2202,7 @@ A4A46:	call	XF28B
 
 ;	  Subroutine last partial sector ?
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4A6B:	ld	hl,0
 	ld	(YF2F2),hl
@@ -2216,13 +2215,13 @@ A4A6B:	ld	hl,0
 
 ;	  Subroutine to next sector (only when partical read was done)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4A7B:	ld	a,(YF2DF)
 	or	a			; flag do not increase
 	ret	z			; yep, quit
 	ld	a,(YF2DD)
-	cp	(ix+006H)		; clustermask
+	cp	(ix+6)			; clustermask
 	jr	c,A4AA2			; still sectors left in this cluster, increase relative sector in cluster
 	ld	de,(YF2EC)		; current cluster of file
 	ld	hl,00FF7H
@@ -2256,11 +2255,11 @@ A4AB9:	ld	(YF300),hl
 
 ; finish read record for dos devices
 
-A4ABC:	ld	(YF2E2),de		; update current transferadres
+A4ABC:	ld	(YF2E2),de		; update current transferaddress
 	jp	nz,A4BE2
-	res	6,(iy+018H)
+	res	6,(iy+24)
 	jp	A4BE2
-;
+
 A4ACA:	call	A53A8			; console output
 	ld	hl,00000H
 	ld	a,c
@@ -2271,9 +2270,9 @@ A4ACA:	call	A53A8			; console output
 
 ;	  Subroutine read record for dos devices
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A4AD7:	ld	de,(YF2E2)		; current transferadres
+A4AD7:	ld	de,(YF2E2)		; current transferaddress
 	inc	a
 	jr	z,A4AF2			; CON, handle
 	inc	a
@@ -2301,10 +2300,8 @@ A4AF2:	ld	hl,(YF300)
 	jr	nz,A4AA8
 
 ; VERSION 1.1 CHANGE
-;
 ; CHANGED, BUGFIX
-; ld hl,00080H
-;
+; ld hl,128
 
 A4AF9:	ld	hl,127
 	ld	a,(YCONBF+0)
@@ -2336,14 +2333,14 @@ A4B05:	push	bc
 
 A4B23:	call	A487D			; initialize record info
 	jp	m,A4AD7			; dos device, special action
-	ld	l,(iy+010H)
-	ld	h,(iy+011H)
+	ld	l,(iy+16)
+	ld	h,(iy+17)
 	ld	de,(YF2F4+0)
 	or	a
 	sbc	hl,de
 	push	hl
-	ld	l,(iy+012H)
-	ld	h,(iy+013H)
+	ld	l,(iy+18)
+	ld	h,(iy+19)
 	ld	de,(YF2F4+2)
 	sbc	hl,de
 	pop	hl
@@ -2393,8 +2390,8 @@ A4B8E:	push	bc
 	or	a			; datasector buffer changed ?
 	jr	z,A4BC1			; nope, then no need to transfer the datasector buffer
 	push	bc
-	ld	c,(ix+002H)
-	ld	b,(ix+003H)		; sectorsize
+	ld	c,(ix+2)
+	ld	b,(ix+3)		; sectorsize
 	push	bc
 	push	hl
 	ld	hl,(YF23F)		; sectornumber of datasector buffer
@@ -2424,12 +2421,12 @@ A4BC1:	pop	de
 	xor	a			; current relative sector in cluster = first sector
 	ex	de,hl
 	jr	A4B8E			; again
-;
+
 A4BDC:	call	A4A6B			; last partial sector ?
 	call	nc,A4A36		; yes, do partical sector read if needed
 A4BE2:	call	XF291
-	ld	hl,(YF2E2)		; current transferadres (end)
-	ld	de,(YF23D)		; transferadres (begin)
+	ld	hl,(YF2E2)		; current transferaddress (end)
+	ld	de,(YF23D)		; transferaddress (begin)
 	or	a
 	sbc	hl,de
 	ld	c,l
@@ -2438,8 +2435,8 @@ A4BE2:	call	XF291
 	ld	a,(YF306)
 	or	a			; Random Block
 	jr	nz,A4C00		; nope, use 128 bytes recordsize
-	ld	e,(iy+00EH)
-	ld	d,(iy+00FH)		; user recordsize for Random Block
+	ld	e,(iy+14)
+	ld	d,(iy+15)		; user recordsize for Random Block
 A4C00:	call	A492F			; how many records ?
 	ld	a,h
 	or	l			; partly records ?
@@ -2462,11 +2459,11 @@ A4C17:	ld	hl,(YF2E8)		; number of records requested
 	ld	(YF2DE),a		; error in record operation
 A4C22:	call	XF294
 	ld	hl,(YF2EC)
-	ld	(iy+01CH),l
-	ld	(iy+01DH),h		; current cluster of file FCB
+	ld	(iy+28),l
+	ld	(iy+29),h		; current cluster of file FCB
 	ld	hl,(YF2EA)
-	ld	(iy+01EH),l
-	ld	(iy+01FH),h		; current relative cluster of file FCB
+	ld	(iy+30),l
+	ld	(iy+31),h		; current relative cluster of file FCB
 A4C37:	ld	hl,(YF2E4+0)
 	ld	de,(YF2E4+2)		; startrecord
 	ld	a,b
@@ -2481,9 +2478,9 @@ A4C37:	ld	hl,(YF2E4+0)
 
 ;	  Subroutine write record for dos devices
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A4C47:	ld	hl,(YF23D)		; transferadres
+A4C47:	ld	hl,(YF23D)		; transferaddress
 	or	040H
 	inc	a
 	jr	z,A4C73			; CON, handle
@@ -2501,7 +2498,7 @@ A4C53:	jr	z,A4C81			; NUL, handle
 	ld	a,b
 	or	c
 	jr	A4C53
-;
+
 A4C63:	ld	a,(hl)
 	inc	hl
 	call	A5475			; auxiliary output
@@ -2512,7 +2509,7 @@ A4C63:	ld	a,(hl)
 	or	c
 	jr	nz,A4C63
 	jr	A4C81
-;
+
 A4C73:	ld	a,(hl)
 	inc	hl
 	cp	01AH
@@ -2524,7 +2521,7 @@ A4C73:	ld	a,(hl)
 	jr	nz,A4C73
 A4C81:	ld	bc,(YF2E8)		; no. of records
 	jr	A4C37
-;
+
 A4C87:	ld	c,e
 	ld	b,d			; clusters to skip
 	call	A49B1			; get next absolute cluster
@@ -2544,20 +2541,20 @@ A4C97:	call	XF297
 
 ;	  Subroutine write record
 ;	     Inputs  DEBC = recordnumber, HL = number of records
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4CA3:	call	A487D			; initialize record info
 	push	af
 	push	bc
 	call	A5496			; get time and date (dirformat)
-	ld	(iy+014H),c
-	ld	(iy+015H),b
-	ld	(iy+016H),e
-	ld	(iy+017H),d
+	ld	(iy+20),c
+	ld	(iy+21),b
+	ld	(iy+22),e
+	ld	(iy+23),d
 	pop	bc
 	pop	af
 	jp	m,A4C47			; DOS device, special action
-	res	6,(iy+018H)		; flag FCB changed
+	res	6,(iy+24)		; flag FCB changed
 	push	bc
 	call	A4953			; calculate partical sector transfers
 	pop	bc
@@ -2573,22 +2570,22 @@ A4CA3:	call	A487D			; initialize record info
 A4CD6:	ld	b,h
 	ld	c,l
 	ex	de,hl
-	ld	e,(ix+002H)
-	ld	d,(ix+003H)
+	ld	e,(ix+2)
+	ld	d,(ix+3)
 	call	A4932			; / sectorsize
 	ld	h,b
 	ld	l,c			; relative sector of endbyte
-	ld	b,(ix+007H)		; clustershift
+	ld	b,(ix+7)		; clustershift
 	dec	b
 	jr	z,A4CF0
 A4CEA:	srl	h
 	rr	l
 	djnz	A4CEA			; relative cluster of endbyte
 A4CF0:	push	hl
-	ld	c,(iy+010H)
-	ld	b,(iy+011H)
-	ld	l,(iy+012H)
-	ld	h,(iy+013H)		; filesize
+	ld	c,(iy+16)
+	ld	b,(iy+17)
+	ld	l,(iy+18)
+	ld	h,(iy+19)		; filesize
 	call	A4932			; / sectorsize
 	ld	a,h
 	or	l			; offset in sector
@@ -2659,12 +2656,12 @@ A4D73:	call	A4755			; write datasectors with DOS error handling
 	ld	(YF2EA),hl		; update relative cluster
 	ex	de,hl
 	jr	A4D65			; again
-;
+
 A4D8C:	call	XF29D
 	call	A4A6B			; last partial sector ?
 	call	nc,A4A46		; partial end, handle partial sector write
-	ld	hl,(YF2E2)		; current transferadres
-	ld	de,(YF23D)		; transferadres
+	ld	hl,(YF2E2)		; current transferaddress
+	ld	de,(YF23D)		; transferaddress
 	or	a
 	sbc	hl,de
 	ld	de,(YF2F4+0)
@@ -2674,12 +2671,12 @@ A4D8C:	call	XF29D
 	inc	de
 A4DAB:	ld	(YF2F4+0),hl
 	ld	(YF2F4+2),de		; startbyte = startbyte + transfersize
-	ld	c,(iy+010H)
-	ld	b,(iy+011H)
+	ld	c,(iy+16)
+	ld	b,(iy+17)
 	or	a
 	sbc	hl,bc
-	ld	c,(iy+012H)
-	ld	b,(iy+013H)
+	ld	c,(iy+18)
+	ld	b,(iy+19)
 	ex	de,hl
 	sbc	hl,bc			; has file expanded ?
 	jr	c,A4DD6			; nop,
@@ -2708,16 +2705,16 @@ A4DDD:	ld	a,h
 	sbc	hl,bc
 	ld	b,d
 	ld	c,e			; filesize = startbyte-1
-	ld	e,(ix+002H)
-	ld	d,(ix+003H)
+	ld	e,(ix+2)
+	ld	d,(ix+3)
 	call	A4932			; / sectorsize
-	ld	a,(ix+007H)		; clustershift
+	ld	a,(ix+7)		; clustershift
 A4DFA:	dec	a
 	jr	z,A4E03
 	srl	b
 	rr	c
 	jr	A4DFA
-;
+
 A4E03:	call	A4989			; get absolute cluster
 	ld	a,b
 	or	c			; found ?
@@ -2727,39 +2724,37 @@ A4E03:	call	A4989			; get absolute cluster
 A4E10:	ld	bc,0
 	ld	(YF2E8),bc		; number of records = 0
 	ld	(YF2EA),bc		; current relative cluster = 0
-	ld	l,(iy+01AH)
-	ld	h,(iy+01BH)		; start cluster of file
+	ld	l,(iy+26)
+	ld	h,(iy+27)		; start cluster of file
 	ld	(YF2EC),hl		; current cluster = start cluster of file
 	jr	A4DC6
-;
+
 A4E26:	ld	bc,00FFFH
 	call	A4F9E			; mark end & release rest chain
 A4E2C:	dec	de
 
 ; VERSION 1.1 CHANGE
-;
 ; CHANGED, BUGFIX
 ; ld a,0FFH
-;
 
 	ld	a,1
 	ld	(de),a			; flag FAT buffer changed
 	jr	A4E10
-;
-A4E32:	ld	l,(iy+01AH)
-	ld	h,(iy+01BH)
+
+A4E32:	ld	l,(iy+26)
+	ld	h,(iy+27)
 	ld	a,h
 	or	l			; file has start cluster ?
 	jr	z,A4E10			; nop,
 	xor	a
-	ld	(iy+01AH),a
-	ld	(iy+01BH),a		; file has no start cluster (empty file)
+	ld	(iy+26),a
+	ld	(iy+27),a		; file has no start cluster (empty file)
 	call	A4F9B			; release cluster chain
 	jr	A4E2C			; mark FAT buffer changed
 
 ;	  Subroutine calculate sequencial sectors
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4E48:	call	XF2A0
 	ld	d,a
@@ -2770,7 +2765,7 @@ A4E48:	call	XF2A0
 	ld	c,0FFH
 A4E53:	ld	e,c
 	push	de
-	ld	a,(ix+006H)		; clustermask
+	ld	a,(ix+6)		; clustermask
 	ld	(YF2DD),a		; current relative sector in cluster
 	inc	a
 	sub	d
@@ -2783,7 +2778,7 @@ A4E5E:	ld	(YF2EC),hl
 	sub	b
 	ld	c,a
 	jr	z,A4E78
-	ld	b,(ix+006H)		; clustermask
+	ld	b,(ix+6)		; clustermask
 	jr	c,A4ECA
 	inc	b
 	inc	de
@@ -2799,14 +2794,14 @@ A4E78:	pop	de
 	sub	c
 	ld	e,a
 	ld	d,000H
-	ld	c,(ix+002H)
-	ld	b,(ix+003H)		; sectorsize
+	ld	c,(ix+2)
+	ld	b,(ix+3)		; sectorsize
 	call	A4916			; multiply
 	pop	af
 	ld	hl,(YF2E2)
 	push	hl
 	add	hl,bc
-	ld	(YF2E2),hl		; update current transferadres
+	ld	(YF2E2),hl		; update current transferaddress
 	pop	bc
 	pop	hl
 	push	bc
@@ -2822,7 +2817,7 @@ A4E78:	pop	de
 	ex	de,hl
 	pop	bc
 	ld	a,(YF241)
-	cp	(ix+000H)		; driveid
+	cp	(ix+0)		; driveid
 	ld	a,c
 	scf
 	jr	nz,A4EC7
@@ -2839,7 +2834,7 @@ A4E78:	pop	de
 A4EC7:	pop	hl
 	pop	bc
 	ret
-;
+
 A4ECA:	add	a,b
 	ld	(YF2DD),a		; current relative sector in cluster
 	ld	c,000H
@@ -2847,7 +2842,7 @@ A4ECA:	add	a,b
 
 ;	  Subroutine get decoded characterpair (not needed, uses for secret message)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4ED2:	call	A41FA
 	ld	a,l
@@ -2862,7 +2857,7 @@ A4ED2:	call	A41FA
 
 A4EDB:	call	XF2A3
 	push	bc
-	ld	b,(ix+007H)		; clustershift
+	ld	b,(ix+7)		; clustershift
 	dec	hl
 	dec	hl
 	dec	b
@@ -2872,21 +2867,21 @@ A4EE7:	sla	l
 	djnz	A4EE7
 A4EED:	or	l
 	ld	l,a
-	ld	c,(ix+00CH)
-	ld	b,(ix+00DH)
+	ld	c,(ix+12)
+	ld	b,(ix+13)
 	add	hl,bc			; + first datasector
 	pop	bc
 	ret
 
 ;	  Subroutine get recordnumber from S2,EX and CR fields
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4EF8:	push	de
 	pop	iy
-	ld	c,(iy+020H)		; CR (current record)
-	ld	b,(iy+00CH)		; EX (extent)
-	ld	e,(iy+00EH)		; S2
+	ld	c,(iy+32)		; CR (current record)
+	ld	b,(iy+12)		; EX (extent)
+	ld	e,(iy+14)		; S2
 	ld	d,0
 	sla	c
 	srl	e
@@ -2897,11 +2892,11 @@ A4EF8:	push	de
 
 ;	  Subroutine allocate cluster chain
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4F12:	call	XF2A6
-	ld	e,(ix+013H)
-	ld	d,(ix+014H)
+	ld	e,(ix+19)
+	ld	d,(ix+20)
 	ex	de,hl			; pointer to FAT buffer of drive
 	ld	a,(hl)
 	inc	hl
@@ -2909,8 +2904,8 @@ A4F12:	call	XF2A6
 	ld	l,a			; pointer to FAT
 	push	hl
 	ex	de,hl
-	ld	e,(ix+00EH)
-	ld	d,(ix+00FH)		; Max cluster
+	ld	e,(ix+14)
+	ld	d,(ix+15)		; Max cluster
 	ld	(YF302),de		; store
 	push	hl
 A4F2D:	push	bc			; clusters to allocate
@@ -2936,7 +2931,7 @@ A4F31:	push	de
 	call	A4F9E			; mark end & release rest chain
 	scf
 	jr	A4F94
-;
+
 A4F4E:	inc	hl
 	call	A4F5E			; try to allocate
 	ld	a,e			; nop not free !
@@ -2950,7 +2945,7 @@ A4F56:	dec	de
 
 ;	  Subroutine allocate cluster if free
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4F5E:	push	hl
 	push	de
@@ -2962,8 +2957,8 @@ A4F5E:	push	hl
 	ld	c,l
 	ld	b,h
 	ex	(sp),hl
-	ld	e,(ix+013H)
-	ld	d,(ix+014H)		; pointer to FAT buffer of drive
+	ld	e,(ix+19)
+	ld	d,(ix+20)		; pointer to FAT buffer of drive
 	call	A4221			; set FAT entry content
 	pop	hl
 	pop	bc
@@ -2983,8 +2978,8 @@ A4F5E:	push	hl
 	ld	a,c
 	or	b
 	jr	nz,A4F94
-	ld	(iy+01AH),l
-	ld	(iy+01BH),h		; start cluster of file
+	ld	(iy+26),l
+	ld	(iy+27),h		; start cluster of file
 A4F94:	ex	de,hl
 	pop	bc
 	ld	(hl),c
@@ -2995,13 +2990,13 @@ A4F94:	ex	de,hl
 
 ;	  Subroutine release cluster chain
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4F9B:	ld	bc,0
 
 ;	  Subroutine set cluster entry and release rest of cluster chain
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4F9E:	call	XF2A9
 	push	hl
@@ -3022,7 +3017,7 @@ A4F9E:	call	XF2A9
 
 ;	  Subroutine BDOS 11 (search for first)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A4FB8:	call	A42A5			; validate FCB, clear S2 and find direntry
 A4FBB:	jr	c,A5000			; error, quit
@@ -3031,7 +3026,7 @@ A4FBB:	jr	c,A5000			; error, quit
 	ld	a,0FFH			; device, flag search next invalid
 A4FC4:	ld	(YF30B),a
 	ld	(YF309),ix		; save pointer to DPB
-	ld	de,(YF23D)		; transferadres
+	ld	de,(YF23D)		; transferaddress
 	ld	a,(YF2E1)		; current driveid
 	inc	a
 	ld	(de),a
@@ -3048,7 +3043,7 @@ A4FDC:	ld	bc,00020H
 	jr	z,A4FEF			; same, RC = max record
 	jr	nc,A5000		; bigger, quit with error
 	ld	c,080H			; smaller, RC = 128 (means extend is full)
-A4FEF:	ld	hl,(YF23D)		; transferadres
+A4FEF:	ld	hl,(YF23D)		; transferaddress
 	ld	de,0000CH
 	add	hl,de
 	ld	b,(hl)			; MS-DOS fileattribute
@@ -3061,14 +3056,14 @@ A4FEF:	ld	hl,(YF23D)		; transferadres
 	ld	(hl),c			; RC = (CP/M: recordcount)
 	xor	a			; CP/M direntry 0, no error
 	ret
-;
+
 A5000:	ld	a,0FFH
 	ld	(YF30B),a		; search for next invalid
 	ret
 
 ;	  Subroutine BDOS 12 (search for next)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A5006:	call	A440E			; validate FCB drive and filename
 	jr	c,A5000			; invalid,
@@ -3082,17 +3077,17 @@ A5006:	call	A440E			; validate FCB drive and filename
 
 ;	  Subroutine BDOS 23 (compute filesize)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A501E:	call	A42A5			; validate FCB, clear S2 and find direntry
 	ld	a,0FFH
 	ret	c			; error, quit
 	push	de
 	pop	ix
-	ld	a,(iy+01CH)
-	ld	c,(iy+01DH)
-	ld	b,(iy+01EH)
-	ld	e,(iy+01FH)
+	ld	a,(iy+28)
+	ld	c,(iy+29)
+	ld	b,(iy+30)
+	ld	e,(iy+31)
 	add	a,a
 	rl	c
 	rl	b
@@ -3104,15 +3099,15 @@ A501E:	call	A42A5			; validate FCB, clear S2 and find direntry
 	or	c
 	jr	nz,A5043
 	inc	e			; nope, increase random record
-A5043:	ld	(ix+021H),c
-	ld	(ix+022H),b
-	ld	(ix+023H),e		; set R2,R1 and R0
+A5043:	ld	(ix+33),c
+	ld	(ix+34),b
+	ld	(ix+35),e		; set R2,R1 and R0
 	xor	a
 	ret				; quit without error
 
 ;	  Subroutine BDOS 18 (return bitmap of logged-in drives)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A504E:	ld	a,(YF347)
 	ld	b,a
@@ -3124,14 +3119,14 @@ A5053:	scf
 
 ;	  Subroutine BDOS 1A (set DMA address)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A5058:	ld	(YF23D),de		; set transferadres
+A5058:	ld	(YF23D),de		; set transferaddress
 	ret
 
 ;	  Subroutine BDOS 1B (MSXDOS get allocation)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A505D:	xor	a
 	ld	(YF306),a		; no CP/M call
@@ -3140,15 +3135,15 @@ A505D:	xor	a
 	ld	a,0FFH
 	ret	c			; error, quit
 	call	A44DB			; get latest FAT
-	ld	e,(ix+013H)
-	ld	d,(ix+014H)
+	ld	e,(ix+19)
+	ld	d,(ix+20)
 	push	de
 	pop	iy			; pointer to FAT buffer of drive
 	ld	hl,2			; start at clusterentry 2
 	ld	b,h
 	ld	c,h			; free cluster = 0
-	ld	e,(ix+00EH)
-	ld	d,(ix+00FH)
+	ld	e,(ix+14)
+	ld	d,(ix+15)
 	dec	de			; number of clusters on disk
 	push	de
 A5081:	push	de
@@ -3166,18 +3161,18 @@ A508B:	inc	hl
 	ld	h,b
 	ld	l,c			; number of free clusters
 	pop	de			; number of clusters
-	ld	a,(ix+006H)
+	ld	a,(ix+6)
 	inc	a			; number of sectors per cluster
-	ld	c,(ix+002H)
-	ld	b,(ix+003H)		; sectorsize
+	ld	c,(ix+2)
+	ld	b,(ix+3)		; sectorsize
 	ret
 
 ;	  Subroutine BDOS 0D (reset discs)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A509F:	ld	hl,00080H
-	ld	(YF23D),hl		; default transferadres
+	ld	(YF23D),hl		; default transferaddress
 	xor	a
 	ld	(YF247),a		; default driveid 0 (A:)
 	call	A472D			; flush datasector buffer
@@ -3200,23 +3195,24 @@ A50B2:	ld	e,(hl)
 
 ;	  Subroutine BDOS 25 (return current drive)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A50C4:	ld	a,(YF247)
 	ret
 
 ;	  Subroutine BDOS 34 (update random access pointer)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A50C8:	call	A4EF8			; get recordnumber from CR,EX and S2 field
-	ld	(iy+021H),l
-	ld	(iy+022H),h
-	ld	(iy+023H),e
+	ld	(iy+33),l
+	ld	(iy+34),h
+	ld	(iy+35),e
 	ret
+
 ;	  Subroutine BDOS 0E (select disc)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A50D5:	ld	a,(YF347)
 	cp	e
@@ -3228,7 +3224,7 @@ A50D5:	ld	a,(YF347)
 
 ;	  Subroutine BDOS 0A (buffered console input)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A50E0:	push	de
 	ld	a,(YF237)
@@ -3248,10 +3244,8 @@ A50E0:	push	de
 	cp	c			; is lengthbyte valid ?
 
 ; VERSION 1.1 CHANGE
-;
 ; CHANGED, BUGFIX
 ; jr nc,A5103
-;
 
 	jr	nc,A5101		; equal, use the line in buffer as basis otherwise use empty line as basis
 	push	hl			; length smaller than size of buffer
@@ -3327,7 +3321,7 @@ A513B:	push	af
 	inc	d
 	inc	hl
 	jr	A5104
-;
+
 A515E:	pop	af
 	ld	a,007H			; bell
 	call	A53A8			; console output
@@ -3352,7 +3346,7 @@ A517A:	ld	a,b
 	ld	(YF23A),a		; store current linelength (for secret message)
 	call	A5183			; newline
 A5181:	jr	A5104
-;
+
 A5183:	ld	a,00DH
 	call	A53A8			; console output
 	ld	a,00AH
@@ -3400,12 +3394,12 @@ A51AB:	ld	a,(YF23A)
 	jr	z,A51CE
 	dec	b
 	dec	ix
-	ld	a,(ix+000H)
+	ld	a,(ix+0)
 	dec	a
 	jr	z,A51DC
 	inc	b
 	inc	ix
-A51CE:	ld	a,(ix+000H)
+A51CE:	ld	a,(ix+0)
 	cp	020H
 	jr	nc,A51DC
 	cp	009H
@@ -3433,7 +3427,7 @@ A51DC:	ld	a,(YF239)
 	dec	d
 	dec	hl
 	jr	A5181
-;
+
 A51FB:	push	hl
 	push	bc
 	ld	a,(YF238)
@@ -3462,7 +3456,7 @@ A5221:	call	A534F
 A5226:	pop	bc
 	pop	hl
 	jr	A51DC
-;
+
 A522A:	ld	a,c
 	add	a,007H
 	and	0F8H
@@ -3589,7 +3583,7 @@ A52B5:	push	af
 	jr	nc,A52DF
 	ld	a,(hl)
 A52CD:	inc	hl
-	ld	(ix+000H),a
+	ld	(ix+0),a
 	inc	ix
 	call	A535D
 	inc	b
@@ -3598,10 +3592,10 @@ A52CD:	inc	hl
 	dec	a
 	jr	nz,A52B5
 	jp	A5104
-;
+
 A52DF:	pop	af
 	jp	A5104
-;
+
 A52E3:	call	A544E			; BDOS 8 (direct input)
 	cp	001H
 	jr	nz,A531F
@@ -3640,7 +3634,7 @@ A531A:	pop	af
 	pop	de
 	pop	hl
 	ret
-;
+
 A531F:	push	bc
 	push	af
 	ld	a,e
@@ -3667,7 +3661,7 @@ A5336:	pop	af
 	pop	bc
 	scf
 	ret
-;
+
 A533F:	inc	hl
 	cpir
 	pop	hl
@@ -3678,19 +3672,19 @@ A533F:	inc	hl
 	sub	c
 	pop	bc
 	ret
-;
+
 A534B:	pop	af
 A534C:	pop	bc
 	scf
 	ret
-;
+
 A534F:	ld	a,008H
 	call	A53A8			; console output
 	ld	a,020H
 	call	A53A8			; console output
 	ld	a,008H
 	jr	A53A8			; console output
-;
+
 A535D:	cp	020H
 	jr	nc,A53A8		; console output
 	cp	009H
@@ -3705,7 +3699,6 @@ A535D:	cp	020H
 	jr	A53A8			; console output
 
 ; keytable lineinput
-;
 ; first table contains all keycodes, code 8 at the end is a fake one for 'other key', because it is already in the table
 ; second table contains all serviceroutines, but in reserve order (so last one belongs to the first keycode)
 
@@ -3722,7 +3715,7 @@ NKEYNT	equ	($-T5374)/3
 
 ;	  Subroutine BDOS 02 (console output)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A53A7:	ld	a,e
 A53A8:	call	XF2AF
@@ -3759,26 +3752,26 @@ A53D5:	push	bc
 	pop	bc
 	ret	z			; nope, quit
 	jp	A409B			; output to printer
-;
+
 A53E8:	push	af
 	xor	a
 	ld	(YF237),a		; console columpos
 	pop	af
 	jr	A53D5
-;
+
 A53F0:	push	hl
 	ld	hl,YF237
 	dec	(hl)			; decrease console columnpos
 	pop	hl
 	jr	A53D5
-;
+
 A53F8:	ld	a," "
 	call	A53A8			; console output
 	ld	a,(YF237)
 	and	007H
 	jr	nz,A53F8		; to the next console tabposition
 	ret
-;
+
 A5405:	cp	010H			; CTRL-P ?
 	jr	z,A541D			; yep, handle it
 	cp	00EH			; CTRL-N ?
@@ -3786,7 +3779,7 @@ A5405:	cp	010H			; CTRL-P ?
 	cp	003H			; CTRL-C ?
 	jr	z,A541D			; yep, handle it
 	ret				; nope, quit
-;
+
 A5412:	call	A4034			; check if keyboardinput available
 	ret	z			; nope, quit
 	cp	013H			; CTRL-S ?
@@ -3802,18 +3795,18 @@ A541D:	call	A4078			; get keyboardinput
 	ret	nz			; nope, quit
 	ld	hl,(YF325)
 	jp	XF1E8			; start abort handler in DOS memory
-;
+
 A5431:	ld	a,1
 	ld	(YF23B),a
 	ret
-;
+
 A5437:	xor	a
 	ld	(YF23B),a
 	ret
 
 ;	  Subroutine BDOS 0B (console status)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A543C:	call	A5412
 	ld	a,000H
@@ -3823,7 +3816,7 @@ A543C:	call	A5412
 
 ;	  Subroutine BDOS 01 (console input)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A5445:	call	A544E			; BDOS 8 (direct input)
 	push	af
@@ -3833,7 +3826,7 @@ A5445:	call	A544E			; BDOS 8 (direct input)
 
 ;	  Subroutine BDOS 08 (direct input)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A544E:	call	A541D
 	jr	z,A544E
@@ -3853,13 +3846,13 @@ A5454:	ld	a,e
 
 ;	  Subroutine BDOS 07 (MSXDOS direct input)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A5462:	jp	A4078			; get keyboardinput
 
 ;	  Subroutine BDOS 05 (printer output)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A5465:	ld	a,e
 A5466:	push	af
@@ -3869,14 +3862,14 @@ A5466:	push	af
 
 ;	  Subroutine BDOS 03 (auxiliary input)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A546E:	call	A5412
 	jp	XF371
 
 ;	  Subroutine BDOS 04 (auxiliary output)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A5474:	ld	a,e
 A5475:	push	af
@@ -3884,9 +3877,7 @@ A5475:	push	af
 	pop	af
 	jp	XF374
 
-;
 ; Programmers message, decoded in FAT entries (not needed)
-;
 ; MSXDOS BY T PATERSON J SUZUKI   @
 
 T547D:	defb	0EDH,08CH,093H,0EFH,00CH,088H,039H,040H
@@ -3896,8 +3887,6 @@ T547D:	defb	0EDH,08CH,093H,0EFH,00CH,088H,039H,040H
 ; unused code
 
 	ret
-
-
 
 A5496:	call	XF2B2
 	call	A54C0			; get time and date values
@@ -3927,7 +3916,7 @@ A5496:	call	XF2B2
 	or	c
 	ld	c,a
 	ret
-;
+
 A54C0:	call	A4179			; get date and time
 	jr	c,A550B			; from clockchip,
 	push	de
@@ -3968,13 +3957,13 @@ A5505:	call	A5588
 	pop	de
 	pop	bc
 	ret
-;
+
 A550B:	push	bc
 	push	de
 	ld	hl,(YF24A)
 	call	A559D			; calculate days since 1-1-1980
 	jr	A5505
-;
+
 A5515:	ex	de,hl
 	ld	c,(hl)
 	inc	hl
@@ -3984,10 +3973,10 @@ A5515:	ex	de,hl
 	jr	c,A5521
 	inc	a
 	jr	A5515
-;
+
 A5521:	add	hl,bc
 	ret
-;
+
 A5523:	call	XF2B5
 	ld	(YF24A),a		; year (offset)
 A5529:	and	003H
@@ -3996,13 +3985,12 @@ A5529:	and	003H
 	inc	a
 A5530:	ld	(YF22B+1),a
 	ret
-;
-;
+
 T5534:	defb	200,166,200,165,200,165,200,165
 
 ;	  Subroutine BDOS 2A (MSXDOS get date)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A553C:	xor	a
 	ld	(YF306),a		; no CP/M call
@@ -4016,7 +4004,7 @@ A553C:	xor	a
 
 ;	  Subroutine BDOS 2B (set date)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A5552:	ld	bc,-1980
 	add	hl,bc
@@ -4058,10 +4046,10 @@ A5588:	ld	bc,(YF24C)		; days since 1-1-1980
 	ld	(YF24E),a
 	xor	a
 	ret
-;
+
 A559A:	ld	a,0FFH
 	ret
-;
+
 A559D:	ld	a,l			; year (offset)
 	call	A5523			; setup days in februari
 	ld	c,l
@@ -4088,7 +4076,7 @@ A559D:	ld	a,l			; year (offset)
 	add	hl,bc
 	ld	(YF24C),hl		; days since 1-1-1980
 	ret
-;
+
 A55D2:	dec	a
 	ret	z
 	ex	de,hl
@@ -4100,7 +4088,7 @@ A55D2:	dec	a
 
 ;	  Subroutine BDOS 2C (MSXDOS get time)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A55DB:	xor	a
 	ld	(YF306),a		; no CP/M call
@@ -4112,7 +4100,7 @@ A55DB:	xor	a
 
 ;	  Subroutine BDOS 2D (set time)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A55E6:	ld	b,h
 	ld	c,l
@@ -4133,16 +4121,16 @@ A55E6:	ld	b,h
 
 ;	  Subroutine BDOS 2E (set verify flag)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A55FF:	ld	a,e
 	ld	(RAWFLG),a
 	ret
 
 ;	  Subroutine Validate FCB filename
-;	     Inputs  HL = adres of FCB+1,DE = destination
-;	     Outputs ________________________ 
-;	     Remark  is copied to 0F1F4H
+;	     Inputs  HL = address of FCB+1,DE = destination
+;	     Outputs ________________________
+;	  Remark     is copied to 0F1F4H
 
 A5604:	ld	a,(hl)
 	cp	" "
@@ -4175,7 +4163,7 @@ A5622:	ld	a,(hl)
 	ret	z			; no 'follow' char, quit with error
 	ld	a,(hl)
 	jr	A5667			; copy 'follow' char and continue
-;
+
 A5631:	ld	a,(YF30E)
 	and	a
 	ld	a,(hl)
@@ -4220,13 +4208,12 @@ A5667:	ld	(de),a			; copy char
 	ld	a,(hl)
 	ld	(YF30C),a		; save the FCB EX byte
 	ret
-;
-;
+
 T5677:	defb	'."/[]:+=;,'
 
 ;	  Subroutine check if double byte header char
 ;	     Inputs  ________________________
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A5681:	push	hl
 	ld	hl,YF30F
@@ -4244,19 +4231,19 @@ A5681:	push	hl
 	cp	(hl)
 A5694:	pop	hl
 	ret
-;
+
 ;	defb	"ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π"
+
 T5696:	defb	"ÄöEAéAèÄEEEIIIéèêííOôOUUYôöõúùûüAIOU••¶ß®©™´¨≠ÆØ∞∞≤≤¥¥∂∂∏∏"
 
 ;	  Subroutine unsupported CP/M BDOS calls
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A56D0:	xor	a
 	ld	b,a
 	ret
-;
-;
+
 A56D3:	ei
 	ld	a,1
 	ld	(YF306),a		; assume CP/M compatible call
@@ -4283,8 +4270,7 @@ A56ED:	push	hl
 	ld	l,b
 	ex	(sp),hl
 	ret
-;
-;
+
 T5700:	push	af
 	ld	a,(YF306)
 	or	a			; CP/M compatible call
@@ -4293,11 +4279,10 @@ T5700:	push	af
 	ld	l,a
 	ld	h,b			; CP/M compatible HL
 	ret
-;
+
 A570B:	pop	af
 	ret
-;
-;
+
 T570D:	defw	A40A7,A5445,A53A7,A546E,A5474,A5465,A5454,A5462
 	defw	A544E,XF1C9,A50E0,A543C,A41EF,A509F,A50D5,A4462
 	defw	A456F,A4FB8,A5006,A436C,A4775,A477D,A461D,A4392
@@ -4335,7 +4320,7 @@ A578E:	ld	hl,(BOTTOM)
 A57A3:	ld	a,0FFH
 	ld	(DEVICE),a		; flag abort disksystem init
 	ret
-;
+
 A57A9:	ld	hl,0F380H+MYSIZE
 	ld	de,XF1C9
 	and	a
@@ -4381,13 +4366,12 @@ A57D6:	ld	(hl),0C9H
 	ld	(H.RUNC+1),a		; init RUNC hook, to catch intialize interpeter
 	pop	de			; base diskdriver workarea
 	jr	A5825
-;
-;
+
 T5807:	rst	030H
 	defb	000H
 	defw	A5897
 	ret
-;
+
 A580C:	ld	hl,YFB21		; DRVTBL
 	ld	b,004H			; 4 diskroms
 	xor	a
@@ -4422,7 +4406,7 @@ A583E:	ld	a,(de)
 	inc	de
 	djnz	A583E			; next entry
 	jp	A5ECC			; none free, error
-;
+
 A584B:	ld	a,(YF33F)
 	and	a
 	ld	a,c			; phantom flag
@@ -4554,12 +4538,12 @@ A592C:	ld	e,(hl)
 	push	hl
 	push	de
 	pop	ix
-	ld	(ix+000H),c		; set drivenumber in DPB
+	ld	(ix+0),c		; set drivenumber in DPB
 	inc	c
 	push	bc
-	ld	c,(ix+002H)
-	ld	b,(ix+003H)		; sectorsize
-	ld	e,(ix+010H)
+	ld	c,(ix+2)
+	ld	b,(ix+3)		; sectorsize
+	ld	e,(ix+16)
 	ld	d,0			; number of sectors per FAT
 	call	A4916			; * FAT size
 	inc	bc			; and a FAT flag
@@ -4569,8 +4553,8 @@ A592C:	ld	e,(hl)
 	ld	(YF349),hl		; base system bottom sofar
 	ld	(hl),0FFH		; flag invalid FAT buffer
 	inc	hl
-	ld	(ix+013H),l
-	ld	(ix+014H),h		; pointer to FAT buffer
+	ld	(ix+19),l
+	ld	(ix+20),h		; pointer to FAT buffer
 	pop	bc
 	pop	hl
 	djnz	A592C			; next drive
@@ -4588,7 +4572,7 @@ A5967:	inc	hl
 	ld	(XF374+1),hl
 	ld	hl,XF331
 	ld	(XF37D+1),hl
-	ld	hl,BASSCR
+	ld	hl,M7D2F
 	ld	a,(EXPTBL+0)
 	call	RDSLT
 	push	af
@@ -4597,7 +4581,7 @@ A5967:	inc	hl
 	call	RDSLT
 	pop	de
 	ld	h,a
-	ld	l,d
+	ld	l,d			; read startup screen address
 	push	hl
 	pop	ix
 	ld	iy,(EXPTBL-1+0)
@@ -4623,9 +4607,9 @@ A59CB:	ld	sp,0C200H		; stack just above temp startbuffer
 	ld	a,(H.STKE+0)
 	cp	0C9H			; STKE hook set ?
 	jr	z,A59DB			; nop, cont
-	ld	ix,SKPROM
+	ld	ix,M7D17
 	jr	A59ED			; skip BASIC extension ROMs and transfer control
-;
+
 A59DB:	ld	hl,SLTATR
 	ld	b,040H
 A59E0:	ld	a,(hl)
@@ -4634,11 +4618,11 @@ A59E0:	ld	a,(hl)
 	inc	hl
 	djnz	A59E0
 	jr	A59F3			; no TEXT extension ROM found,
-;
-A59E9:	ld	ix,RSTCLR		; start BASIC program in ROM
+
+A59E9:	ld	ix,M7E14		; start BASIC program in ROM
 A59ED:	call	A5C16			; initialize diskbasic
 	jp	CALBAS
-;
+
 A59F3:	ld	hl,A5B3A
 	push	hl			; if quit anywhere start diskbasic
 	call	A5AE7			; read bootsector
@@ -4655,9 +4639,9 @@ A59F3:	ld	hl,A5B3A
 	inc	hl
 	cp	(hl)
 	ret	z			; no ram available on page 1, start diskbasic
-;
+
 ; MSXDOS requirement are met, try starting it
-;
+
 A5A11:	XOR	A
 	CALL	A609A			; invalidate FAT buffer drive 0
 	LD	HL,(YF349)
@@ -4668,7 +4652,7 @@ A5A11:	XOR	A
 	LD	A,(RAMAD0)
 	LD	H,00H
 	CALL	C64C2			; calculate masks
-	SCF	
+	SCF
 	CALL	P,C64A2			; primairy slot, change it
 	CALL	C,C64AF			; secundairy slot, change it
 	XOR	A
@@ -4763,8 +4747,8 @@ J5A98:	POP	HL
 	CALL	A5EAD			; allocate MSX-DOS memory for KEYINT stack
 	LD	A,0C3H
 	CALL	A5C62			; enable XFER, ENAKRN and ENARAM routines
-	SCF	
-A5ADB:	LD	HL,YF323		; adres diskerror handler pointer
+	SCF
+A5ADB:	LD	HL,YF323		; address diskerror handler pointer
 	LD	DE,XF368		; ENAKRN routine
 	LD	A,(YF340)		; coldboot flag
 	JP	YC000+01EH		; start bootloader
@@ -4794,8 +4778,8 @@ A5AE7:	LD	A,(DEFDPB+1)
 	RET	Z			; valid bootloader, quit
 	CP	0E9H
 	RET	Z			; valid bootloader, quit
-	SCF	
-	RET	
+	SCF
+	RET
 
 I5B0F:	DEFB	00CH,000H
 	DEFB	014H,021H
@@ -4811,8 +4795,6 @@ T5B27:	defb	'RUN"AUTOEXEC.BAS',0
 T5B38:	defw	A5B92
 
 ; Start diskbasic
-;
-;
 
 A5B3A:	call	A5C60			; disable XFER,ENARAM,ENAKRN routines
 	ld	hl,T5B27
@@ -4837,7 +4819,7 @@ A5B3A:	call	A5C60			; disable XFER,ENARAM,ENAKRN routines
 	inc	a
 	jr	z,A5B92			; error,
 	jr	A5BA0
-;
+
 A5B6E:	ld	a,(WBOOT)
 	cp	0C3H
 	jr	nz,A5B9C		; diskbasic not started from MSXDOS, just start diskbasic
@@ -4852,7 +4834,7 @@ A5B7D:	inc	hl
 	jr	nz,A5B87
 	djnz	A5B7D			; remove spaces in front
 	jr	A5B9C			; no parameter specified, just start diskbasic
-;
+
 A5B87:	xor	a
 	ld	c,b
 	ld	b,a
@@ -4860,7 +4842,7 @@ A5B87:	xor	a
 	ldir				; copy file name after the RUN" at BUF+10
 	ld	(de),a			; and a end of line marker
 	jr	A5BA0
-;
+
 A5B92:	ld	sp,0C200H
 	ld	a,(YF338)
 	and	a
@@ -4892,14 +4874,14 @@ A5BA0:	ld	sp,0C200H
 	ld	(CNSDFG),a		; enable function keys
 	ld	a,00CH
 	rst	018H			; clear screen
-	ld	ix,TXTINI
+	ld	ix,M7D31
 	call	CALBAS			; setup basic startup screen
 	call	A5F86
 	defb	13,10,"Disk BASIC version 1.0",13,10,0
-	ld	hl,M.4173
-	push	hl			; after the RUN command completes
+	ld	hl,M4173
+	push	hl			; execute RUN command
 	ld	hl,BUF+9
-	push	hl
+	push	hl			; ¥basicpointer¥
 	ld	hl,BUF+64
 	push	hl
 	ld	(hl),0E1H
@@ -4945,8 +4927,7 @@ A5C62:	ld	(XF368+0),a
 	ld	(XF36B+0),a
 	ld	(XFER+0),a
 	ret
-;
-;
+
 T5C6C:	defw	A40A7
 
 A5C6E:	ld	hl,T62E8
@@ -4973,8 +4954,7 @@ A5C7C:	ld	e,(hl)
 	ld	a,0C9H
 	ld	(de),a
 	jr	A5C7C
-;
-;
+
 T5C96:	defw	H.DSKO,A6B96
 	defw	H.DSKI,A6B75
 	defw	H.NAME,A6F20
@@ -5055,7 +5035,7 @@ A5D71:	call	A5F8C			; print string
 	call	A5DF8			; get date number (day)
 	ld	e,c
 	jr	A5DB9
-;
+
 A5D9F:	call	A5DF8			; get date number (day european, month american)
 	ld	d,c
 	call	A5DE9			; check for seperator and get date number (month european, day american)
@@ -5066,7 +5046,7 @@ A5D9F:	call	A5DF8			; get date number (day european, month american)
 	jr	nz,A5DB1		; nope, error
 	call	A5E0D			; get date year
 	jr	A5DB9
-;
+
 A5DB1:	push	de
 	call	A553C			; get date
 	push	hl
@@ -5092,7 +5072,7 @@ A5DCB:	ld	sp,(BUF+98)
 	nop				; room for expansion ??
 	nop				; extra 5 bytes
 	jp	A5D48			; try again
-;
+
 A5DE9:	ld	a,(hl)
 	inc	hl
 	ld	b,a
@@ -5119,7 +5099,7 @@ A5DF8:	call	A5E41			; is digit ?
 	add	a,c
 	ld	c,a			; + second digit
 	ret
-;
+
 A5E0D:	call	A5DF8			; get date number
 	ld	b,c
 	call	A5E41			; is digit (is year more as 2 digit number) ?
@@ -5137,7 +5117,7 @@ A5E0D:	call	A5DF8			; get date number
 	pop	hl
 	ld	h,000H
 	jr	A5E3B
-;
+
 A5E2C:	push	hl
 	ld	c,b
 	ld	b,0
@@ -5151,7 +5131,7 @@ A5E3B:	add	hl,bc
 	pop	ix
 	pop	hl
 	ret
-;
+
 A5E41:	ld	a,(hl)
 	sub	030H
 	ret	c
@@ -5160,12 +5140,12 @@ A5E41:	ld	a,(hl)
 	ret	c
 	inc	hl
 	ret
-;
+
 T5E4B:	defw	A5E4D
 
 A5E4D:	ld	sp,(BUF+98)
 	ret
-;
+
 A5E52:	LD	HL,EXPTBL
 	LD	B,4
 	XOR	A
@@ -5177,7 +5157,7 @@ J5E5B:	PUSH	BC
 J5E5E:	LD	L,10H
 J5E60:	PUSH	AF
 	CALL	RDSLT
-	CPL	
+	CPL
 	LD	E,A
 	POP	AF
 	PUSH	DE
@@ -5191,7 +5171,7 @@ J5E60:	PUSH	AF
 	POP	BC
 	LD	B,A
 	LD	A,C
-	CPL	
+	CPL
 	LD	E,A
 	POP	AF
 	PUSH	AF
@@ -5218,7 +5198,7 @@ J5E60:	PUSH	AF
 J5E96:	LD	A,C
 	POP	HL
 	POP	HL
-	RET	
+	RET
 
 J5E9A:	POP	AF
 	POP	HL
@@ -5231,16 +5211,15 @@ J5E9A:	POP	AF
 J5EA7:	INC	HL
 	INC	A
 	DJNZ	J5E58
-	SCF	
-	RET	
-
+	SCF
+	RET
 
 A5EAD:	ld	hl,(YF34B)
 	and	a
 	sbc	hl,bc
 	ld	(YF34B),hl
 	jr	A5EC1
-;
+
 A5EB8:	ld	hl,(HIMEM)
 	and	a
 	sbc	hl,bc
@@ -5249,7 +5228,7 @@ A5EC1:	jr	c,A5ECC
 	ld	a,h
 	cp	0C2H
 	jr	A5ECB
-;
+
 A5EC8:	call	A5EE8
 A5ECB:	ret	nc
 A5ECC:	call	A5F86
@@ -5262,6 +5241,7 @@ T5ED0:	defb	"No enough memory",0
 	nop				; extra 5 bytes
 	di
 	halt
+
 A5EE8:	ld	a,l
 	or	h
 	ret	z
@@ -5341,7 +5321,7 @@ A5F4B:	ex	de,hl
 	dec	a
 	jr	nz,A5F4B
 	ret
-;
+
 A5F5F:	ld	a,001H
 	ld	(MAXFIL),a
 	ld	hl,(HIMEM)
@@ -5362,12 +5342,12 @@ A5F5F:	ld	a,001H
 	ld	(NULBUF),hl
 	pop	hl
 	jr	A5F3B
-;
+
 A5F86:	ex	(sp),hl
 	call	A5F8C			; print string
 	ex	(sp),hl
 	ret
-;
+
 A5F8C:	ld	a,(hl)
 	inc	hl
 	and	a
@@ -5496,7 +5476,7 @@ A5FF6:	ld	a,(H.TIMI+0)
 	ex	de,hl
 	ld	hl,H.TIMI+1
 	ld	c,003H
-	ldir				; save slotid and adres (assumes that is hooked by a CALLF!)
+	ldir				; save slotid and address (assumes that is hooked by a CALLF!)
 	pop	hl
 A6012:	di
 	ld	a,0F7H
@@ -5529,7 +5509,7 @@ A6033:	cp	(hl)			; is this my DRVTBL entry ?
 	djnz	A6033			; next DRVTBL and DRVINT entry
 A603D:	pop	af
 	ret				; quit
-;
+
 A603F:	ex	de,hl
 	ld	a,(hl)
 	and	a
@@ -5541,25 +5521,25 @@ A603F:	ex	de,hl
 	inc	hl
 	ld	b,(hl)
 	push	bc
-	pop	ix			; adres
+	pop	ix			; address
 	pop	af
 	jp	CALSLT
 
 ;	  Subroutine read disksector
-;	     Inputs  A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferadres
+;	     Inputs  A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferaddress
 ;	     Outputs -
 
 A6052:	and	a
 	defb	038H			; JR C,xx (skips next instruction)
 
 ;	  Subroutine write disksector
-;	     Inputs  A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferadres
+;	     Inputs  A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferaddress
 ;	     Outputs -
 
 A6054:	scf
 
 ;	  Subroutine PHYDIO BIOS call
-;	     Inputs  A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferadres
+;	     Inputs  A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferaddress
 ;	     Outputs -
 
 A6055:	push	ix
@@ -5572,11 +5552,11 @@ A6055:	push	ix
 	ld	a,l
 	ld	ix,T4010
 	jr	A607B
-;
+
 A6067:	push	ix
 	ld	ix,T4013
 	jr	A6075
-;
+
 A606F:	push	ix
 	ld	ix,T4016
 A6075:	push	iy
@@ -5588,7 +5568,6 @@ A607B:	pop	hl
 	jp	A636E
 
 ; Unused code
-;
 ; looks like the previous jump is a patch, may be the ¥ei¥ instruction at the end of the patch was forgotten ??
 ; patch code does not fit here, 1 byte too less
 
@@ -5607,7 +5586,7 @@ A608C:	sub	(hl)
 	inc	hl
 	inc	hl
 	jr	A608C
-;
+
 A6093:	add	a,(hl)			; driveid driver
 	inc	hl
 	ld	h,(hl)			; slotid driver
@@ -5617,7 +5596,7 @@ A6093:	add	a,(hl)			; driveid driver
 
 ;	  Subroutine mark FAT buffer as invalid
 ;	     Inputs  A=driveid
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A609A:	ld	hl,YF355
 	call	A5FF1
@@ -5637,13 +5616,13 @@ A609A:	ld	hl,YF355
 
 ;	  Subroutine FORMAT BIOS call
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A60B0:	and	a			; use free BASIC memory as formatbuffer
 
 ;	  Subroutine format disk
 ;	     Inputs  Cx reset = use free BASIC memory as formatbuffer, Cx set = use specified buffer, HL = start of buffer, BC = size of buffer
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A60B1:	ld	(YF339),sp		; save stackpointer for abort
 	call	nc,A62D6		; get formatbuffer in free BASIC memory
@@ -5663,7 +5642,7 @@ A60C0:	call	A5F86
 	ld	b,a			; number of diskdrives
 	ld	a,"A"			; starts with "A" drive
 	jr	A60E5
-;
+
 A60DE:	push	af
 	ld	a,","
 	call	A408F			; output to screen
@@ -5699,7 +5678,7 @@ A6118:	push	af
 	inc	hl
 	pop	af
 	jr	A6118			; print choice string
-;
+
 A6126:	pop	af
 	call	A5F86
 	defb	"? ",0
@@ -5733,14 +5712,14 @@ A615D:	call	A62C9			; print CR/LF
 
 ;	  Subroutine get fresh keyboardinput
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A6166:	xor	a
 	ld	(YF336),a		; no saved input
 	ld	ix,KILBUF
 	call	A40AB			; KILBUF BIOS call
 	jp	A4078			; get keyboardinput
-;
+
 A6174:	call	A5F86
 	defb	"Strike a key when ready ",0
 	nop
@@ -5755,8 +5734,7 @@ A6195:	call	A6166			; get fresh keyboardinput
 	call	A5F86
 	defb	13,10,"Aborted",0
 	ret
-;
-;
+
 T61AD:	defb	"Write protected",0
 T61BD:	defb	"Not ready",0
 T61C7:	defb	"Disk error",0
@@ -5764,22 +5742,21 @@ T61D2:	defb	"Bad parameter",0
 T61E0:	defb	"Format complete",0
 
 ; unused code ??
-;
+
 	nop
-;
-;
+
 A61F1:	ld	de,TEMPST+30
 	ld	hl,(TEMPPT)
 	ld	(DAC+2),hl
-	ld	a,003H
+	ld	a,3
 A61FC:	ld	(VALTYP),a
-	call	VMOVE
+	call	M2EF3			; copy stringdescriptor
 	ld	de,TEMPST+30+3
 	rst	020H
 	ld	(TEMPPT),hl
 	ret	nz
 	jp	A72F7
-;
+
 A620D:	ld	hl,YFB21
 	ld	b,004H
 A6212:	inc	hl
@@ -5800,7 +5777,7 @@ A6224:	and	a
 	pop	hl
 	djnz	A6212
 	ret
-;
+
 A622D:	ld	a,(H.CLEA+0)
 	cp	0C9H
 A6232:	jr	z,A6245
@@ -5811,8 +5788,7 @@ A6234:	ld	hl,T72F2
 	call	A402D
 	ld	(H.LOPD+1),a
 A6245:	jp	A402D
-;
-;
+
 T6248:	defw	T61AD		; dskfmt error 0
 	defw	T61BD		; dskfmt error 2
 	defw	T61C7		; dskfmt error 4
@@ -5858,7 +5834,7 @@ A62BD:	call	A6166			; get fresh keyboardinput
 	cp	003H
 	jr	z,A62BD
 	jr	A62C9			; print CR/LF
-;
+
 A62C6:	call	A408F			; output to screen
 A62C9:	push	af
 	ld	a,00DH
@@ -5867,7 +5843,7 @@ A62C9:	push	af
 	call	A408F			; output to screen
 A62D4:	pop	af
 	ret
-;
+
 A62D6:	ld	hl,0FF00H
 	add	hl,sp			; leave room for the stack
 	ld	de,(STREND)		; end of used BASIC memory
@@ -5880,31 +5856,28 @@ A62D6:	ld	hl,0FF00H
 	ld	c,a
 	ld	b,a			; not enough room, size=0
 	ret
-;
-;
+
 T62E8:	inc	sp
 	inc	sp
-	jp	SKPCHK
-;
-;
+	jp	M6F1D			; skip strong cassette devicecheck
+
 T62ED:	ld	a,d
-	cp	009H
-	jp	nc,CALBLD+3
+	cp	9			; diskdevice ?
+	jp	nc,M6EC6+3		; nope, resume BLOAD
 	rst	030H
 	defb	000H
-	defw	A6AA7
+	defw	A6AA7			; call BLOAD for diskdevice
 	push	hl
-	jp	EXEBLD
-;
-;
+	jp	M6EF4			; finish BLOAD
+
 	ld	a,d
-	cp	009H
-	jp	nc,CALBSV+3
+	cp	9			; diskdevice ?
+	jp	nc,M6E92+3		; nope, resume BSAVE
 	rst	030H
 	defb	000H
 	defw	A69E7
 	ret
-;
+
 A6306:	PUSH	DE
 	EX	DE,HL
 	AND	A
@@ -5953,11 +5926,11 @@ I6336:	PUSH	IX
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
-	EXX	
+	EXX
 	EX	AF,AF'
 	PUSH	AF
 	PUSH	HL
-	LD	HL,(D635F)
+	LD	HL,(D635E+1)
 	LD	A,L
 	OR	H
 	POP	HL
@@ -5965,84 +5938,74 @@ I6336:	PUSH	IX
 	LD	IY,(EXPTBL+0-1)
 	JR	NZ,J6375
 	POP	AF
-	LD	(D635F),SP
+	LD	(D635E+1),SP
 	LD	SP,0
 	CALL	CALSLT
-	DI	
-	LD	SP,0
-D635F	EQU	$-2
+	DI
+D635E:	LD	SP,0
 	PUSH	HL
 	LD	HL,0
 	LD	(D635F),HL
 	POP	HL
 J6369:	EX	AF,AF'
-	EXX	
+	EXX
 	POP	AF
 	POP	BC
 	POP	DE
 A636E:	POP	HL
 	POP	IY
 	POP	IX
-	EI	
-	RET	
-;
-;	-----------------
+	EI
+	RET
+
 J6375:	POP	AF
 	CALL	CALSLT
 	JR	J6369
-;
-;	-----------------
+
 I637B:	PUSH	AF
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	CALL	A402D
 	PUSH	AF
-	LD	H,40H	; "@"
+	LD	H,40H
 	LD	A,(RAMAD1)
 	CALL	ENASLT
-;
 	POP	AF
 	POP	BC
 	POP	DE
 	POP	HL
-	LDIR	
+	LDIR
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	CALL	XF368
-;
-	LD	H,40H	; "@"
+	LD	H,40H
 	CALL	ENASLT
-;
 	POP	BC
 	POP	DE
 	POP	HL
 	POP	AF
-	RET	
-;
-;	-----------------
+	RET
+
 I63A1:	JR	J63A9
-;
-;	-----------------
+
 ?63A3:	PUSH	AF
 	LD	A,(RAMAD1)
 	JR	J63AD
-;
-;	-----------------
+
 J63A9:	PUSH	AF
 	LD	A,(YF348)
 J63AD:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	H,40H	; "@"
+	LD	H,40H
 	CALL	ENASLT
-;
 	POP	BC
 	POP	DE
 	POP	HL
 	POP	AF
-	RET	
+	RET
 
 T63BA:	DEFW	00000H
 	DEFW	00003H
@@ -6078,7 +6041,7 @@ T63BA:	DEFW	00000H
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C63F4:	CALL	C64C2
 	JP	M,J6404
 	IN	A,(0A8H)
@@ -6087,67 +6050,51 @@ C63F4:	CALL	C64C2
 	OR	B
 	CALL	RDPRIM
 	LD	A,E
-	RET	
-;
-;	-----------------
+	RET
+
 J6404:	CALL	C6511
-;
 	JP	Z,J651E
-;
 	PUSH	HL
 	CALL	C64E7
-;
 	EX	(SP),HL
 	PUSH	BC
 	CALL	C63F4
-;
 	JR	J6436
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C6415:	PUSH	DE
 	CALL	C64C2
-;
 	JP	M,J6425
-;
 	POP	DE
 	IN	A,(0A8H)
 	LD	D,A
 	AND	C
 	OR	B
 	JP	WRPRIM
-;
-;	-----------------
+
 J6425:	CALL	C6511
-;
 	JP	Z,J6524
-;
 	EX	(SP),HL
 	PUSH	HL
 	CALL	C64E7
-;
 	POP	DE
 	EX	(SP),HL
 	PUSH	BC
 	CALL	C6415
-;
 J6436:	POP	BC
 	EX	(SP),HL
 	PUSH	AF
 	LD	A,B
-	AND	3FH	; "?"
+	AND	3FH
 	OR	C
 	CALL	X0046
-;
 	POP	AF
 	POP	HL
-	RET	
-;
-;	-----------------
+	RET
+
 ?6443:	EX	(SP),HL
 	PUSH	AF
 	PUSH	DE
@@ -6164,35 +6111,29 @@ J6436:	POP	BC
 	POP	DE
 	POP	AF
 	EX	(SP),HL
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C6455:	EXX	
+
+C6455:	EXX
 	EX	AF,AF'
 	PUSH	IY
 	POP	AF
 	PUSH	IX
 	POP	HL
 	CALL	C64C2
-;
 	JP	M,J646C
-;
 	IN	A,(0A8H)
 	PUSH	AF
 	AND	C
 	OR	B
-	EXX	
+	EXX
 	JP	CLPRIM
-;
-;	-----------------
+
 J646C:	CALL	C6511
-;
 	JP	Z,J652C
-;
 	CALL	C64E7
-;
 	PUSH	AF
 	POP	IY
 	PUSH	HL
@@ -6207,44 +6148,35 @@ J646C:	CALL	C6511
 	LD	(HL),A
 	PUSH	HL
 	EX	AF,AF'
-	EXX	
+	EXX
 	CALL	C6455
-;
-	EXX	
+	EXX
 	EX	AF,AF'
 	POP	HL
 	POP	BC
 	POP	DE
 	LD	A,B
-	AND	3FH	; "?"
+	AND	3FH
 	OR	C
-	DI	
+	DI
 	CALL	X004B
-;
 	LD	(HL),E
 	EX	AF,AF'
-	EXX	
-	RET	
-;
-;	-----------------
+	EXX
+	RET
+
 J649C:	CALL	C64C2
-;
 	JP	M,J64A9
-;
 C64A2:	IN	A,(0A8H)
 	AND	C
 	OR	B
 	OUT	(0A8H),A
-	RET	
-;
-;	-----------------
+	RET
+
 J64A9:	CALL	C6511
-;
 	JP	Z,C6541
-;
 C64AF:	PUSH	HL
 	CALL	C64E7
-;
 	LD	C,A
 	LD	B,00H
 	LD	A,L
@@ -6256,52 +6188,46 @@ C64AF:	PUSH	HL
 	POP	HL
 	LD	A,C
 	JR	J649C
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C64C2:	DI	
+
+C64C2:	DI
 	PUSH	AF
 	LD	A,H
-	RLCA	
-	RLCA	
-	AND	03H	; 3 
+	RLCA
+	RLCA
+	AND	03H
 	LD	E,A
 	INC	E
 	LD	A,0C0H
-J64CD:	RLCA	
-	RLCA	
+J64CD:	RLCA
+	RLCA
 	DEC	E
 	JR	NZ,J64CD
-;
 	LD	E,A
-	CPL	
+	CPL
 	LD	C,A
 	POP	AF
 	PUSH	AF
-	AND	03H	; 3 
+	AND	03H
 	LD	B,A
 	INC	B
 	LD	A,0ABH
-J64DD:	ADD	A,55H	; "U"
+J64DD:	ADD	A,55H
 	DJNZ	J64DD
-;
 	LD	D,A
 	AND	E
 	LD	B,A
 	POP	AF
 	AND	A
-	RET	
-;
-;	-----------------
-;
+	RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C64E7:	PUSH	AF
 	LD	A,D
 	AND	0C0H
@@ -6311,38 +6237,34 @@ C64E7:	PUSH	AF
 	LD	D,A
 	IN	A,(0A8H)
 	LD	B,A
-	AND	3FH	; "?"
+	AND	3FH
 	OR	C
 	PUSH	AF
 	LD	A,D
-	RRCA	
-	RRCA	
-	AND	03H	; 3 
+	RRCA
+	RRCA
+	AND	03H
 	LD	D,A
 	INC	D
 	LD	A,0ABH
-J64FF:	ADD	A,55H	; "U"
+J64FF:	ADD	A,55H
 	DEC	D
 	JR	NZ,J64FF
-;
 	AND	E
 	LD	D,A
 	LD	A,E
-	CPL	
+	CPL
 	LD	H,A
 	POP	AF
 	CALL	C655C
-;
 	POP	AF
-	AND	03H	; 3 
-	RET	
-;
-;	-----------------
-;
+	AND	03H
+	RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C6511:	LD	C,A
 	LD	A,E
 	CP	03H
@@ -6352,86 +6274,73 @@ C6511:	LD	C,A
 	AND	E		; primary slot of the helper routines
 	CP	B		; same as requested ?
 	LD	A,C
-	RET	
-;
-;	-----------------
+	RET
+
 J651E:	CALL	C6549
-;
 	LD	E,(HL)
 	JR	C6529
-;
-;	-----------------
+
 J6524:	POP	DE
 	CALL	C6549
-;
 	LD	(HL),E
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C6529:	LD	A,B
 	JR	J6557
-;
-;	-----------------
+
 J652C:	CALL	C6541
-;
 	PUSH	HL
 	PUSH	BC
 	EX	AF,AF'
-	EXX	
+	EXX
 	CALL	CLPRM1
-;
-	EXX	
+	EXX
 	EX	AF,AF'
 	POP	BC
 	CALL	C6529
-;
 	POP	HL
 	LD	(HL),B
 	EX	AF,AF'
-	EXX	
-	RET	
-;
-;	-----------------
-;
+	EXX
+	RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C6541:	CALL	C6549
-;
 	LD	HL,SLTTBL
 	LD	(HL),D
-	RET	
-;
-;	-----------------
-;
+	RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C6549:	RRCA	
-	RRCA	
-	AND	03H	; 3 
+
+C6549:	RRCA
+	RRCA
+	AND	03H
 	LD	D,A
 	LD	A,(YFFFF)
-	CPL	
+	CPL
 	LD	B,A
 	AND	0FCH
 	OR	D
 	LD	D,A
 J6557:	LD	(YFFFF),A
 	LD	A,E
-	RET	
+	RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C655C:	OUT	(0A8H),A
 	LD	A,(YFFFF)
-	CPL	
+	CPL
 	LD	L,A
 	AND	H
 	OR	D
@@ -6446,9 +6355,8 @@ C655C:	OUT	(0A8H),A
 J656F:	LD	(YFFFF),A
 	LD	A,B
 	OUT	(0A8H),A
-	RET	
+	RET
 
-;
 A6576:	ld	a,(H.GETP+0)
 	cp	0C9H
 	scf
@@ -6476,7 +6384,7 @@ A658D:	ld	a,(de)
 	scf
 	ccf
 	ret
-;
+
 A65A1:	inc	hl
 	ld	a,(hl)
 A65A3:	and	a
@@ -6489,8 +6397,6 @@ A65A3:	and	a
 	jr	nz,A658A
 A65AD:	pop	hl
 	jp	OEMSTA
-;
-;
 T65B1:	defb	"SYSTEM",0
 	defw	A65C4
 	defb	"FORMAT",0
@@ -6501,24 +6407,24 @@ A65C4:	ret	nz
 	ld	a,(YF346)
 	and	a
 	jp	z,A7315
-	ld	ix,ACLOSE
-	call	A731E
+	ld	ix,M6C1C
+	call	A731E			; close all i/o channels
 	call	TOTEXT
 	call	ERAFNK
 	jp	A5A11			; start MSXDOS
-;
+
 A65DC:	push	hl
 	call	z,A60B1
 	pop	hl
 	and	a
 	ret
-;
+
 A65E3:	ld	a,d
 A65E4:	dec	a
 	ret	p
 	ld	a,(YF247)
 	ret
-;
+
 A65EA:	push	hl
 	push	de
 	push	bc
@@ -6567,13 +6473,13 @@ A6626:	inc	de
 	pop	hl
 	pop	hl
 	jr	A66A0			; quit with Zx set (file open)
-;
+
 A662E:	pop	hl
 	pop	af
 	dec	a
 	jp	p,A65F7			; next channel
 	jr	A66A0			; quit with Zx reset (file not open)
-;
+
 A6636:	push	hl
 	push	de
 	push	bc
@@ -6582,22 +6488,22 @@ A6636:	push	hl
 	call	A6657			; copy FILNAM to FCB
 	call	A6645			; search file
 	jr	A66A0
-;
+
 A6645:	ld	hl,BUF+84
-	ld	(YF23D),hl		; transferadres in BUF
+	ld	(YF23D),hl		; transferaddress in BUF
 	ld	de,BUF+10
 	xor	a
 	ld	(BUF+10+12),a		; clear EX byte of FCB
 D6652:	call	A4FB8			; search for first
 	inc	a
 	ret
-;
+
 A6657:	ld	de,BUF+10+1
 A665A:	ld	hl,FILNAM
 	ld	bc,11
 	ldir
 	ret
-;
+
 A6663:	ei
 	push	hl
 	push	de
@@ -6618,7 +6524,7 @@ A6673:	add	hl,sp
 	add	hl,sp
 	ex	de,hl
 	jr	A668D
-;
+
 A6681:	push	iy
 	pop	bc
 A6684:	ld	c,(hl)
@@ -6648,7 +6554,7 @@ A66A0:	pop	bc
 
 ;	  Subroutine  (H.GETP)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A66A4:	ld	ix,RETRTN
 	ld	iy,00200H
@@ -6660,7 +6566,7 @@ A66A4:	ld	ix,RETRTN
 
 ;	  Subroutine OPEN statement expander (H.NOFO)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A66B3:	ei
 	ld	bc,256
@@ -6690,7 +6596,7 @@ A66CD:	add	hl,sp
 	defb	092H
 	call	A72D0
 	defb	0EFH			; check for LEN=
-	ld	ix,EVWORD
+	ld	ix,M4756
 	call	A731E			; evaluate word operand
 	dec	de
 	inc	d
@@ -6703,7 +6609,7 @@ A66CD:	add	hl,sp
 
 ;	  Subroutine OPEN statement  (H.NULO)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A66FC:	ei
 	ret	nc			; not for a disk device, return control
@@ -6778,7 +6684,7 @@ A6761:	push	de
 A6775:	pop	af
 	pop	hl
 	ret
-;
+
 A6778:	cp	008H
 	jr	z,A67C1			; append mode,
 	cp	002H
@@ -6824,7 +6730,7 @@ A6778:	cp	008H
 	inc	hl
 	ld	(hl),080H
 A67BF:	jr	A6775			; quit
-;
+
 A67C1:	push	bc
 	ld	e,c
 	ld	d,b
@@ -6861,7 +6767,7 @@ A67EC:	ld	a,(hl)
 	ld	c,004H			; Rx = 0
 A67F9:	call	A6813
 	jr	A67BF			; quit
-;
+
 A67FE:	ld	bc,0000CH
 	add	hl,bc
 	ld	(hl),b			; clear EX byte
@@ -6880,14 +6786,13 @@ A6813:	ld	(hl),b
 	dec	c
 	jr	nz,A6813		; clear CR byte and Rx bytes
 	ret
-;
-;
+
 A6819:	ld	ix,RETRTN
 	ld	iy,00600H
 	call	A6663			; take control from caller
 	call	A682A			; get char from I/O channel
 	jp	A66A0			; quit
-;
+
 A682A:	push	hl
 	ld	a,(hl)
 	cp	001H			; input mode ?
@@ -6910,7 +6815,7 @@ A682A:	push	hl
 	inc	hl			; to the buffer
 	jr	nz,A6861		; still characters left, use them
 	push	hl
-	ld	(YF23D),hl		; transferadres is I/O channel buffer
+	ld	(YF23D),hl		; transferaddress is I/O channel buffer
 	ex	de,hl
 	inc	hl
 	ld	e,(hl)
@@ -6946,27 +6851,25 @@ A6866:	ld	b,a
 	ret	nc			; no CTRL-Z, quit
 	ld	(hl),a			; CTRL-Z as backup char, so it is always read again
 	ret
-;
-;
+
 A6875:	ei
 	push	hl
 	ld	a,(YF348)
 	add	a,a
-	ld	hl,00008H
+	ld	hl,8
 	jr	nc,A6882
-	ld	l,010H
+	ld	l,8+8
 A6882:	add	hl,sp
-	ld	(hl),LOW M.6E41
+	ld	(hl),LOW M6E41
 	inc	hl
-	ld	(hl),HIGH M.6E41
+	ld	(hl),HIGH M6E41		; resume character putback
 	pop	hl
 	inc	hl
 	inc	hl
 	inc	hl
 	ld	(hl),c
 	ret
-;
-;
+
 A688E:	ld	ix,RETRTN
 	ld	iy,00800H
 	call	A6663			; take control from caller
@@ -6977,7 +6880,7 @@ A688E:	ld	ix,RETRTN
 	push	af
 	call	A68A7			; write char to I/O channel
 	jp	A669F			; quit
-;
+
 A68A7:	push	hl
 	ld	bc,00006H
 	add	hl,bc
@@ -7001,7 +6904,7 @@ A68B5:	push	hl
 	inc	hl
 	inc	hl
 	inc	hl
-	ld	(YF23D),hl		; transferadres
+	ld	(YF23D),hl		; transferaddress
 	and	a
 	ld	l,a
 	ld	h,b
@@ -7013,7 +6916,7 @@ A68CB:	call	A718F			; random block write
 
 ;	  Subroutine  (H.NTFL)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A68D0:	ld	ix,RETRTN
 	ld	iy,00400H
@@ -7055,16 +6958,16 @@ A68F4:	push	hl
 
 ;	  Subroutine Binary Save  (H.BINS)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
 A690E:	call	A7380
 	push	hl
-	ld	ix,PTOLN
-	call	A731E
+	ld	ix,M54F7
+	call	A731E			; convert linepointers to linenumbers
 	ld	a,0FFH
 	call	A69C7
 	ld	hl,(TXTTAB)
-	ld	(YF23D),hl		; transferadres
+	ld	(YF23D),hl		; transferaddress
 	ex	de,hl
 	ld	hl,(VARTAB)
 	and	a
@@ -7072,20 +6975,20 @@ A690E:	call	A7380
 	call	A718B
 	ld	(NLONLY),a
 	pop	hl
-	ld	ix,CLOCHN
-	jp	A731E
+	ld	ix,M6B24
+	jp	A731E			; close i/o channel
 
 ;	  Subroutine Binary Load  (H.BINL)
 ;	     Inputs  
-;	     Outputs ________________________ 
+;	     Outputs ________________________
 
-A6939:	ld	ix,QUITLD
+A6939:	ld	ix,M739A		; quit loading & start (headloop/executing)
 	ld	iy,00200H
 	call	A6663			; take control from caller
 	pop	af
 	jp	z,A7199
-	ld	ix,ACLOSE
-	call	A731E
+	ld	ix,M6C1C
+	call	A731E			; close all i/o channels
 	ld	hl,(YF353)
 	push	hl
 	call	A67FE
@@ -7116,30 +7019,29 @@ A6939:	ld	ix,QUITLD
 	ex	de,hl
 	call	A69D0
 	ld	hl,(TXTTAB)
-	ld	(YF23D),hl		; transferadress
+	ld	(YF23D),hl		; transferaddresss
 	pop	hl
 	dec	hl
 	call	A47B2			; random block read
 	ld	de,(TXTTAB)
 	add	hl,de
 	ld	(VARTAB),hl
-	ld	ix,MKPTRS
-	call	A731E
+	ld	ix,M4253
+	call	A731E			; recalculate linepointers
 	ld	a,(FILNAM+0)
 	and	a
 	ret	nz
 	ld	(NLONLY),a
 	ld	hl,T69B9
 	ld	de,BUF+10
-	ld	bc,00005H
+	ld	bc,5
 	push	de
 	ldir
-	pop	hl
-	ld	ix,EXECLP
-	jp	A731E
-;
-;
-T69B9:	defb	":",092H,000H,000H,000H
+	pop	hl			; ¥basicpointer¥
+	ld	ix,M4601
+	jp	A731E			; continue in the execution loop
+
+T69B9:	defb	":",092H,0,0,0		; :RUN
 
 A69BE:	push	hl
 	ld	a,l
@@ -7147,27 +7049,26 @@ A69BE:	push	hl
 	pop	hl
 	ld	a,h
 	jr	A69CB
-;
+
 A69C7:	ld	de,(YF353)
 A69CB:	ld	bc,A47BE		; random block write
 	jr	A69D3
-;
+
 A69D0:	ld	bc,A47B2		; random block read
 A69D3:	push	af
 	ld	hl,00001H
 	add	hl,sp
-	ld	(YF23D),hl		; transferadres
+	ld	(YF23D),hl		; transferaddress
 	push	de
 	call	A69E2
 	pop	de
 	pop	af
 	ret
-;
+
 A69E2:	ld	hl,00001H
 	push	bc
 	ret
-;
-;
+
 A69E7:	push	de
 	call	A6B6A
 	ld	(SAVENT),de
@@ -7190,7 +7091,7 @@ A69E7:	push	de
 	call	A72DB
 	and	a
 	jr	A6A1B
-;
+
 A6A13:	call	A6B6E
 	ld	(SAVENT),de
 	scf
@@ -7205,8 +7106,8 @@ A6A23:	pop	de
 	push	af
 	xor	a
 	ld	e,002H
-	ld	ix,OPNCHN
-	call	A731E
+	ld	ix,M6AFA
+	call	A731E			; open i/o channel
 	ld	a,0FEH
 	call	A69C7
 	pop	af
@@ -7221,7 +7122,7 @@ A6A23:	pop	de
 	pop	af
 	pop	bc
 	push	af
-	ld	(YF23D),bc		; transferadres
+	ld	(YF23D),bc		; transferaddress
 	ld	hl,(SAVEND)
 	and	a
 	sbc	hl,bc
@@ -7232,10 +7133,10 @@ A6A23:	pop	de
 A6A5D:	ld	a,0FFH
 	ld	(FLBMEM),a
 	xor	a
-	ld	ix,CLOCHN
-	call	A731E
+	ld	ix,M6B24
+	call	A731E			; close i/o channel
 	jp	A6EF8
-;
+
 A6A6D:	call	A7165
 A6A70:	push	hl
 	ld	de,(SAVENT)
@@ -7248,7 +7149,7 @@ A6A70:	push	hl
 	add	hl,bc
 	ld	(SAVEND),hl
 	pop	hl
-	ld	de,(YF23D)		; transferadres
+	ld	de,(YF23D)		; transferaddress
 	call	LDIRMV
 	pop	af
 	jr	nc,A6A9E
@@ -7262,13 +7163,12 @@ A6A70:	push	hl
 	ld	(SAVENT),hl
 	ex	de,hl
 	jr	A6A70
-;
+
 A6A9E:	pop	hl
 	ld	hl,(SAVENT)
 	call	A718B
 	jr	A6A5D
-;
-;
+
 A6AA7:	push	de
 	xor	a
 	ld	(RUNBNF),a
@@ -7297,8 +7197,8 @@ A6AD0:	pop	de
 	ld	(FLBMEM),a
 	xor	a
 	ld	e,001H
-	ld	ix,OPNCHN
-	call	A731E
+	ld	ix,M6AFA
+	call	A731E			; open i/o channel
 	ld	de,(YF353)
 	call	A69D0
 	cp	0FEH
@@ -7315,16 +7215,16 @@ A6AD0:	pop	de
 	and	a
 	sbc	hl,bc
 	inc	hl
-	ld	(YF23D),bc		; transferadres
+	ld	(YF23D),bc		; transferaddress
 	ld	a,(RUNBNF)
 	cp	"S"
 	jr	z,A6B1A
 	call	A47B2			; random block read
-A6B11:	ld	ix,SCROUT
-	call	A731E
+A6B11:	ld	ix,M4AFF
+	call	A731E			; output back to screen
 	pop	hl
 	ret
-;
+
 A6B1A:	call	A7165
 A6B1D:	push	hl
 	ld	de,(SAVENT)
@@ -7341,7 +7241,7 @@ A6B1D:	push	hl
 	add	hl,bc
 	ld	(SAVEND),hl
 	pop	de
-	ld	hl,(YF23D)		; transferadres
+	ld	hl,(YF23D)		; transferaddress
 	pop	af
 	jr	nc,A6B4E
 	call	LDIRVM
@@ -7352,14 +7252,14 @@ A6B1D:	push	hl
 	ld	(SAVENT),hl
 	ex	de,hl
 	jr	A6B1D
-;
+
 A6B4E:	pop	bc
 	ld	bc,(SAVENT)
 	call	LDIRVM
 	xor	a
 	ld	(RUNBNF),a
 	jr	A6B11
-;
+
 A6B5C:	push	bc
 	call	A69D0
 	push	af
@@ -7370,13 +7270,12 @@ A6B5C:	push	bc
 	pop	bc
 	add	hl,bc
 	ret
-;
+
 A6B6A:	call	A72D0
 	defb	","
-A6B6E:	ld	ix,BADRES
-	jp	A731E
-;
-;
+A6B6E:	ld	ix,M6F0B
+	jp	A731E			; evaluate address operand (BLOAD/SAVE)
+
 A6B75:	call	A7380
 	call	A72DB
 	call	A72D0
@@ -7392,8 +7291,7 @@ A6B75:	call	A7380
 	ld	(VALTYP),a
 	and	a
 	jr	A6BA1
-;
-;
+
 A6B96:	call	A7380
 	call	A6BC5
 	call	A72DA
@@ -7412,25 +7310,24 @@ A6BA1:	push	af
 	push	hl
 	ld	a,0FFH
 	ld	(YF246),a		; invalid dirsector buffer
-	ld	a,(ix+000H)		; driveid
+	ld	a,(ix+0)		; driveid
 	ld	b,001H
-	ld	c,(ix+001H)		; mediadescriptor
+	ld	c,(ix+1)		; mediadescriptor
 	ld	hl,(YF351)		; temporary use dirsector buffer
 	call	PHYDIO
 	pop	hl
 	ret
-;
-A6BC5:	ld	ix,EVBYTE
-	call	A731E
+
+A6BC5:	ld	ix,M521C
+	call	A731E			; evaluate byte operand
 	push	de
 	call	A72D0
 	defb	","
-	ld	ix,EVADR
-	call	A731E
+	ld	ix,M542F
+	call	A731E			; evaluate address operand
 	pop	bc
 	ret
-;
-;
+
 A6BDA:	ld	ix,RETRTN
 	ld	iy,00400H
 	call	A6663			; take control from caller
@@ -7449,8 +7346,8 @@ A6BDA:	ld	ix,RETRTN
 	push	de
 	call	A72D0
 	defb	","
-	ld	ix,EVEXPR
-	call	A731E
+	ld	ix,M4C64
+	call	A731E			; evaluate expression
 	push	hl
 	call	A6DFB
 	ld	a,c
@@ -7481,7 +7378,7 @@ A6C16:	ex	de,hl
 	pop	de
 	pop	hl
 A6C29:	ex	(sp),hl
-	ld	(YF23D),hl		; transferadres
+	ld	(YF23D),hl		; transferaddress
 	pop	hl
 	pop	af
 	push	hl
@@ -7497,17 +7394,16 @@ A6C3F:	push	hl
 	ret	nz
 	pop	hl
 	jp	A6EF8
-;
-;
+
 A6C49:	call	A7380
 	cp	"#"
 	call	z,A72DB
-	ld	ix,EVBYTE
-	call	A731E
+	ld	ix,M521C
+	call	A731E			; evaluate byte operand
 	jp	z,A7318
 	push	hl
-	ld	ix,GTCHNP
-	call	A731E
+	ld	ix,M6A6D
+	call	A731E			; get i/o channel pointer
 	ld	e,l
 	ld	d,h
 	jp	z,A7300
@@ -7537,17 +7433,17 @@ A6C8B:	ex	de,hl
 	cp	","
 	ret	nz
 	push	de
-	ld	ix,NEVBYT
-	call	A731E
+	ld	ix,M521B
+	call	A731E			; skip basic char and evaluate byte operand
 	push	af
 	call	A72D0
 	defb	"A"
 	call	A72D0
 	defb	"S"
-	ld	ix,GETVAR
-	call	A731E
-	ld	ix,GETYPR
-	call	A731E
+	ld	ix,M5EA4
+	call	A731E			; get address of variable
+	ld	ix,M5597
+	call	A731E			; GETYPR
 	jp	nz,A72FA
 	pop	af
 	ex	(sp),hl
@@ -7572,26 +7468,25 @@ A6C8B:	ex	de,hl
 	ld	b,000H
 	pop	hl
 	jr	A6C8B
-;
-;
+
 A6CD6:	defb	0F6H
 A6CD7:	scf
 	call	A7380
 	push	af
-	ld	ix,GETVAR
-	call	A731E
-	ld	ix,GETYPR
-	call	A731E
+	ld	ix,M5EA4
+	call	A731E			; get address of variable
+	ld	ix,M5597
+	call	A731E			; GETYPR
 	jp	nz,A72FA
 	push	de
-	ld	ix,EVLEXP
-	call	A731E
+	ld	ix,M4C5F
+	call	A731E			; evaluate =expression
 	pop	bc
 	ex	(sp),hl
 	push	hl
 	push	bc
-	ld	ix,FRETMP
-	call	A731E
+	ld	ix,M67D0
+	call	A731E			; free temporary string
 	ld	b,(hl)
 	ex	(sp),hl
 	ld	a,(hl)
@@ -7622,15 +7517,15 @@ A6CD7:	scf
 	jr	c,A6D7D
 	pop	af
 A6D2A:	ld	a,c
-	ld	ix,ALSSPC
-	call	A731E
+	ld	ix,M668E
+	call	A731E			; allocate stringspace
 	pop	hl
 	pop	bc
 	ex	(sp),hl
 	push	de
 	push	bc
-	ld	ix,FRETMP
-	call	A731E
+	ld	ix,M67D0
+	call	A731E			; free temporary string
 	pop	bc
 	pop	de
 	ex	(sp),hl
@@ -7670,7 +7565,7 @@ A6D61:	dec	b
 	inc	hl
 	inc	de
 	jr	A6D61
-;
+
 A6D6A:	pop	bc
 	pop	bc
 	pop	bc
@@ -7679,7 +7574,7 @@ A6D6A:	pop	bc
 A6D6F:	call	c,A6D74
 	pop	hl
 	ret
-;
+
 A6D74:	ld	a,020H
 	inc	c
 A6D77:	dec	c
@@ -7687,7 +7582,7 @@ A6D77:	dec	c
 	ld	(de),a
 	inc	de
 	jr	A6D77
-;
+
 A6D7D:	pop	af
 	pop	hl
 	pop	bc
@@ -7696,14 +7591,14 @@ A6D7D:	pop	af
 	jr	nz,A6DA9
 	push	bc
 	ld	a,b
-	ld	ix,ALTSTR
-	call	A731E
+	ld	ix,M6627
+	call	A731E			; allocate temporary string
 	ld	de,TEMPST+30
 	ld	hl,(TEMPPT)
 	ld	(DAC+2),hl
-	ld	a,003H
+	ld	a,3
 	ld	(VALTYP),a
-	call	VMOVE
+	call	M2EF3			; copy stringdescriptor
 	ld	de,TEMPST+30+3
 	rst	020H
 	ld	(TEMPPT),hl
@@ -7713,42 +7608,39 @@ A6DA9:	ex	(sp),hl
 	push	bc
 	push	hl
 	jp	A6D2A
-;
-;
-A6DAF:	ld	a,002H
+
+A6DAF:	ld	a,2
 	defb	001H
-A6DB2:	ld	a,004H
+A6DB2:	ld	a,4
 	defb	001H
-A6DB5:	ld	a,008H
+A6DB5:	ld	a,8
 	call	A7380
 	push	af
-	ld	ix,CNVDAC
-	call	A731E
+	ld	ix,M517A
+	call	A731E			; convert DAC
 	pop	af
-	ld	ix,ALTSTR
-	call	A731E
+	ld	ix,M6627
+	call	A731E			; allocate temporary string
 	ld	hl,(DSCTMP+1)
-	call	M.2F10
+	call	M2F10			; copy variable content from DAC
 	jp	A61F1
 
 ; Unused code, patched code ??
-;
+
 	nop
 	nop
 	nop
 	nop
 
-;
-;
-A6DD7:	ld	a,001H
+A6DD7:	ld	a,2-1
 	defb	001H
-A6DDA:	ld	a,003H
+A6DDA:	ld	a,4-1
 	defb	001H
-A6DDD:	ld	a,007H
+A6DDD:	ld	a,8-1
 	call	A7380
 	push	af
-	ld	ix,FRETMP
-	call	A731E
+	ld	ix,M67D0
+	call	A731E			; free temporary string
 	pop	af
 	cp	(hl)
 	jp	nc,A7315
@@ -7759,61 +7651,61 @@ A6DDD:	ld	a,007H
 	ld	h,(hl)
 	ld	l,c
 	ld	(VALTYP),a
-	jp	VMOVFM
-;
-A6DFB:	ld	ix,GETYPR
-	call	A731E
+	jp	M2F08			; copy variable content to DAC
+
+A6DFB:	ld	ix,M5597
+	call	A731E			; GETYPR
 	ld	bc,(DAC+2)
-	ld	hl,00000H
+	ld	hl,0
 	ret	m
 	jp	z,A72FA
 	ld	hl,DAC
 	ld	de,BUF+158
-	ld	bc,00008H
+	ld	bc,8
 	ldir
 	ld	hl,T6E68
 	ld	de,ARG
-	ld	c,008H
+	ld	c,8
 	ldir
-	call	DECDIV
+	call	M289F			; dbl divide
 	and	a
-	call	M.30D1
-	ld	ix,CNVADR
-	call	A731E
+	call	M30D1			; dbl to integer
+	ld	ix,M5432
+	call	A731E			; convert address to integer
 	push	de
 	ex	de,hl
-	ld	ix,CSNG
-	call	A731E
-	call	M.3042
+	ld	ix,M46FF
+	call	A731E			; convert integer to sgn in DAC
+	call	M3042			; convert DAC from sgn to dbl
 	ld	bc,06545H
 	ld	de,06053H
-	call	M.325C
+	call	M325C			; sgn multiply
 	ld	hl,DAC
 	ld	de,ARG
-	ld	bc,00008H
+	ld	bc,8
 	ldir
 	ld	hl,BUF+158
 	ld	de,DAC
-	ld	c,008H
+	ld	c,8
 	ldir
-	call	DECSUB
-	ld	ix,CNVADR
-	call	A731E
+	call	M268C			; dbl subtract
+	ld	ix,M5432
+	call	A731E			; convert address to integer
 	ld	c,e
 	ld	b,d
 	pop	hl
 	ret
-;
+
 T6E68:	defb	045H,065H,053H,060H,000H,000H,000H,000H
 
 A6E70:	call	A7380
 	push	hl
 	call	A682A			; get char from I/O channel
-	ld	hl,00000H
+	ld	hl,0
 	jr	nc,A6E7D
 	dec	hl
 A6E7D:	push	af
-	call	M.2F99
+	call	M2F99			; integer to DAC
 	pop	af
 	pop	hl
 	inc	hl
@@ -7821,15 +7713,14 @@ A6E7D:	push	af
 	inc	hl
 	ld	(hl),a
 	ret
-;
-;
+
 A6E88:	call	A7380
 	ld	d,000H
 	jr	z,A6E95
 	call	A6F80
 	push	hl
 	jr	A6E99
-;
+
 A6E95:	push	hl
 	call	A6FFE
 A6E99:	call	A6F63
@@ -7838,8 +7729,8 @@ A6E99:	call	A6F63
 	push	af
 	call	A6645
 	jp	z,A7312
-	ld	ix,COUTNL
-	call	A731E
+	ld	ix,M7323
+	call	A731E			; newline to OUTDO if not at start of line
 A6EAE:	ld	hl,BUF+85
 	ld	b,00BH
 A6EB3:	ld	a,(hl)
@@ -7870,8 +7761,8 @@ A6ED8:	and	a
 	jr	nc,A6EE3
 	ld	a," "
 	rst	018H
-A6EE3:	ld	ix,OUTNL
-	call	nc,A731E
+A6EE3:	ld	ix,M7328
+	call	nc,A731E		; yep, newline to OUTDO
 A6EEA:	ld	de,BUF+10
 	xor	a
 	ld	(BUF+22),a
@@ -7880,10 +7771,9 @@ A6EEA:	ld	de,BUF+10
 	jr	nz,A6EAE
 	pop	af
 A6EF8:	pop	hl
-	ld	ix,SCROUT
-	jp	A731E
-;
-;
+	ld	ix,M4AFF
+	jp	A731E			; output back to screen and quit
+
 A6F00:	call	A7380
 	call	A6F96
 	call	A72DA
@@ -7898,8 +7788,7 @@ A6F00:	call	A7380
 	jp	nz,A7312
 	pop	hl
 	ret
-;
-;
+
 A6F20:	call	A7380
 	call	A6F96
 	call	A65EA			; is file already open in one of the I/O channels ?
@@ -7930,7 +7819,7 @@ A6F51:	ld	de,BUF+27
 	jp	nz,A71A5
 	pop	hl
 	ret
-;
+
 A6F63:	call	A65E3
 	inc	a
 	ld	(BUF+10),a
@@ -7940,14 +7829,13 @@ A6F63:	call	A65E3
 	pop	de
 	pop	hl
 	ret
-;
-A6F72:	ld	ix,EVFSPC
-	call	A731E
+
+A6F72:	ld	ix,M6A0E
+	call	A731E			; evaluate filespecification
 	ld	a,d
 	cp	009H
 	ret	c
 	jp	A719C
-;
 A6F80:	call	A6F72
 	push	hl
 	ld	hl,FILNAM
@@ -7959,7 +7847,7 @@ A6F89:	ld	a,(hl)
 	djnz	A6F89
 	call	A6FFE
 	jr	A6F9A
-;
+
 A6F96:	call	A6F72
 	push	hl
 A6F9A:	ld	hl,FILNAM
@@ -7991,8 +7879,7 @@ A6FBD:	cpir
 	pop	hl
 	pop	de
 	ret
-;
-;
+
 T6FCC:	defb	'."/\[]:+=;,*?'
 
 A6FD9:	ld	a," "
@@ -8006,38 +7893,37 @@ A6FE5:	inc	hl
 	jr	z,A6FEC
 	djnz	A6FE5
 	ret
-;
+
 A6FEC:	dec	b
 	ret	z
 	inc	hl
 	cp	(hl)
 	jr	z,A6FEC
 A6FF2:	jp	A730F
-;
+
 A6FF5:	ld	a,(hl)
 	cp	"*"
 	jr	z,A7003
 	inc	hl
 	djnz	A6FF5
 	ret
-;
+
 A6FFE:	ld	hl,FILNAM
 	ld	b,00BH
 A7003:	ld	(hl),"?"
 	inc	hl
 	djnz	A7003
 	ret
-;
-;
+
 A7009:	ld	bc,00010H
 	defb	011H
 A700D:	ld	bc,00021H
 	call	A7380
 	push	bc
-	ld	ix,CNVBYT
-	call	A731E
-	ld	ix,GTCHNP
-	call	A731E
+	ld	ix,M521F
+	call	A731E			; convert to byte
+	ld	ix,M6A6D
+	call	A731E			; get i/o channel pointer
 	jp	c,A7315
 	jp	z,A7300
 	pop	bc
@@ -8056,34 +7942,32 @@ A700D:	ld	bc,00021H
 	ld	d,(hl)
 	ex	de,hl
 	push	bc
-	ld	ix,CSNG
-	call	A731E
+	ld	ix,M46FF
+	call	A731E			; convert integer to sgn in DAC
 	ld	bc,06545H
 	ld	de,06053H
-	call	M.325C
+	call	M325C			; sgn multiply
 	ld	hl,DAC
 	ld	de,ARG
-	ld	bc,00008H
+	ld	bc,8
 	ldir
 	pop	hl
-	ld	ix,CSNG
-	call	A731E
-	call	M.3042
-	jp	DECADD
-;
-;
+	ld	ix,M46FF
+	call	A731E			; convert integer to sgn in DAC
+	call	M3042			; convert DAC from sgn to dbl
+	jp	M269A			; dbl add
+
 A7061:	call	A7380
-	ld	ix,CNVBYT
-	call	A731E
+	ld	ix,M521F
+	call	A731E			; convert to byte
 	ld	hl,YF347
 	cp	(hl)
 	jr	z,A7074
 	jp	nc,A719C
 A7074:	ld	e,a
 	call	A505D
-	jp	M.2F99
-;
-;
+	jp	M2F99			; integer to DAC
+
 A707B:	call	A7380
 	call	A6F80
 	call	A65EA			; is file already open in one of the I/O channels ?
@@ -8144,7 +8028,7 @@ A70EF:	ld	a,(de)
 	inc	de
 	djnz	A70EF
 	jp	A7315
-;
+
 A70FA:	call	A716C
 	push	hl
 	xor	a
@@ -8175,7 +8059,7 @@ A7128:	push	hl
 	call	A718F			; random block write
 	pop	hl
 	jr	A7128
-;
+
 A713C:	pop	hl
 	ld	hl,(BUF+104)
 	ld	(BUF+141),hl
@@ -8184,7 +8068,7 @@ A713C:	pop	hl
 	ld	de,BUF+121
 	call	A456F			; close fcb
 	ld	hl,BUF+84
-	ld	(YF23D),hl		; transferadres
+	ld	(YF23D),hl		; transferaddress
 	ld	de,BUF+10
 	xor	a
 	ld	(BUF+22),a
@@ -8193,7 +8077,7 @@ A713C:	pop	hl
 	jp	nz,A70CA
 	pop	hl
 	ret
-;
+
 A7165:	ld	(SAVENT),hl
 	ld	(SAVEND),bc
 A716C:	ld	hl,0FE00H
@@ -8207,16 +8091,16 @@ A716C:	ld	hl,0FE00H
 	and	a
 	jr	nz,A7186
 A717F:	ld	de,(NULBUF)
-	ld	hl,00100H
-A7186:	ld	(YF23D),de		; transferadres
+	ld	hl,256
+A7186:	ld	(YF23D),de		; transferaddress
 	ret
-;
+
 A718B:	ld	de,(YF353)
 A718F:	call	A47BE			; random block write
 	and	a
 	ret	z
 	jr	A71A8
-;
+
 A7196:	ld	e,03CH
 	defb	001H
 A7199:	ld	e,03DH
@@ -8245,13 +8129,12 @@ A71B7:	ld	e,047H
 	ld	(NLONLY),a
 	ld	(FLBMEM),a
 	push	de
-	ld	ix,CLOCHN
-	call	A731E
+	ld	ix,M6B24
+	call	A731E			; close i/o channel
 	pop	de
-	ld	ix,ERROR
+	ld	ix,M406F		; BASIC error
 	jp	A731E
-;
-;
+
 A71D3:	ld	a,e
 	cp	03CH
 	ret	c
@@ -8273,8 +8156,7 @@ A71E0:	ld	a,(hl)
 	ld	e,001H
 	pop	hl
 	ret
-;
-;
+
 T71F5:	defb	0
 	defb	"Bad FAT",0
 	defb	"Bad file mode",0
@@ -8302,8 +8184,7 @@ A72BD:	ld	a,(hl)
 	ld	h,(hl)
 	ld	l,a
 	jp	(hl)
-;
-;
+
 T72C2:	defw	A71AE
 	defw	A71B4
 	defw	A71B1
@@ -8320,11 +8201,11 @@ A72D0:	call	A72DA
 	ex	(sp),hl
 	inc	hl
 A72DA:	dec	hl
-A72DB:	ld	ix,CHRGTR
-	jr	A731E
+A72DB:	ld	ix,M4666
+	jr	A731E			; continue in CHRGTR
 
 ; unused code, patched ??
-;
+
 	nop
 	nop
 	nop
@@ -8363,12 +8244,11 @@ A7312:	ld	e,035H
 A7315:	ld	e,005H
 	defb	001H
 A7318:	ld	e,002H
-	ld	ix,ERROR
+	ld	ix,M406F		; BASIC error
 A731E:	call	CALBAS
 	ei
 	ret
-;
-;
+
 A7323:	ei
 	push	hl
 	push	de
@@ -8382,18 +8262,18 @@ A7331:	add	hl,sp
 	inc	hl
 	ld	d,(hl)
 	push	hl
-	ld	hl,CALBSV+3
-	rst	020H
+	ld	hl,M6E92+3
+	rst	020H			; called from BSAVE ?
 	pop	hl
-	jr	z,A734A
+	jr	z,A734A			; yep,
 	push	hl
-	ld	hl,CALBLD+3
-	rst	020H
+	ld	hl,M6EC6+3
+	rst	020H			; called from BLOAD ?
 	pop	hl
-	jr	nz,A7350
+	jr	nz,A7350		; nope,
 	ld	de,XF377
 	jr	A734D
-;
+
 A734A:	ld	de,XF37A
 A734D:	ld	(hl),d
 	dec	hl
@@ -8429,12 +8309,11 @@ A7374:	inc	hl
 	inc	e
 	pop	de
 	ret
-;
-;
+
 A737C:	ei
-	ld	a,000H
+	ld	a,0
 	ret
-;
+
 A7380:	ei
 	push	hl
 	push	af
@@ -8452,9 +8331,9 @@ A738E:	add	hl,sp
 	ret
 
 ;	  Subroutine BDOS 09 (output string)
-;	     Inputs  DE = adres of string
-;	     Outputs ________________________ 
-;	     Remark  is copied to 0F1C9H
+;	     Inputs  DE = address of string
+;	     Outputs ________________________
+;	  Remark     is copied to 0F1C9H
 
 A7397:	call	XF36B			; enable ram on page 1
 	ld	a,(de)
@@ -8466,9 +8345,9 @@ A7397:	call	XF36B			; enable ram on page 1
 	jr	A7397			; next
 
 ;	  Subroutine XFER (transfer)
-;	     Inputs  HL = source adres, DE = destition adres, BC = size
-;	     Outputs ________________________ 
-;	     Remark  is copied to 0F1D9H
+;	     Inputs  HL = source address, DE = destition address, BC = size
+;	     Outputs ________________________
+;	  Remark     is copied to 0F1D9H
 
 	call	XF36B			; enable ram on page 1
 	ldir				; transfer
@@ -8477,16 +8356,16 @@ A7397:	call	XF36B			; enable ram on page 1
 
 ;	  Subroutine Warm Boot
 ;	     Inputs  ________________________
-;	     Outputs ________________________ 
-;	     Remark  is copied to 0F1E2H
+;	     Outputs ________________________
+;	  Remark     is copied to 0F1E2H
 
 	call	XF36B			; enable ram on page 1
 	jp	0			; WBOOT
 
 ;	  Subroutine start handler in DOS memory
-;	     Inputs  HL = adres of pointer
-;	     Outputs ________________________ 
-;	     Remark  is copied to 0F1E8H
+;	     Inputs  HL = address of pointer
+;	     Outputs ________________________
+;	  Remark     is copied to 0F1E8H
 
 	ld	de,XF1D9+5
 	push	de			; on return, enable system diskrom
@@ -8498,15 +8377,14 @@ A7397:	call	XF36B			; enable ram on page 1
 	jp	(hl)			; start it
 
 ;	  Subroutine validate FCB filename
-;	     Inputs  HL = adres of pointer
-;	     Outputs ________________________ 
-;	     Remark  is copied to 0F1F4H
+;	     Inputs  HL = address of pointer
+;	     Outputs ________________________
+;	  Remark     is copied to 0F1F4H
 
 	jp	A5604
 
 ;	  Data       table with reserved filenames (devicenames)
-;
-;	     Remark  is copied to 0F1F7H
+;	  Remark     is copied to 0F1F7H
 
 	defb	"PRN "
 	defb	"LST "
@@ -8515,8 +8393,7 @@ A7397:	call	XF36B			; enable ram on page 1
 	defb	"CON "
 
 ;	  Data       fake direntry for devices
-;
-;	     Remark  is copied to 0F20BH
+;	  Remark     is copied to 0F20BH
 
 	defb	"           "
 	defb	10000000b
