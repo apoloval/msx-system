@@ -432,7 +432,7 @@ C01BB:	CALL	M6246			; print + if needed
 ;	     Outputs ________________________
 
 
-C01C9:	RST	18H
+C01C9:	RST	OUTDO
 	CP	81H
 	RET	C
 	CP	0A0H
@@ -454,7 +454,7 @@ J01D7:	LD	A,(HOKVLD)
 	RET	Z			; not in KANJI mode, quit
 	LD	A,(HL)
 	INC	HL
-	RST	18H
+	RST	OUTDO
 	DEC	B
 	RET	P
 	INC	B
@@ -1990,15 +1990,15 @@ C08E1:	CALL	H.LPTS
 
 
 C08EB:	LD	A,1BH
-	RST	18H
+	RST	OUTDO
 	LD	A,"Y"
-	RST	18H
+	RST	OUTDO
 	LD	A,L
 	ADD	A,1FH
-	RST	18H
+	RST	OUTDO
 	LD	A,H
 	ADD	A,1FH
-	RST	18H
+	RST	OUTDO
 	RET
 
 ;	  Subroutine CNVCHR
@@ -4122,7 +4122,7 @@ J15B3:	LD	DE,192			; msx1 style screenmodes have ymax=192
 	CP	5
 	CALL	NC,C141C		; new style screenmode, determine y-size
 	NOP				; ??
-	RST	20H
+	RST	DCOMPR
 	JR	C,J15C6			; y-coordinate in range
 	EX	DE,HL
 	DEC	HL			; use max y-coordinate
@@ -4139,8 +4139,8 @@ J15D0:	LD	DE,256			; most screenmodes have xmax 256
 	AND	07H
 	CP	06H
 	JR	C,J15DE
-	LD	D,512/256		; screenmode 6 and 7, xmax is 512
-J15DE:	RST	20H
+	LD	D,HIGH 512		; screenmode 6 and 7, xmax is 512
+J15DE:	RST	DCOMPR
 	JR	C,J15E5			; x-coordinate in range
 	EX	DE,HL
 	DEC	HL			; use max x-coordinate
@@ -4501,7 +4501,7 @@ J17C2:	PUSH	HL
 	ADD	HL,DE
 	EX	DE,HL
 	POP	HL
-	RST	20H
+	RST	DCOMPR
 	JR	C,J17EF
 	LD	A,L
 	INC	A
@@ -4548,7 +4548,7 @@ J1804:	PUSH	HL
 	ADD	HL,DE
 	EX	DE,HL
 	POP	HL
-	RST	20H
+	RST	DCOMPR
 	JR	NC,J1832
 	LD	A,L
 	AND	07H	; 7 
@@ -5190,9 +5190,9 @@ J23BF:	CALL	H.PINL
 
 J23CC:	CALL	H.QINL
 	LD	A,"?"
-	RST	18H
+	RST	OUTDO
 	LD	A," "
-	RST	18H
+	RST	OUTDO
 
 ;	  Subroutine INLIN
 ;	     Inputs  ________________________
@@ -5243,20 +5243,20 @@ J2405:	LD	A," "
 
 J2413:	POP	AF
 	LD	HL,INSFLG
-	CP	01H	; 1 
+	CP	01H
 	JR	Z,J2426
-	CP	20H	; " "
+	CP	20H
 	JR	C,J2428
 	PUSH	AF
 	LD	A,(HL)
 	AND	A
 	CALL	NZ,C24F2
 	POP	AF
-J2426:	RST	18H
+J2426:	RST	OUTDO
 	RET
 
 J2428:	LD	(HL),00H
-	RST	18H
+	RST	OUTDO
 	DEFB	03EH			; LD A,xx (skip next instruction)
 
 ;	  Subroutine change to "insert" cursor
@@ -5363,8 +5363,8 @@ J24AF:	LD	A,0DH	; 13
 J24B2:	PUSH	AF
 	CALL	C0BD9			; unmark line as succession
 	CALL	C08EB			; POSIT
-	LD	A,0AH	; 10 
-	RST	18H
+	LD	A,0AH
+	RST	OUTDO
 	XOR	A
 	LD	(INSFLG),A
 	POP	AF
@@ -5472,7 +5472,7 @@ C2550:	LD	A,(LINLEN)
 	CALL	C0BCD			; get LINTTB entry
 	JR	NZ,J2595
 J255B:	LD	A,1CH
-	RST	18H
+	RST	OUTDO
 	LD	HL,(CSRY)
 
 ; backspace
@@ -5609,7 +5609,7 @@ C2634:	LD	HL,(CSRY)
 	CALL	C0AA9			; cursor left with warp
 	LD	DE,0101H		; top left position
 J263D:	LD	HL,(CSRY)
-	RST	20H
+	RST	DCOMPR
 	RET	Z
 	LD	DE,I2668
 	PUSH	DE

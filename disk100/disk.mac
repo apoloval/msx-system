@@ -331,7 +331,7 @@ M4253	equ	04253H		; recalculate linepointers
 M4601	equ	04601H		; execution loop
 M4666	equ	04666H		; CHRGTR
 M46FF	equ	046FFH		; convert to SNG
-M4756	equ	04756H		; evaluate word operand
+M4756	equ	04756H		; evaluate word operand and check for 0-32767 range
 M4AFF	equ	04AFFH		; output back to screen
 M4C5F	equ	04C5FH		; evaluate =expression
 M4C64	equ	04C64H		; evaluate expression
@@ -361,8 +361,8 @@ M6F1D	equ	06F1DH		; skip strong cassette devicecheck
 M7323	equ	07323H		; newline to OUTDO if not at start of line
 M7328	equ	07328H		; newline to OUTDO
 M739A	equ	0739AH		; quit loading & start (headloop/executing)
-M7D17	equ	07D17H		; start MSX-BASIC
-M7D2F	equ	07D2FH		; address init screen for BASIC
+M7D17	equ	07D17H		; continue start of MSX-BASIC without executing BASIC programs in ROM
+M7D2F	equ	07D2FH		; address initialize BASIC screen
 M7D31	equ	07D31H		; BASIC initscreen (without INITXT & CNSDFG)
 M7E14	equ	07E14H		; start MSX-BASIC program in ROM
 
@@ -394,7 +394,7 @@ RETRTN	equ	WRPRIM+6	; address with a RET instruction, allways available
 
 
 
-	defb	"A","B"
+	defb	"AB"
 	defw	A576F
 	defw	A6576
 	defw	0
@@ -4232,9 +4232,16 @@ A5681:	push	hl
 A5694:	pop	hl
 	ret
 
-;	defb	"ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π"
+;	Table 080H-0B9H accent upcase chars
 
-T5696:	defb	"ÄöEAéAèÄEEEIIIéèêííOôOUUYôöõúùûüAIOU••¶ß®©™´¨≠ÆØ∞∞≤≤¥¥∂∂∏∏"
+T5696:	defb	080H,09AH,"E" ,"A" ,08EH,"A" ,08FH,080H
+	defb	"E" ,"E" ,"E" ,"I" ,"I" ,"I" ,08EH,08FH
+	defb	090H,092H,092H,"O" ,099H,"O" ,"U" ,"U"
+	defb	"Y" ,099H,09AH,09BH,09CH,09DH,09EH,09FH
+	defb	"A" ,"I" ,"O" ,"U" ,0A5H,0A5H,0A6H,0A7H
+	defb	0A8H,0A9H,0AAH,0ABH,0ACH,0ADH,0AEH,0AFH
+	defb	0B0H,0B0H,0B2H,0B2H,0B4H,0B4H,0B6H,0B6H
+	defb	0B8H,0B8H
 
 ;	  Subroutine unsupported CP/M BDOS calls
 ;	     Inputs  
@@ -4585,7 +4592,7 @@ A5967:	inc	hl
 	push	hl
 	pop	ix
 	ld	iy,(EXPTBL-1+0)
-	call	CALSLT			; setup startup screen
+	call	CALSLT			; initialize BASIC screenmode
 	call	A40B8			; check for and initialize clockchip
 	call	A5C6E			; initialize hooks
 	ld	a,(EXPTBL+0)
@@ -4875,7 +4882,7 @@ A5BA0:	ld	sp,0C200H
 	ld	a,00CH
 	rst	018H			; clear screen
 	ld	ix,M7D31
-	call	CALBAS			; setup basic startup screen
+	call	CALBAS			; display BASIC startscreen
 	call	A5F86
 	defb	13,10,"Disk BASIC version 1.0",13,10,0
 	ld	hl,M4173
@@ -5930,7 +5937,7 @@ I6336:	PUSH	IX
 	EX	AF,AF'
 	PUSH	AF
 	PUSH	HL
-	LD	HL,(D635E+1)
+R000C:	LD	HL,(D635E+1)
 	LD	A,L
 	OR	H
 	POP	HL
@@ -5938,14 +5945,14 @@ I6336:	PUSH	IX
 	LD	IY,(EXPTBL+0-1)
 	JR	NZ,J6375
 	POP	AF
-	LD	(D635E+1),SP
+R001E:	LD	(D635E+1),SP
 	LD	SP,0
 	CALL	CALSLT
 	DI
 D635E:	LD	SP,0
 	PUSH	HL
 	LD	HL,0
-	LD	(D635F),HL
+R002F:	LD	(D635E+1),HL
 	POP	HL
 J6369:	EX	AF,AF'
 	EXX
@@ -6597,7 +6604,7 @@ A66CD:	add	hl,sp
 	call	A72D0
 	defb	0EFH			; check for LEN=
 	ld	ix,M4756
-	call	A731E			; evaluate word operand
+	call	A731E			; evaluate word operand and check for 0-32767 range
 	dec	de
 	inc	d
 	dec	d			; should be 1-256
@@ -6973,7 +6980,7 @@ A690E:	call	A7380
 	and	a
 	sbc	hl,de
 	call	A718B
-	ld	(NLONLY),a
+	ld	(NLONLY),a		; not loading basic program, close i/o channels when requested
 	pop	hl
 	ld	ix,M6B24
 	jp	A731E			; close i/o channel
@@ -7031,7 +7038,7 @@ A6939:	ld	ix,M739A		; quit loading & start (headloop/executing)
 	ld	a,(FILNAM+0)
 	and	a
 	ret	nz
-	ld	(NLONLY),a
+	ld	(NLONLY),a		; not loading basic program, close i/o channels when requested
 	ld	hl,T69B9
 	ld	de,BUF+10
 	ld	bc,5
@@ -8126,7 +8133,7 @@ A71B4:	ld	e,046H
 A71B7:	ld	e,047H
 	ld	bc,00000H
 	xor	a
-	ld	(NLONLY),a
+	ld	(NLONLY),a		; not loading basic program, close i/o channels when requested
 	ld	(FLBMEM),a
 	push	de
 	ld	ix,M6B24

@@ -35,43 +35,44 @@ EOL	EQU	0168H
 RDRES	EQU	017AH
 WRRES	EQU	017DH
 
-M.2F92	EQU	2F92H	; convert float (SGN or DBL) to integer
-M.3058	EQU	3058H	; check if string
-M.3236	EQU	3236H	; convert to SGN in DAC
-M.3412	EQU	3412H	; print number
-M.3FD7	EQU	3FD7H	; Ok message
-M.4055	EQU	4055H	; syntax error
-M.406A	EQU	406AH	; missing operand
-M.406D	EQU	406DH	; type mismatch
-M.406F	EQU	406FH	; error
-M.46E6	EQU	46E6H	; basictext for constant handling
-M.475A	EQU	475AH	; illegal function call
-FRMEVL	EQU	4C64H	; evaluate expression
-M.4FCF	EQU	4FCFH	; byte to DAC
-M.51D7	EQU	51D7H	; helper routine ramdisk for transfers page 0
-M.520F	EQU	520FH	; evaluate integer operand
-GETBYT	EQU	521CH	; evaluate byte operand
-FRMQNT	EQU	542FH	; evaluate adres operand
-M.5439	EQU	5439H	; convert DAC to adres operand
-M.579C	EQU	579CH	; evaluate graphic coordinatepair
-M.57AB	EQU	57ABH	; evaluate 2nd graphic coordinatepair
-M.5EA4	EQU	5EA4H	; locate variable
-M.6275	EQU	6275H	; out of memory
-M.6627	EQU	6627H	; allocate stringspace
-M.6678	EQU	6678H	; print text (HL)
-M.67D0	EQU	67D0H	; free (temp) string
-M.6A0E	EQU	6A0EH	; parse filespec
-M.6B24	EQU	6B24H	; close io buffer
-M.6E6B	EQU	6E6BH	; bad filename
-M.6E6E	EQU	6E6EH	; file already open
-M.6E74	EQU	6E74H	; file not found
-M.6E86	EQU	6E86H	; sequential io only
-M.7323	EQU	7323H	; CR,LF if not at start of line
-M.7328	EQU	7328H	; CR,LF to OUTDO
-M.7EE4	EQU	7EE4H	; basic version text
-M.7EF2	EQU	7EF2H	; MSX Basic text
-M.7FFA	EQU	7FFAH	; EXTBIO entry in mainrom
-M.7FFD	EQU	7FFDH	; BDOS entry in mainrom
+M2F92	EQU	2F92H	; convert float (SGN or DBL) to integer
+M3058	EQU	3058H	; check if string
+M3236	EQU	3236H	; convert to SGN in DAC
+M3412	EQU	3412H	; print number
+M3FD7	EQU	3FD7H	; Ok message
+M4055	EQU	4055H	; syntax error
+M406A	EQU	406AH	; missing operand
+M406D	EQU	406DH	; type mismatch
+M406F	EQU	406FH	; error
+M46E6	EQU	46E6H	; basictext for constant handling
+M475A	EQU	475AH	; illegal function call
+M4C64	EQU	4C64H	; evaluate expression
+M4FCF	EQU	4FCFH	; byte to DAC
+M51D7	EQU	51D7H	; helper routine ramdisk for transfers page 0
+M520F	EQU	520FH	; evaluate integer operand
+M521C	EQU	521CH	; evaluate byte operand
+M542F	EQU	542FH	; evaluate adres operand
+M5439	EQU	5439H	; convert DAC to adres operand
+M579C	EQU	579CH	; evaluate graphic coordinatepair
+M57AB	EQU	57ABH	; evaluate 2nd graphic coordinatepair
+M5EA4	EQU	5EA4H	; locate variable
+M6275	EQU	6275H	; out of memory
+M6627	EQU	6627H	; allocate stringspace
+M6678	EQU	6678H	; print text (HL)
+M67D0	EQU	67D0H	; free (temp) string
+M6A0E	EQU	6A0EH	; parse filespec
+M6B24	EQU	6B24H	; close io buffer
+M6E6B	EQU	6E6BH	; bad filename
+M6E6E	EQU	6E6EH	; file already open
+M6E74	EQU	6E74H	; file not found
+M6E86	EQU	6E86H	; sequential io only
+M7323	EQU	7323H	; CR,LF if not at start of line
+M7328	EQU	7328H	; CR,LF to OUTDO
+M7EE4	EQU	7EE4H	; basic version text
+M7EF2	EQU	7EF2H	; MSX Basic text
+M7FFA	EQU	7FFAH	; EXTBIO entry in mainrom
+M7FFD	EQU	7FFDH	; BDOS entry in mainrom
+
 D$C010	EQU	0C010H	; unknown
 
 D$F33B	EQU	0F33BH	; adres pathnamebuffer, dos kernel 2.x
@@ -1188,9 +1189,9 @@ J04AF:	OUT	(0B5H),A
 
 J04D2:	SCF				; flag use normal functionkey setting
 	CALL	C04F9			; initialize settings stored in clockchip
-	LD	HL,M.7EF2
+	LD	HL,M7EF2
 	CALL	C280C			; print msx basic
-	LD	HL,M.7EE4
+	LD	HL,M7EE4
 	JP	C280C			; print version
 
 ;	 Subroutine check for JIS2 rom
@@ -5783,7 +5784,7 @@ J1C3D:	CALL	C27C4			; CR/LF to OUTDO if not at start of line
 	CALL	C1C7F			; select bank 3 clockchip
 	CALL	C1C5C			; read nibble from clockchip at pos 0
 	CP	2			; custom prompt ?
-	LD	HL,M.3FD7
+	LD	HL,M3FD7
 	JP	NZ,C280C		; nope, print default Ok prompt
 J1C4E:	CALL	C1C67			; read byte from clockchip
 	JR	Z,J1C59			; end of prompt string
@@ -5956,7 +5957,7 @@ J1CF8:	LD	L,A
 	LD	(CONLO),HL		; integer
 	LD	A,2
 	LD	(CONTYP),A		; type is integer
-	LD	HL,M.46E6		; basicpointer to special basictext to handle constant
+	LD	HL,M46E6		; basicpointer to special basictext to handle constant
 	POP	AF
 	OR	A			; Zx reset, Cx reset
 	RET
@@ -5991,7 +5992,7 @@ J1D19:	INC	A
 	POP	DE
 	LD	(CONTXT),HL		; save basic pointer after constant
 	POP	AF
-	LD	HL,M.46E6		; basicpointer to special basictext to handle constant
+	LD	HL,M46E6		; basicpointer to special basictext to handle constant
 	OR	A			; Cx reset, Zx reset
 	RET
 
@@ -6229,7 +6230,7 @@ J1E4D:	CALL	C1E6B			; MSX-JE active ?
 ;	    Outputs ________________________
 
 J1E5E:	CALL	C1E6B			; MSX-JE active ?
-	JP	C,J274A			; illegal function call
+	JP	C,J274A			; yep, illegal function call
 	JP	C1046			; S.INIPLT (initialize pallette)
 
 ;	 Subroutine COLOR=RESTORE statement
@@ -6244,7 +6245,7 @@ J1E67:	RST	S.CHRGTR
 ;	    Outputs ________________________
 
 C1E6B:	LD	A,(SCRMOD)
-	CP	02H
+	CP	2
 	RET	NC			; not in textmode, quit
 	PUSH	HL
 	XOR	A
@@ -7691,63 +7692,63 @@ J2705:	LD	HL,(SKPCNT)
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J2732:	LD	IX,M.6E6B
+J2732:	LD	IX,M6E6B
 	JR	J2766
 
 ;	 Subroutine sequencial io only
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J2738:	LD	IX,M.6E86
+J2738:	LD	IX,M6E86
 	JR	J2766
 
 ;	 Subroutine file already open
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J273E:	LD	IX,M.6E6E
+J273E:	LD	IX,M6E6E
 	JR	J2766
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J2744:	LD	IX,M.4055
+J2744:	LD	IX,M4055
 	JR	J2766
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J274A:	LD	IX,M.475A
+J274A:	LD	IX,M475A
 	JR	J2766
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J2750:	LD	IX,M.406A
+J2750:	LD	IX,M406A
 	JR	J2766
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J2756:	LD	IX,M.406D
+J2756:	LD	IX,M406D
 	JR	J2766
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J275C:	LD	IX,M.6275
+J275C:	LD	IX,M6275
 	JR	J2766
 
 ;	 Subroutine file not found
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J2762:	LD	IX,M.6E74
+J2762:	LD	IX,M6E74
 J2766:	JP	J282E
 
 ;	 Subroutine __________________________
@@ -7831,154 +7832,154 @@ J27A6:	LD	IX,EOL
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27AC:	LD	IX,M.7FFA
+C27AC:	LD	IX,M7FFA
 	JR	J280A
 
 ;	 Subroutine evaluate graphic coordinatepair (complex form)
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27B2:	LD	IX,M.579C
+C27B2:	LD	IX,M579C
 	JR	J282E
 
 ;	 Subroutine evaluate graphic coordinatepair (simple form)
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27B8:	LD	IX,M.57AB
+C27B8:	LD	IX,M57AB
 	JR	J282E
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J27BE:	LD	IX,M.7328
+J27BE:	LD	IX,M7328
 	JR	J280A
 
 ;	 Subroutine CR/LF to OUTDO if not at start of line
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27C4:	LD	IX,M.7323
+C27C4:	LD	IX,M7323
 	JR	J280A
 
 ;	 Subroutine convert DAC to adres operand
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27CA:	LD	IX,M.5439
+C27CA:	LD	IX,M5439
 	JR	J280A
 
 ;	 Subroutine parse filespec
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27D0:	LD	IX,M.6A0E
+C27D0:	LD	IX,M6A0E
 	JR	J280A
 
 ;	 Subroutine close io buffer
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27D6:	LD	IX,M.6B24
+C27D6:	LD	IX,M6B24
 	JR	J280A
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J27DC:	LD	IX,M.406F
+J27DC:	LD	IX,M406F
 	JR	J280A
 
 ;	 Subroutine print number
 ;	    Inputs  HL = number
 ;	    Outputs ________________________
 
-C27E2:	LD	IX,M.3412
+C27E2:	LD	IX,M3412
 	JR	J280A
 
 ;	 Subroutine __________________________
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27E8:	LD	IX,M.3058
+C27E8:	LD	IX,M3058
 	JR	J280A
 
 ;	 Subroutine locate variable
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27EE:	LD	IX,M.5EA4
+C27EE:	LD	IX,M5EA4
 	JR	J280A
 
 ;	 Subroutine __________________________
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27F4:	LD	IX,M.3236
+C27F4:	LD	IX,M3236
 	JR	J280A
 
 ;	 Subroutine byte to DAC
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C27FA:	LD	IX,M.4FCF
+C27FA:	LD	IX,M4FCF
 	JR	J280A
 
 ;	 Subroutine __________________________
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C2800:	LD	IX,M.6627
+C2800:	LD	IX,M6627
 	JR	J280A
 
 ;	 Subroutine convert float (SGN or DBL) to integer
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-J2806:	LD	IX,M.2F92
+J2806:	LD	IX,M2F92
 J280A:	JR	J282E
 
 ;	 Subroutine __________________________
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C280C:	LD	IX,M.6678
+C280C:	LD	IX,M6678
 	JR	J280A
 
 ;	 Subroutine __________________________
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C2812:	LD	IX,FRMEVL
+C2812:	LD	IX,M4C64
 	JR	J282E
 
 ;	 Subroutine 
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C2818:	LD	IX,FRMQNT
+C2818:	LD	IX,M542F
 	JR	J282E
 
 ;	 Subroutine evaluate integer
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C281E:	LD	IX,M.520F
+C281E:	LD	IX,M520F
 	JR	J282E
 
 ;	 Subroutine evaluate byte
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C2824:	LD	IX,GETBYT
+C2824:	LD	IX,M521C
 	JR	J282E
 
 ;	 Subroutine free (temp) string
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C282A:	LD	IX,M.67D0
+C282A:	LD	IX,M67D0
 J282E:	CALL	C0262			; call mainrom
 	EI
 	RET
@@ -10159,7 +10160,7 @@ C33FD:	LD	A,(BUF+75)
 ;	    Inputs  ________________________
 ;	    Outputs ________________________
 
-C3409:	LD	IX,M.7FFD
+C3409:	LD	IX,M7FFD
 	JP	C0262			; call mainrom
 
 ;	 Subroutine open file for FD (MSXDisk 2.x)
@@ -11479,7 +11480,7 @@ J3B48:	RRCA
 	LD	D,A
 	LD	A,E
 	DI
-	CALL	M.51D7			; helper routine in basic rom, to switch subrom away
+	CALL	M51D7			; helper routine in basic rom, to switch subrom away
 	EI
 	EXX
 	RET
