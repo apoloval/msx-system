@@ -20,28 +20,27 @@ ENASLT	EQU	0024H	; -C---
 IDBYT0	EQU	002BH	; ----I
 GICINI	EQU	0090H	; ----I
 
-M268C	EQU	268CH	; -C---
-M289F	EQU	289FH	; -C---
-M2F8A	EQU	2F8AH
-M3042	EQU	3042H	; -C---
-M30D1	EQU	30D1H	; -C---
-M325C	EQU	325CH	; -C---
-M3F59	EQU	3F59H	; J----
-M406F	EQU	406FH
-M4601	EQU	4601H
-M4666	EQU	4666H
-M46FF	EQU	46FFH
-M4C64	EQU	4C64H
-M4E9B	EQU	4E9BH
-M517A	EQU	517AH
-M521C	EQU	521CH
-M542F	EQU	542FH
-M5432	EQU	5432H
-M5EA4	EQU	5EA4H
-M67D0	EQU	67D0H
-M6A0E	EQU	6A0EH
-M6C1C	EQU	6C1CH
-M73E5	EQU	73E5H
+M268C	EQU	268CH	; double real subtract
+M289F	EQU	289FH	; double real divide
+M2F8A	EQU	2F8AH	; convert to integer
+M3042	EQU	3042H	; convert single real to double real
+M30D1	EQU	30D1H	; convert single real or double real to integer
+M325C	EQU	325CH	; single real multiply
+M406F	EQU	406FH	; BASIC error
+M4601	EQU	4601H	; execute new statement
+M4666	EQU	4666H	; CHRGTR (get next BASIC character)
+M46FF	EQU	46FFH	; convert unsigned integer to single real
+M4C64	EQU	4C64H	; evaluate expression
+M4E9B	EQU	4E9BH	; get variable value
+M517A	EQU	517AH	; convert DAC to other type
+M521C	EQU	521CH	; evaluate byte operand
+M542F	EQU	542FH	; evaluate address operand
+M5432	EQU	5432H	; convert address to integer
+M5EA4	EQU	5EA4H	; locate variable
+M67D0	EQU	67D0H	; free temporary string
+M6A0E	EQU	6A0EH	; evaluate filespecification
+M6C1C	EQU	6C1CH	; close all i/o channels
+M73E5	EQU	73E5H	; start of the PLAY statement handler
 
 D.7FF6	EQU	07FF6H
 

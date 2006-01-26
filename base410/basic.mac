@@ -551,7 +551,7 @@ J2700:	LD	A,(HL)
 	DEC	C
 	DEC	C
 	DJNZ	J2700
-	JP	J2E7D
+	JP	J2E7D			; DAC = 0 and quit
 
 J270C:	AND	0F0H
 	JR	NZ,J2716
@@ -566,7 +566,7 @@ J2716:	LD	A,8
 	PUSH	BC
 	LD	C,B
 	LD	DE,DAC+1
-	LD	B,00H
+	LD	B,0
 	LDIR
 	POP	BC
 	POP	AF
@@ -589,7 +589,6 @@ J272D:	LD	A,C
 ;	Subroutine	DECROU
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 DECROU:
 C273C:	LD	HL,DAC+8
@@ -619,7 +618,6 @@ J2748:	ADC	A,(HL)
 	LD	(HL),10H
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
@@ -642,11 +640,9 @@ J2762:	LD	A,(DE)
 	DJNZ	J2762
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C276B:	LD	HL,ARG+8
 	LD	A,(HL)
@@ -679,19 +675,15 @@ J278E:	LD	A,00H
 	DJNZ	J278E
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C2797:	LD	HL,DAC+8
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C279A:	PUSH	BC
 	XOR	A
@@ -701,11 +693,9 @@ J279C:	RLD
 	POP	BC
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C27A3:	OR	A
 	RRA
@@ -753,11 +743,9 @@ J27D3:	RRD
 	POP	HL
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C27DB:	LD	HL,DAC+1
 J27DE:	LD	A,8
@@ -776,7 +764,7 @@ C27E6:	CALL	C2E71			; get sign DAC
 	RET	Z			; DAC is zero, quit (result is zero)
 	LD	A,(ARG+0)
 	OR	A
-	JP	Z,J2E7D
+	JP	Z,J2E7D			; DAC = 0 and quit
 	LD	B,A
 	LD	HL,DAC
 	XOR	(HL)
@@ -876,11 +864,9 @@ J2883:	DEC	HL
 	LD	(HL),A
 	JP	C26FA			; normalize DAC
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C288A:	LD	HL,-8
 	ADD	HL,DE
@@ -910,7 +896,7 @@ C289F:	LD	A,(ARG)
 	LD	HL,DAC
 	LD	A,(HL)
 	OR	A
-	JP	Z,J2E7D
+	JP	Z,J2E7D			; DAC = 0 and quit
 	XOR	B
 	AND	80H
 	LD	C,A
@@ -1039,7 +1025,7 @@ J2964:	LD	A,(DECCNT+1)
 	LD	(DECCNT+1),A
 	XOR	E
 	JP	P,J28F4
-	JP	J2E7D
+	JP	J2E7D			; DAC = 0 and quit
 
 J2973:	RRA
 	LD	A,C
@@ -1066,7 +1052,6 @@ J2985:	LD	HL,DAC+8
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 COS:
 C2993:	LD	HL,I2D63
 	CALL	C2C3B			; DAC = DAC * 0.15915494309190
@@ -1081,7 +1066,6 @@ C2993:	LD	HL,I2D63
 ;	Subroutine	SIN function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 SIN:
 C29AC:	LD	HL,I2D63
@@ -1135,8 +1119,8 @@ C29FB:	CALL	C2CCC			; push DAC
 
 ATN:
 C2A14:	LD	A,(DAC)
-	OR	A
-	RET	Z
+	OR	A			; DAC zero ?
+	RET	Z			; yep, result zero
 	CALL	M,C2C80
 	CP	41H
 	JP	C,C2A3C
@@ -1150,11 +1134,9 @@ C2A14:	LD	A,(DAC)
 	CALL	C2C5C			; DAC = 1.5707963267949
 	JP	C268C			; DAC - ARG
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C2A3C:	LD	HL,I2D4B
 	CALL	C2C47			; compare DAC with 0.26794919243112
@@ -1295,7 +1277,7 @@ C2B4A:	LD	HL,I2D09
 	JR	Z,J2B70
 	LD	A,H
 	OR	A
-	JP	P,J2B6D
+	JP	P,J2B6D			; overflow error
 	CALL	C304F
 	CALL	C2CE1			; pop DAC
 	LD	HL,I2D13
@@ -1416,9 +1398,8 @@ C2C3B:	CALL	C2C50			; ARG =
 ;	Subroutine	DAC = DAC / operand
 ;	Inputs		HL = pointer to operand
 ;	Outputs		________________________
-;
-;	Unused Code
-;	Not called from anywhere, leftover from a early Microsoft BASIC
+;	Remark		Unused Code
+;			Not called from anywhere, leftover from a early Microsoft BASIC
 
 ?2C41:	CALL	C2C50			; ARG =
 	JP	C289F			; DAC / ARG and quit
@@ -1468,9 +1449,8 @@ C2C5C:	LD	DE,DAC
 ;	Subroutine	initialize RNDX
 ;	Inputs		HL = value
 ;	Outputs		________________________
-;
-;	Unused Code
-;	Not called from anywhere, leftover from a early Microsoft BASIC
+;	Remark		Unused Code
+;			Not called from anywhere, leftover from a early Microsoft BASIC
 
 ?2C61:	CALL	C2FCB			; convert to single precision real
 	LD	HL,RNDX
@@ -1478,7 +1458,6 @@ C2C5C:	LD	DE,DAC
 ;	Subroutine	MMF (copy DAC to HL)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C2C67:	LD	DE,DAC
 
@@ -1501,11 +1480,9 @@ C2C6F:	POP	HL
 	LD	HL,(FBUFFR)
 	JP	(HL)
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C2C80:	CALL	C2E8D			; NEG DAC
 	LD	HL,C2E8D
@@ -1515,7 +1492,6 @@ C2C80:	CALL	C2E8D			; NEG DAC
 ;	Subroutine	polynomial approximation odd series
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C2C88:	LD	(FBUFFR),HL
 	CALL	C2CCC			; push DAC
@@ -1527,7 +1503,6 @@ C2C88:	LD	(FBUFFR),HL
 ;	Subroutine	polynomial approximation even series
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C2C9A:	LD	(FBUFFR),HL
 	CALL	C2C38			; DAC = DAC^2
@@ -1565,7 +1540,6 @@ J2CB1:	POP	AF
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C2CC7:	LD	HL,ARG+7
 	JR	J2CCF
 
@@ -1573,9 +1547,8 @@ C2CC7:	LD	HL,ARG+7
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C2CCC:	LD	HL,DAC+7
-J2CCF:	LD	A,04H
+J2CCF:	LD	A,4
 	POP	DE
 J2CD2:	LD	B,(HL)
 	DEC	HL
@@ -1591,7 +1564,6 @@ J2CD2:	LD	B,(HL)
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C2CDC:	LD	HL,ARG
 	JR	J2CE4
 
@@ -1599,9 +1571,8 @@ C2CDC:	LD	HL,ARG
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C2CE1:	LD	HL,DAC
-J2CE4:	LD	A,04H
+J2CE4:	LD	A,4
 	POP	DE
 J2CE7:	POP	BC
 	LD	(HL),C
@@ -1684,6 +1655,10 @@ J2E79:	SBC	A,A
 	INC	A
 	RET
 
+;	Subroutine	DAC zero
+;	Inputs		________________________
+;	Outputs		________________________
+
 J2E7D:	XOR	A
 	LD	(DAC+0),A
 	RET
@@ -1696,7 +1671,7 @@ ABSFN:
 C2E82:	CALL	C2EA1			; get sign DAC
 	RET	P			; already postive, quit
 
-;	Subroutine	__________________________
+;	Subroutine	negate
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -1704,7 +1679,7 @@ C2E86:	RST	GETYPR			; get DAC type
 	JP	M,J322B			; integer, 
 	JP	Z,J406D			; string, type mismatch error
 
-;	Subroutine	NEG
+;	Subroutine	NEG (for single and double real)
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -1734,7 +1709,6 @@ C2E9A:	LD	L,A
 	LD	H,A
 	JP	C2F99			; put HL in DAC
 
-
 ;	Subroutine	get sign DAC
 ;	Inputs		________________________
 ;	Outputs		________________________
@@ -1744,7 +1718,7 @@ C2EA1:	RST	GETYPR			; get DAC type
 	JP	P,C2E71			; single or double real, get sign DAC and quit
 	LD	HL,(DAC+2)		; integer value
 
-;	Subroutine	__________________________
+;	Subroutine	get sign of integer
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -1754,7 +1728,7 @@ C2EAB:	LD	A,H
 	LD	A,H
 	JR	J2E78			; sign in A
 
-;	Subroutine	PUSHF (push DAC on stack, single)
+;	Subroutine	PUSHF (push DAC on stack, single real)
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -2034,7 +2008,12 @@ C2F8A:	RST	GETYPR			; get DAC type
 	LD	HL,(DAC+2)
 	RET	M			; already integer, quit
 	JP	Z,J406D			; string, type mismatch error
-	CALL	C305D
+
+;	Subroutine	convert single real or double real to integer
+;	Inputs		________________________
+;	Outputs		________________________
+
+C2F92:	CALL	C305D
 	JP	C,J4067			; overflow error
 	EX	DE,HL
 
@@ -2097,7 +2076,6 @@ C2FC8:	LD	HL,(DAC+2)
 ;	Inputs		HL = integer value
 ;	Outputs		________________________
 
-
 C2FCB:	LD	A,H
 J2FCC:	OR	A
 	PUSH	AF
@@ -2105,7 +2083,7 @@ J2FCC:	OR	A
 	CALL	C3053
 	EX	DE,HL
 	LD	HL,0
-	LD	(DAC),HL
+	LD	(DAC+0),HL
 	LD	(DAC+2),HL
 	LD	A,D
 	OR	E
@@ -2211,7 +2189,7 @@ C3053:	LD	A,4
 J3055:	JP	J2F9E
 
 
-;	Subroutine	__________________________
+;	Subroutine	check if string
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -2311,7 +2289,7 @@ C30BE:	RST	GETYPR			; get DAC type
 	JP	P,C30CF			; DAC is postive, just do a INT
 	CALL	C2E8D			; NEG DAC
 	CALL	C30CF			; do INT
-	JP	C2E86
+	JP	C2E86			; negate
 
 ;	Subroutine	INT function
 ;	Inputs		________________________
@@ -2331,7 +2309,7 @@ J30E0:	LD	A,(DAC)
 	JP	M,J3100
 	AND	7FH
 	SUB	41H
-	JP	C,J2E7D
+	JP	C,J2E7D			; DAC = 0 and quit
 	INC	A
 	SUB	C
 	RET	NC
@@ -2399,7 +2377,6 @@ J3129:	INC	E
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C314A:	PUSH	HL
 	LD	HL,0
 	LD	A,B
@@ -2424,7 +2401,6 @@ J3164:	EX	DE,HL
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C3167:	LD	A,H
 	RLA
 	SBC	A,A
@@ -2437,7 +2413,6 @@ C3167:	LD	A,H
 ;	Subroutine	IADD (add integer)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3172:	LD	A,H
 	RLA
@@ -2466,7 +2441,6 @@ J3175:	LD	B,A
 ;	Subroutine	IMULT (multiply integer)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3193:	LD	A,H
 	OR	L
@@ -2527,7 +2501,6 @@ J31D8:	LD	A,B
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C31E6:	LD	A,H
 	OR	L
 	JP	Z,J4058
@@ -2560,11 +2533,9 @@ J3206:	RL	E
 	PUSH	DE
 	JP	J31B5
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3215:	LD	A,H
 	XOR	D
@@ -2572,21 +2543,17 @@ C3215:	LD	A,H
 	CALL	C321C
 	EX	DE,HL
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C321C:	LD	A,H
 J321D:	OR	A
 	JP	P,C2F99			; put HL in DAC
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3221:	XOR	A
 	LD	C,A
@@ -2604,7 +2571,7 @@ J322B:	LD	HL,(DAC+2)
 	OR	L
 	RET	NZ
 
-;	Subroutine	__________________________
+;	Subroutine	convert unsigned integer to single real
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -2614,7 +2581,6 @@ C3236:	XOR	A
 ;	Subroutine	IMOD (integer mod)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C323A:	PUSH	DE
 	CALL	C31E6			; integer divide
@@ -2676,11 +2642,9 @@ C3267:	LD	HL,(DAC+2)
 	CALL	C3042
 	JP	C289F			; DAC / ARG and quit
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3280:	EX	DE,HL
 	LD	(ARG+2),HL
@@ -2692,20 +2656,16 @@ C3280:	EX	DE,HL
 	LD	(ARG+6),HL
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3293:	DEC	A
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3295:	DEC	HL
 	RET
@@ -2716,7 +2676,6 @@ J3297:	POP	HL
 ;	Subroutine	FIN (convert text to number)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3299:	EX	DE,HL
 	LD	BC,00FFH
@@ -2809,10 +2768,10 @@ J331E:	RST	GETYPR			; get DAC type
 	ADD	A,40H
 	LD	(DAC),A
 	OR	A
-	CALL	M,C334C
+	CALL	M,C334C			; overflow error
 J3334:	POP	AF
 	PUSH	HL
-	CALL	Z,C2E86
+	CALL	Z,C2E86			; negate
 	RST	GETYPR			; get DAC type
 	JR	NC,J3347		; double real,
 	POP	HL
@@ -2826,7 +2785,6 @@ J3334:	POP	AF
 J3347:	CALL	C273C			; round DAC
 	POP	HL
 	RET
-
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -2860,11 +2818,9 @@ J3371:	CALL	C3377
 	RST	CHRGTR			; get next BASIC character
 	JR	J331E
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3377:	PUSH	HL
 	PUSH	DE
@@ -2985,7 +2941,7 @@ C340A:	PUSH	HL
 ;	Outputs		________________________
 
 C3412:	LD	BC,I6677
-	PUSH	BC
+	PUSH	BC			; after this: skip first char, message to interpreter
 	CALL	C2F99			; put HL in DAC
 	XOR	A
 	LD	(TEMP3),A
@@ -3015,7 +2971,7 @@ J342F:	EX	DE,HL
 	LD	(HL),"-"
 	PUSH	BC
 	PUSH	HL
-	CALL	C2E86
+	CALL	C2E86			; negate
 	POP	HL
 	POP	BC
 	OR	H
@@ -3360,11 +3316,9 @@ J365D:	PUSH	BC
 	POP	DE
 	JP	J351C
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3666:	OR	A
 J3667:	RET	Z
@@ -3373,32 +3327,26 @@ J3667:	RET	Z
 	INC	HL
 	JR	J3667
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C366E:	JR	NZ,C3674
 J3670:	RET	Z
 	CALL	C36A0
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3674:	LD	(HL),30H
 	INC	HL
 	DEC	A
 	JR	J3670
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C367A:	LD	A,E
 	ADD	A,D
@@ -3420,11 +3368,9 @@ C3686:	LD	A,(TEMP3)
 	LD	C,A
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C368E:	DEC	B
 	JP	P,J36A1
@@ -3438,11 +3384,9 @@ J3697:	INC	HL
 	INC	HL
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C36A0:	DEC	B
 J36A1:	JR	NZ,J36AB
@@ -3464,11 +3408,9 @@ J36AB:	DEC	C
 	LD	C,03H
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C36B3:	PUSH	DE
 	PUSH	HL
@@ -3500,11 +3442,9 @@ J36CE:	AND	0FH
 	JR	NZ,J36C0
 	JR	J370A
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C36DB:	PUSH	DE
 	LD	DE,I3710
@@ -3546,16 +3486,15 @@ J370A:	CALL	C36A0
 	POP	DE
 	RET
 
-I3710:	DEFW	02710H
-	DEFW	003E8H
-	DEFW	00064H
-	DEFW	0000AH
-	DEFW	00001H
+I3710:	DEFW	10000
+	DEFW	1000
+	DEFW	100
+	DEFW	10
+	DEFW	1
 
 ;	Subroutine	FOUTB (convert integer to binary text)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C371A:	LD	B,1
 	JR	J3724
@@ -3564,14 +3503,12 @@ C371A:	LD	B,1
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C371E:	LD	B,3
 	JR	J3724
 
 ;	Subroutine	FOUTH (convert integer to hexadecimal text)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C3722:	LD	B,4
 J3724:	PUSH	BC
@@ -3610,7 +3547,6 @@ J374A:	LD	(DE),A
 	EX	DE,HL
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
@@ -3643,11 +3579,9 @@ C375F:	LD	(TEMP3),A
 	LD	(HL),20H
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C377B:	PUSH	HL
 	PUSH	DE
@@ -3677,11 +3611,9 @@ J379C:	POP	BC
 	POP	HL
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C37A2:	PUSH	BC
 	PUSH	HL
@@ -3695,11 +3627,9 @@ C37A2:	PUSH	BC
 	OR	A
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C37B4:	PUSH	BC
 	CALL	C3752
@@ -3729,7 +3659,6 @@ C37C8:	CALL	C3280
 ;	Subroutine	DBLEXP (double real to the power)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C37D7:	LD	A,(ARG)
 	OR	A
@@ -3783,7 +3712,6 @@ J382A:	CALL	C304F
 ;	Subroutine	INTEXP (integer to the power)
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C383F:	LD	A,H
 	OR	L
@@ -3906,11 +3834,9 @@ J3901:	CALL	C2C4D			; ARG = DAC
 	CALL	C2C5C			; DAC = 1.0
 	JP	C289F			; DAC / ARG
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C390D:	PUSH	BC
 	PUSH	DE
@@ -3921,11 +3847,9 @@ C390D:	PUSH	BC
 	POP	BC
 	RET
 
-
 ;	Subroutine	__________________________
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C391A:	CALL	C2C59			; DAC = ARG
 	CALL	C2CC7			; push ARG
@@ -3939,115 +3863,115 @@ C391A:	CALL	C2C59			; DAC = ARG
 ;	Table	addresses of BASIC statement token service routines
 ;	Remark	start with token 081H, ends with token 0D8H
 
-I392E:	DEFW	C63EA
-	DEFW	C4524
-	DEFW	C6527
+I392E:	DEFW	C63EA			; END
+	DEFW	C4524			; FOR
+	DEFW	C6527			; NEXT
 	DEFW	C485B			; DATA, skip to end of statement
-	DEFW	C4B6C
-	DEFW	C5E9F
-	DEFW	C4B9F
+	DEFW	C4B6C			; INPUT
+	DEFW	C5E9F			; DIM
+	DEFW	C4B9F			; READ
 	DEFW	C4880			; LET
-	DEFW	C47E8
-	DEFW	C479E
-	DEFW	C49E5
-	DEFW	C63C9
-	DEFW	C47B2
-	DEFW	C4821
+	DEFW	C47E8			; GOTO
+	DEFW	C479E			; RUN
+	DEFW	C49E5			; IF
+	DEFW	C63C9			; RESTORE
+	DEFW	C47B2			; GOSUB
+	DEFW	C4821			; RETURN
 	DEFW	C485D			; REM, skip to end of BASIC line
-	DEFW	C63E3
-	DEFW	C4A24
-	DEFW	C64AF
-	DEFW	C522E
-	DEFW	C6286
-	DEFW	C48E4
-	DEFW	C401C
-	DEFW	C501D
-	DEFW	C5423
-	DEFW	C6424
-	DEFW	C6FB7
-	DEFW	C703F
-	DEFW	C4016
-	DEFW	C4A1D
-	DEFW	C5229
+	DEFW	C63E3			; STOP
+	DEFW	C4A24			; PRINT
+	DEFW	C64AF			; CLEAR
+	DEFW	C522E			; LIST
+	DEFW	C6286			; NEW
+	DEFW	C48E4			; ON
+	DEFW	C401C			; WAIT
+	DEFW	C501D			; DEF
+	DEFW	C5423			; POKE
+	DEFW	C6424			; CONT
+	DEFW	C6FB7			; CSAVE
+	DEFW	C703F			; CLOAD
+	DEFW	C4016			; OUT
+	DEFW	C4A1D			; LPRINT
+	DEFW	C5229			; LLIST
 ;
 ; #####################
 ; MSX 1,2,2+ code:
 
-; 	DEFW	CLS
+; 	DEFW	CLS			; CLS
 
 ; #####################
 ; MSX Turbo-R has a patch for the KANJI screenmodes
 
-	DEFW	C79A9
+	DEFW	C79A9			; CLS
 
 ; #####################
 
-	DEFW	C51C9
+	DEFW	C51C9			; WIDTH
 	DEFW	C485D			; ELSE, skip to end of BASIC line
-	DEFW	C6438
-	DEFW	C6439
-	DEFW	C643E
-	DEFW	C6477
-	DEFW	C49AA
-	DEFW	C495D
-	DEFW	C53E2
-	DEFW	C49B5
-	DEFW	C5468
-	DEFW	C4718
-	DEFW	C471B
-	DEFW	C471E
-	DEFW	C4721
-	DEFW	C4B0E
-	DEFW	C6AB7
-	DEFW	C7C52
-	DEFW	C775B
-	DEFW	C7758
-	DEFW	C6C14
-	DEFW	C6B5D
-	DEFW	C6B5E
-	DEFW	C6C2F
-	DEFW	C7C48
-	DEFW	C7C4D
-	DEFW	C6BA3
-	DEFW	C6C2A
-	DEFW	C5B11
-	DEFW	C7980
-	DEFW	C5D6E
-	DEFW	C59C5
-	DEFW	BEEP
-	DEFW	C73E5
-	DEFW	C57EA
-	DEFW	C57E5
-	DEFW	C73CA
-	DEFW	C79CC
-	DEFW	C7BE2
-	DEFW	C7A48
-	DEFW	C7B37
-	DEFW	C7B5A
-	DEFW	C55A8
-	DEFW	C7911
-	DEFW	C786C
-	DEFW	C7E4B
-	DEFW	C73B7
-	DEFW	C6EC6
-	DEFW	C6E92
-	DEFW	C7C16
-	DEFW	C7C1B
-	DEFW	C7C20
-	DEFW	C7C25
-	DEFW	C7C2A
-	DEFW	C7C2F
-	DEFW	C7C34
-	DEFW	C7766
+	DEFW	C6438			; TRON
+	DEFW	C6439			; TROFF
+	DEFW	C643E			; SWAP
+	DEFW	C6477			; ERASE
+	DEFW	C49AA			; ERROR
+	DEFW	C495D			; RESUME
+	DEFW	C53E2			; DELETE
+	DEFW	C49B5			; AUTO
+	DEFW	C5468			; RENUM
+	DEFW	C4718			; DEFSTR
+	DEFW	C471B			; DEFINT
+	DEFW	C471E			; DEFSNG
+	DEFW	C4721			; DEFDBL
+	DEFW	C4B0E			; LINE
+	DEFW	C6AB7			; OPEN
+	DEFW	C7C52			; FIELD
+	DEFW	C775B			; GET
+	DEFW	C7758			; PUT
+	DEFW	C6C14			; CLOSE
+	DEFW	C6B5D			; LOAD
+	DEFW	C6B5E			; MERGE
+	DEFW	C6C2F			; FILES
+	DEFW	C7C48			; LSET
+	DEFW	C7C4D			; RSET
+	DEFW	C6BA3			; SAVE
+	DEFW	C6C2A			; LFILES
+	DEFW	C5B11			; CIRCLE
+	DEFW	C7980			; COLOR
+	DEFW	C5D6E			; DRAW
+	DEFW	C59C5			; PAINT
+	DEFW	BEEP			; BEEP
+	DEFW	C73E5			; PLAY
+	DEFW	C57EA			; PSET
+	DEFW	C57E5			; PRESET
+	DEFW	C73CA			; SOUND
+	DEFW	C79CC			; SCREEN
+	DEFW	C7BE2			; VPOKE
+	DEFW	C7A48			; SPRITE
+	DEFW	C7B37			; VDP
+	DEFW	C7B5A			; BASE
+	DEFW	C55A8			; CALL
+	DEFW	C7911			; TIME
+	DEFW	C786C			; KEY
+	DEFW	C7E4B			; MAX
+	DEFW	C73B7			; MOTOR
+	DEFW	C6EC6			; BLOAD
+	DEFW	C6E92			; BSAVE
+	DEFW	C7C16			; DSKO$
+	DEFW	C7C1B			; SET
+	DEFW	C7C20			; NAME
+	DEFW	C7C25			; KILL
+	DEFW	C7C2A			; IPL
+	DEFW	C7C2F			; COPY
+	DEFW	C7C34			; CMD
+	DEFW	C7766			; LOCATE
 
 ;	Table	addresses of BASIC function token service routines
 ;	Remark	
 
-I39DE:	DEFW	C6861
-	DEFW	C6891
-	DEFW	C689A
+I39DE:	DEFW	C6861			; LEFT$
+	DEFW	C6891			; RIGHT$
+	DEFW	C689A			; MID$
 	DEFW	C2E97			; SGN
-	DEFW	C30CF
+	DEFW	C30CF			; INT
 	DEFW	C2E82			; ABS
 	DEFW	C2AFF			; SQR
 	DEFW	C2BDF			; RND
@@ -4057,40 +3981,40 @@ I39DE:	DEFW	C6861
 	DEFW	C2993			; COS
 	DEFW	C29FB			; TAN
 	DEFW	C2A14			; ATN
-	DEFW	C69F2
-	DEFW	C4001
-	DEFW	C4FCC
-	DEFW	C67FF
-	DEFW	C6604
-	DEFW	C68BB
-	DEFW	C680B
-	DEFW	C681B
-	DEFW	C541C
-	DEFW	C7BF5
-	DEFW	C6848
-	DEFW	C65F5
-	DEFW	C65FA
-	DEFW	C4FC7
-	DEFW	C65FF
+	DEFW	C69F2			; FRE
+	DEFW	C4001			; INP
+	DEFW	C4FCC			; POS
+	DEFW	C67FF			; LEN
+	DEFW	C6604			; STR$
+	DEFW	C68BB			; VAL
+	DEFW	C680B			; ASC
+	DEFW	C681B			; CHR$
+	DEFW	C541C			; PEEK
+	DEFW	C7BF5			; VPEEK
+	DEFW	C6848			; SPACE$
+	DEFW	C65F5			; OCT$
+	DEFW	C65FA			; HEX$
+	DEFW	C4FC7			; LPOS
+	DEFW	C65FF			; BIN$
 	DEFW	C2F8A			; CINT
 	DEFW	C2FB2			; CSNG
 	DEFW	C303A			; CDBL
 	DEFW	C30BE			; FIX
-	DEFW	C7940
-	DEFW	C794C
-	DEFW	C795A
-	DEFW	C7969
-	DEFW	C7C39
-	DEFW	C6D39
-	DEFW	C7C66
-	DEFW	C7C6B
-	DEFW	C7C70
-	DEFW	C6D25
-	DEFW	C6D03
-	DEFW	C6D14
-	DEFW	C7C57
-	DEFW	C7C5C
-	DEFW	C7C61
+	DEFW	C7940			; STICK
+	DEFW	C794C			; TRIG
+	DEFW	C795A			; PDL
+	DEFW	C7969			; PAD
+	DEFW	C7C39			; DSKF
+	DEFW	C6D39			; FPOS
+	DEFW	C7C66			; CVI
+	DEFW	C7C6B			; CVS
+	DEFW	C7C70			; CVD
+	DEFW	C6D25			; EOF
+	DEFW	C6D03			; LOC
+	DEFW	C6D14			; LOF
+	DEFW	C7C57			; MKI$
+	DEFW	C7C5C			; MKS$
+	DEFW	C7C61			; MKD$
 
 ;	Table	pointers to the start of keywords of a given letter
 ;	Remark	start with the pointer for all "A" keywords and ends with "Z" keywords
@@ -4349,18 +4273,18 @@ I3D26:	TOKEN	!+,0F1H
 	TOKEN	!<,0F0H
 	DEFB	0
 
-I3D3B:	DEFB	079H
-	DEFB	079H
-	DEFB	07CH
-	DEFB	07CH
-	DEFB	07FH
-	DEFB	050H
-	DEFB	046H
-	DEFB	03CH
-	DEFB	032H
-	DEFB	028H
-	DEFB	07AH
-	DEFB	07BH
+I3D3B:	DEFB	079H			; +
+	DEFB	079H			; -
+	DEFB	07CH			; *
+	DEFB	07CH			; /
+	DEFB	07FH			; ^
+	DEFB	050H			; AND
+	DEFB	046H			; OR
+	DEFB	03CH			; XOR
+	DEFB	032H			; EQV
+	DEFB	028H			; IMP
+	DEFB	07AH			; MOD
+	DEFB	07BH			; \
 
 I3D47:	DEFW	C303A			; convert DAC to double real
 	DEFW	0
@@ -4434,56 +4358,53 @@ J3FD7:	DEFB	"Ok",13,10,0
 
 I3FDC:	DEFB	"Break",0
 
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
+;	Subroutine	search FOR block on stack (skip 2 words)
+;	Inputs		DE = address loop variable (0 if any FOR block)
+;	Outputs		Zx set if found, Zx reset if other block found first
 
-C3FE2:	LD	HL,4
-J3FE5:	ADD	HL,SP
+C3FE2:	LD	HL,4			; skip this routine return address and main loop return address
+	ADD	HL,SP
 
-;	Subroutine	__________________________
+;	Subroutine	search FOR block
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 C3FE6:	LD	A,(HL)
 	INC	HL
-	CP	82H
-	RET	NZ
-J3FEB:	LD	C,(HL)
+	CP	82H			; FOR block ?
+	RET	NZ			; nope, quit
+	LD	C,(HL)
 	INC	HL
-	LD	B,(HL)
+	LD	B,(HL)			; address loop variable
 	INC	HL
 	PUSH	HL
 	LD	H,B
-J3FF1:	LD	L,C
+	LD	L,C
 	LD	A,D
-	OR	E
-J3FF4:	EX	DE,HL
-	JR	Z,J3FF9
+	OR	E			; variable specified ?
 	EX	DE,HL
-	RST	DCOMPR
-J3FF9:	LD	BC,22
+	JR	Z,J3FF9			; nope, found
+	EX	DE,HL
+	RST	DCOMPR			; same variable ?
+J3FF9:	LD	BC,25-3
 	POP	HL
-	RET	Z
+	RET	Z			; yep, quit
 	ADD	HL,BC
-	JR	C3FE6
+	JR	C3FE6			; next block
 
 ;	Subroutine	INP function
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C4001:	CALL	C5439			; convert address to integer
 	LD	B,H
-J4005:	LD	C,L
+	LD	C,L
 	IN	A,(C)
-	JP	C4FCF
+	JP	C4FCF			; byte to DAC
 
-
-;	Subroutine	__________________________
+;	Subroutine	evaluate address operand and byte operand seperated by a ","
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C400B:	CALL	C542F			; evaluate address operand
 	PUSH	DE
@@ -4497,8 +4418,7 @@ C400B:	CALL	C542F			; evaluate address operand
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
-C4016:	CALL	C400B
+C4016:	CALL	C400B			; evaluate address operand and byte operand seperated by a ","
 	OUT	(C),A
 	RET
 
@@ -4506,25 +4426,25 @@ C4016:	CALL	C400B
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C401C:	CALL	C400B
+C401C:	CALL	C400B			; evaluate address operand and byte operand seperated by a ","
 	PUSH	BC
 	PUSH	AF
-	LD	E,00H
+	LD	E,0			; assume no XOR parameter
 	DEC	HL
-	RST	CHRGTR			; get next BASIC character
-	JR	Z,J402C
+	RST	CHRGTR			; end of statement ?
+	JR	Z,J402C			; yep, start wait
 	RST	SYNCHR
 	DEFB	","
 	CALL	C521C			; evaluate byte operand
 J402C:	POP	AF
-	LD	D,A
-	POP	BC
+	LD	D,A			; AND parameter
+	POP	BC			; i/o address
 J402F:	CALL	CKCNTC
 	IN	A,(C)
 	XOR	E
 	AND	D
 	JR	Z,J402F
-J4038:	RET
+	RET
 
 ;	Subroutine	at end of BASIC program
 ;	Inputs		________________________
@@ -4544,23 +4464,23 @@ J404C:	JP	J6401			; END without closing i/o channels, clearing
 
 J404F:	LD	HL,(DATLIN)
 	LD	(CURLIN),HL
-J4055:	LD	E,02H
+J4055:	LD	E,2
 	DEFB	001H
-J4058:	LD	E,0BH
+J4058:	LD	E,11
 	DEFB	001H
-J405B:	LD	E,01H
+J405B:	LD	E,1
 	DEFB	001H
-J405E:	LD	E,0AH
+J405E:	LD	E,10
 	DEFB	001H
-J4061:	LD	E,12H
+J4061:	LD	E,18
 	DEFB	001H
-J4064:	LD	E,16H
+J4064:	LD	E,22
 	DEFB	001H
-J4067:	LD	E,06H
+J4067:	LD	E,6
 	DEFB	001H
-J406A:	LD	E,18H
+J406A:	LD	E,24
 	DEFB	001H
-J406D:	LD	E,0DH
+J406D:	LD	E,13
 
 ;	Subroutine	BASIC error
 ;	Inputs		E = errornumber
@@ -4600,9 +4520,13 @@ J4087:	EI
 J4096:	LD	BC,I40A4
 	JR	J409E
 
+;	Subroutine	warm start MSX BASIC
+;	Inputs		-
+;	Outputs		-
+
 J409B:	LD	BC,J411E		; ok and mainloop (+POP)
 J409E:	LD	HL,(SAVSTK)
-	JP	J62F0			; clear stack
+	JP	J62F0			; reinitialize stack
 
 I40A4:	POP	BC
 	LD	A,E
@@ -4621,7 +4545,7 @@ I40A4:	POP	BC
 	LD	(OLDTXT),HL		; nope, save linenumber and BASICpointer for continue
 J40C0:	LD	HL,(ONELIN)
 	LD	A,H
-	OR	L			; error handler defined ?
+	OR	L			; ERROR handler defined ?
 	EX	DE,HL
 	LD	HL,ONEFLG
 	JR	Z,J40D3			; nope, abort
@@ -4851,7 +4775,7 @@ J41F4:	PUSH	BC
 	JR	Z,J4237			; yep, skip line adding
 	POP	DE
 	LD	HL,0
-	LD	(ONELIN),HL
+	LD	(ONELIN),HL		; disable ERROR handler
 	LD	HL,(VARTAB)
 	EX	(SP),HL
 	POP	BC
@@ -5412,32 +5336,32 @@ C4514:	DEC	HL
 ;	Outputs		________________________
 
 C4524:	LD	A,64H
-	LD	(SUBFLG),A		; flag FOR statement
+	LD	(SUBFLG),A		; variable search flag = loopvariable
 	CALL	C4880			; LET statement (initialize loopvariable)
 	POP	BC
 	PUSH	HL
 	CALL	C485B			; skip to end of statement
 	LD	(ENDFOR),HL
 	LD	HL,2
-	ADD	HL,SP
-J4538:	CALL	C3FE6
-	JR	NZ,J4554
-	ADD	HL,BC
+	ADD	HL,SP			; skip 1st word
+J4538:	CALL	C3FE6			; search FOR block on stack
+	JR	NZ,J4554		; not found, continue
+	ADD	HL,BC			; to next block
 	PUSH	DE
 	DEC	HL
 	LD	D,(HL)
 	DEC	HL
-	LD	E,(HL)
+	LD	E,(HL)			; ENDFOR address
 	INC	HL
 	INC	HL
 	PUSH	HL
 	LD	HL,(ENDFOR)
-	RST	DCOMPR
+	RST	DCOMPR			; same as this ENDFOR ?
 	POP	HL
 	POP	DE
-	JR	NZ,J4538
-	POP	DE
-	LD	SP,HL
+	JR	NZ,J4538		; nope, search next FOR block
+	POP	DE			; restore BASIC pointer
+	LD	SP,HL			; remove FOR blocks from stack
 	LD	(SAVSTK),HL
 	DEFB	00EH			; skip next instruction
 J4554:	POP	DE
@@ -5458,51 +5382,38 @@ J4554:	POP	DE
 	CALL	C4C64			; evaluate expression
 	POP	AF
 	PUSH	HL
-	JR	NC,J458B
-	JP	P,J45C2
+	JR	NC,J458B		; loopvariable double real,
+	JP	P,J45C2			; loopvariable single real,
 	CALL	C2F8A			; convert DAC to integer
 	EX	(SP),HL
-	LD	DE,1
+	LD	DE,1			; default STEP value is 1
 	LD	A,(HL)
-	CP	0DCH
-	CALL	Z,C520E
+	CP	0DCH			; STEP token ?
+	CALL	Z,C520E			; yep, skip STEP token and evaluate integer operand
 	PUSH	DE
 	PUSH	HL
 	EX	DE,HL
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C4586:	CALL	C2EAB
-	JR	J45E8
+	CALL	C2EAB			; get sign of integer
+	JR	J45E8			; push step value on stack and continue
 
 J458B:	CALL	C303A			; convert DAC to double real
 	POP	DE
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C458F:	LD	HL,-8
+	LD	HL,-8
 	ADD	HL,SP
 	LD	SP,HL
 	PUSH	DE
 	CALL	C2F10			; HL = DAC
 	POP	HL
 	LD	A,(HL)
-	CP	0DCH
-	LD	DE,I2D1B		; 1.0
-	LD	A,1
-	JR	NZ,J45B2
+	CP	0DCH			; STEP token ?
+	LD	DE,I2D1B		; 1.0 double real
+	LD	A,1			; sign is positive
+	JR	NZ,J45B2		; nope, use 1.0 as STEP value
 	RST	CHRGTR			; get next BASIC character
 	CALL	C4C64			; evaluate expression
 	PUSH	HL
 	CALL	C303A			; convert DAC to double real
-J45AB:	CALL	C2E71			; get sign DAC
+	CALL	C2E71			; get sign DAC
 	LD	DE,DAC
 	POP	HL
 J45B2:	LD	B,H
@@ -5515,29 +5426,24 @@ J45B2:	LD	B,H
 	CALL	C2EF3			; HL = DE (valtyp)
 	POP	HL
 	POP	AF
-	JR	J45EF
+	JR	J45EF			; continue
 
 J45C2:	CALL	C2FB2			; convert DAC to single real
-	CALL	C2ECC			; = DAC (single)
+	CALL	C2ECC			; DEBC = DAC (single)
 	POP	HL
 	PUSH	BC
 	PUSH	DE
 	LD	BC,1041H
-J45CE:	LD	DE,0
+	LD	DE,0000H		; 1.0 single real
 	CALL	H.SNGF
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C45D4:	LD	A,(HL)
-	CP	0DCH
-	LD	A,1
-	JR	NZ,J45E9
-	CALL	C4C65
+	LD	A,(HL)
+	CP	0DCH			; STEP token ?
+	LD	A,1			; sign is positive
+	JR	NZ,J45E9		; nope, push step value on stack and continue
+	CALL	C4C65			; skip character and evaluate expression
 	PUSH	HL
 	CALL	C2FB2			; convert DAC to single real
-	CALL	C2ECC			; = DAC (single)
+	CALL	C2ECC			; DEBC = DAC (single real)
 	CALL	C2E71			; get sign DAC
 J45E8:	POP	HL
 J45E9:	PUSH	DE
@@ -5733,7 +5639,7 @@ C46E8:	LD	A,(CONSAV)
 	INC	HL
 	LD	D,(HL)
 	EX	DE,HL			; linenumber
-J46FF:	JP	C3236			; convert to single real
+J46FF:	JP	C3236			; convert unsigned integer to single real
 
 J4702:	LD	A,(CONTYP)
 	LD	(VALTYP),A
@@ -5816,10 +5722,10 @@ C4755:	RST	CHRGTR			; get next BASIC character
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C4756:	CALL	C520F
+C4756:	CALL	C520F			; evaluate integer operand
 	RET	P
 
-;	Subroutine	__________________________
+;	Subroutine	illegal function call
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -5919,7 +5825,7 @@ C47B2:	LD	C,3
 	PUSH	AF
 	INC	SP			; GOSUB parameter block
 	PUSH	BC			; after this, execute new statement
-	JR	C47EB
+	JR	C47EB			; goto linenumber
 
 ;	Subroutine	GOSUB traphandler
 ;	Inputs		________________________
@@ -5948,7 +5854,7 @@ J47E7:	PUSH	BC
 
 C47E8:	CALL	C4769			; collect linenumber
 
-;	Subroutine	__________________________
+;	Subroutine	goto linenumber
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -5989,10 +5895,10 @@ J481C:	LD	E,8
 
 C4821:	CALL	H.RETU			; hook start return statement
 	LD	(TEMP),HL
-	LD	D,0FFH
-	CALL	C3FE2
-	CP	8DH
-	JR	Z,J4831
+	LD	D,0FFH			; DE=0FFxxH (impossible loop variable address)
+	CALL	C3FE2			; search FOR block on stack (skip 2 words)
+	CP	8DH			; search stopped by a GOSUB block ?
+	JR	Z,J4831			; yep,
 	DEC	HL
 J4831:	LD	SP,HL
 	LD	(SAVSTK),HL
@@ -6024,15 +5930,15 @@ J485A:	POP	HL
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C485B:	DEFB	001H			; load c with ":" and skip to 485E
-	DEFB	":"
+C485B:	DEFB	001H			; LD BC,xx3AH, skip to 485E
+	DEFB	":"			; end search character outside string = :
 
 ;	Subroutine	skip to end of BASIC line (also REM/ELSE statement handler)
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C485D:	LD	C,0
-	LD	B,0
+C485D:	LD	C,0			; end search character outside string = none
+	LD	B,0			; end search character inside string = none
 
 ;	Subroutine	skip to end of BASIC line with extra end characters
 ;	Inputs		C = end search character outside string, B = end search character inside string
@@ -6054,13 +5960,13 @@ J4865:	RST	CHRGTR			; get next BASIC character
 	JR	Z,J4865			; skip function token as well
 	SUB	8BH+1			; IF token ?
 	JR	NZ,J4864		; nope, next
-	CP	B
+	CP	B			; end search character defined ?
 	ADC	A,D
-	LD	D,A
-	JR	J4864
+	LD	D,A			; yep, increase IF nesting level
+	JR	J4864			; next
 
 J487B:	POP	AF
-	ADD	A,03H
+	ADD	A,3
 	JR	J4892
 
 ;	Subroutine	LET statement
@@ -6070,52 +5976,52 @@ J487B:	POP	AF
 C4880:	CALL	C5EA4			; locate variable
 	RST	SYNCHR
 	DEFB	0EFH			; check for =
-	LD	(TEMP),DE
+	LD	(TEMP),DE		; save variable address
 	PUSH	DE
 	LD	A,(VALTYP)
-	PUSH	AF
+	PUSH	AF			; save variable type
 	CALL	C4C64			; evaluate expression
 	POP	AF
 J4892:	EX	(SP),HL
 J4893:	LD	B,A
 	LD	A,(VALTYP)
 	CP	B
-	LD	A,B
-	JR	Z,J48A1
+	LD	A,B			; result expression of the same type as variable ?
+	JR	Z,J48A1			; yep, no need to convert
 	CALL	C517A			; convert to DAC to new type
 J489E:	LD	A,(VALTYP)
 J48A1:	LD	DE,DAC
-	CP	2
+	CP	2			; integer ?
 	JR	NZ,J48AB
-	LD	DE,DAC+2
+	LD	DE,DAC+2		; yep, use DAC+2
 J48AB:	PUSH	HL
-	CP	3
-	JR	NZ,J48DE		; not a string,
+	CP	3			; string ?
+	JR	NZ,J48DE		; nope, just copy value in variable
 	LD	HL,(DAC+2)
 	PUSH	HL
 	INC	HL
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)			; string
+	LD	D,(HL)			; pointer to string
 	LD	HL,KBUF-1
 	RST	DCOMPR
 	JR	C,J48D2			; string in KBUF, copy in string storage area
 	LD	HL,(STREND)
 	RST	DCOMPR
-	POP	DE
-	JR	NC,J48DA		; string in programtext, no copy
+	POP	DE			; stringdescriptor
+	JR	NC,J48DA		; string in programtext, no need to copy
 	LD	HL,DSCTMP-1
 	RST	DCOMPR
-	JR	C,J48D1			; stringdescriptor,
+	JR	C,J48D1			; temporary stringdescriptor, copy string in string storage area
 	LD	HL,TEMPST-1
 	RST	DCOMPR
-	JR	C,J48DA			; stringdescriptor,
+	JR	C,J48DA			; no temporaty result stringdesciptor, no need to copy
 J48D1:	DEFB	03EH			; skip next instruction
-J48D2:	POP	DE
-	CALL	C67EE
+J48D2:	POP	DE			;
+	CALL	C67EE			; free descriptor if temporary and on top of heap
 	EX	DE,HL
-	CALL	C6611
-J48DA:	CALL	C67EE
+	CALL	C6611			; copy string to new temporary string
+J48DA:	CALL	C67EE			; free descriptor if temporary and on top of heap
 	EX	(SP),HL
 J48DE:	CALL	C2EF3			; HL=DE (valtyp)
 	POP	DE
@@ -6144,11 +6050,11 @@ J48FB:	LD	(ONELIN),DE		; set ERROR handler
 	RET	C			; not ON ERROR GOTO 0, quit
 	LD	A,(ONEFLG)
 	OR	A			; in ERROR handling routine ?
-	LD	A,E
+	LD	A,E			; ?? unneeded instruction ??
 	RET	Z			; nope, quit
 	LD	A,(ERRFLG)
-	LD	E,A
-	JP	J4096
+	LD	E,A			; saved errorcode
+	JP	J4096			; BASIC error
 
 ;	Subroutine	ON statement (not ON ERROR)
 ;	Inputs		________________________
@@ -6219,44 +6125,44 @@ C495D:	LD	A,(ONEFLG)
 	OR	A			; in ERROR handling routine ?
 	JR	NZ,J496C		; yep,
 	LD	(ONELIN+0),A
-	LD	(ONELIN+1),A
-	JP	J4064
+	LD	(ONELIN+1),A		; disable ERROR handler
+	JP	J4064			; resume without error
 
 J496C:	INC	A
-	LD	(ERRFLG),A
+	LD	(ERRFLG),A		; clear errorcode
 	LD	A,(HL)
-	CP	83H
-	JR	Z,J4985
+	CP	83H			; NEXT token ?
+	JR	Z,J4985			; yep,
 	CALL	C4769			; collect linenumber
-	RET	NZ
+	RET	NZ			; not end of statement, quit (which generates syntax error)
 	LD	A,D
-	OR	E
-	JR	Z,J4989
-	CALL	C47EB
+	OR	E			; linenumber zero ?
+	JR	Z,J4989			; yep, resume at error position
+	CALL	C47EB			; goto linenumber
 	XOR	A
 	LD	(ONEFLG),A		; not in ERROR handling routine anymore
 	RET
 
 J4985:	RST	CHRGTR			; get next BASIC character
-	RET	NZ
-	JR	J498E
+	RET	NZ			; not end of statement, quit (which generates syntax error)
+	JR	J498E			; flag RESUME 0
 
 J4989:	XOR	A
 	LD	(ONEFLG),A		; not in ERROR handling routine
-	INC	A
+	INC	A			; flag RESUME NEXT
 J498E:	LD	HL,(ERRTXT)
 	EX	DE,HL
 	LD	HL,(ERRLIN)
-	LD	(CURLIN),HL
-	EX	DE,HL
-	RET	NZ
+	LD	(CURLIN),HL		; current linenumber = linenumber when error occured
+	EX	DE,HL			; BASIC pointer = BASIC pointer when error occured
+	RET	NZ			; RESUME NEXT, quit
 	LD	A,(HL)
-	OR	A
-	JR	NZ,J49A2
+	OR	A			; at end of BASIC line ?
+	JR	NZ,J49A2		; nope,
 	INC	HL
 	INC	HL
 	INC	HL
-	INC	HL
+	INC	HL			; skip linelink and linenumber
 J49A2:	INC	HL
 	XOR	A
 	LD	(ONEFLG),A		; not in ERROR handling routine
@@ -6265,7 +6171,6 @@ J49A2:	INC	HL
 ;	Subroutine	ERROR statement
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C49AA:	CALL	C521C			; evaluate byte operand
 	RET	NZ			; not end of statement, quit (which generates a syntax error)
@@ -6328,7 +6233,7 @@ J49FC:	RST	CHRGTR			; get next BASIC character
 	LD	HL,(CONLO)
 	RET
 
-J4A0C:	LD	D,1
+J4A0C:	LD	D,1			; IF nesting level=1
 J4A0E:	CALL	C485B			; skip to end of statement
 	OR	A			; end of BASIC line ?
 	RET	Z			; yep, quit
@@ -6502,7 +6407,7 @@ C4B0E:	CP	85H			; next character INPUT token ?
 	LD	B,0
 	CALL	C6638			; analyze string with specified endmaker (1st char is skipped) and create temporary stringdescriptor
 	POP	HL
-	LD	A,03H
+	LD	A,3
 	JP	J4892
 
 I4B3A:	DEFB	"?Redo from start",13,10,0
@@ -6619,7 +6524,7 @@ J4BEB:	LD	B,","
 	DEC	HL
 J4BEE:	CALL	C6639			; analyse string with specified endmarkers (1st char is skipped) and create temporary stringdescriptor
 I4BF1:	POP	AF
-	ADD	A,03H
+	ADD	A,3
 	EX	DE,HL
 	LD	HL,I4C05
 	EX	(SP),HL
@@ -6701,17 +6606,15 @@ C4C62:	RST	SYNCHR
 ;	Inputs		HL = BASIC pointer
 ;	Outputs		________________________
 
-
 FRMEVL:
 C4C64:	DEC	HL
 
 
-;	Subroutine	__________________________
+;	Subroutine	skip character and evaluate expression
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
-C4C65:	LD	D,00H
+C4C65:	LD	D,0			; current precedence level 0
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -6727,39 +6630,29 @@ J4C76:	LD	HL,(TEMP2)
 	POP	BC
 	LD	A,(HL)
 	LD	(TEMP3),HL
-	CP	0EEH
-	RET	C
-	CP	0F1H
-	JR	C,J4CE4
+	CP	0EEH			; token EEH or above ?
+	RET	C			; nope, quit (expression ends)
+	CP	0F1H			; math operator ?
+	JR	C,J4CE4			; nope, relational operators (EEH-F0H)
 	SUB	0F1H
 	LD	E,A
-	JR	NZ,J4C93
+	JR	NZ,J4C93		; not a addition
 	LD	A,(VALTYP)
-	CP	3
+	CP	3			; string ?
 	LD	A,E
-	JP	Z,J6787
-J4C93:	CP	0CH
-	RET	NC
-	LD	HL,I3D3B
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C4C99:	LD	D,00H
+	JP	Z,J6787			; yep, concat strings
+J4C93:	CP	0FDH-0F1H		; token FDH-FFH ?
+	RET	NC			; yep, quit
+	LD	HL,I3D3B		; table for math operator precedence level
+	LD	D,0
 	ADD	HL,DE
 	LD	A,B
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C4C9D:	LD	D,(HL)
-	CP	D
-	RET	NC
-J4CA0:	PUSH	BC
+	LD	D,(HL)
+	CP	D			; same or smaller precedence level ?
+	RET	NC			; yep,
+J4CA0:	PUSH	BC			; save current precedence level
 	LD	BC,J4C76
-	PUSH	BC
+	PUSH	BC			; return
 	LD	A,D
 	CALL	H.NTPL
 	CP	51H
@@ -6774,15 +6667,10 @@ J4CB3:	LD	HL,DAC+2
 	OR	A
 	LD	HL,(DAC+2)
 	PUSH	HL
-	JP	M,J4CD5
-	LD	HL,(DAC)
+	JP	M,J4CD5			; integer
+	LD	HL,(DAC+0)
 	PUSH	HL
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C4CCA:	JP	PO,J4CD5
+	JP	PO,J4CD5
 	LD	HL,(DAC+6)
 	PUSH	HL
 	LD	HL,(DAC+4)
@@ -6796,15 +6684,15 @@ J4CDD:	PUSH	BC
 	LD	HL,(TEMP3)
 	JP	C4C67
 
-J4CE4:	LD	D,00H
-J4CE6:	SUB	0EEH
-	JR	C,J4D08
-	CP	3
-	JR	NC,J4D08
-	CP	1
-	RLA
+J4CE4:	LD	D,0			; clear flag
+J4CE6:	SUB	0EEH			; relational operators ?
+	JR	C,J4D08			; nope,
+	CP	0F0H-0EEH+1
+	JR	NC,J4D08		; nope,
+	CP	0EFH-0EEH
+	RLA				; b0 is >, b1 is =, b2 is <
 	XOR	D
-	CP	D
+	CP	D			; > = > >= >< >=< =< 
 	LD	D,A
 	JP	C,J4055			; nope, syntax error
 	LD	(TEMP3),HL
@@ -6836,7 +6724,6 @@ J4D08:	LD	A,B
 ;	Subroutine	apply infix math operator
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 I4D22:	POP	BC
 	LD	A,C
@@ -6919,7 +6806,7 @@ J4D9F:	LD	HL,I3D5D
 J4DA4:	POP	HL
 	CALL	C2EB1			; push DAC (single)
 	CALL	C2FCB			; convert to single precision real
-	CALL	C2ECC			; = DAC (single)
+	CALL	C2ECC			; DEBC = DAC (single)
 	POP	HL
 	LD	(DAC+0),HL
 	POP	HL
@@ -6939,79 +6826,76 @@ C4DB8:	PUSH	HL
 ;	Outputs		________________________
 
 C4DC7:	RST	CHRGTR			; get next BASIC character
-	JP	Z,J406A
+	JP	Z,J406A			; end of statement, missing operand error
 	JP	C,C3299			; convert text to number
 	CALL	C64A8			; is upcase letter character ?
 	JP	NC,J4E9B		; yep, get variable value
-	CP	20H
-	JP	C,J46B8
+	CP	20H			; numeric token ?
+	JP	C,J46B8			; yep, get constant value
 	CALL	H.EVAL
-	INC	A
-	JP	Z,J4EFC
+	INC	A			; function token ?
+	JP	Z,J4EFC			; yep, handle function
 	DEC	A
-	CP	0F1H
-	JR	Z,C4DC7			; again
-	CP	0F2H
-	JP	Z,J4E8D
+	CP	0F1H			; + token ?
+	JR	Z,C4DC7			; yep, again
+	CP	0F2H			; - token ?
+	JP	Z,J4E8D			; yep,
 	CP	'"'
 	JP	Z,C6636			; analyze string with " as endmarker (1st char is skipped) and create temporary stringdescriptor and quit
-	CP	0E0H
-	JP	Z,J4F63
+	CP	0E0H			; NOT token ?
+	JP	Z,J4F63			; yep,
 	CP	"&"
 	JP	Z,C4EB8			; convert text with radix indication to number
-	CP	0E2H
-	JR	NZ,J4E07
-	RST	CHRGTR			; get next BASIC character
+	CP	0E2H			; ERR token ?
+	JR	NZ,J4E07		; nope, other
 
 ;	Subroutine	ERR function
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
+	RST	CHRGTR			; get next BASIC character
 	LD	A,(ERRFLG)
 	PUSH	HL
-	CALL	C4FCF
-C4E05:	POP	HL
+	CALL	C4FCF			; byte to DAC
+	POP	HL
 	RET
 
-J4E07:	CP	0E1H
-	JR	NZ,J4E15
+J4E07:	CP	0E1H			; ERL token ?
+	JR	NZ,J4E15		; nope, other
 
 ;	Subroutine	ERL function
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 	RST	CHRGTR			; get next BASIC character
 	PUSH	HL
 	LD	HL,(ERRLIN)
-	CALL	C3236
+	CALL	C3236			; convert unsigned integer to single real
 	POP	HL
 	RET
 
-J4E15:	CP	0EDH
-	JP	Z,J5803
-	CP	0CBH
-	JP	Z,J7900
-	CP	0C7H
-	JP	Z,J7A84
-	CP	0C8H
-	JP	Z,J7B47
-	CP	0C9H
-	JP	Z,J7BCB
-	CP	0C1H
-	JP	Z,J791B
-	CP	0EAH
-	JP	Z,J7C3E
-	CP	0E9H
-	JP	Z,J7C43
-	CP	0E7H
-	JR	NZ,J4E64
+J4E15:	CP	0EDH			; POINT token ?
+	JP	Z,J5803			; yep, POINT function handler
+	CP	0CBH			; TIME token ?
+	JP	Z,J7900			; yep, TIME function handler
+	CP	0C7H			; SPRITE token ?
+	JP	Z,J7A84			; yep, SPRITE function handler
+	CP	0C8H			; VDP token ?
+	JP	Z,J7B47			; yep, VDP function handler
+	CP	0C9H			; BASE token ?
+	JP	Z,J7BCB			; yep, BASE function handler
+	CP	0C1H			; PLAY token ?
+	JP	Z,J791B			; yep, PLAY function handler
+	CP	0EAH			; DSKI$ token ?
+	JP	Z,J7C3E			; yep, DSKI$ function handler
+	CP	0E9H			; ATTR$ token ?
+	JP	Z,J7C43			; yep, ATTR$ function handler
+	CP	0E7H			; VARPTR token ?
+	JR	NZ,J4E64		; nope, other
 
 ;	Subroutine	VARPTR function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 	RST	CHRGTR			; get next BASIC character
 	RST	SYNCHR
@@ -7037,20 +6921,20 @@ J4E56:	RST	SYNCHR
 	POP	HL
 	RET
 
-J4E64:	CP	0DDH
-	JP	Z,J4FD5
-	CP	0E5H
-	JP	Z,J68EB
-	CP	0ECH
-	JP	Z,J7347
-	CP	0E3H
-	JP	Z,J6829
-	CP	85H
-	JP	Z,J6C87
-	CP	0E8H
-	JP	Z,J790A
-	CP	0DEH
-	JP	Z,J5040
+J4E64:	CP	0DDH			; USR token ?
+	JP	Z,J4FD5			; yep, USR function handler
+	CP	0E5H			; INSTR token ?
+	JP	Z,J68EB			; yep, INSTR function handler
+	CP	0ECH			; INKEY$ token ?
+	JP	Z,J7347			; yep, INKEY$ function handler
+	CP	0E3H			; STRING$ token ?
+	JP	Z,J6829			; yep, STRING$ function handler
+	CP	85H			; INPUT token ?
+	JP	Z,J6C87			; yep, INPUT function handler
+	CP	0E8H			; CSRLIN token ?
+	JP	Z,J790A			; yep, CSRLIN function handler
+	CP	0DEH			; FN token ?
+	JP	Z,J5040			; yep, FN function handler
 
 ;	Subroutine	evaluate ( expression )
 ;	Inputs		________________________
@@ -7065,7 +6949,7 @@ J4E8D:	LD	D,7DH
 	CALL	C4C67
 	LD	HL,(TEMP2)
 	PUSH	HL
-	CALL	C2E86
+	CALL	C2E86			; negate
 I4E99:	POP	HL
 	RET
 
@@ -7337,7 +7221,7 @@ J4FB7:	LD	A,L
 
 J4FC1:	OR	A
 	SBC	HL,DE
-	JP	C3236
+	JP	C3236			; convert unsigned integer to single real
 
 ;	Subroutine	LPOS function
 ;	Inputs		________________________
@@ -7345,7 +7229,7 @@ J4FC1:	OR	A
 
 
 C4FC7:	LD	A,(LPTPOS)
-	JR	C4FCF
+	JR	C4FCF			; byte to DAC
 
 ;	Subroutine	POS function
 ;	Inputs		________________________
@@ -7354,7 +7238,7 @@ C4FC7:	LD	A,(LPTPOS)
 
 C4FCC:	LD	A,(TTYPOS)
 
-;	Subroutine	__________________________
+;	Subroutine	put byte in DAC
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -7366,11 +7250,8 @@ I4FD1:	LD	H,A
 ;	Subroutine	USR function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
-;	     Remark  user machinecode subroutine gets the following parameters
-;	             HL = DAC
-;	             DE = 
-
+;	Remark	user machinecode subroutine gets the following parameters:
+;		HL = DAC, A = variabletype, DE = start of string
 
 J4FD5:	CALL	C4FF4			; get usernumber and USRTAB entry
 	PUSH	DE
@@ -7384,8 +7265,8 @@ J4FD5:	CALL	C4FF4			; get usernumber and USRTAB entry
 	PUSH	DE
 	LD	A,(VALTYP)
 	PUSH	AF
-	CP	03H
-	CALL	Z,C67D3			; parameter is a string, free string
+	CP	3
+	CALL	Z,C67D3			; parameter is a string, free temporary string in DAC
 	POP	AF
 	EX	DE,HL
 	LD	HL,DAC
@@ -7465,7 +7346,7 @@ J5040:	CALL	C51A1			; check for FN and locate functionname var
 	LD	A,(VALTYP)
 	OR	A
 	PUSH	AF
-	LD	(TEMP2),HL		; save basictext pointer
+	LD	(TEMP2),HL		; save BASIC pointer
 	EX	DE,HL
 	LD	A,(HL)
 	INC	HL
@@ -7473,7 +7354,7 @@ J5040:	CALL	C51A1			; check for FN and locate functionname var
 	LD	L,A			; pointer to functiondefinition
 	LD	A,H
 	OR	L
-	JP	Z,J4061			; not defined, undefined user function
+	JP	Z,J4061			; not defined, undefined user function error
 	LD	A,(HL)
 	CP	"("
 	JP	NZ,J50F4		; no parameters, skip
@@ -7488,7 +7369,7 @@ J5040:	CALL	C51A1			; check for FN and locate functionname var
 	PUSH	HL
 	EX	DE,HL
 J5069:	LD	A,80H
-	LD	(SUBFLG),A		; flag function variable
+	LD	(SUBFLG),A		; variable search flag = function variable
 	CALL	C5EA4			; locate variable
 	EX	DE,HL
 	EX	(SP),HL
@@ -7613,8 +7494,8 @@ J50F4:	PUSH	DE
 	LD	HL,(DAC+2)
 	RST	DCOMPR
 	JR	C,J5156
-	CALL	C6611
-	CALL	C6658			; push descriptor to temporary stringstack
+	CALL	C6611			; copy string to new temporary string
+	CALL	C6658			; push descriptor to temporary desciptor heap
 J5156:	LD	HL,(PRMSTK)
 	LD	D,H
 	LD	E,L
@@ -7690,7 +7571,7 @@ C5193:	PUSH	HL
 C51A1:	RST	SYNCHR
 	DEFB	0DEH			; check for FN token
 	LD	A,080H
-	LD	(SUBFLG),A		; flag function variable
+	LD	(SUBFLG),A		; variable search flag = function variable
 	OR	(HL)
 	LD	C,A			; first varletter with b7 set
 	JP	J5EA9			; locate functionname variable
@@ -7736,9 +7617,11 @@ C51C9:	CALL	C521C			; evaluate byte operand
 ; #####################
 ;	because of the above code, 51D7-520D is free for other use!
 
-;	helper routine ramdisk for transfers to/from page 0 RAM
-;	because subrom is also in page 0, code to transfer to/from RAM in page 0 must be
-;	somewhere else (page 1,2 or 3)
+;	Subroutine	helper routine ramdisk for transfers to/from page 0 RAM
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		because subrom is also in page 0, code to transfer to/from RAM in page 0 must be
+;			somewhere else (page 1,2 or 3)
 
 C51D7:	OUT	(0A8H),A
 	LD	A,(HL)
@@ -7775,7 +7658,7 @@ C51D7:	OUT	(0A8H),A
 
 C520E:	RST	CHRGTR			; get next BASIC character
 
-;	Subroutine	__________________________
+;	Subroutine	evaluate integer operand
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -7813,7 +7696,7 @@ C521C:	CALL	C4C64			; evaluate expression
 C521F:	CALL	C5212
 	JP	NZ,C475A		; illegal function call
 	DEC	HL
-	RST	CHRGTR			; get next BASIC character
+	RST	CHRGTR			; set end of statement flag
 	LD	A,E
 	RET
 
@@ -8152,8 +8035,8 @@ C53E2:	CALL	C4279			; evaluate linenumber (range) and search start linenumber
 	POP	DE
 	PUSH	BC
 	PUSH	BC
-	CALL	C4295			; search linenumber
-	JR	NC,J53F7		; not found,
+	CALL	C4295			; search linenumber (end linenumber)
+	JR	NC,J53F7		; not found, illegal function call
 	LD	D,H
 	LD	E,L
 	EX	(SP),HL
@@ -8178,8 +8061,8 @@ J53F7:	JP	NC,C475A		; illegal function call
 	LD	HL,J4237
 	EX	(SP),HL
 
-;	Subroutine	__________________________
-;	Inputs		________________________
+;	Subroutine	remove line(s)
+;	Inputs		HL = start of BASIC text that follows, BC = start of deleted BASIC text
 ;	Outputs		________________________
 
 C5405:	EX	DE,HL
@@ -8192,9 +8075,9 @@ J5409:	LD	A,(DE)
 	JR	NZ,J5409
 	LD	H,B
 	LD	L,C
-	LD	(VARTAB),HL
-J5415:	LD	(ARYTAB),HL
-	LD	(STREND),HL
+	LD	(VARTAB),HL		; start variable area
+	LD	(ARYTAB),HL		; start arrayvariable area = start variable area (no variables)
+	LD	(STREND),HL		; start free area = start variable area (no arrayvariables)
 	RET
 
 ;	Subroutine	PEEK function
@@ -8204,7 +8087,7 @@ J5415:	LD	(ARYTAB),HL
 
 C541C:	CALL	C5439			; convert address to integer
 	LD	A,(HL)
-	JP	C4FCF
+	JP	C4FCF			; byte to DAC
 
 ;	Subroutine	POKE statement
 ;	Inputs		________________________
@@ -8596,7 +8479,22 @@ J55F8:	POP	HL
 	CP	16
 	JR	C,J5600
 	LD	B,15			; devicename length is max 15
-J5600:	CALL	C7FB7			; bugfix for zero length devicename
+
+J5600:
+;
+; #####################
+; early MSX 1 version code:
+
+;	LD	DE,PROCNM
+
+; #####################
+; later MSX versions have a patch for zero length devicename
+
+
+	CALL	C7FB7			; bugfix for zero length devicename
+
+; #####################
+
 J5603:	CALL	C4EA9			; get char uppercase
 	LD	(DE),A
 	INC	HL
@@ -8675,17 +8573,17 @@ J566C:	LD	(MCLTAB),DE
 	LD	DE,0
 	PUSH	DE
 	PUSH	AF
-J5679:	CALL	C67D0
+J5679:	CALL	C67D0			; free temporary string with type check
 	CALL	C2EDF			; load from HL (single)
 	LD	B,C
-	LD	C,D
-	LD	D,E
+	LD	C,D			; pointer to string
+	LD	D,E			; size of string
 	LD	A,B
-	OR	C
-	JR	Z,J568C
+	OR	C			; zero pointer ?
+	JR	Z,J568C			; yep,
 	LD	A,D
-	OR	A
-	JR	Z,J568C
+	OR	A			; size of string zero ?
+	JR	Z,J568C			; yep,
 	PUSH	BC
 	PUSH	DE
 J568C:	POP	AF
@@ -8889,7 +8787,7 @@ I5795:	XOR	A
 	LD	D,A
 	RET
 
-;	Subroutine	__________________________
+;	Subroutine	evaluate complex graphic coordinatepair
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -8902,7 +8800,7 @@ C579C:	LD	A,(HL)
 	CP	0F2H
 	JR	Z,J57C1
 
-;	Subroutine	__________________________
+;	Subroutine	evaluate simple graphic coordinatepair
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -8912,11 +8810,11 @@ C57AB:	LD	A,(HL)
 	CALL	Z,C4666			; yep, get next BASIC character
 	RST	SYNCHR
 	DEFB	"("			; check for (
-	CALL	C520F
+	CALL	C520F			; evaluate integer operand
 	PUSH	DE
 	RST	SYNCHR
 	DEFB	","			; check for ,
-	CALL	C520F
+	CALL	C520F			; evaluate integer operand
 	RST	SYNCHR
 	DEFB	")"			; check for )
 	POP	BC
@@ -8960,7 +8858,7 @@ J57ED:
 ; MSX 1 code:
 
 ;	push	af
-;	call	A57AB
+;	call	A57AB			; evaluate simple graphic coordinatepair
 
 ; #####################
 ; MSX 2 and above have a patch for new screenmodes
@@ -8986,7 +8884,6 @@ J5801:	POP	HL
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 J5803:	RST	CHRGTR			; get next BASIC character
 	PUSH	HL
 	CALL	FETCHC
@@ -9002,7 +8899,7 @@ J5803:	RST	CHRGTR			; get next BASIC character
 	LD	HL,(GRPACX)
 	PUSH	HL
 	EX	DE,HL
-	CALL	C57AB
+	CALL	C57AB			; evaluate simple graphic coordinatepair
 	PUSH	HL
 	CALL	SCALXY
 	LD	HL,0FFFFH
@@ -9147,7 +9044,7 @@ J58A7:
 ; #####################
 ; MSX 1 code:
 
-;	call	A579C
+;	call	A579C			; evaluate complex graphic coordinatepair
 
 ; #####################
 ; MSX 2 and above have a patch for new screenmodes
@@ -9160,7 +9057,7 @@ J58AA:	PUSH	BC
 	PUSH	DE
 	RST	SYNCHR
 	DEFB	0F2H			; check for -
-	CALL	C57AB
+	CALL	C57AB			; evaluate simple graphic coordinatepair
 	CALL	C584D
 	POP	DE
 	POP	BC
@@ -9370,7 +9267,7 @@ C59C5:
 ; #####################
 ; MSX 1 code:
 
-;	CALL	C579C
+;	CALL	C579C			; evaluate complex graphic coordinatepair
 
 ; #####################
 ; MSX 2 and above have a patch for new screenmodes
@@ -9597,10 +9494,10 @@ C5B0B:	EX	DE,HL
 ;	Outputs		________________________
 
 
-C5B11:	CALL	C579C
+C5B11:	CALL	C579C			; evaluate complex graphic coordinatepair
 	RST	SYNCHR
 	DEFB	","			; check for ,
-	CALL	C520F
+	CALL	C520F			; evaluate integer operand
 	PUSH	HL
 	EX	DE,HL
 	LD	(GXPOS),HL
@@ -10211,14 +10108,14 @@ C5E9F:	LD	BC,I5E9A
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-	DEFB	0F6H			; OR xx, skip next instruction
+	DEFB	0F6H			; OR 0AFH, skip next instruction
 
 ;	Subroutine	locate variable
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 PTRGET:
-C5EA4:	XOR	A
+C5EA4:	XOR	A			; not DIM
 	LD	(DIMFLG),A
 	LD	C,(HL)
 J5EA9:	CALL	H.PTRG
@@ -10266,7 +10163,7 @@ I5EEE:	LD	A,D
 	LD	(VALTYP),A		; set DAC type
 	RST	CHRGTR			; get next BASIC character (type indicator)
 	LD	A,(SUBFLG)
-	DEC	A			; search flags
+	DEC	A			; variable search flags
 	JP	Z,J5FE8			; search for ERASE statement,
 	JP	P,J5F08			; search for function variables or loop variables, do not check for subscript
 	LD	A,(HL)
@@ -10317,7 +10214,7 @@ J5F3A:	EX	DE,HL
 	XOR	A
 	LD	(PRMFLG),A		; now search the simple variables
 J5F52:	LD	HL,(ARYTAB)
-	LD	(ARYTA2),HL		; end of area is the start of the array variable area
+	LD	(ARYTA2),HL		; end of searcharea is the start of the array variable area
 	LD	HL,(VARTAB)		; start of area is the start of the simple variable area
 	JR	J5F3A			; start search
 
@@ -10366,16 +10263,16 @@ J5F66:	POP	HL
 	LD	L,C
 	LD	(ARYTAB),HL
 J5F96:	DEC	HL
-	LD	(HL),00H
+	LD	(HL),0
 	RST	DCOMPR
-	JR	NZ,J5F96
+	JR	NZ,J5F96		; clear variable
 	POP	DE
-	LD	(HL),E
+	LD	(HL),E			; variable type
 	INC	HL
 	POP	DE
 	LD	(HL),E
 	INC	HL
-	LD	(HL),D
+	LD	(HL),D			; variable name
 	EX	DE,HL
 J5FA4:	INC	DE
 	POP	HL
@@ -10452,14 +10349,14 @@ J6005:	INC	HL
 	JR	NZ,J5FEE		; no match, next array
 	LD	A,(DIMFLG)
 	OR	A			; DIM statement ?
-	JP	NZ,J405E		; yep, redimensioned array
+	JP	NZ,J405E		; yep, redimensioned array error
 	POP	AF
 	LD	B,H
 	LD	C,L
 	JP	Z,J3297			; ERASE, restore BASIC pointer and quit
 	SUB	(HL)			; dimension correct ?
 	JP	Z,J607D			; yep,
-J601D:	LD	DE,9
+J601D:	LD	DE,9			; ?? LD E,9 should be enough ??
 	JP	J406F			; subscript out of range error
 
 J6023:	LD	A,(VALTYP)
@@ -10567,7 +10464,7 @@ J60AD:	LD	HL,(TEMP2)
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-J60B1:	CALL	C4C65			; evaluate expression
+J60B1:	CALL	C4C65			; skip character and evaluate expression
 	CALL	C3058			; check if string
 	RST	SYNCHR
 	DEFB	";"			; check for ";"
@@ -10818,7 +10715,7 @@ J61F9:	POP	HL
 	JP	NZ,J60BF
 J61FE:	CALL	C,C7328			; newline to interpreter output
 	EX	(SP),HL
-	CALL	C67D6			; free string (descriptor in HL)
+	CALL	C67D6			; free temporary string (descriptor in HL)
 	POP	HL
 	JP	C4AFF			; return interpreter output to screen
 
@@ -10930,7 +10827,7 @@ J6275:	CALL	C4253			; setup BASIC linelinks
 	DEC	HL
 	DEC	HL
 	LD	(SAVSTK),HL
-	LD	DE,7
+	LD	DE,7			; ?? LD E,7 should be enough ??
 	JP	J406F			; out of memory error
 
 ;	Subroutine	NEW statement
@@ -10963,7 +10860,7 @@ C629A:	CALL	H.RUNC
 	DEC	HL
 
 ;	Subroutine	initialize interpreter
-;	Inputs		________________________
+;	Inputs		HL = BASIC pointer
 ;	Outputs		________________________
 
 
@@ -10980,7 +10877,7 @@ C62A7:	CALL	C636E			; clear trap variables
 	CALL	H.LOPD
 J62B2:	LD	(HL),8
 	INC	HL
-	DJNZ	J62B2			; default type for variables is double
+	DJNZ	J62B2			; default type for variables is double real
 	CALL	C2C24			; initialize RNDX
 	XOR	A
 	LD	(ONEFLG),A		; not in ERROR handling routine
@@ -10992,25 +10889,30 @@ J62B2:	LD	(HL),8
 	LD	(FRETOP),HL		; empty stringspace
 	CALL	C63C9			; restore statement
 	LD	HL,(VARTAB)
-	LD	(ARYTAB),HL		; begin of arrayvar space
-	LD	(STREND),HL		; end of basicprogram workarea
+	LD	(ARYTAB),HL		; begin of arrayvariables space = begin of variable space (no variables) 
+	LD	(STREND),HL		; end of basicprogram workarea = begin of variable space (no array variables)
 	CALL	C6C1C			; close all i/o channels
 	LD	A,(NLONLY)
 	AND	01H			; loading basic program ?
 	JR	NZ,C62E5
 	LD	(NLONLY),A		; nope, close i/o channels when requested
 
-;	Subroutine	__________________________
+;	Subroutine	initialize stack
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C62E5:	POP	BC			; get return address
+C62E5:	POP	BC			; get return address from stack
 	LD	HL,(STKTOP)
 	DEC	HL
 	DEC	HL
 	LD	(SAVSTK),HL
 	INC	HL
 	INC	HL
+
+;	Subroutine	reinitialize stack, reset interpreter output, clear FN vars, clear variable search flag
+;	Inputs		HL = top of new stack
+;	Outputs		________________________
+
 J62F0:	CALL	H.STKE
 	LD	SP,HL			; initialize stackpointer
 	LD	HL,TEMPST
@@ -11024,9 +10926,9 @@ J62F0:	CALL	H.STKE
 	LD	(NOFUNS),A
 	LD	(PRMLN2),HL
 	LD	(FUNACT),HL
-	LD	(PRMSTK),HL
-	LD	(SUBFLG),A
-	PUSH	HL
+	LD	(PRMSTK),HL		; clear FN variables
+	LD	(SUBFLG),A		; clear variable search flag
+	PUSH	HL			; terminator zero word for FOR and GOSUB
 	PUSH	BC			; return address back on stack
 I6317:	LD	HL,(TEMP)
 	RET
@@ -11089,8 +10991,10 @@ J6348:	XOR	05H			; trap occured AND trap enabled ?
 	EI
 	RET
 
-;	Unused Code
-;	Not called from anywhere, leftover from a early Microsoft BASIC
+;	Subroutine	increase trap counter
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		Unused Code, Not called from anywhere
 
 ?634E:	DI
 
@@ -11224,7 +11128,14 @@ J63DE:	LD	(DATPTR),HL		; new DATA pointer
 ;	Outputs		________________________
 
 C63E3:	JP	NZ,J77A5		; not end of statement, STOP statement (trap)
-	RET	NZ			; UNNEEDED instruction
+
+;	Subroutine	STOP used by BIOS ROM
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		Entrypoint unneeded, because it is called with A=0 and Zx set
+;			Replacement with C63E3 is ok. RET NZ at 63E6 could be removed
+
+C63E6:	RET	NZ
 	INC	A			; A = 1 (flag STOP)
 	JR	J63F4
 
@@ -11269,7 +11180,7 @@ J6414:	CALL	C7304			; end printeroutput
 C6424:	LD	HL,(OLDTXT)
 	LD	A,H
 	OR	L
-	LD	DE,17
+	LD	DE,17			; ?? LD E,17 should be enough ??
 	JP	Z,J406F			; nope, can not continue error
 	LD	DE,(OLDLIN)
 	LD	(CURLIN),DE
@@ -11299,9 +11210,9 @@ C643E:	CALL	C5EA4			; locate variable
 	PUSH	DE
 	PUSH	HL
 	LD	HL,SWPTMP
-	CALL	C2EF3			; HL = DE (valtyp)
+	CALL	C2EF3			; HL = DE (valtyp), save 1st var in SWPTMP
 	LD	HL,(ARYTAB)
-	EX	(SP),HL
+	EX	(SP),HL			; save (ARYTAB), restore BASIC pointer
 	RST	GETYPR			; get DAC type
 	PUSH	AF			; save type
 	RST	SYNCHR
@@ -11315,17 +11226,17 @@ C643E:	CALL	C5EA4			; locate variable
 	EX	(SP),HL
 	EX	DE,HL
 	PUSH	HL
-	LD	HL,(ARYTAB)
+	LD	HL,(ARYTAB)		; has (ARYTAB) changed (2nd variable does not exists) ?
 	RST	DCOMPR
-	JR	NZ,J6474
-	POP	DE
+	JR	NZ,J6474		; yep, illegal function call
+	POP	DE			; pointer to 2nd variable
 	POP	HL
-	EX	(SP),HL
+	EX	(SP),HL			; save BASIC pointer, get pointer to 1st variable
 	PUSH	DE
-	CALL	C2EF3			; HL = DE (valtyp)
+	CALL	C2EF3			; HL = DE (valtyp), 1st var = 2nd var
 	POP	HL
 	LD	DE,SWPTMP
-	CALL	C2EF3			; HL = DE (valtyp)
+	CALL	C2EF3			; HL = DE (valtyp), 2nd var = SWPTMP
 	POP	HL
 	RET
 
@@ -11335,9 +11246,8 @@ J6474:	JP	C475A			; illegal function call
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C6477:	LD	A,1
-	LD	(SUBFLG),A
+	LD	(SUBFLG),A		; variable search flag = arrayvariable
 	CALL	C5EA4			; locate variable
 	PUSH	HL
 	LD	(SUBFLG),A
@@ -11398,33 +11308,33 @@ C64A8:	CP	"A"
 C64AF:	JP	Z,C62A1			; end of statement, initialize interpreter and quit
 	CALL	C4756			; evaluate word operand and check for 0-32767 range
 	DEC	HL
-	RST	CHRGTR			; get next BASIC character
+	RST	CHRGTR			; end of statement ?
 	PUSH	HL
 	LD	HL,(HIMEM)
 	LD	B,H
-	LD	C,L
-	LD	HL,(MEMSIZ)
-	JR	Z,J64EC
+	LD	C,L			; top BASIC memory
+	LD	HL,(MEMSIZ)		; top of string heap
+	JR	Z,J64EC			; yep, 
 	POP	HL
 	RST	SYNCHR
 	DEFB	","			; check for ,
 	PUSH	DE
 	CALL	C542F			; evaluate address operand
 	DEC	HL
-	RST	CHRGTR			; get next BASIC character
+	RST	CHRGTR			; end of statement ?
 	JP	NZ,J4055		; nope, syntax error
 	EX	(SP),HL
 	EX	DE,HL
 	LD	A,H
-	AND	A
-	JP	P,C475A			; illegal function call
+	AND	A			; top BASIC memory in 8000H-0FFFFH range ?
+	JP	P,C475A			; nope, illegal function call
 	PUSH	DE
 	LD	DE,VARWRK+1
-	RST	DCOMPR
-	JP	NC,C475A		; illegal function call
-	POP	DE
+	RST	DCOMPR			; top BASIC memory <= VARWRK ?
+	JP	NC,C475A		; nope, illegal function call
+	POP	DE			; size of string heap
 	PUSH	HL
-	LD	BC,0FEF5H
+	LD	BC,-(256+9+2)
 	LD	A,(MAXFIL)
 J64E5:	ADD	HL,BC
 	DEC	A
@@ -11432,44 +11342,44 @@ J64E5:	ADD	HL,BC
 ; #####################
 ; MSX 1 code:
 
-;	jp	p,A64E5
+;	jp	p,A64E5			; next i/o channel
 
 ; #####################
 ; MSX 2 and above have a bugfix for MEMSIZ and STKTOP
 
-	JP	J7A1F
+	JP	J7A1F			; next i/o channel, extra DEC HL
 
 ; #####################
 
-J64EA:	POP	BC
+J64EA:	POP	BC			; top address
 	DEC	HL
 J64EC:	LD	A,L
 	SUB	E
 	LD	E,A
 	LD	A,H
 	SBC	A,D
-	LD	D,A
-	JP	C,J6275			; out of memory
+	LD	D,A			; bottom of string heap
+	JP	C,J6275			; <0, out of memory
 	PUSH	HL
 	LD	HL,(VARTAB)
 	PUSH	BC
-	LD	BC,000A0H
+	LD	BC,160
 	ADD	HL,BC
 	POP	BC
-	RST	DCOMPR
-	JP	NC,J6275		; out of memory
+	RST	DCOMPR			; enough space for stack ?
+	JP	NC,J6275		; nope, out of memory
 	EX	DE,HL
-	LD	(STKTOP),HL
+	LD	(STKTOP),HL		; new start Z80 stack
 	LD	H,B
 	LD	L,C
-	LD	(HIMEM),HL
+	LD	(HIMEM),HL		; new top BASIC memory
 	POP	HL
-	LD	(MEMSIZ),HL
-	POP	HL
+	LD	(MEMSIZ),HL		; new top of string heap
+	POP	HL			; restore BASIC pointer
 	CALL	C62A1			; initialize interpreter
-	LD	A,(MAXFIL)		; number of io buffers
-	CALL	C7E6B			; allocate io buffers
-	LD	HL,(TEMP)
+	LD	A,(MAXFIL)		; number of i/o channels
+	CALL	C7E6B			; allocate i/o channels
+	LD	HL,(TEMP)		; restore BASIC pointer
 	JP	C4601			; execute new statement
 
 ;	Unused Code
@@ -11491,7 +11401,7 @@ J64EC:	LD	A,L
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C6527:	LD	DE,0
+C6527:	LD	DE,0			; any loop variable
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -11499,8 +11409,8 @@ C6527:	LD	DE,0
 
 C652A:	CALL	NZ,C5EA4		; not end of statement, locate variable
 	LD	(TEMP),HL		; save BASIC pointer
-	CALL	C3FE2
-	JP	NZ,J405B
+	CALL	C3FE2			; search FOR block on stack (skip 2 words)
+	JP	NZ,J405B		; not found,
 	LD	SP,HL
 	PUSH	DE
 	LD	A,(HL)
@@ -11592,43 +11502,43 @@ J65B6:	LD	SP,HL
 	JP	NZ,C4601		; nope, execute new statement
 	RST	CHRGTR			; get next BASIC character
 	CALL	C652A
-I65C8:	CALL	C67D0
-	LD	A,(HL)
+I65C8:	CALL	C67D0			; free temporary string with type check
+	LD	A,(HL)			; size of string
 	INC	HL
 	LD	C,(HL)
 	INC	HL
-	LD	B,(HL)
+	LD	B,(HL)			; pointer to string
 	POP	DE
 	PUSH	BC
 	PUSH	AF
-	CALL	C67D7			; free string (descriptor in DE)
+	CALL	C67D7			; free temporary string (descriptor in DE)
 	POP	AF
 	LD	D,A
-	LD	E,(HL)
+	LD	E,(HL)			; size of string
 	INC	HL
 	LD	C,(HL)
 	INC	HL
-	LD	B,(HL)
+	LD	B,(HL)			; pointer to string
 	POP	HL
 J65DE:	LD	A,E
-	OR	D
-	RET	Z
+	OR	D			; end of both strings ?
+	RET	Z			; yep, quit (A=0, equal)
 	LD	A,D
-	SUB	01H
-	RET	C
+	SUB	1			; end of first string ?
+	RET	C			; yep, quit (A=FF, less)
 	XOR	A
-	CP	E
+	CP	E			; end of second string ?
 	INC	A
-	RET	NC
+	RET	NC			; yep, quit (A=1, bigger)
 	DEC	D
-	DEC	E
+	DEC	E			; adjust counter
 	LD	A,(BC)
 	INC	BC
-	CP	(HL)
+	CP	(HL)			; equal ?
 	INC	HL
-	JR	Z,J65DE
+	JR	Z,J65DE			; yep, next
 	CCF
-	JP	J2E79
+	JP	J2E79			; set compare value
 
 ;	Subroutine	OCT$ function
 ;	Inputs		________________________
@@ -11660,44 +11570,44 @@ C65FF:	CALL	C371A			; convert integer to binary text
 
 C6604:	CALL	C3425			; convert DAC to text, unformatted
 J6607:	CALL	C6635			; analyse string and create temporary stringdescriptor
-	CALL	C67D3			; free string
+	CALL	C67D3			; free temporary string in DAC
 	LD	BC,J6825
-	PUSH	BC
+	PUSH	BC			; copy string to new temporary string, temporary stringdescriptor to heap and quit
 
-;	Subroutine	__________________________
-;	Inputs		________________________
+;	Subroutine	copy string to new temporary string
+;	Inputs		HL = source string descriptor
 ;	Outputs		________________________
 
-C6611:	LD	A,(HL)
+C6611:	LD	A,(HL)			; size of string
 	INC	HL
 	PUSH	HL
 	CALL	C668E			; allocate stringspace
 	POP	HL
 	LD	C,(HL)
 	INC	HL
-	LD	B,(HL)
+	LD	B,(HL)			; pointer to string
 	CALL	C662A			; make temporary stringdescriptor
 	PUSH	HL
-	LD	L,A
-	CALL	C67C7
+	LD	L,A			; size of string
+	CALL	C67C7			; copy string
 	POP	DE
 	RET
 
 ;	Subroutine	allocate temporary string of 1 char
 ;	Inputs		________________________
-;	Outputs		________________________
+;	Outputs		DE = pointer to string, HL = descriptor
 
 C6625:	LD	A,1
 
 ;	Subroutine	allocate temporary string
-;	Inputs		________________________
-;	Outputs		________________________
+;	Inputs		A = stringsize
+;	Outputs		DE = pointer to string, HL = descriptor
 
 C6627:	CALL	C668E			; allocate stringspace
 
 ;	Subroutine	make temporary stringdescriptor
-;	Inputs		________________________
-;	Outputs		________________________
+;	Inputs		A = stringsize, DE = pointer to string
+;	Outputs		HL = pointer to temporary stringdescriptor
 
 C662A:	LD	HL,DSCTMP
 	PUSH	HL
@@ -11750,15 +11660,15 @@ J6648:	CP	'"'			; string marker ?
 	LD	A,C
 	CALL	C662A			; make temporary stringdescriptor
 
-;	Subroutine	push temporary stringdescriptor to stringstack
+;	Subroutine	push temporary descriptor to temporary desciptor heap
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 J6654:	LD	DE,DSCTMP
 	DEFB	03EH			; LD A,xx, skip next instruction
 
-;	Subroutine	push descriptor to temporary stringstack
-;	Inputs		________________________
+;	Subroutine	push descriptor to temporary desciptor heap
+;	Inputs		DE = desciptor
 ;	Outputs		________________________
 
 C6658:	PUSH	DE
@@ -11767,14 +11677,18 @@ C6658:	PUSH	DE
 	LD	A,3
 	LD	(VALTYP),A
 	CALL	C2EF3			; HL = DE (valtyp)
-	LD	DE,FRETOP
-	RST	DCOMPR
+	LD	DE,TEMPST+30+3
+	RST	DCOMPR			; temporary descriptor heap full ?
 	LD	(TEMPPT),HL
 	POP	HL
 	LD	A,(HL)
 	RET	NZ
-	LD	DE,16
-	JP	J406F			; string formula too complex error
+	LD	DE,16			; ?? LD E,16 should be enough ??
+	JP	J406F			; yep, string formula too complex error
+
+;	Subroutine	skip first character, message to interpreter output
+;	Inputs		________________________
+;	Outputs		________________________
 
 I6677:	INC	HL
 
@@ -11788,7 +11702,7 @@ C6678:	CALL	C6635			; analyse string and create temporary stringdescriptor
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C667B:	CALL	C67D3			; free string
+C667B:	CALL	C67D3			; free temporary string in DAC
 	CALL	C2EE1			; get size and address of string
 	INC	D
 J6682:	DEC	D
@@ -11801,84 +11715,83 @@ J6682:	DEC	D
 	JR	J6682
 
 ;	Subroutine	allocate stringspace
-;	Inputs		________________________
-;	Outputs		________________________
+;	Inputs		A = size of string
+;	Outputs		DE = pointer to stringspace
 
-C668E:	OR	A
+C668E:	OR	A			; because size<>0, Zx is reset (no garbage collect done)
 	DEFB	00EH			; LD C,xx, skip next instruction
 I6690:	POP	AF
 	PUSH	AF
 	LD	HL,(STKTOP)
-	EX	DE,HL
+	EX	DE,HL			; lowest stringspace
 	LD	HL,(FRETOP)
 	CPL
 	LD	C,A
 	LD	B,0FFH
 	ADD	HL,BC
-	INC	HL
-	RST	DCOMPR
-	JR	C,J66A9
-	LD	(FRETOP),HL
+	INC	HL			; lower stringspace - stringsize = new lower
+	RST	DCOMPR			; space available at bottom ?
+	JR	C,J66A9			; nope, try garbage collect
+	LD	(FRETOP),HL		; new lower stringspace
 	INC	HL
 	EX	DE,HL
 J66A7:	POP	AF
 	RET
 
-J66A9:	POP	AF
-	LD	DE,14
+J66A9:	POP	AF			; garbage collect already done ?
+	LD	DE,14			; ?? LD E,14 should be enough ??
 	JP	Z,J406F			; yep, out of string space error
-	CP	A
+	CP	A			; Zx set (garbage collect done)
 	PUSH	AF
 	LD	BC,I6690
-	PUSH	BC
+	PUSH	BC			; do a garbage collect and try allocate again
 
 ;	Subroutine	garbage collect
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
-C66B6:	LD	HL,(MEMSIZ)
+C66B6:	LD	HL,(MEMSIZ)		; stringheap pointer to top of stringspace
 J66B9:	LD	(FRETOP),HL
 	LD	HL,0
-	PUSH	HL
+	PUSH	HL			; descriptor current top string
 	LD	HL,(STREND)
-	PUSH	HL
-	LD	HL,TEMPST
+	PUSH	HL			; current top string (strings in BASIC text or variables is excluded)
+	LD	HL,TEMPST		; start with the temporary stringdescriptors
 I66C7:	LD	DE,(TEMPPT)
-	RST	DCOMPR
+	RST	DCOMPR			; stringdescriptor heap empty ?
 	LD	BC,I66C7
-	JP	NZ,J6742
+	JP	NZ,J6742		; nope, adjust if new topstring and next descriptor
 	LD	HL,PRMPRV
 	LD	(TEMP9),HL
 	LD	HL,(ARYTAB)
-	LD	(ARYTA2),HL
-	LD	HL,(VARTAB)
+	LD	(ARYTA2),HL		; stop searching when the array variables are reached
+	LD	HL,(VARTAB)		; start searching in the simple variables
 J66E1:	LD	DE,(ARYTA2)
-	RST	DCOMPR
-	JR	Z,J66FA
-	LD	A,(HL)
+	RST	DCOMPR			; end of searcharea ?
+	JR	Z,J66FA			; yep,
+	LD	A,(HL)			; variable type
 	INC	HL
 	INC	HL
-	INC	HL
-	CP	03H
-	JR	NZ,J66F4
-	CALL	C6743
+	INC	HL			; skip variablename, to variable value
+	CP	3			; string ?
+	JR	NZ,J66F4		; nope, next variable
+	CALL	C6743			; adjust if new topstring
 	XOR	A
 J66F4:	LD	E,A
-	LD	D,00H
+	LD	D,0
 	ADD	HL,DE
-	JR	J66E1
+	JR	J66E1			; next variable
 
-J66FA:	LD	HL,(TEMP9)
+J66FA:	LD	HL,(TEMP9)		; current FN parameter block
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	LD	A,D
-	OR	E
+	OR	E			; end of FN parameter block list ?
 	LD	HL,(ARYTAB)
-	JR	Z,J671A
+	JR	Z,J671A			; yep, continue with the arrayvariables
 	EX	DE,HL
-	LD	(TEMP9),HL
+	LD	(TEMP9),HL		; update current FN parameter block
 	INC	HL
 	INC	HL
 	LD	E,(HL)
@@ -11889,98 +11802,98 @@ J66FA:	LD	HL,(TEMP9)
 	ADD	HL,DE
 	LD	(ARYTA2),HL
 	EX	DE,HL
-	JR	J66E1
+	JR	J66E1			; search FN parameter block variables
 
 J6719:	POP	BC
 J671A:	LD	DE,(STREND)
-	RST	DCOMPR
-	JP	Z,J6763
-	LD	A,(HL)
+	RST	DCOMPR			; end of arrayvariables ?
+	JP	Z,J6763			; yep, move topstring up when possible
+	LD	A,(HL)			; variable type
 	INC	HL
-	CALL	C2EDF			; load from HL
+	CALL	C2EDF			; load from HL (arrayoffset and variablename)
 	PUSH	HL
-	ADD	HL,BC
-	CP	03H
-	JR	NZ,J6719
-	LD	(TEMP8),HL
+	ADD	HL,BC			; to next variable
+	CP	3			; string ?
+	JR	NZ,J6719		; nope, next variable
+	LD	(TEMP8),HL		; next variable
 	POP	HL
 	LD	C,(HL)
-	LD	B,00H
+	LD	B,0
 	ADD	HL,BC
 	ADD	HL,BC
-	INC	HL
+	INC	HL			; to the first arrayelement
 I6737:	EX	DE,HL
 	LD	HL,(TEMP8)
 	EX	DE,HL
-	RST	DCOMPR
-	JR	Z,J671A
-	LD	BC,I6737
+	RST	DCOMPR			; end of this arrayvariable ?
+	JR	Z,J671A			; yep, next arrayvariable
+	LD	BC,I6737		; adjust if new topstring and next arrayelement
 J6742:	PUSH	BC
 
-;	Subroutine	__________________________
+;	Subroutine	adjust if new topstring
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 C6743:	XOR	A
-	OR	(HL)
+	OR	(HL)			; empty string ?
 	INC	HL
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)
+	LD	D,(HL)			; pointer to string
 	INC	HL
-	RET	Z
+	RET	Z			; empty string, quit
 	LD	B,H
 	LD	C,L
 	LD	HL,(FRETOP)
-	RST	DCOMPR
+	RST	DCOMPR			; string above current top of heap ?
 	LD	H,B
 	LD	L,C
-	RET	C
+	RET	C			; yep, quit
 	POP	HL
 	EX	(SP),HL
-	RST	DCOMPR
+	RST	DCOMPR			; string below current top string ?
 	EX	(SP),HL
 	PUSH	HL
 	LD	H,B
 	LD	L,C
-	RET	NC
-	POP	BC
+	RET	NC			; yep, quit
+	POP	BC			; return address
 	POP	AF
-	POP	AF
-	PUSH	HL
-	PUSH	DE
+	POP	AF			; discharge
+	PUSH	HL			; new current descriptor topstring +3
+	PUSH	DE			; new current topstring
 	PUSH	BC
 	RET
 
 J6763:	POP	DE
 	POP	HL
 	LD	A,H
-	OR	L
-	RET	Z
+	OR	L			; topstring found ?
+	RET	Z			; nope, quit with garabage collect
 	DEC	HL
 	LD	B,(HL)
 	DEC	HL
-	LD	C,(HL)
+	LD	C,(HL)			; current topstring
 	PUSH	HL
 	DEC	HL
-	LD	L,(HL)
-	LD	H,00H
+	LD	L,(HL)			; size of string
+	LD	H,0
 	ADD	HL,BC
 	LD	D,B
-	LD	E,C
+	LD	E,C			; start of string
 	DEC	HL
 	LD	B,H
-	LD	C,L
-	LD	HL,(FRETOP)
+	LD	C,L			; end of string
+	LD	HL,(FRETOP)		; top of stringspace is new end of string
 	CALL	C6253			; move data
 	POP	HL
 	LD	(HL),C
 	INC	HL
-	LD	(HL),B
+	LD	(HL),B			; new address string
 	LD	H,B
 	LD	L,C
 	DEC	HL
-	JP	J66B9
+	JP	J66B9			; new stringheap pointer and continue garbage collect
 
 J6787:	PUSH	BC
 	PUSH	HL
@@ -11988,37 +11901,36 @@ J6787:	PUSH	BC
 	EX	(SP),HL
 	CALL	C4DC7			; evaluate factor
 	EX	(SP),HL
-	CALL	C3058			; check if string
-	LD	A,(HL)
+	CALL	C3058			; check if DAC has string
+	LD	A,(HL)			; size of 1st string
 	PUSH	HL
 	LD	HL,(DAC+2)
 	PUSH	HL
-	ADD	A,(HL)
-	LD	DE,15
-	JP	C,J406F			; yep, string too long error
-	CALL	C6627			; allocate temporary string
+	ADD	A,(HL)			; + size of 2nd string
+	LD	DE,15			; ?? LD E,15 should be enough ??
+	JP	C,J406F			; resulting length >255, string too long error
+	CALL	C6627			; allocate temporary string for result
 	POP	DE
-	CALL	C67D7			; free string (descriptor in DE)
+	CALL	C67D7			; free temporary string (descriptor in DE) -> free 2nd string
 	EX	(SP),HL
-	CALL	C67D6			; free string (descriptor in HL)
+	CALL	C67D6			; free temporary string (descriptor in HL) -> free 1st string
 	PUSH	HL
 	LD	HL,(DSCTMP+1)
 	EX	DE,HL
-	CALL	C67BF
-	CALL	C67BF
+	CALL	C67BF			; copy string (descriptor on stack) -> copy 1st string
+	CALL	C67BF			; copy string (descriptor on stack) -> copy 2nd string
 	LD	HL,I4C73
 	EX	(SP),HL
 	PUSH	HL
-	JP	J6654			; push temporary stringdescriptor to stringstack
+	JP	J6654			; push temporary descriptor to temporary desciptor heap and quit
 
-
-;	Subroutine	__________________________
-;	Inputs		________________________
+;	Subroutine	copy string (descriptor on stack)
+;	Inputs		string descriptor on stack, DE = destination string
 ;	Outputs		________________________
-
+;	Remark		works only if this routine is CALLed
 
 C67BF:	POP	HL
-	EX	(SP),HL
+	EX	(SP),HL			; get descriptor from stack
 	LD	A,(HL)
 	INC	HL
 	LD	C,(HL)
@@ -12026,8 +11938,8 @@ C67BF:	POP	HL
 	LD	B,(HL)
 	LD	L,A
 
-;	Subroutine	__________________________
-;	Inputs		________________________
+;	Subroutine	copy string
+;	Inputs		L = size of string, BC = source string, DE = destination string
 ;	Outputs		________________________
 
 C67C7:	INC	L
@@ -12039,104 +11951,98 @@ J67C8:	DEC	L
 	INC	DE
 	JR	J67C8
 
-;	Subroutine	FRESTR (free string with valtyp check)
+;	Subroutine	FRESTR (free temporary string with type check)
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 FRESTR:
 C67D0:	CALL	C3058			; check if string
 
-;	Subroutine	free string
-;	Inputs		________________________
+;	Subroutine	free temporary string in DAC
+;	Inputs		DAC = string descriptor
 ;	Outputs		________________________
 
+C67D3:	LD	HL,(DAC+2)		; descriptor
 
-C67D3:	LD	HL,(DAC+2)
-
-;	Subroutine	free string
+;	Subroutine	free temporary string
 ;	Inputs		HL = string descriptor
 ;	Outputs		________________________
 
-
 C67D6:	EX	DE,HL
 
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
+;	Subroutine	free temporary string
+;	Inputs		DE = string descriptor
+;	Outputs		HL = string descriptor
 
-C67D7:	CALL	C67EE
+C67D7:	CALL	C67EE			; free descriptor if temporary and on top of heap
 	EX	DE,HL
-	RET	NZ
+	RET	NZ			; no temporary descriptor on top of heap, quit
 	PUSH	DE
 	LD	D,B
 	LD	E,C
 	DEC	DE
-	LD	C,(HL)
+	LD	C,(HL)			; size of string
 	LD	HL,(FRETOP)
-	RST	DCOMPR
-	JR	NZ,J67EC
+	RST	DCOMPR			; on top of string heap ?
+	JR	NZ,J67EC		; nope, quit
 	LD	B,A
 	ADD	HL,BC
-	LD	(FRETOP),HL
+	LD	(FRETOP),HL		; release string from heap
 J67EC:	POP	HL
 	RET
 
-
-;	Subroutine	__________________________
-;	Inputs		________________________
+;	Subroutine	free descriptor if temporary and on top of heap
+;	Inputs		DE = descriptor
 ;	Outputs		________________________
-
 
 C67EE:	CALL	H.FRET
 	LD	HL,(TEMPPT)
 	DEC	HL
 	LD	B,(HL)
 	DEC	HL
-	LD	C,(HL)
+	LD	C,(HL)			; pointer to string
 	DEC	HL
-	RST	DCOMPR
-	RET	NZ
-	LD	(TEMPPT),HL
+	RST	DCOMPR			; desciptor on top of the heap ?
+	RET	NZ			; nope, quit
+	LD	(TEMPPT),HL		; release descriptor from heap
 	RET
 
 ;	Subroutine	LEN function
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C67FF:	LD	BC,C4FCF
-	PUSH	BC
+	PUSH	BC			; after this, byte to DAC
 
-;	Subroutine	__________________________
+;	Subroutine	free temporary string and get size
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C6803:	CALL	C67D0
+C6803:	CALL	C67D0			; free temporary string with type check
 	XOR	A
 	LD	D,A
-	LD	A,(HL)
-	OR	A
+	LD	A,(HL)			; size of string
+	OR	A			; Zx set if empty string
 	RET
 
 ;	Subroutine	ASC function
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
-C680B:	LD	BC,C4FCF
+C680B:	LD	BC,C4FCF		; after this, byte to DAC
 	PUSH	BC
 
-;	Subroutine	__________________________
+;	Subroutine	free temporary string and get first character
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C680F:	CALL	C6803
-	JP	Z,C475A			; illegal function call
+C680F:	CALL	C6803			; free temporary string and get size
+	JP	Z,C475A			; empty string, illegal function call
 	INC	HL
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)
-	LD	A,(DE)
+	LD	D,(HL)			; pointer to string
+	LD	A,(DE)			; first character
 	RET
 
 ;	Subroutine	CHR$ function
@@ -12147,19 +12053,18 @@ C680F:	CALL	C6803
 C681B:	CALL	C6625			; allocate temporary string of 1 char
 	CALL	C521F			; check for byte value
 
-;	Subroutine	__________________________
+;	Subroutine	set first character of temporary string and put on heap
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 C6821:	LD	HL,(DSCTMP+1)
 	LD	(HL),E
 J6825:	POP	BC
-	JP	J6654			; push temporary stringdescriptor to stringstack
+	JP	J6654			; push temporary descriptor to temporary desciptor heap and quit
 
 ;	Subroutine	STRING$ function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 J6829:	RST	CHRGTR			; get next BASIC character
 	RST	SYNCHR
@@ -12178,40 +12083,38 @@ J6829:	RST	CHRGTR			; get next BASIC character
 	CALL	C521F			; check for byte value
 	JR	J6844
 
-J6841:	CALL	C680F
-J6844:	POP	DE
-	CALL	C684D
+J6841:	CALL	C680F			; free temporary string and get first character
+J6844:	POP	DE			; number of characters
+	CALL	C684D			; create string with characters and quit
 
 ;	Subroutine	SPACE$ function
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C6848:	CALL	C521F			; check for byte value
-	LD	A,20H
+	LD	A," "
 
-;	Subroutine	__________________________
+;	Subroutine	create string with characters
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 C684D:	PUSH	AF
-	LD	A,E
+	LD	A,E			; number of characters
 	CALL	C6627			; allocate temporary string
 	LD	B,A
 	POP	AF
 	INC	B
-	DEC	B
-	JR	Z,J6825
-	LD	HL,(DSCTMP+1)
+	DEC	B			; stringsize zero ?
+	JR	Z,J6825			; yep, temporary stringdescriptor to heap and quit
+	LD	HL,(DSCTMP+1)		; pointer to temporary string
 J685B:	LD	(HL),A
 	INC	HL
-	DJNZ	J685B
-	JR	J6825
+	DJNZ	J685B			; fill string
+	JR	J6825			; temporary stringdescriptor to heap and quit
 
 ;	Subroutine	LEFT$ function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C6861:	CALL	C68E3
 	XOR	A
@@ -12242,15 +12145,14 @@ J6870:	LD	C,0
 	LD	C,L
 	CALL	C662A			; make temporary stringdescriptor
 	LD	L,A
-	CALL	C67C7
+	CALL	C67C7			; copy string
 	POP	DE
-	CALL	C67D7			; free string (descriptor in DE)
-	JP	J6654			; push temporary stringdescriptor to stringstack
+	CALL	C67D7			; free temporary string (descriptor in DE)
+	JP	J6654			; push temporary descriptor to temporary desciptor heap and quit
 
 ;	Subroutine	RIGHT$ function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C6891:	CALL	C68E3
 	POP	DE
@@ -12262,7 +12164,6 @@ C6891:	CALL	C68E3
 ;	Subroutine	MID$ function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C689A:	EX	DE,HL
 	LD	A,(HL)
@@ -12293,9 +12194,8 @@ C689A:	EX	DE,HL
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
-C68BB:	CALL	C6803
-	JP	Z,C4FCF
+C68BB:	CALL	C6803			; free temporary string and get size
+	JP	Z,C4FCF			; empty string, byte (size) to DAC
 	LD	E,A
 	INC	HL
 	LD	A,(HL)
@@ -12369,7 +12269,7 @@ J6906:	RST	SYNCHR
 	RST	SYNCHR
 	DEFB	")"			; check for )
 	PUSH	HL
-	CALL	C67D0
+	CALL	C67D0			; free temporary string with type check
 	EX	DE,HL
 	POP	BC
 	POP	HL
@@ -12378,17 +12278,17 @@ J6906:	RST	SYNCHR
 	LD	BC,J3297
 	PUSH	BC
 	LD	BC,C4FCF
-	PUSH	BC
+	PUSH	BC			; after this, byte to DAC
 	PUSH	AF
 	PUSH	DE
-	CALL	C67D6			; free string (descriptor in HL)
+	CALL	C67D6			; free temporary string (descriptor in HL)
 	POP	DE
 	POP	AF
 	LD	B,A
 	DEC	A
 	LD	C,A
 	CP	(HL)
-	LD	A,00H
+	LD	A,0
 	RET	NC
 	LD	A,(DE)
 	OR	A
@@ -12400,7 +12300,7 @@ J6906:	RST	SYNCHR
 	INC	HL
 	LD	H,(HL)
 	LD	L,B
-	LD	B,00H
+	LD	B,0
 	ADD	HL,BC
 J693E:	SUB	C
 	LD	B,A
@@ -12471,7 +12371,7 @@ J696E:	RST	SYNCHR
 	JR	NC,J6993
 	POP	HL
 	PUSH	HL
-	CALL	C6611
+	CALL	C6611			; copy string to new temporary string
 	POP	HL
 	PUSH	HL
 	CALL	C2EF3			; HL = DE (valtyp)
@@ -12488,7 +12388,7 @@ J6993:	POP	HL
 	PUSH	DE
 	CALL	C4C5F			; evaluate = expression
 	PUSH	HL
-	CALL	C67D0
+	CALL	C67D0			; free temporary string with type check
 	EX	DE,HL
 	POP	HL
 	POP	BC
@@ -12564,8 +12464,8 @@ C69F2:	LD	HL,(STREND)
 	ADD	HL,SP
 	RST	GETYPR			; get DAC type
 	JP	NZ,J4FC1		; not a string,
-	CALL	C67D3			; free string
-	CALL	C66B6
+	CALL	C67D3			; free temporary string in DAC
+	CALL	C66B6			; garbage collect
 	LD	DE,(STKTOP)
 	LD	HL,(FRETOP)
 	JP	J4FC1
@@ -12576,18 +12476,18 @@ C69F2:	LD	HL,(STREND)
 
 C6A0E:	CALL	C4C64			; evaluate expression
 	PUSH	HL
-	CALL	C67D0
+	CALL	C67D0			; free temporary string with type check
 	LD	A,(HL)
-	OR	A
-	JR	Z,J6A47
+	OR	A			; stringsize zero ?
+	JR	Z,J6A47			; yep, bad filename error
 	INC	HL
 	LD	E,(HL)
 	INC	HL
 	LD	H,(HL)
-	LD	L,E
-	LD	E,A
+	LD	L,E			; pointer to string
+	LD	E,A			; size of string
 	CALL	C6F15			; parse devicename
-	PUSH	AF
+	PUSH	AF			; save devicecode
 	LD	BC,FILNAM
 	LD	D,11
 	INC	E
@@ -12605,7 +12505,7 @@ J6A29:	DEC	E			; end of filespecification string ?
 	JR	NZ,J6A29		; nope, next
 J6A3B:	POP	AF
 	PUSH	AF
-	LD	D,A
+	LD	D,A			; devicecode
 	LD	A,(FILNAM+0)
 	INC	A			; first character FILNAME charactercode 255 ?
 	JR	Z,J6A47			; yep, bad filename error (because this is internally used as runflag)
@@ -13128,7 +13028,7 @@ J6CD0:	LD	(HL),A
 	CALL	H.RSLF
 	LD	(PTRFIL),HL		; restore interpreter input/output device
 	PUSH	BC
-	JP	J6654			; push temporary stringdescriptor to stringstack
+	JP	J6654			; push temporary descriptor to temporary desciptor heap and quit
 
 J6CE2:	CALL	C6C71			; get sequential input
 	JP	C,J6E83
@@ -13415,7 +13315,7 @@ J6E71:	LD	E,39H
 J6E77:	LD	E,3BH
 	DEFB	001H
 
-	LD	E,32H
+J6E74:	LD	E,32H
 	DEFB	001H
 
 J6E7D:	LD	E,34H
@@ -14272,12 +14172,13 @@ C72A6:	DEFW	J71B6			; open, check if output/append and open
 J72BA:	LD	A,C
 	JP	OUTDLP
 
-;	-----------------
-;	Unused subroutine CAS device
-;	-----------------
+;	Subroutine	get cassette putback character if any
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		Unused
 
 ?72BE:	LD	A,(HL)
-	LD	(HL),00H
+	LD	(HL),0
 	AND	A
 	RET	Z
 	INC	SP
@@ -14299,10 +14200,10 @@ C72CD:	LD	A,E
 	JP	Z,J6E6B			; bad filename
 	RET
 
-;	-----------------
-;	Unused subroutine CAS device
-;	-----------------
-
+;	Subroutine	read character from cassette
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		Unused
 
 ?72D4:	PUSH	HL
 	PUSH	DE
@@ -14311,9 +14212,10 @@ C72CD:	LD	A,E
 	JR	NC,J7300
 	JR	J72F2
 
-;	-----------------
-;	Unused subroutine CAS device
-;	-----------------
+;	Subroutine	write character to cassette
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		Unused
 
 ?72DE:	PUSH	HL
 	PUSH	DE
@@ -14323,9 +14225,10 @@ C72CD:	LD	A,E
 	JR	NC,J72FF
 	JR	J72F2
 
-;	-----------------
-;	Unused subroutine CAS device
-;	-----------------
+;	Subroutine	start cassette input
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		Unused
 
 ?72E9:	PUSH	HL
 	PUSH	DE
@@ -14336,9 +14239,10 @@ C72CD:	LD	A,E
 J72F2:	CALL	TAPIOF
 	JP	J73B2			; device I/O error
 
-;	-----------------
-;	Unused subroutine CAS device
-;	-----------------
+;	Subroutine	start cassette output
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		Unused
 
 ?72F8:	PUSH	HL
 	PUSH	DE
@@ -14367,7 +14271,6 @@ C7304:	XOR	A
 	XOR	A
 	LD	(LPTPOS),A
 	RET
-
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -14428,7 +14331,7 @@ J7347:	RST	CHRGTR			; get next BASIC character
 	CALL	C6625			; allocate temporary string of 1 char
 	POP	AF
 	LD	E,A
-	CALL	C6821
+	CALL	C6821			; set first character of temporary string and put on heap and quit
 J735A:	LD	HL,I3FD6
 	LD	(DAC+2),HL
 	LD	A,3
@@ -14540,7 +14443,7 @@ C73E5:	CALL	H.PLAY
 	PUSH	HL
 	LD	HL,I752E
 	LD	(MCLTAB),HL
-	LD	A,00H
+	LD	A,0
 	LD	(PRSCNT),A
 	LD	HL,-10
 	ADD	HL,SP
@@ -14550,23 +14453,23 @@ C73E5:	CALL	H.PLAY
 J73FD:	CALL	C4C64			; evaluate expression
 	EX	(SP),HL
 	PUSH	HL
-	CALL	C67D0
+	CALL	C67D0			; free temporary string with type check
 	CALL	C2EDF			; load from HL
 	LD	A,E
-	OR	A
-	JR	NZ,J7413
-	LD	E,01H
+	OR	A			; stringsize zero ?
+	JR	NZ,J7413		; nope,
+	LD	E,1
 	LD	BC,I73E4
 	LD	D,C
 	LD	C,B
 J7413:	POP	AF
 	PUSH	AF
 	CALL	GETVCP
-	LD	(HL),E
+	LD	(HL),E			; stringsize
 	INC	HL
 	LD	(HL),D
 	INC	HL
-	LD	(HL),C
+	LD	(HL),C			; pointer
 	INC	HL
 	LD	D,H
 	LD	E,L
@@ -15462,7 +15365,7 @@ J78AE:	CP	"("
 	DEFB	","			; check for ,
 	CALL	C4C64			; evaluate expression
 	PUSH	HL
-	CALL	C67D0
+	CALL	C67D0			; free temporary string with type check
 	LD	B,(HL)
 	INC	HL
 	LD	E,(HL)
@@ -15496,18 +15399,16 @@ J78FA:	LD	(HL),C
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 J7900:	RST	CHRGTR			; get next BASIC character
 	PUSH	HL
 	LD	HL,(JIFFY)
-	CALL	C3236
+	CALL	C3236			; convert unsigned integer to single real
 	POP	HL
 	RET
 
 ;	Subroutine	CSRLIN function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 J790A:	RST	CHRGTR			; get next BASIC character
 	PUSH	HL
@@ -15518,7 +15419,6 @@ J790A:	RST	CHRGTR			; get next BASIC character
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C7911:	RST	SYNCHR
 	DEFB	0EFH			; check for =
 	CALL	C542F			; evaluate address operand
@@ -15528,7 +15428,6 @@ C7911:	RST	SYNCHR
 ;	Subroutine	PLAY function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 J791B:	RST	CHRGTR			; get next BASIC character
 	LD	A,2+1			; max is 3
@@ -15567,7 +15466,6 @@ C7940:	CALL	C521F			; check for byte value
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 C794C:	CALL	C521F			; check for byte value
 	CP	05H
 J7951:	JP	NC,C475A		; illegal function call
@@ -15578,32 +15476,29 @@ J7957:	JP	C2E9A
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
-
 C795A:	CALL	C521F			; check for byte value
 	DEC	A
 	CP	0CH
 	JR	NC,J7951
 	INC	A
 	CALL	GTPDL
-J7966:	JP	C4FCF
+J7966:	JP	C4FCF			; byte to DAC
 
 ;	Subroutine	PAD function
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C7969:	CALL	C521F			; check for byte value
 ;
 ; #####################
 ; MSX 1 code:
 
-; 	CP	008H
+; 	CP	8
 
 ; #####################
 ; MSX 2 and above supports extra pads
 
-	CP	14H
+	CP	20
 
 ; #####################
 
@@ -15745,7 +15640,7 @@ J79D6:	CALL	CHKNEW
 	JP	EXTROM
 
 J79E2:	PUSH	AF
-	CALL	C57AB
+	CALL	C57AB			; evaluate simple graphic coordinatepair
 	JP	J57F1
 ; #####################
 
@@ -15757,7 +15652,7 @@ J79E9:	CALL	CHKNEW
 	LD	IX,S.GLINE
 	JP	EXTROM
 
-J79F5:	CALL	C579C
+J79F5:	CALL	C579C			; evaluate complex graphic coordinatepair
 	JP	J58AA
 
 ; #####################
@@ -15768,7 +15663,7 @@ J79FB:	CALL	CHKNEW
 	LD	IX,S.PAINT
 	JP	EXTROM
 
-J7A07:	CALL	C579C
+J7A07:	CALL	C579C			; evaluate complex graphic coordinatepair
 	JP	J59C8
 
 ; #####################
@@ -15805,7 +15700,7 @@ C7A48:	CP	"$"
 	CALL	C4C5F			; evaluate = expression
 	EX	(SP),HL
 	PUSH	HL
-	CALL	C67D0
+	CALL	C67D0			; free temporary string with type check
 	INC	HL
 	LD	E,(HL)
 	INC	HL
@@ -15823,7 +15718,19 @@ C7A48:	CP	"$"
 	PUSH	HL
 	PUSH	AF
 	XOR	A
+;
+; #####################
+; MSX 1 code:
+
+;	CALL	FILVRM
+
+; #####################
+; MSX 2 and above support 128 Kb VRAM
+
 	CALL	BIGFIL
+
+; #####################
+
 	POP	AF
 	AND	A
 	LD	C,A
@@ -15851,7 +15758,7 @@ J7A84:	CALL	C7A9F
 	POP	BC
 	POP	HL
 	CALL	LDIRMV
-	JP	J6654			; push temporary stringdescriptor to stringstack
+	JP	J6654			; push temporary descriptor to temporary desciptor heap and quit
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -15906,7 +15813,7 @@ J7AB6:	AND	A
 	DEFB	","			; check for ,
 	CP	","
 	JR	Z,J7AF9
-	CALL	C579C
+	CALL	C579C			; evaluate complex graphic coordinatepair
 	EX	(SP),HL
 	LD	A,E
 	CALL	WRTVRM
@@ -16119,7 +16026,6 @@ J7B80:	RR	C
 
 	DEFS	07BCBH-$,0		; remaining space
 
-
 ;	Subroutine	BASE function
 ;	Inputs		________________________
 ;	Outputs		________________________
@@ -16210,7 +16116,7 @@ C7BF5:
 
 ;	Subroutine	evaluate parenthesized byte operand with a maximum
 ;	Inputs		A = maximum
-;	Outputs		________________________
+;	Outputs		A = value, E = value
 
 C7C08:	PUSH	AF
 	RST	SYNCHR
@@ -16278,7 +16184,20 @@ C7C2A:	CALL	H.IPL
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C7C2F:	JP	J7D03
+C7C2F:
+;
+; #####################
+; MSX 1 code:
+
+;	CALL	H.COPY
+
+; #####################
+; MSX 2 and above have a patch for extending the SET statement
+
+	JP	J7D03			; patched for MSX2 COPY statement
+
+; #####################
+;	because of the above code, 7C32-7C33 is free for other use
 
 	DEFS	07C34H-$,0
 
@@ -16395,28 +16314,28 @@ C7C76:	LD	SP,VARWRK-10		; temporary stack
 	LD	(ENDBUF),A		; endmarker for BUF
 	LD	(NLONLY),A		; not loading basic program, close i/o channels when requested
 	LD	A,","
-	LD	(BUFMIN),A
+	LD	(BUFMIN),A		; dummy prefix for BUF
 	LD	A,":"
-	LD	(KBFMIN),A
+	LD	(KBFMIN),A		; dummy prefix for KBUF
 	LD	HL,(CGTABL)
-	LD	(CGPNT+1),HL
+	LD	(CGPNT+1),HL		; address charactergenerator (but what about the slotid in CGPNT+0 ??)
 	LD	HL,PRMSTK
-	LD	(PRMPRV),HL
-	LD	(STKTOP),HL
+	LD	(PRMPRV),HL		; initialize previous FN block pointer
+	LD	(STKTOP),HL		; Z80 stack temporary at PRMSTK
 	LD	BC,200
 	ADD	HL,BC
-	LD	(MEMSIZ),HL
+	LD	(MEMSIZ),HL		; a fake string heap of 200 bytes
 	LD	A,1
-	LD	(VARTAB+1),A
-	CALL	C7E6B			; allocate 1 io buffer
-	CALL	C62E5
+	LD	(VARTAB+1),A		; a fake simple variable start at 0100H
+	CALL	C7E6B			; allocate 1 i/o channel (also reinitialize STKTOP, MEMSIZ)
+	CALL	C62E5			; initialize stack
 	LD	HL,(BOTTOM)
 	XOR	A
-	LD	(HL),A
+	LD	(HL),A			; end of BASIC line token before BASIC text
 	INC	HL
-	LD	(TXTTAB),HL
-	CALL	C6287			; clear basic program
-	CALL	INITIO
+	LD	(TXTTAB),HL		; start of BASIC text
+	CALL	C6287			; clear BASIC program
+	CALL	INITIO			; initialize I/O devices (PSG and LPT)
 ;
 ; #####################
 ; MSX 1 code: (7CE1-7D13)
@@ -16486,7 +16405,7 @@ J7D14:
 
 J7D17:	LD	HL,(BOTTOM)
 	XOR	A
-	LD	(HL),A
+	LD	(HL),A			; end of BASIC line before BASIC text
 	INC	HL
 	LD	(TXTTAB),HL
 	CALL	C6287			; clear basic program
@@ -16578,7 +16497,7 @@ J7D60:	LD	A,(HL)
 	LD	H,A
 	JR	J7D60
 
-J7D71:	LD	L,00H
+J7D71:	LD	L,0
 	INC	H
 	RET
 
@@ -16675,8 +16594,8 @@ J7DF6:	CALL	C7E2A			; translate SLTATR loopvar to address and slotid
 	RST	DCOMPR
 	JR	NC,J7E09		; VARTAB is already in page 3, leave it alone
 	EX	DE,HL
-	LD	(VARTAB),HL		; VARTAB = 0C000H for
-J7E09:	LD	HL,(08008H)
+	LD	(VARTAB),HL		; VARTAB = 0C000H (otherwise VARTAB would point into ROM)
+J7E09:	LD	HL,(08000H+8)
 	INC	HL
 	LD	(TXTTAB),HL		; start of basiccode
 	LD	A,H
@@ -16688,10 +16607,10 @@ C7E14:	CALL	C629A			; initialize interpreter, basic pointer at start of program
 	JP	C4601			; execute new statement
 
 ;	Subroutine	read word from extension ROM
-;	Inputs		________________________
-;	Outputs		________________________
+;	Inputs		HL = address, C = slotid
+;	Outputs		DE = word, Zx set if word is zero
 
-C7E1A:	CALL	C7E1E
+C7E1A:	CALL	C7E1E			; read byte from extension ROM
 	LD	E,D
 C7E1E:	LD	A,C
 	PUSH	BC
@@ -16754,21 +16673,21 @@ C7E4B:	RST	SYNCHR
 	PUSH	AF
 	CALL	C6C1C			; close all i/o channels
 	POP	AF
-	CALL	C7E6B			; allocate io buffers
+	CALL	C7E6B			; allocate i/o channels
 	CALL	C62A7			; initialize interpreter, BASIC pointer from TEMP
 	JP	C4601			; execute new statement
 
-;	Subroutine	allocate io buffers
-;	Inputs		A = number of io buffers
+;	Subroutine	allocate i/o channels
+;	Inputs		A = number of i/o channels
 ;	Outputs		________________________
 
 C7E6B:	PUSH	AF
 	LD	HL,(HIMEM)
-	LD	DE,-267
+	LD	DE,-(256+9+2)
 J7E72:	ADD	HL,DE
 	DEC	A
 	JP	P,J7E72
-	EX	DE,HL
+	EX	DE,HL			; calculate FILTAB address
 	LD	HL,(STKTOP)
 	LD	B,H
 	LD	C,L
@@ -16778,80 +16697,81 @@ J7E72:	ADD	HL,DE
 	LD	L,A
 	LD	A,H
 	SBC	A,B
-	LD	H,A
+	LD	H,A			; size of the string heap
 	POP	AF
 	PUSH	HL
 	PUSH	AF
 	LD	BC,140
 	ADD	HL,BC
 	LD	B,H
-	LD	C,L
-	LD	HL,(VARTAB)
-	ADD	HL,BC
-	RST	DCOMPR
-	JP	NC,J6275		; out of memory
+	LD	C,L			; size of the string heap +140
+	LD	HL,(VARTAB)		; start of the simple variables
+	ADD	HL,BC			; + size
+	RST	DCOMPR			; does this fit ?
+	JP	NC,J6275		; nope, out of memory
 	POP	AF
-	LD	(MAXFIL),A
+	LD	(MAXFIL),A		; set number of i/o channels (excluding i/o channel 0)
 	LD	L,E
 	LD	H,D
-	LD	(FILTAB),HL
+	LD	(FILTAB),HL		; start of i/o channel pointers
 	DEC	HL
-	DEC	HL
-	LD	(MEMSIZ),HL
-	POP	BC
+	DEC	HL			; ?? why need a extra byte ??
+	LD	(MEMSIZ),HL		; start of the string heap
+	POP	BC			; size of the string heap
 	LD	A,L
 	SUB	C
 	LD	L,A
 	LD	A,H
 	SBC	A,B
 	LD	H,A
-	LD	(STKTOP),HL
+	LD	(STKTOP),HL		; start of Z80 stack, end of string heap
 	DEC	HL
 	DEC	HL
-	POP	BC
-	LD	SP,HL
-	PUSH	BC
+	POP	BC			; return address
+	LD	SP,HL			; new stack with dummy word on stack
+	PUSH	BC			; return address on stack
 	LD	A,(MAXFIL)
 	LD	L,A
-	INC	L
+	INC	L			; number of i/o channels
 	LD	H,0
-	ADD	HL,HL
+	ADD	HL,HL			; *2
 	ADD	HL,DE
 	EX	DE,HL
-	PUSH	DE
-	LD	BC,267-2
+	PUSH	DE			; start of i/o channel buffers
+	LD	BC,-2+256+9+2
 J7EC2:	LD	(HL),E
 	INC	HL
 	LD	(HL),D
-	INC	HL
+	INC	HL			; pointer to i/o channel buffer
 	EX	DE,HL
-	LD	(HL),0
-	ADD	HL,BC
+	LD	(HL),0			; i/o channel closed
+	ADD	HL,BC			; to the next i/o channel buffer
 	EX	DE,HL
 	DEC	A
-	JP	P,J7EC2
-	POP	HL
+	JP	P,J7EC2			; next i/o channel
+	POP	HL			; start of i/o channel buffer
 	LD	BC,9
 	ADD	HL,BC
-	LD	(NULBUF),HL
+	LD	(NULBUF),HL		; pointer to the i/o channel 0 buffer
 	RET
 
 ?7ED8:	DEFB	"MSX  system"
 	DEFB	0
 
+T7EE4:
 	IF MSXMID EQ 0
 
-?7EE4:	DEFB	"version 4.0",13,10
+	DEFB	"version 4.0",13,10
 	DEFB	0
 
 	ELSE
 
-?7EE4:	DEFB	"version 4.1",13,10
+	DEFB	"version 4.1",13,10
 	DEFB	0
 
 	ENDIF
 
-?7EF2:	DEFB	"MSX BASIC "
+T7EF2:	DEFB	"MSX BASIC "
 	DEFB	0
 J7EFD:	DEFB	"Copyright 1990 by Microsoft",13,10
 	DEFB	0
@@ -16969,6 +16889,11 @@ J7F2F:	LD	A,D
 	defw	00100H
 	defb	':'
 
+
+;	Bugfix		check for zero length devicenames (e.g. ":xxx" filenames)
+;	Inputs		________________________
+;	Outputs		________________________
+
 ; bugfix for zero length devicename
 
 C7FB7:	LD	DE,PROCNM
@@ -16981,8 +16906,6 @@ C7FB7:	LD	DE,PROCNM
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
-
 C7FBE:	CALL	C7FD1			; switch page 0 primary slot 0
 	LD	E,(HL)			; read
 	JR	J7FC8			; restore orginal page 0
@@ -16990,7 +16913,6 @@ C7FBE:	CALL	C7FD1			; switch page 0 primary slot 0
 ;	Subroutine	helper routine for WRSLT
 ;	Inputs		________________________
 ;	Outputs		________________________
-
 
 C7FC4:	CALL	C7FD1			; switch page 0 primary slot 0
 	LD	(HL),E			; write
