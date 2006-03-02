@@ -2,6 +2,9 @@
 ; BEGIN OF JAPANSE KEYBOARD HANDLER
 ; *************************************
 
+;	Table		scancode table
+;	Remark		last scancode+1,execution address
+
 I0DA5:	DEFB	00AH
 	DEFW	C0E67		; keys 0,1,2,3,4,5,6,7,8,9
 	DEFB	016H
@@ -26,24 +29,44 @@ I0DA5:	DEFB	00AH
 	DEFW	C0F06		; home
 	DEFB	0FFH
 	DEFW	C0F10		; ins,del,left,up,down,right, numeric pad
-;
+
+;	Table		keycodes for numeric keys+SHIFT
+
 I0DC9:	DEFB	0FFH
 	DEFB	"!",022H,"#$%&'()"
-;
-I0DD3:	DEFW	C0F55		; SHIFT + CTRL
-	DEFW	C0F55		; CTRL
+
+;	Table		pointer to handler for keys a-z
+
+I0DD3:	DEFW	C0F55		; SHIFT + CTRL, put lettercode in keyboardbuffer
+	DEFW	C0F55		; CTRL, put lettercode in keyboardbuffer
 	DEFW	C0E93		; SHIFT
 	DEFW	C0E95
+
+;	Table		pointers to keycode tables for keys -,^,yen,@,[,;,:,],komma,.,/,_
 
 I0DDB:	DEFW	D0E07-00AH	; SHIFT + CTRL
 	DEFW	D0DFB-00AH	; CTRL
 	DEFW	D0DEF-00AH	; SHIFT
 	DEFW	D0DE3-00AH
 
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_
+
 D0DE3:	DEFB	"-^\@[;:],./",0FFH
+
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_ +SHIFT
+
 D0DEF:	DEFB	"=~|`{+*}<>?_"
+
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_ +CTRL
+
 D0DFB:	DEFB	"-",01EH,01CH,0,01BH,";:",01DH,",./",0FFH
+
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_ +CTRL+SHIFT
+
 D0E07:	DEFB	"=",01EH,01CH,0,01BH,"+*",01DH,"<>?",01FH
+
+;	Table		keycodes for easily converted keys
+;	Remark		scancodes 030H-057H
 
 D0E13:	DEFB	0,0,0,0,0,0,0,0
 	DEFB	0,0,01BH,009H,0,008H,018H,00DH
@@ -51,10 +74,9 @@ D0E13:	DEFB	0,0,0,0,0,0,0,0
 	DEFB	"*","+","/","0","1","2","3","4"
 	DEFB	"5","6","7","8","9","-",",","."
 
-;	  Subroutine K.HAND (not offical name)
-;	     Inputs  C = scancode
-;	     Outputs ________________________
-;
+;	Subroutine	K.HAND (not offical name)
+;	Inputs		C = scancode
+;	Outputs		________________________
 
 K.HAND:	LD	A,C
 	CP	0FFH
@@ -73,106 +95,111 @@ K.HAND:	LD	A,C
 	AND	A
 	JP	NZ,J0F83		; KANA on, handle kana keycodes
 J0E5B:	LD	A,C
-J0E5C:	CP	(HL)
+J0E5C:	CP	(HL)			; scancode handled by this entry ?
 	INC	HL
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)
-J0E61:	INC	HL
+	LD	D,(HL)			; handler
+	INC	HL
 	PUSH	DE
-	RET	C
+	RET	C			; yep, continue in handler
 	POP	DE
-	JR	J0E5C
-;
-;	-----------------
-;	Numeric keys handler
-;	-----------------
+	JR	J0E5C			; next
+
+;	Subroutine	handler keys 0,1,2,3,4,5,6,7,8,9
+;	Inputs		A = C = scancode (000H-009H)
+;	Outputs		________________________
 
 C0E67:	ADD	A,"0"
-	LD	B,A
+	LD	B,A			; keycode number
 	LD	A,(NEWKEY+6)
 	RRCA				; SHIFT pressed ?
 	LD	A,B
-	JR	C,J0E7B			; no
-	LD	B,00H
+	JR	C,J0E7B			; no, put keycode in keyboardbuffer and quit
+	LD	B,0
 	LD	HL,I0DC9
 	ADD	HL,BC
 	LD	A,(HL)
-	CP	0FFH
-	RET	Z
-J0E7B:	JP	C0F55
-;
-;	-----------------
-; 	a-z keys handler
-;	-----------------
+	CP	0FFH			; keycode for this combination ?
+	RET	Z			; nope, quit
+J0E7B:	JP	C0F55			; put in keyboardbuffer and quit
+
+;	Subroutine	handler keys a-z
+;	Inputs		C = scancode (016H-02FH)
+;	Outputs		________________________
 
 C0E7E:	LD	A,(NEWKEY+6)
 	AND	03H			; SHIFT + CTRL status
 	ADD	A,A
 	LD	E,A
-	LD	D,00H
+	LD	D,0
 	LD	HL,I0DD3
 	ADD	HL,DE
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
-	LD	L,A
-	LD	A,C
-	SUB	15H
+	LD	L,A			; handler for SHIFT + CTRL combination
+	LD	A,C			; scancode
+	SUB	15H			; code 001H-01AH
 	JP	(HL)
-;
-; a-z keys, shift pressed, ctrl not pressed
-;
-C0E93:	ADD	A,20H			; lowercase
-;
-; a-z keys, no shift or ctrl pressed
-;
+
+;	Subroutine	handler keys a-z, SHIFT pressed, CTRL not pressed
+;	Inputs		A = lettercode (001H-01AH)
+;	Outputs		________________________
+
+C0E93:	ADD	A,20H			; adjust for lowercase
+
+;	Subroutine	handler keys a-z, SHIFT and CTRL not pressed
+;	Inputs		A = lettercode (001H-01AH)
+;	Outputs		________________________
+
 C0E95:	LD	B,A
 	LD	A,(CAPST)
 	CPL	
-	AND	20H
-	XOR	B
-	ADD	A,40H			; letter ascii
-	JR	J0E7B
-;
-;	-----------------
+	AND	20H			; CAPS lock ?
+	XOR	B			; yep, switch case; nope, keep case
+	ADD	A,40H			; to keycode
+	JR	J0E7B			; put in keyboardbuffer and quit
+
+;	Subroutine	handler keys -,^,yen,@,[,;,:,],komma,.,/,_
+;	Inputs		C = scancode (00AH-015H)
+;	Outputs		________________________
+
 C0EA1:	LD	HL,I0DDB
 	LD	A,(NEWKEY+6)
 	AND	03H			; SHIFT + CTRL status
 	ADD	A,A
 	LD	E,A
-	LD	D,00H
+	LD	D,0
 	ADD	HL,DE
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
-	LD	L,A
-	LD	E,C
+	LD	L,A			; keycode table for SHIFT + CTRL combination
+	LD	E,C			; scancode
 	ADD	HL,DE
 	LD	A,(HL)
-	CP	0FFH
-	JP	NZ,C0F55
-	RET	
-;
-;	-----------------
-;	Functionkey handler
-;	-----------------
+	CP	0FFH			; keycode for this combination ?
+	JP	NZ,C0F55		; yep, put in keyboardbuffer
+	RET
+
+;	Subroutine	handler functionkeys
+;	Inputs		C = scancode (035H-039H)
+;	Outputs		________________________
 
 C0EBB:	LD	A,(NEWKEY+6)
-	RRCA	
-	JR	C,J0EC5		; No SHIFT,
-;
+	RRCA				; SHIFT key pressed ?
+	JR	C,J0EC5			; nope, F1-F5
 	LD	A,C
-	ADD	A,05H	; 5 
-	LD	C,A
+	ADD	A,5
+	LD	C,A			; yep, F6-F10
 J0EC5:	LD	E,C
 	LD	D,00H
 	LD	HL,FNKFLG-035H
 	ADD	HL,DE
 	LD	A,(HL)
-	AND	A
-	JR	NZ,J0EE3
-;
+	AND	A			; functionkey used for trap ?
+	JR	NZ,J0EE3		; yep, handle trap
 J0ED0:	EX	DE,HL
 	ADD	HL,HL
 	ADD	HL,HL
@@ -180,129 +207,125 @@ J0ED0:	EX	DE,HL
 	ADD	HL,HL
 	LD	DE,FNKSTR-035H*16
 	ADD	HL,DE
-	EX	DE,HL
+	EX	DE,HL			; pointer to functionkey definition string
 J0EDA:	LD	A,(DE)
-	AND	A
-	RET	Z
-	CALL	C0F55
-I0EE0:	INC	DE
-	JR	J0EDA
-;
-;	-----------------
+	AND	A			; end of string ?
+	RET	Z			; yep, quit
+I0EDD:	CALL	C0F55			; put keycode in keyboardbuffer
+	INC	DE
+	JR	J0EDA			; next
+
 J0EE3:	LD	HL,(CURLIN)
 	INC	HL
 	LD	A,H
-	OR	L
-	JR	Z,J0ED0
-;
+	OR	L			; interpreter in direct mode ?
+	JR	Z,J0ED0			; yep, normal behavior
 	LD	HL,TRPTBL+0*3-035H*3
 	ADD	HL,DE
 	ADD	HL,DE
 	ADD	HL,DE
-;
-;	  Subroutine __________________________
+
+;	  Subroutine raise trap
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0EF1:	LD	A,(HL)
-	AND	01H	; 1 
-	RET	Z
-;
+	AND	01H			; trap enabled ?
+	RET	Z			; nope, quit
 	LD	A,(HL)
-	OR	04H	; 4 
-	CP	(HL)
-	RET	Z
-;
-	LD	(HL),A
-	XOR	05H	; 5 
-	RET	NZ
-;
+	OR	04H
+	CP	(HL)			; trap occured flag set ?
+	RET	Z			; yep, quit
+	LD	(HL),A			; flag trap occured
+	XOR	05H			; trap paused ?
+	RET	NZ			; yep, quit
 	LD	A,(ONGSBF)
 	INC	A
-	LD	(ONGSBF),A
-	RET	
-;
-;	-----------------
+	LD	(ONGSBF),A		; increase trap counter
+	RET
+
+;	Subroutine	handler HOME key
+;	Inputs		-
+;	Outputs		________________________
+
 C0F06:	LD	A,(NEWKEY+6)
-	RRCA	
-	LD	A,0CH	; 12 
-	SBC	A,00H
-	JR	C0F55
-;
-;	-----------------
+	RRCA				; SHIFT key status
+	LD	A,0CH			; assume SHIFT-HOME -> CLS keycode
+	SBC	A,0			; no SHIFT pressed -> HOME keycode
+	JR	C0F55			; put keycode in keyboardbuffer
+
+;	Subroutine	handler easily converted keys
+;	Inputs		A = scancode (030H-015H)
+;	Outputs		________________________
 
 C0F10:	CALL	H.KEYA
 	LD	E,A
-	LD	D,00H
+	LD	D,0
 	LD	HL,D0E13-030H
 	ADD	HL,DE
 	LD	A,(HL)
-	AND	A
-	RET	Z
-;
-	JR	C0F55
+	AND	A			; keycode for key ?
+	RET	Z			; nope, quit
+	JR	C0F55			; put keycode in keyboardbuffer
 
+;	Subroutine	handler KANA key
+;	Inputs		-
+;	Outputs		________________________
 
-;
-; KANA keyhandler
-;
+C0F1F:
+; #####################
+; MSX 1 code: (0F1F-0F35)
 
-;
-; MSX 1 had:
-;
-;C0F1F:	LD	HL,KANAST
+;	LD	HL,KANAST
 ;	LD	A,(HL)
 ;	CPL	
-;	LD	(HL),A
-;	LD	A,0FH
+;	LD	(HL),A			; toggle KANA mode
+;	LD	A,15
 ;	OUT	(0A0H),A
 ;	IN	A,(0A2H)
 ;	AND	7FH
-;	LD	B,A
-;	LD	A,(HL)
-;	CPL	
-;	AND	80H
+;	LD	B,A			; PSG register 15 without KANA led bit
+;	LD	A,(HL)			; KANA status
+;	CPL
+;	AND	80H			; KANA led bit
 ;	OR	B
-;	OUT	(0A1H),A
+;	OUT	(0A1H),A		; change KANA led
 ;	RET
-;
-; MSX 2 and above have following code:
-;
-;
-; original routine simply toggles KANA mode and led
-; but when SHIFT KANA mode was added, there was too little space for code.
-; led code was moved to 111C, most of the KANA key code was placed
+
+; #####################
+; MSX 2 and above have extension for the new SHIFT KANA mode
+; there was too little space for all of the code.
+; Therefore led code was moved to 111C, most of the KANA key code was placed
 ; here, remainer was placed at 0C25-0C3B
 
-C0F1F:	LD	HL,MODE
-	BIT	0,(HL)				; in SHIFT KANA mode ?
-	JR	Z,J0F2C				; nope,
-;
-	XOR	A				; KANA led off
-	RES	0,(HL)				; leave SHIFT KANA mode
-J0F29:	JP	J111C				; change KANA led
-;
-;	-----------------
+	LD	HL,MODE
+	BIT	0,(HL)			; in SHIFT KANA mode ?
+	JR	Z,J0F2C			; nope,
+	XOR	A			; KANA led off
+	RES	0,(HL)			; leave SHIFT KANA mode
+J0F29:	JP	J111C			; change KANA led
+
 J0F2C:	LD	A,(KANAST)
 	INC	A				; KANA ON ?
-	JP	Z,J0C36				; yes, KANA OFF
-;
-	JP	J0C25				; KANA ON or SHIFT KANA mode
-;
-; end of difference MSX1 - MSX2
-;
-;	-----------------
+	JP	Z,J0C36			; yes, KANA OFF
+	JP	J0C25			; nope, KANA ON or SHIFT KANA mode
+
+; #####################
+
+;	Subroutine	handler CAPS key
+;	Inputs		-
+;	Outputs		________________________
+
 C0F36:	LD	HL,CAPST
 	LD	A,(HL)
-	CPL	
-	LD	(HL),A
-	CPL	
+	CPL
+	LD	(HL),A			; toggle CAPS status
+	CPL				; adjust for CHGCAP and change CAPS led
 
-;	  Subroutine CHGCAP
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-;	compatible with MSX1
+;	Subroutine	CHGCAP
+;	Inputs		________________________
+;	Outputs		________________________
+;	Remark		entrypoint compatible with MSX1
 
 K.BCAP:	AND	A
 	LD	A,0CH
@@ -310,152 +333,148 @@ K.BCAP:	AND	A
 	INC	A
 J0F43:	OUT	(0ABH),A
 	RET	
-;
-;	compatible with MSX1
+
+;	Subroutine	handler STOP key
+;	Inputs		-
+;	Outputs		________________________
+;	Remark		entrypoint compatible with MSX1
 
 C0F46:	LD	A,(NEWKEY+6)
-	RRCA	
-	RRCA	
-	LD	A,03H	; 3 
-	JR	NC,J0F50
-;
-	INC	A
+	RRCA
+	RRCA				; CTRL key status
+	LD	A,3			; CTRL-STOP
+	JR	NC,J0F50		; CTRL pressed, flag CTRL-STOP
+	INC	A			; STOP
 J0F50:	LD	(INTFLG),A
-	JR	C,J0F64
-;
-;
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-;	compatible with MSX1
+	JR	C,J0F64			; STOP, continue in keyclick
+C0F55:
 
-;
-; MSX 1 had:
-;
+;	Subroutine	put keycode in keyboardbuffer
+;	Inputs		A = keycode
+;	Outputs		________________________
+;	Remark		entrypoint compatible with MSX1
+
+; #####################
+; MSX 1 code: (0F55-0F63)
+
 ;	LD	HL,(PUTPNT)
-;	LD	(HL),A
-;	CALL	C10C2
+;	LD	(HL),A			; put in keyboardbuffer
+;	CALL	C10C2			; next postition in keyboardbuffer with roundtrip
 ;	LD	A,(GETPNT)
-;	CP	L
-;	RET	Z
-;	LD	(PUTPNT),HL
+;	CP	L			; keyboard buffer full ?
+;	RET	Z			; yep, quit
+;	LD	(PUTPNT),HL		; update put pointer
 
-;
-; MSX 2 and above have following code:
-;
-; clearly this is patchcode
-; this was needed for handeling the new SHIFT KANA mode
+; #####################
+; MSX 2 and above have code in subrom to handle the new SHIFT KANA mode
 
-C0F55:	POP	HL
+	POP	HL
 	PUSH	HL
-	LD	BC,I0EE0
+	LD	BC,I0EDD
 	OR	A
-	SBC	HL,BC				; called from functionkeyhandler ?
+	SBC	HL,BC			; called from functionkeyhandler ?
 	LD	IX,S.PUTCHR
-	JP	C029B
+	JP	C029B			; put keycode in keyboardbuffer
 
-;
-; end of difference MSX1 - MSX2
-;
+; #####################
+
+;	Subroutine	make keyclick
+;	Inputs		-
+;	Outputs		________________________
+;	Remark		entrypoint compatible with MSX1
 
 J0F64:	LD	A,(CLIKSW)
-	AND	A
-	RET	Z
-;
+	AND	A			; keyclicks enabled ?
+	RET	Z			; nope, quit
 	LD	A,(CLIKFL)
-	AND	A
-	RET	NZ
-;
-	LD	A,0FH	; 15 
-	LD	(CLIKFL),A
-	OUT	(0ABH),A
-	LD	A,0AH	; 10 
+	AND	A			; keyclick already done (only one click for multiple keys) ?
+	RET	NZ			; yep, quit
+	LD	A,0FH
+	LD	(CLIKFL),A		; no keyclick until the next scan
+	OUT	(0ABH),A		; set click bit
+	LD	A,10
 J0F77:	DEC	A
-	JR	NZ,J0F77
-;
+	JR	NZ,J0F77		; wait
+					; reset click bit
+
+;	Subroutine	change click bit
+;	Inputs		A = 0, A <> 0
+;	Outputs		________________________
+;	Remark		entrypoint compatible with MSX1
+
 K.BSND:	AND	A
 	LD	A,0EH
 	JR	Z,J0F80
 	INC	A
 J0F80:	OUT	(0ABH),A
 	RET	
-;
-;	-----------------
+
+;	Subroutine	handle scancodes when KANA is on (and GRAPH and CTRL are not pressed)
+;	Inputs		C = scancode (000H-02FH)
+;	Outputs		________________________
+
 J0F83:	LD	A,(KANAMD)
 	AND	A			; ANSI layout ?
 	LD	A,(NEWKEY+6)
-	RRCA				; shift status in Cx
-	JR	Z,J0F97			; yep,
-;
-; JIS layout
-;
-	LD	HL,I101D
-	JR	C,J0F9F
-;
-	LD	HL,I104D
+	RRCA				; SHIFT key status in Cx
+	JR	Z,J0F97			; yep, use ANSI layout
+	LD	HL,I101D		; assume JIS layout without SHIFT
+	JR	C,J0F9F			; SHIFT not pressed, continue
+	LD	HL,I104D		; use JIS layout with SHIFT
 	JR	J0F9F
-;
-; ANSI layout
-;
-J0F97:	LD	HL,I0FBD
-	JR	C,J0F9F
-;
-	LD	HL,I0FED
-J0F9F:	LD	B,00H
+
+J0F97:	LD	HL,I0FBD		; assume ANSI layout without SHIFT
+	JR	C,J0F9F			; SHIFT not pressed, continue
+	LD	HL,I0FED		; use ANSI layout with SHIFT
+J0F9F:	LD	B,0
 	ADD	HL,BC
 	LD	BC,C0F55
-	PUSH	BC
+	PUSH	BC			; put in keyboard buffer
 	LD	A,(CAPST)
 	AND	A
-	LD	A,(HL)
+	LD	A,(HL)			; keycode
 	RET	NZ			; CAPS lock active, quit
-;
-	CP	0A6H
-	RET	C
-;
-	CP	0B0H
-	RET	Z
-;
-	CP	0DEH
-	RET	NC
-;
-	SUB	20H	; " "
-	CP	0A0H
-	RET	C
-;
-	ADD	A,40H	; "@"
+	CP	0A6H			; keycodes 000H-0A5H ?
+	RET	C			; nope, keycode unchanged
+	CP	0B0H			; keycode 0B0H ?
+	RET	Z			; yep, keycode unchanged
+	CP	0DEH			; keycodes 0DEH-FFH ?
+	RET	NC			; yep, keycode unchanged
+	SUB	20H			; make lowercase
+	CP	0A0H			; good assumption ?
+	RET	C			; yep, quit
+	ADD	A,40H			; make uppercase
 	RET	
-;
-; ANSI layout, without SHIFT (based on CAPS on)
-;
+
+;	Table		ANSI layout, without SHIFT (based on CAPS on)
+
 I0FBD:	DEFB	0C9H,0B1H,0B2H,0B3H,0B4H,0B5H,0C5H,0C6H
 	DEFB	0C7H,0C8H,0D7H,0D8H,0D9H,0DAH,0DBH,0D3H
 	DEFB	0DEH,0DFH,0D6H,0DCH,0A6H,0DDH,0BBH,0C4H
 	DEFB	0C2H,0BDH,0B8H,0BEH,0BFH,0CFH,0CCH,0D0H
 	DEFB	0D1H,0D2H,0D5H,0D4H,0CDH,0CEH,0B6H,0B9H
 	DEFB	0BCH,0BAH,0CBH,0C3H,0B7H,0C1H,0CAH,0C0H
-;
-; ANSI layout, with SHIFT (based on CAPS on)
-;
+
+;	Table		ANSI layout, with SHIFT (based on CAPS on)
+
 I0FED:	DEFB	0C9H,0A7H,0A8H,0A9H,0AAH,0ABH,0C5H,0C6H
 	DEFB	0C7H,0C8H,0D7H,0D8H,0D9H,0DAH,0A2H,0D3H
 	DEFB	0B0H,0A3H,0AEH,0A4H,0A1H,0A5H,0BBH,0C4H
 	DEFB	0AFH,0BDH,0B8H,0BEH,0BFH,0CFH,0CCH,0D0H
 	DEFB	0D1H,0D2H,0ADH,0ACH,0CDH,0CEH,0B6H,0B9H
 	DEFB	0BCH,0BAH,0CBH,0C3H,0B7H,0C1H,0CAH,0C0H
-;
-; JIS layout, without SHIFT (based on CAPS on)
-;
+
+;	Table		JIS layout, without SHIFT (based on CAPS on)
+
 I101D:	DEFB	0DCH,0C7H,0CCH,0B1H,0B3H,0B4H,0B5H,0D4H
 	DEFB	0D5H,0D6H,0CEH,0CDH,0B0H,0DEH,0DFH,0DAH
 	DEFB	0B9H,0D1H,0C8H,0D9H,0D2H,0DBH,0C1H,0BAH
 	DEFB	0BFH,0BCH,0B2H,0CAH,0B7H,0B8H,0C6H,0CFH
 	DEFB	0C9H,0D8H,0D3H,0D0H,0D7H,0BEH,0C0H,0BDH
 	DEFB	0C4H,0B6H,0C5H,0CBH,0C3H,0BBH,0DDH,0C2H
-;
-; JIS layout, with SHIFT (based on CAPS on)
-;
+
+;	Table		JIS layout, with SHIFT (based on CAPS on)
+
 I104D:	DEFB	0A6H,0C7H,0CCH,0A7H,0A9H,0AAH,0ABH,0ACH
 	DEFB	0ADH,0AEH,0CEH,0CDH,0B0H,0DEH,0A2H,0DAH
 	DEFB	0B9H,0A3H,0A4H,0A1H,0A5H,0DBH,0C1H,0BAH
@@ -463,25 +482,24 @@ I104D:	DEFB	0A6H,0C7H,0CCH,0A7H,0A9H,0AAH,0ABH,0ACH
 	DEFB	0C9H,0D8H,0D3H,0D0H,0D7H,0BEH,0C0H,0BDH
 	DEFB	0C4H,0B6H,0C5H,0CBH,0C3H,0BBH,0DDH,0AFH
 
-;	  Subroutine handles scancodes 000H-02FH with GRAPH pressed
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
+;	Subroutine	handle scancodes 000H-02FH with GRAPH key pressed
+;	Inputs		C = scancode
+;	Outputs		________________________
 
-J107D:	LD	B,00H
+J107D:	LD	B,0
 	LD	HL,I1092
 	ADD	HL,BC
-	LD	A,(HL)
+	LD	A,(HL)			; keycode
 	AND	A
-	RET	Z
-	CP	80H
+	RET	Z			; no keycode, quit
+	CP	80H			; keycodes 001H-7FH ?
 	PUSH	AF
 	LD	A,1
-	CALL	C,C0F55
+	CALL	C,C0F55			; yep, put MSX header keycode in keyboard buffer
 	POP	AF
-	JP	C0F55
+	JP	C0F55			; put keycode in keyboard buffer
 
-;	  Table with keycodes for scancodes 000H-02FH with GRAPH pressed
+;	Table		keycodes for scancodes 000H-02FH with GRAPH pressed
 ;	000H		no keycode
 ;	001H-07FH	keycode 1 + keycode (special MSX graphic character)
 ;	080H-0FFH	keycode
