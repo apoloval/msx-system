@@ -1,5 +1,16 @@
-; Disk I/O routines of the Turbo-R (GT)
+; Diskdriver Panasonic FS-A1GT
+;
+; FDC	TC8566AF
+; extra	S1990 hardware for Disk Change
 
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+
+; Code Copyrighted by Panasonic and maybe others
+; Source comments by Arjen Zeilemaker
+
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
 
 
 DEFDPB	EQU	L73DB-1		; default DPB is 720 Kb 3.5"
@@ -2166,7 +2177,7 @@ L7E1D:	DB	0EBh,0FEh,090h
 	DW	0
 
 L7E3B:	DB	0EBh,0FEh,090h
-	DB	"MSX_03  "
+	DB	"MSX_04  "
 	DW	512
 	DB	2
 	DW	1

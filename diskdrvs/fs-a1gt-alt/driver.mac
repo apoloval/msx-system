@@ -1,5 +1,17 @@
-; Disk I/O routines of the Turbo-R (GT)
+; Diskdriver Panasonic FS-A1GT
+; Alternate version without SROM/SRAM drive support
+;
+; FDC	TC8566AF
+; extra	S1990 hardware for Disk Change
 
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+
+; Code Copyrighted by Panasonic and maybe others
+; Source comments by Arjen Zeilemaker
+
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
 
 
 MYSIZE	EQU	31		; size of environment
@@ -194,9 +206,9 @@ L749B:	CALL	L75EB		; init dskio
 	POP	HL
 	JR	L74DD
 
-L74D1:	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0 READY ON)
+L74D1:	CALL	L785F		; normal ready
 	CALL	L74E5		; write sector
-	JP	L75AA		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+	JP	L75AA		; force ready
 
 L74DA:	CALL	L74D1		; write sector (with ready signal)
 L74DD:	RET	C		; error, quit
@@ -211,7 +223,7 @@ L74E7:	PUSH	HL
 	PUSH	BC
 	LD	DE,L751E	; cont routine
 	PUSH	DE
-	LD	DE,L7993	; wait routine
+	LD	DE,L7993	; wait 16.5 ms routine
 	PUSH	DE
 	LD	(IX+10),045H	; WRITE DATA
 	LD	B,9
@@ -310,14 +322,14 @@ L7596:	CALL	L759C		; verify sector (with ready)
 	RET	C		; error, quit
 	JR	L75BF		; next
 
-L759C:	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0 READY ON)
+L759C:	CALL	L785F		; normal ready
 	CALL	L75C6		; read/verify sector
-	JR	L75AA		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+	JR	L75AA		; normal ready
 
-L75A4:	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0 READY ON)
+L75A4:	CALL	L785F		; normal ready
 	CALL	L75C6		; read/verify sector
 L75AA:	PUSH	AF
-	CALL	L7863		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+	CALL	L7863		; forced ready
 	POP	AF
 	RET
 
@@ -441,10 +453,10 @@ L7681:	LD	A,C
 	LD	(L7FF2),A	; motor on
 	EI
 	LD	C,L		; track on side
-	CALL	L785F		; 20h to 7FF3 (C4 enable, C4=0 READY ON)
+	CALL	L785F		; normal ready
 	CALL	L76CF		; Wait FDD ready
 	PUSH	AF
-	CALL	L7863		; 30h to 7FF3 (C4 enable, C4=1 READY OFF)
+	CALL	L7863		; force ready
 	POP	AF
 	JR	C,L76BD		; timeout, Not ready error
 	BIT	6,A
@@ -473,7 +485,7 @@ L76BD:	POP	HL
 	RET
 
 L76C1:	PUSH	BC
-	LD	BC,0CDE5H
+	LD	BC,52709
 L76C5:	EX	(SP),HL
 	EX	(SP),HL
 	DEC	BC
@@ -485,7 +497,7 @@ L76C5:	EX	(SP),HL
 
 L76CF:	LD	(IX+10),004H	; SENSE DRIVE STATUS
 	PUSH	BC
-	LD	HL,01388H
+	LD	HL,5000
 L76D7:	DEC	HL
 	LD	A,L
 	OR	H
@@ -524,7 +536,7 @@ INIHRD:	LD	HL,0
 	POP	IX
 	CALL	L7716		; init FDC
 	LD	A,14H		; motor enable drv 0, normal operation, select drv 0
-	CALL	L7732		; Recalibrate
+	CALL	L7732		; init drive
 	LD	SP,IY		; Restore stack
 
 
@@ -535,7 +547,7 @@ INIHRD:	LD	HL,0
 DSKSTP:	JP	L7867
 
 L7716:	LD	(L7FF2),A	; reset FDC
-	LD	A,0FAH		; 11111010 (enable C6, C6=1, enable C4, C4=1 READY OFF, enable C2, no standby, enable C0, no TC)
+	LD	A,0FAH		; 11111010 (enable C6, C6=1, enable C4, C4=1 (force ready), enable C2, no standby, enable C0, no TC)
 	LD	(L7FF3),A
 	CALL	L7867		; motor off
 	LD	(IX+10),003H	; SPECIFY
@@ -546,7 +558,7 @@ L7716:	LD	(L7FF2),A	; reset FDC
 
 L7732:	LD	(L7FF2),A	; motor on
 	LD	(IX+11),A
-	CALL	L76C1		; wait
+	CALL	L76C1		; wait 1 second (motor spin up ?)
 L773B:	LD	(IX+10),007H	; RECALIBRATE
 	LD	B,2
 	CALL	L7921		; write 2 bytes to controller
@@ -561,7 +573,7 @@ DRIVES:	PUSH	BC
 	PUSH	AF
 	CALL	GETWRK		; GETWRK
 	LD	A,025H		; motor enable drv 1, normal operation, select drv 1
-	CALL	L7732		; Recalibrate
+	CALL	L7732		; init drive
 	LD	L,1
 	JR	NC,L7764	; 2 drives connected
 	LD	(IX+7),L	; set 1 physical drive
@@ -629,14 +641,14 @@ DSKCHG:	EI
 	LD	B,0		; disk change unknown
 	AND	A
 	RET
-L77BC:	XOR	A
+L77BC:	XOR	A		; physical drive 0
 L77BD:	AND	A
 	LD	B,010H		; use -DC0
 	JR	Z,L77C4		; drive 0
 	LD	B,020H		; use -DC1
 L77C4:	LD	(IX+11),A
 	LD	(IX+10),004H	; SENSE DRIVE STATUS
-	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0 READY ON)
+	CALL	L785F		; normal ready
 	PUSH	BC
 	LD	B,2
 	CALL	L7921		; write 2 bytes to controller
@@ -655,11 +667,11 @@ L77D7:	LD	A,(L7FF4)
 	JR	Z,L77ED		; bit was reset, disk changed
 	LD	B,1		; disk unchanged
 L77ED:	XOR	A
-	JR	L77F3		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+	JR	L77F3		; normal ready
 L77F0:	LD	B,0
 	AND	A
 L77F3:	PUSH	AF
-	CALL	L7863		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+	CALL	L7863		; force ready
 	POP	AF
 	RET
 
@@ -726,7 +738,7 @@ L7871:	PUSH	HL
 	PUSH	BC
 	LD	DE,L78A4
 L7877:	PUSH	DE
-	LD	DE,L7993
+	LD	DE,L7993	; wait 16.5 ms routine
 	PUSH	DE
 	LD	(IX+10),046H	; READ DATA, 1 track, MFM, no skip
 	LD	B,9
@@ -784,7 +796,7 @@ L78DF:	BIT	0,E
 	RET	NZ
 	PUSH	BC
 	LD	(IX+10),00FH	; SEEK
-	LD	(IX+12),006H	; Track 6
+	LD	(IX+12),6	; Track 6
 	LD	B,3
 	CALL	L7921		; write 3 bytes to controller
 	CALL	L7955		; wait for end of seek
@@ -795,26 +807,26 @@ L78DF:	BIT	0,E
 	POP	BC
 
 L7900:	PUSH	BC
-	LD	B,077H
+	LD	B,119
 L7903:	EX	(SP),HL
 	EX	(SP),HL
-	DJNZ	L7903		; wait
+	DJNZ	L7903		; wait 1.8 ms
 	LD 	(IX+10),00FH	; SEEK
 	LD	(IX+12),C	; track
 	LD	B,3
 	CALL	L7921		; write 3 bytes to controller
 	CALL	L7955		; wait on end of seek
-	LD	BC,00773H
+	LD	BC,1907
 L7919:	DEC	BC
 	LD	A,B
 	OR	C
-	JR	NZ,L7919	; wait
+	JR	NZ,L7919	; wait 16 ms
 	POP	BC
 	XOR	A
 	RET
 
 L7921:	PUSH	HL
-	LD	HL,07D0H
+	LD	HL,2000
 L7925:	LD	A,(L7FF4)
 	AND	010H
 	JR	Z,L7934		; FDC ready,
@@ -825,6 +837,7 @@ L7925:	LD	A,(L7FF4)
 	POP	HL
 	SCF			; error flag (takes to much time)
 	RET
+
 L7934:	PUSH	DE
 	PUSH	IX
 	LD	DE,10
@@ -847,7 +860,7 @@ L7942:	LD	A,(L7FF4)
 
 L7955:	LD	A,(L7FF4)
 	AND	010H
-	JR	NZ,L7955	; FDC is busy
+	JR	NZ,L7955	; FDC is busy, wait
 L795C:	CALL	L796B		; get status
 	LD	A,(IX+19)
 	BIT	5,A
@@ -878,7 +891,7 @@ L797D:	LD	A,(L7FF4)
 L7990:	POP	IX
 	RET
 
-L7993:	LD	BC,007A8H
+L7993:	LD	BC,1960
 L7996:	DEC	BC
 	LD	A,B
 	OR	C
@@ -886,12 +899,12 @@ L7996:	DEC	BC
 	RET
 
 L799C:	LD	A,002H
-	LD	(L7FF3),A	; enable C0
+	LD	(L7FF3),A	; enable C0, TC=0
 	INC	A
 	LD	(L7FF3),A	; enable C0, TC=1
 	NOP
 	DEC	A
-	LD	(L7FF3),A	; enable C0
+	LD	(L7FF3),A	; enable C0, TC=0
 	RET
 
 L79AB:	LD	E,(IX+20)	; ST1
@@ -909,8 +922,8 @@ L79BB:	PUSH	HL
 	PUSH	BC
 	LD	DE,L79F2
 	PUSH	DE
-	LD	DE,L7993
-	PUSH	DE		; if something goes wrong: wait and then terminate FDC operation
+	LD	DE,L7993	; wait 16.5 ms routine
+	PUSH	DE
 	LD	(IX+10),046H	; READ DATA, 1 Track, MFM, No skip
 	LD	B,9
 	CALL	L7921		; write bytes to controller
@@ -1029,7 +1042,7 @@ L7A5A:	PUSH	BC
 	DJNZ	L7A5A
 	POP	AF
 	PUSH	AF
-	LD	HL,L7B0A		; offsets for diskcontroller adres
+	LD	HL,L7B0A	; offsets for diskcontroller adres
 	LD	B,12
 	JR	NC,L7A87
 	LD	B,9
@@ -1365,7 +1378,7 @@ L7CAC:	ADD	HL,DE
 	JR	Z,L7CBE		; physical drive 0
 	LD	A,025H
 L7CBE:	LD	(L7FF2),A	; motor on
-	CALL	L76C1		; wait
+	CALL	L76C1		; wait 1 second (motor spin up ?)
 	PUSH	IY
 	POP	HL
 	LD	DE,10
@@ -1411,7 +1424,7 @@ L7D00:	LD	C,(IY+10)
 	JR	C,L7D4B		; error, finish dskfmt
 	BIT	0,(IY+2)	; single ?
 	JR	Z,L7D2A		; yep, skip side 1
-	CALL	L7993		; wait
+	CALL	L7993		; wait 16.5 ms
 	CALL	L7F1B		; change side in track data
 	LD	B,004H		; side 1
 	CALL	L7E68		; format track
@@ -1590,7 +1603,7 @@ L7E1D:	DB	0EBh,0FEh,090h
 	DW	0
 
 L7E3B:	DB	0EBh,0FEh,090h
-	DB	"MSX_03  "
+	DB	"MSX_04  "
 	DW	512
 	DB	2
 	DW	1
@@ -1622,13 +1635,13 @@ L7E59:	DEFB 	04DH		; FORMAT A TRACK
 	DEFB	80		; GAP3= 80 bytes
 	DEFB	0FFH		; Datalength
 
-L7E68:	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0 READY ON)
+L7E68:	CALL	L785F		; normal ready
 	LD	A,(IY+7)	; physical drive
 	LD	(IX+11),A
 	CALL	L76CF		; wait FDD ready
-	JP	C,L7F0F		; timeout, 30h to 7FF3 (READY OFF) and quit with not ready error
+	JP	C,L7F0F		; timeout, 30h to 7FF3 (force ready) and quit with not ready error
 	BIT	6,A
-	JP	NZ,L7F15	; 30h to 7FF3 (READY OFF), quit with write protect error
+	JP	NZ,L7F15	; 30h to 7FF3 (force ready), quit with write protect error
 	PUSH	BC
 	PUSH	IX
 	POP	HL
@@ -1684,7 +1697,7 @@ L7ED1:	DEC	BC
 	CP	0C0H
 	JR	NZ,L7ED1	; wait until command ends
 	CALL	L797B		; read bytes from controller
-L7EE0:	CALL	L7863		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+L7EE0:	CALL	L7863		; force ready
 	LD	A,(IX+19)
 	LD	B,A
 	AND	0C0H
@@ -1705,15 +1718,15 @@ L7EFF:	POP	BC
 L7F00:	XOR	A
 	CALL	L7716		; init FDC
 	LD	A,004H		; motor off, normal operation, select drv 0
-	CALL	L7732		; Recalibrate
+	CALL	L7732		; init drive
 	LD	(IX+19),0C8H
 	JR	L7EE0
 
-L7F0F:	CALL	L7863		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+L7F0F:	CALL	L7863		; force ready
 	LD	A,2
 	RET
 
-L7F15:	CALL	L7863		; 30h to 7FF3 (enable C4, C4=1 READY OFF)
+L7F15:	CALL	L7863		; force ready
 	XOR	A
 	SCF
 	RET
@@ -1792,7 +1805,8 @@ MsxDosFcb:	db	0
 		dw	0
 		dw	0
 		dw	0
-		db	0,0,0,0,0
+		db	0
+		db	0,0,0,0
 
 StartFlag:	db	0
 
@@ -1823,17 +1837,26 @@ L7799:	POP	AF
 	JP	PRVINT		; PRVINT
 
 
+; S1990 FDD registers
+
 L7FF0	EQU	07FF0H		; Diskrom 'segment' select
 L7FF1	EQU	07FF1H		; ???, b4 = -DC0, b5 = -DC1, b1 = -HD1, b0 = -HD0
+
+; TC8566 FDC registers
+
 L7FF2	EQU	07FF2H		; DOR, b0 = 0 drive 0, 1 drive 1
 				;      b2 = 0 reset FDC, 1 enable FDC
 				;      b3 = 0 disable DMA, 1 enable DMA
 				;      b4 = 1 motor select drive 0
 				;      b5 = 1 motor select drive 1
 L7FF3	EQU	07FF3H		; TDR, b0 = TC
-				;      b4 = ?
+				;      b1 = enable writing to TC bit
+				;      b2 = STANDBY
+				;      b3 = enable writing to STANDBY bit
+				;      b4 = C4 = FORCE READY
+				;      b5 = enable writing to C4
+                   		;      b6 = C6 = not used
+				;      b7 = enable writing to C6
 L7FF4	EQU	07FF4H		; MSR, Statusport FDC
 L7FF5	EQU	07FF5H		; DAT, Dataport FDC
 
-				; C4 bit is used for ´faking´ a ready signal
-				;    if the diskdrive itself does not have it
