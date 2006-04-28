@@ -53,6 +53,7 @@ CALSLT	equ	0001CH
 ENASLT	equ	00024H
 IDBYT0	equ	0002BH
 CALLF	equ	00030H
+M0034	equ	00034H
 KEYINT	equ	00038H
 LDIRMV	equ	00059H
 LDIRVM	equ	0005CH
@@ -324,6 +325,7 @@ M2F99	equ	02F99H		; integer to DAC
 M3042	equ	03042H		; convert DAC from sgn to dbl
 M30D1	equ	030D1H		; dbl to integer
 M325C	equ	0325CH		; sgn multiply
+M3FD6	equ	03FD6H		; empty string
 M406F	equ	0406FH		; BASIC error
 M409B	equ	0409BH		; restart BASIC
 M4173	equ	04173H		; execute statement
@@ -2818,7 +2820,7 @@ A4E78:	pop	de
 	ex	de,hl
 	pop	bc
 	ld	a,(YF241)
-	cp	(ix+0)		; driveid
+	cp	(ix+0)			; driveid
 	ld	a,c
 	scf
 	jr	nz,A4EC7
@@ -3036,7 +3038,7 @@ A4FC4:	ld	(YF30B),a
 	cp	005H
 	jr	nz,A4FDC
 	ld	(hl),0E5H
-A4FDC:	ld	bc,00020H
+A4FDC:	ld	bc,32
 	call	XF1D9			; transfer direntry to DOS memory (?? LDIR is also sufficient)
 	call	A4439			; get max record and extent
 	ld	a,(YF30C)
@@ -4252,24 +4254,28 @@ A56D0:	xor	a
 	ld	b,a
 	ret
 
+;	Subroutine	BDOS handler (for DiskBASIC)
+;	Inputs		
+;	Outputs		________________________
+
 A56D3:	ei
 	ld	a,1
 	ld	(YF306),a		; assume CP/M compatible call
 	ld	a,c
-	cp	031H
-	jr	nc,A56D0
-	sub	011H
+	cp	031H			; valid BDOS function ?
+	jr	nc,A56D0		; nope, unsupported BDOS call
+	sub	011H			; Search First BDOS function ?
 	jr	nz,A56E6
-	ld	(YF307),de
-A56E6:	dec	a
+	ld	(YF307),de		; yep, save address FCB for Search Next
+A56E6:	dec	a			; Search Next BDOS function ?
 	jr	nz,A56ED
-	ld	de,(YF307)
+	ld	de,(YF307)		; yep, get saved address FCB Search First
 A56ED:	push	hl
 	ld	hl,T5700
-	ex	(sp),hl
+	ex	(sp),hl			; after BDOS routine, fill HL in a CP/M compatible manner
 	push	hl
 	ld	hl,T570D
-	ld	b,000H
+	ld	b,0
 	add	hl,bc
 	add	hl,bc
 	ld	b,(hl)
@@ -4277,7 +4283,7 @@ A56ED:	push	hl
 	ld	h,(hl)
 	ld	l,b
 	ex	(sp),hl
-	ret
+	ret				; start BDOS routine
 
 T5700:	push	af
 	ld	a,(YF306)
@@ -4310,7 +4316,7 @@ A576F:	call	INIHRD			; initialize diskhardware
 	jr	nz,A578E
 	set	0,(hl)
 	ld	hl,EXTBIO
-	ld	b,00FH
+	ld	b,3*5
 A5789:	ld	(hl),0C9H
 	inc	hl
 	djnz	A5789			; nop, init EXTBIO,DISINT and ENAINT hooks
@@ -4329,14 +4335,16 @@ A57A3:	ld	a,0FFH
 	ld	(DEVICE),a		; flag abort disksystem init
 	ret
 
+;	Subroutine	Initialize disksystem, first diskrom
+
 A57A9:	ld	hl,0F380H+MYSIZE
 	ld	de,XF1C9
 	and	a
-	sbc	hl,de
-	call	nc,A5EE8		; allocate basic disksystem memory
+	sbc	hl,de			; bytes needed for static workarea+workarea driver
+	call	nc,A5EE8		; allocate memory (adjust BASIC areapointers)
 	ret	c			; failed, quit
 A57B6:	push	hl
-	ld	hl,-439
+	ld	hl,XF1C9-0F380H
 	ld	bc,XF1C9
 A57BD:	xor	a
 	ld	(bc),a
@@ -4344,9 +4352,9 @@ A57BD:	xor	a
 	inc	hl
 	ld	a,l
 	or	h
-	jr	nz,A57BD		; clear memory
-	ld	(AUTLIN),hl		; SECLEN sofar zero
-	ld	b,014H
+	jr	nz,A57BD		; clear static workarea
+	ld	(AUTLIN),hl		; biggest sectorsize sofar = 0
+	ld	b,4*2+4*3
 	ld	hl,YFB21
 A57CD:	ld	(hl),a
 	inc	hl
@@ -4359,41 +4367,44 @@ A57D6:	ld	(hl),0C9H
 	ld	a,0DBH
 	ld	hl,0C9A8H
 	ld	(XF365+0),a
-	ld	(XF365+1),hl
+	ld	(XF365+1),hl		; read primairy slotregister entry
 	ld	a,006H
 	call	SNSMAT
-	and	002H			; CTRL key pressed
-	ld	(YF33F),a		; saved for panthom drive
+	and	002H
+	ld	(YF33F),a		; saved CTRL key status for panthom drive
 	ld	a,007H
 	rst	018H			; beep
 	ld	hl,T5807
 	ld	de,H.RUNC
-	ld	bc,00005H
+	ld	bc,5
 	ldir
 	call	A402D
-	ld	(H.RUNC+1),a		; init RUNC hook, to catch intialize interpeter
+	ld	(H.RUNC+1),a		; init RUNC hook, to intialize further when the interpeter is initialized
 	pop	de			; base diskdriver workarea
 	jr	A5825
 
 T5807:	rst	030H
-	defb	000H
+	defb	0
 	defw	A5897
 	ret
 
+;	Subroutine	Initialize disksystem, not the first diskrom
+
 A580C:	ld	hl,YFB21		; DRVTBL
-	ld	b,004H			; 4 diskroms
+	ld	b,4			; 4 diskroms
 	xor	a
 A5812:	add	a,(hl)
 	jp	c,A5ECC			; invalid DRVTBL, error
 	inc	hl
 	inc	hl
 	djnz	A5812
-	cp	008H			; 8 or more drives ?
+	cp	8			; 8 or more drives ?
 	ret	nc			; yep, no more drives!
-	ld	hl,MYSIZE
-	call	A5EE8			; allocate diskdriver workarea
+	ld	hl,MYSIZE		; number of bytes for workarea driver
+	call	A5EE8			; allocate memory (adjust BASIC areapointers)
 	ret	c			; failed, quit
 	ex	de,hl
+
 A5825:	call	A5FCD			; get my SLTWRK entry
 	ld	(hl),e
 	inc	hl
@@ -4420,10 +4431,10 @@ A584B:	ld	a,(YF33F)
 	ld	a,c			; phantom flag
 A5850:	call	DRIVES			; query no. of drives
 	add	a,l
-	cp	009H
+	cp	9
 	ld	a,l			; more as 8 drives ?
 	jr	c,A585C			; nop, ok
-	ld	a,008H
+	ld	a,8
 	sub	c			; as much as possible
 A585C:	push	bc
 	ld	(de),a			; save drives
@@ -4431,7 +4442,7 @@ A585C:	push	bc
 	call	A402D
 	ld	(de),a			; save slotid diskrom
 	pop	bc			; drivenumber
-	ld	b,000H
+	ld	b,0
 	ld	hl,YF355
 	add	hl,bc
 	add	hl,bc			; DPBTBL
@@ -4440,11 +4451,11 @@ A585C:	push	bc
 	ld	a,(de)
 	push	af
 	ld	c,a			; drives
-	ld	de,00015H
+	ld	de,21
 	call	A4916			; * size of DPB
 	ld	l,c
-	ld	h,b
-	call	A5EC8			; allocate space for DPB's
+	ld	h,b			; number of bytes for the DPBs
+	call	A5EC8			; allocate memory (adjust BASIC areapointers, halt when error)
 	ex	de,hl
 	pop	af
 	pop	hl
@@ -4454,7 +4465,7 @@ A587E:	ld	(hl),e
 	inc	hl
 	push	hl
 	ld	hl,DEFDPB
-	ld	bc,00015H
+	ld	bc,21
 	ldir				; initialize DPB
 	pop	hl
 	dec	a
@@ -4478,17 +4489,17 @@ A589C:	ld	(hl),0C9H
 	ld	hl,DEVICE
 	xor	a
 	cp	(hl)
-	ld	(hl),a			; clear
+	ld	(hl),a			; clear diskinterface count
 	ret	p			; already cleared, return control
 A58A8:	call	A622D			; hook H.LOPD when H.CLEA is hooked (for register system bottom)
 	ld	(YF348),a		; disksystem diskrom slotid
 	ld	hl,A7397
 	ld	de,XF1C9
 	ld	bc,0006EH
-	ldir
-	ld	hl,00034H
+	ldir				; initialize some static disksystem variables
+	ld	hl,M0034
 	ld	de,YF30F
-	ld	bc,00004H
+	ld	bc,4
 	ldir				; initialize double byte header char table
 	ld	a,(IDBYT0)
 	rrca
@@ -4507,41 +4518,41 @@ A58A8:	call	A622D			; hook H.LOPD when H.CLEA is hooked (for register system bot
 	ld	(YF345),a		; max number of FCB´s is 7
 	ld	hl,1461
 	ld	(YF33B),hl		; default date when no clockchip is 1-1-1984
-	ld	b,008H
+	ld	b,8
 	ld	hl,XF368
 A58F0:	ld	(hl),0C3H
 	inc	hl
 	inc	hl
 	inc	hl
-	djnz	A58F0			; initialize diskvars
+	djnz	A58F0			; initialize jumptable
 	ld	hl,(AUTLIN)
-	push	hl
-	call	A5EC8
+	push	hl			; size of the biggest sector
+	call	A5EC8			; allocate memory (adjust BASIC areapointers, halt when error)
 	ld	($SECBUF),hl		; allocate sectorbuffer
-	pop	hl
+	pop	hl			; size of the biggest sector
 	push	hl
-	call	A5EC8
+	call	A5EC8			; allocate memory (adjust BASIC areapointers, halt when error)
 	ld	(YF34F),hl		; allocate datasector buffer
-	pop	hl
-	call	A5EC8
+	pop	hl			; size of the biggest sector
+	call	A5EC8			; allocate memory (adjust BASIC areapointers, halt when error)
 	ld	(YF351),hl		; allocate dirsector buffer
 	ld	hl,YFB21		; DRVTBL
-	ld	b,004H			; 4 diskroms
+	ld	b,4			; 4 diskroms
 	xor	a
 A5916:	add	a,(hl)
-	jp	c,A5ECC			; invalid, error
+	jp	c,A5ECC			; invalid DRVTBL, error
 	inc	hl
 	inc	hl
 	djnz	A5916
-	cp	009H			; more as 8 drives ?
+	cp	9			; more as 8 drives ?
 	jp	nc,A5ECC		; yep, error
 	ld	(YF347),a		; drives in system
-	ld	b,a
-	ld	c,000H
+	ld	b,a			; number of drives
+	ld	c,0			; drive 0
 	ld	hl,YF355
 A592C:	ld	e,(hl)
 	inc	hl
-	ld	d,(hl)
+	ld	d,(hl)			; DPB of drive
 	inc	hl
 	push	hl
 	push	de
@@ -4554,10 +4565,10 @@ A592C:	ld	e,(hl)
 	ld	e,(ix+16)
 	ld	d,0			; number of sectors per FAT
 	call	A4916			; * FAT size
-	inc	bc			; and a FAT flag
+	inc	bc			; and a FAT buffer flag
 	ld	l,c
-	ld	h,b
-	call	A5EC8			; allocate FAT buffer
+	ld	h,b			; size of the FAT buffer
+	call	A5EC8			; allocate memory (adjust BASIC areapointers, halt when error)
 	ld	(YF349),hl		; base system bottom sofar
 	ld	(hl),0FFH		; flag invalid FAT buffer
 	inc	hl
@@ -4570,16 +4581,16 @@ A592C:	ld	e,(hl)
 	ld	(hl),03EH
 	inc	hl
 	ld	(hl),01AH
-	ld	b,008H
+	ld	b,2*5-2
 A5967:	inc	hl
 	ld	(hl),0C9H
-	djnz	A5967
+	djnz	A5967			; initialize MSX-serial hooks
 	ld	hl,XF327
 	ld	(XF371+1),hl
 	ld	hl,XF32C
 	ld	(XF374+1),hl
 	ld	hl,XF331
-	ld	(XF37D+1),hl
+	ld	(XF37D+1),hl		; initialize jumptable
 	ld	hl,M7D2F
 	ld	a,(EXPTBL+0)
 	call	RDSLT
@@ -4611,7 +4622,7 @@ A59C1:	ld	c,040H
 	call	A5E52			; search ram in page 1
 	jr	c,A59CB
 	ld	(RAMAD1),a		; found, set ram slotid page 1
-A59CB:	ld	sp,0C200H		; stack just above temp startbuffer
+A59CB:	ld	sp,0C200H		; switch to a temporary stack, just above temp startbuffer
 	ld	a,(H.STKE+0)
 	cp	0C9H			; STKE hook set ?
 	jr	z,A59DB			; nop, cont
@@ -4669,14 +4680,14 @@ A5A11:	XOR	A
 J5A36:	LD	(HL),A
 	INC	L
 	JR	NZ,J5A36		; clear 0000-00FF
-	LD	BC,38
-	CALL	A5EAD			; allocate MSX-DOS memory for XFER
+	LD	BC,38			; size of the XFER routine
+	CALL	A5EAD			; allocate MSXDOS memory (halt when error)
 	LD	(XFER+1),HL
 	EX	DE,HL
 	LD	HL,I637B
 	LDIR				; install XFER routine
-	LD	BC,25
-	CALL	A5EAD			; allocate MSX-DOS memory for ENARAM and ENAKRN
+	LD	BC,25			; size of the ENARAM and ENAKRN routine
+	CALL	A5EAD			; allocate MSXDOS memory (halt when error)
 	LD	E,L
 	LD	D,H
 	LD	(XF368+1),HL
@@ -4685,8 +4696,8 @@ J5A36:	LD	(HL),A
 	LD	(XF36B+1),HL
 	LD	HL,I63A1
 	LDIR				; install ENAKRN and ENARAM
-	LD	BC,360
-	CALL	A5EAD			; allocate MSX-DOS memory for slotswitching routines
+	LD	BC,360			; size of the slotswitching routines
+	CALL	A5EAD			; allocate MSXDOS memory (halt when error)
 	PUSH	HL
 	EX	DE,HL
 	LD	HL,C63F4
@@ -4708,7 +4719,7 @@ J5A36:	LD	(HL),A
 	LD	D,A
 J5A84:	LD	E,(HL)
 	CP	E
-	JR	Z,J5A98		; end of table, continue
+	JR	Z,J5A98			; end of table, continue
 	INC	HL
 	LD	C,(HL)
 	INC	HL
@@ -4729,8 +4740,8 @@ J5A98:	POP	HL
 	LD	DE,X003B
 	LD	BC,26
 	LDIR				; install slotswitching helper routines
-	LD	BC,69
-	CALL	A5EAD			; allocate MSX-DOS memory for interrupt routine
+	LD	BC,69			; size of the interrupt routine
+	CALL	A5EAD			; allocate MSXDOS memory (halt when error)
 	PUSH	HL
 	EX	DE,HL
 	LD	HL,I6336
@@ -4751,8 +4762,8 @@ J5A98:	POP	HL
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D			; start of KEYINT stack
-	LD	BC,160
-	CALL	A5EAD			; allocate MSX-DOS memory for KEYINT stack
+	LD	BC,160			; size of the KEYINT stack
+	CALL	A5EAD			; allocate MSXDOS memory (halt when error)
 	LD	A,0C3H
 	CALL	A5C62			; enable XFER, ENAKRN and ENARAM routines
 	SCF
@@ -4800,42 +4811,45 @@ T5B1A:	defb	0,"AUTOEXECBAS",0
 
 T5B27:	defb	'RUN"AUTOEXEC.BAS',0
 
-T5B38:	defw	A5B92
+T5B38:	defw	A5B92			; start DiskBASIC in direct mode
 
-; Start diskbasic
+;	Subroutine	Start DiskBASIC
 
 A5B3A:	call	A5C60			; disable XFER,ENARAM,ENAKRN routines
 	ld	hl,T5B27
 	ld	de,BUF+10
-	ld	bc,00011H
-	ldir
+	ld	bc,17
+	ldir				; copy RUN"AUTOEXEC.BAS in BUF
 	ld	hl,YF340
 	ld	a,(hl)
-	and	a
+	and	a			; is this a warm boot ?
 	ld	(hl),h			; next boot is a warm boot
-	jr	nz,A5B6E		; this was a warm boot, no need to start autoexec.bas
-	ld	(YF346),a		; this was a cold boot, flag CALL SYSTEM invalid
+	jr	nz,A5B6E		; yep, no autoexec.bas but a parameter from MSXDOS ?
+
+;	Subroutine	try to start AUTOEXEC.BAS
+
+	ld	(YF346),a		; flag CALL SYSTEM invalid
 	ld	hl,T5B38
 	ld	(YF323),hl		; setup disk errorhandler
 	ld	hl,T5B1A
-	ld	de,BUF+27
-	ld	bc,00025H
+	ld	de,BUF+10+17
+	ld	bc,37
 	push	de
 	ldir				; setup FCB for autoexec.bas
 	pop	de
 	call	A4462			; open FCB
 	inc	a
-	jr	z,A5B92			; error,
-	jr	A5BA0
+	jr	z,A5B92			; error, start DiskBASIC in direct mode (with date input)
+	jr	A5BA0			; no error, start DiskBASIC and run AUTOEXEC.BAS
 
 A5B6E:	ld	a,(WBOOT)
-	cp	0C3H
-	jr	nz,A5B9C		; diskbasic not started from MSXDOS, just start diskbasic
+	cp	0C3H			; MSXDOS active ?
+	jr	nz,A5B9C		; nope, start DiskBASIC in direct mode
 	ld	hl,00080H
 	ld	b,(hl)
 	inc	b
 	dec	b
-	jr	z,A5B9C			; no parameter specified (after the BASIC command), just start diskbasic
+	jr	z,A5B9C			; no parameter specified (after the BASIC command), start DiskBASIC in direct mode
 A5B7D:	inc	hl
 	ld	a,(hl)
 	cp	" "
@@ -4849,15 +4863,23 @@ A5B87:	xor	a
 	ld	de,BUF+14
 	ldir				; copy file name after the RUN" at BUF+10
 	ld	(de),a			; and a end of line marker
-	jr	A5BA0
+	jr	A5BA0			; start DiskBASIC and run specified basicfile
 
-A5B92:	ld	sp,0C200H
+;	Subroutine	start DiskBASIC in direct mode (cold boot)
+
+A5B92:	ld	sp,0C200H		; switch to a temporary stack
 	ld	a,(YF338)
 	and	a
 	call	z,A5D3F			; no clockchip, ask the date
+
+;	Subroutine	start DiskBASIC in direct mode
+
 A5B9C:	xor	a
 	ld	(BUF+13),a		; make it a ordinary RUN at BUF+10
-A5BA0:	ld	sp,0C200H
+
+;	Subroutine	start DiskBASIC
+
+A5BA0:	ld	sp,0C200H		; switch to a temporary stack
 	ld	a,(RAMAD2)
 	ld	h,080H
 	call	ENASLT			; ram on page 2
@@ -4875,7 +4897,7 @@ A5BA0:	ld	sp,0C200H
 	inc	hl
 	ld	(VARTAB),hl		; start of the variablespace
 	ld	hl,0FFFFH
-	ld	(CURLIN),hl		; interpeter in direct mode
+	ld	(CURLIN),hl		; interpreter in direct mode
 	call	A5C16			; initialize diskbasic
 	ld	sp,(STKTOP)
 	ld	a,0FFH
@@ -4885,10 +4907,12 @@ A5BA0:	ld	sp,0C200H
 	ld	ix,M7D31
 	call	CALBAS			; display BASIC startscreen
 	call	A5F86
-	defb	13,10,"Disk BASIC version 1.0",13,10,0
+	defb	13,10
+	defb	"Disk BASIC version 1.0",13,10
+	defb	0
 	ld	hl,M4173
 	push	hl			; execute RUN command
-	ld	hl,BUF+9
+	ld	hl,BUF+10-1
 	push	hl			; ´basicpointer´
 	ld	hl,BUF+64
 	push	hl
@@ -4899,6 +4923,10 @@ A5BA0:	ld	sp,0C200H
 	ld	h,040H
 	jp	ENASLT			; enable basic-rom on page 1
 
+;	Subroutine	initialize DiskBASIC environment
+;	Inputs		________________________
+;	Outputs		________________________
+
 A5C16:	ld	hl,T72AE
 	ld	(YF323),hl		; setup diskerror handler
 	ld	hl,T5C6C
@@ -4907,20 +4935,20 @@ A5C16:	ld	hl,T72AE
 	ld	(HIMEM),hl
 	ld	a,(YF345)
 	ld	c,a
-	ld	b,000H			; number of FCB´s
+	ld	b,0			; number of FCB´s
 	ld	de,37
 	call	A4916			; * 37
-	call	A5EB8			; allocate basic memory
+	call	A5EB8			; allocate memory (adjust HIMEM, halt when error)
 	ld	(YF353),hl
-	ld	bc,25
-	call	A5EB8			; allocate basic memory
-	ld	(XF377+1),hl
+	ld	bc,25			; size of the BLOAD/BSAVE code
+	call	A5EB8			; allocate memory (adjust HIMEM, halt when error)
+	ld	(XF377+1),hl		; setup BLOAD jumpentry
 	ex	de,hl
 	ld	hl,T62ED
 	ldir				; copy bsave/bload patch code
 	ld	hl,0FFF5H
 	add	hl,de
-	ld	(XF37A+1),hl
+	ld	(XF37A+1),hl		; setup BSAVE jumpentry
 	ld	a,(YF348)
 	ld	de,0FFF9H
 	add	hl,de
@@ -4928,7 +4956,7 @@ A5C16:	ld	hl,T72AE
 	ld	de,0000EH
 	add	hl,de
 	ld	(hl),a
-	call	A5F5F			; setup io channels
+	call	A5F5F			; setup i/o channels
 					; disable XFER..
 A5C60:	ld	a,0C9H
 A5C62:	ld	(XF368+0),a
@@ -4936,11 +4964,15 @@ A5C62:	ld	(XF368+0),a
 	ld	(XFER+0),a
 	ret
 
-T5C6C:	defw	A40A7
+T5C6C:	defw	A40A7			; restart basic
+
+;	Subroutine	initialize hooks
+;	Inputs		________________________
+;	Outputs		________________________
 
 A5C6E:	ld	hl,T62E8
 	ld	de,H.POSD
-	ld	bc,00005H
+	ld	bc,5
 	ldir
 	ld	hl,T5C96
 A5C7C:	ld	e,(hl)
@@ -5003,6 +5035,10 @@ T5C96:	defw	H.DSKO,A6B96
 T5D24:	defb	1,048H,"-",1,041H,"-",1,047H,"):",0
 T5D2F:	defb	"M-D-Y):",0
 T5D37:	defb	"D-M-Y):",0
+
+;	Subroutine	Ask for systemdate
+;	Inputs		________________________
+;	Outputs		________________________
 
 A5D3F:	ld	(BUF+98),sp
 	ld	a,20
@@ -5222,22 +5258,34 @@ J5EA7:	INC	HL
 	SCF
 	RET
 
+;	Subroutine	allocate MSXDOS memory (halt when error)
+;	Inputs		HL = number of bytes to allocate
+;	Outputs		
+
 A5EAD:	ld	hl,(YF34B)
 	and	a
 	sbc	hl,bc
-	ld	(YF34B),hl
+	ld	(YF34B),hl		; new top of MSXDOS
 	jr	A5EC1
+
+;	Subroutine	allocate memory (adjust HIMEM, halt when error)
+;	Inputs		HL = number of bytes to allocate
+;	Outputs		
 
 A5EB8:	ld	hl,(HIMEM)
 	and	a
 	sbc	hl,bc
-	ld	(HIMEM),hl
-A5EC1:	jr	c,A5ECC
+	ld	(HIMEM),hl		; new top of system
+A5EC1:	jr	c,A5ECC			; new top below zero, halt with error
 	ld	a,h
-	cp	0C2H
+	cp	0C2H			; new top below 0C200H ?
 	jr	A5ECB
 
-A5EC8:	call	A5EE8
+;	Subroutine	allocate memory (adjust BASIC areapointers, halt when error)
+;	Inputs		HL = number of bytes to allocate
+;	Outputs		
+
+A5EC8:	call	A5EE8			; allocate memory (adjust BASIC areapointers)
 A5ECB:	ret	nc
 A5ECC:	call	A5F86
 	defb	12
@@ -5250,59 +5298,63 @@ T5ED0:	defb	"No enough memory",0
 	di
 	halt
 
+;	Subroutine	allocate memory (adjust BASIC areapointers)
+;	Inputs		HL = number of bytes to allocate
+;	Outputs		Cx set if out of memory
+
 A5EE8:	ld	a,l
-	or	h
-	ret	z
+	or	h			; size = 0 ?
+	ret	z			; yep, quit
 	xor	a
 	sub	l
 	ld	l,a
-	ld	a,000H
+	ld	a,0
 	sbc	a,h
 	ld	h,a
 	ld	c,l
-	ld	b,h
+	ld	b,h			; - size
 	add	hl,sp
 	ccf
-	ret	c
+	ret	c			; stack would become below zero, quit
 	ld	de,(BOTTOM)
 	sbc	hl,de
-	ret	c
+	ret	c			; stack would become below BOTTOM, quit
 	ld	a,h
-	cp	002H
-	ret	c
+	cp	HIGH 512
+	ret	c			; less then 512 bytes for stack, quit
 	push	bc
-	ld	hl,00000H
+	ld	hl,0
 	add	hl,sp
 	ld	e,l
-	ld	d,h
+	ld	d,h			; top of stack
 	add	hl,bc
-	push	hl
+	push	hl			; new top of stack
 	ld	hl,(STKTOP)
 	and	a
 	sbc	hl,de
 	ld	c,l
-	ld	b,h
+	ld	b,h			; size of the stack
 	inc	bc
 	pop	hl
-	ld	sp,hl
+	ld	sp,hl			; new stack
 	ex	de,hl
-	ldir
+	ldir				; copy stack content to new location
 	pop	bc
 	ld	hl,(HIMEM)
 	add	hl,bc
-	ld	(HIMEM),hl
-	ld	de,0FDEAH
+	ld	(HIMEM),hl		; adjust HIMEM
+	ld	de,-(2*256+2*9+2*2)
 	add	hl,de
-	ld	(FILTAB),hl
+	ld	(FILTAB),hl		; 1 user i/o channel + 1 system i/o channel
 	ex	de,hl
 	ld	hl,(MEMSIZ)
 	add	hl,bc
-	ld	(MEMSIZ),hl
+	ld	(MEMSIZ),hl		; adjust MEMSIZ
 	ld	hl,(NULBUF)
 	add	hl,bc
-	ld	(NULBUF),hl
+	ld	(NULBUF),hl		; adjust NULBUF
 	ld	hl,(STKTOP)
-	add	hl,bc
+	add	hl,bc			; adjust STKTOP
 A5F3B:	ld	(STKTOP),hl
 	dec	hl
 	dec	hl
@@ -5312,28 +5364,28 @@ A5F3B:	ld	(STKTOP),hl
 	inc	hl
 	inc	hl
 	inc	hl
-A5F48:	inc	hl
-	ld	a,002H
+	inc	hl
+	ld	a,2			; 2 i/o channels
 A5F4B:	ex	de,hl
 	ld	(hl),e
 	inc	hl
 	ld	(hl),d
 	inc	hl
 	ex	de,hl
-	ld	bc,00007H
-	ld	(hl),b
+	ld	bc,7
+	ld	(hl),b			; i/o channel not open
 	add	hl,bc
-	ld	(hl),b
-	ld	bc,00102H
+	ld	(hl),b			; clear i/o channel flags
+	ld	bc,256+9-7
 	add	hl,bc
 	dec	a
 	jr	nz,A5F4B
 	ret
 
-A5F5F:	ld	a,001H
+A5F5F:	ld	a,1
 	ld	(MAXFIL),a
 	ld	hl,(HIMEM)
-	ld	de,0FDEAH
+	ld	de,-(2*256+2*9+2*2)
 	add	hl,de
 	ld	(FILTAB),hl
 	ld	e,l
@@ -5341,11 +5393,11 @@ A5F5F:	ld	a,001H
 	dec	hl
 	dec	hl
 	ld	(MEMSIZ),hl
-	ld	bc,000C8H
+	ld	bc,200
 	and	a
 	sbc	hl,bc
 	push	hl
-	ld	hl,0000DH
+	ld	hl,2*2+9
 	add	hl,de
 	ld	(NULBUF),hl
 	pop	hl
@@ -5545,7 +5597,7 @@ A6052:	and	a
 
 A6054:	scf
 
-;	Subroutine	PHYDIO BIOS call
+;	Subroutine	PHYDIO BIOS call (H.PHYD)
 ;	Inputs		A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferaddress
 ;	Outputs		-
 
@@ -5621,7 +5673,7 @@ A609A:	ld	hl,YF355
 	ld	(hl),0FFH
 	ret
 
-;	Subroutine	FORMAT BIOS call
+;	Subroutine	FORMAT BIOS call (H.FORM)
 ;	Inputs		
 ;	Outputs		________________________
 
@@ -5863,6 +5915,10 @@ A62D6:	ld	hl,0FF00H
 	ld	c,a
 	ld	b,a			; not enough room, size=0
 	ret
+
+;	Subroutine	first character filespecifier is 000H-039H (H.POSD)
+;	Inputs		
+;	Outputs		________________________
 
 T62E8:	inc	sp
 	inc	sp
@@ -6387,7 +6443,7 @@ A658D:	ld	a,(de)
 	ld	h,(hl)
 	ld	l,a
 	ex	(sp),hl
-	call	A72DA
+	call	A72DA			;
 	scf
 	ccf
 	ret
@@ -6404,6 +6460,7 @@ A65A3:	and	a
 	jr	nz,A658A
 A65AD:	pop	hl
 	jp	OEMSTA
+
 T65B1:	defb	"SYSTEM",0
 	defw	A65C4
 	defb	"FORMAT",0
@@ -6454,7 +6511,7 @@ A65F7:	push	af
 	inc	hl
 	inc	hl
 	ld	a,(hl)
-	cp	009H			; channel in use by a disk device ?
+	cp	9			; channel in use by a disk device ?
 	jr	nc,A662E		; nope, check next
 	dec	hl
 	dec	hl
@@ -6511,6 +6568,19 @@ A665A:	ld	hl,FILNAM
 	ldir
 	ret
 
+;	Subroutine	take control from caller (move parameters on stack)
+;	Inputs		IX = returnaddress replacement, IYH = number of bytes to move
+;	Outputs		________________________
+
+;	This is what the stack looks like at entry:
+;
+;	prim	exp
+;	+0	+0	returnaddress A6663 caller
+;	+2	+2	callf BIOS registers
+;	+6	+14	returnaddress CALLF caller
+;	+8	+16	returnaddress hook caller
+
+
 A6663:	ei
 	push	hl
 	push	de
@@ -6544,9 +6614,9 @@ A6684:	ld	c,(hl)
 	djnz	A6684
 A668D:	ld	a,(YF348)
 	add	a,a
-	ld	hl,00012H
+	ld	hl,18
 	jr	nc,A6698
-	ld	l,01AH
+	ld	l,18+8
 A6698:	add	hl,sp
 	ld	a,e
 	sub	l
@@ -6559,13 +6629,13 @@ A66A0:	pop	bc
 	pop	hl
 	ret
 
-;	Subroutine	 (H.GETP)
+;	Subroutine	get pointer to i/o channel (H.GETP)
 ;	Inputs		
 ;	Outputs		________________________
 
 A66A4:	ld	ix,RETRTN
 	ld	iy,00200H
-	call	A6663			; take control from caller
+	call	A6663			; take control from caller (move parameters on stack)
 	pop	hl
 	ld	a,(hl)
 	and	a
@@ -6578,23 +6648,23 @@ A66A4:	ld	ix,RETRTN
 A66B3:	ei
 	ld	bc,256
 	ld	(YF33D),bc		; default recordsize 256
-	call	A72DA			; already end of statement ?
+	call	A72DA			; at end of statement ?
 	ld	a,e
 	ret	z			; yes, quit
 	push	af
 	push	hl
 	ld	a,(YF348)
 	add	a,a
-	ld	hl,0000CH
+	ld	hl,12
 	jr	nc,A66CD
-	ld	l,014H
+	ld	l,12+8
 A66CD:	add	hl,sp
 	ld	a,(hl)
-	cp	004H			; random mode ?
+	cp	4			; random mode ?
 	jp	nz,A7318		; nope,
 	inc	hl
 	ld	a,(hl)
-	cp	009H			; disk device ?
+	cp	9			; disk device ?
 	jp	nc,A7318		; nope,
 	pop	hl
 	call	A72D0
@@ -6614,7 +6684,7 @@ A66CD:	add	hl,sp
 	pop	af
 	ret
 
-;	Subroutine	OPEN statement  (H.NULO)
+;	Subroutine	open i/o channel (H.NULO)
 ;	Inputs		
 ;	Outputs		________________________
 
@@ -6622,13 +6692,13 @@ A66FC:	ei
 	ret	nc			; not for a disk device, return control
 	ld	ix,RETRTN
 	ld	iy,00400H
-	call	A6663			; take control from caller
+	call	A6663			; take control from caller (move parameters on stack)
 	call	A6FA9			; validate filename
 	call	A65EA			; is file already open in one of the I/O channels ?
 	jp	z,A7309			; yep, error
 	ld	(PTRFIL),hl
 	ld	a,e
-	cp	004H
+	cp	4
 	jr	z,A6721			; random mode, recordsize already set
 	ld	bc,1
 	ld	(YF33D),bc		; all others use recordsize 1
@@ -6645,7 +6715,7 @@ A6721:	pop	af
 	ld	hl,(YF353)		; base of the FCB's
 	call	A491C			; base + 37 * channelnumber
 	xor	a
-	ld	hl,0000CH
+	ld	hl,12
 	add	hl,bc
 	ld	(hl),a			; reset EX byte of FCB
 	pop	de
@@ -6692,9 +6762,9 @@ A6775:	pop	af
 	pop	hl
 	ret
 
-A6778:	cp	008H
+A6778:	cp	8
 	jr	z,A67C1			; append mode,
-	cp	002H
+	cp	2
 	jr	z,A6761			; output mode, create file (overwrites!)
 	cp	080H
 	jr	z,A6761			; binsav mode, create file (overwrites!)
@@ -6709,16 +6779,16 @@ A6778:	cp	008H
 	ld	hl,(PTRFIL)
 	ld	(hl),e			; filemode, I/O channel open
 	ld	a,e
-	cp	004H			; random mode ?
+	cp	4			; random mode ?
 	jr	z,A6775			; yep, quit
 	push	hl
 	ld	hl,FLBMEM
 	xor	a
-	cp	(hl)
+	cp	(hl)			; in raw mode ?
 	ld	(hl),a
 	pop	hl
 	jr	nz,A6775		; yep, quit
-	ld	bc,00006H
+	ld	bc,6
 	add	hl,bc
 	push	hl
 	ld	(hl),0FFH		; position 255, so next get char fills buffer
@@ -6746,16 +6816,16 @@ A67C1:	push	bc
 	push	hl
 	call	A67FE			; setup FCB fields
 	ld	hl,(PTRFIL)
-	ld	(hl),001H		; first in input mode
-	ld	bc,00006H
+	ld	(hl),1			; first in input mode
+	ld	bc,6
 	add	hl,bc
-	ld	(hl),0FFH
+	ld	(hl),0FFH		; position 255, so next get char fills buffer
 	ld	hl,(PTRFIL)
 A67DA:	push	hl
 	call	A682A			; get char from I/O channel
 	pop	hl
 	jr	nc,A67DA		; not at the end of file, continue
-	ld	(hl),002H		; continue in output mode
+	ld	(hl),2			; continue in output mode
 	pop	hl
 	ld	bc,00021H
 	add	hl,bc			; to the Rx field
@@ -6794,15 +6864,19 @@ A6813:	ld	(hl),b
 	jr	nz,A6813		; clear CR byte and Rx bytes
 	ret
 
+;	Subroutine	input from i/o channel (H.INDS)
+;	Inputs		
+;	Outputs		________________________
+
 A6819:	ld	ix,RETRTN
 	ld	iy,00600H
-	call	A6663			; take control from caller
+	call	A6663			; take control from caller (move parameters on stack)
 	call	A682A			; get char from I/O channel
 	jp	A66A0			; quit
 
 A682A:	push	hl
 	ld	a,(hl)
-	cp	001H			; input mode ?
+	cp	1			; input mode ?
 	jp	nz,A7199		; nope, error
 	ld	e,l
 	ld	d,h
@@ -6843,7 +6917,7 @@ A682A:	push	hl
 	pop	hl
 	xor	a
 A6861:	ld	c,a
-	ld	b,000H
+	ld	b,0
 	add	hl,bc
 	ld	a,(hl)			; get char
 A6866:	ld	b,a
@@ -6858,6 +6932,10 @@ A6866:	ld	b,a
 	ret	nc			; no CTRL-Z, quit
 	ld	(hl),a			; CTRL-Z as backup char, so it is always read again
 	ret
+
+;	Subroutine	putback for diskdevices (H.BAKU)
+;	Inputs		
+;	Outputs		________________________
 
 A6875:	ei
 	push	hl
@@ -6877,11 +6955,15 @@ A6882:	add	hl,sp
 	ld	(hl),c
 	ret
 
+;	Subroutine	output to i/o channel (H.FILO)
+;	Inputs		
+;	Outputs		________________________
+
 A688E:	ld	ix,RETRTN
 	ld	iy,00800H
-	call	A6663			; take control from caller
+	call	A6663			; take control from caller (move parameters on stack)
 	ld	a,(hl)
-	cp	002H			; output mode ?
+	cp	2			; output mode ?
 	jp	nz,A7199		; nope, error
 	pop	af
 	push	af
@@ -6889,7 +6971,7 @@ A688E:	ld	ix,RETRTN
 	jp	A669F			; quit
 
 A68A7:	push	hl
-	ld	bc,00006H
+	ld	bc,6
 	add	hl,bc
 	ld	c,(hl)			; position
 	inc	(hl)			; update
@@ -6905,7 +6987,7 @@ A68B5:	push	hl
 	ld	e,(hl)
 	inc	hl
 	ld	d,(hl)			; pointer to FCB
-	ld	bc,00004H
+	ld	bc,4
 	add	hl,bc
 	ld	a,(hl)			; position
 	inc	hl
@@ -6921,24 +7003,24 @@ A68CB:	call	A718F			; random block write
 	pop	hl
 	ret
 
-;	Subroutine	 (H.NTFL)
+;	Subroutine	close i/o channel for diskdevices (H.NTFL)
 ;	Inputs		
 ;	Outputs		________________________
 
 A68D0:	ld	ix,RETRTN
 	ld	iy,00400H
-	call	A6663			; take control from caller
+	call	A6663			; take control from caller (move parameters on stack)
 	pop	hl
 	ld	a,(hl)
-	sub	002H
-	jr	nz,A68F4
+	sub	2			; output mode ?
+	jr	nz,A68F4		; nope,
 	push	hl
 	ld	hl,FLBMEM
-	cp	(hl)
+	cp	(hl)			; raw mode ?
 	ld	(hl),a
 	pop	hl
-	jr	nz,A68F4
-	ld	(hl),004H
+	jr	nz,A68F4		; yep, skip CTRL-Z
+	ld	(hl),4			; switch to random mode
 	ld	a,01AH			; CTRL-Z
 	call	A68A7			; write char to I/O channel
 	call	nz,A68B5		; buffer not empty, write remaining I/O channel buffer
@@ -6950,7 +7032,7 @@ A68F4:	push	hl
 	call	A456F			; close fcb
 	pop	hl
 	push	hl
-	ld	de,00007H
+	ld	de,7
 	add	hl,de
 	ld	(hl),d
 	ld	l,d
@@ -6967,12 +7049,12 @@ A68F4:	push	hl
 ;	Inputs		
 ;	Outputs		________________________
 
-A690E:	call	A7380
+A690E:	call	A7380			; take control from caller
 	push	hl
 	ld	ix,M54F7
 	call	A731E			; convert linepointers to linenumbers
 	ld	a,0FFH
-	call	A69C7
+	call	A69C7			; write byte to FCB (binairy basicfile id)
 	ld	hl,(TXTTAB)
 	ld	(YF23D),hl		; transferaddress
 	ex	de,hl
@@ -6991,7 +7073,7 @@ A690E:	call	A7380
 
 A6939:	ld	ix,M739A		; quit loading & start (headloop/executing)
 	ld	iy,00200H
-	call	A6663			; take control from caller
+	call	A6663			; take control from caller (move parameters on stack)
 	pop	af
 	jp	z,A7199
 	ld	ix,M6C1C
@@ -7024,7 +7106,7 @@ A6939:	ld	ix,M739A		; quit loading & start (headloop/executing)
 	ex	de,hl
 	ex	(sp),hl
 	ex	de,hl
-	call	A69D0
+	call	A69D0			; read byte from FCB
 	ld	hl,(TXTTAB)
 	ld	(YF23D),hl		; transferaddresss
 	pop	hl
@@ -7052,10 +7134,10 @@ T69B9:	defb	":",092H,0,0,0		; :RUN
 
 A69BE:	push	hl
 	ld	a,l
-	call	A69CB
+	call	A69CB			; write byte to FCB
 	pop	hl
 	ld	a,h
-	jr	A69CB
+	jr	A69CB			; write byte to FCB
 
 A69C7:	ld	de,(YF353)
 A69CB:	ld	bc,A47BE		; random block write
@@ -7063,7 +7145,7 @@ A69CB:	ld	bc,A47BE		; random block write
 
 A69D0:	ld	bc,A47B2		; random block read
 A69D3:	push	af
-	ld	hl,00001H
+	ld	hl,1
 	add	hl,sp
 	ld	(YF23D),hl		; transferaddress
 	push	de
@@ -7075,6 +7157,10 @@ A69D3:	push	af
 A69E2:	ld	hl,00001H
 	push	bc
 	ret
+
+;	Subroutine	BSAVE for diskdevices
+;	Inputs		
+;	Outputs		________________________
 
 A69E7:	push	de
 	call	A6B6A
@@ -7088,14 +7174,14 @@ A69E7:	push	de
 	jp	c,A7315
 	ex	de,hl
 	ex	(sp),hl
-	call	A72DA
+	call	A72DA			; at end of statement ?
 	scf
-	jr	z,A6A1B
+	jr	z,A6A1B			; yep,
 	call	A72D0
-	defb	","
+	defb	","			; check for ","
 	cp	"S"
 	jr	nz,A6A13
-	call	A72DB
+	call	A72DB			; get basic character
 	and	a
 	jr	A6A1B
 
@@ -7111,21 +7197,21 @@ A6A23:	pop	de
 	push	hl
 	push	bc
 	push	af
-	xor	a
-	ld	e,002H
+	xor	a			; i/o channel 0
+	ld	e,2			; output mode
 	ld	ix,M6AFA
 	call	A731E			; open i/o channel
 	ld	a,0FEH
-	call	A69C7
+	call	A69C7			; write byte to FCB (bsave file id)
 	pop	af
 	pop	hl
 	push	hl
 	push	af
-	call	A69BE
+	call	A69BE			; write word to FCB
 	ld	hl,(SAVEND)
-	call	A69BE
+	call	A69BE			; write word to FCB
 	ld	hl,(SAVENT)
-	call	A69BE
+	call	A69BE			; write word to FCB
 	pop	af
 	pop	bc
 	push	af
@@ -7138,7 +7224,7 @@ A6A23:	pop	de
 	jr	nc,A6A6D
 	call	A718B
 A6A5D:	ld	a,0FFH
-	ld	(FLBMEM),a
+	ld	(FLBMEM),a		; raw mode
 	xor	a
 	ld	ix,M6B24
 	call	A731E			; close i/o channel
@@ -7176,56 +7262,60 @@ A6A9E:	pop	hl
 	call	A718B
 	jr	A6A5D
 
+;	Subroutine	BLOAD for diskdevices
+;	Inputs		
+;	Outputs		________________________
+
 A6AA7:	push	de
 	xor	a
-	ld	(RUNBNF),a
+	ld	(RUNBNF),a		; assume no autostart, no vram
 	ld	c,a
-	ld	b,a
-	call	A72DA
-	jr	z,A6AD0
+	ld	b,a			; assume offset 0
+	call	A72DA			; at end of statement ?
+	jr	z,A6AD0			; yep,
 	call	A72D0
-	defb	","
-	cp	"R"
-	jr	z,A6ABF
-	cp	"S"
-	jr	nz,A6ACB
+	defb	","			; check for ","
+	cp	"R"			; autorun specified ?
+	jr	z,A6ABF			; yep, set autorun
+	cp	"S"			; vram specified ?
+	jr	nz,A6ACB		; nope, then it must be a offset
 A6ABF:	ld	(RUNBNF),a
-	call	A72DB
-	jr	z,A6AD0
+	call	A72DB			; get basic character
+	jr	z,A6AD0			; end of statement, skip offset
 	call	A72D0
-	defb	","
+	defb	","			; check for ","
 A6ACB:	call	A6B6E
 	ld	b,d
-	ld	c,e
+	ld	c,e			; offset
 A6AD0:	pop	de
 	push	hl
 	push	bc
 	ld	a,0FFH
-	ld	(FLBMEM),a
-	xor	a
-	ld	e,001H
+	ld	(FLBMEM),a		; raw mode
+	xor	a			; i/o channel 0
+	ld	e,1			; input mode
 	ld	ix,M6AFA
 	call	A731E			; open i/o channel
 	ld	de,(YF353)
-	call	A69D0
+	call	A69D0			; read byte from FCB
 	cp	0FEH
 	jp	nz,A7199
 	pop	bc
-	call	A6B5C
+	call	A6B5C			; read word from FCB and add offset
 	push	hl
-	call	A6B5C
+	call	A6B5C			; read word from FCB and add offset
 	push	hl
-	call	A6B5C
+	call	A6B5C			; read word from FCB and add offset
 	ld	(SAVENT),hl
 	pop	hl
 	pop	bc
 	and	a
-	sbc	hl,bc
+	sbc	hl,bc			; end address - start address
 	inc	hl
 	ld	(YF23D),bc		; transferaddress
 	ld	a,(RUNBNF)
-	cp	"S"
-	jr	z,A6B1A
+	cp	"S"			; vram load ?
+	jr	z,A6B1A			; yep,
 	call	A47B2			; random block read
 A6B11:	ld	ix,M4AFF
 	call	A731E			; output back to screen
@@ -7268,9 +7358,9 @@ A6B4E:	pop	bc
 	jr	A6B11
 
 A6B5C:	push	bc
-	call	A69D0
+	call	A69D0			; read byte from FCB
 	push	af
-	call	A69D0
+	call	A69D0			; read byte from FCB
 	ld	h,a
 	pop	af
 	ld	l,a
@@ -7279,30 +7369,38 @@ A6B5C:	push	bc
 	ret
 
 A6B6A:	call	A72D0
-	defb	","
+	defb	","			; check for ","
 A6B6E:	ld	ix,M6F0B
 	jp	A731E			; evaluate address operand (BLOAD/SAVE)
 
-A6B75:	call	A7380
-	call	A72DB
+;	Subroutine	DSKI$ function (H.DSKI)
+;	Inputs		
+;	Outputs		________________________
+
+A6B75:	call	A7380			; take control from caller
+	call	A72DB			; get basic character
 	call	A72D0
-	defb	"("
+	defb	"("			; check for "("
 	call	A6BC5
 	call	A72D0
-	defb	")"
+	defb	")"			; check for ")"
 	push	hl
-	ld	hl,03FD6H
+	ld	hl,M3FD6
 	ld	(DAC+2),hl
 	pop	hl
-	ld	a,003H
+	ld	a,3
 	ld	(VALTYP),a
 	and	a
 	jr	A6BA1
 
-A6B96:	call	A7380
+;	Subroutine	DSKO statement (H.DSKO)
+;	Inputs		
+;	Outputs
+
+A6B96:	call	A7380			; take control from caller
 	call	A6BC5
-	call	A72DA
-	ret	nz
+	call	A72DA			; at end of statement ?
+	ret	nz			; nope, quit
 	scf
 A6BA1:	push	af
 	push	hl
@@ -7329,30 +7427,34 @@ A6BC5:	ld	ix,M521C
 	call	A731E			; evaluate byte operand
 	push	de
 	call	A72D0
-	defb	","
+	defb	","			; check for ","
 	ld	ix,M542F
 	call	A731E			; evaluate address operand
 	pop	bc
 	ret
 
+;	Subroutine	GET/PUT statement (H.DGET)
+;	Inputs		
+;	Outputs		________________________
+
 A6BDA:	ld	ix,RETRTN
 	ld	iy,00400H
-	call	A6663			; take control from caller
+	call	A6663			; take control from caller (move parameters on stack)
 	ld	a,(hl)
-	cp	004H
-	jp	nz,A7199
+	cp	4			; random mode ?
+	jp	nz,A7199		; nope,
 	inc	hl
 	ld	e,(hl)
 	inc	hl
-	ld	d,(hl)
-	ld	bc,00007H
+	ld	d,(hl)			; pointer to FCB
+	ld	bc,7
 	add	hl,bc
 	ex	(sp),hl
-	call	A72DA
-	jr	z,A6C29
+	call	A72DA			; at end of statement ?
+	jr	z,A6C29			; yep,
 	push	de
 	call	A72D0
-	defb	","
+	defb	","			; check for ","
 	ld	ix,M4C64
 	call	A731E			; evaluate expression
 	push	hl
@@ -7402,9 +7504,13 @@ A6C3F:	push	hl
 	pop	hl
 	jp	A6EF8
 
-A6C49:	call	A7380
+;	Subroutine	FIELD statement (H.FIEL)
+;	Inputs		
+;	Outputs		________________________
+
+A6C49:	call	A7380			; take control from caller
 	cp	"#"
-	call	z,A72DB
+	call	z,A72DB			; get basic character
 	ld	ix,M521C
 	call	A731E			; evaluate byte operand
 	jp	z,A7318
@@ -7446,7 +7552,7 @@ A6C8B:	ex	de,hl
 	call	A72D0
 	defb	"A"
 	call	A72D0
-	defb	"S"
+	defb	"S"			; check for "AS"
 	ld	ix,M5EA4
 	call	A731E			; get address of variable
 	ld	ix,M5597
@@ -7476,9 +7582,18 @@ A6C8B:	ex	de,hl
 	pop	hl
 	jr	A6C8B
 
+;	Subroutine	RSET statement (H.RSET)
+;	Inputs		
+;	Outputs		________________________
+
 A6CD6:	defb	0F6H
+
+;	Subroutine	LSET statement (H.LSET)
+;	Inputs		
+;	Outputs		________________________
+
 A6CD7:	scf
-	call	A7380
+	call	A7380			; take control from caller
 	push	af
 	ld	ix,M5EA4
 	call	A731E			; get address of variable
@@ -7616,12 +7731,26 @@ A6DA9:	ex	(sp),hl
 	push	hl
 	jp	A6D2A
 
+;	Subroutine	MKI$ function (H.MKI$)
+;	Inputs		
+;	Outputs		________________________
+
 A6DAF:	ld	a,2
 	defb	001H
+
+;	Subroutine	MKS$ function (H.MKS$)
+;	Inputs		
+;	Outputs		________________________
+
 A6DB2:	ld	a,4
 	defb	001H
+
+;	Subroutine	MKD$ function (H.MKD$)
+;	Inputs		
+;	Outputs		________________________
+
 A6DB5:	ld	a,8
-	call	A7380
+	call	A7380			; take control from caller
 	push	af
 	ld	ix,M517A
 	call	A731E			; convert DAC
@@ -7639,12 +7768,26 @@ A6DB5:	ld	a,8
 	nop
 	nop
 
+;	Subroutine	CVI function (H.CVI)
+;	Inputs		
+;	Outputs		________________________
+
 A6DD7:	ld	a,2-1
 	defb	001H
+
+;	Subroutine	CVS function (H.CVS)
+;	Inputs		
+;	Outputs		________________________
+
 A6DDA:	ld	a,4-1
 	defb	001H
+
+;	Subroutine	CVD function (H.CVD)
+;	Inputs		
+;	Outputs		________________________
+
 A6DDD:	ld	a,8-1
-	call	A7380
+	call	A7380			; take control from caller
 	push	af
 	ld	ix,M67D0
 	call	A731E			; free temporary string
@@ -7705,7 +7848,11 @@ A6DFB:	ld	ix,M5597
 
 T6E68:	defb	045H,065H,053H,060H,000H,000H,000H,000H
 
-A6E70:	call	A7380
+;	Subroutine	 (H.EOF)
+;	Inputs		
+;	Outputs		________________________
+
+A6E70:	call	A7380			; take control from caller
 	push	hl
 	call	A682A			; get char from I/O channel
 	ld	hl,0
@@ -7721,7 +7868,11 @@ A6E7D:	push	af
 	ld	(hl),a
 	ret
 
-A6E88:	call	A7380
+;	Subroutine	FILES/LFILES statement (H.FILE)
+;	Inputs		
+;	Outputs		________________________
+
+A6E88:	call	A7380			; take control from caller
 	ld	d,000H
 	jr	z,A6E95
 	call	A6F80
@@ -7732,14 +7883,14 @@ A6E95:	push	hl
 	call	A6FFE
 A6E99:	call	A6F63
 	ld	a,(PRTFLG)
-	and	a
+	and	a			; output to printer ?
 	push	af
 	call	A6645
 	jp	z,A7312
 	ld	ix,M7323
 	call	A731E			; newline to OUTDO if not at start of line
 A6EAE:	ld	hl,BUF+85
-	ld	b,00BH
+	ld	b,11
 A6EB3:	ld	a,(hl)
 	inc	hl
 	rst	018H
@@ -7753,16 +7904,16 @@ A6EB3:	ld	a,(hl)
 A6EC2:	rst	018H
 A6EC3:	djnz	A6EB3
 	call	CKCNTC
-	pop	af
+	pop	af			; output to printer ?
 	push	af
 	ld	a,(LINLEN)
-	ld	b,a
-	ld	a,(TTYPOS)
-	jr	z,A6ED8
-	ld	b,80
-	ld	a,(LPTPOS)
-A6ED8:	and	a
-	jr	z,A6EEA
+	ld	b,a			; screenwidth
+	ld	a,(TTYPOS)		; screenpos
+	jr	z,A6ED8			; nope, use screen
+	ld	b,80			; printerwidth
+	ld	a,(LPTPOS)		; printerpos
+A6ED8:	and	a			; at start of line ?
+	jr	z,A6EEA			; yep, no newline
 	add	a,00CH
 	cp	b
 	jr	nc,A6EE3
@@ -7781,10 +7932,14 @@ A6EF8:	pop	hl
 	ld	ix,M4AFF
 	jp	A731E			; output back to screen and quit
 
-A6F00:	call	A7380
+;	Subroutine	KILL statement (H.KILL)
+;	Inputs		
+;	Outputs		________________________
+
+A6F00:	call	A7380			; take control from caller
 	call	A6F96
-	call	A72DA
-	ret	nz
+	call	A72DA			; at end of statement ?
+	ret	nz			; nope, quit
 	call	A65EA			; is file already open in one of the I/O channels ?
 	jp	z,A71A2
 	call	A6F63
@@ -7796,7 +7951,11 @@ A6F00:	call	A7380
 	pop	hl
 	ret
 
-A6F20:	call	A7380
+;	Subroutine	NAME statement (H.NAME)
+;	Inputs		
+;	Outputs		________________________
+
+A6F20:	call	A7380			; take control from caller
 	call	A6F96
 	call	A65EA			; is file already open in one of the I/O channels ?
 	jp	z,A71A2
@@ -7808,7 +7967,7 @@ A6F20:	call	A7380
 	call	A72D0
 	defb	"A"
 	call	A72D0
-	defb	"S"
+	defb	"S"			; check for "AS"
 	call	A6F96
 	ld	a,d
 	ld	(BUF+26),a
@@ -7922,10 +8081,19 @@ A7003:	ld	(hl),"?"
 	djnz	A7003
 	ret
 
+;	Subroutine	 (H.LOF)
+;	Inputs		
+;	Outputs		________________________
+
 A7009:	ld	bc,00010H
 	defb	011H
+
+;	Subroutine	 (H.LOC)
+;	Inputs		
+;	Outputs		________________________
+
 A700D:	ld	bc,00021H
-	call	A7380
+	call	A7380			; take control from caller
 	push	bc
 	ld	ix,M521F
 	call	A731E			; convert to byte
@@ -7964,7 +8132,11 @@ A700D:	ld	bc,00021H
 	call	M3042			; convert DAC from sgn to dbl
 	jp	M269A			; dbl add
 
-A7061:	call	A7380
+;	Subroutine	DSKF function (H.DSKF)
+;	Inputs		
+;	Outputs		________________________
+
+A7061:	call	A7380			; take control from caller
 	ld	ix,M521F
 	call	A731E			; convert to byte
 	ld	hl,YF347
@@ -7975,7 +8147,11 @@ A7074:	ld	e,a
 	call	A505D
 	jp	M2F99			; integer to DAC
 
-A707B:	call	A7380
+;	Subroutine	COPY statement (H.COPY)
+;	Inputs		
+;	Outputs		________________________
+
+A707B:	call	A7380			; take control from caller
 	call	A6F80
 	call	A65EA			; is file already open in one of the I/O channels ?
 	jp	z,A71A2
@@ -7989,10 +8165,10 @@ A707B:	call	A7380
 	ld	bc,00024H
 	ldir
 	pop	hl
-	call	A72DA
-	jr	z,A70C3
+	call	A72DA			; at end of statement ?
+	jr	z,A70C3			; yep,
 	call	A72D0
-	defb	0D9H
+	defb	0D9H			; check for TO token
 	call	A6F80
 	call	A65EA			; is file already open in one of the I/O channels ?
 	jp	z,A71A2
@@ -8003,8 +8179,8 @@ A707B:	call	A7380
 	ld	de,BUF+48
 	call	A665A
 	pop	hl
-	call	A72DA
-	ret	nz
+	call	A72DA			; at end of statement ?
+	ret	nz			; nope, quit
 A70C3:	push	hl
 	call	A6645
 	jp	z,A7312
@@ -8134,7 +8310,7 @@ A71B7:	ld	e,047H
 	ld	bc,00000H
 	xor	a
 	ld	(NLONLY),a		; not loading basic program, close i/o channels when requested
-	ld	(FLBMEM),a
+	ld	(FLBMEM),a		; ascii mode
 	push	de
 	ld	ix,M6B24
 	call	A731E			; close i/o channel
@@ -8142,25 +8318,29 @@ A71B7:	ld	e,047H
 	ld	ix,M406F		; BASIC error
 	jp	A731E
 
+;	Subroutine	expand errormessages (H.ERRP)
+;	Inputs		
+;	Outputs		________________________
+
 A71D3:	ld	a,e
-	cp	03CH
-	ret	c
-	cp	048H
-	ret	nc
+	cp	03CH			; normal BASIC error ?
+	ret	c			; yep, quit
+	cp	048H			; DiskBASIC error ?
+	ret	nc			; nope, quit
 	sub	03BH
-	ld	b,a
+	ld	b,a			; 1 based offset
 	ld	hl,T71F5
 A71E0:	ld	a,(hl)
 	and	a
 	inc	hl
 	jr	nz,A71E0
-	djnz	A71E0
-	dec	hl
+	djnz	A71E0			; next errormessage
+	dec	hl			; include trailing zero
 	ld	de,BUF+166
 	push	de
-	ld	bc,00016H
-	ldir
-	ld	e,001H
+	ld	bc,22
+	ldir				; copy errormessage to temporary place
+	ld	e,1			; erroroffset 1
 	pop	hl
 	ret
 
@@ -8178,12 +8358,17 @@ T71F5:	defb	0
 	defb	"Disk offline",0
 	defb	"Rename across disk",0
 
-T72AE:	defw	A72B0
 
-A72B0:	bit	7,c
-	jp	nz,A7196
+T72AE:	defw	A72B0			; pointer to the default diskerror handler for DiskBASIC
+
+;	Subroutine	diskerror handler for DiskBASIC
+;	Inputs		________________________
+;	Outputs		________________________
+
+A72B0:	bit	7,c			; FAT error ?
+	jp	nz,A7196		; yep, bad fat error
 	res	0,c
-	ld	b,000H
+	ld	b,0
 	ld	hl,T72C2
 	add	hl,bc
 A72BD:	ld	a,(hl)
@@ -8192,13 +8377,17 @@ A72BD:	ld	a,(hl)
 	ld	l,a
 	jp	(hl)
 
-T72C2:	defw	A71AE
-	defw	A71B4
-	defw	A71B1
-	defw	A71B1
-	defw	A71B1
-	defw	A71B1
-	defw	A71B1
+T72C2:	defw	A71AE			; Write Protect error, disk write protect error
+	defw	A71B4			; Not Ready error, disk offline error
+	defw	A71B1			; Data/CRC error, disk i/o error
+	defw	A71B1			; Seek error, disk i/o error
+	defw	A71B1			; Record not found error, disk i/o error
+	defw	A71B1			; Write fault error, disk i/o error
+	defw	A71B1			; Other error, disk i/o error
+
+;	Subroutine	check for BASIC character
+;	Inputs		HL = BASIC pointer
+;	Outputs		________________________
 
 A72D0:	call	A72DA
 	ex	(sp),hl
@@ -8230,31 +8419,46 @@ T72F2:	rst	030H
 
 A72F7:	ld	e,010H
 	defb	001H
+
 A72FA:	ld	e,00DH
 	defb	001H
+
 A72FD:	ld	e,007H
 	defb	001H
+
 A7300:	ld	e,03BH
 	defb	001H
+
 A7303:	ld	e,037H
 	defb	001H
+
 A7306:	ld	e,032H
 	defb	001H
+
 A7309:	ld	e,036H
 	defb	001H
+
 A730C:	ld	e,034H
 	defb	001H
+
 A730F:	ld	e,038H
 	defb	001H
+
 A7312:	ld	e,035H
 	defb	001H
+
 A7315:	ld	e,005H
 	defb	001H
+
 A7318:	ld	e,002H
 	ld	ix,M406F		; BASIC error
 A731E:	call	CALBAS
 	ei
 	ret
+
+;	Subroutine	devicename parser (H.PARD)
+;	Inputs		
+;	Outputs		________________________
 
 A7323:	ei
 	push	hl
@@ -8272,14 +8476,14 @@ A7331:	add	hl,sp
 	ld	hl,M6E92+3
 	rst	020H			; called from BSAVE ?
 	pop	hl
-	jr	z,A734A			; yep,
+	jr	z,A734A			; yep, adjust returnaddress for DiskBASIC BSAVE
 	push	hl
 	ld	hl,M6EC6+3
 	rst	020H			; called from BLOAD ?
 	pop	hl
-	jr	nz,A7350		; nope,
+	jr	nz,A7350		; nope, do not adjust returnaddress
 	ld	de,XF377
-	jr	A734D
+	jr	A734D			; yep, adjust returnaddress for DiskBASIC BLOAD
 
 A734A:	ld	de,XF37A
 A734D:	ld	(hl),d
@@ -8288,47 +8492,63 @@ A734D:	ld	(hl),d
 A7350:	pop	de
 	pop	hl
 	ld	a,e
-	cp	002H
-	ret	c
+	cp	2			; filespecification length <2 ?
+	ret	c			; yep, no device specified
 	ld	a,(hl)
-	cp	":"
-	jr	z,A730F
+	cp	":"			; first character a ":" ?
+	jr	z,A730F			; yep,
 	inc	hl
 	ld	a,(hl)
-	cp	":"
+	cp	":"			; second character a ":" ?
 	dec	hl
-	ret	nz
-	call	A7380
+	ret	nz			; nope, no diskdevice specifier
+	call	A7380			; take control from caller
 	ld	a,(hl)
-	and	0DFH
-	sub	040H
+	and	0DFH			; upcase
+	sub	040H			; to drivenumber/deviceid for disk (1...) 
 	push	hl
 	ld	hl,YF347
-	cp	(hl)
+	cp	(hl)			; valid drive ?
 	pop	hl
 	jr	z,A7374
-	jp	nc,A719C
+	jp	nc,A719C		; nope,
 A7374:	inc	hl
 	inc	hl
 	dec	e
 	dec	e
 	push	de
-	inc	e
+	inc	e			; flag Zx reset
 	pop	de
 	ret
 
+;	Subroutine	no device specified (H.NODE)
+;	Inputs		
+;	Outputs		________________________
+
 A737C:	ei
-	ld	a,0
+	ld	a,0			; deviceid for default drive
 	ret
+
+;	Subroutine	take control from caller
+;	Inputs		
+;	Outputs		________________________
+
+;	This is what the stack looks like at entry:
+;
+;	prim	exp
+;	+0	+0	returnaddress A7380 caller
+;	+2	+2	callf BIOS registers
+;	+6	+14	returnaddress CALLF caller
+;	+8	+16	returnaddress hook caller
 
 A7380:	ei
 	push	hl
 	push	af
 	ld	a,(YF348)
 	add	a,a
-	ld	hl,0000CH
+	ld	hl,12
 	jr	nc,A738E
-	ld	l,014H
+	ld	l,12+8
 A738E:	add	hl,sp
 	ld	(hl),LOW RETRTN
 	inc	hl

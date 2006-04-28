@@ -124,21 +124,6 @@ J1A31		EQU	01A31H	; Patch routine init midi hardware
 JF37D		EQU	0F37DH	; BDOS routine for diskbasic
 VARWRK		EQU	0F380H
 
-CLPRM1		EQU	0F398H
-USRTAB		EQU	0F39AH
-LINL40		EQU	0F3AEH
-LINLEN		EQU	0F3B0H
-CLMLST		EQU	0F3B2H
-CSRY		EQU	0F3DCH
-RG0SAV		EQU	0F3DFH
-FORCLR		EQU	0F3E9H
-BAKCLR		EQU	0F3EAH
-MAXUPD		EQU	0F3ECH
-MINUPD		EQU	0F3EFH
-ATRBYT		EQU	0F3F2H
-CS1200		EQU	0F3FCH
-LOW		EQU	0F406H
-ENDPRG		EQU	0F40FH
 ERRFLG		EQU	0F414H
 LPTPOS		EQU	0F415H
 PRTFLG		EQU	0F416H
@@ -5923,10 +5908,16 @@ J4845:	POP	BC
 	LD	L,C
 	LD	(CURLIN),HL
 	EX	DE,HL
-	DEFB	03EH			; skip next instruction
+	DEFB	03EH			; skip next instruction and skip to end of statement
+
+
+;	Subroutine	skip to end of statement
+;	Inputs		________________________
+;	Outputs		________________________
+
 J485A:	POP	HL
 
-;	Subroutine	skip to end of statement, (also DATA statement handler)
+;	Subroutine	skip to end of statement (also DATA statement handler)
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -6465,7 +6456,7 @@ I4B8B:	PUSH	HL
 	OR	A
 	DEC	HL
 	PUSH	BC
-	JP	Z,J485A
+	JP	Z,J485A			; skip to end of statement
 J4B9B:	LD	(HL),","
 	JR	J4BA4
 
@@ -6503,7 +6494,7 @@ J4BB9:	OR	A
 	DEC	HL
 	OR	A
 	PUSH	BC
-	JP	Z,J485A
+	JP	Z,J485A			; skip to end of statement
 	PUSH	DE
 J4BD1:	CALL	ISFLIO			; interpreter input/output device = file ?
 	JP	NZ,J6D83		; yep,
@@ -6616,7 +6607,7 @@ C4C64:	DEC	HL
 
 C4C65:	LD	D,0			; current precedence level 0
 
-;	Subroutine	__________________________
+;	Subroutine	skip character and evaluate expression with precendence level
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -6682,7 +6673,7 @@ J4CD5:	ADD	A,3
 	LD	BC,I4D22
 J4CDD:	PUSH	BC
 	LD	HL,(TEMP3)
-	JP	C4C67
+	JP	C4C67			; skip character and evaluate expression with precendence level
 
 J4CE4:	LD	D,0			; clear flag
 J4CE6:	SUB	0EEH			; relational operators ?
@@ -6763,7 +6754,7 @@ J4D50:	LD	HL,I3D69
 	RET
 
 J4D60:	CALL	C303A			; convert DAC to double real
-J4D63:	CALL	C2F10			; HL = DAC
+J4D63:	CALL	C2F0D			; ARG = DAC
 	POP	HL
 	LD	(DAC+4),HL
 	POP	HL
@@ -6788,7 +6779,7 @@ J4D79:	LD	A,(DORES)
 
 J4D87:	LD	A,B
 	PUSH	AF
-	CALL	C2F10			; HL = DAC
+	CALL	C2F0D			; ARG = DAC
 	POP	AF
 	LD	(VALTYP),A
 	CP	4
@@ -6829,7 +6820,7 @@ C4DC7:	RST	CHRGTR			; get next BASIC character
 	JP	Z,J406A			; end of statement, missing operand error
 	JP	C,C3299			; convert text to number
 	CALL	C64A8			; is upcase letter character ?
-	JP	NC,J4E9B		; yep, get variable value
+	JP	NC,C4E9B		; yep, get variable value
 	CP	20H			; numeric token ?
 	JP	C,J46B8			; yep, get constant value
 	CALL	H.EVAL
@@ -6946,7 +6937,7 @@ C4E87:	CALL	C4C62			; evaluate ( expression
 	RET
 
 J4E8D:	LD	D,7DH
-	CALL	C4C67
+	CALL	C4C67			; skip character and evaluate expression with precendence level
 	LD	HL,(TEMP2)
 	PUSH	HL
 	CALL	C2E86			; negate
@@ -6957,7 +6948,7 @@ I4E99:	POP	HL
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-J4E9B:	CALL	C5EA4			; locate variable (without creation)
+C4E9B:	CALL	C5EA4			; locate variable (without creation)
 	PUSH	HL
 	EX	DE,HL
 	LD	(DAC+2),HL
@@ -7137,7 +7128,7 @@ I4F57:	INC	A
 	JR	J4F75
 
 J4F63:	LD	D,5AH
-	CALL	C4C67
+	CALL	C4C67			; skip character and evaluate expression with precendence level
 	CALL	C2F8A			; convert DAC to integer
 	LD	A,L
 	CPL
@@ -8763,7 +8754,7 @@ J5768:	LD	(DE),A
 	DJNZ	J5768
 J5773:	CALL	C475A			; illegal function call
 J5776:	POP	HL
-	JP	J4E9B			; get variable value
+	JP	C4E9B			; get variable value
 
 J577A:	CALL	C575A
 	CALL	C2F8A			; convert DAC to integer
@@ -10812,10 +10803,10 @@ C625E:	PUSH	HL
 ;	Outputs		________________________
 
 C6267:	PUSH	HL
-	LD	A,LOW (-120)
+	LD	A,LOW -120
 	SUB	L
 	LD	L,A
-	LD	A,HIGH (-120)
+	LD	A,HIGH -120
 	SBC	A,H
 	LD	H,A
 	JR	C,J6275			; out of memory
@@ -11169,7 +11160,7 @@ J6414:	CALL	C7304			; end printeroutput
 	CALL	C7323			; fresh line to interpreter output
 	POP	AF			; END ?
 	LD	HL,I3FDC
-	JP	NZ,J40FD		; aborted input or STOP,
+	JP	NZ,J40FD		; nope, aborted input or STOP,
 	JP	J411E			; END, ok and mainloop (+POP)
 
 ;	Subroutine	CONT statement
@@ -11342,7 +11333,7 @@ J64E5:	ADD	HL,BC
 ; #####################
 ; MSX 1 code:
 
-;	jp	p,A64E5			; next i/o channel
+;	JP	P,J64E5			; next i/o channel
 
 ; #####################
 ; MSX 2 and above have a bugfix for MEMSIZ and STKTOP
@@ -14927,7 +14918,7 @@ J76A9:	POP	HL
 	CALL	C314A			; unsigned integer multiply
 	EX	DE,HL
 	CALL	C2FCB			; convert to single precision real
-	CALL	C2F10			; HL = DAC
+	CALL	C2F0D			; ARG = DAC
 	LD	HL,I7754
 	CALL	C2EBE			; DAC = (single)
 	CALL	C289F			; DAC / ARG
@@ -15786,7 +15777,7 @@ C7AA0:	RST	SYNCHR
 ;	Outputs		________________________
 
 J7AAF:	DEC	B			; PUT ?
-	JP	M,C475A			; illegal function call
+	JP	M,C475A			; nope, illegal function call
 ;
 ; #####################
 ; MSX 1 code:
@@ -15958,73 +15949,73 @@ C7B5A:
 ;	Subroutine	system initialization, part 2
 ;	Inputs		________________________
 ;	Outputs		________________________
-;	Remark	System initialization routine continues here
-;		MSX1 had this in page 0, with MSX2 moved here because of space left in page 0
+;	Remark		System initialization routine continues here
+;			MSX1 had this in page 0, with MSX2 moved here because of space left in page 0
 
 C7B61:	LD	HL,0
 	ADD	HL,SP
 	LD	A,H
-	OUT	(0A8H),A
+	OUT	(0A8H),A			; select primary slot RAM in page 2 and 3
 	LD	A,L
-	LD	(D.FFFF),A
-	LD	A,C
+	LD	(D.FFFF),A			; if primary slot is expanded, select secundairy slot RAM in page 2 and 3
+	LD	A,C				; save expansion flag
 	LD	BC,0C77H
 	LD	DE,VARWRK+1
 	LD	HL,VARWRK
-	LD	(HL),00H
-	LDIR
-	LD	C,A
-	LD	B,4
+	LD	(HL),0
+	LDIR					; clear system variables
+	LD	C,A				; expansion flag
+	LD	B,4				; 4 primairy slots
 	LD	HL,EXPTBL+3
 J7B80:	RR	C
 	SBC	A,A
-	AND	80H
-	LD	(HL),A
+	AND	80H				; 080H for expanded slot, 000H for non-expanded slot
+	LD	(HL),A				; set expansion flag
 	DEC	HL
-	DJNZ	J7B80
+	DJNZ	J7B80				; next slot
 	IN	A,(0A8H)
-	LD	C,A
+	LD	C,A				; save current primairy slotregister
 	XOR	A
-	OUT	(0A8H),A
+	OUT	(0A8H),A			; primairy slot 0 in all pages
 	LD	A,(D.FFFF)
 	CPL
-	LD	L,A
+	LD	L,A				; current secundiary slotregister slot 0
 	LD	A,40H
-	OUT	(0A8H),A
+	OUT	(0A8H),A			; primairy slot 1 in page 3, primairy slot 0 in other pages
 	LD	A,(D.FFFF)
 	CPL
-	LD	H,A
+	LD	H,A				; current secundiary slotregister slot 1
 	LD	A,80H
-	OUT	(0A8H),A
+	OUT	(0A8H),A			; primairy slot 2 in page 3, primairy slot 0 in other pages
 	LD	A,(D.FFFF)
 	CPL
-	LD	E,A
+	LD	E,A				; current secundiary slotregister slot 2
 	LD	A,0C0H
-	OUT	(0A8H),A
+	OUT	(0A8H),A			; primairy slot 3 in page 3, primairy slot 0 in other pages
 	LD	A,(D.FFFF)
 	CPL
-	LD	D,A
+	LD	D,A				; current secundiary slotregister slot 3
 	LD	A,C
-	OUT	(0A8H),A
+	OUT	(0A8H),A			; restore primairy slotregister
 	LD	(SLTTBL+0),HL
 	EX	DE,HL
-	LD	(SLTTBL+2),HL
-	IM	1
+	LD	(SLTTBL+2),HL			; save secundiary slotregisters
+	IM	1				; switch to interrupt mode 1 (Z80 defaults to mode 0)
 
 	IF	MSXMID EQ 0
 
-	JP	C7C76
+	JP	C7C76				; continue with system initialization
 
 	ELSE
 
 ; Panasonic FS-A1GT has MSX-MIDI build in
 ; hardware must be initialized
 
-	JP	J1A31			; patch for initialize midi
+	JP	J1A31				; patch for initialize midi
 
 	ENDIF
 
-	DEFS	07BCBH-$,0		; remaining space
+	DEFS	07BCBH-$,0			; remaining space
 
 ;	Subroutine	BASE function
 ;	Inputs		________________________
@@ -16192,7 +16183,7 @@ C7C2F:
 ;	CALL	H.COPY
 
 ; #####################
-; MSX 2 and above have a patch for extending the SET statement
+; MSX 2 and above have a patch for extending the COPY statement
 
 	JP	J7D03			; patched for MSX2 COPY statement
 
@@ -16293,7 +16284,7 @@ C7C70:	CALL	H.CVD
 J7C73:	JP	C475A			; illegal function call
 
 ;	Subroutine	System initialization routine
-;	Remark	 RAM is invoked, EXPTBL and SLTTBL are initialized
+;	Remark		RAM is invoked, EXPTBL and SLTTBL are initialized
 
 C7C76:	LD	SP,VARWRK-10		; temporary stack
 	LD	BC,00230H-1
@@ -16302,13 +16293,13 @@ C7C76:	LD	SP,VARWRK-10		; temporary stack
 	LD	(HL),0C9H
 	LDIR				; initialize hooks
 	LD	HL,VARWRK
-	LD	(HIMEM),HL		; highist BASIC RAM address
+	LD	(HIMEM),HL		; highest BASIC RAM address
 	CALL	C7D5D			; search lowest BASIC RAM address
 	LD	(BOTTOM),HL		; save in BOTTOM
 	LD	BC,00090H
 	LD	DE,VARWRK
 	LD	HL,I7F27
-	LDIR				; initialize workarea
+	LDIR				; initialize some systemvariables
 	CALL	INIFNK			; initialize functionkeys
 	XOR	A
 	LD	(ENDBUF),A		; endmarker for BUF
@@ -16506,7 +16497,7 @@ J7D71:	LD	L,0
 ;	Outputs		________________________
 
 C7D75:	DI
-	LD	C,00H
+	LD	C,0			; primairy slot
 	LD	DE,EXPTBL
 	LD	HL,SLTATR
 J7D7E:	LD	A,(DE)
@@ -16522,7 +16513,7 @@ J7D87:	CALL	C7E1A
 	RST	DCOMPR
 	POP	HL			; expansion ROM ?
 	LD	B,0
-	JR	NZ,J7DBE		; nope, next
+	JR	NZ,J7DBE		; nope, next slot
 	CALL	C7E1A			; read INIT entry
 	PUSH	HL
 	PUSH	BC
@@ -16531,7 +16522,7 @@ J7D87:	CALL	C7E1A
 	LD	A,C
 	PUSH	AF
 	POP	IY
-	CALL	NZ,C7FF2		; if extension ROM has INIT, call this INIT after VR
+	CALL	NZ,C7FF2		; if extension ROM has INIT, call INIT after VR
 	POP	BC
 	POP	HL
 	CALL	C7E1A			; read STATEMENT entry
@@ -16678,7 +16669,7 @@ C7E4B:	RST	SYNCHR
 	JP	C4601			; execute new statement
 
 ;	Subroutine	allocate i/o channels
-;	Inputs		A = number of i/o channels
+;	Inputs		A = number of user i/o channels
 ;	Outputs		________________________
 
 C7E6B:	PUSH	AF
@@ -16783,17 +16774,21 @@ I7F1B:	DEFB	" Bytes free"
 ; Initial Workarea variables
 
 
-I7F27:	OUT	(0A8H),A
+I7F27:
+
+	.PHASE	VARWRK
+
+RDPRIM:	OUT	(0A8H),A
 	LD	E,(HL)
 	JR	J7F2F
 
-	OUT	(0A8H),A
+WRPRIM:	OUT	(0A8H),A
 	LD	(HL),E
 J7F2F:	LD	A,D
 	OUT	(0A8H),A
 	RET
 
-	OUT	(0A8H),A
+CLPRIM:	OUT	(0A8H),A
 	EX	AF,AF'
 	CALL	CLPRM1
 	EX	AF,AF'
@@ -16802,9 +16797,9 @@ J7F2F:	LD	A,D
 	EX	AF,AF'
 	RET
 
-	JP	(IX)
+CLPRM1:	JP	(IX)
 
-	defw	C475A			; illegal function call
+USRTAB:	defw	C475A			; illegal function call
 	defw	C475A			; illegal function call
 	defw	C475A			; illegal function call
 	defw	C475A			; illegal function call
@@ -16815,79 +16810,94 @@ J7F2F:	LD	A,D
 	defw	C475A			; illegal function call
 	defw	C475A			; illegal function call
 
+LINL40:
 	IF BASVER EQ 0
 	defb	39
 	ELSE
 	defb	37
 	ENDIF
 
-	defb	29
+LINL32:	defb	29
 
+LINLEN:
 	IF BASVER EQ 0
 	defb	29
 	ELSE
 	defb	37
 	ENDIF
 
-	defb	24
-	defb	14
+CRTCNT:	defb	24
 
-	defw	0
-	defw	0
-	defw	00800H
-	defw	0
-	defw	0
+CLMLST:	defb	14
 
-	defw	01800H
-	defw	02000H
-	defw	0
-	defw	01B00H
-	defw	03800H
+TXTNAM:	defw	0
+TXTCOL:	defw	0
+TXTCGP:	defw	00800H
+TXTATR:	defw	0
+TXTPAT:	defw	0
 
-	defw	01800H
-	defw	02000H
-	defw	0
-	defw	01B00H
-	defw	03800H
+T32NAM:	defw	01800H
+T32COL:	defw	02000H
+T32CGP:	defw	0
+T32ATR:	defw	01B00H
+T32PAT:	defw	03800H
 
-	defw	00800H
-	defw	0
-	defw	0
-	defw	01B00H
-	defw	03800H
+GRPNAM:	defw	01800H
+GRPCOL:	defw	02000H
+GRPCGP:	defw	0
+GRPATR:	defw	01B00H
+GRPPAT:	defw	03800H
 
-	defb	1
-	defb	1
-	defb	1
-	defb	0
+MLTNAM:	defw	00800H
+MLTCOL:	defw	0
+MLTCGP:	defw	0
+MLTATR:	defw	01B00H
+MLTPAT:	defw	03800H
 
-	defb	000H,0E0H,000H,000H,000H,000H,000H,000H
-	defb	000H
-	defb	0FFH
-	defb	15
-	defb	4
+CLIKSW:	defb	1
+CSRY:	defb	1
+CSRX:	defb	1
+CNSDFG:	defb	0
 
+RG0SAV:	defb	000H
+RG1SAV:	defb	0E0H
+RG2SAV:	defb	000H
+RG3SAV:	defb	000H
+RG4SAV:	defb	000H
+RG5SAV:	defb	000H
+RG6SAV:	defb	000H
+RG7SAV:	defb	000H
+STATFL:	defb	000H
+TRGFLG:	defb	0FFH
+FORCLR:	defb	15
+BAKCLR:	defb	4
+
+BDRCLR:
 	IF BASVER EQ 0
 	defb	7
 	ELSE
 	defb	4
 	ENDIF
 
-	jp	0
-	jp	0
-	defb	15
-	defw	QUETAB
-	defb	0FFH
-	defb	1
-	defb	50
-	defw	KEYBUF
-	defw	KEYBUF
-	defb	053H,05CH,026H,02DH,00FH
-	defb	025H,02DH,00EH,016H,01FH
-	defb	053H,05CH,026H,02DH,00FH
-	defw	00100H
-	defw	00100H
-	defb	':'
+MAXUPD:	jp	0
+MINUPD:	jp	0
+ATRBYT:	defb	15
+QUEUES:	defw	QUETAB
+FRCNEW:	defb	0FFH
+SCNCNT:	defb	1
+REPCNT:	defb	50
+PUTPNT:	defw	KEYBUF
+GETPNT:	defw	KEYBUF
+CS1200:	defb	053H,05CH,026H,02DH,00FH
+CS2400:	defb	025H,02DH,00EH,016H,01FH
+	defb	053H,05CH
+	defb	026H,02DH
+	defb	00FH
+ASPCT1:	defw	00100H
+ASPCT2:	defw	00100H
+ENDPRG:	defb	':'
+
+	.DEPHASE
 
 
 ;	Bugfix		check for zero length devicenames (e.g. ":xxx" filenames)

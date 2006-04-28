@@ -7136,7 +7136,7 @@ J67FD:	PUSH	AF
 	PUSH	DE
 	POP	IX
 	LD	A,1
-	CALL	CALSLT			; MSX-JE inquiry
+	CALL	CALSLT			; MSX-JE, inquiry
 	PUSH	BC			; size of workspace needed by MSX-JE
 	LD	HL,0161H
 	ADD	HL,BC			; plus an extra 0161H

@@ -370,7 +370,7 @@ C0F55:
 
 	POP	HL
 	PUSH	HL
-	LD	BC,I0EDD
+	LD	BC,I0EDD+3
 	OR	A
 	SBC	HL,BC			; called from functionkeyhandler ?
 	LD	IX,S.PUTCHR
