@@ -1,15 +1,22 @@
-;  
-;   AUDIO10 -> Source re-created by Z80DIS 2.2
-;      Z80DIS was written by Kenneth Gielow
-;                            Palo Alto, CA
-;
+; AUDIO10.MAC
+
+; MSX AUDIO BASIC ROM
+
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+
 	.Z80
 	ASEG
 	ORG	4000H
 
 
 ; voicebuffer
-;
 ; +0,2	durationcounter
 ; +2	stringlength
 ; +3,2	stringaddress
@@ -90,7 +97,7 @@ D7489	EQU	7489H	; play sample repeat flag
 D7496	EQU	7496H	; audio keyboard flags
 I7500	EQU	7500H	; temporary sample buffer
 C7B00	EQU	7B00H	; midi hook
-C7B05	EQU	7B05H	; audio keyboard keystroke hook
+C7B05	EQU	7B05H	; audio keyboard key pressed/released hook
 D7B0A	EQU	7B0AH	; (120*4*int freq)/2, NOT USED
 D7B0C	EQU	7B0CH	; vdp i/o address
 D7B0E	EQU	7B0EH	; slotid MSX-AUDIO
@@ -240,26 +247,27 @@ D4002:	DEFW	C403E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 ?4016:	LD	(D.FFFF),A
 	LD	A,C
 	OUT	(0A8H),A
 	LD	A,L
-	AND	03H	; 3 
+	AND	03H
 	EX	(SP),HL
 	LD	(HL),E
 	PUSH	HL
 	PUSH	BC
-	EXX	
+	EXX
 	EX	AF,AF'
 	CALL	CLPRM1
 	EX	AF,AF'
-	EXX	
+	EXX
 	POP	BC
 	POP	HL
 	POP	DE
 	LD	A,I
 	PUSH	AF
-	DI	
+	DI
 	LD	A,D
 	OUT	(0A8H),A
 	LD	A,B
@@ -271,6 +279,7 @@ D4002:	DEFW	C403E
 ;	  Subroutine cartridge INIT
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C403E:	XOR	A
 	LD	(D7FFE),A		; select segment 0
@@ -286,7 +295,7 @@ C403E:	XOR	A
 	LD	E,L
 	INC	DE
 	LD	BC,10-1
-	LDIR				; looks like 2 ´hooks´ are intialized
+	LDIR				; initialize midi and audio keyboard hook
 	LD	HL,(M0006)
 	LD	(D7B0C),HL		; vdp i/o dataport addresses
 	CALL	C4D83			; MSX-AUDIO in page 0
@@ -299,8 +308,8 @@ C403E:	XOR	A
 	POP	DE			; enable mask
 	XOR	A
 	LD	(D7B13),A		; AUDIO-BASIC not initialized
-	DI	
-	LD	A,19H
+	DI
+	LD	A,25
 	OUT	(0C0H),A
 	EX	(SP),HL
 	EX	(SP),HL
@@ -312,11 +321,11 @@ C403E:	XOR	A
 	RET	Z			; nope, quit (EXTBIO handle by other MSX-AUDIO)
 	JP	J5C13			; initialize EXTBIO and quit
 
-J4092:	DI	
+J4092:	DI
 	LD	HL,I40A1
 	LD	DE,BUF
 	LD	BC,C40AF-I40A1
-	LDIR	
+	LDIR
 	JP	BUF
 
 I40A1:	LD	A,1
@@ -327,11 +336,13 @@ I40A1:	LD	A,1
 	LD	HL,(D4002)
 	JP	(HL)
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C40AF:	DI	
+
+C40AF:	DI
 	LD	HL,D7B13
 	BIT	0,(HL)			; AUDIO-BASIC already initialized ?
 	RET	NZ			; nope, quit
@@ -349,31 +360,34 @@ C40AF:	DI
 	LD	DE,H.PLAY
 	CALL	C40DC
 	LD	(H.PLAY+1),A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C40DC:	LD	BC,5
-	LDIR	
-	RET	
+	LDIR
+	RET
 
 I40E2:	RST	30H
 	DEFB	0
 	DEFW	C4D5E
-	RET	
+	RET
 
 I40E7:	RST	30H
 	DEFB	0
 	DEFW	C5F8E
-	RET	
+	RET
 
 ;	  Subroutine cartridge STATEMENT handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C40EC:	EI	
+
+C40EC:	EI
 	PUSH	HL
 	LD	HL,PROCNM
 	CALL	C4267
@@ -393,24 +407,26 @@ C40EC:	EI
 	JR	Z,J4111
 	LD	A,(D7B13)
 	AND	01H			; AUDIO-BASIC initialized ?
-	SCF	
+	SCF
 	RET	Z			; nope, quit and flag "call statement not recognized"
 J4111:	CALL	C411C			; check for enough stackspace
 	CALL	C411A			; call routine
-	EI	
+	EI
 	OR	A			; flag "call statement recognized"
-	RET	
+	RET
 
 ;	  Subroutine call routine
 ;	     Inputs  DE = routine
 ;	     Outputs ________________________
 
+
 C411A:	PUSH	DE
-	RET	
+	RET
 
 ;	  Subroutine check for enough stackspace
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C411C:	PUSH	HL
 	PUSH	DE
@@ -423,7 +439,7 @@ C411C:	PUSH	HL
 	JP	C,J6EB4
 	POP	DE
 	POP	HL
-	RET	
+	RET
 
 I4132:	DEFB	I.ST_A-I4148		; A
 	DEFB	I.ST_B-I4148		; B
@@ -499,15 +515,17 @@ I.ST_P:	KEYWRD	<PLAY>,C5F36
 	KEYWRD	<PITCH>,C4A7F
 	DEFB	0FFH 
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4267:	LD	A,(HL)
 	SUB	"A"
 	RET	C
 	CP	16H
-	CCF	
+	CCF
 	RET	C
 	INC	HL
 	PUSH	HL
@@ -529,15 +547,17 @@ J4280:	PUSH	HL
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
-	RET	
+	RET
 
-J4290:	SCF	
+J4290:	SCF
 	POP	HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4293:	LD	A,(DE)
 	LD	B,A
@@ -571,11 +591,12 @@ J42B2:	LD	A,(DE)
 	JP	P,J42B2
 	INC	DE
 	INC	DE
-	RET	
+	RET
 
 ;	  Subroutine check for "(" and evaluate byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C42BE:	CALL	C4FB9			; check for "("
 	JP	C6EFE			; evaluate byte operand 
@@ -584,13 +605,15 @@ C42BE:	CALL	C4FB9			; check for "("
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C42C4:	CALL	C4A0A			; end of statement ?
 	JP	NZ,J6EA8		; nope, syntax error
-	RET	
+	RET
 
 ;	  Subroutine evaluate parenthesized byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C42CB:	PUSH	BC
 	CALL	C42BE			; check for "(" and evaluate byte operand
@@ -600,6 +623,7 @@ C42CB:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 ?42D1:	PUSH	BC
 	CALL	C4FB9			; check for "("
 	JR	J42E1
@@ -607,6 +631,7 @@ C42CB:	PUSH	BC
 ;	  Subroutine evaluate two parenthesized adres operands (unused code)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 ?42D7:	CALL	C4FB9			; check for "("
 	CALL	C6EF8			; evaluate adres operand
@@ -616,11 +641,12 @@ J42E1:	CALL	C6EF8			; evaluate adres operand
 J42E4:	CALL	C4FBE			; check for ")"
 	POP	BC
 	LD	A,E
-	RET	
+	RET
 
 ;	  Subroutine CALL SYNTHE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C42EA:	CALL	C42C4			; check for end of statement
 	CALL	C42F3			; try to start synthesizer software
@@ -630,10 +656,11 @@ C42EA:	CALL	C42C4			; check for end of statement
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C42F3:	LD	A,(D7B13)
 	AND	01H			; AUDIO-BASIC initialized ?
 	JP	Z,J4092			; nope, start synthesizer software
-	RET	
+	RET
 
 I42FC:	DEFB	3			; number of FM-AUDIO playvoices
 	DEFB	1			; mode 1
@@ -643,6 +670,7 @@ I42FC:	DEFB	3			; number of FM-AUDIO playvoices
 ;	  Subroutine CALL AUDIO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4308:	PUSH	HL
 	LD	HL,I42FC
@@ -730,13 +758,15 @@ J43A0:	ADD	A,D
 	JR	NC,J434C		; nope, illegal function call
 	CALL	C43AA
 	POP	HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C43AA:	DI	
+
+C43AA:	DI
 	LD	HL,BUF
 	LD	A,(HL)
 	LD	(D7B15),A		; number of FM-AUDIO playvoices
@@ -754,7 +784,7 @@ C43AA:	DI
 	LD	HL,0
 	OR	A
 J43C6:	JR	Z,J43D0
-	SCF	
+	SCF
 	RR	H
 	RR	L
 	DEC	A
@@ -786,16 +816,18 @@ J43E9:	EX	DE,HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C43FB:	CALL	C42CB			; evaluate parenthesized byte operand
 	CP	2			; 0-1 ?
 	JP	NC,C6EAB		; nope, illegal function call
 J4403:	DEC	A
 	LD	(D7B29),A
-	RET	
+	RET
 
 ;	  Subroutine CALL KEY ON
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4408:	CALL	C42BE			; check for "(" and evaluate byte operand
 	LD	A,E
@@ -821,6 +853,7 @@ J4423:	CALL	C4FBE			; check for ")"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C442D:	CALL	C42CB			; evaluate parenthesized byte operand
 	OR	A			; 0-127 ?
 	JP	M,C6EAB			; nope, illegal function call
@@ -831,7 +864,7 @@ J4439:	LD	D,A
 	LD	A,50
 	CALL	C4D6A			; AUDIO function key on/off on audio keyboard channels
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine evaluate one and optional two parenthesized adres operands
 ;	     Inputs  ________________________
@@ -848,38 +881,41 @@ C4441:	CALL	C4FB9			; check for "("
 J4453:	CALL	C4FBE			; check for ")"
 	POP	BC
 	LD	A,E
-	RET	
+	RET
 
 ;	  Subroutine validate volume
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4459:	LD	A,D
 	AND	A
-	SCF	
+	SCF
 	RET	NZ
 	LD	A,E
 	CP	64
-	CCF	
-	RET	
+	CCF
+	RET
 
 ;	  Subroutine CALL MK VEL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4462:	CALL	C42CB			; evaluate parenthesized byte operand
 	PUSH	HL
 	CALL	C446E			; set audio keyboard velocity
 	JP	C,C6EAB			; illegal function call
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine set audio keyboard velocity
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C446E:	CP	16
-	CCF	
+	CCF
 	RET	C
 	LD	C,A			; velocity
 	LD	B,1			; audio keyboard FM play enabled
@@ -887,22 +923,24 @@ C446E:	CP	16
 	LD	HL,C00AB		; setup AUDIO
 	CALL	C4D6D			; start routine in MSX-AUDIO BIOS
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine CALL MK VOL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C447F:	CALL	C4441			; evaluate one and optional two parenthesized adres operands
 	PUSH	HL
 	CALL	C448B			; set audio keyboard volume
 	JP	C,C6EAB			; illegal function call
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine set audio keyboard volume
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C448B:	PUSH	BC
 	LD	IY,I32C0
@@ -916,30 +954,33 @@ C448B:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4499:	CALL	C4459			; validate volume
 	RET	C			; invalid, quit with error
-	CPL	
+	CPL
 	LD	E,A
 	LD	C,15H
 	LD	A,53
 J44A3:	CALL	C4D6A			; AUDIO BIOS function
 	AND	A
-	RET	
+	RET
 
 ;	  Subroutine CALL PCM VOL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C44A8:	CALL	C4441			; evaluate one and optional two parenthesized adres operands
 	PUSH	HL
 	CALL	C44B4			; set sample volume
 	JP	C,C6EAB			; illegal function call
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine set sample volume
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C44B4:	PUSH	BC
 	LD	IY,I32C0
@@ -953,19 +994,20 @@ C44B4:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C44C2:	CALL	C4459			; validate volume
 	RET	C
 	PUSH	AF
-	CPL	
+	CPL
 	AND	3FH
 	LD	C,A
 	LD	A,7			; ADPCM volume
 	CALL	C4D6A			; AUDIO BIOS function
 	POP	AF
 	AND	38H
-	RRA	
-	RRA	
-	RRA	
+	RRA
+	RRA
+	RRA
 	JR	NZ,J44D9
 	INC	A
 J44D9:	LD	C,A
@@ -975,6 +1017,7 @@ J44D9:	LD	C,A
 ;	  Subroutine CALL MK TEMPO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 
 C44DF:	CALL	C4FB9			; check for "("
@@ -1001,6 +1044,7 @@ J44FF:	JP	C6EAB			; illegal function call
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4502:	CALL	C4FB4			; check for ","
 	CALL	C6EFE			; evaluate byte operand 
 	CALL	C4FBE			; check for ")"
@@ -1008,31 +1052,33 @@ C4502:	CALL	C4FB4			; check for ","
 	CP	32			; 0-31 ?
 	JR	NC,J44FF		; nope, illegal function call
 	LD	(D7EE3),A		; set audio keyboard variation
-	RET	
+	RET
 
 ;	  Subroutine set audio keyboard accompaniment tempo
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4514:	LD	HL,-361
+
+C4514:	LD	HL,-(360+1)
 	ADD	HL,DE
 	RET	C
-	LD	HL,-25
+	LD	HL,-(24+1)
 	ADD	HL,DE
-	CCF	
+	CCF
 	RET	C
 	LD	HL,6250
 	EX	DE,HL
-	CALL	C63B9
+	CALL	C63B9			; 6250/tempo
 	XOR	A
 	SUB	E
-	LD	C,A
-	LD	A,18
+	LD	C,A			; 256-val
+	LD	A,18			; set TIMER-2
 	JP	J44A3			; AUDIO BIOS function
 
 ;	  Subroutine CALL MK PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C452E:	CALL	C4FB9			; check for "("
 	CP	0EBH			; OFF token ?
@@ -1049,11 +1095,12 @@ J4543:	CALL	C4FBE			; check for ")"
 	LD	A,E
 	CALL	C4551			; set sample for audio keyboard
 	JP	C,C6EAB			; illegal function call
-	RET	
+	RET
 
 ;	  Subroutine set sample for audio keyboard
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4551:	CP	0FFH
 	JR	Z,J4564			; off,
@@ -1065,7 +1112,7 @@ C4551:	CP	0FFH
 	CALL	C4B7C			; scan audio keyboard enabled
 	SET	4,(HL)			; audio keyboard play sample
 J4562:	POP	HL
-	RET	
+	RET
 
 J4564:	PUSH	HL
 	LD	HL,D7496
@@ -1076,43 +1123,49 @@ J4564:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C456C:	CALL	C42CB			; evaluate parenthesized byte operand
 	CALL	C4576
 	JP	C,C6EAB			; illegal function call
-	RET	
+	RET
 
 ;	  Subroutine set audio keyboard recording mode
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4576:	LD	C,A
 	LD	E,0
 	JP	C49FF
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C457C:	ADD	A,L
 	LD	L,A
 	RET	NC
 	INC	H
-	RET	
+	RET
 
 ;	  Subroutine CALL PCM FREQ
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4581:	CALL	C4441			; evaluate one and optional two parenthesized adres operands
 	PUSH	HL
 	CALL	C458D			; set sample frequency
 	JP	C,C6EAB			; illegal function call
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine set sample frequency
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C458D:	PUSH	BC
 	LD	IY,I32C0
@@ -1126,12 +1179,13 @@ C458D:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C459B:	LD	HL,-49717
 	ADD	HL,DE
 	RET	C
 	LD	HL,-1800
 	ADD	HL,DE
-	CCF	
+	CCF
 	RET	C
 	LD	A,43
 	JP	J44A3			; AUDIO BIOS function
@@ -1139,6 +1193,7 @@ C459B:	LD	HL,-49717
 ;	  Subroutine CALL COPY PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C45AB:	CALL	C4618			; evaluate "(" samplenumber,samplenumber
 	LD	A,(HL)
@@ -1175,6 +1230,7 @@ J45E8:	CALL	C4FBE			; check for ")"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C45F1:	CALL	C4618			; evaluate "(" samplenumber,samplenumber
 	LD	A,(BUF+8)
 	OR	A			; first samplenumber has "#" prefix ?
@@ -1187,6 +1243,7 @@ C45F1:	CALL	C4618			; evaluate "(" samplenumber,samplenumber
 ;	  Subroutine CALL CONVP
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4603:	CALL	C4618			; evaluate "(" samplenumber,samplenumber
 	LD	A,(BUF+8)
@@ -1202,6 +1259,7 @@ J4615:	JP	C6EAB			; illegal function call
 ;	  Subroutine evaluate "(" samplenumber,samplenumber
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4618:	LD	DE,BUF
 	LD	B,9
@@ -1219,11 +1277,12 @@ J462F:	CALL	C6EFE			; evaluate byte operand
 	CALL	C4FB4			; check for ","
 	CALL	C6EFE			; evaluate byte operand 
 	LD	(BUF+1),A
-	RET	
+	RET
 
 ;	  Subroutine copy pcm sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C463F:	LD	A,(BUF+8)
 	OR	A			; first samplenumber has "#" prefix ?
@@ -1249,7 +1308,7 @@ J4649:	EX	DE,HL			; source length
 J4666:	LD	(BUF+16+4),DE		; source length
 	LD	DE,(BUF+6)		; destination start offset
 	LD	HL,(BUF+32+4)
-	SCF	
+	SCF
 	SBC	HL,DE			; valid ?
 	RET	C			; nope, quit with error
 	INC	HL
@@ -1261,7 +1320,7 @@ J4666:	LD	(BUF+16+4),DE		; source length
 	SBC	HL,DE			; destination length suficient ?
 	LD	A,0
 	JP	NC,J4719		; yep, start transfer
-	RET	
+	RET
 
 J468A:	EX	DE,HL
 	JR	J4666
@@ -1270,13 +1329,13 @@ J468D:	LD	A,(D7E88)
 	LD	B,A
 	LD	A,(BUF+0)
 	CP	B			; AUDIO ROM sample number valid ?
-	CCF	
+	CCF
 	RET	C			; nope, quit with error
 	LD	HL,I4FDD
 	LD	DE,BUF+128
 	LD	BC,E$4FDD-I4FDD
 	LDIR				; routine for copying from segment 2 or 3
-	DI	
+	DI
 	LD	(BUF+254),SP		; save current stackpointer
 	LD	SP,I7FC4
 	CALL	C4FC3			; switch MSX-AUDIO in page 2
@@ -1304,16 +1363,17 @@ J468D:	LD	A,(D7E88)
 	DEC	A			; destination memorytype sample ROM ?
 	LD	DE,(BUF+20)
 	JP	NZ,J4649		; nope, continue
-	SCF	
+	SCF
 	RET				; yep, quit with error
 
 ;	  Subroutine convert pcm to adpcm
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C46E8:	CALL	C480B			; validate source and destination
 	RET	C			; invalid, quit with error
-	RLA	
+	RLA
 	CCF				; source sampletype ADPCM ?
 	RET	C			; yep, quit with error
 	SRL	D
@@ -1321,7 +1381,7 @@ C46E8:	CALL	C480B			; validate source and destination
 	JR	NC,J46F9		; even number of bytes, ok
 	LD	A,D
 	OR	E			; only 1 byte PCM data ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 J46F9:	PUSH	HL
 	CALL	C47AF
@@ -1334,6 +1394,7 @@ J46F9:	PUSH	HL
 ;	  Subroutine convert adpcm to pcm
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4705:	CALL	C480B			; validate source and destination
 	RET	C			; invalid, quit with error
@@ -1352,11 +1413,12 @@ C4705:	CALL	C480B			; validate source and destination
 ;	     Inputs  A = functionnumber
 ;	     Outputs ________________________
 
+
 J4719:	PUSH	AF
 	CALL	C521D			; wait for all samplers and sample memories to become ready
 	JR	NZ,J4721		; not aborted by CTRL-STOP, continue
 	POP	AF
-	RET	
+	RET
 
 J4721:	LD	A,33H
 	LD	(D7EDF),A		; sampler and sample memory both Y8950 in use
@@ -1378,7 +1440,7 @@ J4721:	LD	A,33H
 J4749:	CALL	C4D8F			; restore page 0
 	XOR	A
 	LD	(D7EDF),A		; sampler and sample memory both Y8950 free
-	RET	
+	RET
 
 J4751:	POP	AF
 	LD	A,4
@@ -1391,7 +1453,7 @@ J4751:	POP	AF
 	LD	(BUF+16+2),HL
 J4766:	LD	HL,1
 	LD	(BUF+48+4),HL		; temp source length = 1*256 bytes
-	DI	
+	DI
 	LD	(BUF+254),SP
 	LD	SP,I7FC4
 	CALL	C4FC3			; switch MSX-AUDIO in page 2
@@ -1401,7 +1463,7 @@ J4766:	LD	HL,1
 	CALL	BUF+128			; copy AUDIO ROM sample data to temporary source buffer
 	CALL	C4FD5			; restore orginal page 2
 	LD	SP,(BUF+254)
-	EI	
+	EI
 	LD	IX,BUF+48
 	LD	IY,BUF+32
 	LD	A,0
@@ -1419,9 +1481,11 @@ J4766:	LD	HL,1
 	JR	NZ,J4766		; nope, next block
 	JR	J4749			; quit
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C47AF:	LD	A,(HL)
 	AND	07H
@@ -1454,14 +1518,15 @@ J47DB:	POP	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C47DF:	PUSH	DE
 	LD	BC,8
-	LDIR	
+	LDIR
 	POP	HL
 	LD	A,(HL)
 	AND	07H
 	LD	(HL),A
-	RET	
+	RET
 
 J47EB:	PUSH	HL
 	LD	HL,(BUF+32+4)
@@ -1478,36 +1543,42 @@ J47EB:	PUSH	HL
 	INC	HL
 	JR	J4802
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-;
-C47FF:	CALL	C4806
-J4802:	LD	DE,(BUF+16+6)
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
+C47FF:	CALL	C4806
+J4802:	LD	DE,(BUF+16+6)
+
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 
 C4806:	INC	HL
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C480B:	LD	DE,(BUF+0)
 	LD	A,D
 	CP	E			; source sample same as destination ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 
 ;	  Subroutine copy both sampledefinitions
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4813:	LD	A,(BUF+0)		; source samplenumber
 	LD	HL,BUF+16
@@ -1532,6 +1603,7 @@ C4813:	LD	A,(BUF+0)		; source samplenumber
 ;	  Subroutine copy sampledefinition
 ;	     Inputs  HL = source definition, A = destination samplenumber
 ;	     Outputs ________________________
+
 
 C4839:	CP	16
 	CCF				; samplenumber 0-15 ?
@@ -1561,7 +1633,7 @@ C4839:	CP	16
 	INC	HL
 	LD	(HL),0
 	POP	HL
-	RET	
+	RET
 
 J4861:	INC	HL
 	INC	HL
@@ -1570,12 +1642,13 @@ J4861:	INC	HL
 	OR	(HL)			; length zero ?
 	POP	HL
 	RET	NZ			; nope, ok
-	SCF	
+	SCF
 	RET				; yep, quit with error
 
 ;	  Subroutine adjust start
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C486A:	LD	A,(HL)
 	INC	HL
@@ -1589,11 +1662,12 @@ C486A:	LD	A,(HL)
 J4875:	INC	HL
 	ADC	A,(HL)
 	LD	(HL),A
-	RET	
+	RET
 
 ;	  Subroutine CALL STOPM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4879:	CALL	C4A0A			; end of statement ?
 	JR	Z,C488C			; yep, stop all sound and quit
@@ -1608,6 +1682,7 @@ C4879:	CALL	C4A0A			; end of statement ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C488C:	PUSH	HL
 	CALL	C6CDC			; stop background music
 	CALL	C4D83			; MSX-AUDIO in page 0
@@ -1617,7 +1692,7 @@ C488C:	PUSH	HL
 	LD	IY,I32C0
 	LD	A,10
 	RST	00H			; abort sampling 2nd Y8950
-	DI	
+	DI
 	LD	HL,D7EDF
 	LD	(HL),0			; sampler and sample memory both Y8950 free
 	LD	A,57
@@ -1626,11 +1701,12 @@ C488C:	PUSH	HL
 	CALL	C4D8F			; restore page 0
 	POP	HL
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine CALL CONT MK
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C48B2:	CALL	C42C4			; check for end of statement
 J48B5:	LD	E,2
@@ -1639,6 +1715,7 @@ J48B5:	LD	E,2
 ;	  Subroutine CALL AUDREG
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C48BA:	CALL	C4FB9			; check for "("
 	CALL	C6EFE			; evaluate byte operand (register)
@@ -1667,11 +1744,12 @@ J48E9:	POP	DE
 	LD	HL,C0099		; write AUDIO register (EI)
 	CALL	C4D6D			; start routine in MSX-AUDIO BIOS
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine setup audio and audio keyboard mode
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C48F5:	LD	C,8			; default audio keyboard velocity
 	CALL	C4D83			; MSX-AUDIO in page 0
@@ -1688,9 +1766,9 @@ J4902:	PUSH	BC
 	PUSH	AF
 	AND	04H			; b4
 	LD	C,A
-	RRCA	
+	RRCA
 	OR	C
-	RRCA	
+	RRCA
 	LD	C,A			; 0 for mode 0-3, 3 for mode 4-7
 	POP	AF
 	ADD	A,A
@@ -1728,17 +1806,18 @@ C4935:	LD	A,1
 	DEC	HL
 	EX	DE,HL			; end of array
 	LD	A,(BC)
-	SCF	
-	RLA	
+	SCF
+	RLA
 	ADD	A,C
 	LD	C,A
 	RET	NC
 	INC	B
-	RET	
+	RET
 
 ;	  Subroutine evaluate APPEND/REC/PLAY MK parameterlist
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4957:	CALL	C4A0A			; end of statement ?
 	RET	Z			; yep, quit (Zx set)
@@ -1756,19 +1835,20 @@ C4957:	CALL	C4A0A			; end of statement ?
 	POP	BC
 	XOR	A
 	INC	A			; Cx reset, Zx reset
-	RET	
+	RET
 
 J4976:	POP	HL
 	CALL	C4935			; search array variable
 	CALL	C4FBE			; check for ")"
-	SCF	
+	SCF
 	ADC	A,A
 	RRA				; Cx set, Zx reset
-	RET	
+	RET
 
 ;	  Subroutine CALL APPEND MK
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4981:	CALL	C4957			; evaluate parameterlist
 	JR	Z,J4997			; no parameters, illegal function call
@@ -1788,6 +1868,7 @@ J4997:	JP	C6EAB			; illegal function call
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C499A:	CALL	C4957			; evaluate parameterlist
 	JR	Z,J4997			; no parameters, illegal function call
 	PUSH	BC
@@ -1798,6 +1879,7 @@ C499A:	CALL	C4957			; evaluate parameterlist
 ;	  Subroutine CALL PLAY MK
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C49A6:	CALL	C4957			; evaluate parameterlist
 	PUSH	BC
@@ -1814,37 +1896,40 @@ J49B9:	LD	E,4			; start audio keyboard replay
 	CALL	C49E8
 	RET	C
 	RET	NZ
-J49C0:	EI	
+J49C0:	EI
 	CALL	C6B8D			; CTRL-STOP pressed ?
-	DI	
+	DI
 	JR	Z,J49DC			; yep,
 	LD	A,(D7496)
 	BIT	3,A			; still replaying ?
 	JR	NZ,J49C0		; yep, wait
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine start audio keyboard recording
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C49D0:	LD	E,3			; start audio keyboard recording
 	CALL	C49E8
 	RET	C
 	RET	NZ
-J49D7:	EI	
+J49D7:	EI
 	CALL	C6B8D			; CTRL-STOP pressed ?
-	DI	
+	DI
 J49DC:	JP	Z,C488C			; yep, stop all sound and quit
 	LD	A,(D7496)
 	BIT	2,A			; still recording ?
 	JR	NZ,J49D7		; yep, wait
 	OR	A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C49E8:	LD	A,(D7EE1)
 	OR	A
@@ -1858,22 +1943,24 @@ J49F8:	CALL	C49FF
 	RET	C
 	LD	A,C
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine audio keyboard bios function
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C49FF:	LD	A,57
 	PUSH	HL
 	CALL	C4B7C			; scan audio keyboard enabled
 	CALL	C4D6A			; AUDIO BIOS function
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine end of statement ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A0A:	DEC	HL
 	JP	C6EEC
@@ -1882,6 +1969,7 @@ C4A0A:	DEC	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4A0E:	CALL	C4FB9			; check for "("
 	LD	DE,D3496
 	JR	J4A33
@@ -1889,6 +1977,7 @@ C4A0E:	CALL	C4FB9			; check for "("
 ;	  Subroutine CALL APOKE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A16:	CALL	C4FB9			; check for "("
 	CALL	C6EF8			; evaluate adres operand
@@ -1899,11 +1988,12 @@ C4A16:	CALL	C4FB9			; check for "("
 	LD	A,E
 	POP	DE
 	LD	(DE),A
-	RET	
+	RET
 
 ;	  Subroutine CALL APEEK
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A2A:	CALL	C4FB9			; check for "("
 	CALL	C6EF8			; evaluate adres operand
@@ -1918,11 +2008,12 @@ J4A33:	PUSH	DE
 J4A41:	CALL	C4A49			; put in DAC and convert and put in variable
 	POP	HL
 	CALL	C4FBE			; check for ")"
-	RET	
+	RET
 
 ;	  Subroutine put in DAC and convert and put in variable
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A49:	LD	(DAC+2),HL
 	LD	HL,VALTYP
@@ -1950,12 +2041,13 @@ J4A6F:	POP	DE
 J4A75:	LD	HL,DAC+2
 	LD	C,2
 J4A7A:	LD	B,0
-	LDIR	
-	RET	
+	LDIR
+	RET
 
 ;	  Subroutine CALL PITCH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A7F:	LD	A,30
 	DEFB	1
@@ -1963,6 +2055,7 @@ C4A7F:	LD	A,30
 ;	  Subroutine CALL TRANSPOSE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A82:	LD	A,31
 	PUSH	AF
@@ -1972,20 +2065,23 @@ J4A89:	PUSH	HL
 	CALL	C4D6A			; AUDIO BIOS function
 	POP	HL
 	JP	C,C6EAB			; illegal function call
-	RET	
+	RET
 
 ;	  Subroutine CALL TEMPER
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A92:	CALL	C42CB			; evaluate parenthesized byte operand
 	LD	C,A
 	LD	A,29
 	JR	J4A89
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4A9A:	PUSH	AF
 	PUSH	HL
@@ -1993,11 +2089,12 @@ C4A9A:	PUSH	AF
 	CALL	C4D6A			; AUDIO BIOS function
 	POP	HL
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine CALL INMK
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4AA4:	EX	DE,HL
 	CALL	C4B7C			; scan audio keyboard enabled
@@ -2008,10 +2105,10 @@ C4AA4:	EX	DE,HL
 	EX	DE,HL
 	CALL	C4A0A			; end of statement ?
 	JR	NZ,J4AC4		; nope, evaluate
-	DI	
+	DI
 	LD	(D7EF0),DE
 	LD	(D7EF1),DE		; clear keystroke buffer
-	RET	
+	RET
 
 J4AC4:	CALL	C4FB9			; check for "("
 	CP	","
@@ -2051,7 +2148,7 @@ J4B10:	LD	DE,(BUF+2)
 	DEC	D			; pressed/released variable specified ?
 	JR	Z,J4B20			; nope, skip
 	PUSH	AF
-	RLCA	
+	RLCA
 	AND	01H
 	CALL	C4B32			; put in variable
 	POP	AF
@@ -2071,19 +2168,21 @@ J4B20:	LD	DE,(BUF+4)
 ;	     Inputs  A = value, DE = address variable
 ;	     Outputs ________________________
 
+
 C4B32:	PUSH	HL
 	LD	L,A
 	LD	H,0
 J4B36:	CALL	C4A49			; put in DAC and convert and put in variable
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine put in audio keyboard keystroke buffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4B3B:	LD	HL,D7EF0
-	DI	
+	DI
 	LD	A,32
 	CP	(HL)			; >32 ?
 	JR	C,J4B57			; yep, quit
@@ -2100,15 +2199,16 @@ C4B3B:	LD	HL,D7EF0
 J4B52:	CALL	C457C			; get table entry
 	LD	(HL),D
 	AND	A
-J4B57:	EI	
-	RET	
+J4B57:	EI
+	RET
 
 ;	  Subroutine get from audio keyboard keystroke buffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4B59:	LD	HL,D7EF0
-	DI	
+	DI
 	LD	A,(HL)
 	AND	A
 	JR	Z,J4B68
@@ -2116,8 +2216,8 @@ C4B59:	LD	HL,D7EF0
 	CP	(HL)
 	JR	NC,J4B6A
 	LD	(HL),0
-J4B68:	EI	
-	RET	
+J4B68:	EI
+	RET
 
 J4B6A:	DEC	(HL)
 	INC	HL
@@ -2130,20 +2230,22 @@ J4B74:	INC	HL
 	CALL	C457C
 	LD	A,(HL)
 	AND	A
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine scan audio keyboard enabled
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4B7C:	LD	HL,D7496
 	SET	7,(HL)
-	RET	
+	RET
 
 ;	  Subroutine AST MK
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 I4B82:	CALL	C7B05			; hook ?
 	CALL	C4B3B			; put in audio keyboard keystroke buffer
@@ -2162,6 +2264,7 @@ I4B82:	CALL	C7B05			; hook ?
 ;	  Subroutine save in recording buffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4B9C:	LD	HL,I34A4
 	LD	A,(HL)
@@ -2183,11 +2286,12 @@ J4BAF:	LD	(D3497),HL
 	RET	C
 	LD	HL,D3496
 	RES	2,(HL)			; stop recording
-	RET	
+	RET
 
 ;	  Subroutine key on/off sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4BC1:	LD	A,(D7EDD)
 	BIT	7,D			; key released ?
@@ -2235,7 +2339,7 @@ J4BFF:	PUSH	HL
 	LD	DE,I7ECA
 	PUSH	DE
 	LD	BC,6
-	LDIR	
+	LDIR
 	POP	IX
 	LD	HL,D7EE0
 	LD	A,(IX+0)
@@ -2253,7 +2357,7 @@ J4C29:	LD	A,10
 	LD	A,11
 	RST	00H			; play sample
 	POP	DE
-	RET	
+	RET
 
 J4C33:	AND	7FH
 	SUB	D			; key released = key pressed ?
@@ -2267,7 +2371,7 @@ J4C3A:	PUSH	DE
 	LD	A,10
 	LD	IY,I3280
 	RST	00H			; abort sampling 1st Y8950
-	DI	
+	DI
 	LD	HL,D7EDF
 	LD	A,0F0H
 	AND	(HL)
@@ -2280,7 +2384,7 @@ J4C57:	POP	AF
 	LD	A,10
 	LD	IY,I32C0
 	RST	00H			; abort sampling 2nd Y8950
-	DI	
+	DI
 	LD	HL,D7EDF
 	LD	A,0FH
 	AND	(HL)
@@ -2288,17 +2392,19 @@ J4C57:	POP	AF
 	LD	HL,D7EE0
 	RES	1,(HL)			; audio keyboard sample on 2nd Y8950 stopped
 J4C70:	POP	DE
-	RET	
+	RET
 
 ;	  Subroutine get sample frequency for key
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4C72:	LD	A,D
 
 ;	  Subroutine get sample frequency for key
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4C73:	ADD	A,A
 	LD	HL,I4CA0
@@ -2313,7 +2419,7 @@ J4C80:	SUB	C
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)
-	RET	
+	RET
 
 J4C8C:	DEC	B
 	SUB	C
@@ -2324,11 +2430,11 @@ J4C8C:	DEC	B
 	INC	HL
 	LD	A,(HL)
 J4C98:	AND	A
-	RRA	
+	RRA
 	RR	C
 	DJNZ	J4C98
 	LD	B,A
-	RET	
+	RET
 
 I4CA0:	DEFW	06336H
 	DEFW	0691DH
@@ -2346,6 +2452,7 @@ I4CA0:	DEFW	06336H
 ;	  Subroutine TIMER-2 handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 I4CB8:	LD	A,(D3496)
 	BIT	2,A			; audio keyboard recording ?
@@ -2366,11 +2473,12 @@ I4CB8:	LD	A,(D3496)
 	LD	C,A
 	LD	A,21
 	RST	00H			; audio function play percussion
-	RET	
+	RET
 
 ;	  Subroutine AST ADPCM 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 I4CDC:	LD	A,0FH
 	DEFB	021H
@@ -2379,21 +2487,24 @@ I4CDC:	LD	A,0FH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 I4CDF:	LD	A,0F0H
 	LD	HL,D7EDF
-	DI	
+	DI
 	AND	(HL)
 	LD	(HL),A			; sampler and sample memory free
 	XOR	A
 	LD	(D7EDD),A		; no sample playing from audio keyboard
-	EI	
-	RET	
+	EI
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4CED:	DI	
+
+C4CED:	DI
 	LD	HL,I34A4
 	INC	(HL)			; increase timer
 	RET	NZ
@@ -2404,13 +2515,15 @@ C4CED:	DI
 	LD	(HL),7FH		; keycode (= no key)
 	INC	HL
 	LD	(D3497),HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4D01:	DI	
+
+C4D01:	DI
 	LD	HL,D34A3
 	LD	A,(HL)
 	AND	A
@@ -2446,7 +2559,7 @@ J4D37:	BIT	4,A			; audio keyboard play sample ?
 	CALL	NZ,C4BC1		; yep, key on/off sample
 	LD	A,50
 	RST	00H			; AUDIO function key on/off on audio keyboard channels
-	DI	
+	DI
 	POP	HL
 	AND	A
 J4D42:	LD	A,(HL)
@@ -2456,7 +2569,7 @@ J4D42:	LD	A,(HL)
 	AND	A
 	JR	Z,J4D0B
 	LD	(D34A3),A
-	RET	
+	RET
 
 J4D52:	LD	HL,D3496
 	RES	3,(HL)			; stop keyboard replay
@@ -2464,13 +2577,14 @@ J4D52:	LD	HL,D3496
 	RET	NZ			; yep, quit
 	LD	A,49
 	RST	00H			; AUDIO function key off on audio keyboard channels
-	RET	
+	RET
 
 ;	  Subroutine H.KEYI handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4D5E:	DI	
+
+C4D5E:	DI
 	PUSH	HL
 	LD	HL,C00B4		; interrupt handler AUDIO
 	CALL	C4D6D			; start routine in MSX-AUDIO BIOS
@@ -2481,31 +2595,35 @@ C4D5E:	DI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4D6A:	LD	HL,C00AE		; function AUDIO
 
 ;	  Subroutine start routine in MSX-AUDIO BIOS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4D6D:	EX	AF,AF'
-	EXX	
+	EXX
 	CALL	C4D9B			; select MSX-AUDIO in page 0
-	DI	
+	DI
 	PUSH	BC			; save slotregisters
-	EXX	
+	EXX
 	EX	AF,AF'
 	CALL	C4D82
 	EX	AF,AF'
-	EXX	
+	EXX
 	POP	BC			; saved slotregisters
 	CALL	C4DD0			; restore page 0
-	EXX	
+	EXX
 	EX	AF,AF'
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4D82:	JP	(HL)
 
@@ -2513,33 +2631,36 @@ C4D82:	JP	(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4D83:	EX	AF,AF'
-	EXX	
+	EXX
 	CALL	C4D9B			; select MSX-AUDIO in page 0
 	LD	(D7F98),BC		; save orginal slotregisters
-	EXX	
+	EXX
 	EX	AF,AF'
-	RET	
+	RET
 
 ;	  Subroutine restore page 0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4D8F:	EX	AF,AF'
-	EXX	
+	EXX
 	LD	BC,(D7F98)
 	CALL	C4DD0
-	EXX	
+	EXX
 	EX	AF,AF'
-	RET	
+	RET
 
 ;	  Subroutine select MSX-AUDIO in page 0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4D9B:	LD	A,I
 	PUSH	AF
-	DI	
+	DI
 	IN	A,(0A8H)
 	LD	B,A
 	AND	0F0H
@@ -2569,17 +2690,19 @@ C4D9B:	LD	A,I
 	OUT	(0A8H),A		; restore page 3
 J4DCC:	POP	AF
 	RET	PO
-	EI	
-	RET	
+	EI
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4DD0:	LD	A,I
-	DI	
+	DI
 	LD	A,(D7F94)
-	RLA	
+	RLA
 	JR	C,J4DE6
 	LD	HL,(D7F95)
 	LD	(HL),C
@@ -2590,16 +2713,17 @@ C4DD0:	LD	A,I
 J4DE6:	LD	A,B
 	OUT	(0A8H),A
 	RET	PO
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine get slotmasks of page 1 (my slot)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4DEC:	LD	E,A
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	CALL	C4E1A
 	AND	0FH
 	LD	(D7F93),A		; primairy slot OR mask for MSX-AUDIO page 0 and 1
@@ -2618,31 +2742,34 @@ C4DEC:	LD	E,A
 	AND	0FH
 	LD	(D7F94),A		; secundairy slot OR mask for MSX-AUDIO page 0 and 1
 	LD	A,B
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	OR	B
 	LD	(D7F97),A		; primary slot OR mask for MSX-AUDIO page 0,1 and 3
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4E1A:	AND	0FCH
 	LD	D,A
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	AND	03H
 	OR	D
-	RET	
+	RET
 
 ;	  Subroutine get slotid of page
 ;	     Inputs  B = page
 ;	     Outputs ________________________
 
+
 C4E23:	IN	A,(0A8H)
 	CALL	C4E45
-	AND	03H	; 3 
+	AND	03H
 	LD	E,A
 	LD	D,00H
 	LD	HL,EXPTBL
@@ -2657,32 +2784,34 @@ C4E23:	IN	A,(0A8H)
 	INC	HL
 	INC	HL
 	LD	A,(HL)
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	CALL	C4E45
-	AND	0CH	; 12 
+	AND	0CH
 	OR	E
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4E45:	INC	B
 	DEC	B
 	RET	Z
 	PUSH	BC
-J4E49:	RRCA	
-	RRCA	
+J4E49:	RRCA
+	RRCA
 	DJNZ	J4E49
 	POP	BC
-	RET	
+	RET
 
 I4E4F:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	EXX	
+	EXX
 	EX	AF,AF'
 	PUSH	IX
 	PUSH	IY
@@ -2692,14 +2821,14 @@ I4E4F:	PUSH	AF
 	POP	IY
 	POP	IX
 	EX	AF,AF'
-	EXX	
+	EXX
 J4E6A:	POP	HL
 	POP	DE
 	POP	BC
 	POP	AF
-	EI	
+	EI
 	RET
-E$4E4F:	
+E$4E4F:
 
 I4E70:	DEFB	4			; default sample volume PCM
 	DEFB	0			; default sample volume ADPCM
@@ -2719,12 +2848,14 @@ I4E70:	DEFB	4			; default sample volume PCM
 	DEFB	040H
 	DEFB	0,0,0,0
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4E89:	PUSH	DE
-	DI	
+	DI
 	CALL	C4D83			; MSX-AUDIO in page 0
 	CALL	C0090			; initialize AUDIO workspace
 	LD	HL,I4E4F
@@ -2734,7 +2865,7 @@ C4E89:	PUSH	DE
 	LD	HL,I4E70
 	LD	DE,D7EDA
 	LD	BC,25
-	LDIR	
+	LDIR
 	LD	A,0C3H
 	LD	(D7300+0),A
 	LD	HL,I3E89
@@ -2814,24 +2945,26 @@ J4F14:	LD	(D7EEE),HL		; VRAM mask
 	RST	00H			; start TIMER-1,TIMER-2 and set TIMER masks
 	CALL	C4D8F			; restore page 0
 	CALL	C4F7C			; count number of samples in sample ROM
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine sample ram size in 256 bytes units
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4F64:	AND	A
-	RRA	
+	RRA
 	LD	H,A
 	LD	L,0
 	RR	L
 	DEC	HL
-	RET	
+	RET
 
 ;	  Subroutine set sample volume
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4F6D:	LD	A,(D7EDA)
 	LD	C,A
@@ -2841,11 +2974,13 @@ C4F6D:	LD	A,(D7EDA)
 	LD	C,A
 	LD	A,7
 	RST	00H
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4F7C:	LD	A,1			; source memory type = sample ROM 1st Y8950
 	CALL	C4F8D
@@ -2855,9 +2990,11 @@ C4F7C:	LD	A,1			; source memory type = sample ROM 1st Y8950
 	LD	(D7E87),A		; number of samples in sample ROM 2nd Y8950
 	RET
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4F8D:	CALL	C550A			; get sample rom directory
 	XOR	A
@@ -2882,22 +3019,24 @@ J4FA4:	LD	A,(HL)
 	JR	J4FA4			; next sample
 
 J4FB0:	LD	A,D
-	RET	
+	RET
 
 J4FB2:	XOR	A
-	RET	
+	RET
 
 ;	  Subroutine check for ","
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4FB4:	CALL	C6EE4
 	DEFB	","
-	RET	
+	RET
 
 ;	  Subroutine check for "("
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4FB9:	CALL	C6EE4
 	DEFB	"("
@@ -2906,14 +3045,15 @@ C4FB9:	CALL	C6EE4
 ;	  Subroutine check for ")"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C4FBE:	CALL	C6EE4
 	DEFB	")"
-	RET	
+	RET
 
 ;	  Subroutine switch MSX-AUDIO in page 2
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4FC3:	LD	B,2
 	CALL	C4E23			; get slotid of page 2
@@ -2930,6 +3070,7 @@ C4FC3:	LD	B,2
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4FD5:	POP	HL
 	EX	(SP),HL
 	LD	A,L
@@ -2939,22 +3080,23 @@ C4FD5:	POP	HL
 I4FDD:	LD	A,H
 	AND	80H
 	RES	7,H
-	RLCA	
+	RLCA
 	OR	02H			; first 32 KB in segment 2, second 32 KB in segment 3
-	DI	
+	DI
 	LD	(D7FFE),A		; select segment
 	LD	A,40H
 	ADD	A,H
 	LD	H,A			; page 1 and 2 based
-	LDIR	
+	LDIR
 	XOR	A
 	LD	(D7FFE),A		; select segment 0
-	RET	
+	RET
 E$4FDD:
 
 ;	  Subroutine check for "," <>255 or not specified operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C4FF4:	CALL	C4FB4			; check for ","
 	CP	","
@@ -2966,6 +3108,7 @@ C4FF4:	CALL	C4FB4			; check for ","
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C4FFE:	CALL	C6EFE			; evaluate byte operand 
 	CP	0FFH
 	RET	NZ
@@ -2974,6 +3117,7 @@ C4FFE:	CALL	C6EFE			; evaluate byte operand
 ;	  Subroutine check for "," <>65535 or not specified operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5006:	CALL	C4FB4			; check for ","
 	CP	","
@@ -2986,9 +3130,11 @@ C5006:	CALL	C4FB4			; check for ","
 	RET	NZ			; nope, quit
 J5016:	JP	C6EAB			; illegal function call
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5019:	LD	A,(HL)
 	CP	")"
@@ -2999,6 +3145,7 @@ C5019:	LD	A,(HL)
 ;	  Subroutine CALL SET PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5021:	PUSH	HL
 	LD	HL,BUF+2
@@ -3047,7 +3194,7 @@ J5082:	CALL	C4FBE			; check for ")"
 	CALL	C51BA			; define sample
 	POP	HL
 	JR	C,J5016			; error, illegal function call
-	RET	
+	RET
 
 J5090:	CALL	C4FB4			; check for "," (no sample type for a ROM)
 	CALL	C4FB4			; check for ","
@@ -3097,9 +3244,11 @@ J50D2:	LD	A,5
 	LD	(BUF+5),DE
 	JP	J506D			; rest of parameterlist
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C50F4:	LD	C,(HL)
 	CALL	C512B			; is upcase letter ?
@@ -3127,28 +3276,30 @@ J5112:	LD	E,":"
 	RET	NZ
 J5126:	LD	E,A
 	CALL	C6EEC			; read char
-	RET	
+	RET
 
 ;	  Subroutine is upcase letter
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C512B:	CP	"A"
 	RET	C
 	CP	"Z"+1
-	CCF	
-	RET	
+	CCF
+	RET
 
 ;	  Subroutine validate samplefrequency
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5132:	LD	A,D
 	AND	E
 	INC	A
 	JR	NZ,J513B
 	LD	DE,8000
-	RET	
+	RET
 
 J513B:	PUSH	HL
 	LD	HL,16000
@@ -3157,35 +3308,39 @@ J513B:	PUSH	HL
 	JR	C,J514A
 	LD	HL,1800-1
 	SBC	HL,DE
-	CCF	
+	CCF
 J514A:	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine CALL REC PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C514C:	CALL	C516B			; evaluate parameterlist
 	PUSH	HL
 	CALL	C5535			; record sample
 	JR	C,J515E			; error, illegal function call
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine CALL PLAY PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5157:	CALL	C516B			; evaluate parameterlist
 	PUSH	HL
 	CALL	C571C			; play sample
 J515E:	JP	C,C6EAB			; error, illegal function call
 	POP	HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5163:	LD	A,(HL)
 	CP	")"
@@ -3193,9 +3348,11 @@ C5163:	LD	A,(HL)
 	POP	DE
 	JP	J51B3
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C516B:	PUSH	HL
 	LD	HL,BUF+1
@@ -3225,11 +3382,12 @@ J5171:	LD	(HL),0FFH
 	LD	(BUF+8),A
 J51B3:	CALL	C4FBE			; check for ")"
 	JP	NZ,J6EA8		; not end of statement, syntax error
-	RET	
+	RET
 
 ;	  Subroutine define sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C51BA:	LD	A,(BUF+0)
 	CP	16
@@ -3245,7 +3403,7 @@ C51BA:	LD	A,(BUF+0)
 	LD	DE,(BUF+5)
 	LD	A,E
 	OR	D			; sample lenghth <>0 ?
-	SCF	
+	SCF
 	RET	Z			; nope, quit with error
 	CALL	C521D			; wait for all samplers and sample memories to become ready
 	RET	Z			; aborted by CTRL-STOP, quit
@@ -3260,11 +3418,12 @@ C51BA:	LD	A,(BUF+0)
 	XOR	A
 	LD	(D7EDF),A		; sampler and sample memory both Y8950 free
 	POP	AF
-	RET	
+	RET
 
 ;	  Subroutine fill sample entry
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C51FC:	LD	A,(BUF+0)
 	CALL	C54F4			; get pointer to sample entry
@@ -3281,34 +3440,36 @@ C51FC:	LD	A,(BUF+0)
 	JP	Z,J5337			; 4, ram
 	DEC	A
 	JP	Z,J5349			; 5, vram
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine wait for all samplers and sample memories to become ready
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C521D:	DI	
+
+C521D:	DI
 	LD	A,(D7EDF)
 	OR	A			; all samplers and sample memory free ?
 	JR	Z,J522B			; yep, quit
-	EI	
+	EI
 	CALL	C6B8D			; CTRL-STOP pressed ?
 	JR	NZ,C521D		; nope, loop
-	RET	
+	RET
 
 J522B:	INC	A
-	RET	
+	RET
 
 ;	  Subroutine fill sample entry sample ram 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J522D:	LD	A,(BUF+9)
 	CP	0FFH			; Y8950 number specified ?
 	JR	Z,J5241			; nope, ok
 	DEC	A			; yep, then it must be 1
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	JR	J5241
 
@@ -3316,11 +3477,12 @@ J522D:	LD	A,(BUF+9)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J5239:	LD	A,(BUF+9)
 	LD	B,A
-	RRCA	
+	RRCA
 	CP	B			; Y8950 number not specified or 0 ?
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 J5241:	CALL	C54B9			; validate sample type
 	RET	C
@@ -3360,7 +3522,7 @@ J5255:	LD	HL,BUF+1
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)			; number of blocks
-	DI	
+	DI
 	LD	IX,D7EAA
 	LD	IY,D7EBA
 	LD	(IY+0),A
@@ -3382,17 +3544,18 @@ J529B:	LD	(D7EBA+2),DE		; destination start = destination address
 	LD	A,C
 	OR	B
 	JR	NZ,J529B		; next block
-	RET	
+	RET
 
 ;	  Subroutine fill sample entry sample rom 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J52B5:	LD	A,(BUF+9)
 	CP	0FFH			; Y8950 number specified ?
 	JR	Z,J52BF			; nope, ok
 	DEC	A			; yep, then it must be 1
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 J52BF:	LD	A,(D7E87)		; number of samples in sample ROM
 	JR	J52CF
@@ -3401,9 +3564,10 @@ J52BF:	LD	A,(D7E87)		; number of samples in sample ROM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J52C4:	LD	A,(BUF+9)
 	LD	B,A
-	RRCA	
+	RRCA
 	CP	B			; Y8950 number 0 or not specified ?
 	SCF
 	RET	NZ			; nope, quit with error
@@ -3420,7 +3584,7 @@ J52CF:	LD	B,A
 	POP	HL
 	LD	A,(BUF+2)
 	INC	A			; sample type specified ?
-	SCF	
+	SCF
 	RET	NZ			; yep, quit with error
 	LD	A,(BUF+1)
 	OR	(HL)
@@ -3474,6 +3638,7 @@ J5321:	CALL	C5132			; validate samplefrequency
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J5337:	CALL	C54B9			; validate sample type
 	RET	C			; invalid, quit with error
 	PUSH	HL
@@ -3482,13 +3647,14 @@ J5337:	CALL	C54B9			; validate sample type
 	POP	HL
 	LD	A,D
 	OR	A			; size <255 ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 	JR	J536A
 
 ;	  Subroutine fill sample entry vram
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J5349:	CALL	C54B9			; validate sample type
 	RET	C			; invalid, quit with error
@@ -3515,11 +3681,12 @@ J536A:	CALL	C5374			; free sample RAM if sample RAM entry
 	JP	J5255
 
 J5372:	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine free sample RAM if sample RAM entry
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5374:	LD	A,(HL)
 	AND	07H
@@ -3599,11 +3766,13 @@ J53DE:	LD	HL,(D7E84)
 	SBC	HL,BC
 	LD	(D7E84),HL
 J53E6:	POP	HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C53E8:	LD	E,L
 	LD	D,H
@@ -3625,7 +3794,7 @@ J53FA:	INC	HL
 	LD	A,C
 	OR	B
 	RET	Z
-	DI	
+	DI
 	LD	IX,D7EAA
 	LD	IY,D7EBA
 	LD	A,(BUF+31)
@@ -3636,12 +3805,13 @@ J53FA:	INC	HL
 	LD	(D7EBA+2),DE
 	LD	A,0			; transfer data
 	CALL	C4D6A			; AUDIO BIOS function
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine reserve sample RAM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5428:	PUSH	DE
 	CALL	C5374			; free sample RAM if sample RAM entry
@@ -3690,7 +3860,7 @@ J5478:	LD	C,L
 	LD	B,H			; start block
 J547A:	OR	A
 J547B:	POP	HL
-	RET	
+	RET
 
 J547D:	LD	A,(BUF+1)
 	AND	07H
@@ -3699,13 +3869,13 @@ J547D:	LD	A,(BUF+1)
 	LD	HL,(D7EE4)		; sample RAM size 1st Y8950 (256 bytes unit)
 	LD	A,L
 	OR	H
-	SCF	
+	SCF
 	JR	Z,J547B
-	CCF	
+	CCF
 	LD	E,L
 	LD	D,H
 	SBC	HL,BC
-	SCF	
+	SCF
 	JR	Z,J547B
 	EX	DE,HL
 	LD	(D7E82),HL
@@ -3715,13 +3885,13 @@ J549E:	LD	BC,(D7E84)
 	LD	HL,(D7EE8)		; sample RAM size 2nd Y8950 (256 bytes unit)
 	LD	A,L
 	OR	H
-	SCF	
+	SCF
 	JR	Z,J547B
-	CCF	
+	CCF
 	LD	E,L
 	LD	D,H
 	SBC	HL,BC
-	SCF	
+	SCF
 	JR	Z,J547B
 	EX	DE,HL
 	LD	(D7E84),HL
@@ -3732,11 +3902,12 @@ J54B6:	INC	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C54B9:	LD	A,(BUF+2)
 	INC	A
 	ADD	A,0FDH			; sample type not specified or 0-1 ?
 	RET	C			; nope, quit with error
-	CPL	
+	CPL
 	DEC	A
 	AND	80H
 	LD	B,A			; b7 set if PCM sample
@@ -3749,16 +3920,16 @@ C54B9:	LD	A,(BUF+2)
 	JR	NZ,J54DD		; yep, check Y8950 number
 	LD	A,C
 	AND	02H			; sample type specifies Y8950 number
-	RRCA	
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
+	RRCA
 	LD	C,A			; in b6
 	JR	J54E5
 
 J54DC:	INC	A
 J54DD:	ADD	A,0FDH			; not specified or 0-1 ?
 	RET	C			; nope, quit with error
-	CPL	
+	CPL
 	DEC	A
 	AND	40H
 	LD	C,A			; b6 set if Y8950 number = 1
@@ -3769,11 +3940,12 @@ J54E5:	LD	A,(BUF+1)
 	LD	(BUF+1),A
 	XOR	A
 	LD	(BUF+2),A
-	RET	
+	RET
 
 ;	  Subroutine get pointer to sample entry
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C54F4:	ADD	A,A
 	ADD	A,A
@@ -3782,11 +3954,12 @@ C54F4:	ADD	A,A
 	LD	D,0
 	LD	HL,I7F13
 	ADD	HL,DE
-	RET	
+	RET
 
 ;	  Subroutine get pointer to rom sample entry
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C54FF:	LD	L,A
 	LD	H,00H
@@ -3795,13 +3968,14 @@ C54FF:	LD	L,A
 	ADD	HL,HL
 	LD	DE,I7500+16
 	ADD	HL,DE
-	RET	
+	RET
 
 ;	  Subroutine get sample rom directory
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C550A:	DI	
+
+C550A:	DI
 	LD	IX,D7EAA
 	LD	IY,D7EBA
 	LD	(IX+0),A		; source type
@@ -3815,16 +3989,17 @@ C550A:	DI
 	LD	(D7EBA+2),HL		; destination start = temporary sample buffer
 	LD	A,0			; transfer sample
 	CALL	C4D6A			; AUDIO BIOS function
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine record sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5535:	LD	A,(BUF+0)
 	CP	16			; samplenumber 0-15 ?
-	CCF	
+	CCF
 	RET	C			; nope, quit with error
 	LD	A,11H
 	LD	(BUF+9),A
@@ -3837,12 +4012,12 @@ C5535:	LD	A,(BUF+0)
 	LD	(BUF+2),HL
 J554D:	LD	A,(BUF+1)
 	LD	B,A
-	RRCA	
+	RRCA
 	SUB	B			; 0 or not specified ?
-	CPL	
+	CPL
 	JR	Z,J555A			; yep, mic
 	DEC	B			; 1 ?
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	XOR	A			; mic
 J555A:	LD	(D7488),A
@@ -3853,11 +4028,11 @@ J555A:	LD	(D7488),A
 	JR	NZ,J5572
 	LD	A,(HL)
 	AND	40H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	LD	(BUF+8),A
 J5572:	AND	0FEH
-	SCF	
+	SCF
 	RET	NZ
 	LD	A,(HL)
 	AND	07H
@@ -3872,8 +4047,8 @@ J5572:	AND	0FEH
 	JP	Z,J561E			; ram
 	DEC	A
 	JP	Z,J5621			; vram
-	SCF	
-	RET	
+	SCF
+	RET
 
 J5590:	LD	A,2			; sample source memory = sample RAM 2nd Y8950
 J5592:	CALL	C5674			; define sample source
@@ -3885,11 +4060,11 @@ J5592:	CALL	C5674			; define sample source
 	LD	A,(BUF+8)
 	JR	NZ,J55A6
 	OR	A
-	SCF	
+	SCF
 	RET	NZ
 	INC	A
 J55A6:	DEC	A
-	SCF	
+	SCF
 	RET	NZ
 	BIT	7,B
 	LD	C,12			; record ADPCM sample from sample memory
@@ -3900,8 +4075,9 @@ J55A6:	DEC	A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J55B1:	CALL	C56C0			; sample frequency 0 ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 	CALL	C56C7			; validate start offset and length and put in sample source
 	RET	C			; error, quit with error
@@ -3912,6 +4088,7 @@ J55B1:	CALL	C56C0			; sample frequency 0 ?
 ;	  Subroutine play/record sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J55BD:	LD	IY,I3280
 	LD	A,(BUF+8)
@@ -3947,26 +4124,26 @@ J55F7:	LD	A,C
 	JR	Z,J5608			; yep, sampler and sample memory frees itself when ready
 	CP	11			; play ADPCM sample from sample memory ?
 	JR	Z,J5608			; yep, sampler and sample memory frees itself when ready
-	DI	
+	DI
 	LD	A,(D7EDF)
 	AND	D
 	LD	(D7EDF),A		; sampler and sample memory free
-J5608:	EI	
+J5608:	EI
 	LD	A,(D7B29)
 	OR	A			; background music ?
 	RET	Z			; yep, quit
 	LD	A,D
-	CPL	
+	CPL
 	LD	D,A
 J5611:	CALL	C6B8D			; CTRL-STOP pressed ?
 	RET	Z			; yep, quit
 	LD	A,(D7EDF)
 	AND	D			; sampler and sample memory free ?
 	JR	NZ,J5611		; nope, wait
-	RET	
+	RET
 
-J561C:	SCF	
-	RET	
+J561C:	SCF
+	RET
 
 J561E:	LD	A,4			; sample source memory = RAM
 	DEFB	1
@@ -3983,8 +4160,9 @@ J5621:	LD	A,5			; sample source memory = VRAM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J5632:	CALL	C56C0			; sample frequency 0 ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 	CALL	C56C7			; validate start offset and length and put in sample source
 	RET	C			; invalid, quit with error
@@ -3996,6 +4174,7 @@ J5632:	CALL	C56C0			; sample frequency 0 ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5640:	PUSH	HL
 	PUSH	IY
 	POP	HL
@@ -4006,13 +4185,13 @@ C5640:	PUSH	HL
 	LD	DE,00F02H
 	JR	Z,J5653
 	LD	DE,0F020H
-J5653:	DI	
+J5653:	DI
 	LD	A,(D7EDF)
 	AND	D			; sampler and sample memory free ?
 	JR	Z,J5662			; yep, reserve sampler
-	EI	
+	EI
 	CALL	C6B8D			; CTRL-STOP pressed ?
-	SCF	
+	SCF
 	RET	Z
 	JR	J5653
 
@@ -4025,11 +4204,12 @@ J5662:	LD	A,(BUF+9)
 	LD	(D7EDF),A		; reserve sampler
 	XOR	A
 	LD	(D7EE0),A		; no audio keyboard sample playing
-	RET	
+	RET
 
 ;	  Subroutine define sample source
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5674:	CP	4			; sample memory = RAM ?
 	JR	Z,J5689			; yep, determine array start and size
@@ -4043,7 +4223,7 @@ C5674:	CP	4			; sample memory = RAM ?
 	LDIR				; fill in sample source
 	POP	HL
 	POP	IX
-	RET	
+	RET
 
 J5689:	LD	(D7EAA+0),A
 	PUSH	HL
@@ -4055,7 +4235,7 @@ J5689:	LD	(D7EAA+0),A
 	INC	DE
 	LD	BC,4
 	PUSH	DE
-	LDIR	
+	LDIR
 	POP	HL
 	CALL	C5E52			; get array variable address and size
 	POP	HL
@@ -4072,26 +4252,27 @@ J5689:	LD	(D7EAA+0),A
 	LD	A,(HL)
 	LD	(IX+7),A		; sample frequency
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine sample frequency 0 ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 
 C56C0:	LD	A,(IX+6)
 	OR	(IX+7)
-	RET	
+	RET
 
 ;	  Subroutine validate start offset and length and put in sample source
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C56C7:	LD	DE,(D7EAA+4)		; sample length
 	LD	HL,(BUF+2)
 	OR	A
 	SBC	HL,DE			; start offset valid ?
-	CCF	
+	CCF
 	RET	C			; nope, quit with error
 	LD	HL,(BUF+4)
 	LD	A,H
@@ -4132,11 +4313,12 @@ J570A:	ADD	HL,DE
 	LD	(D7EAA+4),HL		; source length
 	XOR	A
 	INC	A			; Cx reset, Zx reset
-	RET	
+	RET
 
 ;	  Subroutine abort sampling
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5717:	LD	A,10
 	JP	C4D6A			; AUDIO BIOS function
@@ -4144,6 +4326,7 @@ C5717:	LD	A,10
 ;	  Subroutine play sample
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C571C:	LD	A,(BUF+0)
 	CP	16			; samplenumber 0-15 ?
@@ -4160,11 +4343,11 @@ C571C:	LD	A,(BUF+0)
 	LD	(BUF+2),HL		; use 0
 J5733:	LD	A,(BUF+1)
 	LD	B,A
-	RRCA	
+	RRCA
 	SUB	B			; 0 or not specified ?
 	JR	Z,J5740			; yep, no repeat
 	DEC	B			; then it must be 1
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	LD	A,0FFH			; flag repeat
 J5740:	LD	(D7489),A
@@ -4175,11 +4358,11 @@ J5740:	LD	(D7489),A
 	JR	NZ,J5758		; yep,
 	LD	A,(HL)
 	AND	40H
-	RLCA	
-	RLCA	
+	RLCA
+	RLCA
 	LD	(BUF+8),A		; use b6 of sampledefinition
 J5758:	AND	0FEH			; 0 or 1 ?
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	LD	A,(HL)
 	AND	07H
@@ -4194,18 +4377,20 @@ J5758:	AND	0FEH			; 0 or 1 ?
 	JR	Z,J57C4
 	DEC	A
 	JR	Z,J57C7
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine play sample from sample RAM 2nd Y8950
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J5772:	LD	A,2			; sample source memory = sample RAM 2nd Y8950
 
 ;	  Subroutine play sample from sample memory
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J5774:	CALL	C5674			; define sample source
 	LD	A,(HL)
@@ -4229,7 +4414,7 @@ J5782:	LD	DE,(BUF+6)
 	PUSH	HL
 	LD	HL,1800-1
 	SBC	HL,DE
-	CCF	
+	CCF
 	POP	HL			; ADPCM sample frequency <1800 ?
 	RET	C			; yep, quit with error
 	LD	(IX+6),E
@@ -4240,11 +4425,11 @@ J57A3:	LD	A,(HL)
 	LD	A,(BUF+8)
 	JR	NZ,J57B0		; 2nd Y8950, check if playdevice is also 2nd Y8950
 	OR	A			; 1st Y8950, playdevice also 1st Y8950 ?
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	INC	A			; continue in next code
 J57B0:	DEC	A
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	BIT	7,B			; ADPCM sample ?
 	LD	C,11
@@ -4256,11 +4441,13 @@ J57BB:	JP	J55B1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J57BE:	LD	A,-2
 
 ;	  Subroutine play sample from sample ROM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J57C0:	ADD	A,3
 	JR	J5774			; play sample from sample memory
@@ -4269,12 +4456,14 @@ J57C0:	ADD	A,3
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J57C4:	LD	A,4
 	DEFB	1
 
 ;	  Subroutine play sample from VRAM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J57C7:	LD	A,5
 	CALL	C5674			; define sample source
@@ -4290,6 +4479,7 @@ J57D8:	JP	J5632
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C57DB:	LD	DE,(BUF+6)
 	LD	A,E
 	AND	D
@@ -4299,11 +4489,12 @@ C57DB:	LD	DE,(BUF+6)
 	RET	C
 	LD	(IX+6),E
 	LD	(IX+7),D
-	RET	
+	RET
 
 ;	  Subroutine CALL SAVE PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C57EE:	LD	D,0
 	DEFB	1
@@ -4311,6 +4502,7 @@ C57EE:	LD	D,0
 ;	  Subroutine CALL LOAD PCM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C57F1:	LD	D,1
 	CALL	C4FB9			; check for "("
@@ -4340,23 +4532,27 @@ J581A:	POP	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C581C:	CALL	C5849
 J581F:	JP	C,C6EAB			; illegal function call
-	RET	
+	RET
 
 ;	  Subroutine read sample from file
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5823:	CALL	C5A11
 	JR	J581F
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5828:	CP	16			; samplenumber 0-15 ?
-	CCF	
+	CCF
 	RET	C			; nope, quit with error
 	PUSH	AF
 	XOR	A
@@ -4371,11 +4567,13 @@ C5828:	CP	16			; samplenumber 0-15 ?
 	LD	(BUF+21),HL
 	LD	B,(HL)
 	CALL	C5938
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5849:	CALL	C5828
 	RET	C			; invalid samplenumber, quit with error
@@ -4412,16 +4610,14 @@ J586A:	LD	(BUF+5),DE
 	INC	HL
 	LD	A,D
 	OR	E
-	SCF	
+	SCF
 	RET	Z
-;
 	LD	(BUF+7),DE
 	LD	A,D
 	LD	D,E
-	LD	E,08H	; 8 
+	LD	E,8
 	OR	A
 	JR	Z,J5898
-;
 	LD	DE,0
 J5898:	DEC	DE
 	LD	(BUF+3),DE
@@ -4435,7 +4631,6 @@ J5898:	DEC	DE
 	LD	A,(BUF+5)
 	OR	A
 	JR	Z,J58BF
-;
 	LD	HL,I.8000
 	LD	(BUF+11),HL
 	LD	HL,127
@@ -4444,7 +4639,7 @@ J58BF:	LD	HL,BUF
 	LD	DE,(NULBUF)
 	PUSH	DE
 	LD	BC,15
-	LDIR	
+	LDIR
 	POP	BC			; start of buffer
 	LD	HL,256			; filesize = 256 bytes
 	LD	E,1			; create file
@@ -4471,27 +4666,31 @@ J58F6:	PUSH	BC
 	JR	NZ,J58F6
 J5903:	CALL	C5BB6			; close file
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5906:	LD	HL,(BUF+21)
 	LD	A,(HL)
-	AND	40H	; "@"
+	AND	40H
 	LD	A,0F0H
 	JR	Z,J5912
-	LD	A,0FH	; 15 
-J5912:	DI	
+	LD	A,0FH
+J5912:	DI
 	LD	HL,D7EDF
 	AND	(HL)			; sampler and sample memory free
 	LD	(HL),A
 	CALL	C5A07			; restore orginal H.ERRO
-	EI	
-	RET	
+	EI
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C591D:	LD	IX,D7EAA
 	LD	HL,1
@@ -4502,11 +4701,13 @@ C591D:	LD	IX,D7EAA
 	LD	HL,(D7EAA+2)
 	INC	HL
 	LD	(D7EAA+2),HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5938:	BIT	6,B
 	LD	DE,00F03H
@@ -4514,25 +4715,25 @@ C5938:	BIT	6,B
 	JR	Z,J594A
 	LD	DE,0F030H
 	LD	IY,I32C0
-J594A:	EI	
+J594A:	EI
 	CALL	C6B8D			; CTRL-STOP pressed ?
 	RET	Z			; yep, quit
-	DI	
+	DI
 	LD	A,(D7EDF)
 	AND	D			; sampler or sample memory in use ?
 	JR	NZ,J594A		; yep, wait
 	LD	A,(D7EDF)
 	OR	E
 	LD	(D7EDF),A		; reserve sampler and sample memory
-	EI	
-	RET	
+	EI
+	RET
 
 J595F:	CALL	C5AFD
 	RET	C
-	LD	E,07H	; 7 
+	LD	E,7
 	LD	(BUF+3),DE
 	LD	E,D
-	LD	D,00H
+	LD	D,0
 	LD	(BUF+7),DE
 	INC	HL
 	INC	HL
@@ -4556,7 +4757,7 @@ J5996:	LD	HL,BUF
 	LD	DE,(NULBUF)
 	PUSH	DE
 	LD	BC,15
-	LDIR	
+	LDIR
 	POP	BC			; start of buffer
 	LD	HL,256			; buffersize = 256 bytes
 	LD	E,1			; create file
@@ -4578,11 +4779,12 @@ J5996:	LD	HL,BUF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C59CE:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	DI	
+	DI
 	LD	HL,H.ERRO
 	PUSH	HL
 	LD	DE,I7B2A
@@ -4613,18 +4815,22 @@ C59F2:	PUSH	AF
 	POP	AF
 	JP	H.ERRO			; to orginal H.ERRO hook
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5A07:	DI	
+
+C5A07:	DI
 	LD	HL,I7B2A
 	LD	DE,H.ERRO
 	JP	C40DC
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5A11:	CALL	C5828
 	RET	C			; invalid samplenumber, quit with error
@@ -4648,11 +4854,11 @@ C5A11:	CALL	C5828
 	SBC	HL,DE			; 15 bytes read ?
 	POP	HL
 	POP	BC
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	LD	A,(BUF+0)
 	CP	0FEH			; bsave/bload fileid ?
-	SCF	
+	SCF
 	RET	NZ			; nope, quit with error
 	LD	A,B
 	AND	07H
@@ -4661,7 +4867,7 @@ C5A11:	CALL	C5828
 	LD	(D7EBA+0),A
 	AND	05H
 	DEC	A			; sample rom ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 	INC	HL
 	INC	HL
@@ -4676,7 +4882,7 @@ C5A11:	CALL	C5828
 	INC	HL
 	LD	A,D
 	OR	E
-	SCF	
+	SCF
 	RET	Z
 	LD	HL,(BUF+7)
 	OR	A
@@ -4707,8 +4913,8 @@ J5A87:	LD	A,B
 J5A95:	CALL	C5BB6			; close file
 	LD	HL,(BUF+21)
 	LD	A,(BUF+5)
-	AND	01H	; 1 
-	RRCA	
+	AND	01H
+	RRCA
 	LD	B,A
 	LD	A,(HL)
 	AND	7FH
@@ -4724,9 +4930,11 @@ J5A95:	CALL	C5BB6			; close file
 	POP	HL
 	JP	C5906
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5AB7:	LD	A,(BUF+26)
 	LD	L,A
@@ -4736,7 +4944,6 @@ C5AB7:	LD	A,(BUF+26)
 	SBC	HL,BC
 	POP	HL
 	JR	C,J5AC6
-;
 	LD	L,C
 	LD	H,B
 J5AC6:	LD	IX,D7EAA
@@ -4757,7 +4964,7 @@ J5AC6:	LD	IX,D7EAA
 	SBC	HL,BC
 	LD	C,L
 	LD	B,H
-	RET	
+	RET
 
 J5AEA:	CALL	C5AFD
 	RET	C
@@ -4767,20 +4974,22 @@ J5AEA:	CALL	C5AFD
 	CALL	C5BA3			; read disk file buffer
 	JR	J5A95
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5AFD:	INC	HL
 	INC	HL
 	PUSH	HL
 	LD	DE,BUF+16
-	LD	A,3AH	; ":"
+	LD	A,":"
 	LD	(DE),A
 	INC	DE
 	LD	BC,4
 	PUSH	DE
-	LDIR	
+	LDIR
 	POP	HL
 	CALL	C5E52			; get array variable address and size
 	POP	HL
@@ -4790,13 +4999,13 @@ C5AFD:	INC	HL
 	LD	A,D
 	OR	A
 	RET	NZ
-;
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine open/create file
 ;	     Inputs  E = read/write, D=driveid, BC = start of buffer, HL = size of buffer (0 = use temporary buffer)
 ;	     Outputs ________________________
+
 
 C5B21:	LD	A,(H.PHYD+0)
 	CP	0C9H			; MSX disksystem ?
@@ -4846,11 +5055,13 @@ J5B5C:	LD	HL,1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5B69:	CALL	C5B78			; get address and size of temporary disk filebuffer
 
 ;	  Subroutine set address and size of disk filebuffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5B6C:	LD	(BUF+23),DE		; start of buffer
 	LD	(BUF+25),HL		; size of buffer
@@ -4860,6 +5071,7 @@ C5B6C:	LD	(BUF+23),DE		; start of buffer
 ;	  Subroutine get address and size of disk filebuffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5B78:	LD	HL,-768
 	ADD	HL,SP
@@ -4873,17 +5085,19 @@ C5B78:	LD	HL,-768
 	RET	NZ
 J5B8A:	LD	DE,(NULBUF)
 	LD	HL,256
-	RET	
+	RET
 
 ;	  Subroutine write disk filebuffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5B92:	LD	HL,(BUF+25)		; size of buffer
 
 ;	  Subroutine write bytes disk filebuffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5B95:	LD	DE,BUF+27
 	LD	C,26H			; random block write
@@ -4896,6 +5110,7 @@ C5B95:	LD	DE,BUF+27
 ;	  Subroutine read disk filebuffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5BA3:	LD	HL,(BUF+25)		; size of buffer
 	LD	DE,BUF+27
@@ -4910,6 +5125,7 @@ J5BB3:	JP	J6EB6			; input past end
 ;	  Subroutine close file
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5BB6:	XOR	A
 	LD	(D7B2F),A		; file is closed
@@ -4945,15 +5161,16 @@ I5BC2:	DEFB	0,0,0
 	JP	C46E8		; convert pcm to adpcm
 	JP	C5D86		; set voice
 	JP	C5E5C		; copy voice
-	RET	
-	RET	
-	RET	
+	RET
+	RET
+	RET
 
 ;	  Subroutine initialize EXTBIO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J5C13:	DI	
+
+J5C13:	DI
 	LD	HL,HOKVLD
 	BIT	0,(HL)
 	JR	NZ,J5C2A
@@ -4962,7 +5179,7 @@ J5C13:	DI
 	LD	DE,EXTBIO+1
 	LD	BC,29-1
 	LD	(HL),0C9H
-	LDIR	
+	LDIR
 J5C2A:	LD	DE,J7E7C
 	LD	HL,EXTBIO
 	LD	BC,5
@@ -4972,15 +5189,15 @@ J5C2A:	LD	DE,J7E7C
 	CALL	C40DC			; MSX-AUDIO EXTBIO
 	LD	A,(D7B0E)		; slotid MSX-AUDIO
 	LD	(EXTBIO+1),A
-	EI	
-	RET	
+	EI
+	RET
 
 I5C46:	RST	30H
 	DEFB	0
 	DEFW	C5C4B
-	RET	
+	RET
 
-C5C4B:	EI	
+C5C4B:	EI
 	PUSH	AF
 	LD	A,D
 	INC	A			; system exclusive EXTBIO ?
@@ -4993,9 +5210,9 @@ C5C4B:	EI
 J5C58:	POP	AF
 	JP	J7E7C			; control to next EXTBIO handler
 
-J5C5C:	LD	A,0AH
+J5C5C:	LD	A,10
 	CALL	C5CB3			; write devicenumber (10 = MSX-AUDIO)
-	LD	A,00H
+	LD	A,0
 	CALL	C5CB3			; write reserved
 	JR	J5C58			; control to next EXTBIO handler
 
@@ -5003,23 +5220,23 @@ J5C68:	LD	A,E
 	OR	A
 	JR	NZ,J5C79
 	CALL	C5CA2			; write slotid and jumptable adres
-	LD	A,00H
+	LD	A,0
 	CALL	C5CB3			; write makerid (0 = ASCII)
-	LD	A,00H
+	LD	A,0
 	CALL	C5CB3			; write reserved
 J5C79:	JR	J5C58			; control to next EXTBIO handler
 
-J5C7B:	CP	0AH			; MSX-AUDIO EXTBIO ?
+J5C7B:	CP	10			; MSX-AUDIO EXTBIO ?
 	JR	NZ,J5C58		; nope, control to next EXTBIO handler
 	LD	A,E
 	OR	A			; function 0
 	JR	Z,J5C89
-	CP	01H			; function 1
+	CP	1			; function 1
 	JR	Z,J5C93
 	JR	J5C58			; control to next EXTBIO handler
 
 J5C89:	CALL	C5CA2			; write slotid and jumptable adres
-	LD	A,00H
+	LD	A,0
 	CALL	C5CB3			; write reserved
 	JR	J5C58			; control to next EXTBIO handler
 
@@ -5034,9 +5251,11 @@ J5C93:	POP	AF
 J5C9F:	PUSH	AF
 	JR	J5C58			; control to next EXTBIO handler
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5CA2:	LD	A,(D7B0E)		; slotid MSX-AUDIO
 	CALL	C5CB3
@@ -5044,20 +5263,22 @@ C5CA2:	LD	A,(D7B0E)		; slotid MSX-AUDIO
 	CALL	C5CB3
 	LD	A,HIGH I5BC2
 	CALL	C5CB3
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5CB3:	PUSH	BC
 	LD	E,A
 	LD	A,B
 	CALL	WRSLT
-	EI	
+	EI
 	INC	HL
 	POP	BC
-	RET	
+	RET
 
 J5CBD:	CALL	C5CCF
 	JP	J49B9
@@ -5068,19 +5289,22 @@ J5CC3:	CALL	C5CCF
 J5CC9:	CALL	C5CCF
 	JP	C4D6D			; start routine in MSX-AUDIO BIOS
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5CCF:	LD	IX,(BUF+0)
 	LD	IY,(BUF+2)
-	RET	
+	RET
 
 ;	  Subroutine enable Y8950 on this MSX-AUDIO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5CD8:	DI	
+
+C5CD8:	DI
 	LD	HL,I7FFF
 	XOR	A
 	LD	E,A
@@ -5101,7 +5325,7 @@ J5CF1:	LD	A,E
 	RET	NC			; it is not, quit
 	LD	E,1
 	LD	(HL),E			; enable only Y8950 at 0C0H of this MSX-AUDIO
-	RET	
+	RET
 
 ;	  Subroutine test for Y8950
 ;	     Inputs  C = I/O address Y8950
@@ -5115,6 +5339,7 @@ C5CFE:	CALL	C5D1B			; program TIMER-1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5D06:	LD	C,0C0H
 	CALL	C5D1B			; program TIMER-1 first Y8950
 	LD	C,0C2H
@@ -5126,15 +5351,17 @@ J5D12:	LD	A,78H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5D14:	OUT	(C),D
 	INC	C
 	OUT	(C),A
 	DEC	C
-	RET	
+	RET
 
 ;	  Subroutine program TIMER-1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5D1B:	LD	D,02H
 	LD	A,0FCH
@@ -5151,21 +5378,23 @@ C5D1B:	LD	D,02H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5D32:	IN	A,(C)
 	AND	40H			; TIMER-1 interrupt ?
 	RET	NZ			; yep, quit
 	LD	B,A
 J5D38:	IN	A,(C)
 	AND	40H
-	SCF	
+	SCF
 	RET	NZ
 	DJNZ	J5D38
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine CALL VOICE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5D42:	CALL	C6EE4
 	DEFB	"("			; check for "("
@@ -5208,11 +5437,13 @@ J5D75:	CALL	C6EE4
 	LD	(DE),A			; end marker
 	CALL	C5D86
 	JP	C,C6EAB			; illegal function call
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5D86:	PUSH	HL
 	LD	HL,BUF
@@ -5238,7 +5469,7 @@ J5D8A:	LD	A,(HL)
 J5DA8:	LD	C,(HL)
 	LD	A,C
 	CP	64
-	CCF	
+	CCF
 	RET	C
 	INC	HL
 	PUSH	HL
@@ -5254,22 +5485,24 @@ J5DBA:	CALL	C5DC7			; do AUDIO function and next
 
 J5DC4:	POP	HL
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine do AUDIO function
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5DC7:	PUSH	BC
 	RST	00H
 	LD	BC,32
 	ADD	IX,BC
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine get pointer to channel
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5DD0:	LD	IX,I3000
 	OR	A
@@ -5280,16 +5513,17 @@ J5DDA:	ADD	IX,BC
 	DEC	A
 	JR	NZ,J5DDA
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine CALL VOICE COPY
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5DE1:	CALL	C6EE4
 	DEFB	"("
 	CALL	C5E28			; evaluate instrument operand
-	CCF	
+	CCF
 	SBC	A,A
 	LD	(BUF+0),A		; instrumentnumber or variable
 	LD	(BUF+1),DE		; instrumentnumber or address of variable
@@ -5297,7 +5531,7 @@ C5DE1:	CALL	C6EE4
 	CALL	C6EE4
 	DEFB	","			; check for ","
 	CALL	C5E28			; evaluate instrument operand
-	CCF	
+	CCF
 	SBC	A,A
 	LD	(BUF+5),A		; instrumentnumber or variable
 	LD	(BUF+6),DE		; instrumentnumber or address of variable
@@ -5317,11 +5551,12 @@ J5E10:	CALL	C6EE4
 	CALL	C5E5C			; copy instrument definition
 	JR	C,J5E41			; error, illegal function call
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine evaluate instrument operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5E28:	CP	"@"
 	JR	Z,J5E38
@@ -5330,7 +5565,7 @@ C5E28:	CP	"@"
 	CALL	C6EEC			; read * token
 	LD	DE,255			; indicates all changable instruments
 	SCF
-	RET	
+	RET
 
 J5E38:	CALL	C6EEC			; read "@" char
 	CALL	C6EFE			; evaluate byte operand 
@@ -5347,7 +5582,7 @@ J5E44:	CALL	C5E52			; get array variable address and size
 	LD	E,C
 	LD	D,B
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine get array variable address and size
 ;	     Inputs  ________________________
@@ -5359,11 +5594,12 @@ C5E52:	CALL	C4935			; search array variable
 	SBC	HL,BC
 	INC	HL
 	EX	DE,HL
-	RET	
+	RET
 
 ;	  Subroutine copy instrument definition
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5E5C:	LD	A,(BUF+5)
 	LD	HL,(BUF+6)
@@ -5384,18 +5620,18 @@ J5E6C:	PUSH	HL
 	CALL	C5EBB			; get pointer to instrument definition
 J5E7D:	POP	DE
 	LD	BC,32
-J5E81:	DI	
+J5E81:	DI
 	CALL	C4D83			; MSX-AUDIO in page 0
 	LDIR				; copy instrument definition
 	CALL	C4D8F			; restore page 0
 	OR	A
-	EI	
-	RET	
+	EI
+	RET
 
 J5E8D:	POP	HL			; clean stack
 	LD	A,(BUF+5)
 	OR	A			; destination a instrument ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 	LD	A,(BUF+9)
 	CP	HIGH (32*32)		; variablesize big enough ?
@@ -5407,7 +5643,7 @@ J5EA1:	LD	BC,32*32
 
 J5EA6:	LD	A,(BUF+0)
 	OR	A			; source a instrument ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit with error
 	LD	A,(BUF+4)
 	CP	HIGH (32*32)		; variablesize big enough ?
@@ -5437,16 +5673,17 @@ J5ECC:	EX	DE,HL
 	ADD	HL,HL
 	ADD	HL,HL
 	ADD	HL,DE
-	RET	
+	RET
 
 ;	  Subroutine CALL MK VOICE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5ED7:	CALL	C6EE4
 	DEFB	"("
 	CALL	C5E28
-	CCF	
+	CCF
 	SBC	A,A
 	PUSH	DE
 	PUSH	AF
@@ -5460,7 +5697,7 @@ C5ED7:	CALL	C6EE4
 	CALL	C6EE4
 	DEFB	","
 	CALL	C5E28
-	CCF	
+	CCF
 	SBC	A,A
 	PUSH	DE
 	PUSH	AF
@@ -5474,11 +5711,13 @@ J5EF6:	CALL	C6EE4
 	CALL	C5F09
 	JP	C,C6EAB			; illegal function call
 	POP	HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5F09:	PUSH	AF
 	PUSH	DE
@@ -5493,32 +5732,35 @@ C5F09:	PUSH	AF
 	POP	AF
 	LD	IY,I32C0
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5F1E:	DI	
+
+C5F1E:	DI
 	OR	A
 	LD	A,56
 	JR	NZ,J5F2F
 	LD	A,B
 	OR	A
-	SCF	
+	SCF
 	RET	NZ
 	LD	A,C
 	CP	40H
-	CCF	
+	CCF
 	RET	C
 	LD	A,54
 J5F2F:	JP	C4D6A			; AUDIO BIOS function
 J5F32:	POP	BC
 	POP	AF
-	SCF	
-	RET	
+	SCF
+	RET
 
 ;	  Subroutine CALL PLAY
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5F36:	CALL	C42BE			; check for "(" and evaluate byte operand
 	LD	A,(D7B22)		; number of playvoices
@@ -5533,9 +5775,11 @@ C5F36:	CALL	C42BE			; check for "(" and evaluate byte operand
 	EX	(SP),HL
 	JP	J4A41			; put in variable, check for ")" and quit
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5F50:	LD	HL,(D7B26)
 	OR	A			; all playvoices ?
@@ -5547,7 +5791,7 @@ C5F50:	LD	HL,(D7B26)
 	LD	A,0FFH			; return -1
 J5F5E:	LD	L,A
 	LD	H,A
-	RET	
+	RET
 
 J5F61:	SRL	H
 	RR	L
@@ -5583,11 +5827,12 @@ I5F8D:	DEFB	" "
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C5F8E:	CALL	C411C			; check for enough stackspace
 	CALL	C5FC5
 	PUSH	HL
 	LD	A,(D7B0E)		; slotid MSX-AUDIO
-	DI	
+	DI
 	ADD	A,A
 	LD	HL,8
 	JR	NC,J5FA1
@@ -5612,14 +5857,15 @@ J5FA1:	ADD	HL,SP
 	LD	BC,8
 	JR	NC,J5FC0
 	LD	C,8+8
-J5FC0:	LDDR	
+J5FC0:	LDDR
 	POP	HL
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine execute PLAY statement
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C5FC5:	CP	"#"			; playdevice specified ?
 	JP	NZ,J5FE5		; no, use PSG
@@ -5688,7 +5934,7 @@ J602A:	PUSH	HL
 	LD	HL,I5F6B
 	LD	DE,BUF+128
 	LD	BC,0022H
-	LDIR	
+	LDIR
 	POP	HL			; 2F8A routine in BUF+128
 	CALL	C6EF2			; evaluate expression
 	EX	(SP),HL
@@ -5795,13 +6041,13 @@ J60B8:	LD	(MCLTAB),HL
 	LD	HL,(SAVSP)
 	DEC	HL			; destination start
 	POP	BC			; source start = offset 36
-	DI	
+	DI
 	CALL	C6F50			; copy data from voicebuffer to Z80 stack
 	POP	DE
 	LD	H,B
 	LD	L,C
 	LD	SP,HL			; stack on destination end
-	EI	
+	EI
 	LD	A,(VOICEN)
 	OR	A			; current playvoice 0 ?
 	JR	NZ,J6108		; nope, skip device selection
@@ -5834,7 +6080,7 @@ J6114:	LD	A,(VOICEN)		; current playvoice
 	ADD	HL,SP
 	EX	DE,HL
 	LD	HL,(SAVSP)
-	DI	
+	DI
 	LD	SP,HL
 	POP	BC
 	POP	BC
@@ -5861,13 +6107,13 @@ J6114:	LD	A,(VOICEN)		; current playvoice
 
 J6151:	POP	BC
 	POP	BC
-J6153:	EI	
+J6153:	EI
 	POP	AF			; current playvoice
 	INC	A			; next playvoice
 	LD	HL,D7B22
 	CP	(HL)			; done all playvoices ?
 	JP	C,J6099			; nope, next
-	DI	
+	DI
 	CALL	C6B8D			; CTRL-STOP pressed ?
 	JR	Z,J618B			; yep, stop backgroud music and quit
 	LD	A,(PRSCNT)
@@ -5878,7 +6124,7 @@ J6153:	EI
 	LD	A,(HL)
 	LD	(PLYCNT),A		; something queued for PSG
 	CALL	C6F66			; start dequeueing
-J6174:	EI	
+J6174:	EI
 	LD	HL,PRSCNT
 	SET	7,(HL)			; flag music dequeueing started
 	LD	A,(HL)
@@ -5890,13 +6136,14 @@ J6174:	EI
 	CALL	NZ,C6B79		; nope, wait until queues are empty and playvoices are stopped
 	JR	NC,J618F		; not aborted by CTRL-STOP, quit
 J618B:	CALL	C6CDC			; stop background music
-	EI	
+	EI
 J618F:	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine increase strings completed and put endbyte in queue
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6191:	LD	A,(PRSCNT)
 	INC	A
@@ -5907,50 +6154,54 @@ C6191:	LD	A,(PRSCNT)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C619A:	PUSH	HL
 	PUSH	BC
 J619C:	PUSH	DE
 	LD	A,(VOICEN)		; current playvoice
-	DI	
+	DI
 	CALL	C6E25
-	EI	
+	EI
 	POP	DE
 	JR	Z,J619C
 J61A8:	POP	BC
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine put byte in queue (DI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C61AB:	PUSH	HL
 	PUSH	BC
 J61AD:	PUSH	DE
 	LD	A,(VOICEN)		; current playvoice
-	DI	
+	DI
 	CALL	C6E25
 	POP	DE
 	JR	NZ,J61A8
-	EI	
+	EI
 	JR	J61AD
 
 ;	  Subroutine less then 8 bytes free in voice queue
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C61BB:	LD	A,(VOICEN)		; current playvoice
 	PUSH	BC
-	DI	
+	DI
 	CALL	C6E6D
-	EI	
+	EI
 	POP	BC
 	CP	8
-	RET	
+	RET
 
 ;	  Table      MCL PSG
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 I61C8:	DEFB	"A"
 	DEFW	C6303
@@ -6000,6 +6251,7 @@ I620B:	DEFW	3421,3228,3047,2876,2715,2562
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6223:	JR	C,J6227			; value specified
 	LD	E,8			; use a default of 8
 J6227:	LD	A,15
@@ -6012,15 +6264,16 @@ J622C:	CALL	C6425			; check for byte value
 	AND	(HL)			; keep b6
 	OR	E
 	LD	(HL),A			; set volume
-	RET	
+	RET
 
 ;	  Subroutine PSG MCL "M"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C623A:	LD	A,E
 	JR	C,J6240			; value specified, check for zero
-	CPL	
+	CPL
 	INC	A
 	LD	E,A			; use a default of 255
 J6240:	OR	D
@@ -6043,11 +6296,12 @@ J6240:	OR	D
 	LD	A,40H
 	OR	(HL)
 	LD	(HL),A			; set b6 volume
-	RET	
+	RET
 
 ;	  Subroutine PSG MCL "S"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C625C:	LD	A,E
 	CP	16			; value 0-15 ?
@@ -6060,6 +6314,7 @@ C625C:	LD	A,E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6266:	JR	C,J626A			; specified, use that
 	LD	E,4			; use a default of 4
 J626A:	LD	A,E
@@ -6071,18 +6326,20 @@ J626A:	LD	A,E
 ;	     Inputs  L = offset
 ;	     Outputs ________________________
 
+
 J6271:	CALL	C6F13			; get pointer in voicebuffer of current playvoice
 	CALL	C6425			; check for byte value
 	OR	E			; zero value ?
 	JR	Z,J627C			; yep, illegal function call
 	LD	(HL),A
-	RET	
+	RET
 
 J627C:	JP	C6EAB			; illegal function call
 
 ;	  Subroutine FM/PSG/drum MCL "T"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C627F:	JR	C,J6283			; value specified, use that
 	LD	E,120			; use a default of 120
@@ -6096,6 +6353,7 @@ J6283:	LD	A,E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C628C:	JR	C,J6290			; value specified, use that
 	LD	E,4			; use a default of 4
 J6290:	LD	A,E
@@ -6107,18 +6365,14 @@ J6290:	LD	A,E
 J6299:	XOR	A
 	LD	D,A
 C629B:	JR	C,J629F
-;
-	LD	E,04H	; 4 
+	LD	E,04H
 J629F:	XOR	A
 	OR	D
 	JR	NZ,J627C
-;
 	OR	E
 	JR	Z,J627C
-;
-	CP	41H	; "A"
+	CP	64+1
 	JR	NC,J627C
-;
 J62AA:	LD	HL,0
 	PUSH	HL
 	LD	L,16			; notelength offset
@@ -6137,26 +6391,29 @@ J62AA:	LD	HL,0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C62C0:	JR	NC,J627C
 	CALL	C6425			; check for byte value
 	OR	E
 	JR	Z,J62AA
-	CP	61H	; "a"
+	CP	96+1
 	JR	NC,J627C
 	LD	A,E
-	LD	B,00H
+	LD	B,0
 	LD	E,B
-J62D0:	SUB	0CH	; 12 
+J62D0:	SUB	12
 	INC	E
 	JR	NC,J62D0
-	ADD	A,0CH	; 12 
+	ADD	A,12
 	ADD	A,A
 	LD	C,A
 	JP	J6313
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C62DC:	LD	B,C
 	LD	A,C
@@ -6182,11 +6439,12 @@ J62F6:	DEC	C
 	JR	NZ,J6301
 J6300:	DEC	C
 J6301:	DEC	C
-	RET	
+	RET
 
 ;	  Subroutine PSG MCL "A"-"G"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6303:	CALL	C62DC
 	LD	L,15
@@ -6233,7 +6491,6 @@ J6348:	POP	HL
 	INC	HL
 	PUSH	HL
 	CALL	C667B
-;
 	EX	DE,HL
 	LD	BC,-9
 	POP	HL
@@ -6243,7 +6500,7 @@ J6348:	POP	HL
 	INC	HL
 	LD	(HL),E
 	INC	HL
-	LD	C,02H	; 2 
+	LD	C,2
 	EX	(SP),HL
 	INC	HL
 	LD	E,(HL)
@@ -6258,7 +6515,7 @@ J6348:	POP	HL
 	INC	C
 	EX	(SP),HL
 	LD	A,E
-	AND	40H	; "@"
+	AND	40H
 	JR	Z,J637B
 	INC	HL
 	LD	E,(HL)
@@ -6287,9 +6544,9 @@ J6386:	LD	L,7
 	LD	(HL),C			; musicpacket size
 	LD	A,C
 	SUB	02H
-	RRCA	
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
+	RRCA
 	INC	HL
 	OR	(HL)
 	LD	(HL),A
@@ -6315,9 +6572,9 @@ J63A9:	LD	E,(HL)
 	JP	C,J610B			; yep,
 	JP	J6D1A			; start MCL parser
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;	  Subroutine divide
+;	     Inputs  DE = param, HL = divider
+;	     Outputs HL = remainer, DE = result
 
 C63B9:	LD	B,H
 	LD	C,L
@@ -6331,32 +6588,34 @@ C63B9:	LD	B,H
 	LD	A,H
 	LD	C,L
 	POP	HL
-	LD	B,10H	; 16 
+	LD	B,16
 J63C8:	ADC	HL,HL
 	ADD	HL,DE
 	JR	C,J63CF
 	SBC	HL,DE
 J63CF:	RL	C
-	RLA	
+	RLA
 	DJNZ	J63C8
 	LD	D,A
 	LD	E,C
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C63D7:	LD	E,8
 	LD	HL,0
 J63DC:	ADD	HL,HL
-	RLA	
+	RLA
 	JR	NC,J63E3
 	ADD	HL,BC
 	ADC	A,0
 J63E3:	DEC	E
 	JP	NZ,J63DC
-C63E7:	RET	
+C63E7:	RET
 
 C63E8:	JR	NC,J6428
 	LD	A,E
@@ -6370,9 +6629,9 @@ C63E8:	JR	NC,J6428
 	JR	C6425			; check for byte value
 
 C63FE:	JR	C,J6402
-	LD	E,08H	; 8 
+	LD	E,8
 J6402:	LD	A,E
-	CP	09H	; 9 
+	CP	9
 	JR	NC,J6428
 	JR	C6425			; check for byte value
 
@@ -6394,6 +6653,7 @@ C640D:	CALL	C6D68			; get MCL char (error if end of string)
 ;	  Subroutine check for byte value
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6425:	LD	A,D
 	OR	A
@@ -6424,6 +6684,7 @@ J6451:	JP	J6299
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 I6454:	DEFB	"A"
 	DEFW	C65BC
 	DEFB	"&"
@@ -6443,7 +6704,7 @@ I6454:	DEFB	"A"
 	DEFB	"O"+128
 	DEFW	C628C
 	DEFB	">"
-	DEFW	C657A	
+	DEFW	C657A
 	DEFB	"<"
 	DEFW	C6587
 	DEFB	"Z"+128
@@ -6468,6 +6729,7 @@ I6454:	DEFB	"A"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C648E:	CALL	C6D68			; get MCL char (error if end of string)
 	CP	"V"
 	JR	Z,J64C1
@@ -6478,15 +6740,15 @@ C648E:	CALL	C6D68			; get MCL char (error if end of string)
 	CALL	C6DA5			; parse numeric operand (1st char get)
 	CALL	C6425			; check for byte value
 	LD	A,E
-	CP	64
-	JR	NC,J64EA
+	CP	64			; instrumentnumber 0-63 ?
+	JR	NC,J64EA		; nope, illegal function call
 	LD	C,A
 	LD	A,(VOICEN)		; current playvoice
 	CALL	C696D			; get playvoice type
-	JR	NC,J64B7		; FM playvoice,
+	JR	NC,J64B7		; not a sample playvoice, instrument valid
 	LD	A,C
-	CP	16
-	JR	NC,J64EA
+	CP	16			; instrument a valid samplenumber 0-15 ?
+	JR	NC,J64EA		; nope, illegal function call
 J64B7:	LD	E,84H			; change instrument
 	CALL	C61AB			; put byte in queue (DI)
 	LD	E,C
@@ -6497,6 +6759,7 @@ J64B7:	LD	E,84H			; change instrument
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J64C1:	CALL	C6D68			; get MCL char (error if end of string)
 	CALL	C64ED			; numeric operand ?
 	JR	C,J64EA			; nope, illegal function call
@@ -6504,7 +6767,7 @@ J64C1:	CALL	C6D68			; get MCL char (error if end of string)
 	LD	A,127
 	SUB	E
 	JP	M,J64EA
-	RRA	
+	RRA
 	LD	C,A
 	CALL	C6425			; check for byte value
 	LD	E,85H			; set volume (fine)
@@ -6517,6 +6780,7 @@ J64C1:	CALL	C6D68			; get MCL char (error if end of string)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J64E1:	POP	DE
 	CALL	C6652			; get notelength
 	LD	E,83H
@@ -6528,6 +6792,7 @@ J64EA:	JP	C6EAB			; illegal function call
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C64ED:	CP	"+"
 	RET	Z
 	CP	"-"
@@ -6537,12 +6802,13 @@ C64ED:	CP	"+"
 	CP	"0"
 	RET	C
 	CP	"9"+1
-	CCF	
-	RET	
+	CCF
+	RET
 
 ;	  Subroutine FM/drum MCL "Y"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C64FD:	JR	NC,J6526		; value not specified, illegal function call
 	LD	A,E
@@ -6572,6 +6838,7 @@ J6526:	JP	C6EAB			; illegal function call
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6529:	JR	NC,J6526
 	CALL	C6425			; check for byte value
 	LD	C,E
@@ -6581,6 +6848,7 @@ C6529:	JR	NC,J6526
 ;	  Subroutine FM MCL "V"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6533:	JR	C,J6537			; value specified, use that
 	LD	E,8
@@ -6599,6 +6867,7 @@ J6542:	CALL	C61AB			; put byte in queue (DI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C654A:	JR	C,J654E			; value specified, use that
 	LD	E,8
 J654E:	CALL	C6425			; check for byte value
@@ -6615,17 +6884,17 @@ J654E:	CALL	C6425			; check for byte value
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C655D:	RET	NC
-;
 	LD	A,E
 	OR	D
 	RET	NZ
-;
 J6561:	JP	C6EAB			; illegal function call
 
 ;	  Subroutine FM MCL "S"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6564:	LD	A,E
 	CP	16
@@ -6635,6 +6904,7 @@ C6564:	LD	A,E
 ;	  Subroutine FM MCL "Q"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C656C:	JR	C,J6570			; value specified, use that
 	LD	E,8			; use a default of 8
@@ -6648,6 +6918,7 @@ J6570:	LD	A,E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C657A:	LD	L,15
 	CALL	C6F13			; get pointer in voicebuffer of current playvoice
 	LD	A,(HL)			; current octave
@@ -6655,11 +6926,12 @@ C657A:	LD	L,15
 	CP	8+1			; octave > 8 ?
 	JR	NC,J6561		; yep, illegal function call
 	LD	(HL),A			; new octave
-	RET	
+	RET
 
 ;	  Subroutine FM/PSG MCL "<"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6587:	LD	L,15
 	CALL	C6F13			; get pointer in voicebuffer of current playvoice
@@ -6667,11 +6939,12 @@ C6587:	LD	L,15
 	DEC	A			; decrease
 	JR	Z,J6561			; octave 0, illegal function call
 	LD	(HL),A			; new octave
-	RET	
+	RET
 
 ;	  Subroutine FM/drum MCL "R"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6592:	JR	C,J6596
 	LD	E,4
@@ -6693,6 +6966,7 @@ J6596:	CALL	C6425			; check for byte value
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C65AF:	JR	NC,J6561
 	CALL	C6425			; check for byte value
 	LD	A,E
@@ -6703,6 +6977,7 @@ C65AF:	JR	NC,J6561
 ;	  Subroutine FM MCL "A"-"G"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C65BC:	CALL	C62DC
 	LD	L,15
@@ -6717,7 +6992,7 @@ J65C9:	ADD	A,D
 	LD	HL,I61FC
 	ADD	HL,BC
 	LD	A,(HL)
-	RRCA	
+	RRCA
 	ADD	A,D
 J65D6:	ADD	A,12
 	PUSH	AF
@@ -6779,7 +7054,7 @@ J6631:	CALL	C61AB			; put byte in queue (DI)
 	LD	E,H
 J6639:	CALL	C61AB			; put byte in queue (DI)
 	CALL	C61BB			; less then 8 bytes free in voice queue ?
-	EI	
+	EI
 	JP	C,J610B			; yep,
 	JP	J6D1A			; start MCL parser
 
@@ -6791,6 +7066,7 @@ J6646:	CALL	C61AB			; put byte in queue (DI)
 ;	  Subroutine get notelength
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6652:	LD	L,9
 	CALL	C6F13			; get pointer in voicebuffer of current playvoice
@@ -6817,23 +7093,25 @@ J666D:	LD	A,64
 J6679:	POP	HL
 	INC	HL
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C667B:	LD	A,(HL)
 	LD	B,0
 	CALL	C63D7
 	PUSH	HL
 	LD	DE,28800		; (120*4*int freq)/2, int freq=120 Hz
-	CALL	C63B9
+	CALL	C63B9			; divide
 	EX	DE,HL
 	EX	(SP),HL
 	LD	B,5
 J668C:	SRL	H
 	RR	L
-	DJNZ	J668C
-	CALL	C63B9
+	DJNZ	J668C			; /32
+	CALL	C63B9			; divide
 	CALL	C66CC			; get pointer to interrupt corrector byte of playvoice
 	LD	L,(IX+0)
 	LD	H,0
@@ -6864,11 +7142,12 @@ J66B0:	CALL	C6D6E			; get MCL char
 	JR	J66CB
 
 J66C8:	CALL	C6D94			; undo MCL char
-J66CB:	RET	
+J66CB:	RET
 
 ;	  Subroutine get pointer to interrupt corrector byte of playvoice 
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C66CC:	PUSH	BC
 	LD	A,(VOICEN)		; current playvoice
@@ -6877,11 +7156,12 @@ C66CC:	PUSH	BC
 	LD	IX,I7FC6
 	ADD	IX,BC
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine FM MCL "&"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C66DB:	LD	E,87H
 	POP	BC
@@ -6892,6 +7172,7 @@ J66E1:	JP	C6EAB			; illegal function call
 ;	  Subroutine FM MCL "{"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C66E4:	LD	L,9
 	CALL	C6F13			; get pointer in voicebuffer of current playvoice
@@ -6948,7 +7229,7 @@ J673C:	LD	A,64
 	OR	H
 	JR	NZ,J66E1
 	LD	A,L
-	CP	41H	; "A"
+	CP	64+1
 	JR	NC,J66E1
 	PUSH	AF
 	LD	L,9
@@ -6959,11 +7240,12 @@ J673C:	LD	A,64
 	LD	(MCLLEN),A
 	POP	HL
 	LD	(MCLPTR),HL
-	RET	
+	RET
 
 ;	  Subroutine FM MCL "}"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6763:	LD	L,9
 	CALL	C6F13			; get pointer in voicebuffer of current playvoice
@@ -6971,11 +7253,12 @@ C6763:	LD	L,9
 	OR	A
 	JR	Z,J679B
 	LD	(HL),00H
-	RET	
+	RET
 
 ;	  Table      MCL drum
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 I676F:	DEFB	"B"
 	DEFW	C679E
@@ -7010,6 +7293,7 @@ J679B:	JP	C6EAB			; illegal function call
 ;	  Subroutine drum MCL "B","S","M","C","H"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C679E:	LD	BC,0
 	CALL	C6D94			; undo MCL char
@@ -7067,6 +7351,7 @@ I67EC:	POP	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C67F7:	CALL	C6D68			; get MCL char (error if end of string)
 	CP	"V"
 	JP	Z,J64C1
@@ -7096,29 +7381,32 @@ J6825:	JP	C6EAB			; illegal function call
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 I6828:	PUSH	AF
-	DI	
+	DI
 	LD	HL,D7B30
 	LD	A,(D7B14)
 	OR	A			; already in TIMER-1 handler ?
 	JR	NZ,J6845		; yep, count int skip and quit
-J6833:	CPL	
+J6833:	CPL
 	LD	(D7B14),A		; flag we are in TIMER-1 handler
 	PUSH	HL
 	CALL	C6848			; execute playvoice activities
 	POP	HL
-	DI	
+	DI
 	XOR	A
 	LD	(D7B14),A		; we are leaving the TIMER-1 handler
 	DEC	(HL)			; do we have some skiped interrupts left ?
 	JP	P,J6833			; yep, execute to keep up with
 J6845:	INC	(HL)
 	POP	AF
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6848:	LD	A,(MUSICF)
 	OR	A			; any PSG playvoice active OR b7 set ?
@@ -7133,7 +7421,7 @@ J6858:	LD	HL,(D7B26)
 	LD	HL,D7B28
 	OR	(HL)			; OR something queued ?
 	CALL	NZ,C6CDC		; yep, stop background music
-	RET	
+	RET
 
 J6865:	LD	BC,(D7B26)
 	LD	A,B
@@ -7156,20 +7444,21 @@ J6879:	SRL	B
 	LD	HL,D7B22
 	CP	(HL)
 	JR	C,J6879
-	DI	
+	DI
 	POP	HL
 	LD	(D7F98),HL
 	CALL	C4D8F			; restore page 0
 	POP	HL
 	LD	(D7F98),HL
-J6897:	RET	
+J6897:	RET
 
 ;	  Subroutine service playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6898:	LD	(D7B31),A		; current playvoice serviced
-	DI	
+	DI
 	LD	L,0
 	CALL	C6F16			; get pointer in voicebuffer
 	LD	E,(HL)
@@ -7234,21 +7523,23 @@ J68FE:	PUSH	BC
 	POP	DE
 	POP	BC
 	DJNZ	J68FE			; next channel
-	RET	
+	RET
 
 ;	  Subroutine output to midi ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C690D:	PUSH	HL
 	LD	HL,D7B11
 	BIT	0,(HL)
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine connection
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6915:	CALL	C6B64			; get from voicequeue serviced
 	RET	Z			; queue empty, quit
@@ -7280,18 +7571,20 @@ J693C:	JP	J4C3A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C693F:	PUSH	DE
 	CALL	C6945			; note off
 	POP	DE
-	RET	
+	RET
 
 ;	  Subroutine note off
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6945:	CALL	C696A			; get playvoice type of current serviced playvoice
-	JR	NC,J6954		; FM playvoice,
-	RET	NZ			; not the first non-FM playvoice, quit
+	JR	NC,J6954		; FM playvoice, note off FM
+	RET	NZ			; not the first non-FM playvoice (drums), quit
 	CALL	C690D			; output to midi ?
 	JP	NZ,J6BA4		; yep, start midi note off and quit
 	JP	J693C			; stop playing sample
@@ -7306,11 +7599,12 @@ J695D:	PUSH	BC
 	ADD	IX,BC
 	POP	BC
 	DJNZ	J695D			; next channel
-	RET	
+	RET
 
 ;	  Subroutine get playvoice type of current serviced playvoice 
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C696A:	LD	A,(D7B31)		; current playvoice serviced
 
@@ -7318,25 +7612,28 @@ C696A:	LD	A,(D7B31)		; current playvoice serviced
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C696D:	LD	HL,D7B15
 	CP	(HL)			; number of FM-AUDIO playvoices
-	CCF	
+	CCF
 	RET	NC			; FM-AUDIO playvoice (Cx is reset)
 	PUSH	AF
 	LD	A,(D7B1F)
 	DEC	A			; audio mode 1 ?
 	JR	Z,J697C			; yep,
 	POP	AF			; Cx is set, Zx is set if first non-FM playvoice, Zx reset for any other playvoice
-	RET	
+	RET
 
 J697C:	POP	AF			; assume A<>0 and <128. Cx is set
 	ADC	A,A			; this put the Cx flag in b0. Reset Cx, Reset Zx
 	RRA				; Set Cx. Zx remains unchanged
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6980:	CALL	C690D			; output to midi ?
 	JP	NZ,J6BA8		; yep, start midi program change
@@ -7344,34 +7641,35 @@ C6980:	CALL	C690D			; output to midi ?
 	JR	NC,J6990		; FM playvoice,
 	LD	A,C
 	LD	(D7B12),A		; sample number for sample playvoice
-	RET	
+	RET
 
 J6990:	PUSH	BC
 	CALL	C69B2			; get channelpointer and channels playvoice
 	POP	DE
 	LD	C,E
 J6996:	PUSH	BC
-	LD	A,34
+	LD	A,34			; both Y8950: operators sustain level 0, key off
 	RST	00H
 	POP	BC
 	PUSH	BC
-	LD	A,39
+	LD	A,39			; set predefined instrument
 	RST	00H
 	LD	BC,32
 	ADD	IX,BC
 	POP	BC
 	PUSH	BC
-	LD	A,39
+	LD	A,39			; set predefined instrument
 	RST	00H
 	LD	BC,32
 	ADD	IX,BC
 	POP	BC
 	DJNZ	J6996			; next channel
-	RET	
+	RET
 
 ;	  Subroutine get channelpointer and channels playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C69B2:	LD	A,(D7B31)		; current playvoice serviced
 	CALL	C696D			; get playvoice type
@@ -7379,7 +7677,7 @@ C69B2:	LD	A,(D7B31)		; current playvoice serviced
 	JR	Z,J69C3			; first non-FM playvoice,
 	LD	IX,I3000+6*64		; drum channel
 	LD	B,3			; 3 channels
-	RET	
+	RET
 
 J69C3:	LD	HL,I7B16
 	OR	A			; first AUDIO playvoice ?
@@ -7397,11 +7695,12 @@ J69D9:	ADD	IX,BC
 	DEC	A
 	JR	NZ,J69D9		; get pointer to channel buffer
 J69DE:	LD	B,(HL)
-	RET	
+	RET
 
 ;	  Subroutine endmarker
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J69E0:	CALL	C6945			; note off
 	LD	L,13
@@ -7415,7 +7714,7 @@ J69EA:	LD	A,(D7B31)		; current playvoice serviced
 J69F4:	ADD	HL,HL
 	DJNZ	J69F4
 J69F7:	EX	DE,HL
-	DI	
+	DI
 	LD	HL,(D7B26)
 	LD	A,E
 	AND	L
@@ -7431,6 +7730,7 @@ J69F7:	EX	DE,HL
 ;	  Subroutine special operationcode (80H-FEH)
 ;	     Inputs  
 ;	     Outputs ________________________
+
 
 J6A0A:	LD	E,A
 	AND	0C0H
@@ -7449,7 +7749,7 @@ J6A0A:	LD	E,A
 	LD	B,(HL)
 	EX	DE,HL
 	PUSH	BC
-	RET	
+	RET
 
 I6A23:	DEFW	C6A43			; 080H, NOTE OFF
 	DEFW	C6A46			; 081H, SET VOLUME
@@ -7476,6 +7776,7 @@ C6A43:	JP	C6945			; note off
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6A46:	PUSH	HL
 	CALL	C696A			; get playvoice type of current serviced playvoice
 	POP	HL
@@ -7486,6 +7787,7 @@ C6A46:	PUSH	HL
 ;	  Subroutine set volume FM playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J6A52:	PUSH	HL
 	LD	L,18
@@ -7498,6 +7800,7 @@ J6A5C:	POP	HL
 ;	  Subroutine set volume sample playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J6A60:	PUSH	HL
 	LD	L,18
@@ -7514,6 +7817,7 @@ J6A60:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6A73:	PUSH	HL
 	CALL	C6B64			; get from voicequeue serviced
 	LD	C,A
@@ -7525,17 +7829,19 @@ C6A73:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6A80:	CALL	C6B64			; get from voicequeue serviced
 	LD	C,A
 	CALL	C6B64			; get from voicequeue serviced
 	LD	(HL),A
 	DEC	HL
 	LD	(HL),C
-	RET	
+	RET
 
 ;	  Subroutine change instrument
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6A8B:	PUSH	HL
 	CALL	C6B64			; get from voicequeue serviced
@@ -7546,6 +7852,7 @@ C6A8B:	PUSH	HL
 ;	  Subroutine set volume (fine)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6A95:	CALL	C690D			; output to midi ?
 	JP	NZ,J6BAD		; yep, start midi volume change
@@ -7562,9 +7869,11 @@ J6AAC:	CALL	C6AB6
 	DJNZ	J6AAC			; next channel
 	JR	J6A5C
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6AB6:	PUSH	BC
 	PUSH	DE
@@ -7574,7 +7883,7 @@ C6AB6:	PUSH	BC
 	ADD	IX,BC
 	POP	DE
 	POP	BC
-	RET	
+	RET
 
 J6AC3:	CALL	C6B64			; get from voicequeue serviced
 	LD	E,A
@@ -7582,11 +7891,13 @@ J6AC3:	CALL	C6B64			; get from voicequeue serviced
 	SUB	E
 	CALL	C6ACF
 	POP	HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6ACF:	LD	C,A
 	LD	B,00H
@@ -7598,6 +7909,7 @@ C6ACF:	LD	C,A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J6AD8:	PUSH	HL
 	LD	L,10
 	CALL	C6B72			; get pointer in voicebuffer of playvoice serviced
@@ -7607,13 +7919,14 @@ J6AD8:	PUSH	HL
 	LD	L,8
 	CALL	C6B72			; get pointer in voicebuffer of playvoice serviced
 	LD	A,(HL)
-	CPL	
+	CPL
 	CALL	C6B07			; set volume drums
 	JP	J6A5C
 
 ;	  Subroutine set accent volume drums
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6AF0:	PUSH	HL
 	LD	L,12
@@ -7631,6 +7944,7 @@ C6AF0:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6B07:	AND	1FH
 	RET	Z
 	CALL	C690D			; output to midi ?
@@ -7643,11 +7957,12 @@ C6B07:	AND	1FH
 	RST	00H			; AUDIO function set volume drums
 	POP	DE
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine drum operationcode (0C0H-0FEH)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J6B1D:	CALL	C6B64			; get from voicequeue serviced (accent drum mask)
 	LD	D,A
@@ -7674,7 +7989,7 @@ J6B1D:	CALL	C6B64			; get from voicequeue serviced (accent drum mask)
 	POP	AF
 	CALL	C6B07			; set volume drums
 	LD	A,D
-	CPL	
+	CPL
 	LD	D,A
 	POP	AF
 	AND	D
@@ -7693,52 +8008,56 @@ J6B55:	POP	HL
 	JP	NZ,J6BCB		; yep, start midi rhythm operation and quit
 	LD	A,21
 	RST	00H			; audio function play percussion
-	RET	
+	RET
 
 ;	  Subroutine get from voicequeue serviced
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6B64:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	LD	A,(D7B31)		; current playvoice serviced
-	DI	
+	DI
 	CALL	C6E40
 	POP	BC
 	POP	DE
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine get pointer in voicebuffer of playvoice serviced
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6B72:	LD	A,(D7B31)		; current playvoice serviced
-	DI	
+	DI
 	JP	C6F16			; get pointer in voicebuffer
 
 ;	  Subroutine wait until queues are empty and playvoices are stopped
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6B79:	EI	
+
+C6B79:	EI
 	CALL	C6B8D			; CTRL-STOP pressed ?
-	SCF	
+	SCF
 	RET	Z			; yep, quit
-	DI	
+	DI
 	LD	HL,(D7B26)
 	LD	A,L
 	OR	H			; any playvoice active ?
 	LD	HL,D7B28
 	OR	(HL)			; OR something queued ?
 	JR	NZ,C6B79		; yep, wait some more
-	EI	
-	RET	
+	EI
+	RET
 
 ;	  Subroutine CTRL-STOP pressed ?
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6B8D:	LD	A,(BASROM)
 	OR	A
@@ -7746,11 +8065,12 @@ C6B8D:	LD	A,(BASROM)
 	LD	A,(INTFLG)
 	SUB	3
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine start midi note on
 ;	     Inputs  
 ;	     Outputs ________________________
+
 
 J6B99:	LD	B,0
 
@@ -7758,15 +8078,17 @@ J6B99:	LD	B,0
 ;	     Inputs  B = midi function
 ;	     Outputs ________________________
 
+
 C6B9B:	LD	A,(D7B31)		; current playvoice serviced
 	PUSH	HL
 	CALL	C7B00			; midi hook
 	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine start midi note off
 ;	     Inputs  
 ;	     Outputs ________________________
+
 
 J6BA4:	LD	B,1
 	JR	C6B9B
@@ -7775,6 +8097,7 @@ J6BA4:	LD	B,1
 ;	     Inputs  
 ;	     Outputs ________________________
 
+
 J6BA8:	LD	B,2
 	LD	D,C
 	JR	C6B9B
@@ -7782,6 +8105,7 @@ J6BA8:	LD	B,2
 ;	  Subroutine start midi volume change
 ;	     Inputs  
 ;	     Outputs ________________________
+
 
 J6BAD:	CALL	C6B64			; get from voicequeue serviced
 	LD	D,A
@@ -7798,6 +8122,7 @@ J6BAD:	CALL	C6B64			; get from voicequeue serviced
 ;	     Inputs  
 ;	     Outputs ________________________
 
+
 J6BC0:	PUSH	BC
 	PUSH	DE
 	LD	D,A
@@ -7805,11 +8130,12 @@ J6BC0:	PUSH	BC
 	CALL	C6B9B
 	POP	DE
 	POP	BC
-	RET	
+	RET
 
 ;	  Subroutine start midi rhythm operation
 ;	     Inputs  
 ;	     Outputs ________________________
+
 
 J6BCB:	LD	B,6
 	LD	D,C
@@ -7819,14 +8145,17 @@ J6BCB:	LD	B,6
 ;	     Inputs  
 ;	     Outputs ________________________
 
+
 C6BD0:	CALL	C6B64			; get from voicequeue serviced
 	LD	D,A
 	LD	B,07H
 	JR	C6B9B
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6BD8:	XOR	A
 	LD	(D7B29),A		; background
@@ -7845,7 +8174,7 @@ J6BEC:	LD	(D7B23),A		; number of AUDIO playvoices
 	OR	80H
 	LD	(D7B24),A		; number of playvoices, b7 set
 	LD	HL,0
-J6BFD:	SCF	
+J6BFD:	SCF
 	ADC	HL,HL
 	DJNZ	J6BFD
 	LD	(D7B20),HL		; playvoice mask
@@ -7867,15 +8196,15 @@ J6BFD:	SCF
 	JR	Z,J6C2D			; 60 Hz
 	LD	HL,12000		; 50 Hz
 J6C2D:	LD	(D7B0A),HL
-	RET	
+	RET
 
 I6C31:	DEFB	000H,0FFH,07FH,07FH,03FH,03FH,03FH,01FH,01FH,01FH,01FH
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
-C6C3C:	DI	
+
+C6C3C:	DI
 	XOR	A
 	LD	(D7B30),A		; no skipped TIMER-1 interrupts
 	LD	(D7B28),A		; nothing queued
@@ -7918,16 +8247,18 @@ J6C84:	PUSH	BC
 	EX	DE,HL
 	LD	HL,I6CB5
 	LD	BC,39
-	LDIR	
+	LDIR
 	POP	BC
 	DJNZ	J6C84
 J6C98:	XOR	A
 	LD	(MUSICF),A
 	JP	J6EC6
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6C9F:	LD	A,(D7B1F)
 	AND	01H			; drum mode ?
@@ -7938,7 +8269,7 @@ C6C9F:	LD	A,(D7B1F)
 	CALL	C4D83			; MSX-AUDIO in page 0
 	CALL	C6B07			; set volume drums
 	CALL	C4D8F			; restore page 0
-	RET	
+	RET
 
 I6CB5:	DEFW	0			; +0 , duration counter
 	DEFB	0			; +2 , stringlength
@@ -7954,10 +8285,10 @@ I6CB5:	DEFW	0			; +0 , duration counter
 	DEFS	16,0			; +21, stack
 	DEFB	0			; +37, ?
 	DEFB	8			; +38, division value
-;
 ;	  Subroutine stop background music
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6CDC:	CALL	C6C3C			; initialize playvoice
 	CALL	C6C9F			; initialize for drums
@@ -7966,9 +8297,11 @@ C6CDC:	CALL	C6C3C			; initialize playvoice
 	CALL	C6CEE
 	JP	C4D8F			; restore page 0
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6CEE:	DEC	A
 	RET	M
@@ -8003,6 +8336,7 @@ J6D0D:	POP	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J6D1A:	CALL	C6D6E			; get MCL char
 	JR	Z,J6D0D			; end of string,
 	LD	HL,(MCLTAB)
@@ -8029,7 +8363,7 @@ J6D3A:	LD	BC,J6D1A
 	ADD	A,A
 	JR	NC,J6D62
 	OR	A
-	RRA	
+	RRA
 	LD	C,A
 	PUSH	BC
 	PUSH	HL
@@ -8039,7 +8373,7 @@ J6D3A:	LD	BC,J6D1A
 	CALL	C6FCE
 	JP	NC,J6D5C
 	CALL	C6DA5			; parse numeric operand (1st char get)
-	SCF	
+	SCF
 	JR	J6D60
 
 J6D5C:	CALL	C6D94			; undo MCL char
@@ -8057,13 +8391,15 @@ J6D62:	INC	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6D68:	CALL	C6D6E			; get MCL char
 	JR	Z,J6D2E			; end of string, illegal function call
-	RET	
+	RET
 
 ;	  Subroutine get MCL char
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6D6E:	PUSH	HL
 J6D6F:	LD	HL,MCLLEN
@@ -8079,25 +8415,28 @@ J6D6F:	LD	HL,MCLLEN
 	JR	Z,J6D6F
 	POP	HL
 	CALL	C6D8B
-	SCF	
+	SCF
 	ADC	A,A
-	RRA	
-	RET	
+	RRA
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6D8B:	CP	"a"
 	RET	C
 	CP	"z"+1
 	RET	NC
 	SUB	20H
-	RET	
+	RET
 
 ;	  Subroutine undo MCL char
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6D94:	PUSH	HL
 	LD	HL,MCLLEN
@@ -8106,17 +8445,19 @@ C6D94:	PUSH	HL
 	DEC	HL
 	LD	(MCLPTR),HL
 J6DA0:	POP	HL
-	RET	
+	RET
 
 ;	  Subroutine parse numeric operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6DA2:	CALL	C6D68			; get MCL char (error if end of string)
 
 ;	  Subroutine parse numeric operand (1 char get)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6DA5:	CP	"="
 	JP	Z,J6E03
@@ -8152,9 +8493,11 @@ J6DCF:	ADD	HL,DE
 	JR	NZ,J6DBB		; not end of string,
 	RET
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6DE3:	CALL	C6D68			; get MCL char (error if end of string)
 	LD	DE,BUF
@@ -8175,11 +8518,12 @@ J6DFF:	POP	HL
 J6E03:	CALL	C6DE3
 	CALL	BUF+128
 	EX	DE,HL
-	RET	
+	RET
 
 ;	  Subroutine FM/PSG/drum MCL "X"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6E0B:	CALL	C6DE3
 	LD	A,(MCLLEN)
@@ -8196,11 +8540,13 @@ I6E1E:	XOR	A
 	SBC	A,D
 	SUB	E
 	LD	D,A
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6E25:	CALL	C6E7C
 	LD	A,B
@@ -8225,11 +8571,13 @@ C6E25:	CALL	C6E7C
 	LD	B,00H
 	ADD	HL,BC
 	LD	(HL),E
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6E40:	CALL	C6E7C
 	LD	A,C
@@ -8252,14 +8600,16 @@ C6E40:	CALL	C6E7C
 	LD	B,00H
 	ADD	HL,BC
 	LD	A,(HL)
-	SCF	
+	SCF
 	ADC	A,A
-	RRA	
-	RET	
+	RRA
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6E5C:	PUSH	BC
 	CALL	C6E84
@@ -8275,11 +8625,13 @@ C6E5C:	PUSH	BC
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6E6D:	CALL	C6E7C
 	LD	A,B
@@ -8292,33 +8644,37 @@ C6E6D:	CALL	C6E7C
 	AND	(HL)
 	LD	L,A
 	LD	H,00H
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6E7C:	CALL	C6E84
 	LD	B,(HL)
 	INC	HL
 	LD	C,(HL)
 	INC	HL
-	RET	
+	RET
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6E84:	LD	C,A
 	LD	A,(D7B22)
 	SUB	C
-	SUB	04H	; 4 
+	SUB	4
 	LD	HL,(QUEUES)
 	JR	C,J6E95
 	LD	HL,(D7B32)
 	LD	A,C
-	CPL	
-J6E95:	CPL	
+	CPL
+J6E95:	CPL
 	ADD	A,A			; *2
 	LD	B,A
 	ADD	A,A			; *4
@@ -8326,7 +8682,7 @@ J6E95:	CPL
 	LD	C,A
 	LD	B,0
 	ADD	HL,BC
-	RET	
+	RET
 
 J6E9F:	LD	E,33H
 	DEFB	1
@@ -8358,12 +8714,14 @@ J6EC6:	LD	IX,GICINI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 J6ECC:	LD	IX,M4E9B
 	JR	J6F08
 
 ;	  Subroutine evaluate filespec
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6ED2:	LD	IX,M6A0E
 	JR	J6F08
@@ -8372,6 +8730,7 @@ C6ED2:	LD	IX,M6A0E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6ED8:	LD	IX,M5EA4
 	JR	J6F08
 
@@ -8379,12 +8738,14 @@ C6ED8:	LD	IX,M5EA4
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6EDE:	LD	IX,M517A
 	JR	J6F08
 
 ;	  Subroutine check for
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6EE4:	LD	A,(HL)
 	EX	(SP),HL
@@ -8397,12 +8758,14 @@ C6EE4:	LD	A,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6EEC:	LD	IX,M4666
 	JR	J6F08
 
 ;	  Subroutine evaluate expression
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6EF2:	LD	IX,M4C64
 	JR	J6F08
@@ -8411,12 +8774,14 @@ C6EF2:	LD	IX,M4C64
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6EF8:	LD	IX,M542F
 	JR	J6F08
 
 ;	  Subroutine evaluate byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6EFE:	LD	IX,M521C
 	JR	J6F08
@@ -8425,11 +8790,13 @@ C6EFE:	LD	IX,M521C
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6F04:	LD	IX,M67D0
 
 ;	  Subroutine start MAIN-ROM routine
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 J6F08:	LD	IY,(EXPTBL+0-1)
 	JP	CALSLT
@@ -8438,6 +8805,7 @@ J6F08:	LD	IY,(EXPTBL+0-1)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6F0F:	LD	L,2
 	JR	C6F16			; get pointer in voicebuffer
 
@@ -8445,11 +8813,13 @@ C6F0F:	LD	L,2
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+
 C6F13:	LD	A,(VOICEN)
 
 ;	  Subroutine get pointer in voicebuffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6F16:	LD	H,0
 	PUSH	DE
@@ -8466,7 +8836,7 @@ C6F16:	LD	H,0
 	LD	DE,39
 	JR	J6F4A
 
-J6F2F:	CPL	
+J6F2F:	CPL
 	EX	AF,AF'
 	LD	A,L
 	OR	A
@@ -8478,7 +8848,7 @@ J6F2F:	CPL
 	LD	L,A
 	POP	DE
 	XOR	A
-	RET	
+	RET
 
 J6F3F:	EX	AF,AF'
 	LD	DE,VCBA
@@ -8490,7 +8860,7 @@ J6F4A:	ADD	HL,DE
 	DEC	A
 	JR	NZ,J6F4A
 J6F4E:	POP	DE
-	RET	
+	RET
 
 ;	  Subroutine copy data
 ;	     Inputs  BC = source start, HL = destination start, DE = source end
@@ -8507,9 +8877,11 @@ J6F53:	CALL	C6FF4			; compare
 	DEC	HL
 	JR	J6F53
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6F5D:	LD	E,(HL)
 	INC	HL
@@ -8519,13 +8891,14 @@ C6F5D:	LD	E,(HL)
 	INC	HL
 	LD	B,(HL)
 	INC	HL
-	RET	
+	RET
 
 ;	  Subroutine start dequeueing
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6F66:	DI	
+
+C6F66:	DI
 	LD	HL,(D7B26)
 	LD	A,L
 	OR	H			; any playvoice active ?
@@ -8564,11 +8937,12 @@ J6FA4:	LD	(HL),LOW 1
 	DJNZ	J6FA4
 J6FAD:	LD	HL,(D7B20)		; playvoice mask
 	LD	(D7B26),HL		; all playvoices active
-	RET	
+	RET
 
 ;	  Subroutine check for stackspace
 ;	     Inputs  C = number of words
 ;	     Outputs ________________________
+
 
 C6FB4:	PUSH	HL
 	LD	HL,(STREND)
@@ -8588,9 +8962,11 @@ C6FB4:	PUSH	HL
 	RET	C
 J6FCB:	JP	J6EB4
 
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 C6FCE:	CP	"{"
 	RET	Z
@@ -8605,35 +8981,37 @@ C6FCE:	CP	"{"
 	CP	"@"
 	RET	C
 	CP	"Z"+1
-	CCF	
-	RET	
+	CCF
+	RET
 
 ;	  Subroutine (UNUSED)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 
 ?6FE4:	LD	A,(VALTYP)
 	CP	8
 	JR	NC,J6FF0
 	SUB	3
 	OR	A
-	SCF	
-	RET	
+	SCF
+	RET
 
 J6FF0:	SUB	3
 	OR	A
-	RET	
+	RET
 
 ;	  Subroutine compare
 ;	     Inputs  HL = value1, DE = value2
 ;	     Outputs ________________________
+
 
 C6FF4:	LD	A,H
 	SUB	D
 	RET	NZ
 	LD	A,L
 	SUB	E
-	RET	
+	RET
 
 	DEFS	08000H-$,0
 
