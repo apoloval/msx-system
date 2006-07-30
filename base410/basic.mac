@@ -11303,9 +11303,9 @@ C64AF:	JP	Z,C62A1			; end of statement, initialize interpreter and quit
 	PUSH	HL
 	LD	HL,(HIMEM)
 	LD	B,H
-	LD	C,L			; top BASIC memory
-	LD	HL,(MEMSIZ)		; top of string heap
-	JR	Z,J64EC			; yep, 
+	LD	C,L			; current top BASIC memory
+	LD	HL,(MEMSIZ)		; current top of string heap
+	JR	Z,J64EC			; end of statement (no new top specified), use current
 	POP	HL
 	RST	SYNCHR
 	DEFB	","			; check for ,
@@ -11342,8 +11342,8 @@ J64E5:	ADD	HL,BC
 
 ; #####################
 
-J64EA:	POP	BC			; top address
-	DEC	HL
+J64EA:	POP	BC			; new top address
+	DEC	HL			; new top of string heap
 J64EC:	LD	A,L
 	SUB	E
 	LD	E,A
@@ -16450,6 +16450,8 @@ J7D31:
 	LD	(HL),A			; ramdisk invalid, but flag ramdisk disabled remains unchanged
 	NOP
 	NOP				; align to MSX1 code
+; #####################
+
 
 ?7D3D:	LD	HL,J7EFD		; copyright message
 	CALL	C6678			; message to interpreter output

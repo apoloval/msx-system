@@ -13,15 +13,23 @@
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
 
-DEFDPB	EQU	L73DB-1		; default DPB is 720 Kb 3.5"
 FIRSID	EQU	08FH		; internal firmware slotid
-MYSIZ	EQU	31		; size of environment
+MYSIZE	EQU	31		; size of environment
+SECLEN	EQU	512
 
+
+ENAKRN	EQU	0F368H
+BDOS	EQU	0F37DH
+DSKBAS	EQU	04022H
+
+
+
+	IFDEF	DOS2
 
 ; DPB ROMdrive
 
 
-L7000:	DB	0FFh
+ROMDPB:	DB	0FFh
 	DW	512		; sectorsize
 	DB	00Fh
 	DB	004h
@@ -37,7 +45,7 @@ L7000:	DB	0FFh
 
 ; DPB SRAMdrive
 
-L7012:	DB	0FFh
+RAMDPB:	DB	0FFh
 	DW	512
 	DB	00Fh
 	DB	004h
@@ -55,14 +63,16 @@ L7012:	DB	0FFh
 L7024:	PUSH	BC
 	PUSH	HL
 	PUSH	AF
-	CALL	L4DD8		; GETWRK
+	CALL	GETWRK		; GETWRK
 	POP	AF
 	CP	(IX+30)		; Is it a diskdrive ?
 	POP	HL
 	POP	BC
 	RET
 
-; DSKIO for ROM and SRAM drive
+;	  Subroutine DSKIO SRAM/ROM disk
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 L7031:	POP	AF
 	CALL	L7118		; save firmwaremapper state
@@ -91,30 +101,38 @@ L7057:	PUSH	BC
 	DJNZ	L7057		; handle all sectors
 	JR	L7045
 
+;	  Subroutine write SRAM disk sector
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 L7060:	LD	A,E
 	AND	A
 	JR	NZ,L706A	; not the boot sector,
 	INC	DE
-	LD	BC,00200H
+	LD	BC,512
 	ADD	HL,BC		; bootsector, simply skip write
 	RET
 
 L706A:	PUSH	DE
-	LD	DE,(LF34D)
-	LD	BC,00200H
+	LD	DE,($SECBUF)
+	LD	BC,512
 	LDIR			; copy to sectorbuffer
 	POP	DE
 	PUSH	HL
 	PUSH	DE
 	CALL	L70C4		; set SRAM for sector
 	EX	DE,HL
-	LD	HL,(LF34D)
+	LD	HL,($SECBUF)
 	LDIR			; copy to SRAM
 	CALL	L70E1		; restore firmwarepage, ram on page 2
 	POP	DE
 	INC	DE		; next sector
 	POP	HL
 	RET
+
+;	  Subroutine read SRAM disk sector
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 L7087:	LD	A,E
 	AND	A
@@ -129,6 +147,10 @@ L7087:	LD	A,E
 	LD	DE,1		; sector 1
 	RET
 
+;	  Subroutine read ROM disk sector
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 L709D:	PUSH	DE
 	PUSH	HL
 	CALL	L70BF		; set ROM for sector
@@ -137,12 +159,12 @@ L709D:	PUSH	DE
 L70A4:	PUSH	DE
 	PUSH	HL
 	CALL	L70C4		; set SRAM for sector
-L70A9:	LD	DE,(LF34D)
+L70A9:	LD	DE,($SECBUF)
 	LDIR			; Copy to sectorbuffer
 	CALL	L70E1		; restore firmwarepage, ram on page 2
 	POP	DE
-	LD	HL,(LF34D)
-	LD	BC,0200H
+	LD	HL,($SECBUF)
+	LD	BC,512
 	LDIR			; copy to dest
 	EX	DE,HL
 	POP	DE
@@ -165,15 +187,15 @@ L70D3:	DI
 	CALL	L70F6		; set firmware mapper
 	LD	H,80H
 	LD	A,FIRSID
-	CALL	L0024		; Enable firmwarerom on page 2
+	CALL	ENASLT		; Enable firmwarerom on page 2
 	POP	BC
 	POP	HL
 	RET
 
 L70E1:	PUSH	AF
 	LD	H,80H
-	LD	A,(LF343)
-	CALL	L0024		; RAM back on page 2
+	LD	A,(RAMAD2)
+	CALL	ENASLT		; RAM back on page 2
 	LD	E,(IX+28)
 	LD	D,(IX+29)
 	CALL	L70F6		; restore firmware mapper
@@ -201,7 +223,7 @@ L7118:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
-	CALL	L4DD8		; GETWRK
+	CALL	GETWRK		; GETWRK
 	LD	(IX+27),0
 	LD	HL,L7FF9
 	LD	B,10
@@ -259,21 +281,22 @@ L716F:	LD	HL,L7FF4
 L7190:	PUSH	HL
 	PUSH	BC
 	LD	A,FIRSID
-	CALL	L000C
+	CALL	RDSLT
 	POP	BC
 	POP	HL
 	RET
 
 L719A:	LD	A,FIRSID
-	JP	L0014
+	JP	WRSLT
 
 L719F:	DEC	E
 	JR	NZ,L71AC
-	LD	HL,L9FC0	; sector 1
-	LD	BC,00040H	; size = 64
+	LD	HL,09FC0H	; sector 1
+	LD	BC,64		; size = 64
 	LD	A,081H		; 'page'nr
 	AND	A
 	RET
+
 L71AC:	DEC	E
 	LD	A,E
 	AND	00FH		; 16 sectors per 'page'
@@ -289,7 +312,7 @@ L71AC:	DEC	E
 	RRCA
 	ADD	A,082H		; 'page'nr
 	AND	A
-	LD	BC,00200H	; size = 512
+	LD	BC,512		; size = 512
 	RET
 
 L71C4:	BIT	6,(IX+26)	; patchROM ?
@@ -346,14 +369,14 @@ L721B:	LD	HL,0FFFDH
 L7220:	LD	HL,0FFFCH
 L7223:	BIT	7,(IX+26)	; OptionROM ?
 	JR	NZ,L71F2	; yep, cont
-	LD	HL,(LF34D)
+	LD	HL,($SECBUF)
 	LD	E,L
 	LD	D,H
 	INC	DE
 	LD	(HL),0
 	LD	BC,001FFH
 	LDIR			; clear sector
-	LD	HL,(LF34D)
+	LD	HL,($SECBUF)
 	LD	BC,00200H
 	XOR	A
 	RET
@@ -405,7 +428,7 @@ L727B:	DJNZ	L7271
 
 L7280:	LD	E,C
 	LD	D,0
-	LD	HL,L8201
+	LD	HL,08201H
 	ADD	HL,DE
 	ADD	HL,DE		; after the sectorlist
 	LD	A,C
@@ -447,14 +470,14 @@ L72B5:	LD	(IX+30),L	; set # of logical drives
 	LD	A,H
 	RET
 
-L72C9:	LD	A,005H
+L72C9:	LD	A,5
 	OUT	(0E4H),A
 	IN	A,(0E5H)	; firmware switch on ?
 	AND	040H
 	RET	Z		; No, quit
 	PUSH	BC
 	XOR	A
-	CALL	L0141
+	CALL	SNSMAT
 	AND	002H		; Check "1" key (boot to DOS1)
 	POP	BC
 	RET
@@ -477,7 +500,7 @@ L7300:	AND	A
 	PUSH	BC
 	LD	A,C
 	CALL	L70C7		; select firmwarepage and enable on page 2
-	LD	HL,L8000
+	LD	HL,08000H
 	LD	DE,L73C0	; "patch ROM"
 	LD	B,9
 	CALL	L7348		; Check bytes
@@ -494,14 +517,14 @@ L731F:	LD	A,C
 	DJNZ	L7300
 L7325:	LD	DE,1
 	CALL	L70C4		; set SRAM for sector 1
-	LD	DE,L0032
+	LD	DE,50
 	ADD	HL,DE
 	LD	DE,L73A8	; "SRAM disk by JS"
 	LD	B,14
 	CALL	L7348		; Check bytes
 	JR	NZ,L7342	; no, init SRAM
 	LD	A,7
-	CALL	L0141
+	CALL	SNSMAT
 	AND	004H
 	JR	NZ,L7345	; "ESC" not pressed
 L7342:	CALL	L737B		; init SRAM drive
@@ -525,9 +548,9 @@ L7350:	AND	A
 
 L7354:	EX	DE,HL
 	INC	DE
-	LD	HL,L7000
+	LD	HL,ROMDPB
 	JR	Z,L735E
-	LD	HL,L7012
+	LD	HL,RAMDPB
 L735E:	LD	BC,18
 	LDIR
 	AND	A
@@ -582,6 +605,10 @@ L73A8:	DB	"SRAMdisk by JS"
 L73B6:	DB	"option ROM"
 
 L73C0:	DB	"patch ROM"
+
+	ENDIF
+
+
 
 L73C9:	DB	0F8h
 	DW	512
@@ -695,16 +722,25 @@ L73DB:	DB	0F9h
 	DB	1
 	DW	3
 
+DEFDPB	EQU	L73DB-1		; default DPB is 720 Kb 3.5"
+
 
 ; DSKIO
 ;
 ; Reads or writes sectors
 
+L7459:
 DSKIO:	EI
+
+	IFDEF	DOS2
+
 	PUSH	AF
 	CALL	L7024		; check if extra drive
 	JP	NC,L7031	; yep, handle
 	POP	AF
+
+	ENDIF
+
 	PUSH	AF
 	JP	NC,L7550	; read sectors
 	PUSH	AF
@@ -742,16 +778,16 @@ L7496:	LD	(IX+2),C
 
 L749B:	CALL	L75EB		; init dskio
 	RET	C
-	CALL	LFFCF
+	CALL	DISINT
 	DI			; disable ints
 	PUSH	HL
-	LD	HL,LFFD4
+	LD	HL,ENAINT
 	EX	(SP),HL
 	LD	A,H
 	AND	A		; 8000-FFFF ?
 	JP	M,L74DA		; direct transport
 	SCF
-	CALL	L79FC
+	CALL	L79FC		; install and start write routines in SECBUF
 	RET	C
 	INC	B
 	DEC	B
@@ -762,10 +798,10 @@ L749B:	CALL	L75EB		; init dskio
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	DE,(LF34D)
+	LD	DE,($SECBUF)
 	PUSH	DE
 	LD	BC,0200H
-	CALL	LF36E
+	CALL	XFER
 	POP	HL
 	POP	BC
 	POP	DE
@@ -773,9 +809,9 @@ L749B:	CALL	L75EB		; init dskio
 	POP	HL
 	JR	L74DD
 
-L74D1:	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0)
+L74D1:	CALL	L785F		; READY input from drive
 	CALL	L74E5
-	JP	L75AA		; 30h to 7FF3 (enable C4, C4=1)
+	JP	L75AA		; READY input true
 
 L74DA:	CALL	L74D1
 L74DD:	RET	C
@@ -784,7 +820,7 @@ L74DD:	RET	C
 	CALL	L78AE
 	JR	L74DA
 
-L74E5:	LD	E,#0B
+L74E5:	LD	E,11
 L74E7:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
@@ -792,11 +828,11 @@ L74E7:	PUSH	HL
 	PUSH	DE
 	LD	DE,L7993	; wait routine
 	PUSH	DE
-	LD	(IX+10),#45	; WRITE DATA
+	LD	(IX+10),045H	; WRITE DATA
 	LD	B,9
 	CALL	L7921		; write bytes to controller
 	LD	DE,L7FF4
-	LD	B,#00
+	LD	B,0
 L7500:	LD	A,(DE)
 	ADD	A,A
 	JP	NC,L7500	; wait for Request
@@ -817,15 +853,15 @@ L750E:	LD	A,(DE)
 	DJNZ	L750E
 	POP	BC
 	POP	BC
-L751E:	CALL	L799C		; Terminal Count
+L751E:	CALL	L799C		; terminate transfer
 	CALL	L797B		; read bytes from controller
 	POP	BC
 	POP	DE
 	POP	HL
 	LD	A,(IX+19)
-	AND	#C8
+	AND	0C8H
 	RET	Z		; No error or not ready
-	AND	#08
+	AND	008H
 	JP	NZ,L754C	; Not ready
 	BIT	1,(IX+20)
 	JR	NZ,L7549	; Write protect
@@ -834,13 +870,13 @@ L751E:	CALL	L799C		; Terminal Count
 	JR	NZ,L74E7	; next try
 	SCF
 	BIT	4,(IX+19)
-	LD	A,#0A
+	LD	A,10
 	RET	NZ		; Other error
 	JP	L79AB
 L7549:	XOR	A
 	SCF
 	RET
-L754C:	LD	A,#02
+L754C:	LD	A,2
 	SCF
 	RET
 
@@ -849,15 +885,15 @@ L7550:	CALL	L7556
 
 L7556:	CALL	L75EB		; init dskio
 	RET	C
-	CALL	LFFCF
+	CALL	DISINT
 	DI			; disable ints
 	PUSH	HL
-	LD	HL,LFFD4
+	LD	HL,ENAINT
 	EX	(SP),HL		; ret to enable ints
 	LD	A,H
 	AND	A
 	JP	M,L75B0		; direct access
-	CALL	L79FC
+	CALL	L79FC		; install and start read routines in SECBUF
 	RET	C
 	INC	B
 	DEC	B
@@ -868,17 +904,17 @@ L7556:	CALL	L75EB		; init dskio
 	BIT	1,(IX+5)
 	JR	NZ,L7596	; it's a verify
 	PUSH	HL
-	LD	HL,(LF34D)
+	LD	HL,($SECBUF)
 	CALL	L75A4
 	POP	HL
 	RET	C
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	DE,(LF34D)
+	LD	DE,($SECBUF)
 	EX	DE,HL
-	LD	BC,L0200
-	CALL	LF36E
+	LD	BC,512
+	CALL	XFER
 	POP	BC
 	POP	DE
 	POP	HL
@@ -887,14 +923,14 @@ L7596:	CALL	L759C
 	RET	C
 	JR	L75BF
 
-L759C:	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0)
+L759C:	CALL	L785F		; READY input from drive
 	CALL	L75C6
-	JR	L75AA		; 30h to 7FF3 (enable C4, C4=1)
+	JR	L75AA		; READY input true
 
-L75A4:	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0)
+L75A4:	CALL	L785F		; READY input from drive
 	CALL	L75C6
 L75AA:	PUSH	AF
-	CALL	L7863		; 30h to 7FF3 (enable C4, C4=1)
+	CALL	L7863		; READY input true
 	POP	AF
 	RET
 
@@ -909,16 +945,16 @@ L75BF:	DEC	B
 	CALL	L78AE
 	JR	L75B0
 
-L75C6:	LD	E,#0B
+L75C6:	LD	E,11
 L75C8:	BIT	1,(IX+5)
 	JR	Z,L75D3		; no verify
 	CALL	L7871
 	JR	L75D6
 L75D3:	CALL	L79BB
 L75D6:	LD	A,(IX+19)
-	AND	#C8
+	AND	0C8H
 	RET	Z
-	AND	#08
+	AND	008H
 	JP	NZ,L754C
 	CALL	L78DF
 	DEC	E
@@ -929,21 +965,21 @@ L75D6:	LD	A,(IX+19)
 L75EB:	PUSH	AF
 	PUSH	BC
 	PUSH	HL
-	CALL	L4DD8		; GETWRK
+	CALL	GETWRK		; GETWRK
 	POP	HL
 	POP	BC
 	POP	AF
 	RES	0,(IX+5)
 	JR	NC,L75FE
 	SET	0,(IX+5)	; write operation
-L75FE:	CP	#02		; Check driveid
+L75FE:	CP	2		; Check driveid
 	JR	C,L7606
-L7602:	LD	A,#0C
+L7602:	LD	A,12
 	SCF
 	RET
 L7606:	PUSH	AF
 	LD	A,C
-	CP	#F8		; Check mediabyte
+	CP	0F8H		; Check mediabyte
 	JR	NC,L760F
 	POP	AF
 	JR	L7602
@@ -956,33 +992,33 @@ L760F:	POP	AF
 	DEC	A
 	JR	NZ,L762F	; double drive system
 	POP	AF
-	LD	B,#00
+	LD	B,0
 	PUSH	BC
 	CP	(IX+3)		; same logical drive
 	JR	Z,L762F		; yes,
 	LD	(IX+3),A
 	CALL	L7867		; motor off
 	PUSH	HL
-	CALL	L4D5A		; PROMPT
+	CALL	PROMPT		; PROMPT
 	POP	HL
 L762F:	POP	AF
 	POP	DE
 	POP	BC
 	POP	IX
-	LD	(IX+15),#02	; Sectorsize = 512
-	LD	(IX+16),#09	; lastsector = 9
-	LD	(IX+17),#50	; Gapsize = 80 bytes
-	LD	(IX+18),#FF
+	LD	(IX+15),2	; Sectorsize = 512
+	LD	(IX+16),9	; lastsector = 9
+	LD	(IX+17),80	; Gapsize = 80 bytes
+	LD	(IX+18),0FFH
 	PUSH	HL
 	PUSH	AF
 	PUSH	BC
 	BIT	1,C		; 8 sectors/track ?
 	LD	C,E
 	LD	B,D
-	LD	DE,L0008
+	LD	DE,8
 	JR	NZ,L7651	; yeah
 	INC	DE
-L7651:	CALL	L4E72		; DIV16
+L7651:	CALL	DIV16		; DIV16
 	INC	L
 	LD	(IX+14),L	; Record
 	LD	L,C
@@ -990,9 +1026,9 @@ L7651:	CALL	L4E72		; DIV16
 	POP	AF
 	LD	(IX+11),A	; Unit
 	AND	A
-	LD	A,#14		; motor enable #0, normal operation, select drv 0
+	LD	A,014H		; motor enable #0, normal operation, select drv 0
 	JR	Z,L7665
-	LD	A,#25		; motor enable #1, normal operation, select drv 1
+	LD	A,025H		; motor enable #1, normal operation, select drv 1
 L7665:	LD	H,A
 	LD	D,A
 	BIT	0,C		; double sided ?
@@ -1000,14 +1036,14 @@ L7665:	LD	H,A
 	SRL	L		; track on side
 	JR	NC,L7679
 	SET	2,(IX+11)	; Head 1
-	LD	(IX+13),#01	; side 1
+	LD	(IX+13),1	; side 1
 	JR	L7681
 L7679:	RES	2,(IX+11)	; Head 0
-	LD	(IX+13),#00	; side 0
+	LD	(IX+13),0	; side 0
 L7681:	LD	A,C
 	RRCA
 	RRCA
-	AND	#C0		; double/8-9 sect
+	AND	0C0H		; double/8-9 sect
 	OR	D
 	LD	D,A
 	DI
@@ -1015,10 +1051,10 @@ L7681:	LD	A,C
 	LD	(L7FF2),A	; motor on
 	EI
 	LD	C,L		; track on side
-	CALL	L785F		; 20h to 7FF3 (C4 enable, C4=0) Fake READY signal ON
+	CALL	L785F		; READY input from drive
 	CALL	L76CF		; Wait FDD ready
 	PUSH	AF
-	CALL	L7863		; 30h to 7FF3 (C4 enable, C4=1) Fake READY signal OFF
+	CALL	L7863		; READY input true
 	POP	AF
 	JR	C,L76BD		; timeout, Not ready error
 	BIT	6,A
@@ -1058,7 +1094,7 @@ L76C5:	EX	(SP),HL
 
 L76CF:	LD	(IX+10),004H	; SENSE DRIVE STATUS
 	PUSH	BC
-	LD	HL,L1388
+	LD	HL,01388H
 L76D7:	DEC	HL
 	LD	A,L
 	OR	H
@@ -1108,7 +1144,7 @@ INIHRD:	LD	HL,0
 DSKSTP:	JP	L7867
 
 L7716:	LD	(L7FF2),A	; reset FDC
-	LD	A,0FAH		; 11111010 (enable C6, C6=1, enable C4, C4=1, enable C2, no standby, enable C0, no TC)
+	LD	A,0FAH		; 11111010 (C6 output true, force READY input true, no standby, reset TC)
 	LD	(L7FF3),A
 	CALL	L7867		; motor off
 	LD	(IX+10),003H	; SPECIFY
@@ -1132,7 +1168,7 @@ L773B:	LD	(IX+10),007H	; RECALIBRATE
 
 DRIVES:	PUSH	BC
 	PUSH	AF
-	CALL	L4DD8		; GETWRK
+	CALL	GETWRK		; GETWRK
 	LD	A,025H
 	CALL	L7732		; Track 00
 	LD	L,001H
@@ -1143,8 +1179,15 @@ DRIVES:	PUSH	BC
 	JR	Z,L775F
 	INC	L		; 1 physical must act as 2 logical drives
 L775F:	POP	BC
+
+	IFDEF	DOS2
+
 	CALL	L72B5		; Check for memory drives
+
+	ENDIF
+
 	RET
+
 L7764:	INC	L
 	LD	(IX+7),L	; set 2 physical drives
 	CALL	L7867		; motor off
@@ -1172,21 +1215,27 @@ L7764:	INC	L
 ; +30	
 
 INIENV:	LD	A,1
-	LD	(LF30D),A	; Verify on
-	CALL	L4DD8		; GETWRK
+	LD	(RAWFLG),A	; Verify on
+	CALL	GETWRK		; GETWRK
 	XOR	A
 	LD	B,7
 L777C:	LD	(HL),A
 	INC	HL
 	DJNZ	L777C		; Clear environment area
+
+	IFDEF	DOS2
+
 	CALL	L72DB
+
+	ENDIF
+
 	LD	HL,L7FD4
-	JP	L4E09		; SETINT
+	JP	SETINT		; SETINT
 
 ; diskdrive interrupt handler
 
 L7789:	PUSH	AF
-	CALL	L4DD8		; GETWRK
+	CALL	GETWRK		; GETWRK
 	INC	HL
 	LD	A,(HL)
 	AND	A		; drive 0 counter 0 ?
@@ -1198,7 +1247,7 @@ L7793:	INC	HL
 	JR	Z,L7799
 	DEC	(HL)		; nope, decrease
 L7799:	POP	AF
-	JP	L4E1F		; PRVINT
+	JP	PRVINT		; PRVINT
 
 
 ; DSKCHG
@@ -1206,12 +1255,18 @@ L7799:	POP	AF
 ; Checks if disk was changed
 
 DSKCHG:	EI
+
+	IFDEF	DOS2
+
 	CALL	L7024		; Check if extra drive
 	JP	NC,L7350	; yep, handle
+
+	ENDIF
+
 	PUSH	HL
 	PUSH	BC
 	PUSH	AF
-	CALL	L4DD8		; GETWRK
+	CALL	GETWRK		; GETWRK
 	POP	AF
 	POP	BC
 	POP	HL
@@ -1220,17 +1275,17 @@ DSKCHG:	EI
 	JR	NZ,L77BD	; double drive system
 	CP	(IX+3)		; logical drive same as last ?
 	JR	Z,L77BC		; yep,
-	LD	B,#00		; unkwown
+	LD	B,0		; unkwown
 	AND	A
 	RET
 L77BC:	XOR	A
 L77BD:	AND	A
-	LD	B,#10
+	LD	B,010H
 	JR	Z,L77C4		; drive 0
-	LD	B,#20
+	LD	B,020H
 L77C4:	LD	(IX+11),A
-	LD	(IX+10),#04	; SENSE DRIVE STATUS
-	CALL	L785F		; 20h to 7FF3 (enable C4, C4=0)
+	LD	(IX+10),4	; SENSE DRIVE STATUS
+	CALL	L785F		; READY input from drive
 	PUSH	BC
 	LD	B,2
 	CALL	L7921		; write 2 bytes to controller
@@ -1245,15 +1300,15 @@ L77D7:	LD	A,(L7FF4)
 	CALL	L797B		; read bytes from controller
 	LD	A,B
 	AND	A
-	LD	B,#FF
+	LD	B,0FFH
 	JR	Z,L77ED		; bit was reset, disk changed
-	LD	B,#01
+	LD	B,1
 L77ED:	XOR	A
-	JR	L77F3		; 30h to 7FF3 (enable C4, C4=1)
-L77F0:	LD	B,#00
+	JR	L77F3		; READY input true
+L77F0:	LD	B,0
 	AND	A
 L77F3:	PUSH	AF
-	CALL	L7863		; 30h to 7FF3 (enable C4, C4=1)
+	CALL	L7863		; READY input true
 	POP	AF
 	RET
 
@@ -1263,8 +1318,14 @@ L77F3:	PUSH	AF
 ; Fills in a Drive Parameter Block
 
 GETDPB:	EI
+
+	IFDEF	DOS2
+
 	CALL	L7024		; Check if extra drive
 	JP	NC,L7354	; yep, handle
+
+	ENDIF
+
 	EX	DE,HL
 	INC	DE
 	LD	A,B
@@ -1281,7 +1342,7 @@ GETDPB:	EI
 	ADD	HL,BC
 	LD	BC,L73C9
 	ADD	HL,BC
-	LD	BC,L0012
+	LD	BC,18
 	LDIR
 	RET
 
@@ -1290,8 +1351,15 @@ GETDPB:	EI
 ;
 ; Returns pointer to formatoption string
 
-CHOICE:	CALL	L7024		; Check if extra drive
+CHOICE:	
+
+	IFDEF	DOS2
+
+	CALL	L7024		; Check if extra drive
 	JP	NC,L7365	; yep, handle
+
+	ENDIF
+
 	LD	HL,L7824
 	RET
 
@@ -1306,13 +1374,13 @@ L7824:	DEFB	13,10
 OEMSTA:	SCF
 	RET
 
-L785F:	LD	A,#20
+L785F:	LD	A,020H
 	JR	L786D
 
-L7863	LD	A,#30
+L7863:	LD	A,030H
 	JR	L786D
 
-L7867:	LD	A,#04
+L7867:	LD	A,004H
 	LD	(L7FF2),A	; all motors off, normal operation, drv 0
 	RET
 
@@ -1347,12 +1415,14 @@ L7897:	ADD	A,A
 L78A0:	DJNZ	L7896
 	POP	BC
 	POP	BC
-L78A4:	CALL	L799C		; Terminal Count
+L78A4:	CALL	L799C		; terminate transfer
 	CALL	L797B		; read bytes from controller
 	POP	BC
 	POP	DE
 	POP	HL
 	RET
+
+S_SUPP:
 
 L78AE:	INC	H
 	INC	H		; +512
@@ -1361,15 +1431,15 @@ L78AE:	INC	H
 	LD	(IX+14),A	; R+1
 	BIT	7,D
 	JR	NZ,L78BE
-	CP	#0A
+	CP	9+1
 	RET	C
-L78BE:	CP	#09
+L78BE:	CP	8+1
 	RET	C		; still on this cylinder, quit
-	LD	(IX+14),#01	; R=1
+	LD	(IX+14),1	; R=1
 	BIT	6,D
 	JR	Z,L78DC		; SS, next track
 	LD	A,(IX+13)
-	XOR	#01
+	XOR	001H
 	LD	(IX+13),A	; other head
 	JR	Z,L78D8		; now head 0, next track
 	SET	2,(IX+11)
@@ -1381,15 +1451,15 @@ L78DC:	INC	C
 L78DF:	BIT	0,E
 	RET	NZ
 	PUSH	BC
-	LD	(IX+10),#0F	; SEEK
-	LD	(IX+12),#06	; Track 6
+	LD	(IX+10),00FH	; SEEK
+	LD	(IX+12),6	; Track 6
 	LD	B,3
-	CALL	L7921		; write 3 bytes to controller
-	CALL	L7955		; wait for end of seek
-	LD	(IX+10),#07	; RECALIBRATE
+Q003F:	CALL	L7921		; write 3 bytes to controller
+Q0042:	CALL	L7955		; wait for end of seek
+	LD	(IX+10),007H	; RECALIBRATE
 	LD	B,2
-	CALL	L7921		; write 2 bytes to controller
-	CALL	L7955		; wait for end of seek
+Q004B:	CALL	L7921		; write 2 bytes to controller
+Q004E:	CALL	L7955		; wait for end of seek
 	POP	BC
 
 L7900:	PUSH	BC
@@ -1397,12 +1467,12 @@ L7900:	PUSH	BC
 L7903:	EX	(SP),HL
 	EX	(SP),HL
 	DJNZ	L7903		; wait
-	LD 	(IX+10),#0F	; SEEK
+	LD 	(IX+10),00FH	; SEEK
 	LD	(IX+12),C	; track
 	LD	B,3
-	CALL	L7921		; write 3 bytes to controller
-	CALL	L7955		; wait on end of seek
-	LD	BC,L0773
+Q0062:	CALL	L7921		; write 3 bytes to controller
+Q0065:	CALL	L7955		; wait on end of seek
+	LD	BC,00773H
 L7919:	DEC	BC
 	LD	A,B
 	OR	C
@@ -1413,8 +1483,9 @@ L7919:	DEC	BC
 
 L7921:	PUSH	HL
 	LD	HL,07D0H
+Q0077:
 L7925:	LD	A,(L7FF4)
-	AND	#10
+	AND	010H
 	JR	Z,L7934		; FDC ready,
 	DEC	HL
 	LD	A,H
@@ -1431,114 +1502,125 @@ L7934:	PUSH	DE
 	POP	HL
 	POP	IX
 	POP	DE
+Q0094:
 L7942:	LD	A,(L7FF4)
-	AND	#C0
-	CP	#80
+	AND	0C0H
+	CP	080H
 	JR	NZ,L7942	; wait until Output Request
 	LD	A,(HL)
-	LD	(L7FF5),A
+Q009E:	LD	(L7FF5),A
 	INC	HL
 	DJNZ	L7942
 	POP	HL
 	XOR	A
 	RET
 
+Q00A7:
 L7955:	LD	A,(L7FF4)
-	AND	#10
+	AND	010H
 	JR	NZ,L7955	; FDC is busy
+Q00AE:
 L795C:	CALL	L796B		; get status
 	LD	A,(IX+19)
 	BIT	5,A
 	JR	Z,L795C		; Seek not completed, wait
-	AND	#C0
+	AND	0C0H
 	RET	Z
 	SCF			; Seek error
 	RET
 
 L796B:	PUSH	BC
-	LD	(IX+10),#08	; SENSE INTERRUPT STATUS
+	LD	(IX+10),008H	; SENSE INTERRUPT STATUS
 	LD	B,1
-	CALL	L7921		; write bytes to controller
-	CALL	L797B		; read bytes from controller
+Q00C4:	CALL	L7921		; write bytes to controller
+Q00C7:	CALL	L797B		; read bytes from controller
 	XOR	A
 	POP	BC
 	RET
 
 L797B:	PUSH	IX
+Q00CF:
 L797D:	LD	A,(L7FF4)
 	ADD	A,A
 	JR	NC,L797D	; wait on Request
-	JP	P,L7990		; Output Request, quit
-	LD	A,(L7FF5)
+Q00D5:	JP	P,L7990		; Output Request, quit
+Q00D8:	LD	A,(L7FF5)
 	LD	(IX+19),A
 	INC	IX
 	JR	L797D
 L7990:	POP	IX
 	RET
 
-L7993:	LD	BC,L07A8
+L7993:	LD	BC,007A8H
 L7996:	DEC	BC
 	LD	A,B
 	OR	C
 	JR	NZ,L7996
 	RET
 
-L799C:	LD	A,#02
-	LD	(L7FF3),A	; enable C0
+L799C:	LD	A,002H
+Q00F0:	LD	(L7FF3),A	; enable C0, TC=0
 	INC	A
-	LD	(L7FF3),A	; enable C0, TC=1
+Q00F4:	LD	(L7FF3),A	; enable C0, TC=1
 	NOP
 	DEC	A
-	LD	(L7FF3),A	; enable C0
+Q00F9:	LD	(L7FF3),A	; enable C0, TC=0
 	RET
 
 L79AB:	LD	E,(IX+20)
 	BIT	2,E
-	LD	A,#08		; Record not found
+	LD	A,8		; Record not found
 	RET	NZ
 	BIT	5,E
-	LD	A,#04		; Data error
+	LD	A,4		; Data error
 	RET	NZ
-	LD	A,#0C
+	LD	A,12
 	RET
+
+L_SUPP	EQU	$-S_SUPP
+
 L79BB:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	DE,L79F2
+Q0110:	LD	DE,L79F2
 	PUSH	DE
-	LD	DE,L7993
+Q0114:	LD	DE,L7993
 	PUSH	DE
-	LD	(IX+10),#46	; READ DATA, 1 Track, MFM, No skip
+	LD	(IX+10),046H	; READ DATA, 1 Track, MFM, No skip
 	LD	B,9
-	CALL	L7921		; write bytes to controller
-	LD	DE,L7FF4
-	LD	B,#00
+Q011E:	CALL	L7921		; write bytes to controller
+Q0121:	LD	DE,L7FF4
+	LD	B,0
 L79D4:	LD	A,(DE)
 	ADD	A,A
-	JP	NC,L79D4	; wait on Request
+Q0128:	JP	NC,L79D4	; wait on Request
 	ADD	A,A
 	RET	P		; Output Request, quit
-	LD	A,(L7FF5)
-	LD	(HL),A
+Q012D:	LD	A,(L7FF5)
+R79DE:	LD	(HL),A
 	INC	HL
 	DJNZ	L79D4
 L79E2:	LD	A,(DE)
 	ADD	A,A
-	JP	NC,L79E2
+Q0136:	JP	NC,L79E2
 	ADD	A,A
 	RET	P
-	LD	A,(L7FF5)
-	LD	(HL),A
+Q013B:	LD	A,(L7FF5)
+R79EC:	LD	(HL),A
 	INC	HL
 	DJNZ	L79E2
 	POP	BC
 	POP	BC
-L79F2:	CALL	L799C		; Terminal Count
-	CALL	L797B		; read bytes from controller
+Q0144:
+L79F2:	CALL	L799C		; terminate transfer
+Q0147:	CALL	L797B		; read bytes from controller
 	POP	BC
 	POP	DE
 	POP	HL
 	RET
+
+L_SCLP	EQU	$-L79BB
+
 
 L79FC:	PUSH	HL
 	PUSH	IY
@@ -1547,13 +1629,13 @@ L79FC:	PUSH	HL
 	PUSH	AF
 	LD	DE,L7AC0
 	LD	HL,L7B2C
-	LD	BC,006CH
-	JR	NC,L7A16
+	LD	BC,L_SCRD
+	JR	NC,L7A16	; read/verify, install read/verify sector routine
 	LD	DE,L7ACE
 	LD	HL,L7B98
-	LD	BC,00BAH
+	LD	BC,L_SCWR	; write, install write sector routine
 L7A16:	PUSH	DE
-	LD	DE,(LF34D)
+	LD	DE,($SECBUF)
 	LDIR			; copy routine to secbuf
 	POP	HL
 	PUSH	DE
@@ -1565,14 +1647,14 @@ L7A1F:	LD	E,(HL)
 	OR	E
 	JR	Z,L7A3C
 	PUSH	HL
-	LD	HL,(LF34D)
+	LD	HL,($SECBUF)
 	ADD	HL,DE
 	INC	HL
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)
 	EX	DE,HL
-	LD	HL,(LF34D)
+	LD	HL,($SECBUF)
 	ADD	HL,BC
 	EX	DE,HL
 	LD	(HL),D
@@ -1585,17 +1667,17 @@ L7A3C:	POP	DE
 	PUSH	AF
 	PUSH	DE
 	LD	HL,L78AE
-	LD	BC,014EH
-	JR	NC,L7A4B
-	LD	BC,010DH
+	LD	BC,L_SUPP+L_SCLP
+	JR	NC,L7A4B	; read/verify, install support routines with read/verify routine
+	LD	BC,L_SUPP	; write, install support routines without read routine
 L7A4B:	LDIR
 	POP	IY
 	PUSH	AF
 	POP	AF
 	LD	HL,L7AE8
-	LD	B,#11
-	JR	NC,L7A5A
-	LD	B,#0A
+	LD	B,L_RLRD
+	JR	NC,L7A5A	; read/verify, relocate support+read routines
+	LD	B,L_RLWR	; write, relocate support routines
 L7A5A:	PUSH	BC
 	LD	E,(HL)
 	INC	HL
@@ -1627,9 +1709,9 @@ L7A5A:	PUSH	BC
 	POP	AF
 	PUSH	AF
 	LD	HL,L7B0A
-	LD	B,#0C
-	JR	NC,L7A87
-	LD	B,#09
+	LD	B,L_CTRD
+	JR	NC,L7A87	; read/verify, change support+read/verify routines
+	LD	B,L_CTWR	; write, change support routines
 L7A87:	PUSH	BC
 	LD	E,(HL)
 	INC	HL
@@ -1641,14 +1723,14 @@ L7A87:	PUSH	BC
 	ADD	HL,DE
 	INC	HL
 	INC	HL
-	LD	(HL),#BF
+	LD	(HL),0BFH
 	POP	HL
 	POP	BC
 	DJNZ	L7A87
 	POP	AF
 	JR	C,L7AB7
 	BIT	1,(IX+5)
-	JR	Z,L7AB7			; no verify
+	JR	Z,L7AB7		; no verify
 	LD	HL,L7B22
 L7AA5:	LD	E,(HL)
 	INC	HL
@@ -1661,169 +1743,195 @@ L7AA5:	LD	E,(HL)
 	PUSH	IY
 	POP	HL
 	ADD	HL,DE
-	LD	(HL),#00
+	LD	(HL),0
 	POP	HL
 	JR	L7AA5
 L7AB7:	POP	BC
 	POP	DE
 	POP	IY
-	LD	HL,(LF34D)
+	LD	HL,($SECBUF)
 	EX	(SP),HL
 	RET
 
 
-L7AC0:	DEFW	0006H
-	DEFW	001EH
-	DEFW	0028H
-	DEFW	003AH
-	DEFW	0043H
-	DEFW	0049H
-	DEFW	0000H
+L7AC0:	DEFW	R7B32
+	DEFW	R7B4A
+	DEFW	R7B54
+	DEFW	R7B66
+	DEFW	R7B6F
+	DEFW	R7B75
+	DEFW	0
 
-L7ACE:	DEFW	0006H
-	DEFW	001EH
-	DEFW	002BH
-	DEFW	0043H
-	DEFW	0051H
-	DEFW	002FH
-	DEFW	0039H
-	DEFW	005FH
-	DEFW	0067H
-	DEFW	0077H
-	DEFW	0086H
-	DEFW	0094H
-	DEFW	0000H
+L7ACE:	DEFW	R7B9E
+	DEFW	R7BB6
+	DEFW	R7BC3
+	DEFW	R7BDB
+	DEFW	R7BE9
+	DEFW	R7BC7
+	DEFW	R7BD1
+	DEFW	R7BF7
+	DEFW	R7BFF
+	DEFW	R7C0F
+	DEFW	R7C1E
+	DEFW	R7C2C
+	DEFW	0
 
-L7AE8:	DEFW	003FH
-	DEFW	0042H
-	DEFW	004BH
-	DEFW	004EH
-	DEFW	0062H
-	DEFW	0065H
-	DEFW	00AEH
-	DEFW	00C4H
-	DEFW	00C7H
-	DEFW	00D5H
-	DEFW	0110H
-	DEFW	0114H
-	DEFW	011EH
-	DEFW	0128H
-	DEFW	0136H
-	DEFW	0144H
-	DEFW	0147H
+L7AE8:	DEFW	Q003F-S_SUPP
+	DEFW	Q0042-S_SUPP
+	DEFW	Q004B-S_SUPP
+	DEFW	Q004E-S_SUPP
+	DEFW	Q0062-S_SUPP
+	DEFW	Q0065-S_SUPP
+	DEFW	Q00AE-S_SUPP
+	DEFW	Q00C4-S_SUPP
+	DEFW	Q00C7-S_SUPP
+	DEFW	Q00D5-S_SUPP
 
-L7B0A:	DEFW	0077H
-	DEFW	0094H
-	DEFW	009EH
-	DEFW	00A7H
-	DEFW	00CFH
-	DEFW	00D8H
-	DEFW	00F0H
-	DEFW	00F4H
-	DEFW	00F9H
-	DEFW	0121H
-	DEFW	012DH
-	DEFW	013BH
+L_RLWR	EQU	($-L7AE8)/2
 
-L7B22:	DEFW	0130H
-	DEFW	0131H
-	DEFW	013EH
-	DEFW	013FH
-	DEFW	0000H
+	DEFW	Q0110-S_SUPP
+	DEFW	Q0114-S_SUPP
+	DEFW	Q011E-S_SUPP
+	DEFW	Q0128-S_SUPP
+	DEFW	Q0136-S_SUPP
+	DEFW	Q0144-S_SUPP
+	DEFW	Q0147-S_SUPP
 
-L7B2C:	PUSH	HL
+L_RLRD	EQU	($-L7AE8)/2
+
+
+L7B0A:	DEFW	Q0077-S_SUPP
+	DEFW	Q0094-S_SUPP
+	DEFW	Q009E-S_SUPP
+	DEFW	Q00A7-S_SUPP
+	DEFW	Q00CF-S_SUPP
+	DEFW	Q00D8-S_SUPP
+	DEFW	Q00F0-S_SUPP
+	DEFW	Q00F4-S_SUPP
+	DEFW	Q00F9-S_SUPP
+
+L_CTWR	EQU	($-L7B0A)/2
+
+	DEFW	Q0121-S_SUPP
+	DEFW	Q012D-S_SUPP
+	DEFW	Q013B-S_SUPP
+
+L_CTRD	EQU	($-L7B0A)/2
+
+
+L7B22:	DEFW	R79DE-S_SUPP+0
+	DEFW	R79DE-S_SUPP+1
+	DEFW	R79EC-S_SUPP+0
+	DEFW	R79EC-S_SUPP+1
+	DEFW	0
+
+L7B2C:
+
+	.PHASE	0
+
+S_SCRD:
+	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	CALL	L402D
-	LD	(L0061),A
-	LD	H,#80
-	CALL	L0024
-	LD	A,(LF342)
-	LD	H,#40
-	CALL	L0024
+	CALL	GETSLT
+R7B32:	LD	(L7B8C+1),A
+	LD	H,080H
+	CALL	ENASLT
+	LD	A,(RAMAD1)
+	LD	H,040H
+	CALL	ENASLT
 	POP	BC
 	POP	DE
 	POP	HL
 L7B45:	DEC	HL
 	LD	A,H
-	ADD	A,#02
+	ADD	A,HIGH 512
 	INC	HL
-	JP	M,L0051
-	LD	E,#0B
-L7B4F:	LD	A,#20
-	LD	(LBFF3),A
-	CALL	L0179
-	LD	A,#30
-	LD	(LBFF3),A
+R7B4A:	JP	M,L7B7D
+	LD	E,11
+L7B4F:	LD	A,020H
+	LD	(LBFF3),A		; READY input from drive
+R7B54:	CALL	L79BB-S_SUPP+L_SCRD	; read sector
+	LD	A,030H
+	LD	(LBFF3),A		; READY input true
 	LD	A,(IX+19)
-	AND	#C8
+	AND	0C8H
 	JR	NZ,L7B6B
 	DEC	B
 	JR	Z,L7B7D
-	CALL	L006C
+R7B66:	CALL	L78AE-S_SUPP+L_SCRD	; setup for next sector
 	JR	L7B45
-L7B6B:	AND	#08
+L7B6B:	AND	008H
 	JR	NZ,L7B7A
-	CALL	L009D
+R7B6F:	CALL	L78DF-S_SUPP+L_SCRD	; reposition
 	DEC	E
 	JR	NZ,L7B4F
-	CALL	L0169
+R7B75:	CALL	L79AB-S_SUPP+L_SCRD	; error from ST2
 	JR	L7B7C
-L7B7A:	LD	A,#02
+L7B7A:	LD	A,2
 L7B7C:	SCF
 L7B7D:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
-	LD	A,(LF343)
-	LD	H,#80
-	CALL	L0024
-	CALL	LF368
-	LD	A,#00
-	LD	H,#40
-	CALL	L0024
+	LD	A,(RAMAD2)
+	LD	H,080H
+	CALL	ENASLT
+	CALL	ENAKRN
+L7B8C:	LD	A,0
+	LD	H,040H
+	CALL	ENASLT
 	POP	AF
 	POP	BC
 	POP	DE
 	POP	HL
 	RET
 
-L7B98:	PUSH	HL
+L_SCRD	EQU	$-S_SCRD
+
+	.DEPHASE
+
+L7B98:
+
+	.PHASE	0
+
+S_SCWR:
+	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	CALL	L402D
-	LD	(L00AF),A
-	LD	H,#80
-	CALL	L0024
-	LD	A,(LF342)
-	LD	H,#40
-	CALL	L0024
+	CALL	GETSLT
+R7B9E:	LD	(L7C46+1),A
+	LD	H,080H
+	CALL	ENASLT
+	LD	A,(RAMAD1)
+	LD	H,040H
+	CALL	ENASLT
 	POP	BC
 	POP	DE
 	POP	HL
 L7BB1:	DEC	HL
 	LD	A,H
-	ADD	A,#02
+	ADD	A,HIGH 512
 	INC	HL
-	JP	M,L009F
-	LD	E,#0B
+R7BB6:	JP	M,L7C37
+	LD	E,11
 L7BBB:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	A,#20
-	LD	(LBFF3),A
-	LD	DE,L005F
+	LD	A,020H
+	LD	(LBFF3),A		; READY input from drive
+R7BC3:	LD	DE,L7BF7
 	PUSH	DE
-	LD	DE,L019F
+R7BC7:	LD	DE,L7993-S_SUPP+L_SCWR	; wait
 	PUSH	DE
-	LD	(IX+10),#45		; WRITE DATA
-	LD	B,#09
-	CALL	L012D
+	LD	(IX+10),045H		; WRITE DATA
+	LD	B,9
+R7BD1:	CALL	L7921-S_SUPP+L_SCWR	; start FDC command
 	LD	DE,LBFF4
-	LD	B,#00
+	LD	B,0
 L7BD9:	LD	A,(DE)
 	ADD	A,A
-	JP	NC,L0041
+R7BDB:	JP	NC,L7BD9
 	ADD	A,A
 	RET	P
 	LD	A,(HL)
@@ -1832,7 +1940,7 @@ L7BD9:	LD	A,(DE)
 	DJNZ	L7BD9
 L7BE7:	LD	A,(DE)
 	ADD	A,A
-	JP	NC,L004F
+R7BE9:	JP	NC,L7BE7
 	ADD	A,A
 	RET	P
 	LD	A,(HL)
@@ -1841,83 +1949,94 @@ L7BE7:	LD	A,(DE)
 	DJNZ	L7BE7
 	POP	BC
 	POP	BC
-	CALL	L01A8
-	LD	A,#30
-	LD	(LBFF3),A
-	CALL	L0187
+R7BF7:
+L7BF7:	CALL	L799C-S_SUPP+L_SCWR	; terminate transfer
+	LD	A,030H
+	LD	(LBFF3),A		; READY input true
+R7BFF:	CALL	L797B-S_SUPP+L_SCWR	; read FDC status
 	POP	BC
 	POP	DE
 	POP	HL
 	LD	A,(IX+19)
-	AND	#C8
+	AND	0C8H
 	JR	NZ,L7C14
 	DEC	B
 	JR	Z,L7C37
-	CALL	L00BA
+R7C0F:	CALL	L78AE-S_SUPP+L_SCWR	; setup for next sector
 	JR	L7BB1
-L7C14:	AND	#08
+L7C14:	AND	008H
 	JR	NZ,L7C34
 	BIT	1,(IX+20)
 	JR	NZ,L7C31
-	CALL	L00EB
+R7C1E:	CALL	L78DF-S_SUPP+L_SCWR	; reposition
 	DEC	E
 	JR	NZ,L7BBB
 	BIT	4,(IX+19)
-	LD	A,#0A
+	LD	A,10
 	JR	NZ,L7C36
-	CALL	L01B7
+R7C2C:	CALL	L79AB-S_SUPP+L_SCWR	; get error from ST2
 	JR	L7C36
 L7C31:	XOR	A
 	JR	L7C36
-L7C34:	LD	A,#02
+L7C34:	LD	A,2
 L7C36:	SCF
 L7C37:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
-	LD	A,(LF343)
-	LD	H,#80
-	CALL	L0024
-	CALL	LF368
-	LD	A,#00
-	LD	H,#40
-	CALL	L0024
+	LD	A,(RAMAD2)
+	LD	H,080H
+	CALL	ENASLT
+	CALL	ENAKRN
+L7C46:	LD	A,0
+	LD	H,040H
+	CALL	ENASLT
 	POP	AF
 	POP	BC
 	POP	DE
 	POP	HL
 	RET
 
+L_SCWR	EQU	$-S_SCWR
+
+	.DEPHASE
+
 
 ; DSKFMT
 ;
 ; Formats a disk
 
-DSKFMT:	LD	E,A
+DSKFMT:	
+	IFDEF	DOS2
+
+	LD	E,A
 	LD	A,D
 	CALL	L7024		; Check if extra drive
 	LD	A,E
 	JP	NC,L736E	; yep, handle
+
+	ENDIF
+
 	PUSH	HL
 	POP	IY		; IY= ptr to workarea
 	DEC	A
 	LD	(IY+9),A	; choice (0=single, 1=double)
 	LD	E,A
-	LD	A,#01
+	LD	A,1
 	CP	E
-	LD	A,#0C
+	LD	A,12
 	RET	C		; choice <1 or >2, bad parameter
 	LD	A,B
-	CP	#14
-	LD	A,#0E
+	CP	HIGH 01400H
+	LD	A,14
 	RET	C		; less then 5120 bytes, insufficient memory
 	LD	A,D
-	AND	#01
+	AND	001H
 	LD	(IY+8),A	; driveid
 	LD	D,A
 	PUSH	HL
 	PUSH	DE
-	CALL	L4DD8		; GETWRK
+	CALL	GETWRK		; GETWRK
 	POP	DE
 	LD	A,(IX+7)
 	DEC	A
@@ -1928,7 +2047,7 @@ DSKFMT:	LD	E,A
 	LD	(IX+3),A
 	PUSH	DE
 	PUSH	IY
-	CALL	L4D5A		; PROMPT
+	CALL	PROMPT		; PROMPT
 	POP	IY
 	POP	DE
 L7C94:	LD	D,0
@@ -1939,28 +2058,28 @@ L7C96:	POP	HL
 	ADD	HL,BC
 	LD	(IY+5),L
 	LD	(IY+6),H	; start of ?? area in workarea
-	LD	D,#00
-	LD	B,#05
+	LD	D,0
+	LD	B,5
 	LD	HL,L7E13
 L7CAC:	ADD	HL,DE
 	DJNZ	L7CAC
 	POP	DE		; start of workarea
-	LD	C,#05
+	LD	C,5
 	LDIR			; copy diskformat info
 	BIT	0,(IY+7)
-	LD	A,#14
+	LD	A,014H
 	JR	Z,L7CBE		; physical drive 0
-	LD	A,#25
+	LD	A,025H
 L7CBE:	LD	(L7FF2),A	; motor on
 	CALL	L76C1		; wait
 	PUSH	IY
 	POP	HL
 	LD	DE,10
 	ADD	HL,DE
-	LD	(HL),#00
+	LD	(HL),0
 	INC	HL
-	LD	D,#01
-	LD	BC,L0902
+	LD	D,1
+	LD	BC,00902H
 L7CD3:	XOR	A
 	LD	(HL),A		; C
 	INC	HL
@@ -1974,48 +2093,48 @@ L7CD3:	XOR	A
 	DJNZ	L7CD3
 	PUSH	IY
 	POP	HL
-	LD	DE,L002F
+	LD	DE,0002FH
 	ADD	HL,DE
 	PUSH	HL
 	POP	IX
 	LD	A,(IY+7)	; physical drive
 	LD	(IX+11),A
-	LD	C,#06
+	LD	C,6
 	CALL	L7900		; select track 6
 	CALL	L773B		; recalibrate
-	LD	A,#06
+	LD	A,6
 	JP	C,L7D4B		; seek error
-	CALL	LFFCF
+	CALL	DISINT
 	DI
 L7D00:	LD	C,(IY+10)
 	LD	A,(IY+7)	; physical drive
 	LD	(IX+11),A
 	CALL	L7900		; select track
-	LD	A,#06
+	LD	A,6
 	JR	C,L7D4B		; seek error
-	LD	B,#00		; side 0
+	LD	B,0		; side 0
 	CALL	L7E68		; format track
 	JR	C,L7D4B
 	BIT	0,(IY+2)	; single ?
 	JR	Z,L7D2A		; yep, skip side 1
 	CALL	L7993		; wait
 	CALL	L7F1B		; change side in track data
-	LD	B,#04		; side 1
+	LD	B,004H		; side 1
 	CALL	L7E68
 	JR	C,L7D4B
 L7D2A:	LD	A,(IY+10)
 	INC	A
-	CP	#50
+	CP	80
 	JR	NC,L7D57	; track 80, done
 	LD	(IY+10),A
 	PUSH	IY
 	POP	HL
-	LD	BC,L000B
+	LD	BC,11
 	ADD	HL,BC
-	LD	B,#09
+	LD	B,9
 L7D3E:	LD	(HL),A
 	INC	HL
-	LD	(HL),#00
+	LD	(HL),0
 	INC	HL
 	INC	HL
 	INC	HL
@@ -2025,7 +2144,7 @@ L7D49:	POP	BC
 	POP	HL
 L7D4B:	PUSH	AF
 	EI
-	CALL	LFFD4
+	CALL	ENAINT
 	CALL	L7867		; motor off
 	POP	AF
 	JP	L7DFD
@@ -2034,22 +2153,22 @@ L7D57:	PUSH	IY
 	POP	HL
 	INC	H
 	INC	H
-	LD	DE,L0000
-	LD	BC,L50F8
+	LD	DE,0
+	LD	BC,050F8H
 	BIT	0,(IY+9)
 	JR	Z,L7D6B
-	LD	B,#A0
+	LD	B,160
 	INC	C
 L7D6B:	PUSH	HL
 	PUSH	BC
 	PUSH	DE
-	LD	B,#09
+	LD	B,9
 	LD	A,(IY+8)
 	AND	A
 	CALL	L7459		; DSKIO
 	POP	DE
 	JR	C,L7D49
-	LD	HL,L0009
+	LD	HL,9
 	ADD	HL,DE
 	EX	DE,HL
 	POP	BC
@@ -2060,10 +2179,10 @@ L7D6B:	PUSH	HL
 	EX	DE,HL
 	LD	L,(IY+0)
 	LD	H,(IY+1)
-	LD	BC,L001E
+	LD	BC,0001EH
 	LDIR			; DPB
 	LD	HL,L7F2D
-	LD	BC,L008D
+	LD	BC,L_BOOT
 	LDIR			; Boottrap loader
 	POP	HL
 	PUSH	HL
@@ -2079,7 +2198,7 @@ L7D6B:	PUSH	HL
 	INC	H
 	INC	H
 	INC	H
-	CP	#F9
+	CP	0F9H
 	JR	NZ,L7DB1
 	INC	H
 	INC	H
@@ -2090,8 +2209,8 @@ L7DB1:	DEC	(HL)
 	LD	(HL),A
 	POP	HL
 	LD	C,A
-	LD	B,#09
-	LD	DE,L0000
+	LD	B,9
+	LD	DE,0
 	LD	A,(IY+8)
 	PUSH	DE
 	PUSH	AF
@@ -2116,8 +2235,8 @@ L7DB1:	DEC	(HL)
 	POP	BC
 	POP	AF
 	POP	DE
-	LD	B,#05
-	LD	DE,L0009
+	LD	B,5
+	LD	DE,9
 	PUSH	DE
 	PUSH	AF
 	PUSH	BC
@@ -2137,15 +2256,15 @@ L7DF9:	POP	HL
 	POP	BC
 	POP	DE
 	POP	DE
-L7DFD:	CP	#0C
+L7DFD:	CP	12
 	JR	NZ,L7E03
-	LD	A,#10
+	LD	A,16
 L7E03:	SCF
 	RET
 
 L7E05:	PUSH	HL
-	LD	BC,L1200
-L7E09:	LD	(HL),#00
+	LD	BC,9*512
+L7E09:	LD	(HL),0
 	INC	HL
 	DEC	BC
 	LD	A,B
@@ -2190,28 +2309,32 @@ L7E3B:	DB	0EBh,0FEh,090h
 	DW	2
 	DW	0
 
-L7E59:	DEFB 	#4D		; FORMAT A TRACK
-	DEFB	#00		; Unit, Head
-	DEFB	#02		; 512 bytes sector
-	DEFB	#09		; 9 sector on a track
-	DEFB	#50		; GAP3= 80 bytes
-	DEFB	#40		; Filler byte
+L7E59:	DEFB 	04DH		; FORMAT A TRACK
+	DEFB	0		; Unit, Head
+	DEFB	2		; 512 bytes sector
+	DEFB	9		; 9 sector on a track
+	DEFB	80		; GAP3= 80 bytes
+	DEFB	040H		; Filler byte
 
- LD B,(HL)
- NOP
- NOP
- NOP
- LD BC,L0902
- LD D,B
- RST #38
+; This table is NOT USED!
 
-L7E68:	CALL	L785F		; 20h to 7FF3
+	DEFB	046H		; READ DATA, 1 track, MFM, no skip
+	DEFB	0		; Unit, Head
+	DEFB	0		; Cylinder
+	DEFB	0		; Head
+	DEFB	1		; Start Record
+	DEFB	2		; 512 byte sector
+	DEFB	9		; End Record
+	DEFB	80		; GAP3= 80 bytes
+	DEFB	0FFH		; Datalength
+
+L7E68:	CALL	L785F		; READY input from drive
 	LD	A,(IY+7)	; physical drive
 	LD	(IX+11),A
 	CALL	L76CF		; wait FDD ready
-	JP	C,L7F0F		; 30h to 7FF3, not ready
+	JP	C,L7F0F		; READY input true, not ready
 	BIT	6,A
-	JP	NZ,L7F15	; 30h to 7FF3, write protect
+	JP	NZ,L7F15	; READY input true, write protect
 	PUSH	BC
 	PUSH	IX
 	POP	HL
@@ -2229,12 +2352,12 @@ L7E68:	CALL	L785F		; 20h to 7FF3
 	CALL	L7921		; write bytes to controller
 	PUSH	IY
 	POP	HL
-	LD	BC,L000B
+	LD	BC,11
 	ADD	HL,BC
-	LD	C,#09		; 9 sectors
+	LD	C,9		; 9 sectors
 	LD	DE,L7FF4
 L7EA6:	PUSH	BC
-	LD	BC,L0000
+	LD	BC,0
 L7EAA:	DEC	BC
 	LD	A,B
 	OR	C
@@ -2246,7 +2369,7 @@ L7EAA:	DEC	BC
 	LD	(L7FF5),A
 	INC	HL
 	POP	BC
-	LD	B,#03
+	LD	B,3
 L7EBC:	LD	A,(DE)
 	ADD	A,A
 	JP	NC,L7EBC	; wait until b7 set
@@ -2256,57 +2379,57 @@ L7EBC:	LD	A,(DE)
 	DJNZ	L7EBC
 	DEC	C
 	JR	NZ,L7EA6	; next sector
-	CALL	L799C		; Terminal Count
-	LD	BC,L0000
+	CALL	L799C		; terminate transfer
+	LD	BC,0
 L7ED1:	DEC	BC
 	LD	A,B
 	OR	C
 	JR	Z,L7F00		; takes too long
 	LD	A,(DE)
-	AND	#C0
-	CP	#C0
+	AND	0C0H
+	CP	0C0H
 	JR	NZ,L7ED1	; wait until command ends
 	CALL	L797B		; read bytes from controller
-L7EE0:	CALL	L7863		; 30h to 7FF3
+L7EE0:	CALL	L7863		; READY input true
 	LD	A,(IX+19)
 	LD	B,A
-	AND	#C0
+	AND	0C0H
 	RET	Z
 	SCF
 	BIT	3,B
-	LD	A,#02
+	LD	A,2
 	RET	NZ		; not ready
 	BIT	4,B
-	LD	A,#0A
+	LD	A,10
 	RET	NZ		; write fault
 	BIT	1,(IX+20)
-	LD	A,#00
+	LD	A,0
 	RET	NZ		; write protect
-	LD	A,#10
+	LD	A,16
 	RET
 L7EFF:	POP	BC
 L7F00:	XOR	A
 	CALL	L7716		; init FDC
-	LD	A,#04
+	LD	A,004H
 	CALL	L7732		; Track 00
-	LD	(IX+19),#C8
+	LD	(IX+19),0C8H
 	JR	L7EE0
 
-L7F0F:	CALL	L7863		; 30h to 7FF3
-	LD	A,#02
+L7F0F:	CALL	L7863		; READY input true
+	LD	A,2
 	RET
 
-L7F15:	CALL	L7863		; 30h to 7FF3
+L7F15:	CALL	L7863		; READY input true
 	XOR	A
 	SCF
 	RET
 
 L7F1B:	PUSH	IY
 	POP	HL
-	LD	DE,L000C
+	LD	DE,12
 	ADD	HL,DE
-	LD	B,#09
-L7F24:	LD	(HL),#01
+	LD	B,9
+L7F24:	LD	(HL),1
 	INC	HL
 	INC	HL
 	INC	HL
@@ -2314,65 +2437,77 @@ L7F24:	LD	(HL),#01
 	DJNZ	L7F24
 	RET
 
-L7F2D:	RET	NC
-	LD	(LC059),DE
+L7F2D:
+	.PHASE	0C01EH
+
+	RET	NC
+	LD	(LC058+1),DE
 	LD	(LC0C4),A
-	LD	(HL),#56
+	LD	(HL),LOW LC056
 	INC	HL
-	LD	(HL),#C0
-L7F3A:	LD	SP,LF51F
+	LD	(HL),HIGH LC056
+L7F3A:	LD	SP,KBUF+256
 	LD	DE,LC09F
-	LD	C,#0F
-	CALL	LF37D
+	LD	C,00FH
+	CALL	BDOS
 	INC	A
 	JP	Z,LC063
-	LD	DE,L0100
-	LD	C,#1A
-	CALL	LF37D
-	LD	HL,L0001
-	LD	(LC0AD),HL
-	LD	HL,L3F00
+	LD	DE,00100H
+	LD	C,01AH
+	CALL	BDOS
+	LD	HL,1
+	LD	(LC09F+14),HL
+	LD	HL,04000H-00100H
 	LD	DE,LC09F
-	LD	C,#27
-	CALL	LF37D
-	JP	L0100
-	LD	E,B
-	RET	NZ
-	CALL	L0000
+	LD	C,027H
+	CALL	BDOS
+	JP	00100H
+
+LC056:	DEFW	LC058
+
+LC058:	CALL	0
 	LD	A,C
-	AND	#FE
-	CP	#02
+	AND	0FEH
+	CP	2
 	JP	NZ,LC06A
-	LD	A,(LC0C4)
+LC063:	LD	A,(LC0C4)
 	AND	A
-	JP	Z,L4022
-	LD	DE,LC079
-	LD	C,#09
-	CALL	LF37D
-	LD	C,#07
-	CALL	LF37D
+	JP	Z,DSKBAS
+LC06A:	LD	DE,LC079
+	LD	C,009H
+	CALL	BDOS
+	LD	C,007H
+	CALL	BDOS
 	JR	L7F3A
 
-	DEFB	"Boot error",13,10
+LC079:	DEFB	"Boot error",13,10
 	DEFB	"Press any key for retry",13,10
 	DEFB	"$"
 
+LC09F:	defb	0
+	defb	"MSXDOS  SYS"
+	defw 	0
+	defw	0
+	defb	0,0,0,0
+	defw	0
+	defw	0
 	defb	0
-	db	"MSXDOS  SYS"
-	dw 	0
-	dw	0
-	db	0,0,0,0
-	dw	0
-	dw	0
-	db	0
-	db	0
-	dw	0
-	dw	0
-	dw	0
-	db	0,0,0,0,0
+	defb	0
+	defw	0
+	defw	0
+	defw	0
+	defb	0
+	defb	0,0,0,0
 
-	db	0
+LC0C4:	defb	0
 
+	.DEPHASE
+
+L_BOOT	EQU	$-L7F2D
+
+	IFDEF	DOS2
+
+	DEFS	07FE4H-$,0
 
 L7FD0:	LD	(L7FF0),A
 	RET
@@ -2392,31 +2527,44 @@ L7FD4:	EX	AF,AF'
 	CALL	L7FD0		; Set old block
 	EX	AF,AF'
 	RET
- RST #38
- RST #38
- RST #38
- RST #38
- RST #38
- RST #38
- RST #38
- RST #38
 
-L7FF0	DB	0		; Diskrom 'segment' select
-L7FF1	DB	#33		; ???, b4 = -DC0, b5 = -DC1, b1 = ?, b0 = ?
-L7FF2	DB	#FF		; DOR, b0 = 0 drive 0, 1 drive 1
-				;      b2 = 1
-				;      b4 = 1 motor drive 0
-				;      b5 = 1 motor drive 1
-L7FF3	DB	#FF		; TDR, b0 = TC
-				;      b4 = ?
-L7FF4	DB	0		; MSR, Statusport FDC
-L7FF5	DB	0		; DAT, Dataport FDC
+	ELSE
 
- DB	#FF
- RST #38
- RST #38
- RST #38
- RST #38
- RST #38
-L7FFC CALL M,LFFFC
- CCF
+	DEFS	07FE8H-$,0
+
+L7FD4:	JP	L7789
+
+	ENDIF
+
+
+; S1990 FDD registers
+
+L7FF0	EQU	07FF0H		; Diskrom 'segment' select
+L7FF1	EQU	07FF1H		; ???, b4 = -DC0, b5 = -DC1, b1 = -HD1, b0 = -HD0
+
+; TC8566AF FDC registers
+
+L7FF2	EQU	07FF2H		; DOR, b0 = 0 drive 0, 1 drive 1
+				;      b2 = 0 reset FDC, 1 enable FDC
+				;      b3 = 0 disable DMA, 1 enable DMA
+				;      b4 = 1 motor select drive 0
+				;      b5 = 1 motor select drive 1
+L7FF3	EQU	07FF3H		; TDR, b0 = TC
+				;      b1 = enable writing to TC bit
+				;      b2 = STANDBY
+				;      b3 = enable writing to STANDBY bit
+				;      b4 = C4 = FORCE READY
+				;      b5 = enable writing to C4
+                   		;      b6 = C6 = not used
+				;      b7 = enable writing to C6
+L7FF4	EQU	07FF4H		; MSR, Statusport FDC
+L7FF5	EQU	07FF5H		; DAT, Dataport FDC
+
+
+LBFF3	EQU	L7FF3+04000H
+LBFF4	EQU	L7FF4+04000H
+LBFF5	EQU	L7FF5+04000H
+
+L7000	EQU	07000H
+L7FF8	EQU	07FF8H
+L7FF9	EQU	07FF9H

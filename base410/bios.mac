@@ -217,9 +217,9 @@ CHKRAM:	DI
 
 
 
-	DEFW	D1BBF
-	DEFB	098H
-	DEFB	098H
+	DEFW	D1BBF			; address character pattern
+	DEFB	098H			; vdp dataregister i/o address for read
+	DEFB	098H			; vdp dataregister i/o address for write
 
 
 SYNCHR:	JP	J2683

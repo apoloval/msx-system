@@ -42,11 +42,11 @@ M6A0E	EQU	6A0EH	; evaluate filespecification
 M6C1C	EQU	6C1CH	; close all i/o channels
 M73E5	EQU	73E5H	; start of the PLAY statement handler
 
-D.7FF6	EQU	07FF6H
+D7FF6	EQU	07FF6H
 
 Y8010	EQU	08010H
 
-D$F349	EQU	0F349H	; disksystem bottom
+DF349	EQU	0F349H	; disksystem bottom
 CURLIN	EQU	0F41CH	; ---L-
 BUF	EQU	0F55EH	; --SLI
 VALTYP	EQU	0F663H	; ---LI
@@ -166,60 +166,60 @@ Q	ASET	"&D"
 
 
 
-D.4000:	DEFB	"AB"
+D4000:	DEFB	"AB"
 	DEFW	0
-	DEFW	J.5000
+	DEFW	J5000
 	DEFW	0
 	DEFW	0
 	DEFS	6,0
 
 	DEFS	8,0
 
-I.4018:	DEFB	"APRLOPLL"	; internal MSX-MUSIC indentifier
+I4018:	DEFB	"APRLOPLL"	; internal MSX-MUSIC indentifier
 
 	DEFS	04100H-$,0
 
-I.4100:	DEFB	"V1.3 1988 04 26",0	; looks like a version string
+I4100:	DEFB	"V1.3 1988 04 26",0	; looks like a version string
 
 ; looks like a BIOS jumptable
 
-?.4110:	JP	J.4140		; WRTOPL
-?.4113:	JP	J$4192		; INIOPL
-?.4116:	JP	J.42E5		; MSTART
-?.4119:	JP	J.43F1		; MSTOP
-?.411C:	JP	J$4447		; RDDATA
-?.411F:	JP	J$445E		; OPLDRV
-?.4122:	JP	J$4752		; TSTBGM
-?.4125:	RET			;
-	DEFW	0FFFFH		; not sure about this, but a fm-pac has a pointer to ?.473D
+?4110:	JP	J4140		; WRTOPL
+?4113:	JP	J4192		; INIOPL
+?4116:	JP	J42E5		; MSTART
+?4119:	JP	J43F1		; MSTOP
+?411C:	JP	J4447		; RDDATA
+?411F:	JP	J445E		; OPLDRV
+?4122:	JP	J4752		; TSTBGM
+?4125:	RET			;
+	DEFW	0FFFFH		; not sure about this, but a fm-pac has a pointer to ?473D
 
-I$4128:	DEFW 00ABH
-	DEFW 00B5H
-	DEFW 00C0H
-	DEFW 00CCH
-	DEFW 00D8H
-	DEFW 00E5H
-	DEFW 00F2H
-	DEFW 0101H
-	DEFW 0110H
-	DEFW 0120H
-	DEFW 0131H
-	DEFW 0143H
+I4128:	DEFW	00ABH
+	DEFW	00B5H
+	DEFW	00C0H
+	DEFW	00CCH
+	DEFW	00D8H
+	DEFW	00E5H
+	DEFW	00F2H
+	DEFW	0101H
+	DEFW	0110H
+	DEFW	0120H
+	DEFW	0131H
+	DEFW	0143H
 
 ;	  Subroutine WRTOPL
 ;	     Inputs  A = OPLL register, E = data
 ;	     Outputs ________________________
 
 
-J.4140:	PUSH	BC
+J4140:	PUSH	BC
 	OUT	(7CH),A
 	PUSH	AF
 	LD	B,3
-	CALL	C.4154			; wait for OPLL
+	CALL	C4154			; wait for OPLL
 	LD	A,E
 	OUT	(7DH),A
 	LD	B,13
-	CALL	C.4154			; wait for OPLL
+	CALL	C4154			; wait for OPLL
 	POP	AF
 	POP	BC
 	RET
@@ -229,12 +229,12 @@ J.4140:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.4154:	IN	A,(0E6H)
+C4154:	IN	A,(0E6H)
 	LD	C,A
-J$4157:	IN	A,(0E6H)
+J4157:	IN	A,(0E6H)
 	SUB	C
 	CP	B
-	JP	C,J$4157
+	JP	C,J4157
 	RET
 
 ;	  Subroutine write OPLL register
@@ -242,7 +242,7 @@ J$4157:	IN	A,(0E6H)
 ;	     Outputs ________________________
 
 
-C.415F:	PUSH	BC
+C415F:	PUSH	BC
 	PUSH	IY
 	PUSH	DE
 	ADD	A,0
@@ -253,12 +253,12 @@ C.415F:	PUSH	BC
 	OUT	(7CH),A			; select OPLL register
 	PUSH	AF
 	LD	B,3
-	CALL	C.4154			; wait for OPLL
+	CALL	C4154			; wait for OPLL
 	LD	A,E
 	OUT	(7DH),A
 	LD	(IY),A			; write data in OPLL register
 	LD	B,13
-	CALL	C.4154			; wait for OPLL
+	CALL	C4154			; wait for OPLL
 	POP	AF
 	POP	IY
 	POP	BC
@@ -269,7 +269,7 @@ C.415F:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.4183:	PUSH	HL
+C4183:	PUSH	HL
 	PUSH	IY
 	POP	HL
 	ADD	A,0
@@ -287,23 +287,23 @@ C.4183:	PUSH	HL
 ;	     Outputs ________________________
 
 
-J$4192:	DI
+J4192:	DI
 	LD	A,L
 	AND	0FEH
 	LD	L,A
 	PUSH	HL
-	LD	BC,4000H
-	CALL	C.41F3			; get my SLTWRK entry
+	LD	BC,4000H		; page 1
+	CALL	C41F3			; get my SLTWRK entry
 	POP	BC
 	LD	A,(HL)
-	AND	01H
+	AND	01H			; keep b0
 	OR	C
 	LD	(HL),A
 	INC	HL
-	LD	(HL),B
+	LD	(HL),B			; register start of workarea
 	PUSH	BC
 	POP	IY
-	CALL	C$4247			; enable MSX-MUSIC I/O
+	CALL	C4247			; enable MSX-MUSIC I/O
 	PUSH	IY
 	POP	HL
 	LD	DE,0
@@ -315,30 +315,30 @@ J$4192:	DI
 	LD	(HL),0
 	LDIR
 	LD	A,0
-	CALL	C.4652			; program software instrument
+	CALL	C4652			; program software instrument
 	LD	A,14
 	LD	E,0
-	CALL	C.415F			; write OPLL rhythm register (disable rhythm)
+	CALL	C415F			; write OPLL rhythm register (disable rhythm)
 	INC	A
-	CALL	C.415F			; write OPLL test register (clear)
+	CALL	C415F			; write OPLL test register (clear)
 	LD	A,16
 	LD	E,20H			; f-number LSB = 32
 	LD	B,9
-J$41D3:	CALL	C.415F			; write OPLL register
+J41D3:	CALL	C415F			; write OPLL register
 	INC	A
-	DJNZ	J$41D3			; on all 9 channels
+	DJNZ	J41D3			; on all 9 channels
 	LD	A,32
 	LD	E,07H			; sustain off, key off, octave 3, f-number b8 = 1
 	LD	B,9
-J$41DF:	CALL	C.415F			; write OPLL register
+J41DF:	CALL	C415F			; write OPLL register
 	INC	A
-	DJNZ	J$41DF			; on all 9 channels
+	DJNZ	J41DF			; on all 9 channels
 	LD	A,48
 	LD	E,0B3H			; instrument 11, volume 3
 	LD	B,9
-J$41EB:	CALL	C.415F			; write OPLL register
+J41EB:	CALL	C415F			; write OPLL register
 	INC	A
-	DJNZ	J$41EB			; on all 9 channels
+	DJNZ	J41EB			; on all 9 channels
 	EI
 	RET
 
@@ -346,8 +346,7 @@ J$41EB:	CALL	C.415F			; write OPLL register
 ;	     Inputs BC = adres (for page)
 ;	     Outputs ________________________
 
-
-C.41F3:	CALL	C.420D			; get slotid
+C41F3:	CALL	C420D			; get slotid
 	AND	0FH
 	LD	L,A
 	RLCA
@@ -370,7 +369,7 @@ C.41F3:	CALL	C.420D			; get slotid
 ;	     Outputs ________________________
 
 
-C.420D:	PUSH	BC
+C420D:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	LD	A,B
@@ -379,7 +378,7 @@ C.420D:	PUSH	BC
 	AND	03H	; 3 
 	LD	B,A
 	IN	A,(0A8H)
-	CALL	C.423D
+	CALL	C423D
 	AND	03H	; 3 
 	LD	E,A
 	LD	D,0
@@ -388,7 +387,7 @@ C.420D:	PUSH	BC
 	LD	A,(HL)
 	AND	80H
 	OR	E
-	JP	P,J$4239
+	JP	P,J4239
 	LD	E,A
 	INC	HL
 	INC	HL
@@ -397,10 +396,10 @@ C.420D:	PUSH	BC
 	LD	A,(HL)
 	RLCA
 	RLCA
-	CALL	C.423D
+	CALL	C423D
 	AND	0CH	; 12 
 	OR	E
-J$4239:	POP	HL
+J4239:	POP	HL
 	POP	DE
 	POP	BC
 	RET
@@ -411,13 +410,13 @@ J$4239:	POP	HL
 ;	     Outputs ________________________
 
 
-C.423D:	INC	B
+C423D:	INC	B
 	DEC	B
 	RET	Z
 	PUSH	BC
-J$4241:	RRCA
+J4241:	RRCA
 	RRCA
-	DJNZ	J$4241
+	DJNZ	J4241
 	POP	BC
 	RET
 
@@ -427,51 +426,51 @@ J$4241:	RRCA
 ;	     Outputs ________________________
 
 
-C$4247:	LD	HL,I$425A
+C4247:	LD	HL,I425A
 	PUSH	IY
 	POP	DE
 	LD	BC,008BH
 	LDIR
 	LD	BC,4000H
-	CALL	C.420D			; get my slotid
+	CALL	C420D			; get my slotid
 	JP	(IY)			; start routine
 
-I$425A:	PUSH	AF
+I425A:	PUSH	AF
 	PUSH	IY
 	POP	DE
-	LD	HL,I$426F-I$425A
+	LD	HL,I426F-I425A
 	ADD	HL,DE
 	PUSH	HL			; after search execute this
-	LD	HL,I$42D5-I$425A
+	LD	HL,I42D5-I425A
 	ADD	HL,DE			; APRLOPLL
-	LD	IX,I$4291-I$425A
+	LD	IX,I4291-I425A
 	ADD	IX,DE
 	JP	(IX)			; search internal MSX-MUSIC
 
-I$426F:	CP	0FFH
-	JR	NZ,J$4289		; internal MSX-MUSIC found (MSX MUSIC I/O already enabled), enable my slot again and quit
+I426F:	CP	0FFH
+	JR	NZ,J4289		; internal MSX-MUSIC found (MSX MUSIC I/O already enabled), enable my slot again and quit
 	PUSH	IY
 	POP	DE
-	LD	HL,I$4281-I$425A
+	LD	HL,I4281-I425A
 	ADD	HL,DE
 	PUSH	HL			; after search execute this
-	LD	HL,I$42DD-I$425A
+	LD	HL,I42DD-I425A
 	ADD	HL,DE			; PAC2OPLL
 	JP	(IX)			; search external MSX-MUSIC
 
-I$4281:	LD	A,(D.7FF6)
+I4281:	LD	A,(D7FF6)
 	OR	01H
-	LD	(D.7FF6),A		; enable MSX MUSIC I/O (it is sure that page 1 has a MSX-MUSIC)
-J$4289:	POP	AF
-	LD	HL,D.4000
+	LD	(D7FF6),A		; enable MSX MUSIC I/O (it is sure that page 1 has a MSX-MUSIC)
+J4289:	POP	AF
+	LD	HL,D4000
 	CALL	ENASLT			; enable my slot again
 	RET
 
-I$4291:	EX	DE,HL
+I4291:	EX	DE,HL
 	LD	HL,EXPTBL
 	LD	C,0			; slot 0
 	LD	B,4			; 4 primairy slots
-J$4299:	PUSH	BC
+J4299:	PUSH	BC
 	PUSH	HL
 	LD	A,(HL)
 	AND	80H
@@ -479,60 +478,59 @@ J$4299:	PUSH	BC
 	LD	C,A
 	LD	B,1
 	RLCA
-	JR	NC,J.42A7		; slot not expanded, do only the primairy
+	JR	NC,J42A7		; slot not expanded, do only the primairy
 	LD	B,4			; slot expanded, do all 4 subslots
-J.42A7:	PUSH	BC
+J42A7:	PUSH	BC
 	PUSH	DE
 	LD	A,C
 	LD	H,40H
 	CALL	ENASLT
 	POP	DE
 	PUSH	DE
-	LD	HL,I.4018
+	LD	HL,I4018
 	LD	B,8
-J$42B6:	LD	A,(DE)
+J42B6:	LD	A,(DE)
 	INC	DE
 	CP	(HL)
 	INC	HL
-	JR	NZ,J$42BE		; not found in this slot
-	DJNZ	J$42B6
-J$42BE:	POP	DE
+	JR	NZ,J42BE		; not found in this slot
+	DJNZ	J42B6
+J42BE:	POP	DE
 	POP	BC
-	JR	Z,J$42D1		; found, quit
+	JR	Z,J42D1		; found, quit
 	LD	A,C
 	ADD	A,4
 	LD	C,A
-	DJNZ	J.42A7			; next subslot
+	DJNZ	J42A7			; next subslot
 	POP	HL
 	POP	BC
 	INC	HL
 	INC	C
-	DJNZ	J$4299			; next primairy slot
+	DJNZ	J4299			; next primairy slot
 	LD	A,0FFH			; not found
 	RET
 
-J$42D1:	LD	A,C
+J42D1:	LD	A,C
 	POP	HL
 	POP	BC
 	RET
 
-I$42D5:	DEFB	"APRLOPLL"
-I$42DD:	DEFB	"PAC2OPLL"
+I42D5:	DEFB	"APRLOPLL"
+I42DD:	DEFB	"PAC2OPLL"
 
 ;	  Subroutine MSTART
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-
-J.42E5:	DI
+J42E5:	DI
 	PUSH	HL
 	PUSH	AF
-	LD	BC,4000H
-	CALL	C.41F3			; get my SLTWRK entry
+	LD	BC,4000H		; page 1
+	CALL	C41F3			; get my SLTWRK entry
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
-	AND	0FEH
+	AND	0FEH			; leave out b0,
 	LD	L,A
 	PUSH	HL
 	POP	IY			; start of workarea
@@ -542,34 +540,36 @@ J.42E5:	DI
 	POP	IX			; start
 	POP	AF
 	OR	A
-	JR	NZ,J.4303
+	JR	NZ,J4303
 	DEC	A
-J.4303:	LD	(IY+58),A
+J4303:	LD	(IY+58),A
 	POP	HL
 	LD	A,(HL)
 	CP	12H
-	JP	NZ,J$431D
+	JP	NZ,J431D
 	LD	A,14
 	LD	E,0
-	CALL	C.415F			; write OPLL rhythm register (disable rhythm)
+	CALL	C415F			; write OPLL rhythm register (disable rhythm)
 	LD	B,9
 	LD	(IY+57),0
-	JP	J$4323
-J$431D:	LD	B,7
+	JP	J4323
+
+J431D:	LD	B,7
 	LD	(IY+57),0FFH
-J$4323:	LD	(IY+59),0
+J4323:	LD	(IY+59),0
 	PUSH	HL
-J$4328:	LD	E,(HL)
+J4328:	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	LD	A,D
 	OR	E
-	JP	NZ,J$433C
+	JP	NZ,J433C
 	LD	(IX+0),0
 	LD	(IX+1),0
-	JP	J$434E
-J$433C:	EX	(SP),HL
+	JP	J434E
+
+J433C:	EX	(SP),HL
 	EX	DE,HL
 	ADD	HL,DE
 	LD	(IX+0),L
@@ -578,11 +578,11 @@ J$433C:	EX	(SP),HL
 	EX	DE,HL
 	EX	(SP),HL
 	INC	(IY+59)
-J$434E:	LD	DE,11
+J434E:	LD	DE,11
 	ADD	IX,DE
-	DJNZ	J$4328
+	DJNZ	J4328
 	POP	HL
-	CALL	C.435B
+	CALL	C435B
 	EI
 	RET
 
@@ -592,25 +592,25 @@ J$434E:	LD	DE,11
 ;	     Outputs ________________________
 
 
-C.435B:	PUSH	IY
+C435B:	PUSH	IY
 	POP	IX
 	LD	DE,003DH
 	ADD	IX,DE
 	LD	B,9
 	LD	A,(IY+57)
 	OR	A
-	JP	Z,J.438B
+	JP	Z,J438B
 	LD	L,(IX+0)
 	LD	H,(IX+1)
 	LD	(IX+2),L
 	LD	(IX+3),H
 	LD	(IX+4),1
 	LD	(IX+5),0
-	CALL	C$43CC			; setup OPLL for rhythm
+	CALL	C43CC			; setup OPLL for rhythm
 	LD	DE,11
 	ADD	IX,DE
 	LD	B,6
-J.438B:	LD	L,(IX+0)
+J438B:	LD	L,(IX+0)
 	LD	H,(IX+1)
 	LD	(IX+2),L
 	LD	(IX+3),H
@@ -622,15 +622,15 @@ J.438B:	LD	L,(IX+0)
 	LD	(IX+8),8
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0CFH			; sustain off, key off
 	LD	E,A
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.415F			; write OPLL register
+	CALL	C415F			; write OPLL register
 	LD	DE,11
 	ADD	IX,DE
-	DJNZ	J.438B
+	DJNZ	J438B
 	LD	A,(IY+59)
 	LD	(IY+60),A
 	RET
@@ -640,18 +640,18 @@ J.438B:	LD	L,(IX+0)
 ;	     Outputs ________________________
 
 
-C$43CC:	LD	HL,I$43DC
-J$43CF:	LD	A,(HL)
+C43CC:	LD	HL,I43DC
+J43CF:	LD	A,(HL)
 	CP	0FFH
 	RET	Z
 	INC	HL
 	LD	E,(HL)
 	INC	HL
-	CALL	C.415F			; write OPLL register
-	JP	J$43CF
+	CALL	C415F			; write OPLL register
+	JP	J43CF
 
 
-I$43DC:	DEFB 00EH,020H			; enable rhythm
+I43DC:	DEFB 00EH,020H			; enable rhythm
 	DEFB 016H,020H			; channel 6, f-number lsb
 	DEFB 017H,050H			; channel 7, f-number lsb
 	DEFB 018H,0C0H			; channel 8, f-number lsb
@@ -668,13 +668,13 @@ I$43DC:	DEFB 00EH,020H			; enable rhythm
 ;	     Outputs ________________________
 
 
-J.43F1:	DI
-	LD	BC,4000H
-	CALL	C.41F3			; get my SLTWRK entry
+J43F1:	DI
+	LD	BC,4000H		; page 1
+	CALL	C41F3			; get my SLTWRK entry
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
-	AND	0FEH
+	AND	0FEH			; leave out b0,
 	LD	L,A
 	PUSH	HL
 	POP	IY
@@ -685,28 +685,28 @@ J.43F1:	DI
 	LD	B,9
 	LD	A,(IY+57)
 	OR	A
-	JP	Z,J.4427
+	JP	Z,J4427
 	LD	A,14
 	LD	E,20H
-	CALL	C.415F			; write OPLL rhythm register (enable rhythm)
+	CALL	C415F			; write OPLL rhythm register (enable rhythm)
 	LD	(IX+2),0
 	LD	(IX+3),0
 	LD	DE,11
-J$4423:	ADD	IX,DE
+J4423:	ADD	IX,DE
 	LD	B,6
-J.4427:	LD	(IX+2),0
+J4427:	LD	(IX+2),0
 	LD	(IX+3),0
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0EFH			; key off
 	LD	E,A
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.415F			; write OPLL register
+	CALL	C415F			; write OPLL register
 	LD	DE,11
 	ADD	IX,DE
-	DJNZ	J.4427
+	DJNZ	J4427
 	EI
 	RET
 
@@ -715,7 +715,7 @@ J.4427:	LD	(IX+2),0
 ;	     Outputs ________________________
 
 
-J$4447:	PUSH	BC
+J4447:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	EX	DE,HL
@@ -724,7 +724,7 @@ J$4447:	PUSH	BC
 	ADD	HL,HL
 	ADD	HL,HL
 	ADD	HL,HL
-	LD	BC,I.4C00
+	LD	BC,I4C00
 	ADD	HL,BC
 	LD	BC,8
 	LDIR
@@ -737,19 +737,18 @@ J$4447:	PUSH	BC
 ;	     Inputs  
 ;	     Outputs ________________________
 
-
-J$445E:	PUSH	AF
+J445E:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	PUSH	IX
 	PUSH	IY
-	LD	BC,4000H
-	CALL	C.41F3			; get my SLTWRK entry
+	LD	BC,4000H		; page 1
+	CALL	C41F3			; get my SLTWRK entry
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
-	AND	0FEH
+	AND	0FEH			; leave out b0,
 	LD	L,A
 	PUSH	HL
 	POP	IY
@@ -757,53 +756,53 @@ J$445E:	PUSH	AF
 	ADD	HL,DE
 	PUSH	HL
 	POP	IX
-J$447C:	LD	B,9
+J447C:	LD	B,9
 	LD	A,(IY+57)
 	OR	A
-	JP	Z,J.44A9
+	JP	Z,J44A9
 	LD	L,(IX+2)
 	LD	H,(IX+3)
 	LD	A,L
 	OR	H
-	JP	Z,J$44A2
+	JP	Z,J44A2
 	LD	E,(IX+4)
 	LD	D,(IX+5)
 	DEC	DE
 	LD	A,E
 	OR	D
-	CALL	Z,C.4698
+	CALL	Z,C4698
 	LD	(IX+4),E
 	LD	(IX+5),D
-J$44A2:	LD	DE,11
+J44A2:	LD	DE,11
 	ADD	IX,DE
-	LD	B,06H	; 6 
-J.44A9:	LD	E,(IX+6)
+	LD	B,6
+J44A9:	LD	E,(IX+6)
 	LD	D,(IX+7)
 	LD	A,E
 	OR	D
-	JP	Z,J$44C0
+	JP	Z,J44C0
 	DEC	DE
 	LD	A,E
 	OR	D
 	LD	(IX+6),E
 	LD	(IX+7),D
-	CALL	Z,C$44ED
-J$44C0:	LD	L,(IX+2)
+	CALL	Z,C44ED
+J44C0:	LD	L,(IX+2)
 	LD	H,(IX+3)
 	LD	A,L
 	OR	H
-	JP	Z,J$44DD
+	JP	Z,J44DD
 	LD	E,(IX+4)
 	LD	D,(IX+5)
 	DEC	DE
 	LD	A,E
 	OR	D
-	CALL	Z,C.4501
+	CALL	Z,C4501
 	LD	(IX+4),E
 	LD	(IX+5),D
-J$44DD:	LD	DE,11
+J44DD:	LD	DE,11
 	ADD	IX,DE
-	DJNZ	J.44A9
+	DJNZ	J44A9
 	POP	IY
 	POP	IX
 	POP	HL
@@ -811,23 +810,22 @@ J$44DD:	LD	DE,11
 	POP	BC
 	POP	AF
 	RET
-;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$44ED:	LD	A,(IX+9)
+C44ED:	LD	A,(IX+9)
 	OR	A
 	RET	NZ
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0EFH			; key off
 	LD	E,A
 	LD	A,1FH
 	ADD	A,B
-	JP	C.415F			; write OPLL register
+	JP	C415F			; write OPLL register
 
 
 ;	  Subroutine __________________________
@@ -835,32 +833,32 @@ C$44ED:	LD	A,(IX+9)
 ;	     Outputs ________________________
 
 
-C.4501:	LD	A,(HL)
+C4501:	LD	A,(HL)
 	INC	HL
 	CP	0FFH
-	JP	Z,J.453B
+	JP	Z,J453B
 	CP	60H	; "`"
-	JP	C,J$456B
+	JP	C,J456B
 	CP	70H	; "p"
-	JP	C,J$45F4
+	JP	C,J45F4
 	CP	80H
-	JP	C,J$460A
-	JP	Z,J$4624
+	JP	C,J460A
+	JP	Z,J4624
 	CP	81H
-	JP	Z,J$4636
+	JP	Z,J4636
 	CP	82H
-	JP	Z,J$4648
+	JP	Z,J4648
 	CP	83H
-	JP	Z,J$466B
+	JP	Z,J466B
 	CP	84H
-	JP	Z,J$4691
+	JP	Z,J4691
 	CP	85H
-	JP	Z,J$468A
+	JP	Z,J468A
 	CP	86H
-	JP	Z,J$4682
-	JP	C.4501
+	JP	Z,J4682
+	JP	C4501
 
-J.453B:	LD	(IX+2),0
+J453B:	LD	(IX+2),0
 	LD	(IX+3),0
 	LD	A,(IX+10)
 	OR	A
@@ -869,22 +867,22 @@ J.453B:	LD	(IX+2),0
 	RET	NZ
 	LD	A,(IY+58)
 	CP	0FFH
-	JP	Z,J$455B
+	JP	Z,J455B
 	OR	A
 	RET	Z
 	DEC	A
 	LD	(IY+58),A
 	RET	Z
-J$455B:	POP	HL
-	CALL	C.435B
+J455B:	POP	HL
+	CALL	C435B
 	PUSH	IY
 	POP	IX
 	LD	DE,003DH
 	ADD	IX,DE
-	JP	J$447C
+	JP	J447C
 ;	-----------------
-J$456B:	LD	C,A
-	CALL	C.4729
+J456B:	LD	C,A
+	CALL	C4729
 	LD	(IX+2),L
 	LD	(IX+3),H
 	LD	A,C
@@ -893,52 +891,52 @@ J$456B:	LD	C,A
 	PUSH	DE
 	LD	A,(IX+8)
 	AND	07H	; 7 
-	JP	NZ,J$4586
+	JP	NZ,J4586
 	LD	H,E
 	LD	L,D
-	JP	J.45A3
+	JP	J45A3
 ;	-----------------
-J$4586:	RRCA
+J4586:	RRCA
 	RRCA
 	RRCA
 	PUSH	BC
 	LD	HL,0
 	LD	B,08H	; 8 
-J$458F:	ADD	HL,HL
+J458F:	ADD	HL,HL
 	RLA
-	JP	NC,J$4597
+	JP	NC,J4597
 	ADD	HL,DE
 	ADC	A,0
-J$4597:	DJNZ	J$458F
+J4597:	DJNZ	J458F
 	POP	BC
 	LD	L,A
 	OR	H
-	JP	NZ,J.45A3
+	JP	NZ,J45A3
 	LD	H,1
 	LD	L,0
-J.45A3:	LD	(IX+6),H
+J45A3:	LD	(IX+6),H
 	LD	(IX+7),L
 	DEC	C
 	LD	L,C
 	LD	H,0
 	LD	A,0CH	; 12 
-	CALL	C$45DB
+	CALL	C45DB
 	LD	C,L
 	SLA	C
 	LD	A,H
 	ADD	A,A
 	LD	E,A
 	LD	D,0
-	LD	HL,I$4128
+	LD	HL,I4128
 	ADD	HL,DE
 	LD	A,0FH	; 15 
 	ADD	A,B
 	LD	E,(HL)			; LSB f-number
 	INC	HL
-	CALL	C.415F			; write OPLL register
+	CALL	C415F			; write OPLL register
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	20H			; leave sustain alone
 	OR	(HL)
 	OR	C
@@ -946,7 +944,7 @@ J.45A3:	LD	(IX+6),H
 	LD	E,A
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.415F			; write OPLL register
+	CALL	C415F			; write OPLL register
 	POP	DE
 	RET
 ;	-----------------
@@ -955,38 +953,38 @@ J.45A3:	LD	(IX+6),H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$45DB:	PUSH	BC
+C45DB:	PUSH	BC
 	LD	B,08H	; 8 
 	OR	A
 	LD	C,A
-J$45E0:	ADC	HL,HL
+J45E0:	ADC	HL,HL
 	LD	A,H
-	JP	C,J$45EA
+	JP	C,J45EA
 	CP	C
-	JP	C,J$45ED
-J$45EA:	SUB	C
+	JP	C,J45ED
+J45EA:	SUB	C
 	LD	H,A
 	OR	A
-J$45ED:	CCF
-	DJNZ	J$45E0
+J45ED:	CCF
+	DJNZ	J45E0
 	RL	L
 	POP	BC
 	RET
 
-J$45F4:	AND	0FH
+J45F4:	AND	0FH
 	LD	C,A
 	LD	A,2FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0F0H			; leave instrument alone
 	OR	C			; set volume
 	LD	E,A
 	LD	A,2FH
 	ADD	A,B
-	CALL	C.415F			; write OPLL register
-	JP	C.4501
+	CALL	C415F			; write OPLL register
+	JP	C4501
 
-J$460A:	AND	0FH
+J460A:	AND	0FH
 	RLCA
 	RLCA
 	RLCA
@@ -994,65 +992,65 @@ J$460A:	AND	0FH
 	LD	C,A
 	LD	A,2FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0FH			; leave volume alone
 	OR	C			; set instrument
 	LD	E,A
 	LD	A,2FH
 	ADD	A,B
-	CALL	C.415F			; write OPLL register
-	JP	C.4501
+	CALL	C415F			; write OPLL register
+	JP	C4501
 
-J$4624:	LD	A,1FH
+J4624:	LD	A,1FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	OR	20H			; sustain on
 	LD	E,A
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.415F			; write OPLL register
-	JP	C.4501
+	CALL	C415F			; write OPLL register
+	JP	C4501
 
-J$4636:	LD	A,1FH
+J4636:	LD	A,1FH
 	ADD	A,B
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0DFH			; sustain off
 	LD	E,A
 	LD	A,1FH
 	ADD	A,B
-	CALL	C.415F			; write OPLL register
-	JP	C.4501
+	CALL	C415F			; write OPLL register
+	JP	C4501
 
-J$4648:	LD	A,(HL)
+J4648:	LD	A,(HL)
 	INC	HL
 	AND	7FH
-	CALL	C.4652			; program software instrument
-	JP	C.4501
+	CALL	C4652			; program software instrument
+	JP	C4501
 
 ;	  Subroutine program software instrument
 ;	     Inputs  A = instrument
 ;	     Outputs ________________________
 
 
-C.4652:	INC	A
+C4652:	INC	A
 	PUSH	HL
 	LD	L,A
 	LD	H,0
 	ADD	HL,HL
 	ADD	HL,HL
 	ADD	HL,HL
-	LD	DE,I.4C00
+	LD	DE,I4C00
 	ADD	HL,DE
 	LD	A,7
-J$4660:	DEC	HL
+J4660:	DEC	HL
 	LD	E,(HL)
-	CALL	C.415F			; write OPLL register
+	CALL	C415F			; write OPLL register
 	DEC	A
-	JP	P,J$4660
+	JP	P,J4660
 	POP	HL
 	RET
 
-J$466B:	LD	E,(HL)
+J466B:	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	INC	HL
@@ -1060,37 +1058,37 @@ J$466B:	LD	E,(HL)
 	EX	DE,HL
 	LD	C,8			; 8 registers
 	XOR	A			; starting with register 0
-J$4674:	LD	E,(HL)
+J4674:	LD	E,(HL)
 	INC	HL
-	CALL	C.415F			; write OPLL register
+	CALL	C415F			; write OPLL register
 	INC	A
 	DEC	C
-	JP	NZ,J$4674		; program software instrument
+	JP	NZ,J4674		; program software instrument
 	POP	HL
-	JP	C.4501
+	JP	C4501
 ;	-----------------
-J$4682:	LD	A,(HL)
+J4682:	LD	A,(HL)
 	INC	HL
 	LD	(IX+8),A
-	JP	C.4501
+	JP	C4501
 ;	-----------------
-J$468A:	LD	(IX+9),0FFH
-	JP	C.4501
+J468A:	LD	(IX+9),0FFH
+	JP	C4501
 ;	-----------------
-J$4691:	LD	(IX+9),0
-	JP	C.4501
+J4691:	LD	(IX+9),0
+	JP	C4501
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.4698:	LD	A,(HL)
+C4698:	LD	A,(HL)
 	INC	HL
 	CP	0FFH
-	JP	Z,J.453B
+	JP	Z,J453B
 	OR	A
-	JP	P,J$4703
+	JP	P,J4703
 	LD	D,A
 	LD	A,(HL)
 	INC	HL
@@ -1102,65 +1100,65 @@ C.4698:	LD	A,(HL)
 	RLA
 	LD	B,A
 	RR	D
-	JR	NC,J$46C0
+	JR	NC,J46C0
 	LD	A,37H
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0FH			; leave volume Snare Drum
 	OR	B			; set volume Hi Hat
 	LD	E,A
 	LD	A,37H
-	CALL	C.415F			; write OPLL register
-J$46C0:	RR	D
-	JR	NC,J$46D2
+	CALL	C415F			; write OPLL register
+J46C0:	RR	D
+	JR	NC,J46D2
 	LD	A,38H
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0F0H			; leave volume Cimbal
 	OR	C			; set volume Tom Tom
 	LD	E,A
 	LD	A,38H
-	CALL	C.415F			; write OPLL register
-J$46D2:	RR	D
-	JR	NC,J$46E4
+	CALL	C415F			; write OPLL register
+J46D2:	RR	D
+	JR	NC,J46E4
 	LD	A,38H
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0FH			; leave volume Tom Tom
 	OR	B			; set volume Cimbal
 	LD	E,A
 	LD	A,38H
-	CALL	C.415F			; write OPLL register
-J$46E4:	RR	D
-	JR	NC,J$46F6
+	CALL	C415F			; write OPLL register
+J46E4:	RR	D
+	JR	NC,J46F6
 	LD	A,37H
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	0F0H			; leave volume Hi Hat
 	OR	C			; set volume Snare Drum
 	LD	E,A
 	LD	A,37H
-	CALL	C.415F			; write OPLL register
-J$46F6:	RR	D
-	JR	NC,J$4700
+	CALL	C415F			; write OPLL register
+J46F6:	RR	D
+	JR	NC,J4700
 	LD	A,36H
 	LD	E,C			; set volume Bass Drum
-	CALL	C.415F			; write OPLL register
-J$4700:	JP	C.4698
+	CALL	C415F			; write OPLL register
+J4700:	JP	C4698
 ;	-----------------
-J$4703:	LD	C,A
+J4703:	LD	C,A
 	XOR	1FH
 	LD	E,A
 	LD	A,0EH
-	CALL	C.4183			; read OPLL register
+	CALL	C4183			; read OPLL register
 	AND	E			; selected drums off
 	LD	E,A
 	LD	A,0EH
-	CALL	C.415F			; write OPLL register
-	CALL	C.4183			; read OPLL register
+	CALL	C415F			; write OPLL register
+	CALL	C4183			; read OPLL register
 	LD	E,A
 	LD	A,C
 	OR	E			; selected drums on
 	LD	E,A
 	LD	A,0EH
-	CALL	C.415F			; write OPLL register
-	CALL	C.4729
+	CALL	C415F			; write OPLL register
+	CALL	C4729
 	LD	(IX+2),L
 	LD	(IX+3),H
 	RET
@@ -1171,15 +1169,15 @@ J$4703:	LD	C,A
 ;	     Outputs ________________________
 
 
-C.4729:	LD	DE,0
-J$472C:	LD	A,(HL)
+C4729:	LD	DE,0
+J472C:	LD	A,(HL)
 	INC	HL
 	CP	0FFH
-	JR	NZ,J$4736
+	JR	NZ,J4736
 	INC	D
 	DEC	DE
-	JR	J$472C
-J$4736:	ADD	A,E
+	JR	J472C
+J4736:	ADD	A,E
 	LD	E,A
 	LD	A,D
 	ADC	A,0
@@ -1193,8 +1191,8 @@ J$4736:	ADD	A,E
 ;	  Remark     Left over from FM-PAC
 ;		     FMPAC has a pointer to this routine at 4126H
 
-?.473D:	OR	A
-	JP	Z,J.43F1		; MSTOP
+?473D:	OR	A
+	JP	Z,J43F1			; MSTOP
 	DEC	A
 	ADD	A,A
 	LD	D,0
@@ -1206,21 +1204,20 @@ J$4736:	ADD	A,E
 	LD	H,(HL)
 	LD	L,A
 	LD	A,B
-	JP	J.42E5			; MSTART
+	JP	J42E5			; MSTART
 
 ;	  Subroutine TSTBGM
 ;	     Inputs  
 ;	     Outputs ________________________
 
-
-J$4752:	PUSH	BC
+J4752:	PUSH	BC
 	PUSH	HL
-	LD	BC,4000H
-	CALL	C.41F3			; get my SLTWRK entry
+	LD	BC,4000H		; page 1
+	CALL	C41F3			; get my SLTWRK entry
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
-	AND	0FEH
+	AND	0FEH			; leave out b0,
 	LD	L,A
 	LD	BC,003AH
 	ADD	HL,BC
@@ -1235,7 +1232,7 @@ J$4752:	PUSH	BC
 ; each entry has 8 bytes, these are the registervalues for OPLL register 7 - 0
 ; so register 7 is first stored and then downwards
 
-I.4C00:	DEFB	11H,11H,20H,20H,0FFH,0B2H,0F4H,0F4H
+I4C00:	DEFB	11H,11H,20H,20H,0FFH,0B2H,0F4H,0F4H
 	DEFB	30H,10H,20H,20H,0FBH,0B2H,0F3H,0F3H
 	DEFB	61H,61H,20H,20H,0B4H,56H,17H,17H
 	DEFB	31H,31H,20H,20H,43H,43H,26H,26H
@@ -1302,54 +1299,61 @@ I.4C00:	DEFB	11H,11H,20H,20H,0FFH,0B2H,0F4H,0F4H
 
 	DEFS	05000H-$,0
 
-J.5000:	JP	J$50EB			; call statement handler
-J$5003:	JP	J$6589			; interrupt handler
-?.5006:	JP	J$5078			; stop background music
+;	Jumptable, some sort of BIOS ?
+;
+;	+0	statement handler
+;	+3	interrupt handler
+;	+6	stop background music
+;	+9	enable and reset OPLL
+
+J5000:	JP	J50EB			; call statement handler
+J5003:	JP	J6589			; interrupt handler
+?5006:	JP	J5078			; stop background music
 
 ;	  Subroutine enable and reset OPLL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5009:	LD	HL,I$F975
+C5009:	LD	HL,I$F975
 	LD	DE,I$F975+1
 	LD	BC,017CH-1
 	LD	(HL),0
 	LDIR				; clear static workarea in VOICAQ,VOICBQ and VOICCQ
 	LD	B,4
-J$5018:	PUSH	BC
+J5018:	PUSH	BC
 	LD	A,4
 	SUB	B
 	LD	C,A
 	LD	HL,EXPTBL
-	CALL	C.5539			; get entry A
+	CALL	C5539			; get entry A
 	LD	A,(HL)
 	ADD	A,A			; expanded slot ?
-	JR	NC,J$5043		; nope, use try the primairy
+	JR	NC,J5043		; nope, use try the primairy
 	LD	B,4
-J$5029:	PUSH	BC
+J5029:	PUSH	BC
 	LD	A,24H
 	SUB	B
 	RLCA
 	RLCA
 	OR	C
-	CALL	C.5054			; internal MSX-MUSIC in slot ?
+	CALL	C5054			; internal MSX-MUSIC in slot ?
 	POP	BC
-	JR	Z,J$5049		; yep, quit
-	DJNZ	J$5029			; next secundairy slot
-J$5038:	POP	BC
-	DJNZ	J$5018			; next primairy slot
-	LD	HL,D.7FF6
+	JR	Z,J5049			; yep, quit
+	DJNZ	J5029			; next secundairy slot
+J5038:	POP	BC
+	DJNZ	J5018			; next primairy slot
+	LD	HL,D7FF6
 	SET	0,(HL)			; internal MSX-MUSIC not found, enable MSX-MUSIC I/O
-J$5040:	JP	C.7586			; reset OPLL and quit
+J5040:	JP	C7586			; reset OPLL and quit
 
-J$5043:	LD	A,C
-	CALL	C.5054			; internal MSX-MUSIC in slot ?
-	JR	NZ,J$5038		; nope, next primairy slot
-J$5049:	POP	BC
-	JR	J$5040			; quit
+J5043:	LD	A,C
+	CALL	C5054			; internal MSX-MUSIC in slot ?
+	JR	NZ,J5038		; nope, next primairy slot
+J5049:	POP	BC
+	JR	J5040			; quit
 
-I$504C:	DEFB	"APRLOPLL"
+I504C:	DEFB	"APRLOPLL"
 
 
 ;	  Subroutine __________________________
@@ -1357,11 +1361,11 @@ I$504C:	DEFB	"APRLOPLL"
 ;	     Outputs ________________________
 
 
-C.5054:	PUSH	BC
-	LD	HL,I.4018
-	LD	DE,I$504C
+C5054:	PUSH	BC
+	LD	HL,I4018
+	LD	DE,I504C
 	LD	B,8
-J$505D:	PUSH	AF
+J505D:	PUSH	AF
 	PUSH	BC
 	PUSH	DE
 	CALL	RDSLT
@@ -1371,47 +1375,47 @@ J$505D:	PUSH	AF
 	LD	C,A
 	LD	A,(DE)
 	CP	C
-	JR	NZ,J$5073
+	JR	NZ,J5073
 	POP	AF
 	INC	DE
 	INC	HL
-	DJNZ	J$505D
+	DJNZ	J505D
 	POP	BC
 	XOR	A
 	RET
 
-J$5073:	POP	AF
+J5073:	POP	AF
 	POP	BC
 	XOR	A
 	INC	A
 	RET
 
-J$5078:	CALL	C.50C6			; is MSX MUSIC initialized ?
+J5078:	CALL	C50C6			; is MSX MUSIC initialized ?
 	RET	Z			; nope, quit
-	JP	C.6BCF			; stop background music
+	JP	C6BCF			; stop background music
 
 ;	  Subroutine initialize hooks
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$507F:	DI
-	CALL	C.50C6			; is MSX MUSIC initialized ?
+C507F:	DI
+	CALL	C50C6			; is MSX MUSIC initialized ?
 	RET	NZ			; yep, quit
-	CALL	C$50BE			; flag MSX MUSIC initialized
+	CALL	C50BE			; flag MSX MUSIC initialized
 	LD	HL,H.MDTM
 	LD	DE,J.F9BB
 	PUSH	HL
-	CALL	C.50AE			; save H.MDTM
-	LD	HL,I$50B9
+	CALL	C50AE			; save H.MDTM
+	LD	HL,I50B9
 	POP	DE
-	CALL	C.50AE			; initialize H.MDTM
-	CALL	C.57FE			; get my slotid
+	CALL	C50AE			; initialize H.MDTM
+	CALL	C57FE			; get my slotid
 	LD	(D.F97C),A
 	LD	(H.MDTM+1),A
-	LD	HL,I$50B4
+	LD	HL,I50B4
 	LD	DE,H.PLAY
-	CALL	C.50AE			; initialize H.PLAY
+	CALL	C50AE			; initialize H.PLAY
 	LD	(H.PLAY+1),A
 	RET
 
@@ -1421,18 +1425,18 @@ C$507F:	DI
 ;	     Outputs ________________________
 
 
-C.50AE:	LD	BC,5
+C50AE:	LD	BC,5
 	LDIR
 	RET
 
-I$50B4:	RST	30H
+I50B4:	RST	30H
 	DEFB	0
-	DEFW	C$5A9E
+	DEFW	C5A9E
 	RET
 
-I$50B9:	RST	30H
+I50B9:	RST	30H
 	DEFB	0
-	DEFW	C.7FED
+	DEFW	C7FED
 	RET
 
 ;	  Subroutine flag MSX MUSIC initialized
@@ -1440,8 +1444,8 @@ I$50B9:	RST	30H
 ;	     Outputs ________________________
 
 
-C$50BE:	PUSH	HL
-	CALL	C.50CE			; get my SLTWRK entry
+C50BE:	PUSH	HL
+	CALL	C50CE			; get my SLTWRK entry
 	SET	0,(HL)
 	POP	HL
 	RET
@@ -1451,8 +1455,8 @@ C$50BE:	PUSH	HL
 ;	     Outputs ________________________
 
 
-C.50C6:	PUSH	HL
-	CALL	C.50CE			; get my SLTWRK entry
+C50C6:	PUSH	HL
+	CALL	C50CE			; get my SLTWRK entry
 	BIT	0,(HL)
 	POP	HL
 	RET
@@ -1462,9 +1466,9 @@ C.50C6:	PUSH	HL
 ;	     Outputs ________________________
 
 
-C.50CE:	PUSH	AF
+C50CE:	PUSH	AF
 	PUSH	DE
-	CALL	C.57FE
+	CALL	C57FE
 	AND	0FH
 	LD	L,A
 	RLCA
@@ -1490,41 +1494,41 @@ C.50CE:	PUSH	AF
 
 
 
-J$50EB:	EI
+J50EB:	EI
 	PUSH	HL
 	LD	HL,PROCNM
-	CALL	C$52A9
+	CALL	C52A9
 	POP	HL
 	RET	C
 	PUSH	HL
-	LD	HL,C$5342
+	LD	HL,C5342
 	OR	A
 	SBC	HL,DE			; CALL MUSIC ?
 	POP	HL
-	JR	Z,J.5122		; yep, always works
+	JR	Z,J5122		; yep, always works
 	PUSH	HL
-	LD	HL,C$561E
+	LD	HL,C561E
 	OR	A
 	SBC	HL,DE			; CALL PCM PLAY ?
 	POP	HL
-	JR	Z,J.5122		; yep, always works
+	JR	Z,J5122		; yep, always works
 	PUSH	HL
-	LD	HL,C$5623		; CALL PCM REC ?
+	LD	HL,C5623		; CALL PCM REC ?
 	OR	A
 	SBC	HL,DE
 	POP	HL
-	JR	Z,J.5122		; yep, always works
+	JR	Z,J5122		; yep, always works
 	PUSH	HL
-	LD	HL,C$57C6
+	LD	HL,C57C6
 	OR	A
 	SBC	HL,DE			; CALL PAUSE
 	POP	HL
-	JR	Z,J.5122		; yep, always works
-	CALL	C.50C6			; is MSX MUSIC initialized ?
+	JR	Z,J5122		; yep, always works
+	CALL	C50C6			; is MSX MUSIC initialized ?
 	SCF
 	RET	Z			; nope, quit (which generates a syntax error)
-J.5122:	CALL	C$512D
-	CALL	C$512B
+J5122:	CALL	C512D
+	CALL	C512B
 	EI
 	OR	A
 	RET
@@ -1535,7 +1539,7 @@ J.5122:	CALL	C$512D
 ;	     Outputs ________________________
 
 
-C$512B:	PUSH	DE
+C512B:	PUSH	DE
 	RET
 
 
@@ -1544,95 +1548,95 @@ C$512B:	PUSH	DE
 ;	     Outputs ________________________
 
 
-C$512D:	PUSH	HL
+C512D:	PUSH	HL
 	PUSH	DE
 	LD	HL,0FD00H
 	ADD	HL,SP
-	JP	NC,J.6F92
+	JP	NC,J6F92
 	LD	DE,(STREND)
 	OR	A
 	SBC	HL,DE
-	JP	C,J.6F92
+	JP	C,J6F92
 	POP	DE
 	POP	HL
 	RET
 
-I$5143:	DEFW	I.ST_A-I$516F		; A
-	DEFW	I.ST_B-I$516F		; B
-	DEFW	I.ST_C-I$516F		; C
-	DEFW	I.ST__-I$516F		; D
-	DEFW	I.ST__-I$516F		; E
-	DEFW	I.ST__-I$516F		; F
-	DEFW	I.ST__-I$516F		; G
-	DEFW	I.ST__-I$516F		; H
-	DEFW	I.ST_I-I$516F		; I
-	DEFW	I.ST__-I$516F		; J
-	DEFW	I.ST_K-I$516F		; K
-	DEFW	I.ST_L-I$516F		; L
-	DEFW	I.ST_M-I$516F		; M
-	DEFW	I.ST__-I$516F		; N
-	DEFW	I.ST__-I$516F		; O
-	DEFW	I.ST_P-I$516F		; P
-	DEFW	I.ST__-I$516F		; Q
-	DEFW	I.ST_R-I$516F		; R
-	DEFW	I.ST_S-I$516F		; S
-	DEFW	I.ST_T-I$516F		; T
-	DEFW	I.ST__-I$516F		; U
-	DEFW	I.ST_V-I$516F		; V
+I5143:	DEFW	I.ST_A-I516F		; A
+	DEFW	I.ST_B-I516F		; B
+	DEFW	I.ST_C-I516F		; C
+	DEFW	I.ST__-I516F		; D
+	DEFW	I.ST__-I516F		; E
+	DEFW	I.ST__-I516F		; F
+	DEFW	I.ST__-I516F		; G
+	DEFW	I.ST__-I516F		; H
+	DEFW	I.ST_I-I516F		; I
+	DEFW	I.ST__-I516F		; J
+	DEFW	I.ST_K-I516F		; K
+	DEFW	I.ST_L-I516F		; L
+	DEFW	I.ST_M-I516F		; M
+	DEFW	I.ST__-I516F		; N
+	DEFW	I.ST__-I516F		; O
+	DEFW	I.ST_P-I516F		; P
+	DEFW	I.ST__-I516F		; Q
+	DEFW	I.ST_R-I516F		; R
+	DEFW	I.ST_S-I516F		; S
+	DEFW	I.ST_T-I516F		; T
+	DEFW	I.ST__-I516F		; U
+	DEFW	I.ST_V-I516F		; V
 
-I$516F:
-I.ST_A:	KEYWRD	<AUDREG>,C$554B
-	KEYWRD	<APPEND MK>,C$5307
-	KEYWRD	<APEEK>,C$5307
-	KEYWRD	<APOKE>,C$5307
+I516F:
+I.ST_A:	KEYWRD	<AUDREG>,C554B
+	KEYWRD	<APPEND MK>,C5307
+	KEYWRD	<APEEK>,C5307
+	KEYWRD	<APOKE>,C5307
 I.ST__:	DEFB	0FFH
-I.ST_B:	KEYWRD	<BGM>,C$550B
+I.ST_B:	KEYWRD	<BGM>,C550B
 	DEFB	0FFH
-I.ST_C:	KEYWRD	<CONT MK>,C$5307
-	KEYWRD	<COPY PCM>,C$5307
-	KEYWRD	<CONVP>,C$5307
-	KEYWRD	<CONVA>,C$5307
+I.ST_C:	KEYWRD	<CONT MK>,C5307
+	KEYWRD	<COPY PCM>,C5307
+	KEYWRD	<CONVP>,C5307
+	KEYWRD	<CONVA>,C5307
 	DEFB	0FFH
-I.ST_I:	KEYWRD	<INMK>,C$5307
+I.ST_I:	KEYWRD	<INMK>,C5307
 	DEFB	0FFH
-I.ST_K:	KEYWRD	<KEY ON>,C$5307
-	KEYWRD	<KEY OFF>,C$5307
+I.ST_K:	KEYWRD	<KEY ON>,C5307
+	KEYWRD	<KEY OFF>,C5307
 	DEFB	0FFH
-I.ST_L:	KEYWRD	<LOAD PCM>,C$5307
+I.ST_L:	KEYWRD	<LOAD PCM>,C5307
 	DEFB	0FFH
-I.ST_M:	KEYWRD	<MDR>,C$55F4
-	KEYWRD	<MK VOICE>,C$5307
-	KEYWRD	<MK VEL>,C$5307
-	KEYWRD	<MK VOL>,C$5307
-	KEYWRD	<MK TEMPO>,C$5307
-	KEYWRD	<MK STAT>,C$5307
-	KEYWRD	<MK PCM>,C$5307
-	KEYWRD	<MUSIC>,C$5342
+I.ST_M:	KEYWRD	<MDR>,C55F4
+	KEYWRD	<MK VOICE>,C5307
+	KEYWRD	<MK VEL>,C5307
+	KEYWRD	<MK VOL>,C5307
+	KEYWRD	<MK TEMPO>,C5307
+	KEYWRD	<MK STAT>,C5307
+	KEYWRD	<MK PCM>,C5307
+	KEYWRD	<MUSIC>,C5342
 	DEFB	0FFH
-I.ST_R:	KEYWRD	<REC MK>,C$5307
-	KEYWRD	<RECMOD>,C$5307
-	KEYWRD	<REC PCM>,C$5307
+I.ST_R:	KEYWRD	<REC MK>,C5307
+	KEYWRD	<RECMOD>,C5307
+	KEYWRD	<REC PCM>,C5307
 	DEFB	0FFH
-I.ST_S:	KEYWRD	<STOPM>,C$553E
-	KEYWRD	<SET PCM>,C$5307
-	KEYWRD	<SAVE PCM>,C$5307
-	KEYWRD	<SYNTHE>,C$5307
+I.ST_S:	KEYWRD	<STOPM>,C553E
+	KEYWRD	<SET PCM>,C5307
+	KEYWRD	<SAVE PCM>,C5307
+	KEYWRD	<SYNTHE>,C5307
 	DEFB	0FFH
-I.ST_T:	KEYWRD	<TRANSPOSE>,C$55E8
-	KEYWRD	<TEMPER>,C$57F3
+I.ST_T:	KEYWRD	<TRANSPOSE>,C55E8
+	KEYWRD	<TEMPER>,C57F3
 	DEFB	0FFH
-I.ST_V:	KEYWRD	<VOICE>,C$58EB
-	KEYWRD	<VOICE COPY>,C$597B
+I.ST_V:	KEYWRD	<VOICE>,C58EB
+	KEYWRD	<VOICE COPY>,C597B
 	DEFB	0FFH
-I.ST_P:	KEYWRD	<PAUSE>,C$57C6
-	KEYWRD	<PLAY>,C$5A43
-	KEYWRD	<PLAY PCM>,C$5307
-	KEYWRD	<PCM PLAY>,C$561E
-	KEYWRD	<PCM REC>,C$5623
-	KEYWRD	<PCM FREQ>,C$5307
-	KEYWRD	<PCM VOL>,C$5307
-	KEYWRD	<PLAY MK>,C$5307
-	KEYWRD	<PITCH>,C$55DC
+I.ST_P:	KEYWRD	<PAUSE>,C57C6
+	KEYWRD	<PLAY>,C5A43
+	KEYWRD	<PLAY PCM>,C5307
+	KEYWRD	<PCM PLAY>,C561E
+	KEYWRD	<PCM REC>,C5623
+	KEYWRD	<PCM FREQ>,C5307
+	KEYWRD	<PCM VOL>,C5307
+	KEYWRD	<PLAY MK>,C5307
+	KEYWRD	<PITCH>,C55DC
 	DEFB	0FFH
 
 
@@ -1641,7 +1645,7 @@ I.ST_P:	KEYWRD	<PAUSE>,C$57C6
 ;	     Outputs ________________________
 
 
-C$52A9:	LD	A,(HL)
+C52A9:	LD	A,(HL)
 	SUB	"A"
 	RET	C
 	CP	16H
@@ -1650,33 +1654,33 @@ C$52A9:	LD	A,(HL)
 	INC	HL
 	PUSH	HL
 	PUSH	BC
-	LD	HL,I$5143
+	LD	HL,I5143
 	PUSH	AF
-	CALL	C.5539			; get entry A
+	CALL	C5539			; get entry A
 	POP	AF
-	CALL	C.5539			; get entry A
+	CALL	C5539			; get entry A
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)
-	LD	HL,I$516F
+	LD	HL,I516F
 	ADD	HL,BC
 	EX	DE,HL
 	POP	BC
 	POP	HL
-J$52C9:	PUSH	HL
+J52C9:	PUSH	HL
 	LD	A,(DE)
 	INC	A			; end of statement list ?
-	JR	Z,J$52D9		; yep, statement not recognized
-	CALL	C.52DC			; check if this statement
+	JR	Z,J52D9		; yep, statement not recognized
+	CALL	C52DC			; check if this statement
 	POP	HL
-	JR	NZ,J$52C9		; nope, try next
+	JR	NZ,J52C9		; nope, try next
 	EX	DE,HL
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	RET
 
-J$52D9:	SCF
+J52D9:	SCF
 	POP	HL
 	RET
 
@@ -1686,36 +1690,36 @@ J$52D9:	SCF
 ;	     Outputs ________________________
 
 
-C.52DC:	LD	A,(DE)
+C52DC:	LD	A,(DE)
 	LD	B,A
 	AND	7FH
 	CP	(HL)
 	INC	DE
 	INC	HL
-	JR	NZ,J$52ED
+	JR	NZ,J52ED
 	LD	A,B
 	OR	A
-	JP	P,C.52DC
+	JP	P,C52DC
 	LD	A,(HL)
 	OR	A
 	RET	Z
-J$52ED:	INC	B
-	JR	NZ,J$52FA
+J52ED:	INC	B
+	JR	NZ,J52FA
 	DEC	HL
-J$52F1:	LD	A,(HL)
+J52F1:	LD	A,(HL)
 	CP	" "
 	INC	HL
-	JR	Z,J$52F1
+	JR	Z,J52F1
 	DEC	HL
-	JR	C.52DC
+	JR	C52DC
 
-J$52FA:	DEC	DE
-J.52FB:	LD	A,(DE)
+J52FA:	DEC	DE
+J52FB:	LD	A,(DE)
 	INC	DE
 	INC	A
-	JR	Z,J.52FB
+	JR	Z,J52FB
 	DEC	A
-	JP	P,J.52FB
+	JP	P,J52FB
 	INC	DE
 	INC	DE
 	RET
@@ -1725,7 +1729,7 @@ J.52FB:	LD	A,(DE)
 ;	     Outputs ________________________
 
 
-C$5307:	JP	C.6F89			; illegal function call
+C5307:	JP	C6F89			; illegal function call
 
 
 ;	  Subroutine __________________________
@@ -1733,14 +1737,14 @@ C$5307:	JP	C.6F89			; illegal function call
 ;	     Outputs ________________________
 
 
-C.530A:	CALL	C.5896			; check for "("
-	JP	C.6FE6			; evaluate byte operand
+C530A:	CALL	C5896			; check for "("
+	JP	C6FE6			; evaluate byte operand
 
 
 ;	  Unused code
 
-?.5310:	CALL	C.559A
-	JP	NZ,J.6F86
+?5310:	CALL	C559A
+	JP	NZ,J6F86
 	RET
 
 
@@ -1749,30 +1753,30 @@ C.530A:	CALL	C.5896			; check for "("
 ;	     Outputs ________________________
 
 
-C.5317:	PUSH	BC
-	CALL	C.530A
-	JR	J$5330
+C5317:	PUSH	BC
+	CALL	C530A
+	JR	J5330
 
 ;	  Unused code
 
-?.531D:	PUSH	BC
-	CALL	C.5896			; check for "("
-	JR	J$532D
+?531D:	PUSH	BC
+	CALL	C5896			; check for "("
+	JR	J532D
 
 ;	  Unused code
 
-?.5323:	CALL	C.5896			; check for "("
-	CALL	C.6FDA
+?5323:	CALL	C5896			; check for "("
+	CALL	C6FDA
 	PUSH	DE
-	CALL	C.5891			; check for ","
-J$532D:	CALL	C.6FDA
+	CALL	C5891			; check for ","
+J532D:	CALL	C6FDA
 
-J$5330:	CALL	C.589B			; check for ")"
+J5330:	CALL	C589B			; check for ")"
 	POP	BC
 	LD	A,E
 	RET
 
-I$5336:	DEFB	3			; 3 FM playvoices
+I5336:	DEFB	3			; 3 FM playvoices
 	DEFB	1			; drums
 	DEFB	0			; keyboard
 	DEFB	1,1,1,0,0,0,0,0,0	; 1 FM channel on voice 0,1 and 2
@@ -1782,16 +1786,16 @@ I$5336:	DEFB	3			; 3 FM playvoices
 ;	     Outputs ________________________
 
 
-C$5342:	PUSH	HL
-	CALL	C.50C6			; is MSX MUSIC initialized ?
-	CALL	Z,C$5009		; nope,
-	LD	HL,I$5336
+C5342:	PUSH	HL
+	CALL	C50C6			; is MSX MUSIC initialized ?
+	CALL	Z,C5009		; nope,
+	LD	HL,I5336
 	LD	DE,BUF
 	LD	BC,12
 	LDIR
 	POP	HL
-	CALL	C.559A
-	JP	Z,J$53E0		; no parameters specified
+	CALL	C559A
+	JP	Z,J53E0		; no parameters specified
 	PUSH	HL
 	LD	HL,BUF+0
 	LD	DE,BUF+1
@@ -1799,56 +1803,56 @@ C$5342:	PUSH	HL
 	LD	(HL),0
 	LDIR
 	POP	HL
-	CALL	C.5896			; check for "("
+	CALL	C5896			; check for "("
 	CP	","
-	JR	Z,J$5381		; drum parameter not specified,
-	CALL	C.6FE6			; evaluate byte operand
+	JR	Z,J5381		; drum parameter not specified,
+	CALL	C6FE6			; evaluate byte operand
 	CP	2			; 0 or 1 ?
-	JP	NC,C.6F89		; nope, illegal function call
+	JP	NC,C6F89		; nope, illegal function call
 	LD	(BUF+1),A		; drum mode
 	LD	A,(HL)
 	CP	")"
-	JR	Z,J.53DA		; end of parameterlist
-J$5381:	CALL	C.5891			; check for ","
+	JR	Z,J53DA		; end of parameterlist
+J5381:	CALL	C5891			; check for ","
 	CP	","
-	JR	Z,J$5396		; keyboard parameter not specified,
-	CALL	C.6FE6			; evaluate byte operand
+	JR	Z,J5396		; keyboard parameter not specified,
+	CALL	C6FE6			; evaluate byte operand
 	OR	A			; 0
-	JR	NZ,J.53C6		; <>0, error
+	JR	NZ,J53C6		; <>0, error
 	LD	(BUF+2),A		; keyboard parameter, always 0 on MSX-MUSIC
 	LD	A,(HL)
 	CP	")"
-	JR	Z,J.53DA		; end of parameterlist
-J$5396:	LD	B,9
+	JR	Z,J53DA		; end of parameterlist
+J5396:	LD	B,9
 	PUSH	HL
 	LD	HL,BUF+3
 	EX	(SP),HL
 	LD	C,0			; start with playvoice 0
-J$539F:	CALL	C.5891			; check for ","
+J539F:	CALL	C5891			; check for ","
 	PUSH	BC
-	CALL	C.6FE6			; evaluate byte operand (number of channels)
+	CALL	C6FE6			; evaluate byte operand (number of channels)
 	POP	BC
 	OR	A			; <>0 ?
-	JR	NZ,J.53C4		; yep, check if 1-9 and add to list
+	JR	NZ,J53C4		; yep, check if 1-9 and add to list
 	PUSH	AF
 	LD	A,(BUF+1)
 	AND	01H			; drums on ?
-	JR	Z,J.53C0		; nope, 0 is an error
+	JR	Z,J53C0		; nope, 0 is an error
 	LD	A,C
 	CP	6			; playvoice 6 ?
-	JR	Z,J.53BD		; yep, 0 is ok
+	JR	Z,J53BD		; yep, 0 is ok
 	CP	7			; playvoice 7 ?
-	JR	Z,J.53BD		; yep, 0 is ok
-	JR	J.53C0			; on other voices 0 is an error
+	JR	Z,J53BD		; yep, 0 is ok
+	JR	J53C0			; on other voices 0 is an error
 
-J.53BD:	POP	AF
-	JR	J.53C4
+J53BD:	POP	AF
+	JR	J53C4
 
-J.53C0:	POP	AF
-	JP	J.53C6
+J53C0:	POP	AF
+	JP	J53C6
 
-J.53C4:	CP	10			; number of channels <10 ?
-J.53C6:	JP	NC,C.6F89		; nope, illegal function call
+J53C4:	CP	10			; number of channels <10 ?
+J53C6:	JP	NC,C6F89		; nope, illegal function call
 	EX	(SP),HL
 	LD	(HL),A
 	INC	HL
@@ -1856,14 +1860,14 @@ J.53C6:	JP	NC,C.6F89		; nope, illegal function call
 	EX	(SP),HL
 	LD	A,(HL)
 	CP	")"			; end of parameterlist ?
-	JR	Z,J$53D5		; yep, quit
-	DJNZ	J$539F
-J$53D5:	LD	A,C
+	JR	Z,J53D5		; yep, quit
+	DJNZ	J539F
+J53D5:	LD	A,C
 	LD	(BUF+0),A		; number of FM playvoices specified
 	POP	BC
-J.53DA:	CALL	C.589B			; check for ")"
-	JP	NZ,J.6F86		; text follows, error
-J$53E0:	PUSH	HL
+J53DA:	CALL	C589B			; check for ")"
+	JP	NZ,J6F86		; text follows, error
+J53E0:	PUSH	HL
 	LD	HL,BUF+1
 	LD	A,(HL)
 	AND	01H
@@ -1877,33 +1881,33 @@ J$53E0:	PUSH	HL
 	LD	A,(BUF+0)
 	LD	B,A			; number of FM playvoices
 	OR	A
-	JR	Z,J$53FA		; zero,
+	JR	Z,J53FA		; zero,
 	XOR	A
-J$53F6:	ADD	A,(HL)			; number of channels used
+J53F6:	ADD	A,(HL)			; number of channels used
 	INC	HL
-	DJNZ	J$53F6
-J$53FA:	ADD	A,D
+	DJNZ	J53F6
+J53FA:	ADD	A,D
 	CP	10			; only 9 channels available
-	JR	NC,J.53C6		; to much, error
+	JR	NC,J53C6		; to much, error
 	LD	A,0FFH
 	LD	B,9			; 9 voices
 	LD	HL,I.FAD7
-J$5406:	LD	(HL),A
+J5406:	LD	(HL),A
 	INC	HL
-	DJNZ	J$5406			; no MIDI notes active on all playvoices
+	DJNZ	J5406			; no MIDI notes active on all playvoices
 	LD	A,1			; MIDI channel 1
 	LD	B,9			; 9 voices
 	LD	HL,I.FAC4
-J$5411:	LD	(HL),A
+J5411:	LD	(HL),A
 	INC	A
 	INC	HL
-	DJNZ	J$5411			; initialize MIDI channel per playvoice
+	DJNZ	J5411			; initialize MIDI channel per playvoice
 	LD	A,40H			; MIDI velocity 64
 	LD	B,5
 	LD	HL,I$FAD2
-J$541D:	LD	(HL),A
+J541D:	LD	(HL),A
 	INC	HL
-	DJNZ	J$541D
+	DJNZ	J541D
 	LD	A,12
 	LD	(D.FAE1),A		; MIDI base notenumber
 	LD	A,0
@@ -1913,10 +1917,10 @@ J$541D:	LD	(HL),A
 	LD	(D.FAE4),A
 	LD	A,120
 	LD	(D.FAE6),A		; midi clock
-	CALL	C$6FF2			; close all i/o channels
+	CALL	C6FF2			; close all i/o channels
 	LD	HL,(HIMEM)
-	CALL	C.50C6			; is MSX MUSIC initialized ?
-	JR	NZ,J.5459		; yep,
+	CALL	C50C6			; is MSX MUSIC initialized ?
+	JR	NZ,J5459		; yep,
 	LD	DE,807
 	AND	A
 	SBC	HL,DE
@@ -1924,15 +1928,15 @@ J$541D:	LD	(HL),A
 	LD	(D.F97D),HL		; start MSX-MUSIC workarea
 	LD	A,(H.PHYD+0)
 	CP	0C9H			; disksystem ?
-	JR	Z,J.5459
-	LD	(D$F349),HL		; yep, adjust
-J.5459:	POP	DE
+	JR	Z,J5459
+	LD	(DF349),HL		; yep, adjust
+J5459:	POP	DE
 	LD	SP,HL
 	PUSH	DE
-	CALL	C$54B1
+	CALL	C54B1
 	LD	HL,(CURLIN)
 	LD	(OLDLIN),HL
-	LD	HL,I$5496
+	LD	HL,I5496
 	LD	DE,HOLD8
 	LD	BC,27
 	LDIR				; basic program in HOLD8
@@ -1951,9 +1955,9 @@ J.5459:	POP	DE
 	LD	(BUF+0),HL
 	LD	(HL),A
 	LD	HL,HOLD8
-	JP	J$6FEC
+	JP	J6FEC
 
-I$5496:	DEFB	":"
+I5496:	DEFB	":"
 	DEFB	0CDH,0B7H,0EFH,00FH,0,":"		; MAXFILES=0:
 	DEFB	098H,00CH
 	DEFW	OLDTXT+0
@@ -1970,7 +1974,7 @@ I$5496:	DEFB	":"
 ;	     Outputs ________________________
 
 
-C$54B1:	DI
+C54B1:	DI
 	LD	HL,BUF
 	LD	A,(HL)
 	LD	(D.F984),A		; number of FM playvoices
@@ -1987,50 +1991,50 @@ C$54B1:	DI
 	LD	A,(HL)			; keyboard parameter, always 0
 	LD	HL,0
 	OR	A
-J$54CD:	JR	Z,J$54D7
+J54CD:	JR	Z,J54D7
 	SCF
 	RR	H
 	RR	L
 	DEC	A
-	JR	J$54CD			; so this is never executed (left over from MSX-AUDIO)
-J$54D7:	ADD	HL,HL
+	JR	J54CD			; so this is never executed (left over from MSX-AUDIO)
+J54D7:	ADD	HL,HL
 	RL	A
 	LD	L,H
 	LD	H,A			; always 0
 	LD	A,B
 	LD	(D.F98E),A		; drum mode
 	AND	01H
-	JR	Z,J$54F0		; no drums
+	JR	Z,J54F0		; no drums
 	SRL	H
 	RR	L
 	SRL	H
 	RR	L
 	SRL	H
 	RR	L
-J$54F0:	EX	DE,HL
+J54F0:	EX	DE,HL
 	PUSH	DE
-	CALL	C$6AD0
-	CALL	C.6B30
-	CALL	C$507F			; initialize hooks
+	CALL	C6AD0
+	CALL	C6B30
+	CALL	C507F			; initialize hooks
 	POP	DE
-	CALL	C$5836
+	CALL	C5836
 	PUSH	HL
 	PUSH	AF
 	PUSH	BC
-	CALL	C$58A0			; initialize MIDI hardware
+	CALL	C58A0			; initialize MIDI hardware
 	POP	BC
 	POP	AF
 	POP	HL
-	JP	C.6B98
+	JP	C6B98
 
 ;	  Subroutine CALL BGM
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$550B:	CALL	C.5317
+C550B:	CALL	C5317
 	CP	2			; 0 or 1 ?
-	JP	NC,C.6F89		; nope, illegal function call
+	JP	NC,C6F89		; nope, illegal function call
 	DEC	A
 	LD	(D.F998),A		; background music status
 	RET
@@ -2041,22 +2045,22 @@ C$550B:	CALL	C.5317
 ;	     Outputs ________________________
 
 
-C.5518:	CALL	C.5896			; check for "("
-	CALL	C.6FDA
+C5518:	CALL	C5896			; check for "("
+	CALL	C6FDA
 	LD	A,(HL)
 	CP	")"
 	PUSH	DE
-	JR	Z,J$552A
-	CALL	C.5891			; check for ","
-	CALL	C.6FDA
-J$552A:	CALL	C.589B			; check for ")"
+	JR	Z,J552A
+	CALL	C5891			; check for ","
+	CALL	C6FDA
+J552A:	CALL	C589B			; check for ")"
 	POP	BC
 	LD	A,E
 	RET
 
 ;	  Unused code
 
-?.5530:	LD	A,D
+?5530:	LD	A,D
 	AND	A
 	SCF
 	RET	NZ
@@ -2069,7 +2073,7 @@ J$552A:	CALL	C.589B			; check for ")"
 ;	     Inputs  HL = start of table, A = offset
 ;	     Outputs HL = entry
 
-C.5539:	ADD	A,L
+C5539:	ADD	A,L
 	LD	L,A
 	RET	NC
 	INC	H
@@ -2080,10 +2084,10 @@ C.5539:	ADD	A,L
 ;	     Outputs ________________________
 
 
-C$553E:	CALL	C.559A
-	JP	NZ,J.6F86
+C553E:	CALL	C559A
+	JP	NZ,J6F86
 	PUSH	HL
-	CALL	C.6BCF			; stop background music
+	CALL	C6BCF			; stop background music
 	POP	HL
 	OR	A
 	RET
@@ -2093,27 +2097,27 @@ C$553E:	CALL	C.559A
 ;	     Outputs ________________________
 
 
-C$554B:	CALL	C.5896			; check for "("
-	CALL	C.6FE6			; evaluate byte operand
+C554B:	CALL	C5896			; check for "("
+	CALL	C6FE6			; evaluate byte operand
 	PUSH	DE
-	CALL	C.5891			; check for ","
-	CALL	C.6FE6			; evaluate byte operand
+	CALL	C5891			; check for ","
+	CALL	C6FE6			; evaluate byte operand
 	PUSH	DE
 	LD	A,(HL)
 	CP	")"
 	LD	E,0
-	JR	Z,J$5566
-	CALL	C.5891			; check for ","
-	CALL	C.6FE6			; evaluate byte operand
-J$5566:	CALL	C.589B			; check for ")"
+	JR	Z,J5566
+	CALL	C5891			; check for ","
+	CALL	C6FE6			; evaluate byte operand
+J5566:	CALL	C589B			; check for ")"
 	LD	A,E
 	OR	A
-	JP	NZ,C.6F89		; illegal function call
+	JP	NZ,C6F89		; illegal function call
 	POP	DE
 	POP	BC
 	LD	B,E
-	CALL	C.75DA			; write OPLL register with validation
-	JP	C,C.6F89		; invalid register, illegal function call
+	CALL	C75DA			; write OPLL register with validation
+	JP	C,C6F89		; invalid register, illegal function call
 	RET
 
 
@@ -2122,14 +2126,14 @@ J$5566:	CALL	C.589B			; check for ")"
 ;	     Outputs ________________________
 
 
-C$5578:	LD	A,1
+C5578:	LD	A,1
 	LD	(SUBFLG),A
-	CALL	C.6FB4
-	JP	NZ,C.6F89		; illegal function call
+	CALL	C6FB4
+	JP	NZ,C6F89		; illegal function call
 	LD	(SUBFLG),A
 	LD	A,(VALTYP)
 	CP	3			; string ?
-	JP	Z,C.6F89		; yep, illegal function call
+	JP	Z,C6F89		; yep, illegal function call
 	EX	DE,HL
 	ADD	HL,BC
 	DEC	HL
@@ -2148,12 +2152,12 @@ C$5578:	LD	A,1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.559A:	DEC	HL
-	JP	C.6FCE
+C559A:	DEC	HL
+	JP	C6FCE
 ;	-----------------
-J$559E:	CALL	C$55A6
+J559E:	CALL	C55A6
 	POP	HL
-	CALL	C.589B			; check for ")"
+	CALL	C589B			; check for ")"
 	RET
 ;	-----------------
 
@@ -2161,32 +2165,32 @@ J$559E:	CALL	C$55A6
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$55A6:	LD	(DAC+2),HL
+C55A6:	LD	(DAC+2),HL
 	LD	HL,VALTYP
 	LD	A,(HL)
 	CP	02H	; 2 
-	JR	Z,J$55D2
+	JR	Z,J55D2
 	CP	04H	; 4 
-	JR	Z,J$55C4
+	JR	Z,J55C4
 	CP	08H	; 8 
-	JP	NZ,J.6F8C
+	JP	NZ,J6F8C
 	LD	(HL),02H	; 2 
 	PUSH	DE
-	CALL	C.6FBA
+	CALL	C6FBA
 	LD	C,08H	; 8 
-	JR	J$55CC
+	JR	J55CC
 ;	-----------------
-J$55C4:	LD	(HL),02H	; 2 
+J55C4:	LD	(HL),02H	; 2 
 	PUSH	DE
-	CALL	C.6FBA
+	CALL	C6FBA
 	LD	C,04H	; 4 
-J$55CC:	POP	DE
+J55CC:	POP	DE
 	LD	HL,DAC
-	JR	J$55D7
+	JR	J55D7
 ;	-----------------
-J$55D2:	LD	HL,DAC+2
+J55D2:	LD	HL,DAC+2
 	LD	C,2
-J$55D7:	LD	B,0
+J55D7:	LD	B,0
 	LDIR
 	RET
 
@@ -2195,11 +2199,11 @@ J$55D7:	LD	B,0
 ;	     Outputs ________________________
 
 
-C$55DC:	CALL	C.5518
+C55DC:	CALL	C5518
 	PUSH	HL
-	CALL	C$7375			; set pitch
+	CALL	C7375			; set pitch
 	POP	HL
-	JP	C,C.6F89		; illegal function call
+	JP	C,C6F89		; illegal function call
 	RET
 
 ;	  Subroutine CALL TRANSPOSE
@@ -2207,11 +2211,11 @@ C$55DC:	CALL	C.5518
 ;	     Outputs ________________________
 
 
-C$55E8:	CALL	C.5518
+C55E8:	CALL	C5518
 	PUSH	HL
-	CALL	C$73FF			; set transpose
+	CALL	C73FF			; set transpose
 	POP	HL
-	JP	C,C.6F89		; illegal function call
+	JP	C,C6F89		; illegal function call
 	RET
 
 ;	  Subroutine CALL MDR
@@ -2219,30 +2223,30 @@ C$55E8:	CALL	C.5518
 ;	     Outputs ________________________
 
 
-C$55F4:	CALL	C.5896			; check for "("
+C55F4:	CALL	C5896			; check for "("
 	PUSH	HL
 	LD	B,0
 	LD	HL,I$FACD
 	EX	(SP),HL
-J$55FE:	PUSH	BC
-	CALL	C.6FE6			; evaluate byte operand
+J55FE:	PUSH	BC
+	CALL	C6FE6			; evaluate byte operand
 	POP	BC
 	INC	B
 	CP	80H			; 1-126 ?
-	JP	NC,C.6F89		; nope, illegal function call
+	JP	NC,C6F89		; nope, illegal function call
 	EX	(SP),HL
 	LD	(HL),A
 	INC	HL
 	EX	(SP),HL
 	LD	A,B
 	CP	05H	; 5 
-	JR	Z,J$5619
+	JR	Z,J5619
 	PUSH	BC
-	CALL	C.5891			; check for ","
+	CALL	C5891			; check for ","
 	POP	BC
-	JR	J$55FE
+	JR	J55FE
 ;	-----------------
-J$5619:	CALL	C.589B			; check for ")"
+J5619:	CALL	C589B			; check for ")"
 	POP	AF
 	RET
 
@@ -2251,79 +2255,79 @@ J$5619:	CALL	C.589B			; check for ")"
 ;	     Outputs ________________________
 
 
-C$561E:	LD	DE,0186H
-	JR	J$5626
+C561E:	LD	DE,0186H
+	JR	J5626
 
 ;	  Subroutine CALL PCM REC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5623:	LD	DE,0189H
-J$5626:	LD	(BUF+0),DE
+C5623:	LD	DE,0189H
+J5626:	LD	(BUF+0),DE
 	XOR	A
 	LD	(BUF+4),A
 	LD	(BUF+5),A
-	CALL	C.5896			; check for "("
+	CALL	C5896			; check for "("
 	LD	A,(HL)
 	CP	"@"
-	JR	Z,J$566F
-	CALL	C.59EC
-	CALL	C.5891			; check for ","
+	JR	Z,J566F
+	CALL	C59EC
+	CALL	C5891			; check for ","
 	LD	A,(HL)
 	CP	","
-	JR	Z,J$5652
+	JR	Z,J5652
 	PUSH	DE
 	PUSH	BC
-	CALL	C.6FDA
+	CALL	C6FDA
 	POP	BC
 	EX	(SP),HL
 	OR	A
 	SBC	HL,DE
-	JP	C,C.6F89		; illegal function call
+	JP	C,C6F89		; illegal function call
 	POP	HL
-J$5652:	PUSH	BC
+J5652:	PUSH	BC
 	PUSH	DE
-	CALL	C.5891			; check for ","
-	CALL	C.6FE6			; evaluate byte operand
+	CALL	C5891			; check for ","
+	CALL	C6FE6			; evaluate byte operand
 	PUSH	DE
-	CALL	C.5786
+	CALL	C5786
 	POP	DE
-	CALL	C.589B			; check for ")"
+	CALL	C589B			; check for ")"
 	LD	A,E
 	CP	4			; 0-3 ?
-	JP	NC,C.6F89		; nope, illegal function call
+	JP	NC,C6F89		; nope, illegal function call
 	LD	(BUF+2),HL
 	POP	BC
 	POP	HL
-	JR	J.56CE
+	JR	J56CE
 
-J$566F:	CALL	C.6FC6
+J566F:	CALL	C6FC6
 	DEFB	"@"			; check for "@"
-	CALL	C.6FD4			; evaluate expression
+	CALL	C6FD4			; evaluate expression
 	PUSH	HL
-	CALL	C.5721
-	CALL	C.571A
+	CALL	C5721
+	CALL	C571A
 	EX	(SP),HL
 	PUSH	BC
-	CALL	C.5891			; check for ","
-	CALL	C.6FD4			; evaluate expression
+	CALL	C5891			; check for ","
+	CALL	C6FD4			; evaluate expression
 	PUSH	HL
-	CALL	C.5721
-	CALL	C.571A
+	CALL	C5721
+	CALL	C571A
 	EX	(SP),HL
 	PUSH	BC
-	CALL	C.5891			; check for ","
-	CALL	C.6FE6			; evaluate byte operand
+	CALL	C5891			; check for ","
+	CALL	C6FE6			; evaluate byte operand
 	PUSH	DE
-	CALL	C.5786
+	CALL	C5786
 	LD	A,(HL)
 	CP	","
-	JR	NZ,J$56F5
-	CALL	C.6FCE			; read "," char
-	CALL	C.6FC6
+	JR	NZ,J56F5
+	CALL	C6FCE			; read "," char
+	CALL	C6FC6
 	DEFB	"S"			; check for "S"
-	CALL	C.589B			; check for ")"
+	CALL	C589B			; check for ")"
 	LD	(BUF+2),HL
 	POP	DE
 	LD	A,E
@@ -2337,7 +2341,7 @@ J$566F:	CALL	C.6FC6
 	OR	A
 	SBC	HL,DE
 	SBC	A,C
-	JR	C,J.5717
+	JR	C,J5717
 	PUSH	DE
 	LD	DE,1
 	ADD	HL,DE
@@ -2351,24 +2355,24 @@ J$566F:	CALL	C.6FC6
 	LD	E,A
 	EX	AF,AF'
 	CP	04H	; 4 
-	JR	NC,J.5717
+	JR	NC,J5717
 	SET	7,A
-J.56CE:	PUSH	BC
+J56CE:	PUSH	BC
 	LD	BC,(BUF+4)
 	OR	C
 	OR	B
 	POP	BC
 	LD	IY,(BUF+0)
-	CALL	C$56F3			; start bios call
-	JR	NC,J.56EE		; no error
+	CALL	C56F3			; start bios call
+	JR	NC,J56EE		; no error
 	DEC	A
-	JP	Z,C.6F89		; illegal function call
+	JP	Z,C6F89		; illegal function call
 	LD	A,(BASROM)
 	OR	A
-	JR	NZ,J.56EE
+	JR	NZ,J56EE
 	LD	A,3
 	LD	(INTFLG),A
-J.56EE:	OR	A
+J56EE:	OR	A
 	LD	HL,(BUF+2)
 	RET
 
@@ -2378,9 +2382,9 @@ J.56EE:	OR	A
 ;	     Outputs ________________________
 
 
-C$56F3:	JP	(IY)
+C56F3:	JP	(IY)
 ;	-----------------
-J$56F5:	CALL	C.589B			; check for ")"
+J56F5:	CALL	C589B			; check for ")"
 	LD	(BUF+2),HL
 	POP	DE
 	LD	A,E
@@ -2389,32 +2393,32 @@ J$56F5:	CALL	C.589B			; check for ")"
 	POP	BC
 	LD	A,C
 	OR	B
-	JR	NZ,J.5717
+	JR	NZ,J5717
 	POP	DE
 	POP	BC
 	LD	A,C
 	OR	B
-	JR	NZ,J.5717
+	JR	NZ,J5717
 	SBC	HL,DE
-	JR	C,J.5717
+	JR	C,J5717
 	INC	HL
 	EX	DE,HL
 	LD	C,E
 	LD	B,D
 	EX	AF,AF'
 	CP	04H	; 4 
-	JR	C,J.56CE
-J.5717:	JP	C.6F89			; illegal function call
+	JR	C,J56CE
+J5717:	JP	C6F89			; illegal function call
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.571A:	LD	A,L
+C571A:	LD	A,L
 	AND	0FEH
 	OR	H
-	JR	NZ,J.5717
+	JR	NZ,J5717
 	RET
 
 
@@ -2422,26 +2426,26 @@ C.571A:	LD	A,L
 ;	     Inputs  ________________________
 ;	     Outputs HLBC = result
 
-C.5721:	CALL	C$70E9			; type in DAC
+C5721:	CALL	C70E9			; type in DAC
 	LD	BC,(DAC+2)
 	LD	HL,0
 	RET	M			; integer, quit
-	JP	Z,J.6F8C		; string,
+	JP	Z,J6F8C		; string,
 	LD	HL,DAC
 	LD	DE,I.FABC
 	LD	BC,8
 	LDIR				; save DAC
-	LD	HL,I$577E
+	LD	HL,I577E
 	LD	DE,ARG
 	LD	C,8
 	LDIR				; ARG = 65536
 	CALL	M289F			; divide
 	AND	A
 	CALL	M30D1			; convert DBL to INT
-	CALL	C.6FE0			; convert to adres
+	CALL	C6FE0			; convert to adres
 	PUSH	DE
 	EX	DE,HL
-	CALL	C$6FC0			; convert to SGN
+	CALL	C6FC0			; convert to SGN
 	CALL	M3042			; convert to DBL
 	LD	BC,06545H
 	LD	DE,06053H		; 65536
@@ -2455,20 +2459,20 @@ C.5721:	CALL	C$70E9			; type in DAC
 	LD	C,8
 	LDIR				; DAC = orginal
 	CALL	M268C			; subtract
-	CALL	C.6FE0			; convert to adres
+	CALL	C6FE0			; convert to adres
 	LD	C,E
 	LD	B,D
 	POP	HL
 	RET
 ;	65536
-I$577E:	DEFB 045H,065H,053H,060H,0,0,0,0
+I577E:	DEFB 045H,065H,053H,060H,0,0,0,0
 
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.5786:	PUSH	HL
+C5786:	PUSH	HL
 	LD	BC,0189H
 	LD	HL,(BUF+0)
 	OR	A
@@ -2478,25 +2482,25 @@ C.5786:	PUSH	HL
 	LD	A,(HL)
 	CP	","
 	RET	NZ
-	CALL	C.6FCE			; read "," char
+	CALL	C6FCE			; read "," char
 	CP	","
-	JR	Z,J$57AB
-	CALL	C.6FE6			; evaluate byte operand
+	JR	Z,J57AB
+	CALL	C6FE6			; evaluate byte operand
 	LD	A,E
 	CP	80H
-	JP	NC,C.6F89		; illegal function call
+	JP	NC,C6F89		; illegal function call
 	AND	78H
 	LD	(BUF+4),A
-J$57AB:	CALL	C.559A
+J57AB:	CALL	C559A
 	CP	","
 	RET	NZ
-	CALL	C.6FCE			; read "," char
+	CALL	C6FCE			; read "," char
 	CP	","
 	RET	Z
-	CALL	C.6FE6			; evaluate byte operand
+	CALL	C6FE6			; evaluate byte operand
 	LD	A,E
 	CP	02H
-	JP	NC,C.6F89		; illegal function call
+	JP	NC,C6F89		; illegal function call
 	ADD	A,A
 	ADD	A,A
 	LD	(BUF+5),A
@@ -2507,11 +2511,11 @@ J$57AB:	CALL	C.559A
 ;	     Outputs ________________________
 
 
-C$57C6:	CALL	C.5896			; check for "("
-	CALL	C.6FDA
-	CALL	C.589B			; check for ")"
+C57C6:	CALL	C5896			; check for "("
+	CALL	C6FDA
+	CALL	C589B			; check for ")"
 	PUSH	HL
-	CALL	C$57D6
+	CALL	C57D6
 	POP	HL
 	OR	A
 	RET
@@ -2521,34 +2525,34 @@ C$57C6:	CALL	C.5896			; check for "("
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$57D6:	EX	DE,HL
+C57D6:	EX	DE,HL
 	LD	DE,0080H
-J$57DA:	OR	A
+J57DA:	OR	A
 	SBC	HL,DE
-	JR	C,J$57EB
+	JR	C,J57EB
 	LD	C,E
-	CALL	C.763C			; wait
+	CALL	C763C			; wait
 	LD	A,(INTFLG)
 	CP	03H			; CTRL-STOP pressed ?
 	RET	Z
-	JR	J$57DA			; next
+	JR	J57DA			; next
 
-J$57EB:	ADD	HL,DE
+J57EB:	ADD	HL,DE
 	LD	A,L
 	OR	A
 	RET	Z			; all done, quit
 	LD	C,L
-	JP	C.763C			; wait and then quit
+	JP	C763C			; wait and then quit
 
 ;	  Subroutine CALL TEMPER
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$57F3:	CALL	C.5317
+C57F3:	CALL	C5317
 	LD	C,A
-	CALL	C.74C4
-	JP	C,C.6F89		; illegal function call
+	CALL	C74C4
+	JP	C,C6F89		; illegal function call
 	RET
 
 
@@ -2557,11 +2561,11 @@ C$57F3:	CALL	C.5317
 ;	     Outputs ________________________
 
 
-C.57FE:	PUSH	BC
+C57FE:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	LD	B,01H	; 1 
-	CALL	C$580A
+	CALL	C580A
 	POP	HL
 	POP	DE
 	POP	BC
@@ -2572,8 +2576,8 @@ C.57FE:	PUSH	BC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$580A:	IN	A,(0A8H)
-	CALL	C.582C
+C580A:	IN	A,(0A8H)
+	CALL	C582C
 	AND	03H	; 3 
 	LD	E,A
 	LD	D,0
@@ -2591,7 +2595,7 @@ C$580A:	IN	A,(0A8H)
 	LD	A,(HL)
 	RLCA
 	RLCA
-	CALL	C.582C
+	CALL	C582C
 	AND	0CH	; 12 
 	OR	E
 	RET
@@ -2601,13 +2605,13 @@ C$580A:	IN	A,(0A8H)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.582C:	INC	B
+C582C:	INC	B
 	DEC	B
 	RET	Z
 	PUSH	BC
-J$5830:	RRCA
+J5830:	RRCA
 	RRCA
-	DJNZ	J$5830
+	DJNZ	J5830
 	POP	BC
 	RET
 
@@ -2617,10 +2621,10 @@ J$5830:	RRCA
 ;	     Outputs ________________________
 
 
-C$5836:	CALL	C.7586			; reset OPLL
+C5836:	CALL	C7586			; reset OPLL
 	LD	IX,I.FA27
 	LD	BC,0900H
-J$5840:	LD	A,C
+J5840:	LD	A,C
 	ADD	A,10H
 	LD	(IX+0),A		; F-number register
 	LD	(IX+1),4
@@ -2632,25 +2636,25 @@ J$5840:	LD	A,C
 	LD	DE,16
 	ADD	IX,DE
 	INC	C
-J$5864:	DJNZ	J$5840
+J5864:	DJNZ	J5840
 	LD	A,(D.F98E)
 	AND	01H
-	CALL	NZ,C$75AB		; drum mode, setup OPLL for rhythm
+	CALL	NZ,C75AB		; drum mode, setup OPLL for rhythm
 	LD	C,9
-	CALL	C.74C4
+	CALL	C74C4
 	LD	IX,I.FA27
 	LD	A,(D.F98E)
 	AND	01H
 	LD	B,9			; normal mode, 9 channels
-	JR	Z,J.5882
+	JR	Z,J5882
 	LD	B,6			; drum mode, 6 channels
-J.5882:	PUSH	BC
+J5882:	PUSH	BC
 	LD	C,0			; programmable instrument
-	CALL	C.7106			; set instrument OPLL
+	CALL	C7106			; set instrument OPLL
 	POP	BC
 	LD	DE,16
 	ADD	IX,DE
-	DJNZ	J.5882			; next instrument
+	DJNZ	J5882			; next instrument
 	RET
 
 ;	  Subroutine check for ","
@@ -2658,7 +2662,7 @@ J.5882:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.5891:	CALL	C.6FC6
+C5891:	CALL	C6FC6
 	DEFB	","			; check for ","
 	RET
 
@@ -2667,7 +2671,7 @@ C.5891:	CALL	C.6FC6
 ;	     Outputs ________________________
 
 
-C.5896:	CALL	C.6FC6
+C5896:	CALL	C6FC6
 	DEFB	"("
 	RET
 
@@ -2676,7 +2680,7 @@ C.5896:	CALL	C.6FC6
 ;	     Outputs ________________________
 
 
-C.589B:	CALL	C.6FC6
+C589B:	CALL	C6FC6
 	DEFB	")"
 	RET
 
@@ -2685,7 +2689,7 @@ C.589B:	CALL	C.6FC6
 ;	     Outputs ________________________
 
 
-C$58A0:	LD	A,16H
+C58A0:	LD	A,16H
 	OUT	(0EFH),A		; counter 0, LSB, mode 3, binary
 	LD	A,8
 	OUT	(0ECH),A		; initialize counter 0 on 500 KHz (MIDI timer interrupts every 5 ms)
@@ -2698,20 +2702,20 @@ C$58A0:	LD	A,16H
 	OUT	(0EEH),A		; initialize counter 2
 	XOR	A
 	OUT	(0E9H),A
-	CALL	C.58DB			; wait for 8251
+	CALL	C58DB			; wait for 8251
 	OUT	(0E9H),A
-	CALL	C.58DB			; wait for 8251
+	CALL	C58DB			; wait for 8251
 	OUT	(0E9H),A
-	CALL	C.58DB			; wait for 8251
+	CALL	C58DB			; wait for 8251
 	LD	A,40H
 	OUT	(0E9H),A		; initialize 8251
-	CALL	C.58DB			; wait for 8251
+	CALL	C58DB			; wait for 8251
 	LD	A,4EH
 	OUT	(0E9H),A		; 1 stopbit, no parity, 8 bit, 16x
-	CALL	C.58DB			; wait for 8251
+	CALL	C58DB			; wait for 8251
 	LD	A,03H
 	OUT	(0E9H),A		; no reset, MIDI IN interrupt off, MIDI in off, MIDI timer interrupt on, MIDI out on
-	CALL	C.58DB			; wait for 8251
+	CALL	C58DB			; wait for 8251
 	RET
 
 ;	  Subroutine wait for 8251
@@ -2719,15 +2723,15 @@ C$58A0:	LD	A,16H
 ;	     Outputs ________________________
 
 
-C.58DB:	PUSH	AF
+C58DB:	PUSH	AF
 	PUSH	BC
 	LD	B,1
 	IN	A,(0E6H)
 	LD	C,A
-J$58E2:	IN	A,(0E6H)
+J58E2:	IN	A,(0E6H)
 	SUB	C
 	CP	B
-	JR	C,J$58E2
+	JR	C,J58E2
 	POP	BC
 	POP	AF
 	RET
@@ -2737,13 +2741,13 @@ J$58E2:	IN	A,(0E6H)
 ;	     Outputs ________________________
 
 
-C$58EB:	CALL	C.6FC6
+C58EB:	CALL	C6FC6
 	DEFB	"("			; check for "("
 	LD	DE,BUF+0
 	LD	B,9
-J$58F4:	LD	A,(HL)
+J58F4:	LD	A,(HL)
 	CP	","			; nothing specified ?
-	JR	Z,J$5918		; yep, skip
+	JR	Z,J5918		; yep, skip
 	PUSH	BC
 	LD	A,9
 	SUB	B
@@ -2751,11 +2755,11 @@ J$58F4:	LD	A,(HL)
 	INC	DE
 	PUSH	DE
 	LD	A,(HL)
-J$5901:	CALL	C.59C2
+J5901:	CALL	C59C2
 	LD	A,0
-	JR	C,J$5909		; instrument, use type 000H
+	JR	C,J5909		; instrument, use type 000H
 	CPL				; variable, use type 0FFH
-J$5909:	EX	(SP),HL
+J5909:	EX	(SP),HL
 	LD	(HL),A			; type
 	INC	HL
 	LD	(HL),E
@@ -2767,18 +2771,18 @@ J$5909:	EX	(SP),HL
 	POP	BC
 	LD	A,(HL)
 	CP	")"			; end of list ?
-	JR	Z,J$591E		; yep, finish
+	JR	Z,J591E		; yep, finish
 
-J$5918:	CALL	C.6FC6
+J5918:	CALL	C6FC6
 	DEFB	","			; check for ","
-	DJNZ	J$58F4			; next channel
-J$591E:	CALL	C.6FC6
+	DJNZ	J58F4			; next channel
+J591E:	CALL	C6FC6
 	DEFB	")"			; check for ")"
-	JP	NZ,J.6F86		; text after statement, illegal function call
+	JP	NZ,J6F86		; text after statement, illegal function call
 	LD	A,0FFH
 	LD	(DE),A			; mark end of table
-	CALL	C$592F
-	JP	C,C.6F89		; illegal function call
+	CALL	C592F
+	JP	C,C6F89		; illegal function call
 	RET
 
 
@@ -2787,39 +2791,39 @@ J$591E:	CALL	C.6FC6
 ;	     Outputs ________________________
 
 
-C$592F:	PUSH	HL
+C592F:	PUSH	HL
 	LD	HL,BUF
-J$5933:	LD	A,(HL)
+J5933:	LD	A,(HL)
 	CP	0FFH			; end of table ?
-	JR	Z,J$595F		; yep, quit with no error
+	JR	Z,J595F		; yep, quit with no error
 	INC	HL
-	CALL	C$596A			; get pointer of channel
+	CALL	C596A			; get pointer of channel
 	LD	A,(HL)
 	INC	HL
 	OR	A			; instument ?
-	JR	Z,J.594D		; yep,
+	JR	Z,J594D		; yep,
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)			; adres of variable
 	PUSH	HL
-	CALL	C$70FF
-	CALL	C.5962
-	JR	J$595B			; next
+	CALL	C70FF
+	CALL	C5962
+	JR	J595B			; next
 
-J.594D:	LD	C,(HL)
+J594D:	LD	C,(HL)
 	LD	A,C
 	CP	64
 	CCF				; 0-63 ?
 	RET	C			; nope, quit with error
 	INC	HL
 	PUSH	HL
-	CALL	C.7106			; set instrument OPLL
-	CALL	C.5962
-J$595B:	POP	HL
+	CALL	C7106			; set instrument OPLL
+	CALL	C5962
+J595B:	POP	HL
 	INC	HL
-	JR	J$5933			; next
+	JR	J5933			; next
 
-J$595F:	POP	HL
+J595F:	POP	HL
 	OR	A
 	RET
 
@@ -2829,7 +2833,7 @@ J$595F:	POP	HL
 ;	     Outputs ________________________
 
 
-C.5962:	PUSH	BC
+C5962:	PUSH	BC
 	LD	BC,16
 	ADD	IX,BC
 	POP	BC
@@ -2841,14 +2845,14 @@ C.5962:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C$596A:	LD	IX,I.FA27
+C596A:	LD	IX,I.FA27
 	OR	A
 	RET	Z
 	PUSH	BC
 	LD	BC,16
-J$5974:	ADD	IX,BC
+J5974:	ADD	IX,BC
 	DEC	A
-	JR	NZ,J$5974
+	JR	NZ,J5974
 	POP	BC
 	RET
 
@@ -2857,36 +2861,36 @@ J$5974:	ADD	IX,BC
 ;	     Outputs ________________________
 
 
-C$597B:	CALL	C.6FC6
+C597B:	CALL	C6FC6
 	DEFB	"("			; check for "("
-	CALL	C.59C2
+	CALL	C59C2
 	CCF
 	SBC	A,A
 	LD	(BUF+0),A		; variable flag
 	LD	(BUF+1),DE
 	LD	(BUF+3),BC
-	CALL	C.6FC6
+	CALL	C6FC6
 	DEFB	","			; check for ","
-	CALL	C.59C2
+	CALL	C59C2
 	CCF
 	SBC	A,A
 	LD	(BUF+5),A
 	LD	(BUF+6),DE
 	LD	(BUF+8),BC
-	JR	NZ,J$59AA
+	JR	NZ,J59AA
 	LD	A,E
 	CP	20H	; " "
-	JR	C,J.59DB
-J$59AA:	CALL	C.6FC6
+	JR	C,J59DB
+J59AA:	CALL	C6FC6
 	DEFB	")"			; check for ")"
-	JP	NZ,J.6F86
+	JP	NZ,J6F86
 	PUSH	HL
 	LD	HL,BUF+0
 	LD	A,(BUF+5)
 	AND	(HL)
-	JR	NZ,J.59DB
-	CALL	C$59F6
-	JR	C,J.59DB
+	JR	NZ,J59DB
+	CALL	C59F6
+	JR	C,J59DB
 	POP	HL
 	RET
 
@@ -2895,26 +2899,26 @@ J$59AA:	CALL	C.6FC6
 ;	     Inputs  ________________________
 ;	     Outputs Cx reset if variable, Cx set if instrument, DE = value/adres, BC = size
 
-C.59C2:	CP	"@"			; instrument prefix ?
-	JR	Z,J$59D2		; yep, get instrumentnumber
+C59C2:	CP	"@"			; instrument prefix ?
+	JR	Z,J59D2		; yep, get instrumentnumber
 	CP	0F3H			; * ?
-	JR	NZ,J$59DE		; nope, get var
-	CALL	C.6FCE			; read char
+	JR	NZ,J59DE		; nope, get var
+	CALL	C6FCE			; read char
 	LD	DE,00FFH		; 255
 	SCF
 	RET
 
-J$59D2:	CALL	C.6FCE			; read "@" char
-	CALL	C.6FE6			; evaluate byte operand
+J59D2:	CALL	C6FCE			; read "@" char
+	CALL	C6FE6			; evaluate byte operand
 	CP	64			; 0-63 ?
 	RET	C			; yep, quit
-J.59DB:	JP	C.6F89			; illegal function call
+J59DB:	JP	C6F89			; illegal function call
 
-J$59DE:	CALL	C.59EC
+J59DE:	CALL	C59EC
 	LD	A,E
 	AND	0E0H
 	OR	D			; size at least 16 bytes ?
-	JR	Z,J.59DB		; nope, illegal function call
+	JR	Z,J59DB		; nope, illegal function call
 	PUSH	DE
 	LD	E,C
 	LD	D,B
@@ -2927,7 +2931,7 @@ J$59DE:	CALL	C.59EC
 ;	     Outputs ________________________
 
 
-C.59EC:	CALL	C$5578
+C59EC:	CALL	C5578
 	EX	DE,HL
 	OR	A
 	SBC	HL,BC
@@ -2941,10 +2945,10 @@ C.59EC:	CALL	C$5578
 ;	     Outputs ________________________
 
 
-C$59F6:	LD	A,(BUF+5)
+C59F6:	LD	A,(BUF+5)
 	LD	HL,(BUF+6)
 	OR	A
-	JR	NZ,J$5A0A
+	JR	NZ,J5A0A
 	LD	A,L
 	INC	A
 	SCF
@@ -2953,19 +2957,19 @@ C$59F6:	LD	A,(BUF+5)
 	SCF
 	RET	NZ
 	LD	HL,I.F9F9
-J$5A0A:	PUSH	HL
+J5A0A:	PUSH	HL
 	LD	A,(BUF+0)
 	LD	HL,(BUF+1)
 	OR	A
-	JR	NZ,J$5A22
+	JR	NZ,J5A22
 	LD	A,L
 	CP	0FFH
-	JR	Z,J.5A2C
+	JR	Z,J5A2C
 	LD	C,A
-	CALL	C.7134			; check if hardware instrument
-	JR	Z,J.5A2C		; hardware, nothing to program
-	CALL	C.5A2F			; get pointer to software instrument data
-J$5A22:	POP	DE
+	CALL	C7134			; check if hardware instrument
+	JR	Z,J5A2C		; hardware, nothing to program
+	CALL	C5A2F			; get pointer to software instrument data
+J5A22:	POP	DE
 	LD	BC,32
 	DI
 	LDIR
@@ -2973,7 +2977,7 @@ J$5A22:	POP	DE
 	EI
 	RET
 ;	-----------------
-J.5A2C:	POP	HL
+J5A2C:	POP	HL
 	SCF
 	RET
 
@@ -2982,7 +2986,7 @@ J.5A2C:	POP	HL
 ;	     Outputs ________________________
 
 
-C.5A2F:	LD	A,L
+C5A2F:	LD	A,L
 	CP	63			; programable instrument ?
 	LD	HL,I.F9F9
 	RET	Z			; yep, quit
@@ -2993,7 +2997,7 @@ C.5A2F:	LD	A,L
 	ADD	HL,HL
 	ADD	HL,HL
 	ADD	HL,HL
-	LD	DE,I$7645
+	LD	DE,I7645
 	ADD	HL,DE			; predefined MSX-MUSIC instruments
 	RET
 
@@ -3002,18 +3006,18 @@ C.5A2F:	LD	A,L
 ;	     Outputs ________________________
 
 
-C$5A43:	CALL	C.530A
+C5A43:	CALL	C530A
 	LD	A,(D.F991)		; number of playvoices
 	CP	E			; playvoice number valid ?
-	JP	C,C.6F89		; nope,	illegal function call
+	JP	C,C6F89		; nope,	illegal function call
 	LD	A,E
 	PUSH	HL
-	CALL	C$5A5D
+	CALL	C5A5D
 	EX	(SP),HL
-	CALL	C.5891			; check for ","
-	CALL	C.6FB4
+	CALL	C5891			; check for ","
+	CALL	C6FB4
 	EX	(SP),HL
-	JP	J$559E
+	JP	J559E
 
 
 ;	  Subroutine __________________________
@@ -3021,26 +3025,26 @@ C$5A43:	CALL	C.530A
 ;	     Outputs ________________________
 
 
-C$5A5D:	LD	HL,(D.F995)
+C5A5D:	LD	HL,(D.F995)
 	OR	A
-	JR	NZ,J.5A6E
+	JR	NZ,J5A6E
 	LD	A,H
 	AND	1FH
 	OR	L
-	JR	Z,J.5A6B
+	JR	Z,J5A6B
 	LD	A,0FFH
-J.5A6B:	LD	L,A
-J$5A6C:	LD	H,A
+J5A6B:	LD	L,A
+J5A6C:	LD	H,A
 	RET
 
-J.5A6E:	SRL	H
+J5A6E:	SRL	H
 	RR	L
 	DEC	A
-	JR	NZ,J.5A6E
+	JR	NZ,J5A6E
 	SBC	A,A
-	JR	J.5A6B
+	JR	J5A6B
 
-I$5A78:	LD	A,(D.F97C)
+I5A78:	LD	A,(D.F97C)
 	PUSH	AF
 	PUSH	BC
 	PUSH	DE
@@ -3066,23 +3070,23 @@ I$5A78:	LD	A,(D.F97C)
 	EI
 	RET
 
-I$5A9D:	DEFB	" "
+I5A9D:	DEFB	" "
 
 ;	  Subroutine H.PLAY handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5A9E:	CALL	C$512D
-	CALL	C$5AD6			; handle statement
+C5A9E:	CALL	C512D
+	CALL	C5AD6			; handle statement
 	PUSH	HL
 	LD	A,(D.F97C)
 	DI
 	ADD	A,A
 	LD	HL,8			; CALLF with primairy pushes 8 bytes on stack
-	JR	NC,J$5AB1
+	JR	NC,J5AB1
 	LD	L,8+8			; CALLF with expanded pushes 16 bytes on stack
-J$5AB1:	ADD	HL,SP
+J5AB1:	ADD	HL,SP
 	PUSH	HL
 	LD	E,(HL)
 	INC	HL
@@ -3090,7 +3094,7 @@ J$5AB1:	ADD	HL,SP
 	LD	HL,M73E5+3
 	OR	A
 	SBC	HL,DE			; called from the PLAY statement ?
-	JP	NZ,J$6F7D		; nope, error
+	JP	NZ,J6F7D		; nope, error
 	POP	HL
 	DEC	HL
 	LD	D,H
@@ -3100,9 +3104,9 @@ J$5AB1:	ADD	HL,SP
 	LD	A,(D.F97C)
 	ADD	A,A
 	LD	BC,8
-	JR	NC,J$5AD0
+	JR	NC,J5AD0
 	LD	C,8+8
-J$5AD0:	LDDR				; move stack 1 word up
+J5AD0:	LDDR				; move stack 1 word up
 	EI
 	POP	HL			; discharge returnadres
 	POP	HL			; restore basicpointer
@@ -3113,36 +3117,36 @@ J$5AD0:	LDDR				; move stack 1 word up
 ;	     Outputs ________________________
 
 
-C$5AD6:	CP	"#"			; play device specified ?
-	JR	NZ,J.5AF5		; nope, use PSG
-	CALL	C.6FCE			; read "#" char
-	CALL	C.6FE6			; evaluate byte operand
+C5AD6:	CP	"#"			; play device specified ?
+	JR	NZ,J5AF5		; nope, use PSG
+	CALL	C6FCE			; read "#" char
+	CALL	C6FE6			; evaluate byte operand
 	PUSH	AF
-	CALL	C.5891			; check for ","
+	CALL	C5891			; check for ","
 	POP	AF
 	OR	A
-	JR	Z,J.5AF5		; 0, for PSG
+	JR	Z,J5AF5		; 0, for PSG
 	DEC	A
-	JR	Z,J$5AF2		; 1, for MIDI
+	JR	Z,J5AF2		; 1, for MIDI
 	SUB	03H
-	JR	C,J$5B28		; 2-3, for OPLL/PSG
-	JP	C.6F89			; illegal function call
+	JR	C,J5B28		; 2-3, for OPLL/PSG
+	JP	C6F89			; illegal function call
 
-J$5AF2:	INC	A			; set PLAY MIDI flag
-	JR	J$5B29
+J5AF2:	INC	A			; set PLAY MIDI flag
+	JR	J5B29
 
-J.5AF5:	XOR	A
+J5AF5:	XOR	A
 	LD	(D.F97F),A		; reset PLAY MIDI flag
 	PUSH	HL
 	LD	A,(D.F992)
 	OR	A			; no OPLL playvoices initialized ?
-	JR	Z,J$5B1E		; yep, skip
+	JR	Z,J5B1E		; yep, skip
 	LD	B,A
-J$5B01:	PUSH	BC
+J5B01:	PUSH	BC
 	LD	A,B
 	DEC	A
-	CALL	C.7005			; get pointer to stringlength in voicebuffer
-	LD	DE,I$5A9D
+	CALL	C7005			; get pointer to stringlength in voicebuffer
+	LD	DE,I5A9D
 	LD	(HL),1			; stringlength=1
 	INC	HL
 	LD	(HL),E
@@ -3158,68 +3162,68 @@ J$5B01:	PUSH	BC
 	INC	HL
 	LD	(HL),D
 	POP	BC
-	DJNZ	J$5B01			; next OPLL playvoice
-J$5B1E:	POP	HL
+	DJNZ	J5B01			; next OPLL playvoice
+J5B1E:	POP	HL
 	XOR	A
 	LD	(PRSCNT),A		; no strings are completed
 	LD	A,(D.F992)		; start with the first PSG playvoice
-	JR	J$5B30
+	JR	J5B30
 
-J$5B28:	XOR	A			; reset PLAY MIDI flag
-J$5B29:	LD	(D.F97F),A
+J5B28:	XOR	A			; reset PLAY MIDI flag
+J5B29:	LD	(D.F97F),A
 	XOR	A
 	LD	(PRSCNT),A		; no strings are completed
 					; start with playvoice 0
-J$5B30:	PUSH	HL
+J5B30:	PUSH	HL
 	LD	HL,-10
 	ADD	HL,SP
 	LD	(SAVSP),HL
 	POP	HL
 	PUSH	AF
-J$5B3A:	PUSH	HL
-	LD	HL,I$5A78
+J5B3A:	PUSH	HL
+	LD	HL,I5A78
 	LD	DE,BUF+128
-	LD	BC,I$5A9D-I$5A78
+	LD	BC,I5A9D-I5A78
 	LDIR				; install convert DAC to integer routine in BUF
 	POP	HL
-	CALL	C.6FD4			; evaluate expression
+	CALL	C6FD4			; evaluate expression
 	EX	(SP),HL			; save basicpointer, get playvoice
 	PUSH	HL
-	CALL	C.6FF8			; free temporary string
-	CALL	C.7059			; get size and location of string
+	CALL	C6FF8			; free temporary string
+	CALL	C7059			; get size and location of string
 	LD	A,(D.F97F)
 	AND	01H			; PLAY MIDI ?
-	JR	NZ,J.5B71		; yep,
+	JR	NZ,J5B71		; yep,
 	LD	A,(D.F98E)
 	AND	01H			; in drum mode ?
-	JR	Z,J.5B71		; nope,
+	JR	Z,J5B71		; nope,
 	POP	HL
 	PUSH	HL
 	LD	A,H
 	CP	6			; playvoice 0-5 ?
-	JR	C,J.5B71		; yep,
+	JR	C,J5B71		; yep,
 	LD	A,(D.F992)		; number of OPLL playvoices
 	DEC	A
 	DEC	A
 	CP	H
-	JR	C,J.5B71
+	JR	C,J5B71
 	LD	E,0			; empty string for 2nd and 3th last OPLL playvoice (OPLL channel used by rhythm)
-J.5B71:	LD	A,E
+J5B71:	LD	A,E
 	OR	A			; empty string ?
-	JR	NZ,J$5B7A
-	LD	DE,256*(LOW I$5A9D)+1
-	LD	C,HIGH I$5A9D		; yep, use special nothing string
-J$5B7A:	POP	AF
+	JR	NZ,J5B7A
+	LD	DE,256*(LOW I5A9D)+1
+	LD	C,HIGH I5A9D		; yep, use special nothing string
+J5B7A:	POP	AF
 	PUSH	AF			; USELESS CODE
 	POP	AF			; USELESS CODE
 	PUSH	AF
 	LD	(VOICEN),A		; current playvoice
-	CALL	C.63EE			; get pointer to interrupt corrector byte of playvoice
+	CALL	C63EE			; get pointer to interrupt corrector byte of playvoice
 	XOR	A
 	LD	(IX+0),A		; nothing to correct
 	POP	AF			; playvoice
 	PUSH	AF
-	CALL	C.7005			; get pointer to stringlength in voicebuffer
+	CALL	C7005			; get pointer to stringlength in voicebuffer
 	LD	(HL),E			; size of string
 	INC	HL
 	LD	(HL),D
@@ -3240,56 +3244,56 @@ J$5B7A:	POP	AF
 	LD	A,(D.F991)		; number of playvoices
 	DEC	A
 	CP	B			; any playvoices left ?
-	JR	C,J$5BC9		; nope,
+	JR	C,J5BC9		; nope,
 	DEC	HL
-	CALL	C.6FCE			; end of statement ?
-	JR	Z,J.5BB3		; yep, no more playvoices
+	CALL	C6FCE			; end of statement ?
+	JR	Z,J5BB3		; yep, no more playvoices
 	PUSH	BC
-	CALL	C.5891			; check for ","
-	JR	J$5B3A
+	CALL	C5891			; check for ","
+	JR	J5B3A
 
-J.5BB3:	LD	A,B
+J5BB3:	LD	A,B
 	LD	(VOICEN),A		; current playvoice
 	PUSH	BC
 	PUSH	HL
-	CALL	C.5CD0			; update output device status
+	CALL	C5CD0			; update output device status
 	POP	HL
 	POP	BC
-	CALL	C.5CB6			; put end byte in queue
+	CALL	C5CB6			; put end byte in queue
 	INC	B			; next playvoice
 	LD	A,(D.F991)		; number of playvoices
 	DEC	A
 	CP	B			; any playvoices left ?
-	JR	NC,J.5BB3		; yep,
-J$5BC9:	DEC	HL
-	CALL	C.6FCE			; end of statement ?
-	JP	NZ,J.6F86		; nope, error
+	JR	NC,J5BB3		; yep,
+J5BC9:	DEC	HL
+	CALL	C6FCE			; end of statement ?
+	JP	NZ,J6F86		; nope, error
 	PUSH	HL
-J$5BD1:	XOR	A			; start with playvoice 0
-J$5BD2:	PUSH	AF
+J5BD1:	XOR	A			; start with playvoice 0
+J5BD2:	PUSH	AF
 	LD	(VOICEN),A		; current playvoice
 	LD	C,A
 	LD	A,(D.F991)		; number of playvoices
 	SUB	C
 	SUB	4
-	LD	HL,I$5D03		; MCL for PSG
-	JR	C,J.5BF1
-	LD	HL,I$5FFF		; MCL for OPLL
-	JR	NZ,J.5BF1		; not the last OPLL playvoice, FM playvoice
+	LD	HL,I5D03		; MCL for PSG
+	JR	C,J5BF1
+	LD	HL,I5FFF		; MCL for OPLL
+	JR	NZ,J5BF1		; not the last OPLL playvoice, FM playvoice
 	LD	A,(D.F98E)
 	AND	01H			; in drum mode ?
-	JR	Z,J.5BF1		; nope, FM playvoice
-	LD	HL,I$648E		; yep, drum playvoice, use MCL for drums
-J.5BF1:	LD	(MCLTAB),HL
+	JR	Z,J5BF1		; nope, FM playvoice
+	LD	HL,I648E		; yep, drum playvoice, use MCL for drums
+J5BF1:	LD	(MCLTAB),HL
 	LD	A,C
 	LD	B,A
-	CALL	C.5CF6			; less then 8 bytes free in voice queue ?
-	JP	C,J.5C78		; yep, skip to the next voice
+	CALL	C5CF6			; less then 8 bytes free in voice queue ?
+	JP	C,J5C78		; yep, skip to the next voice
 	LD	A,B
-	CALL	C.7005			; get pointer to stringlength in voicebuffer
+	CALL	C7005			; get pointer to stringlength in voicebuffer
 	LD	A,(HL)
 	OR	A			; playstring length 0 ?
-	JP	Z,J.5C78		; yep, skip to the next voice
+	JP	Z,J5C78		; yep, skip to the next voice
 	LD	(MCLLEN),A		; length of playstring
 	INC	HL
 	LD	E,(HL)
@@ -3303,27 +3307,27 @@ J.5BF1:	LD	(MCLTAB),HL
 	INC	HL
 	PUSH	HL
 	LD	L,24H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	PUSH	HL			; top of voicebuffer stack
 	LD	HL,(SAVSP)
 	DEC	HL
 	POP	BC
 	DI
-	CALL	C.704C
+	CALL	C704C
 	POP	DE
 	LD	H,B
 	LD	L,C
 	LD	SP,HL			; stack
 	EI
-	CALL	C.5CD0			; update output device status
-	JP	J.6DDF			; start MCL parser
+	CALL	C5CD0			; update output device status
+	JP	J6DDF			; start MCL parser
 
-J.5C30:	LD	A,(MCLLEN)
+J5C30:	LD	A,(MCLLEN)
 	OR	A			; parsed the whole playstring ?
-	JR	NZ,J$5C39		; nope, skip the end byte
-J$5C36:	CALL	C.5CB6			; put end byte in queue
-J$5C39:	LD	A,(VOICEN)		; current playvoice
-	CALL	C.7005			; get pointer to stringlength in voicebuffer
+	JR	NZ,J5C39		; nope, skip the end byte
+J5C36:	CALL	C5CB6			; put end byte in queue
+J5C39:	LD	A,(VOICEN)		; current playvoice
+	CALL	C7005			; get pointer to stringlength in voicebuffer
 	LD	A,(MCLLEN)
 	LD	(HL),A
 	INC	HL
@@ -3343,56 +3347,56 @@ J$5C39:	LD	A,(VOICEN)		; current playvoice
 	PUSH	HL
 	OR	A
 	SBC	HL,DE			; stack clear ?
-	JR	Z,J$5C76		; yep,
+	JR	Z,J5C76		; yep,
 	LD	A,0F0H
 	AND	L
 	OR	H
-	JP	NZ,C.6F89		; illegal function call
+	JP	NZ,C6F89		; illegal function call
 	LD	L,24H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	POP	BC
 	DEC	BC
-	CALL	C.704C			; copy
+	CALL	C704C			; copy
 	POP	HL
 	DEC	HL
 	LD	(HL),B
 	DEC	HL
 	LD	(HL),C
-	JR	J.5C78
+	JR	J5C78
 
-J$5C76:	POP	BC
+J5C76:	POP	BC
 	POP	BC
-J.5C78:	EI
+J5C78:	EI
 	POP	AF
 	INC	A
 	LD	HL,D.F991
 	CP	(HL)			; number of playvoices
-	JP	C,J$5BD2		; next playvoice
+	JP	C,J5BD2		; next playvoice
 	DI
-	CALL	C.69A2			; check if CTRL-STOP
-	JR	Z,J$5CB0		; yep,
+	CALL	C69A2			; check if CTRL-STOP
+	JR	Z,J5CB0		; yep,
 	LD	A,(PRSCNT)
 	RLCA				; b7 set ?
-	JR	C,J$5C99		; yep, musci dequeing already started
+	JR	C,J5C99		; yep, musci dequeing already started
 	LD	HL,D.F997
 	INC	(HL)
 	LD	A,(HL)
 	LD	(PLYCNT),A		; increase PLYCNT
-	CALL	C.7062			; start music dequeuing
-J$5C99:	EI
+	CALL	C7062			; start music dequeuing
+J5C99:	EI
 	LD	HL,PRSCNT
 	SET	7,(HL)			; b7 set
 	LD	A,(HL)
 	LD	HL,D.F993
 	CP	(HL)			; last playvoice ?
-	JP	NZ,J$5BD1		; nope, start again
+	JP	NZ,J5BD1		; nope, start again
 	LD	A,(D.F998)
 	OR	A			; background music ?
-	CALL	NZ,C.698E		; nope, wait until played
-	JR	NC,J$5CB4		; not CTRL-STOP, quit
-J$5CB0:	CALL	C.6BCF			; stop background music
+	CALL	NZ,C698E		; nope, wait until played
+	JR	NC,J5CB4		; not CTRL-STOP, quit
+J5CB0:	CALL	C6BCF			; stop background music
 	EI
-J$5CB4:	POP	HL
+J5CB4:	POP	HL
 	RET
 
 ;	  Subroutine put end byte in queue
@@ -3400,7 +3404,7 @@ J$5CB4:	POP	HL
 ;	     Outputs ________________________
 
 
-C.5CB6:	LD	A,(PRSCNT)
+C5CB6:	LD	A,(PRSCNT)
 	INC	A
 	LD	(PRSCNT),A		; an other string is completed
 	LD	E,0FFH			; end of data byte
@@ -3410,16 +3414,16 @@ C.5CB6:	LD	A,(PRSCNT)
 ;	     Outputs ________________________
 
 
-C$5CBF:	PUSH	HL
+C5CBF:	PUSH	HL
 	PUSH	BC
-J$5CC1:	PUSH	DE
+J5CC1:	PUSH	DE
 	LD	A,(VOICEN)		; current playvoice
 	DI
-	CALL	C.6F12			; put in voice queue
+	CALL	C6F12			; put in voice queue
 	EI
 	POP	DE
-	JR	Z,J$5CC1		; queue full, wait
-J$5CCD:	POP	BC
+	JR	Z,J5CC1		; queue full, wait
+J5CCD:	POP	BC
 	POP	HL
 	RET
 
@@ -3429,7 +3433,7 @@ J$5CCD:	POP	BC
 ;	     Outputs ________________________
 
 
-C.5CD0:	LD	HL,VOICEN
+C5CD0:	LD	HL,VOICEN
 	LD	A,(D.F992)		; number of OPLL playvoices
 	DEC	A
 	CP	(HL)			; current playvoice = last OPLL playvoice ?
@@ -3448,26 +3452,26 @@ C.5CD0:	LD	HL,VOICEN
 ;	     Outputs ________________________
 
 
-C.5CE6:	PUSH	HL
+C5CE6:	PUSH	HL
 	PUSH	BC
-J$5CE8:	PUSH	DE
+J5CE8:	PUSH	DE
 	LD	A,(VOICEN)		; current playvoice
 	DI
-	CALL	C.6F12			; put in voice queue
+	CALL	C6F12			; put in voice queue
 	POP	DE
-	JR	NZ,J$5CCD		; queue not full, quit
+	JR	NZ,J5CCD		; queue not full, quit
 	EI
-	JR	J$5CE8			; wait
+	JR	J5CE8			; wait
 
 ;	  Subroutine less then 8 bytes free in voice queue
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.5CF6:	LD	A,(VOICEN)		; current playvoice
+C5CF6:	LD	A,(VOICEN)		; current playvoice
 	PUSH	BC
 	DI
-	CALL	C$6F5A			; get free space voice queue
+	CALL	C6F5A			; get free space voice queue
 	EI
 	POP	BC
 	CP	8
@@ -3476,48 +3480,48 @@ C.5CF6:	LD	A,(VOICEN)		; current playvoice
 ; PSG MCL
 
 
-I$5D03:	DEFB	"A"
-	DEFW	C$5E57
+I5D03:	DEFB	"A"
+	DEFW	C5E57
 	DEFB	"M"+128
-	DEFW	C$5D75
+	DEFW	C5D75
 	DEFB	"V"+128
-	DEFW	C$5D5E
+	DEFW	C5D5E
 	DEFB	"S"+128
-	DEFW	C$5D97
+	DEFW	C5D97
 	DEFB	"N"+128
-	DEFW	C$5E14
+	DEFW	C5E14
 	DEFB	"O"+128
-	DEFW	C$5DE0
+	DEFW	C5DE0
 	DEFB	"R"+128
-	DEFW	C$5DEF
+	DEFW	C5DEF
 	DEFB	"T"+128
-	DEFW	C$5DBA
+	DEFW	C5DBA
 	DEFB	"L"+128
-	DEFW	C$5DA1
+	DEFW	C5DA1
 	DEFB	"X"
-	DEFW	C$6EF4
+	DEFW	C6EF4
 	DEFB	">"
-	DEFW	C$6237
+	DEFW	C6237
 	DEFB	"<"
-	DEFW	C$6244
+	DEFW	C6244
 	DEFB	"Y"+128
-	DEFW	C$5F3E
+	DEFW	C5F3E
 	DEFB	"Q"+128
-	DEFW	C$5F54
+	DEFW	C5F54
 	DEFB	"@"
-	DEFW	C$5F63
+	DEFW	C5F63
 	DEFB	"&"
-	DEFW	C$5F3D
+	DEFW	C5F3D
 	DEFB	"Z"+128
-	DEFW	C$5F5F
+	DEFW	C5F5F
 	DEFB	0
 
-I$5D37:	DEFB	010H,012H,014H,016H
+I5D37:	DEFB	010H,012H,014H,016H
 	DEFB	000H,000H,002H,004H
 	DEFB	006H,008H,00AH,00AH
 	DEFB	00CH,00EH,010H
 
-I$5D46:	DEFW	3421,3228,3047,2876,2715,2562
+I5D46:	DEFW	3421,3228,3047,2876,2715,2562
 	DEFW	2419,2283,2155,2034,1920,1812
 
 ;	  Subroutine PSG MCL "V"
@@ -3525,14 +3529,14 @@ I$5D46:	DEFW	3421,3228,3047,2876,2715,2562
 ;	     Outputs ________________________
 
 
-C$5D5E:	JR	C,J$5D62
+C5D5E:	JR	C,J5D62
 	LD	E,8			; default = volume 8
-J$5D62:	LD	A,15
+J5D62:	LD	A,15
 	CP	E			; volume 0-15 ?
-	JR	C,J.5DB7		; nope, illegal function call
-J$5D67:	CALL	C.5F87			; check for byte value
+	JR	C,J5DB7		; nope, illegal function call
+J5D67:	CALL	C5F87			; check for byte value
 	LD	L,12H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	A,40H
 	AND	(HL)			; leave b6 alone
 	OR	E
@@ -3544,21 +3548,21 @@ J$5D67:	CALL	C.5F87			; check for byte value
 ;	     Outputs ________________________
 
 
-C$5D75:	LD	A,E
-	JR	C,J$5D7B		; operand found,
+C5D75:	LD	A,E
+	JR	C,J5D7B		; operand found,
 	CPL
 	INC	A
 	LD	E,A			; use 255 as default
-J$5D7B:	OR	D
-	JR	Z,J.5DB7		; 0, illegal function call
+J5D7B:	OR	D
+	JR	Z,J5DB7		; 0, illegal function call
 	LD	L,13H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	PUSH	HL
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
 	LD	L,A			; envelope period
-	CALL	C.70F9			; compare
+	CALL	C70F9			; compare
 	POP	HL
 	RET	Z			; equal, quit
 	LD	(HL),E
@@ -3576,48 +3580,48 @@ J$5D7B:	OR	D
 ;	     Outputs ________________________
 
 
-C$5D97:	LD	A,E
+C5D97:	LD	A,E
 	CP	10H			; shape 0-15 ?
-	JR	NC,J.5DB7		; nope, illegal function call
+	JR	NC,J5DB7		; nope, illegal function call
 	OR	10H
 	LD	E,A			; set b4
-	JR	J$5D67
+	JR	J5D67
 
 ;	  Subroutine MCL "L"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5DA1:	JR	C,J$5DA5
+C5DA1:	JR	C,J5DA5
 	LD	E,4			; default is length 4
-J$5DA5:	LD	A,E
+J5DA5:	LD	A,E
 	CP	96+1
-	JR	NC,J.5DB7		; illegal function call
+	JR	NC,J5DB7		; illegal function call
 	LD	L,10H
-J.5DAC:	CALL	C.7009			; get pointer in current voicebuffer
-	CALL	C.5F87			; check for byte value
+J5DAC:	CALL	C7009			; get pointer in current voicebuffer
+	CALL	C5F87			; check for byte value
 	OR	E
-	JR	Z,J.5DB7		; length value 0, illegal function call
+	JR	Z,J5DB7		; length value 0, illegal function call
 	LD	(HL),A			; length
 	RET
 
-J.5DB7:	JP	C.6F89			; illegal function call
+J5DB7:	JP	C6F89			; illegal function call
 
 ;	  Subroutine MCL "T"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5DBA:	JR	C,J$5DBE
+C5DBA:	JR	C,J5DBE
 	LD	E,120			; default is tempo 120
-J$5DBE:	LD	A,E
+J5DBE:	LD	A,E
 	CP	32			; <32 ?
-	JR	C,J.5DB7		; yep, illegal function call
+	JR	C,J5DB7		; yep, illegal function call
 	LD	L,11H
-	CALL	C.7009			; get pointer in current voicebuffer
-	CALL	C.5F87			; check for byte value
+	CALL	C7009			; get pointer in current voicebuffer
+	CALL	C5F87			; check for byte value
 	OR	E
-	JR	Z,J.5DB7		; tempo value 0, illegal function call
+	JR	Z,J5DB7		; tempo value 0, illegal function call
 	LD	(HL),A			; tempo
 	LD	C,A
 
@@ -3637,25 +3641,25 @@ J$5DBE:	LD	A,E
 	CP	0			; playvoice 0 ?
 	RET	NZ			; nope, quit
 	LD	E,8DH			; midi clock
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
 ;	  Subroutine MCL "O"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5DE0:	JR	C,J$5DE4
+C5DE0:	JR	C,J5DE4
 	LD	E,4
-J$5DE4:	LD	A,E
+J5DE4:	LD	A,E
 	CP	9			; 0-8 ?
-	JR	NC,J.5DB7		; nope, illegal function call
+	JR	NC,J5DB7		; nope, illegal function call
 	LD	L,0FH
-	JR	J.5DAC
+	JR	J5DAC
 
-J$5DED:	XOR	A
+J5DED:	XOR	A
 	LD	D,A
 
 ;	  Subroutine PSG MCL "R"
@@ -3663,19 +3667,19 @@ J$5DED:	XOR	A
 ;	     Outputs ________________________
 
 
-C$5DEF:	JR	C,J.5DF3
+C5DEF:	JR	C,J5DF3
 	LD	E,04H	; 4 
-J.5DF3:	XOR	A
+J5DF3:	XOR	A
 	OR	D
-	JR	NZ,J.5DB7		; illegal function call
+	JR	NZ,J5DB7		; illegal function call
 	OR	E
-	JR	Z,J.5DB7		; illegal function call
+	JR	Z,J5DB7		; illegal function call
 	CP	61H	; "a"
-	JR	NC,J.5DB7		; illegal function call
-J$5DFE:	LD	HL,0
+	JR	NC,J5DB7		; illegal function call
+J5DFE:	LD	HL,0
 	PUSH	HL
 	LD	L,10H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	PUSH	HL			; save pointer to length
 	INC	HL
 	INC	HL
@@ -3684,29 +3688,29 @@ J$5DFE:	LD	HL,0
 	LD	(HL),80H		; special value
 	DEC	HL
 	DEC	HL
-	JR	J$5E92
+	JR	J5E92
 
 ;	  Subroutine PSG MCL "N"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5E14:	JR	NC,J.5DB7		; illegal function call
-	CALL	C.5F87			; check for byte value
+C5E14:	JR	NC,J5DB7		; illegal function call
+	CALL	C5F87			; check for byte value
 	OR	E
-	JR	Z,J$5DFE
+	JR	Z,J5DFE
 	CP	61H	; "a"
-	JR	NC,J.5DB7		; illegal function call
+	JR	NC,J5DB7		; illegal function call
 	LD	A,E
 	LD	B,0
 	LD	E,B
-J$5E24:	SUB	0CH	; 12 
+J5E24:	SUB	0CH	; 12 
 	INC	E
-	JR	NC,J$5E24
+	JR	NC,J5E24
 	ADD	A,0CH	; 12 
 	ADD	A,A
 	LD	C,A
-	JP	J$5E67
+	JP	J5E67
 
 ;	  Subroutine get note number
 ;	     Inputs  C = notechar
@@ -3727,30 +3731,30 @@ J$5E24:	SUB	0CH	; 12
 ; 13=G
 ; 14=G+
 
-C.5E30:	LD	B,C			; save orginal
+C5E30:	LD	B,C			; save orginal
 	LD	A,C
 	SUB	40H
 	ADD	A,A
 	LD	C,A			; 2,4,6,8,10,12,14
-	CALL	C.6E33			; get MCL char
-	JR	Z,J.5E55		; end of string, quit
+	CALL	C6E33			; get MCL char
+	JR	Z,J5E55		; end of string, quit
 	CP	"#"
 	RET	Z
 	CP	"+"
 	RET	Z
 	CP	"-"
-	JR	Z,J$5E4A
-	CALL	C.6E59			; undo MCL char
-	JR	J.5E55
+	JR	Z,J5E4A
+	CALL	C6E59			; undo MCL char
+	JR	J5E55
 ;	-----------------
-J$5E4A:	DEC	C
+J5E4A:	DEC	C
 	LD	A,B
 	CP	"C"
-	JR	Z,J$5E54
+	JR	Z,J5E54
 	CP	"F"
-	JR	NZ,J.5E55
-J$5E54:	DEC	C
-J.5E55:	DEC	C
+	JR	NZ,J5E55
+J5E54:	DEC	C
+J5E55:	DEC	C
 	RET
 
 ;	  Subroutine PSG MCL "ABCDEFG"
@@ -3758,53 +3762,53 @@ J.5E55:	DEC	C
 ;	     Outputs ________________________
 
 
-C$5E57:	CALL	C.5E30			; get notenumber
+C5E57:	CALL	C5E30			; get notenumber
 	LD	L,0FH
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	E,(HL)			; octave
 	LD	B,0
-	LD	HL,I$5D37
+	LD	HL,I5D37
 	ADD	HL,BC
 	LD	C,(HL)			; offset
-J$5E67:	LD	HL,I$5D46
+J5E67:	LD	HL,I5D46
 	ADD	HL,BC
 	LD	A,E			; octave
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)			; tone divider
-J$5E6F:	DEC	A
-	JR	Z,J$5E7B
+J5E6F:	DEC	A
+	JR	Z,J5E7B
 	SRL	D
 	RR	E
-	JR	J$5E6F
+	JR	J5E6F
 
-J$5E78:	CALL	C.6F89			; illegal function call
-J$5E7B:	ADC	A,E
+J5E78:	CALL	C6F89			; illegal function call
+J5E7B:	ADC	A,E
 	LD	E,A
 	ADC	A,D
 	SUB	E
 	LD	D,A
 	PUSH	DE
 	LD	L,10H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	C,(HL)			; length
 	PUSH	HL
-	CALL	C.6E33			; get MCL char
-	JR	Z,J.5E9E		; end of string, use default length
+	CALL	C6E33			; get MCL char
+	JR	Z,J5E9E		; end of string, use default length
 	PUSH	BC
-	CALL	C.6E6A			; evaluate number in MCL
+	CALL	C6E6A			; evaluate number in MCL
 	POP	BC
-J$5E92:	LD	A,96
+J5E92:	LD	A,96
 	CP	E			; length specified 0-96 ?
-	JR	C,J$5E78		; nope, illegal function call
-	CALL	C.5F87			; check for byte value
+	JR	C,J5E78		; nope, illegal function call
+	CALL	C5F87			; check for byte value
 	OR	E			; length 0 ?
-	JR	Z,J.5E9E		; yep, use default length
+	JR	Z,J5E9E		; yep, use default length
 	LD	C,E
-J.5E9E:	POP	HL
+J5E9E:	POP	HL
 	INC	HL			; points to tempo
 	PUSH	HL
-	CALL	C$633D			; get duration
+	CALL	C633D			; get duration
 	EX	DE,HL
 	LD	BC,-9
 	POP	HL
@@ -3830,7 +3834,7 @@ J.5E9E:	POP	HL
 	EX	(SP),HL
 	LD	A,E
 	AND	40H			; envelope changed ?
-	JR	Z,J$5ED1		; nope,
+	JR	Z,J5ED1		; nope,
 	INC	HL
 	LD	E,(HL)
 	INC	HL
@@ -3843,18 +3847,18 @@ J.5E9E:	POP	HL
 	INC	C
 	INC	C
 	DEFB	0FEH
-J$5ED1:	POP	HL
+J5ED1:	POP	HL
 	POP	DE
 	LD	A,D
 	OR	E			; rest ?
-	JR	Z,J$5EDC		; yep, skip frequency block
+	JR	Z,J5EDC		; yep, skip frequency block
 	LD	(HL),D
 	INC	HL
 	LD	(HL),E
 	INC	C
 	INC	C
-J$5EDC:	LD	L,07H
-	CALL	C.7009			; get pointer in current voicebuffer
+J5EDC:	LD	L,07H
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	(HL),C			; size of music packet
 	LD	A,C
 	SUB	02H
@@ -3867,7 +3871,7 @@ J$5EDC:	LD	L,07H
 	DEC	HL
 	LD	A,D
 	OR	E			; rest ?
-	JR	NZ,J$5EFC		; nope,
+	JR	NZ,J5EFC		; nope,
 	PUSH	HL
 	LD	A,(SAVVOL)
 	OR	80H
@@ -3875,22 +3879,22 @@ J$5EDC:	LD	L,07H
 	ADD	HL,BC
 	LD	(HL),A
 	POP	HL
-J$5EFC:	POP	DE
+J5EFC:	POP	DE
 	LD	B,(HL)			; size
 	INC	HL
-J$5EFF:	LD	E,(HL)			; data
+J5EFF:	LD	E,(HL)			; data
 	INC	HL
-	CALL	C$5CBF			; put byte in queue (EI)
-	DJNZ	J$5EFF			; next byte
-	CALL	C.5CF6			; less then 8 bytes free in voice queue ?
-	JP	C,J.5C30		; yep, stop parsing
-	JP	J.6DDF			; start MCL parser
+	CALL	C5CBF			; put byte in queue (EI)
+	DJNZ	J5EFF			; next byte
+	CALL	C5CF6			; less then 8 bytes free in voice queue ?
+	JP	C,J5C30		; yep, stop parsing
+	JP	J6DDF			; start MCL parser
 
 ;	  Subroutine divide
 ;	     Inputs  DE = param, HL = divider
 ;	     Outputs HL = remainer, DE = result
 
-C.5F0F:	LD	B,H
+C5F0F:	LD	B,H
 	LD	C,L
 	XOR	A
 	LD	H,A
@@ -3903,13 +3907,13 @@ C.5F0F:	LD	B,H
 	LD	C,L
 	POP	HL			; HL = 0
 	LD	B,16
-J$5F1E:	ADC	HL,HL
+J5F1E:	ADC	HL,HL
 	ADD	HL,DE
-	JR	C,J$5F25
+	JR	C,J5F25
 	SBC	HL,DE
-J$5F25:	RL	C
+J5F25:	RL	C
 	RLA
-	DJNZ	J$5F1E
+	DJNZ	J5F1E
 	LD	D,A
 	LD	E,C
 	RET
@@ -3919,75 +3923,75 @@ J$5F25:	RL	C
 ;	     Outputs ________________________
 
 
-C.5F2D:	LD	E,8
+C5F2D:	LD	E,8
 	LD	HL,0
-J$5F32:	ADD	HL,HL
+J5F32:	ADD	HL,HL
 	RLA
-	JR	NC,J$5F39
+	JR	NC,J5F39
 	ADD	HL,BC
 	ADC	A,0
-J$5F39:	DEC	E
-	JP	NZ,J$5F32
-C$5F3D:	RET
+J5F39:	DEC	E
+	JP	NZ,J5F32
+C5F3D:	RET
 
 ;	  Subroutine PSG MCL "Y"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5F3E:	JR	NC,J.5F8A
-J$5F40:	LD	A,E
+C5F3E:	JR	NC,J5F8A
+J5F40:	LD	A,E
 	CP	0C9H
-	JR	NC,J.5F8A
-	CALL	C.5F87			; check for byte value
-	CALL	C.6E33			; get MCL char
+	JR	NC,J5F8A
+	CALL	C5F87			; check for byte value
+	CALL	C6E33			; get MCL char
 	CP	","
-	JR	NZ,J.5F8A
-	CALL	C.6E67
-	JR	C.5F87			; check for byte value and quit
+	JR	NZ,J5F8A
+	CALL	C6E67
+	JR	C5F87			; check for byte value and quit
 
 ;	  Subroutine PSG MCL "Q"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5F54:	JR	C,J$5F58
+C5F54:	JR	C,J5F58
 	LD	E,8
-J$5F58:	LD	A,E
+J5F58:	LD	A,E
 	CP	9
-	JR	NC,J.5F8A
-	JR	C.5F87			; check for byte value and quit
+	JR	NC,J5F8A
+	JR	C5F87			; check for byte value and quit
 
 ;	  Subroutine PSG MCL "Z"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5F5F:	JR	NC,J.5F8A
-	JR	C.5F87			; check for byte value
+C5F5F:	JR	NC,J5F8A
+	JR	C5F87			; check for byte value
 
 ;	  Subroutine PSG MCL "@"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$5F63:	CALL	C.6E2D
+C5F63:	CALL	C6E2D
 	CP	"V"
-	JR	Z,J$5F8D
+	JR	Z,J5F8D
 	CP	"W"
-	JR	Z,J$5FA0
+	JR	Z,J5FA0
 	CP	"H"
-	JR	Z,J$5FB6
+	JR	Z,J5FB6
 	CP	"S"
-	JR	Z,J$5FCA
+	JR	Z,J5FCA
 	CP	"C"
-	JR	Z,J$5FDD
-	CALL	C.60E5
-	JR	C,J.5F8A
-	CALL	C.6E6A			; evaluate number in MCL
+	JR	Z,J5FDD
+	CALL	C60E5
+	JR	C,J5F8A
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	CP	40H
-	JR	NC,J.5F8A
+	JR	NC,J5F8A
 
 
 ;	  Subroutine __________________________
@@ -3995,106 +3999,106 @@ C$5F63:	CALL	C.6E2D
 ;	     Outputs ________________________
 
 
-C.5F87:	LD	A,D
+C5F87:	LD	A,D
 	OR	A
 	RET	Z
-J.5F8A:	JP	C.6F89			; illegal function call
+J5F8A:	JP	C6F89			; illegal function call
 
-J$5F8D:	CALL	C.6E33			; get MCL char
+J5F8D:	CALL	C6E33			; get MCL char
 	RET	Z
-	CALL	C.60E5
-	JR	C,J.5F8A
-	CALL	C.6E6A			; evaluate number in MCL
+	CALL	C60E5
+	JR	C,J5F8A
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	CP	80H
-	JR	NC,J.5F8A
-	JR	C.5F87			; check for byte value
+	JR	NC,J5F8A
+	JR	C5F87			; check for byte value
 
-J$5FA0:	CALL	C.6E33			; get MCL char
-	JR	Z,J$5FB3
-	CALL	C.60E5
-	JR	C,J$5FB0
-	CALL	C.6E6A			; evaluate number in MCL
-	JP	J.5DF3
+J5FA0:	CALL	C6E33			; get MCL char
+	JR	Z,J5FB3
+	CALL	C60E5
+	JR	C,J5FB0
+	CALL	C6E6A			; evaluate number in MCL
+	JP	J5DF3
 
-J$5FB0:	CALL	C.6E59			; undo MCL char
-J$5FB3:	JP	J$5DED
+J5FB0:	CALL	C6E59			; undo MCL char
+J5FB3:	JP	J5DED
 
-J$5FB6:	CALL	C.6E33			; get MCL char
+J5FB6:	CALL	C6E33			; get MCL char
 	RET	Z
-	CALL	C.60E5
-	JR	C,J.5F8A
-	CALL	C.6E6A			; evaluate number in MCL
+	CALL	C60E5
+	JR	C,J5F8A
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	DEC	A
 	CP	10H
-	JR	NC,J.5F8A
-	JR	C.5F87			; check for byte value
+	JR	NC,J5F8A
+	JR	C5F87			; check for byte value
 
-J$5FCA:	CALL	C.6E33			; get MCL char
+J5FCA:	CALL	C6E33			; get MCL char
 	RET	Z
-	CALL	C.60E5
-	JR	C,J.5F8A
-	CALL	C.6E6A			; evaluate number in MCL
+	CALL	C60E5
+	JR	C,J5F8A
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	CP	04H
-	JR	NC,J.5F8A
-	JR	C.5F87			; check for byte value
+	JR	NC,J5F8A
+	JR	C5F87			; check for byte value
 
-J$5FDD:	CALL	C.6E2D
-	CALL	C.60E5
-	JP	C,J.5F8A
-	CALL	C.6E6A			; evaluate number in MCL
+J5FDD:	CALL	C6E2D
+	CALL	C60E5
+	JP	C,J5F8A
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	CP	80H
-	JR	NC,J.5F8A
-	CALL	C.6E2D
+	JR	NC,J5F8A
+	CALL	C6E2D
 	CP	","
-	JR	NZ,J.5F8A
-	CALL	C.6E67
+	JR	NZ,J5F8A
+	CALL	C6E67
 	LD	A,E
 	CP	80H
-	JR	NC,J.5F8A
-	JR	C.5F87			; check for byte value
+	JR	NC,J5F8A
+	JR	C5F87			; check for byte value
 
-I$5FFF:	DEFB	"A"
-	DEFW	C$6279
+I5FFF:	DEFB	"A"
+	DEFW	C6279
 	DEFB	"&"
-	DEFW	C$63FD
+	DEFW	C63FD
 	DEFB	"{"
-	DEFW	C$6406
+	DEFW	C6406
 	DEFB	"}"+128
-	DEFW	C$6482
+	DEFW	C6482
 	DEFB	"Y"+128
-	DEFW	C$60F5
+	DEFW	C60F5
 	DEFB	"L"+128
-	DEFW	C$5DA1
+	DEFW	C5DA1
 	DEFB	"Q"+128
-	DEFW	C$6229
+	DEFW	C6229
 	DEFB	"V"+128
-	DEFW	C$61E2
+	DEFW	C61E2
 	DEFB	"O"+128
-	DEFW	C$5DE0
+	DEFW	C5DE0
 	DEFB	">"
-	DEFW	C$6237
+	DEFW	C6237
 	DEFB	"<"
-	DEFW	C$6244
+	DEFW	C6244
 	DEFB	"Z"+128
-	DEFW	C$6127
+	DEFW	C6127
 	DEFB	"X"
-	DEFW	C$6EF4
+	DEFW	C6EF4
 	DEFB	"R"+128
-	DEFW	C$624F
+	DEFW	C624F
 	DEFB	"N"+128
-	DEFW	C$626C
+	DEFW	C626C
 	DEFB	"T"+128
-	DEFW	C$5DBA
+	DEFW	C5DBA
 	DEFB	"@"
-	DEFW	C$6039
+	DEFW	C6039
 	DEFB	"M"+128
-	DEFW	C$621A
+	DEFW	C621A
 	DEFB	"S"+128
-	DEFW	C$6221
+	DEFW	C6221
 	DEFB	0
 
 ;	  Subroutine FM MCL "@"
@@ -4102,115 +4106,115 @@ I$5FFF:	DEFB	"A"
 ;	     Outputs ________________________
 
 
-C$6039:	CALL	C.6E2D
+C6039:	CALL	C6E2D
 	CP	"V"
-	JP	Z,J.608D
+	JP	Z,J608D
 	CP	"W"
-	JP	Z,J$60BB
+	JP	Z,J60BB
 	CP	"C"
-	JP	Z,J.616F
+	JP	Z,J616F
 	CP	"H"
-	JP	Z,J.61B3
+	JP	Z,J61B3
 	CP	"S"
-	JP	Z,J$6142
-	CALL	C.60E5
-	JR	C,J.60C4
-	CALL	C.6E6A			; evaluate number in MCL
-	CALL	C.5F87			; check for byte value
+	JP	Z,J6142
+	CALL	C60E5
+	JR	C,J60C4
+	CALL	C6E6A			; evaluate number in MCL
+	CALL	C5F87			; check for byte value
 	LD	A,(D.F97F)
 	CP	01H			; PLAY MIDI ?
 	LD	A,E
-	JR	Z,J$606C		; nope,
+	JR	Z,J606C		; nope,
 	CP	64
-	JR	J$606E
+	JR	J606E
 
-J$606C:	CP	80H
-J$606E:	JR	NC,J.60C4
+J606C:	CP	80H
+J606E:	JR	NC,J60C4
 	LD	C,A
 	LD	A,(VOICEN)		; current playvoice
-	CALL	C.6772			; get playvoice type
-	JR	NC,J.6083		; FM playvoice,
+	CALL	C6772			; get playvoice type
+	JR	NC,J6083		; FM playvoice,
 	LD	A,C
 	CP	10H	; 16 
-	JR	NC,J.60C4
+	JR	NC,J60C4
 	LD	A,E
 	CP	40H	; "@"
-	JR	NC,J.60C4
-J.6083:	LD	E,84H
-	CALL	C.5CE6			; put byte in queue (DI)
+	JR	NC,J60C4
+J6083:	LD	E,84H
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
 ;	  Subroutine FM MCL "@V"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J.608D:	CALL	C.6E2D
-	CALL	C.60E5
-	JR	C,J.60C4
-	CALL	C.6E6A			; evaluate number in MCL
+J608D:	CALL	C6E2D
+	CALL	C60E5
+	JR	C,J60C4
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,(D.F97F)
 	CP	01H			; MIDI playdevice ?
-	JR	Z,J$60A8		; yep,
+	JR	Z,J60A8		; yep,
 	LD	A,7FH
 	SUB	E
-	JP	M,J.60C4
+	JP	M,J60C4
 	RRA
-	JR	J$60AD
+	JR	J60AD
 
-J$60A8:	LD	A,E
+J60A8:	LD	A,E
 	CP	80H
-	JR	NC,J.60C4
-J$60AD:	LD	C,A
-	CALL	C.5F87			; check for byte value
+	JR	NC,J60C4
+J60AD:	LD	C,A
+	CALL	C5F87			; check for byte value
 	LD	E,85H
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
 ;	  Subroutine FM MCL "@W"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J$60BB:	POP	DE
-	CALL	C$60C7
+J60BB:	POP	DE
+	CALL	C60C7
 	LD	E,83H
-	JP	J.62F9
+	JP	J62F9
 
-J.60C4:	JP	C.6F89			; illegal function call
+J60C4:	JP	C6F89			; illegal function call
 
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$60C7:	CALL	C.630E
+C60C7:	CALL	C630E
 	PUSH	HL
-	CALL	C.6E33			; get MCL char
-	JR	Z,J$60E1
+	CALL	C6E33			; get MCL char
+	JR	Z,J60E1
 	PUSH	BC
-	CALL	C.6E6A			; evaluate number in MCL
+	CALL	C6E6A			; evaluate number in MCL
 	POP	BC
 	LD	A,60H	; "`"
 	CP	E
-	JR	C,J.60C4
-	CALL	C.5F87			; check for byte value
+	JR	C,J60C4
+	CALL	C5F87			; check for byte value
 	OR	E
-	JR	Z,J.60C4
+	JR	Z,J60C4
 	LD	C,E
-J$60E1:	POP	HL
-	JP	J$633C
+J60E1:	POP	HL
+	JP	J633C
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.60E5:	CP	"+"
+C60E5:	CP	"+"
 	RET	Z
 	CP	"-"
 	RET	Z
@@ -4227,236 +4231,236 @@ C.60E5:	CP	"+"
 ;	     Outputs ________________________
 
 
-C$60F5:	JR	NC,J.616C
+C60F5:	JR	NC,J616C
 	LD	A,(D.F97F)
 	AND	01H			; MIDI playdevice ?
-	JP	NZ,J$5F40		; yep,
+	JP	NZ,J5F40		; yep,
 	LD	A,E
-	CALL	C.7618			; validate OPLL registernumber
-	JR	C,J.616C		; invalid,
-	CALL	C.5F87			; check for byte value
+	CALL	C7618			; validate OPLL registernumber
+	JR	C,J616C		; invalid,
+	CALL	C5F87			; check for byte value
 	PUSH	DE
-	CALL	C.6E2D
+	CALL	C6E2D
 	CP	","
-	JR	NZ,J.616C
-	CALL	C.6E67
-	CALL	C.5F87			; check for byte value
+	JR	NZ,J616C
+	CALL	C6E67
+	CALL	C5F87			; check for byte value
 	PUSH	DE
 	LD	E,82H
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	POP	HL
 	EX	(SP),HL
 	LD	E,L
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	POP	DE
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
 ;	  Subroutine FM/drum MCL "Z"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6127:	JR	NC,J.616C
+C6127:	JR	NC,J616C
 	LD	A,(D.F97F)
 	AND	01H			; MIDI playdevice ?
-	JP	Z,J$613F		; nope,
-	CALL	C.5F87			; check for byte value
+	JP	Z,J613F		; nope,
+	CALL	C5F87			; check for byte value
 	LD	C,E
 	LD	E,8AH
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
-J$613F:	JP	C.5F87			; check for byte value
+J613F:	JP	C5F87			; check for byte value
 
 ;	  Subroutine FM MCL "@S"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J$6142:	CALL	C.6E2D
-	CALL	C.60E5
-	JP	C,J.60C4
-	CALL	C.6E6A			; evaluate number in MCL
+J6142:	CALL	C6E2D
+	CALL	C60E5
+	JP	C,J60C4
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	CP	03H	; 3 
-	JP	NC,J.60C4
+	JP	NC,J60C4
 	LD	C,A
 	LD	A,(D.F97F)
 	AND	01H			; MIDI playdevice ?
-	JR	Z,J$6169		; nope,
-	CALL	C.5F87			; check for byte value
+	JR	Z,J6169		; nope,
+	CALL	C5F87			; check for byte value
 	LD	E,8EH
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
-J$6169:	JP	C.5F87			; check for byte value
+J6169:	JP	C5F87			; check for byte value
 
-J.616C:	JP	C.6F89			; illegal function call
+J616C:	JP	C6F89			; illegal function call
 
 ;	  Subroutine FM MCL "@C"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J.616F:	CALL	C.6E2D
-	CALL	C.60E5
-	JP	C,J.60C4
-	CALL	C.6E6A			; evaluate number in MCL
+J616F:	CALL	C6E2D
+	CALL	C60E5
+	JP	C,J60C4
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	CP	80H
-	JR	NC,J.616C
-	CALL	C.5F87			; check for byte value
+	JR	NC,J616C
+	CALL	C5F87			; check for byte value
 	PUSH	DE
-	CALL	C.6E2D
+	CALL	C6E2D
 	CP	2CH	; ","
-	JR	NZ,J.616C
-	CALL	C.6E67
+	JR	NZ,J616C
+	CALL	C6E67
 	LD	A,E
 	CP	80H
-	JR	NC,J.616C
+	JR	NC,J616C
 	LD	A,(D.F97F)
 	AND	01H			; MIDI playdevice ?
-	JP	Z,J$61AF		; nope,
-	CALL	C.5F87			; check for byte value
+	JP	Z,J61AF		; nope,
+	CALL	C5F87			; check for byte value
 	PUSH	DE
 	LD	E,8BH
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	POP	HL
 	EX	(SP),HL
 	LD	E,L
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	POP	DE
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
-J$61AF:	POP	AF
-	JP	C.5F87			; check for byte value
+J61AF:	POP	AF
+	JP	C5F87			; check for byte value
 
 ;	  Subroutine FM MCL "@H"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J.61B3:	CALL	C.6E2D
-	CALL	C.60E5
-	JP	C,J.60C4
-	CALL	C.6E6A			; evaluate number in MCL
-	CALL	C.5F87			; check for byte value
+J61B3:	CALL	C6E2D
+	CALL	C60E5
+	JP	C,J60C4
+	CALL	C6E6A			; evaluate number in MCL
+	CALL	C5F87			; check for byte value
 	LD	A,E
 	DEC	A
 	CP	10H	; 16 
-	JP	NC,C.6F89		; illegal function call
+	JP	NC,C6F89		; illegal function call
 	PUSH	AF
 	LD	A,(D.F97F)
 	AND	01H			; MIDI playdevice ?
-	JR	Z,J$61DE		; nope,
+	JR	Z,J61DE		; nope,
 	POP	AF
 	INC	A
 	LD	C,A
 	LD	E,8CH
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
-J$61DE:	POP	AF
-	JP	C.5F87			; check for byte value
+J61DE:	POP	AF
+	JP	C5F87			; check for byte value
 
 ;	  Subroutine FM MCL "V"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$61E2:	JR	C,J$61E6
+C61E2:	JR	C,J61E6
 	LD	E,8			; use defaultvalue 8
-J$61E6:	CALL	C.5F87			; check for byte value
+J61E6:	CALL	C5F87			; check for byte value
 	LD	A,E
 	CP	16			; 0-15 ?
-	JR	NC,J.621E		; nope, illegal function call
-J.61EE:	LD	C,A
+	JR	NC,J621E		; nope, illegal function call
+J61EE:	LD	C,A
 	LD	E,81H
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
 ;	  Subroutine drum MCL "V"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$61F9:	JR	C,J$61FD
+C61F9:	JR	C,J61FD
 	LD	E,08H	; 8 
-J$61FD:	CALL	C.5F87			; check for byte value
+J61FD:	CALL	C5F87			; check for byte value
 	LD	A,(D.F97F)
 	CP	01H			; MIDI playdevice ?
-	JR	Z,J$6213		; nope,
+	JR	Z,J6213		; nope,
 	LD	A,E
 	CP	10H	; 16 
-	JR	NC,J.621E
+	JR	NC,J621E
 	LD	A,0FH	; 15 
 	SUB	E
 	ADD	A,A
 	LD	E,A
-	JR	J.61EE
+	JR	J61EE
 ;	-----------------
-J$6213:	LD	A,E
+J6213:	LD	A,E
 	ADD	A,A
 	ADD	A,A
 	ADD	A,A
 	LD	E,A
-	JR	J.61EE
+	JR	J61EE
 
 ;	  Subroutine FM MCL "M"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$621A:	RET	NC
+C621A:	RET	NC
 	LD	A,E
 	OR	D
 	RET	NZ
-J.621E:	JP	C.6F89			; illegal function call
+J621E:	JP	C6F89			; illegal function call
 
 ;	  Subroutine FM MCL "S"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6221:	LD	A,E
+C6221:	LD	A,E
 	CP	16			; 0-15 ?
-	JR	NC,J.621E		; nope, illegal function call
-	JP	C.5F87			; check for byte value
+	JR	NC,J621E		; nope, illegal function call
+	JP	C5F87			; check for byte value
 
 ;	  Subroutine FM MCL "Q"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6229:	JR	C,J$622D
+C6229:	JR	C,J622D
 	LD	E,08H	; 8 
-J$622D:	LD	A,E
+J622D:	LD	A,E
 	CP	09H	; 9 
-	JR	NC,J.621E
+	JR	NC,J621E
 	LD	L,26H	; "&"
-	JP	J.5DAC
+	JP	J5DAC
 
 ;	  Subroutine MCL ">"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6237:	LD	L,0FH
-	CALL	C.7009			; get pointer in current voicebuffer
+C6237:	LD	L,0FH
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	A,(HL)			; octave
 	INC	A			; increase octave
 	CP	9			; 9 ?
-	JR	NC,J.621E		; yep, illegal function call
+	JR	NC,J621E		; yep, illegal function call
 	LD	(HL),A
 	RET
 
@@ -4465,11 +4469,11 @@ C$6237:	LD	L,0FH
 ;	     Outputs ________________________
 
 
-C$6244:	LD	L,0FH
-	CALL	C.7009			; get pointer in current voicebuffer
+C6244:	LD	L,0FH
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	A,(HL)			; octave
 	DEC	A			; decrease octave
-	JR	Z,J.621E		; 0, illegal function call
+	JR	Z,J621E		; 0, illegal function call
 	LD	(HL),A
 	RET
 
@@ -4478,78 +4482,78 @@ C$6244:	LD	L,0FH
 ;	     Outputs ________________________
 
 
-C$624F:	JR	C,J$6253
+C624F:	JR	C,J6253
 	LD	E,04H	; 4 
-J$6253:	CALL	C.5F87			; check for byte value
+J6253:	CALL	C5F87			; check for byte value
 	OR	E
-	JR	Z,J.621E
+	JR	Z,J621E
 	CP	61H	; "a"
-	JR	NC,J.621E
+	JR	NC,J621E
 	XOR	A
 	PUSH	AF
-	LD	HL,I$629D
+	LD	HL,I629D
 	PUSH	HL
 	LD	L,10H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	PUSH	HL
-	JP	J.632E
+	JP	J632E
 
 ;	  Subroutine FM MCL "N"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$626C:	JR	NC,J.621E
-	CALL	C.5F87			; check for byte value
+C626C:	JR	NC,J621E
+	CALL	C5F87			; check for byte value
 	LD	A,E
 	CP	61H	; "a"
-	JR	C,J$6293
-	JP	C.6F89			; illegal function call
+	JR	C,J6293
+	JP	C6F89			; illegal function call
 
 ;	  Subroutine FM MCL "ABCDEFG"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6279:	CALL	C.5E30			; get notenumber
+C6279:	CALL	C5E30			; get notenumber
 	LD	L,0FH
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	D,0CH	; 12 
 	LD	B,(HL)			; octave
 	LD	A,0F4H
-J$6286:	ADD	A,D
-	DJNZ	J$6286
+J6286:	ADD	A,D
+	DJNZ	J6286
 	LD	D,A
 	LD	B,0
-	LD	HL,I$5D37
+	LD	HL,I5D37
 	ADD	HL,BC
 	LD	A,(HL)
 	RRCA
 	ADD	A,D
-J$6293:	ADD	A,0CH	; 12 
+J6293:	ADD	A,0CH	; 12 
 	LD	D,A
-	CALL	C$74A7
+	CALL	C74A7
 	PUSH	DE
-	CALL	C$6320
-I$629D:	PUSH	HL
-	CALL	C.6E33			; get MCL char
-	JR	Z,J$62AC
+	CALL	C6320
+I629D:	PUSH	HL
+	CALL	C6E33			; get MCL char
+	JR	Z,J62AC
 	CP	26H	; "&"
 	PUSH	AF
-	CALL	C.6E59			; undo MCL char
+	CALL	C6E59			; undo MCL char
 	POP	AF
-	JR	Z,J.62ED
-J$62AC:	LD	L,26H
-	CALL	C.7009			; get pointer in current voicebuffer
+	JR	Z,J62ED
+J62AC:	LD	L,26H
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	A,(HL)
 	CP	08H	; 8 
-	JR	Z,J.62ED
+	JR	Z,J62ED
 	POP	DE
 	PUSH	DE
 	LD	B,A
 	LD	HL,0
-J$62BC:	ADD	HL,DE
-	DJNZ	J$62BC
+J62BC:	ADD	HL,DE
+	DJNZ	J62BC
 	SRL	H
 	RR	L
 	SRL	H
@@ -4561,56 +4565,56 @@ J$62BC:	ADD	HL,DE
 	OR	A
 	SBC	HL,DE
 	EX	DE,HL
-	JR	Z,J$62EE
+	JR	Z,J62EE
 	POP	BC
 	POP	AF
 	PUSH	DE
 	LD	E,B
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	A,B
 	OR	A
 	LD	E,C
-	CALL	NZ,C.5CE6		; put byte in queue (DI)
+	CALL	NZ,C5CE6		; put byte in queue (DI)
 	LD	E,L
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,H
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	POP	HL
 	LD	E,0
-	JR	J.62F9
+	JR	J62F9
 ;	-----------------
-J.62ED:	POP	HL
-J$62EE:	POP	BC
+J62ED:	POP	HL
+J62EE:	POP	BC
 	POP	DE
 	LD	E,B
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	A,B
 	OR	A
-	JR	Z,J$62FC
+	JR	Z,J62FC
 	LD	E,C
-J.62F9:	CALL	C.5CE6			; put byte in queue (DI)
-J$62FC:	LD	E,L
-	CALL	C.5CE6			; put byte in queue (DI)
+J62F9:	CALL	C5CE6			; put byte in queue (DI)
+J62FC:	LD	E,L
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,H
-J.6301:	CALL	C.5CE6			; put byte in queue (DI)
-	CALL	C.5CF6			; less then 8 bytes free in voice queue ?
+J6301:	CALL	C5CE6			; put byte in queue (DI)
+	CALL	C5CF6			; less then 8 bytes free in voice queue ?
 	EI
-	JP	C,J.5C30		; yep, stop parsing
-	JP	J.6DDF			; start MCL parser
+	JP	C,J5C30		; yep, stop parsing
+	JP	J6DDF			; start MCL parser
 ;	-----------------
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.630E:	LD	L,09H
-	CALL	C.7009			; get pointer in current voicebuffer
+C630E:	LD	L,09H
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	C,(HL)
 	LD	A,C
 	OR	A
 	PUSH	AF
 	LD	L,10H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	POP	AF
 	RET	NZ
 	LD	C,(HL)
@@ -4622,22 +4626,22 @@ C.630E:	LD	L,09H
 ;	     Outputs ________________________
 
 
-C$6320:	CALL	C.630E
+C6320:	CALL	C630E
 	PUSH	HL
-	CALL	C.6E33			; get MCL char
-	JR	Z,J.633B		; end of string, take current note length
+	CALL	C6E33			; get MCL char
+	JR	Z,J633B		; end of string, take current note length
 	PUSH	BC
-	CALL	C.6E6A			; evaluate number in MCL
+	CALL	C6E6A			; evaluate number in MCL
 	POP	BC
-J.632E:	LD	A,96
+J632E:	LD	A,96
 	CP	E
-	JP	C,J.6403
-	CALL	C.5F87			; check for byte value
+	JP	C,J6403
+	CALL	C5F87			; check for byte value
 	OR	E
-	JR	Z,J.633B		; 0 value, take current note length
+	JR	Z,J633B		; 0 value, take current note length
 	LD	C,E
-J.633B:	POP	HL
-J$633C:	INC	HL
+J633B:	POP	HL
+J633C:	INC	HL
 
 
 ;	  Subroutine __________________________
@@ -4645,39 +4649,39 @@ J$633C:	INC	HL
 ;	     Outputs ________________________
 
 
-C$633D:	LD	A,(HL)
+C633D:	LD	A,(HL)
 	LD	L,A
 	LD	H,0
 	LD	(D.FAE7),HL		; note tempo
 	LD	B,0
 	PUSH	BC
-	CALL	C.5F2D			; multiply length*tempo
+	CALL	C5F2D			; multiply length*tempo
 	LD	DE,(D.F97A)
-	CALL	C.5F0F			; 48000/(length*tempo)
+	CALL	C5F0F			; 48000/(length*tempo)
 	LD	(D.FAE9),DE		; number of MIDI timer interrupts
 	EX	DE,HL
 	POP	HL			; length
-	CALL	C.5F0F			; remainer/length
+	CALL	C5F0F			; remainer/length
 	LD	(D.FAED),DE
-	CALL	C$6387			; handle "."
+	CALL	C6387			; handle "."
 	LD	HL,(D.FAE9)		; number of interrupts
 	PUSH	HL
 	LD	DE,(D.FAED)
-	CALL	C.63EE			; get pointer to ? byte of playvoice
+	CALL	C63EE			; get pointer to ? byte of playvoice
 	LD	L,(IX+0)
 	LD	H,0
 	ADD	HL,DE
 	LD	DE,(D.FAE7)		; note tempo
-J$6376:	PUSH	HL
+J6376:	PUSH	HL
 	SBC	HL,DE
-	JR	C,J$6381
+	JR	C,J6381
 	POP	BC
 	POP	BC
 	INC	BC
 	PUSH	BC
-	JR	J$6376
+	JR	J6376
 
-J$6381:	POP	HL
+J6381:	POP	HL
 	LD	(IX+0),L
 	POP	HL
 	RET
@@ -4688,19 +4692,19 @@ J$6381:	POP	HL
 ;	     Outputs ________________________
 
 
-C$6387:	LD	HL,(D.FAE9)
+C6387:	LD	HL,(D.FAE9)
 	LD	(D.FAEB),HL		; number of interrupts
 	LD	HL,(D.FAED)
 	LD	(D.FAEF),HL
-J$6393:	CALL	C.6E33			; get MCL char
-	JR	Z,J$63ED		; end of string, quit
+J6393:	CALL	C6E33			; get MCL char
+	JR	Z,J63ED		; end of string, quit
 	CP	"."
-	JR	NZ,J$63EA		; not the "." extension, quit
+	JR	NZ,J63EA		; not the "." extension, quit
 	LD	HL,(D.FAE9)
 	LD	DE,(D.FAEB)
 	SRL	D
 	RR	E
-	JR	NC,J$63CC
+	JR	NC,J63CC
 	ADD	HL,DE
 	LD	(D.FAE9),HL
 	LD	(D.FAEB),DE
@@ -4714,9 +4718,9 @@ J$6393:	CALL	C.6E33			; get MCL char
 	ADC	HL,DE
 	LD	(D.FAED),HL
 	LD	(D.FAEF),DE
-	JR	J$63E8
+	JR	J63E8
 
-J$63CC:	ADD	HL,DE
+J63CC:	ADD	HL,DE
 	LD	(D.FAE9),HL
 	LD	(D.FAEB),DE
 	LD	HL,(D.FAEF)
@@ -4727,17 +4731,17 @@ J$63CC:	ADD	HL,DE
 	ADC	HL,DE
 	LD	(D.FAED),HL
 	LD	(D.FAEF),DE
-J$63E8:	JR	J$6393
+J63E8:	JR	J6393
 
-J$63EA:	CALL	C.6E59			; undo MCL char
-J$63ED:	RET
+J63EA:	CALL	C6E59			; undo MCL char
+J63ED:	RET
 
 ;	  Subroutine get pointer to interrupt corrector byte of playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.63EE:	PUSH	BC
+C63EE:	PUSH	BC
 	LD	A,(VOICEN)		; current playvoice
 	LD	C,A
 	LD	B,0
@@ -4751,77 +4755,77 @@ C.63EE:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C$63FD:	LD	E,87H
+C63FD:	LD	E,87H
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 
-J.6403:	JP	C.6F89			; illegal function call
+J6403:	JP	C6F89			; illegal function call
 
 ;	  Subroutine FM MCL "{"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6406:	LD	L,09H
-	CALL	C.7009			; get pointer in current voicebuffer
+C6406:	LD	L,09H
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	A,(HL)
-	JR	NZ,J.6403
+	JR	NZ,J6403
 	LD	C,0
 	LD	HL,(MCLPTR)
 	PUSH	HL
 	LD	A,(MCLLEN)
 	PUSH	AF
-J.6418:	CALL	C.6E2D
-J$641B:	CP	"N"
-	JR	Z,J.642B
+J6418:	CALL	C6E2D
+J641B:	CP	"N"
+	JR	Z,J642B
 	CP	"R"
-	JR	Z,J.642B
+	JR	Z,J642B
 	CP	"A"
-	JR	C,J.642E
+	JR	C,J642E
 	CP	"H"
-	JR	NC,J.642E
-J.642B:	INC	C
-	JR	J.6418
+	JR	NC,J642E
+J642B:	INC	C
+	JR	J6418
 
-J.642E:	CP	"}"
-	JR	Z,J$6441
+J642E:	CP	"}"
+	JR	Z,J6441
 	CP	"{"
-	JR	Z,J.6403
+	JR	Z,J6403
 	CP	"="
-	JR	NZ,J.6418
+	JR	NZ,J6418
 	PUSH	BC
-	CALL	C.6EBD
+	CALL	C6EBD
 	POP	BC
-	JR	J$641B
+	JR	J641B
 ;	-----------------
-J$6441:	LD	L,10H
-	CALL	C.7009			; get pointer in current voicebuffer
+J6441:	LD	L,10H
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	E,(HL)			; length
 	LD	D,0
-	CALL	C.6E33			; get MCL char
-	JR	Z,J.645B
-	CALL	C.6E59			; undo MCL char
-	CALL	C.60E5
-	JR	C,J.645B
+	CALL	C6E33			; get MCL char
+	JR	Z,J645B
+	CALL	C6E59			; undo MCL char
+	CALL	C60E5
+	JR	C,J645B
 	PUSH	BC
-	CALL	C.6E67
+	CALL	C6E67
 	POP	BC
-J.645B:	LD	A,60H	; "`"
+J645B:	LD	A,60H	; "`"
 	CP	E
-	JR	C,J.6403
-	CALL	C.5F87			; check for byte value
+	JR	C,J6403
+	CALL	C5F87			; check for byte value
 	LD	A,C
 	LD	B,D
 	LD	C,E
-	CALL	C.5F2D			; multiply
+	CALL	C5F2D			; multiply
 	OR	H
-	JR	NZ,J.6403
+	JR	NZ,J6403
 	LD	A,L
 	CP	61H	; "a"
-	JR	NC,J.6403
+	JR	NC,J6403
 	PUSH	AF
 	LD	L,09H
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	POP	AF
 	LD	(HL),A
 	POP	AF
@@ -4835,194 +4839,194 @@ J.645B:	LD	A,60H	; "`"
 ;	     Outputs ________________________
 
 
-C$6482:	LD	L,09H
-	CALL	C.7009			; get pointer in current voicebuffer
+C6482:	LD	L,09H
+	CALL	C7009			; get pointer in current voicebuffer
 	LD	A,(HL)
 	OR	A
-	JR	Z,J.64BD
+	JR	Z,J64BD
 	LD	(HL),0
 	RET
 
-I$648E:	DEFB	"B"
-	DEFW	C$64C0
+I648E:	DEFB	"B"
+	DEFW	C64C0
 	DEFB	"S"
-	DEFW	C$64C0
+	DEFW	C64C0
 	DEFB	"M"
-	DEFW	C$64C0
+	DEFW	C64C0
 	DEFB	"C"
-	DEFW	C$64C0
+	DEFW	C64C0
 	DEFB	"H"
-	DEFW	C$64C0
+	DEFW	C64C0
 	DEFB	"R"+128
-	DEFW	C$624F
+	DEFW	C624F
 	DEFB	"@"
-	DEFW	C$6519
+	DEFW	C6519
 	DEFB	"T"+128
-	DEFW	C$5DBA
+	DEFW	C5DBA
 	DEFB	"Y"+128
-	DEFW	C$60F5
+	DEFW	C60F5
 	DEFB	"V"+128
-	DEFW	C$61F9
+	DEFW	C61F9
 	DEFB	"X"
-	DEFW	C$6EF4
+	DEFW	C6EF4
 	DEFB	"Z"+128
-	DEFW	C$6127
+	DEFW	C6127
 	DEFB 	0
 
-I$64B3:	DEFB "B","S","M","C","H"
+I64B3:	DEFB "B","S","M","C","H"
 	DEFB 010H,008H,004H,002H,001H
 
-J.64BD:	JP	C.6F89			; illegal function call
+J64BD:	JP	C6F89			; illegal function call
 
 ;	  Subroutine drum MCL "B","S","M","C","H"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$64C0:	LD	BC,0
-	CALL	C.6E59			; undo MCL char
-J$64C6:	CALL	C.6E2D
-	CALL	C.60E5
-	JR	NC,J$64F2
+C64C0:	LD	BC,0
+	CALL	C6E59			; undo MCL char
+J64C6:	CALL	C6E2D
+	CALL	C60E5
+	JR	NC,J64F2
 	PUSH	BC
-	LD	HL,I$64B3
+	LD	HL,I64B3
 	LD	BC,5
 	CPIR
-	JR	NZ,J.64BD
+	JR	NZ,J64BD
 	LD	C,04H	; 4 
 	ADD	HL,BC
 	LD	D,(HL)
 	POP	BC
-	CALL	C.6E2D
+	CALL	C6E2D
 	CP	21H	; "!"
 	PUSH	AF
-	CALL	NZ,C.6E59		; undo MCL char
+	CALL	NZ,C6E59		; undo MCL char
 	POP	AF
-	JR	NZ,J$64ED
+	JR	NZ,J64ED
 	LD	A,D
 	OR	B
 	LD	B,A
-J$64ED:	LD	A,D
+J64ED:	LD	A,D
 	OR	C
 	LD	C,A
-	JR	J$64C6
+	JR	J64C6
 ;	-----------------
-J$64F2:	INC	C
+J64F2:	INC	C
 	DEC	C
-	JR	Z,J.64BD
+	JR	Z,J64BD
 	LD	A,0C0H
 	OR	C
 	PUSH	AF
 	PUSH	BC
-	LD	HL,I$650E
+	LD	HL,I650E
 	PUSH	HL
 	LD	L,10H	; 16 
-	CALL	C.7009			; get pointer in current voicebuffer
+	CALL	C7009			; get pointer in current voicebuffer
 	PUSH	HL
-	CALL	C.6E59			; undo MCL char
-	CALL	C.6E67
-	JP	J.632E
+	CALL	C6E59			; undo MCL char
+	CALL	C6E67
+	JP	J632E
 ;	-----------------
-I$650E:	POP	BC
+I650E:	POP	BC
 	POP	AF
 	POP	DE
 	LD	E,A
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,B
-	JP	J.62F9
+	JP	J62F9
 
 ;	  Subroutine drum MCL "@"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6519:	CALL	C.6E2D
+C6519:	CALL	C6E2D
 	CP	43H	; "C"
-	JP	Z,J.616F
+	JP	Z,J616F
 	CP	48H	; "H"
-	JP	Z,J.61B3
+	JP	Z,J61B3
 	CP	56H	; "V"
-	JP	Z,J.608D
+	JP	Z,J608D
 	CP	41H	; "A"
-	JR	Z,J$6557
-	CALL	C.60E5
-	JR	C,J.64BD
-	CALL	C.6E6A			; evaluate number in MCL
+	JR	Z,J6557
+	CALL	C60E5
+	JR	C,J64BD
+	CALL	C6E6A			; evaluate number in MCL
 	LD	A,E
 	CP	80H
-	JP	NC,J.64BD
+	JP	NC,J64BD
 	PUSH	AF
 	LD	A,(D.F97F)
 	AND	01H			; MIDI playdevice ?
-	JP	Z,J$654E		; nope,
-	CALL	C.5F87			; check for byte value
+	JP	Z,J654E		; nope,
+	CALL	C5F87			; check for byte value
 	POP	AF
 	LD	C,A
-	JP	J.6083
+	JP	J6083
 ;	-----------------
-J$654E:	POP	AF
+J654E:	POP	AF
 	CP	40H	; "@"
-	JP	NC,J.64BD
-	JP	C.5F87			; check for byte value
+	JP	NC,J64BD
+	JP	C5F87			; check for byte value
 ;	-----------------
-J$6557:	CALL	C.6E2D
-	CALL	C.60E5
-	JR	C,J.6586
-	CALL	C.6E6A			; evaluate number in MCL
-	CALL	C.5F87			; check for byte value
+J6557:	CALL	C6E2D
+	CALL	C60E5
+	JR	C,J6586
+	CALL	C6E6A			; evaluate number in MCL
+	CALL	C5F87			; check for byte value
 	LD	A,E
 	CP	10H	; 16 
-	JR	NC,J.6586
+	JR	NC,J6586
 	LD	A,(D.F97F)
 	CP	01H			; MIDI playdevice ?
-	JR	Z,J$6577		; nope,
+	JR	Z,J6577		; nope,
 	LD	A,0FH	; 15 
 	SUB	E
 	ADD	A,A
-	JR	J$657B
+	JR	J657B
 ;	-----------------
-J$6577:	LD	A,E
+J6577:	LD	A,E
 	ADD	A,A
 	ADD	A,A
 	ADD	A,A
-J$657B:	LD	C,A
+J657B:	LD	C,A
 	LD	E,86H
-	CALL	C.5CE6			; put byte in queue (DI)
+	CALL	C5CE6			; put byte in queue (DI)
 	LD	E,C
 	POP	BC
-	JP	J.6301			; put byte in queue and stop parsing when queue is almost full
+	JP	J6301			; put byte in queue and stop parsing when queue is almost full
 ;	-----------------
-J.6586:	JP	C.6F89			; illegal function call
+J6586:	JP	C6F89			; illegal function call
 
 ;	  Subroutine MIDI timer interrupt handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J$6589:	PUSH	AF
+J6589:	PUSH	AF
 	XOR	A
 	OUT	(0EAH),A		; reset timer interrupt
 	DI
 	LD	HL,D.F999
 	LD	A,(D.F983)
 	OR	A			; already in MIDI timer interrupt ?
-	JR	NZ,J$65B3		; count skip int and quit
-J$6597:	CPL
+	JR	NZ,J65B3		; count skip int and quit
+J6597:	CPL
 	LD	(D.F983),A		; flag we are in a MIDI timer interrupt
 	PUSH	HL
-J$659C:	XOR	A
+J659C:	XOR	A
 	LD	(D.FA26),A		; reset ? flag
-	CALL	C.65B8
+	CALL	C65B8
 	LD	A,(D.FA26)
 	OR	A			; ? flag set ?
-	JR	NZ,J$659C		; restart queue service
+	JR	NZ,J659C		; restart queue service
 	POP	HL
 	DI
 	XOR	A
 	LD	(D.F983),A		; we are leaving the MIDI timer interrupt
 	DEC	(HL)			; do we have some skiped ints left ?
-	JP	P,J$6597		; yep, keep up with
-J$65B3:	INC	(HL)
+	JP	P,J6597		; yep, keep up with
+J65B3:	INC	(HL)
 	POP	AF
 	JP	J.F9BB			; continue in old H.MDTM
 
@@ -5032,25 +5036,25 @@ J$65B3:	INC	(HL)
 ;	     Outputs ________________________
 
 
-C.65B8:	LD	A,(MUSICF)
+C65B8:	LD	A,(MUSICF)
 	OR	A			; any PSG playvoice active OR b7 set ?
-	JR	Z,J$65C8		; nope,
-	CALL	C.69A2			; check if CTRL-STOP
-	JR	NZ,J$65D5		; nope,
+	JR	Z,J65C8		; nope,
+	CALL	C69A2			; check if CTRL-STOP
+	JR	NZ,J65D5		; nope,
 	LD	A,(MUSICF)
 	AND	7FH			; any PSG playvoice active ?
-J$65C8:	LD	HL,(D.F995)
+J65C8:	LD	HL,(D.F995)
 	OR	L
 	OR	H			; any playvoice active ?
 	LD	HL,D.F997
 	OR	(HL)			; OR something queued ?
-	CALL	NZ,C.6BCF		; yep, stop background music
+	CALL	NZ,C6BCF		; yep, stop background music
 	RET
 
-J$65D5:	LD	BC,(D.F995)
+J65D5:	LD	BC,(D.F995)
 	LD	A,B
 	OR	C			; any playvoice active ?
-	JP	Z,J.666B		; nope, quit
+	JP	Z,J666B		; nope, quit
 	LD	L,C
 	LD	H,B
 	LD	A,(D.F991)
@@ -5058,37 +5062,37 @@ J$65D5:	LD	BC,(D.F995)
 	LD	A,16
 	SUB	B
 	LD	B,A
-J$65E8:	ADD	HL,HL
-	DJNZ	J$65E8			; bits starting at b15 downwards
+J65E8:	ADD	HL,HL
+	DJNZ	J65E8			; bits starting at b15 downwards
 	LD	A,(D.F991)		; number of playvoices
-J$65EE:	DEC	A
-	JP	M,J$65FC		; all playvoices done, quit
+J65EE:	DEC	A
+	JP	M,J65FC		; all playvoices done, quit
 	ADD	HL,HL
 	PUSH	AF
 	PUSH	HL
-	CALL	C,C$666C		; service playvoice
+	CALL	C,C666C		; service playvoice
 	POP	HL
 	POP	AF
-	JR	J$65EE			; next playvoice
+	JR	J65EE			; next playvoice
 
-J$65FC:	PUSH	HL
+J65FC:	PUSH	HL
 	LD	A,(D.FAE2)
 	OR	0			; MIDI clock active ?
-	JR	Z,J.6658		; nope, skip MIDI clock
+	JR	Z,J6658		; nope, skip MIDI clock
 	LD	HL,(D.F995)
 	LD	A,H
 	OR	L			; any playvoice active ?
-	JR	Z,J$6649		; nope,
+	JR	Z,J6649		; nope,
 	LD	A,(D.FAE3)
 	CP	0
-	JR	NZ,J$6652
-J$6612:	LD	C,60H
+	JR	NZ,J6652
+J6612:	LD	C,60H
 	LD	B,0
 	LD	A,(D.FAE6)		; midi clock
-	CALL	C.5F2D			; multiply
+	CALL	C5F2D			; multiply
 	PUSH	HL
 	LD	DE,(D.F97A)		; 48000
-	CALL	C.5F0F			; divide
+	CALL	C5F0F			; divide
 	EX	DE,HL
 	EX	(SP),HL
 	PUSH	HL
@@ -5097,57 +5101,57 @@ J$6612:	LD	C,60H
 	POP	DE
 	PUSH	HL
 	SBC	HL,DE
-	JR	C,J$6639
+	JR	C,J6639
 	LD	(D.FAE4),HL
 	POP	HL
 	POP	HL
 	INC	HL
-	JR	J$663E
+	JR	J663E
 
-J$6639:	POP	HL
+J6639:	POP	HL
 	LD	(D.FAE4),HL
 	POP	HL
-J$663E:	LD	A,L
+J663E:	LD	A,L
 	LD	(D.FAE3),A
 	LD	A,0F8H			; MIDI timing clock
-	CALL	C.6DB4			; transmit MIDI data
-	JR	J.6658
+	CALL	C6DB4			; transmit MIDI data
+	JR	J6658
 
-J$6649:	XOR	A
+J6649:	XOR	A
 	LD	(D.FAE4),A
 	LD	(D$FAE5),A
-	JR	J.6658
+	JR	J6658
 
-J$6652:	DEC	A
-	JR	Z,J$6612
+J6652:	DEC	A
+	JR	Z,J6612
 	LD	(D.FAE3),A
-J.6658:	POP	HL
+J6658:	POP	HL
 	LD	HL,(D.F995)
 	LD	A,H
 	OR	L			; any playvoice active ?
-	JR	NZ,J.666B		; yep, quit
-	CALL	C.7062			; start music dequeuing
+	JR	NZ,J666B		; yep, quit
+	CALL	C7062			; start music dequeuing
 	LD	HL,(D.F995)
 	LD	A,H
 	OR	L			; any playvoice active ?
-	JP	NZ,C.65B8		; yep,
-J.666B:	RET
+	JP	NZ,C65B8		; yep,
+J666B:	RET
 
 ;	  Subroutine service playvoice
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$666C:	LD	(D.F99A),A		; current playvoice serviced
+C666C:	LD	(D.F99A),A		; current playvoice serviced
 	DI
 	LD	L,0
-	CALL	C.700C			; get pointer in voicebuffer
+	CALL	C700C			; get pointer in voicebuffer
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	LD	A,D
 	OR	E			; duration counter zero ?
-	JR	Z,J$6684		; yep,
+	JR	Z,J6684		; yep,
 	DEC	DE
 	LD	(HL),D
 	DEC	HL
@@ -5156,54 +5160,54 @@ C$666C:	LD	(D.F99A),A		; current playvoice serviced
 	OR	E			; duration counter becomes zero ?
 	RET	NZ			; nope, quit
 	INC	HL
-J$6684:	LD	A,(D.F992)
+J6684:	LD	A,(D.F992)
 	LD	B,A			; number of OPLL playvoices
 	LD	A,(D.F99A)		; current playvoice serviced
 	CP	B
-	JP	NC,J$6A43		; PSG playvoice
-J.668F:	CALL	C.6979			; get from voice queue serviced
+	JP	NC,J6A43		; PSG playvoice
+J668F:	CALL	C6979			; get from voice queue serviced
 	RET	Z			; queue empty, quit
-J.6693:	INC	A
-	JP	Z,J$67DB		; 0FFH, end marker
+J6693:	INC	A
+	JP	Z,J67DB		; 0FFH, end marker
 	DEC	A
-	JP	M,J$6806		; 080H-FEH,
+	JP	M,J6806		; 080H-FEH,
 	PUSH	HL
 	LD	D,A
 	LD	E,A
-	JR	Z,J.66A4		; 0,
-	CALL	C.6979			; get from voice queue serviced
+	JR	Z,J66A4		; 0,
+	CALL	C6979			; get from voice queue serviced
 	LD	E,A
-J.66A4:	LD	L,0DH
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+J66A4:	LD	L,0DH
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	(HL),E
 	INC	HL
 	LD	(HL),D
 	POP	HL
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	C,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
 	DEC	HL
 	LD	(HL),C			; new duration
 	LD	A,D
 	OR	A
-	JP	Z,C.6718
-	CALL	C.67AD
+	JP	Z,C6718
+	CALL	C67AD
 	LD	L,12H
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	C,(HL)
-	CALL	C.66E0			; to MIDI ?
-	JP	NZ,J$69AE		; yep, start note on midi operation and quit
-	CALL	C.676F			; get playvoice type of playvoice serviced
-	JP	C,J$6713		; not a FM playvoice, quit with ??
-J$66D1:	PUSH	BC
+	CALL	C66E0			; to MIDI ?
+	JP	NZ,J69AE		; yep, start note on midi operation and quit
+	CALL	C676F			; get playvoice type of playvoice serviced
+	JP	C,J6713		; not a FM playvoice, quit with ??
+J66D1:	PUSH	BC
 	PUSH	DE
-	CALL	C$726F
+	CALL	C726F
 	LD	BC,16
 	ADD	IX,BC
 	POP	DE
 	POP	BC
-	DJNZ	J$66D1
+	DJNZ	J66D1
 	RET
 
 ;	  Subroutine to MIDI device ?
@@ -5211,7 +5215,7 @@ J$66D1:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.66E0:	PUSH	HL
+C66E0:	PUSH	HL
 	LD	HL,D.F981
 	BIT	0,(HL)			; MIDI ?
 	POP	HL
@@ -5222,37 +5226,37 @@ C.66E0:	PUSH	HL
 ;	     Outputs ________________________
 
 
-I$66E8:	CALL	C.6979			; get from voice queue serviced
+I66E8:	CALL	C6979			; get from voice queue serviced
 	RET	Z
 	OR	A
-	JP	M,J.6693		; 80H-FFH,
-	JR	Z,J.6693		; 0,
+	JP	M,J6693		; 80H-FFH,
+	JR	Z,J6693		; 0,
 	LD	D,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	E,A
 	PUSH	HL
 	LD	L,0DH
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	A,E
 	CP	(HL)
-	JR	NZ,J$6704
+	JR	NZ,J6704
 	INC	HL
 	LD	A,D
 	CP	(HL)
-J$6704:	JP	NZ,J.66A4
+J6704:	JP	NZ,J66A4
 	POP	HL
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	C,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
 	DEC	HL
 	LD	(HL),C			; set duration
 	RET
 
-J$6713:	LD	A,(D.F982)
+J6713:	LD	A,(D.F982)
 	RET
 
-J$6717:	RET
+J6717:	RET
 
 
 ;	  Subroutine __________________________
@@ -5260,47 +5264,47 @@ J$6717:	RET
 ;	     Outputs ________________________
 
 
-C.6718:	CALL	C.66E0			; to MIDI ?
-	JR	NZ,J$6737		; yep,
+C6718:	CALL	C66E0			; to MIDI ?
+	JR	NZ,J6737		; yep,
 	LD	A,(D.F98E)
 	AND	01H			; in drum mode ?
-	JR	Z,J.674A		; nope,
+	JR	Z,J674A		; nope,
 	LD	A,(D.F99A)		; current playvoice serviced
 	CP	6
-	JR	C,J.674A
+	JR	C,J674A
 	LD	A,(D.F992)		; number of OPLL playvoices
 	DEC	A
 	DEC	A
 	LD	HL,D.F99A
 	CP	(HL)			; current playvoice serviced
-	JR	C,J.674A
+	JR	C,J674A
 	RET
 
-J$6737:	LD	A,(D.F98E)
+J6737:	LD	A,(D.F98E)
 	AND	01H			; in drum mode ?
-	JR	Z,J.674A		; nope,
-	CALL	C.676F			; get playvoice type of playvoice serviced
-	JR	NC,J.674A		; FM playvoice,
-	JR	Z,J.674A
+	JR	Z,J674A		; nope,
+	CALL	C676F			; get playvoice type of playvoice serviced
+	JR	NC,J674A		; FM playvoice,
+	JR	Z,J674A
 	LD	C,0
-	JP	C.69E0			; start midi rhythm operation
+	JP	C69E0			; start midi rhythm operation
 
-J.674A:	CALL	C.676F			; get playvoice type of playvoice serviced
-	JR	NC,J$6759		; FM playvoice,
+J674A:	CALL	C676F			; get playvoice type of playvoice serviced
+	JR	NC,J6759		; FM playvoice,
 	RET	NZ
-	CALL	C.66E0			; to MIDI ?
-	JP	NZ,J.69B9		; yep, start note off midi operation
-	JP	J$6717			; quit
+	CALL	C66E0			; to MIDI ?
+	JP	NZ,J69B9		; yep, start note off midi operation
+	JP	J6717			; quit
 
-J$6759:	CALL	C.66E0			; to MIDI ?
-	JP	NZ,J.69B9		; yep, start note off midi operation
-	CALL	C.67AD
-J$6762:	PUSH	BC
-	CALL	C.747D			; set KEY ON/OFF OPLL
+J6759:	CALL	C66E0			; to MIDI ?
+	JP	NZ,J69B9		; yep, start note off midi operation
+	CALL	C67AD
+J6762:	PUSH	BC
+	CALL	C747D			; set KEY ON/OFF OPLL
 	LD	BC,16
 	ADD	IX,BC
 	POP	BC
-	DJNZ	J$6762
+	DJNZ	J6762
 	RET
 
 ;	  Subroutine get playvoice type of playvoice serviced
@@ -5308,24 +5312,24 @@ J$6762:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.676F:	LD	A,(D.F99A)		; current playvoice serviced
+C676F:	LD	A,(D.F99A)		; current playvoice serviced
 
 ;	  Subroutine get playvoice type
 ;	     Inputs  A = playvoice
 ;	     Outputs Cx reset if FM, Cx set if not FM
 
-C.6772:	LD	HL,D.F984
+C6772:	LD	HL,D.F984
 	CP	(HL)			; FM playvoice ?
 	CCF
 	RET	NC			; yep, quit (Cx reset, Zx reset)
 	PUSH	AF
 	LD	A,(D.F98E)
 	DEC	A			; in drum mode ?
-	JR	Z,J$6781		; yep,
+	JR	Z,J6781		; yep,
 	POP	AF
 	RET				; quit (Cx set)
 
-J$6781:	POP	AF
+J6781:	POP	AF
 	ADC	A,A			; Zx is reset (*2+1)
 	RRA				; Cx set, Zx unchanged
 	RET
@@ -5336,27 +5340,27 @@ J$6781:	POP	AF
 ;	     Outputs ________________________
 
 
-C$6785:	CALL	C.66E0			; to MIDI ?
-	JP	NZ,J$69BD		; yep, program change midi operation
-	CALL	C.676F			; get playvoice type of playvoice serviced
-	JR	NC,J$6795		; FM playvoice,
+C6785:	CALL	C66E0			; to MIDI ?
+	JP	NZ,J69BD		; yep, program change midi operation
+	CALL	C676F			; get playvoice type of playvoice serviced
+	JR	NC,J6795		; FM playvoice,
 	LD	A,C
 	LD	(D.F982),A
 	RET
 
-J$6795:	PUSH	BC
-	CALL	C.67AD
+J6795:	PUSH	BC
+	CALL	C67AD
 	POP	DE
 	LD	C,E
-J$679B:	PUSH	BC
-	CALL	C$726C			; set KEY ON/OFF OPLL
+J679B:	PUSH	BC
+	CALL	C726C			; set KEY ON/OFF OPLL
 	POP	BC
 	PUSH	BC
-	CALL	C.7106			; set instrument OPLL
+	CALL	C7106			; set instrument OPLL
 	LD	BC,16
 	ADD	IX,BC
 	POP	BC
-	DJNZ	J$679B
+	DJNZ	J679B
 	RET
 
 
@@ -5365,46 +5369,46 @@ J$679B:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.67AD:	LD	A,(D.F99A)		; current playvoice serviced
-	CALL	C.6772			; get playvoice type
-	JR	NC,J.67BE		; FM voice,
-	JR	Z,J.67BE		; MUSIC drum voice,
+C67AD:	LD	A,(D.F99A)		; current playvoice serviced
+	CALL	C6772			; get playvoice type
+	JR	NC,J67BE		; FM voice,
+	JR	Z,J67BE		; MUSIC drum voice,
 	LD	IX,I.FA27+6*16
 	LD	B,3
 	RET
 
-J.67BE:	LD	HL,I.F985		; channels per voice
+J67BE:	LD	HL,I.F985		; channels per voice
 	OR	A
-	JR	Z,J$67CA		; voice 0, first channel = 0
+	JR	Z,J67CA		; voice 0, first channel = 0
 	LD	B,A
 	XOR	A
-J$67C6:	ADD	A,(HL)
+J67C6:	ADD	A,(HL)
 	INC	HL
-	DJNZ	J$67C6			; calculate first channel number of voice
-J$67CA:	LD	IX,I.FA27
+	DJNZ	J67C6			; calculate first channel number of voice
+J67CA:	LD	IX,I.FA27
 	OR	A
-	JR	Z,J$67D9		; channel 0,
+	JR	Z,J67D9		; channel 0,
 	LD	BC,16
-J$67D4:	ADD	IX,BC
+J67D4:	ADD	IX,BC
 	DEC	A
-	JR	NZ,J$67D4
-J$67D9:	LD	B,(HL)			; number of channels in this voice
+	JR	NZ,J67D4
+J67D9:	LD	B,(HL)			; number of channels in this voice
 	RET
 ;	-----------------
-J$67DB:	CALL	C.6718
+J67DB:	CALL	C6718
 	LD	L,0DH
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	(HL),0
 	INC	HL
 	LD	(HL),0
-J$67E8:	LD	A,(D.F99A)		; current playvoice serviced
+J67E8:	LD	A,(D.F99A)		; current playvoice serviced
 	LD	HL,1
 	LD	B,A
 	OR	A
-	JR	Z,J$67F5
-J$67F2:	ADD	HL,HL
-	DJNZ	J$67F2			; playvoice mask
-J$67F5:	EX	DE,HL
+	JR	Z,J67F5
+J67F2:	ADD	HL,HL
+	DJNZ	J67F2			; playvoice mask
+J67F5:	EX	DE,HL
 	DI
 	LD	HL,(D.F995)
 	LD	A,E
@@ -5418,17 +5422,17 @@ J$67F5:	EX	DE,HL
 	LD	(D.F995),HL		; clear playvoice bit
 	RET
 
-J$6806:	LD	E,A
+J6806:	LD	E,A
 	AND	0C0H			; b7 and b6
 	CP	0C0H
-	JP	Z,J$6932		; 0C0H-0FEH,
+	JP	Z,J6932		; 0C0H-0FEH,
 	LD	A,E
 	ADD	A,A
 	EX	DE,HL
-	ADD	A,LOW I$681F
+	ADD	A,LOW I681F
 	LD	L,A
 	LD	A,0
-	ADC	A,HIGH I$681F
+	ADC	A,HIGH I681F
 	LD	H,A
 	LD	C,(HL)
 	INC	HL
@@ -5437,28 +5441,28 @@ J$6806:	LD	E,A
 	PUSH	BC
 	RET
 
-I$681F:	DEFW	I$6847			; 080H
-	DEFW	I$684A			; 081H, volume
-	DEFW	I$688F			; 082H, register
-	DEFW	I$689D			; 083H, duration
-	DEFW	I$68A8			; 084H, voice
-	DEFW	I$68B2			; 085H, volume
-	DEFW	I$6909			; 086H, rhythm
-	DEFW	I$66E8			; 087H, "&"
-	DEFW	I$683D			; 088H, use MUSIC/PSG
-	DEFW	I$683F			; 089H, use MIDI
-	DEFW	I$69E5			; 08AH, midi data
-	DEFW	I$6A1F			; 08BH, midi control change
-	DEFW	I$6A30			; 08CH, midi channel set
-	DEFW	I$6A14			; 08DH, midi clock
-	DEFW	I$69F2			; 08EH, midi timing
+I681F:	DEFW	I6847			; 080H
+	DEFW	I684A			; 081H, volume
+	DEFW	I688F			; 082H, register
+	DEFW	I689D			; 083H, duration
+	DEFW	I68A8			; 084H, voice
+	DEFW	I68B2			; 085H, volume
+	DEFW	I6909			; 086H, rhythm
+	DEFW	I66E8			; 087H, "&"
+	DEFW	I683D			; 088H, use MUSIC/PSG
+	DEFW	I683F			; 089H, use MIDI
+	DEFW	I69E5			; 08AH, midi data
+	DEFW	I6A1F			; 08BH, midi control change
+	DEFW	I6A30			; 08CH, midi channel set
+	DEFW	I6A14			; 08DH, midi clock
+	DEFW	I69F2			; 08EH, midi timing
 
 ;	  Subroutine packet 088H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$683D:	XOR	A
+I683D:	XOR	A
 	DEFB	001H
 
 ;	  Subroutine packet 089H
@@ -5466,80 +5470,80 @@ I$683D:	XOR	A
 ;	     Outputs ________________________
 
 
-I$683F:	LD	A,1
+I683F:	LD	A,1
 	LD	(D.F981),A
-	JP	J.668F			; get next music packet
+	JP	J668F			; get next music packet
 
 ;	  Subroutine packet 080H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$6847:	JP	C.6718
+I6847:	JP	C6718
 
 ;	  Subroutine packet 081H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$684A:	CALL	C.66E0			; to MIDI ?
-	JR	Z,J.6862		; nope,
+I684A:	CALL	C66E0			; to MIDI ?
+	JR	Z,J6862		; nope,
 	LD	A,(D.F98E)
 	AND	04H
-	JR	Z,J.6862
+	JR	Z,J6862
 	LD	A,(D.F992)		; number of OPLL playvoices
 	DEC	A
 	LD	B,A
 	LD	A,(D.F99A)		; current playvoice serviced
 	CP	B
-	JP	Z,J.68F1
-J.6862:	PUSH	HL
-	CALL	C.676F			; get playvoice type of playvoice serviced
+	JP	Z,J68F1
+J6862:	PUSH	HL
+	CALL	C676F			; get playvoice type of playvoice serviced
 	POP	HL
-	JR	NC,J$686E		; FM playvoice,
-	JP	NZ,J.68F1
-	JR	J$687C
+	JR	NC,J686E		; FM playvoice,
+	JP	NZ,J68F1
+	JR	J687C
 ;	-----------------
-J$686E:	PUSH	HL
+J686E:	PUSH	HL
 	LD	L,12H	; 18 
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
-J.6878:	POP	HL
-	JP	J.668F			; get next music packet
+J6878:	POP	HL
+	JP	J668F			; get next music packet
 ;	-----------------
-J$687C:	PUSH	HL
+J687C:	PUSH	HL
 	LD	L,12H	; 18 
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
 	ADD	A,A
 	ADD	A,A
 	ADD	A,03H	; 3 
-	CALL	C.68EA
-	JR	J.6878			; get next music packet
+	CALL	C68EA
+	JR	J6878			; get next music packet
 
 ;	  Subroutine packet 082H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$688F:	PUSH	HL
-	CALL	C.6979			; get from voice queue serviced
+I688F:	PUSH	HL
+	CALL	C6979			; get from voice queue serviced
 	LD	C,A			; register
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	B,A			; data
-	CALL	C.75DA			; write OPLL register with validation
-	JR	J.6878			; get next music packet
+	CALL	C75DA			; write OPLL register with validation
+	JR	J6878			; get next music packet
 
 ;	  Subroutine packet 083H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$689D:	CALL	C.6979			; get from voice queue serviced
+I689D:	CALL	C6979			; get from voice queue serviced
 	LD	C,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
 	DEC	HL
 	LD	(HL),C
@@ -5550,45 +5554,45 @@ I$689D:	CALL	C.6979			; get from voice queue serviced
 ;	     Outputs ________________________
 
 
-I$68A8:	PUSH	HL
-	CALL	C.6979			; get from voice queue serviced
+I68A8:	PUSH	HL
+	CALL	C6979			; get from voice queue serviced
 	LD	C,A
-	CALL	C$6785
-	JR	J.6878			; get next music packet
+	CALL	C6785
+	JR	J6878			; get next music packet
 
 ;	  Subroutine packet 085H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$68B2:	CALL	C.66E0			; to MIDI ?
-	JP	NZ,J$69C2		; yep, start volume change midi operation and quit
+I68B2:	CALL	C66E0			; to MIDI ?
+	JP	NZ,J69C2		; yep, start volume change midi operation and quit
 	PUSH	HL
-	CALL	C.676F			; get playvoice type of playvoice serviced
-	JR	NC,J$68C7		; FM playvoice
-	JR	Z,J$68DE
-	CALL	C.67AD
+	CALL	C676F			; get playvoice type of playvoice serviced
+	JR	NC,J68C7		; FM playvoice
+	JR	Z,J68DE
+	CALL	C67AD
 	LD	B,01H
-	JR	J$68CA
+	JR	J68CA
 
-J$68C7:	CALL	C.67AD
-J$68CA:	CALL	C.6979			; get from voice queue serviced
+J68C7:	CALL	C67AD
+J68CA:	CALL	C6979			; get from voice queue serviced
 	LD	E,A
-J$68CE:	PUSH	BC
+J68CE:	PUSH	BC
 	PUSH	DE
-	CALL	C$71F1
+	CALL	C71F1
 	LD	BC,16
 	ADD	IX,BC
 	POP	DE
 	POP	BC
-	DJNZ	J$68CE
-	JR	J.6878			; get next music packet
+	DJNZ	J68CE
+	JR	J6878			; get next music packet
 ;	-----------------
-J$68DE:	CALL	C.6979			; get from voice queue serviced
+J68DE:	CALL	C6979			; get from voice queue serviced
 	LD	E,A
 	LD	A,3FH	; "?"
 	SUB	E
-	CALL	C.68EA
+	CALL	C68EA
 	POP	HL
 	RET
 
@@ -5598,41 +5602,41 @@ J$68DE:	CALL	C.6979			; get from voice queue serviced
 ;	     Outputs ________________________
 
 
-C.68EA:	LD	C,A
+C68EA:	LD	C,A
 	LD	B,0
 	LD	E,A
 	LD	D,0
 	RET
 ;	-----------------
-J.68F1:	PUSH	HL
+J68F1:	PUSH	HL
 	LD	L,0AH	; 10 
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
 	LD	E,A
 	LD	L,08H	; 8 
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	A,(HL)
 	CPL
-	CALL	C.6920
-	JP	J.6878			; get next music packet
+	CALL	C6920
+	JP	J6878			; get next music packet
 
 ;	  Subroutine packet 086H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$6909:	PUSH	HL
+I6909:	PUSH	HL
 	LD	L,0CH
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
 	LD	E,A
 	LD	L,08H
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	A,(HL)
-	CALL	C.6920
-	JP	J.6878			; get next music packet
+	CALL	C6920
+	JP	J6878			; get next music packet
 
 
 ;	  Subroutine __________________________
@@ -5640,42 +5644,42 @@ I$6909:	PUSH	HL
 ;	     Outputs ________________________
 
 
-C.6920:	AND	1FH
+C6920:	AND	1FH
 	RET	Z
-	CALL	C.66E0			; to MIDI ?
-	JP	NZ,J$69D5		; yep, start rhythm velocity operation and quit
+	CALL	C66E0			; to MIDI ?
+	JP	NZ,J69D5		; yep, start rhythm velocity operation and quit
 	PUSH	BC
 	PUSH	DE
 	LD	C,A
-	CALL	C$7200
+	CALL	C7200
 	POP	DE
 	POP	BC
 	RET
 ;	-----------------
-J$6932:	CALL	C.6979			; get from voice queue serviced
+J6932:	CALL	C6979			; get from voice queue serviced
 	LD	D,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	C,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A
 	DEC	HL
 	LD	(HL),C
 	PUSH	HL
 	LD	L,08H	; 8 
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	A,D
 	XOR	(HL)
-	JR	Z,J$696A
+	JR	Z,J696A
 	LD	(HL),D
 	PUSH	DE
 	PUSH	AF
 	AND	D
 	PUSH	AF
 	LD	L,0CH	; 12 
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	E,(HL)
 	POP	AF
-	CALL	C.6920
+	CALL	C6920
 	LD	A,D
 	CPL
 	LD	D,A
@@ -5683,18 +5687,18 @@ J$6932:	CALL	C.6979			; get from voice queue serviced
 	AND	D
 	PUSH	AF
 	LD	L,0AH	; 10 
-	CALL	C.6987			; get pointer in voicebuffer currently serviced
+	CALL	C6987			; get pointer in voicebuffer currently serviced
 	LD	E,(HL)
 	POP	AF
-	CALL	C.6920
+	CALL	C6920
 	POP	DE
-J$696A:	POP	HL
+J696A:	POP	HL
 	LD	A,E
 	AND	3FH
 	LD	C,A
-	CALL	C.66E0			; to MIDI ?
-	JP	NZ,C.69E0		; yep, start midi rhythm operation and quit
-	CALL	C$748D			; do rhythm OPLL
+	CALL	C66E0			; to MIDI ?
+	JP	NZ,C69E0		; yep, start midi rhythm operation and quit
+	CALL	C748D			; do rhythm OPLL
 	RET
 
 ;	  Subroutine get from voice queue serviced
@@ -5702,12 +5706,12 @@ J$696A:	POP	HL
 ;	     Outputs ________________________
 
 
-C.6979:	PUSH	HL
+C6979:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	LD	A,(D.F99A)		; current playvoice serviced
 	DI
-	CALL	C$6F2D			; get from voice queue
+	CALL	C6F2D			; get from voice queue
 	POP	BC
 	POP	DE
 	POP	HL
@@ -5718,9 +5722,9 @@ C.6979:	PUSH	HL
 ;	     Outputs ________________________
 
 
-C.6987:	LD	A,(D.F99A)		; current playvoice serviced
+C6987:	LD	A,(D.F99A)		; current playvoice serviced
 	DI
-	JP	C.700C			; get pointer in voicebuffer
+	JP	C700C			; get pointer in voicebuffer
 
 
 ;	  Subroutine __________________________
@@ -5728,8 +5732,8 @@ C.6987:	LD	A,(D.F99A)		; current playvoice serviced
 ;	     Outputs ________________________
 
 
-C.698E:	EI
-	CALL	C.69A2			; check if CTRL-STOP
+C698E:	EI
+	CALL	C69A2			; check if CTRL-STOP
 	SCF
 	RET	Z			; yep, quit
 	DI
@@ -5738,7 +5742,7 @@ C.698E:	EI
 	OR	H			; any playvoice active ?
 	LD	HL,D.F997
 	OR	(HL)			; OR something queued ?
-	JR	NZ,C.698E		; yep, wait
+	JR	NZ,C698E		; yep, wait
 	EI
 	RET
 
@@ -5747,7 +5751,7 @@ C.698E:	EI
 ;	     Outputs ________________________
 
 
-C.69A2:	LD	A,(BASROM)
+C69A2:	LD	A,(BASROM)
 	OR	A
 	RET	NZ
 	LD	A,(INTFLG)
@@ -5755,42 +5759,42 @@ C.69A2:	LD	A,(BASROM)
 	OR	A
 	RET
 
-J$69AE:	LD	B,0			; note on midi operation
+J69AE:	LD	B,0			; note on midi operation
 
 ;	  Subroutine start midi operation
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.69B0:	LD	A,(D.F99A)		; current playvoice serviced
+C69B0:	LD	A,(D.F99A)		; current playvoice serviced
 	PUSH	HL
-	CALL	C$6C03
+	CALL	C6C03
 	POP	HL
 	RET
 
-J.69B9:	LD	B,1			; note off midi operation
-	JR	C.69B0			; start midi operation
+J69B9:	LD	B,1			; note off midi operation
+	JR	C69B0			; start midi operation
 
-J$69BD:	LD	B,2			; program change operation
+J69BD:	LD	B,2			; program change operation
 	LD	D,C
-	JR	C.69B0			; start midi operation
+	JR	C69B0			; start midi operation
 
-J$69C2:	CALL	C.6979			; get from voice queue serviced
+J69C2:	CALL	C6979			; get from voice queue serviced
 	LD	D,A
 	PUSH	HL
-	CALL	C.676F			; get playvoice type of playvoice serviced
+	CALL	C676F			; get playvoice type of playvoice serviced
 	POP	HL
 	LD	B,3			; volume change operation
-	JR	NC,C.69B0		; FM playvoice, start midi operation
-	JR	Z,C.69B0		; start midi operation
+	JR	NC,C69B0		; FM playvoice, start midi operation
+	JR	Z,C69B0		; start midi operation
 	LD	B,3			; volume change operation
-	JR	C.69B0			; start midi operation
+	JR	C69B0			; start midi operation
 
-J$69D5:	PUSH	BC
+J69D5:	PUSH	BC
 	PUSH	DE
 	LD	D,A
 	LD	B,5			; rhythm velocity operation
-	CALL	C.69B0			; start midi operation
+	CALL	C69B0			; start midi operation
 	POP	DE
 	POP	BC
 	RET
@@ -5801,102 +5805,102 @@ J$69D5:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.69E0:	LD	B,6			; do rhythm operation
+C69E0:	LD	B,6			; do rhythm operation
 	LD	D,C
-	JR	C.69B0			; start midi operation
+	JR	C69B0			; start midi operation
 
 ;	  Subroutine packet 08AH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$69E5:	PUSH	HL
-	CALL	C.6979			; get from voice queue serviced
+I69E5:	PUSH	HL
+	CALL	C6979			; get from voice queue serviced
 	LD	D,A
 	LD	B,7			; midi data
-	CALL	C.69B0			; start midi operation
-	JP	J.6878			; get next music packet
+	CALL	C69B0			; start midi operation
+	JP	J6878			; get next music packet
 
 ;	  Subroutine packet 08EH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$69F2:	PUSH	HL
-	CALL	C.6979			; get from voice queue serviced
+I69F2:	PUSH	HL
+	CALL	C6979			; get from voice queue serviced
 	LD	HL,D.FAE2
 	LD	(HL),A			; MIDI clock status
 	CP	1
-	JR	Z,J$6A06
+	JR	Z,J6A06
 	CP	2
-	JR	Z,J$6A0A
+	JR	Z,J6A0A
 	LD	A,0FCH			; system real-time stop
-	JR	J.6A0E
+	JR	J6A0E
 
-J$6A06:	LD	A,0FAH			; system real-time start
-	JR	J.6A0E
+J6A06:	LD	A,0FAH			; system real-time start
+	JR	J6A0E
 
-J$6A0A:	LD	A,0FBH			; system real-time continue
-	JR	J.6A0E
+J6A0A:	LD	A,0FBH			; system real-time continue
+	JR	J6A0E
 
-J.6A0E:	CALL	C.6DB4			; transmit MIDI data
-	JP	J.6878			; get next music packet
+J6A0E:	CALL	C6DB4			; transmit MIDI data
+	JP	J6878			; get next music packet
 
 ;	  Subroutine packet 08DH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$6A14:	PUSH	HL
-	CALL	C.6979			; get from voice queue serviced
+I6A14:	PUSH	HL
+	CALL	C6979			; get from voice queue serviced
 	LD	HL,D.FAE6
 	LD	(HL),A			; MIDI clock speed
-	JP	J.6878			; get next music packet
+	JP	J6878			; get next music packet
 
 ;	  Subroutine packet 08BH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$6A1F:	PUSH	HL
-	CALL	C.6979			; get from voice queue serviced
+I6A1F:	PUSH	HL
+	CALL	C6979			; get from voice queue serviced
 	LD	D,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	E,A
 	LD	B,8			; control change operation
-	CALL	C.69B0			; start midi operation
-	JP	J.6878			; get next music packet
+	CALL	C69B0			; start midi operation
+	JP	J6878			; get next music packet
 
 ;	  Subroutine packet 08CH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-I$6A30:	PUSH	HL
+I6A30:	PUSH	HL
 	LD	HL,I.FAC4
 	LD	A,(D.F99A)		; current playvoice serviced
 	ADD	A,L
 	LD	L,A
-	JR	NC,J$6A3C
+	JR	NC,J6A3C
 	INC	H
-J$6A3C:	CALL	C.6979			; get from voice queue serviced
+J6A3C:	CALL	C6979			; get from voice queue serviced
 	LD	(HL),A			; set MIDI channel of this playvoice
-	JP	J.6878			; get next music packet
+	JP	J6878			; get next music packet
 
 ;	  Subroutine get PSG music packet
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-J$6A43:	LD	A,(D.F992)
+J6A43:	LD	A,(D.F992)
 	LD	B,A			; number of OPLL playvoices
 	LD	A,(D.F99A)		; current playvoice serviced
 	SUB	B
 	LD	B,A			; PSG channel
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	RET	Z			; queue empty, quit
 	CP	0FFH
-	JR	Z,J$6AAF		; end marker, silence PSG channel
+	JR	Z,J6AAF		; end marker, silence PSG channel
 	LD	D,A
 	AND	0E0H
 	RLCA
@@ -5906,76 +5910,76 @@ J$6A43:	LD	A,(D.F992)
 	LD	A,D
 	AND	1FH
 	LD	(HL),A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	DEC	HL
 	LD	(HL),A			; new duration
 	INC	C
-J.6A65:	DEC	C
+J6A65:	DEC	C
 	RET	Z			; end of packet, quit
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	D,A
 	AND	0C0H			; volume or envelope specified ?
-	JR	NZ,J$6A80		; yep, handle this first
-	CALL	C.6979			; get from voice queue serviced
+	JR	NZ,J6A80		; yep, handle this first
+	CALL	C6979			; get from voice queue serviced
 	LD	E,A
 	LD	A,B
 	RLCA
-	CALL	C.6AC7			; write PSG frequency LSB register
+	CALL	C6AC7			; write PSG frequency LSB register
 	INC	A
 	LD	E,D
-	CALL	C.6AC7			; write PSG frequency MSB register
+	CALL	C6AC7			; write PSG frequency MSB register
 	DEC	C
-	JR	J.6A65
+	JR	J6A65
 
-J$6A80:	LD	H,A
+J6A80:	LD	H,A
 	AND	80H			; volume specified ?
-	JR	Z,J$6A94		; nope,
+	JR	Z,J6A94		; nope,
 	LD	E,D
 	LD	A,B
 	ADD	A,8
-	CALL	C.6AC7			; write PSG volume register
+	CALL	C6AC7			; write PSG volume register
 	LD	A,E
 	AND	10H			; shape ?
 	LD	A,0DH
-	CALL	NZ,C.6AC7		; yep, write PSG shape register
-J$6A94:	LD	A,H
+	CALL	NZ,C6AC7		; yep, write PSG shape register
+J6A94:	LD	A,H
 	AND	40H			; envelope specified ?
-	JR	Z,J.6A65		; nope,
-	CALL	C.6979			; get from voice queue serviced
+	JR	Z,J6A65		; nope,
+	CALL	C6979			; get from voice queue serviced
 	LD	D,A
-	CALL	C.6979			; get from voice queue serviced
+	CALL	C6979			; get from voice queue serviced
 	LD	E,A
 	LD	A,0BH
-	CALL	C.6AC7			; write PSG envelope register
+	CALL	C6AC7			; write PSG envelope register
 	INC	A
 	LD	E,D
-	CALL	C.6AC7			; write PSG envelope register
+	CALL	C6AC7			; write PSG envelope register
 	DEC	C
 	DEC	C
-	JR	J.6A65
+	JR	J6A65
 
-J$6AAF:	LD	A,B
+J6AAF:	LD	A,B
 	ADD	A,8
 	LD	E,0			; volume 0
-	CALL	C.6AC7			; write PSG volume register
+	CALL	C6AC7			; write PSG volume register
 	INC	B
 	DI
 	LD	HL,MUSICF
 	XOR	A
 	SCF
-J$6ABE:	RLA
-	DJNZ	J$6ABE			; PSG playvoice mask
+J6ABE:	RLA
+	DJNZ	J6ABE			; PSG playvoice mask
 	AND	(HL)
 	XOR	(HL)
 	LD	(HL),A			; clear PSG playvoice bit
-	JP	J$67E8			; clear playvoice bit and quit
+	JP	J67E8			; clear playvoice bit and quit
 
 ;	  Subroutine write PSG register
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.6AC7:	DI
+C6AC7:	DI
 	OUT	(0A0H),A
 	PUSH	AF
 	LD	A,E
@@ -5989,30 +5993,30 @@ C.6AC7:	DI
 ;	     Outputs ________________________
 
 
-C$6AD0:	XOR	A
+C6AD0:	XOR	A
 	LD	(D.F998),A		; music at background
 	LD	A,(D.F984)		; number of FM playvoices
 	LD	HL,D.F98E
 	BIT	0,(HL)			; in drum mode ?
-	JR	Z,J$6ADF		; nope,
+	JR	Z,J6ADF		; nope,
 	INC	A			; yep, 1 extra playvoice for drums
-J$6ADF:	BIT	1,(HL)
-	JR	Z,J$6AE4
+J6ADF:	BIT	1,(HL)
+	JR	Z,J6AE4
 	INC	A
-J$6AE4:	LD	(D.F992),A		; number of OPLL playvoices
+J6AE4:	LD	(D.F992),A		; number of OPLL playvoices
 	ADD	A,3			; 3 PSG playvoices
 	LD	(D.F991),A		; number of playvoices
 	LD	B,A
 	OR	80H
 	LD	(D.F993),A		; number of playvoices with b7 set
 	LD	HL,0
-J$6AF5:	SCF
+J6AF5:	SCF
 	ADC	HL,HL
-	DJNZ	J$6AF5
+	DJNZ	J6AF5
 	LD	(D.F98F),HL		; playvoice mask
 	LD	A,(D.F992)		; number of OPLL playvoices
-	LD	HL,I$6B26
-	CALL	C.5539			; get entry A
+	LD	HL,I6B26
+	CALL	C5539			; get entry A
 	LD	A,(HL)
 	LD	(D.F994),A		; size of voice queue - 1
 	LD	HL,(D.F97D)		; start MSX-MUSIC workarea
@@ -6027,7 +6031,7 @@ J$6AF5:	SCF
 	LD	(D.F97A),HL
 	RET
 
-I$6B26:	DEFB	127			; 0 OPLL playvoices, use 128 bytes queues
+I6B26:	DEFB	127			; 0 OPLL playvoices, use 128 bytes queues
 	DEFB	63,63,63		; 1-3 OPLL playvoices, use 64 bytes queues
 	DEFB	31,31,31,31,31,31	; 4-9 OPLL playvoices, use 32 bytes queues
 
@@ -6037,7 +6041,7 @@ I$6B26:	DEFB	127			; 0 OPLL playvoices, use 128 bytes queues
 ;	     Outputs ________________________
 
 
-C.6B30:	CALL	C$6FA2			; GICINI
+C6B30:	CALL	C6FA2			; GICINI
 	DI
 	XOR	A
 	LD	(D.F999),A
@@ -6056,14 +6060,14 @@ C.6B30:	CALL	C$6FA2			; GICINI
 	LD	DE,0048H
 	ADD	HL,DE
 	EX	DE,HL			; start of the voice queue area
-J$6B5B:	PUSH	BC
+J6B5B:	PUSH	BC
 	PUSH	DE
 	LD	A,(D.F991)		; number of playvoices
 	SUB	B
 	LD	(D.F99A),A		; current playvoice serviced
 	LD	HL,D.F994
 	LD	B,(HL)			; size of voice queue-1
-	CALL	C$6F49			; initialize voice queue
+	CALL	C6F49			; initialize voice queue
 	POP	DE
 	POP	BC
 	LD	A,(D.F994)
@@ -6072,23 +6076,23 @@ J$6B5B:	PUSH	BC
 	LD	H,0			; size of voice queue
 	ADD	HL,DE
 	EX	DE,HL
-	DJNZ	J$6B5B			; next playvoice
+	DJNZ	J6B5B			; next playvoice
 	LD	A,(D.F992)
 	OR	A			; number of OPLL playvoices zero ?
-	JR	Z,J$6B93		; yep,
+	JR	Z,J6B93		; yep,
 	LD	B,A
-J$6B7F:	PUSH	BC
+J6B7F:	PUSH	BC
 	LD	A,B
 	DEC	A
 	LD	L,0
-	CALL	C.700C			; get pointer in voicebuffer
+	CALL	C700C			; get pointer in voicebuffer
 	EX	DE,HL
-	LD	HL,I$6BA8
+	LD	HL,I6BA8
 	LD	BC,39
 	LDIR				; initialize voicebuffer
 	POP	BC
-	DJNZ	J$6B7F			; next OPLL playvoice
-J$6B93:	XOR	A
+	DJNZ	J6B7F			; next OPLL playvoice
+J6B93:	XOR	A
 	LD	(MUSICF),A		; no PSG playvoice active
 	RET
 
@@ -6098,16 +6102,16 @@ J$6B93:	XOR	A
 ;	     Outputs ________________________
 
 
-C.6B98:	LD	A,(D.F98E)
+C6B98:	LD	A,(D.F98E)
 	AND	01H			; in drum mode ?
 	RET	Z			; nope, quit
-	LD	A,(I$6BA8+10)
+	LD	A,(I6BA8+10)
 	LD	E,A
 	LD	A,1FH
-	CALL	C.6920
+	CALL	C6920
 	RET
 
-I$6BA8:	DEFW	0			; +0 , duration counter
+I6BA8:	DEFW	0			; +0 , duration counter
 	DEFB	0			; +2 , stringlength
 	DEFW	0			; +3 , stringadres
 	DEFW	0			; +5 , stackdata
@@ -6127,10 +6131,10 @@ I$6BA8:	DEFW	0			; +0 , duration counter
 ;	     Outputs ________________________
 
 
-C.6BCF:	CALL	C.6B30
-	CALL	C.6B98
+C6BCF:	CALL	C6B30
+	CALL	C6B98
 	LD	A,(D.F992)		; number of OPLL playvoices
-	CALL	C.6BF7
+	CALL	C6BF7
 
 ; now some buggy MIDI code
 ; the case where the number of OPLL/MIDI playvoices is zero is not handled correctly
@@ -6143,17 +6147,17 @@ C.6BCF:	CALL	C.6B30
 
 	LD	A,(D.F98E)
 	AND	01H			; in drum mode ?
-	JR	Z,J$6BEB		; nope,
+	JR	Z,J6BEB		; nope,
 	LD	A,(D.F992)		; number of OPLL playvoices
 	DEC	A
 	LD	C,0
-	CALL	C.69E0			; start midi rhythm operation
-J$6BEB:	LD	A,(D.F992)		; number of OPLL playvoices
+	CALL	C69E0			; start midi rhythm operation
+J6BEB:	LD	A,(D.F992)		; number of OPLL playvoices
 	LD	B,A
-J$6BEF:	LD	A,B
+J6BEF:	LD	A,B
 	DEC	A
-	CALL	C$6D5D			; notes off MIDI
-	DJNZ	J$6BEF
+	CALL	C6D5D			; notes off MIDI
+	DJNZ	J6BEF
 	RET
 
 
@@ -6162,39 +6166,39 @@ J$6BEF:	LD	A,B
 ;	     Outputs ________________________
 
 
-C.6BF7:	DEC	A			; no more OPLL playvoices ?
+C6BF7:	DEC	A			; no more OPLL playvoices ?
 	RET	M			; yep, quit
 	LD	(D.F99A),A		; current playvoice serviced
 	PUSH	AF
-	CALL	C.6718
+	CALL	C6718
 	POP	AF
-	JR	C.6BF7			; next OPLL playvoice
+	JR	C6BF7			; next OPLL playvoice
 
 ;	  Subroutine do midi operation
 ;	     Inputs  B = midi operation
 ;	     Outputs ________________________
 
 
-C$6C03:	DI
+C6C03:	DI
 	PUSH	AF
 	LD	A,B
 	CP	0
-	JP	Z,J$6C3D		; note on
+	JP	Z,J6C3D		; note on
 	CP	1
-	JP	Z,J$6C7C		; note off
+	JP	Z,J6C7C		; note off
 	CP	2
-	JP	Z,J$6CA9		; program change
+	JP	Z,J6CA9		; program change
 	CP	3
-	JP	Z,J$6CB9		; volume change
+	JP	Z,J6CB9		; volume change
 	CP	5
-	JP	Z,J$6CCE		; set rhythm velocity
+	JP	Z,J6CCE		; set rhythm velocity
 	CP	6
-	JP	Z,J$6CE4		; do rhythm
+	JP	Z,J6CE4		; do rhythm
 	CP	7
-	JP	Z,J$6D41		; midi data
+	JP	Z,J6D41		; midi data
 	CP	8
-	JP	Z,J$6D49		; control change
-J.6C2E:	EI
+	JP	Z,J6D49		; control change
+J6C2E:	EI
 	RET
 
 ;	  Subroutine get midi channel
@@ -6202,155 +6206,155 @@ J.6C2E:	EI
 ;	     Outputs ________________________
 
 
-C.6C30:	PUSH	HL
+C6C30:	PUSH	HL
 	LD	HL,I.FAC4
 	ADD	A,L
 	LD	L,A
-	JR	NC,J$6C39
+	JR	NC,J6C39
 	INC	H
-J$6C39:	LD	A,(HL)
+J6C39:	LD	A,(HL)
 	DEC	A
 	POP	HL
 	RET
 
-J$6C3D:	POP	AF
+J6C3D:	POP	AF
 	PUSH	AF
-	CALL	C.6C30			; get MIDI channel
+	CALL	C6C30			; get MIDI channel
 	ADD	A,90H			; note on
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	HL,I.FAD7
 	POP	AF
 	PUSH	AF
 	OR	A
-J$6C4D:	JR	Z,J$6C53
+J6C4D:	JR	Z,J6C53
 	DEC	A
 	INC	HL
-	JR	J$6C4D
-J$6C53:	LD	A,(HL)			; note number
+	JR	J6C4D
+J6C53:	LD	A,(HL)			; note number
 	CP	0FFH			; already MIDI note active ?
-	JR	Z,J$6C69		; nope, skip release key
-	CALL	C.6DB4			; transmit MIDI data
+	JR	Z,J6C69		; nope, skip release key
+	CALL	C6DB4			; transmit MIDI data
 	XOR	A			; velocity 0 (release key)
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	POP	AF
 	PUSH	AF
-	CALL	C.6C30			; get MIDI channel
+	CALL	C6C30			; get MIDI channel
 	ADD	A,90H			; note on
-	CALL	C.6DB4			; transmit MIDI data
-J$6C69:	POP	AF
+	CALL	C6DB4			; transmit MIDI data
+J6C69:	POP	AF
 	LD	A,(D.FAE1)		; MIDI base notenumber
 	ADD	A,D
 	LD	(HL),A			; note number
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,C
 	ADD	A,A
 	ADD	A,A
 	ADD	A,A			; velocity
-	CALL	C.6DB4			; transmit MIDI data
-	JP	J.6C2E			; quit
+	CALL	C6DB4			; transmit MIDI data
+	JP	J6C2E			; quit
 
-J$6C7C:	POP	AF
+J6C7C:	POP	AF
 	PUSH	AF
 	LD	HL,I.FAD7
 	OR	A
-J$6C82:	JR	Z,J$6C88
+J6C82:	JR	Z,J6C88
 	DEC	A
 	INC	HL
-	JR	J$6C82
-J$6C88:	LD	A,(HL)
+	JR	J6C82
+J6C88:	LD	A,(HL)
 	CP	0FFH			; MIDI note active ?
-	JP	NZ,J$6C92		; yep, release key
+	JP	NZ,J6C92		; yep, release key
 	POP	AF
-	JP	J.6C2E			; quit
+	JP	J6C2E			; quit
 
-J$6C92:	POP	AF
-	CALL	C.6C30			; get MIDI channel
+J6C92:	POP	AF
+	CALL	C6C30			; get MIDI channel
 	ADD	A,90H			; note on
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,(HL)			; note number
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	XOR	A			; velocity 0 (release key)
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,0FFH
 	LD	(HL),A
-	JP	J.6C2E			; quit
+	JP	J6C2E			; quit
 
-J$6CA9:	POP	AF
-	CALL	C.6C30			; get MIDI channel
+J6CA9:	POP	AF
+	CALL	C6C30			; get MIDI channel
 	ADD	A,0C0H			; program change
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,D			; program number
-	CALL	C.6DB4			; transmit MIDI data
-	JP	J.6C2E			; quit
+	CALL	C6DB4			; transmit MIDI data
+	JP	J6C2E			; quit
 
-J$6CB9:	POP	AF
-	CALL	C.6C30			; get MIDI channel
+J6CB9:	POP	AF
+	CALL	C6C30			; get MIDI channel
 	ADD	A,0B0H			; control change
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,7			; main volume
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,D			; volume
-	CALL	C.6DB4			; transmit MIDI data
-	JP	J.668F			; get next music packet
+	CALL	C6DB4			; transmit MIDI data
+	JP	J668F			; get next music packet
 
-J$6CCE:	POP	AF
+J6CCE:	POP	AF
 	LD	HL,I$FAD2+4
 	LD	B,1
-J$6CD4:	LD	A,D
+J6CD4:	LD	A,D
 	AND	B
-	JR	Z,J$6CD9
+	JR	Z,J6CD9
 	LD	(HL),E
-J$6CD9:	DEC	HL
+J6CD9:	DEC	HL
 	LD	A,B
 	ADD	A,A
 	LD	B,A
 	CP	20H
-	JR	NZ,J$6CD4		; all 5 drum instruments
-	JP	J.6C2E			; quit
+	JR	NZ,J6CD4		; all 5 drum instruments
+	JP	J6C2E			; quit
 
-J$6CE4:	LD	A,D
+J6CE4:	LD	A,D
 	OR	0
-	JR	NZ,J.6CF4
+	JR	NZ,J6CF4
 	LD	A,(D.FAE0)
 	OR	0			; midi drums key on ?
-	JR	NZ,J.6CF4		; yep, release key
+	JR	NZ,J6CF4		; yep, release key
 	POP	AF
-	JP	J.6C2E			; quit
+	JP	J6C2E			; quit
 
-J.6CF4:	POP	AF
-	CALL	C.6C30			; get MIDI channel
+J6CF4:	POP	AF
+	CALL	C6C30			; get MIDI channel
 	ADD	A,90H			; note on
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	HL,I$FACD+4
 	LD	B,1
-J$6D02:	LD	A,(D.FAE0)
+J6D02:	LD	A,(D.FAE0)
 	AND	B			; drum instrument currently key on ?
-	JR	Z,J$6D10		; nope, leave it
+	JR	Z,J6D10		; nope, leave it
 	LD	A,(HL)			; note number
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	XOR	A			; velocity 0 (release key)
-	CALL	C.6DB4			; transmit MIDI data
-J$6D10:	DEC	HL
+	CALL	C6DB4			; transmit MIDI data
+J6D10:	DEC	HL
 	LD	A,B
 	ADD	A,A
 	LD	B,A
 	CP	20H
-	JR	NZ,J$6D02		; all 5 drum instruments
+	JR	NZ,J6D02		; all 5 drum instruments
 	LD	HL,I$FAD2+4
 	PUSH	HL
 	LD	HL,I$FACD+4
 	LD	B,1
-J$6D21:	LD	A,D
+J6D21:	LD	A,D
 	LD	(D.FAE0),A
 	AND	B			; put drum instrument on ?
-	JR	Z,J$6D32		; nope, leave it
+	JR	Z,J6D32		; nope, leave it
 	LD	A,(HL)			; note number
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	EX	(SP),HL
 	LD	A,(HL)			; velocity
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	EX	(SP),HL
-J$6D32:	DEC	HL
+J6D32:	DEC	HL
 	EX	(SP),HL
 	DEC	HL
 	EX	(SP),HL
@@ -6358,24 +6362,24 @@ J$6D32:	DEC	HL
 	ADD	A,A
 	LD	B,A
 	CP	20H
-	JR	NZ,J$6D21		; all 5 drum instruments
+	JR	NZ,J6D21		; all 5 drum instruments
 	POP	HL
-	JP	J.6C2E			; quit
+	JP	J6C2E			; quit
 
-J$6D41:	POP	AF
+J6D41:	POP	AF
 	LD	A,D
-	CALL	C.6DB4			; transmit MIDI data
-	JP	J.6C2E			; quit
+	CALL	C6DB4			; transmit MIDI data
+	JP	J6C2E			; quit
 
-J$6D49:	POP	AF
-	CALL	C.6C30			; get MIDI channel
+J6D49:	POP	AF
+	CALL	C6C30			; get MIDI channel
 	ADD	A,0B0H			; control change
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,D
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,E
-	CALL	C.6DB4			; transmit MIDI data
-	JP	J.6C2E			; quit
+	CALL	C6DB4			; transmit MIDI data
+	JP	J6C2E			; quit
 
 
 ;	  Subroutine __________________________
@@ -6383,68 +6387,68 @@ J$6D49:	POP	AF
 ;	     Outputs ________________________
 
 
-C$6D5D:	PUSH	BC
+C6D5D:	PUSH	BC
 	PUSH	HL
 	LD	HL,I.FAD7		; MIDI notes currently key on
 	PUSH	HL
 	LD	HL,I.FAC4		; MIDI channel of playvoice
 	OR	A
-J$6D67:	JR	Z,J$6D70
+J6D67:	JR	Z,J6D70
 	DEC	A
 	INC	HL
 	EX	(SP),HL
 	INC	HL
 	EX	(SP),HL
-	JR	J$6D67
+	JR	J6D67
 
-J$6D70:	LD	A,(HL)
+J6D70:	LD	A,(HL)
 	DEC	A			; MIDI channel
 	LD	C,A
 	POP	HL
 	LD	A,(HL)
 	CP	0FFH
-	JR	Z,J$6D8A
+	JR	Z,J6D8A
 	LD	A,90H
 	ADD	A,C			; note on
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,(HL)			; note number
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,0FFH
 	LD	(HL),A
 	XOR	A			; velocity 0 (release key)
-	CALL	C.6DB4			; transmit MIDI data
-J$6D8A:	LD	A,C
+	CALL	C6DB4			; transmit MIDI data
+J6D8A:	LD	A,C
 	ADD	A,0B0H			; control change
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	LD	A,7BH			; all notes off
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	XOR	A			; no function
-	CALL	C.6DB4			; transmit MIDI data
+	CALL	C6DB4			; transmit MIDI data
 	POP	HL
 	POP	BC
 	RET
 
 ;	  Unused code
 
-?.6D9C:	PUSH	AF
+?6D9C:	PUSH	AF
 	IN	A,(0E6H)
 	LD	C,A
-J$6DA0:	IN	A,(0E6H)
+J6DA0:	IN	A,(0E6H)
 	SUB	C
 	CP	B
-	JR	C,J$6DA0
+	JR	C,J6DA0
 	POP	AF
 	RET
 
 ;	  Unused code
 
-?.6DA8:	PUSH	AF
+?6DA8:	PUSH	AF
 	IN	A,(0E7H)
 	LD	C,A
-J$6DAC:	IN	A,(0E7H)
+J6DAC:	IN	A,(0E7H)
 	SUB	C
 	CP	B
-	JR	C,J$6DAC
+	JR	C,J6DAC
 	POP	AF
 	RET
 
@@ -6453,33 +6457,33 @@ J$6DAC:	IN	A,(0E7H)
 ;	     Outputs ________________________
 
 
-C.6DB4:	PUSH	AF
-J$6DB5:	IN	A,(0E9H)
+C6DB4:	PUSH	AF
+J6DB5:	IN	A,(0E9H)
 	AND	01H			; transmitter ready ?
-	JR	Z,J$6DB5		; nope, wait
+	JR	Z,J6DB5		; nope, wait
 	POP	AF
 	OUT	(0E8H),A
 	RET
 ;	-----------------
-J$6DBF:	CALL	C.6FF8			; free temporary string
-	CALL	C.7059
+J6DBF:	CALL	C6FF8			; free temporary string
+	CALL	C7059
 	LD	B,C
 	LD	C,D
 	LD	D,E
 	LD	A,B
 	OR	C
-	JR	Z,J.6DD2
+	JR	Z,J6DD2
 	LD	A,D
 	OR	A
-	JR	Z,J.6DD2
+	JR	Z,J6DD2
 	PUSH	BC
 	PUSH	DE
-J.6DD2:	POP	AF
+J6DD2:	POP	AF
 	LD	(MCLLEN),A
 	POP	HL
 	LD	A,H
 	OR	L			; something to parse ?
-	JP	Z,J$5C36		; nope, quit
+	JP	Z,J5C36		; nope, quit
 	LD	(MCLPTR),HL
 
 ;	  Subroutine MCL parser
@@ -6487,50 +6491,50 @@ J.6DD2:	POP	AF
 ;	     Outputs ________________________
 
 
-J.6DDF:	CALL	C.6E33			; get MCL char
-	JR	Z,J.6DD2		; end of string, quit
+J6DDF:	CALL	C6E33			; get MCL char
+	JR	Z,J6DD2		; end of string, quit
 	LD	HL,(MCLTAB)
 	CP	"A"
-	JR	C,J$6DEF		; not a note char,
+	JR	C,J6DEF		; not a note char,
 	CP	"H"
-	JR	C,J$6DFF		; note char,
-J$6DEF:	ADD	A,A
+	JR	C,J6DFF		; note char,
+J6DEF:	ADD	A,A
 	LD	C,A
-J$6DF1:	LD	A,(HL)
+J6DF1:	LD	A,(HL)
 	ADD	A,A			; end of table ?
-J$6DF3:	CALL	Z,C.6F89		; yep, illegal function call
+J6DF3:	CALL	Z,C6F89		; yep, illegal function call
 	CP	C			; recognized (b7 is ignored) ?
-	JR	Z,J$6DFE		; yep, 
+	JR	Z,J6DFE		; yep, 
 	INC	HL
 	INC	HL
 	INC	HL
-	JR	J$6DF1
+	JR	J6DF1
 
-J$6DFE:	LD	A,(HL)			; char
-J$6DFF:	LD	BC,J.6DDF
+J6DFE:	LD	A,(HL)			; char
+J6DFF:	LD	BC,J6DDF
 	PUSH	BC			; after this, restart MCL parser
 	LD	C,A
 	ADD	A,A			; b7 set ?
-	JR	NC,J$6E27		; nope, skip operand
+	JR	NC,J6E27		; nope, skip operand
 	OR	A
 	RRA
 	LD	C,A
 	PUSH	BC
 	PUSH	HL
-	CALL	C.6E33			; get MCL char
+	CALL	C6E33			; get MCL char
 	LD	DE,1
-	JP	Z,J$6E24		; end of string, use 1 as default
-	CALL	C$70D3			; check if special chars
-	JP	NC,J$6E21		; yep, no operand
-	CALL	C.6E6A			; evaluate number in MCL
+	JP	Z,J6E24		; end of string, use 1 as default
+	CALL	C70D3			; check if special chars
+	JP	NC,J6E21		; yep, no operand
+	CALL	C6E6A			; evaluate number in MCL
 	SCF				; flag operand
-	JR	J$6E25
+	JR	J6E25
 
-J$6E21:	CALL	C.6E59			; undo MCL char
-J$6E24:	OR	A			; flag no operand
-J$6E25:	POP	HL
+J6E21:	CALL	C6E59			; undo MCL char
+J6E24:	OR	A			; flag no operand
+J6E25:	POP	HL
 	POP	BC
-J$6E27:	INC	HL
+J6E27:	INC	HL
 	LD	A,(HL)
 	INC	HL
 	LD	H,(HL)
@@ -6543,8 +6547,8 @@ J$6E27:	INC	HL
 ;	     Outputs ________________________
 
 
-C.6E2D:	CALL	C.6E33			; get MCL char
-	JR	Z,J$6DF3
+C6E2D:	CALL	C6E33			; get MCL char
+	JR	Z,J6DF3
 	RET
 
 ;	  Subroutine get MCL char
@@ -6552,20 +6556,20 @@ C.6E2D:	CALL	C.6E33			; get MCL char
 ;	     Outputs ________________________
 
 
-C.6E33:	PUSH	HL
-J$6E34:	LD	HL,MCLLEN
+C6E33:	PUSH	HL
+J6E34:	LD	HL,MCLLEN
 	LD	A,(HL)
 	OR	A
-	JR	Z,J$6E65		; Cx reset, Zx set
+	JR	Z,J6E65		; Cx reset, Zx set
 	DEC	(HL)
 	LD	HL,(MCLPTR)
 	LD	A,(HL)
 	INC	HL
 	LD	(MCLPTR),HL
 	CP	" "
-	JR	Z,J$6E34		; skip space
+	JR	Z,J6E34		; skip space
 	POP	HL
-	CALL	C$6E50			; make upcase
+	CALL	C6E50			; make upcase
 	SCF
 	ADC	A,A
 	RRA				; Cx set, Zx reset
@@ -6576,7 +6580,7 @@ J$6E34:	LD	HL,MCLLEN
 ;	     Outputs ________________________
 
 
-C$6E50:	CP	"a"
+C6E50:	CP	"a"
 	RET	C
 	CP	"z"+1
 	RET	NC
@@ -6588,13 +6592,13 @@ C$6E50:	CP	"a"
 ;	     Outputs ________________________
 
 
-C.6E59:	PUSH	HL
+C6E59:	PUSH	HL
 	LD	HL,MCLLEN
 	INC	(HL)
 	LD	HL,(MCLPTR)
 	DEC	HL
 	LD	(MCLPTR),HL
-J$6E65:	POP	HL
+J6E65:	POP	HL
 	RET
 ;	-----------------
 
@@ -6602,7 +6606,7 @@ J$6E65:	POP	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.6E67:	CALL	C.6E2D
+C6E67:	CALL	C6E2D
 
 
 ;	  Subroutine __________________________
@@ -6610,38 +6614,38 @@ C.6E67:	CALL	C.6E2D
 ;	     Outputs ________________________
 
 
-C.6E6A:	CP	"="
-	JP	Z,J$6EEC
+C6E6A:	CP	"="
+	JP	Z,J6EEC
 	CP	"+"
-	JR	Z,C.6E67
+	JR	Z,C6E67
 	CP	"-"
-	JR	NZ,J$6E7D
-	LD	DE,I$6F0B
+	JR	NZ,J6E7D
+	LD	DE,I6F0B
 	PUSH	DE			; after negate result
-	JR	C.6E67
+	JR	C6E67
 
-J$6E7D:	LD	DE,0
-J$6E80:	CP	","
-	JR	Z,C.6E59		; undo MCL char
+J6E7D:	LD	DE,0
+J6E80:	CP	","
+	JR	Z,C6E59		; undo MCL char
 	CP	";"
 	RET	Z
 	CP	"9"+1
-	JR	NC,C.6E59		; undo MCL char
+	JR	NC,C6E59		; undo MCL char
 	CP	"0"
-	JR	C,C.6E59		; undo MCL char
+	JR	C,C6E59		; undo MCL char
 	LD	HL,0
 	LD	B,10
-J$6E94:	ADD	HL,DE
-	JR	C,J.6EE5
-	DJNZ	J$6E94
+J6E94:	ADD	HL,DE
+	JR	C,J6EE5
+	DJNZ	J6E94
 	SUB	"0"
 	LD	E,A
 	LD	D,0
 	ADD	HL,DE
-	JR	C,J.6EE5
+	JR	C,J6EE5
 	EX	DE,HL
-	CALL	C.6E33			; get MCL char
-	JR	NZ,J$6E80
+	CALL	C6E33			; get MCL char
+	JR	NZ,J6E80
 	RET
 
 
@@ -6650,7 +6654,7 @@ J$6E94:	ADD	HL,DE
 ;	     Outputs ________________________
 
 
-C$6EA8:	CP	41H	; "A"
+C6EA8:	CP	41H	; "A"
 	RET	C
 	CP	5BH	; "["
 	CCF
@@ -6661,7 +6665,7 @@ C$6EA8:	CP	41H	; "A"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$6EAF:	CP	25H	; "%"
+C6EAF:	CP	25H	; "%"
 	RET	Z
 	CP	21H	; "!"
 	RET	Z
@@ -6677,32 +6681,32 @@ C$6EAF:	CP	25H	; "%"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.6EBD:	CALL	C.6E2D
+C6EBD:	CALL	C6E2D
 	LD	DE,BUF
 	PUSH	DE
 	LD	B,28H	; "("
-	CALL	C$6EA8
-	JR	C,J.6EE5
-J$6ECB:	LD	(DE),A
+	CALL	C6EA8
+	JR	C,J6EE5
+J6ECB:	LD	(DE),A
 	INC	DE
-	CALL	C$6EAF
-	JR	C,J$6EDC
-	CALL	C.6E2D
+	CALL	C6EAF
+	JR	C,J6EDC
+	CALL	C6E2D
 	LD	(DE),A
 	INC	DE
 	LD	A,3BH	; ";"
 	LD	(DE),A
-	JR	J.6EE8
+	JR	J6EE8
 ;	-----------------
-J$6EDC:	CP	3BH	; ";"
-	JR	Z,J.6EE8
-	CALL	C.6E2D
-	DJNZ	J$6ECB
-J.6EE5:	CALL	C.6F89			; illegal function call
-J.6EE8:	POP	HL
-	JP	J$6FA8
+J6EDC:	CP	3BH	; ";"
+	JR	Z,J6EE8
+	CALL	C6E2D
+	DJNZ	J6ECB
+J6EE5:	CALL	C6F89			; illegal function call
+J6EE8:	POP	HL
+	JP	J6FA8
 ;	-----------------
-J$6EEC:	CALL	C.6EBD
+J6EEC:	CALL	C6EBD
 	CALL	BUF+128			; convert DAC to integer
 	EX	DE,HL
 	RET
@@ -6712,18 +6716,18 @@ J$6EEC:	CALL	C.6EBD
 ;	     Outputs ________________________
 
 
-C$6EF4:	CALL	C.6EBD
+C6EF4:	CALL	C6EBD
 	LD	A,(MCLLEN)
 	OR	A
-	JP	NZ,C.6F89		; illegal function call
+	JP	NZ,C6F89		; illegal function call
 	LD	HL,(MCLPTR)
 	EX	(SP),HL
 	PUSH	AF
 	LD	C,02H	; 2 
-	CALL	C$70B9
-	JP	J$6DBF
+	CALL	C70B9
+	JP	J6DBF
 
-I$6F0B:	XOR	A
+I6F0B:	XOR	A
 	SUB	E
 	LD	E,A
 	SBC	A,D
@@ -6736,7 +6740,7 @@ I$6F0B:	XOR	A
 ;	     Outputs ________________________
 
 
-C.6F12:	CALL	C.6F69			; get voice queue control and put/get pos
+C6F12:	CALL	C6F69			; get voice queue control and put/get pos
 	LD	A,B
 	INC	A			; put pos +1
 	INC	HL
@@ -6765,7 +6769,7 @@ C.6F12:	CALL	C.6F69			; get voice queue control and put/get pos
 ;	     Inputs  A = playvoice
 ;	     Outputs A = data
 
-C$6F2D:	CALL	C.6F69			; get voice queue control and put/get pos
+C6F2D:	CALL	C6F69			; get voice queue control and put/get pos
 	LD	A,C
 	CP	B			; queue empty ?
 	RET	Z			; yep, quit
@@ -6796,8 +6800,8 @@ C$6F2D:	CALL	C.6F69			; get voice queue control and put/get pos
 ;	     Outputs ________________________
 
 
-C$6F49:	PUSH	BC
-	CALL	C.6F71			; get voice queue control
+C6F49:	PUSH	BC
+	CALL	C6F71			; get voice queue control
 	LD	(HL),B			; put pos
 	INC	HL
 	LD	(HL),B			; get pos
@@ -6817,7 +6821,7 @@ C$6F49:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C$6F5A:	CALL	C.6F69			; get voice queue control and put/get pos
+C6F5A:	CALL	C6F69			; get voice queue control and put/get pos
 	LD	A,B
 	INC	A			; put pos +1
 	INC	HL
@@ -6835,7 +6839,7 @@ C$6F5A:	CALL	C.6F69			; get voice queue control and put/get pos
 ;	     Outputs ________________________
 
 
-C.6F69:	CALL	C.6F71			; get voice queue control
+C6F69:	CALL	C6F71			; get voice queue control
 	LD	B,(HL)
 	INC	HL
 	LD	C,(HL)
@@ -6847,7 +6851,7 @@ C.6F69:	CALL	C.6F71			; get voice queue control
 ;	     Outputs ________________________
 
 
-C.6F71:	LD	HL,(D.F99B)
+C6F71:	LD	HL,(D.F99B)
 	ADD	A,A
 	LD	B,A
 	ADD	A,A
@@ -6857,27 +6861,27 @@ C.6F71:	LD	HL,(D.F99B)
 	ADD	HL,BC
 	RET
 ;	-----------------
-J$6F7D:	LD	E,33H
+J6F7D:	LD	E,33H
 	DEFB	001H
 	LD	E,35H
 	DEFB	001H
 	LD	E,38H
 	DEFB	001H
-J.6F86:	LD	E,02H
+J6F86:	LD	E,02H
 	DEFB	001H
-C.6F89:	LD	E,05H
+C6F89:	LD	E,05H
 	DEFB	001H
-J.6F8C:	LD	E,0DH
+J6F8C:	LD	E,0DH
 	DEFB	001H
 	LD	E,06H
 	DEFB	001H
-J.6F92:	LD	E,07H
-	CALL	C.50C6			; is MSX MUSIC initialized ?
+J6F92:	LD	E,07H
+	CALL	C50C6			; is MSX MUSIC initialized ?
 	PUSH	DE
-	CALL	NZ,C.6BCF		; yep, stop background music
+	CALL	NZ,C6BCF		; yep, stop background music
 	POP	DE
 	LD	IX,M406F
-	JR	J.6FFC
+	JR	J6FFC
 
 
 ;	  Subroutine __________________________
@@ -6885,16 +6889,16 @@ J.6F92:	LD	E,07H
 ;	     Outputs ________________________
 
 
-C$6FA2:	LD	IX,GICINI
-	JR	J.6FFC
+C6FA2:	LD	IX,GICINI
+	JR	J6FFC
 
-J$6FA8:	LD	IX,M4E9B
-	JR	J.6FFC
+J6FA8:	LD	IX,M4E9B
+	JR	J6FFC
 
 ;	  Unused code
 
-?.6FAE:	LD	IX,M6A0E
-	JR	J.6FFC
+?6FAE:	LD	IX,M6A0E
+	JR	J6FFC
 
 
 ;	  Subroutine __________________________
@@ -6902,8 +6906,8 @@ J$6FA8:	LD	IX,M4E9B
 ;	     Outputs ________________________
 
 
-C.6FB4:	LD	IX,M5EA4
-	JR	J.6FFC
+C6FB4:	LD	IX,M5EA4
+	JR	J6FFC
 
 
 ;	  Subroutine __________________________
@@ -6911,8 +6915,8 @@ C.6FB4:	LD	IX,M5EA4
 ;	     Outputs ________________________
 
 
-C.6FBA:	LD	IX,M517A
-	JR	J.6FFC
+C6FBA:	LD	IX,M517A
+	JR	J6FFC
 
 
 ;	  Subroutine __________________________
@@ -6920,18 +6924,18 @@ C.6FBA:	LD	IX,M517A
 ;	     Outputs ________________________
 
 
-C$6FC0:	LD	IX,M46FF
-	JR	J.6FFC
+C6FC0:	LD	IX,M46FF
+	JR	J6FFC
 
 ;	  Subroutine check for
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.6FC6:	LD	A,(HL)
+C6FC6:	LD	A,(HL)
 	EX	(SP),HL
 	CP	(HL)
-	JP	NZ,J.6F86
+	JP	NZ,J6F86
 	INC	HL
 	EX	(SP),HL
 
@@ -6941,16 +6945,16 @@ C.6FC6:	LD	A,(HL)
 ;	     Outputs ________________________
 
 
-C.6FCE:	LD	IX,M4666
-	JR	J.6FFC
+C6FCE:	LD	IX,M4666
+	JR	J6FFC
 
 ;	  Subroutine evaluate expression
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.6FD4:	LD	IX,M4C64
-	JR	J.6FFC
+C6FD4:	LD	IX,M4C64
+	JR	J6FFC
 
 
 ;	  Subroutine __________________________
@@ -6958,8 +6962,8 @@ C.6FD4:	LD	IX,M4C64
 ;	     Outputs ________________________
 
 
-C.6FDA:	LD	IX,M542F
-	JR	J.6FFC
+C6FDA:	LD	IX,M542F
+	JR	J6FFC
 
 
 ;	  Subroutine __________________________
@@ -6967,27 +6971,27 @@ C.6FDA:	LD	IX,M542F
 ;	     Outputs ________________________
 
 
-C.6FE0:	LD	IX,M5432
-	JR	J.6FFC
+C6FE0:	LD	IX,M5432
+	JR	J6FFC
 
 ;	  Subroutine evaluate byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.6FE6:	LD	IX,M521C
-	JR	J.6FFC
+C6FE6:	LD	IX,M521C
+	JR	J6FFC
 
-J$6FEC:	LD	IX,M4601
-	JR	J.6FFC
+J6FEC:	LD	IX,M4601
+	JR	J6FFC
 
 ;	  Subroutine close all i/o channels
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$6FF2:	LD	IX,M6C1C
-	JR	J.6FFC
+C6FF2:	LD	IX,M6C1C
+	JR	J6FFC
 
 
 ;	  Subroutine __________________________
@@ -6995,8 +6999,8 @@ C$6FF2:	LD	IX,M6C1C
 ;	     Outputs ________________________
 
 
-C.6FF8:	LD	IX,M67D0
-J.6FFC:	LD	IY,(EXPTBL+0-1)
+C6FF8:	LD	IX,M67D0
+J6FFC:	LD	IY,(EXPTBL+0-1)
 	CALL	CALSLT
 	EI
 	RET
@@ -7006,61 +7010,61 @@ J.6FFC:	LD	IY,(EXPTBL+0-1)
 ;	     Outputs ________________________
 
 
-C.7005:	LD	L,2
-	JR	C.700C			; get pointer in voicebuffer
+C7005:	LD	L,2
+	JR	C700C			; get pointer in voicebuffer
 
 ;	  Subroutine get pointer in current voicebuffer
 ;	     Inputs  L = offset
 ;	     Outputs ________________________
 
 
-C.7009:	LD	A,(VOICEN)		; current playvoice
+C7009:	LD	A,(VOICEN)		; current playvoice
 
 ;	  Subroutine get pointer in voicebuffer
 ;	     Inputs  A = voicebuffer, L = offset
 ;	     Outputs ________________________
 
 
-C.700C:	LD	H,0
+C700C:	LD	H,0
 	PUSH	DE
 	LD	E,A
 	LD	A,(D.F991)		; number of playvoices
 	SUB	E
 	SUB	4
-	JR	C,J$702A		; PSG playvoice,
+	JR	C,J702A		; PSG playvoice,
 	LD	A,E
 	LD	DE,01C8H
 	ADD	HL,DE
 	LD	DE,(D.F97D)		; start MSX-MUSIC workarea
 	ADD	HL,DE
 	OR	A
-	JR	Z,J.704A
+	JR	Z,J704A
 	LD	DE,39
-	JR	J.7046
+	JR	J7046
 
-J$702A:	CPL
+J702A:	CPL
 	EX	AF,AF'
 	LD	A,L
 	OR	A			; offset 0 ?
-	JR	NZ,J$703B		; nope, use old style VCB
+	JR	NZ,J703B		; nope, use old style VCB
 	EX	AF,AF'
 	LD	HL,D.F9AF
 	ADD	A,A
-	CALL	C.5539			; get entry A
+	CALL	C5539			; get entry A
 	POP	DE
 	XOR	A
 	RET
 
-J$703B:	EX	AF,AF'
+J703B:	EX	AF,AF'
 	LD	DE,VCBA
 	ADD	HL,DE
 	OR	A
-	JR	Z,J.704A
+	JR	Z,J704A
 	LD	DE,37
-J.7046:	ADD	HL,DE
+J7046:	ADD	HL,DE
 	DEC	A
-	JR	NZ,J.7046
-J.704A:	POP	DE
+	JR	NZ,J7046
+J704A:	POP	DE
 	RET
 
 ;	  Subroutine copy
@@ -7068,16 +7072,16 @@ J.704A:	POP	DE
 ;	     Outputs ________________________
 
 
-C.704C:	PUSH	BC
+C704C:	PUSH	BC
 	EX	(SP),HL
 	POP	BC
-J$704F:	CALL	C.70F9			; compare
+J704F:	CALL	C70F9			; compare
 	LD	A,(HL)
 	LD	(BC),A
 	RET	Z
 	DEC	BC
 	DEC	HL
-	JR	J$704F
+	JR	J704F
 
 
 ;	  Subroutine __________________________
@@ -7085,7 +7089,7 @@ J$704F:	CALL	C.70F9			; compare
 ;	     Outputs ________________________
 
 
-C.7059:	LD	E,(HL)			; size
+C7059:	LD	E,(HL)			; size
 	INC	HL
 	LD	D,(HL)
 	INC	HL
@@ -7100,14 +7104,14 @@ C.7059:	LD	E,(HL)			; size
 ;	     Outputs ________________________
 
 
-C.7062:	DI
+C7062:	DI
 	LD	HL,(D.F995)
 	LD	A,L
 	OR	H			; any playvoice active ?
 	RET	NZ			; yep, quit
 	LD	HL,PLYCNT
 	OR	(HL)			; something queued (PSG) ?
-	JR	Z,J$708C		; nope, do not start PSG queues
+	JR	Z,J708C		; nope, do not start PSG queues
 	DEC	(HL)
 	LD	HL,0FFFFH
 	LD	(VCBA+0),HL
@@ -7120,26 +7124,26 @@ C.7062:	DI
 	LD	(D$F9B3),HL		; duration PSG playvoice 2
 	LD	A,87H
 	LD	(MUSICF),A		; all PSG playvoices active, b7=?
-J$708C:	LD	HL,D.F997
+J708C:	LD	HL,D.F997
 	LD	A,(HL)
 	OR	A			; something queued ?
 	RET	Z			; nope, do not start queues
 	DEC	(HL)
 	LD	A,(D.F992)
 	OR	A			; number of OPLL playvoices zero ?
-	JR	Z,J$70AD		; yep, skip OPLL playvoice init
+	JR	Z,J70AD		; yep, skip OPLL playvoice init
 	LD	B,A
 	LD	HL,(D.F97D)		; start MSX-MUSIC workarea
 	LD	DE,01C8H
 	ADD	HL,DE
 	LD	DE,39
-J$70A4:	LD	(HL),1
+J70A4:	LD	(HL),1
 	INC	HL
 	LD	(HL),0			; duration OPLL playvoice
 	DEC	HL
 	ADD	HL,DE
-	DJNZ	J$70A4			; next playvoice
-J$70AD:	LD	HL,(D.F98F)		; playvoice mask
+	DJNZ	J70A4			; next playvoice
+J70AD:	LD	HL,(D.F98F)		; playvoice mask
 	LD	(D.F995),HL		; all playvoices active
 	LD	A,0FFH
 	LD	(D.FA26),A		; request service
@@ -7151,7 +7155,7 @@ J$70AD:	LD	HL,(D.F98F)		; playvoice mask
 ;	     Outputs ________________________
 
 
-C$70B9:	PUSH	HL
+C70B9:	PUSH	HL
 	LD	HL,(STREND)
 	LD	B,0
 	ADD	HL,BC
@@ -7163,11 +7167,11 @@ C$70B9:	PUSH	HL
 	LD	A,0FFH
 	SBC	A,H
 	LD	H,A
-	JR	C,J$70D0
+	JR	C,J70D0
 	ADD	HL,SP
 	POP	HL
 	RET	C
-J$70D0:	JP	J.6F92
+J70D0:	JP	J6F92
 
 
 ;	  Subroutine __________________________
@@ -7175,7 +7179,7 @@ J$70D0:	JP	J.6F92
 ;	     Outputs ________________________
 
 
-C$70D3:	CP	"{"
+C70D3:	CP	"{"
 	RET	Z
 	CP	"}"
 	RET	Z
@@ -7197,14 +7201,14 @@ C$70D3:	CP	"{"
 ;	     Outputs ________________________
 
 
-C$70E9:	LD	A,(VALTYP)
+C70E9:	LD	A,(VALTYP)
 	CP	8
-	JR	NC,J$70F5
+	JR	NC,J70F5
 	SUB	3
 	OR	A
 	SCF
 	RET
-J$70F5:	SUB	3
+J70F5:	SUB	3
 	OR	A
 	RET
 
@@ -7213,7 +7217,7 @@ J$70F5:	SUB	3
 ;	     Outputs ________________________
 
 
-C.70F9:	LD	A,H
+C70F9:	LD	A,H
 	SUB	D
 	RET	NZ
 	LD	A,L
@@ -7226,28 +7230,28 @@ C.70F9:	LD	A,H
 ;	     Outputs ________________________
 
 
-C$70FF:	LD	L,C
+C70FF:	LD	L,C
 	LD	H,B
-	CALL	C.7167			; program instrument 0
-	JR	J$7118			; set instrument 0
+	CALL	C7167			; program instrument 0
+	JR	J7118			; set instrument 0
 
 ;	  Subroutine program and set instrument OPLL
 ;	     Inputs  C = instrument
 ;	     Outputs ________________________
 
 
-C.7106:	LD	A,C
+C7106:	LD	A,C
 	CP	64
 	RET	NC
-	CALL	C.7134			; check if hardware instrument
+	CALL	C7134			; check if hardware instrument
 	LD	(IX+7),0
 	LD	(IX+8),0
-	CALL	NZ,C$715D		; software, program instrument 0 with software instrument
-J$7118:	PUSH	BC
+	CALL	NZ,C715D		; software, program instrument 0 with software instrument
+J7118:	PUSH	BC
 	LD	A,(IX+0)
 	ADD	A,20H
 	LD	C,A
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	AND	0FH			; leave volume
 	LD	B,A
 	POP	DE
@@ -7258,26 +7262,26 @@ J$7118:	PUSH	BC
 	ADD	A,A			; set instrument
 	OR	B
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
-	CALL	C.729D			; set octave and F-number OPLL
+	CALL	C75DA			; write OPLL register with validation
+	CALL	C729D			; set octave and F-number OPLL
 	RET
 
 ;	  Subroutine check if hardware instrument
 ;	     Inputs  C = instrumentnumber
 ;	     Outputs Zx set if hardware, Zx reset if software, C = OPLL hardware instrument (if Zx set)
 
-C.7134:	PUSH	BC
+C7134:	PUSH	BC
 	PUSH	HL
-	LD	HL,I$714D
+	LD	HL,I714D
 	LD	A,C
 	LD	BC,16
 	CPIR
-	JR	Z,J$7144
+	JR	Z,J7144
 	POP	HL
 	POP	BC
 	RET
 
-J$7144:	LD	A,10H
+J7144:	LD	A,10H
 	SUB	C
 	DEC	A
 	POP	HL
@@ -7286,7 +7290,7 @@ J$7144:	LD	A,10H
 	XOR	A
 	RET
 
-I$714D:	DEFB	0FFH
+I714D:	DEFB	0FFH
 	DEFB	002H
 	DEFB	00AH
 	DEFB	000H
@@ -7303,10 +7307,10 @@ I$714D:	DEFB	0FFH
 	DEFB	021H
 	DEFB	00CH
 
-C$715D:	PUSH	HL
+C715D:	PUSH	HL
 	LD	L,C			; software instrument
-	CALL	C.5A2F			; get pointer to software instrument data
-	CALL	C.7167			; program OPLL instrument 0
+	CALL	C5A2F			; get pointer to software instrument data
+	CALL	C7167			; program OPLL instrument 0
 	POP	HL
 	RET
 
@@ -7316,7 +7320,7 @@ C$715D:	PUSH	HL
 ;	     Outputs ________________________
 
 
-C.7167:	LD	DE,8
+C7167:	LD	DE,8
 	ADD	HL,DE
 	LD	E,(HL)
 	INC	HL
@@ -7327,23 +7331,23 @@ C.7167:	LD	DE,8
 	PUSH	IX
 	LD	IX,I.FA27
 	LD	B,9
-J$717D:	PUSH	BC
+J717D:	PUSH	BC
 	LD	A,(IX+0)
 	ADD	A,20H
 	LD	C,A
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	RRCA
 	RRCA
 	RRCA
 	RRCA
 	AND	0FH			; sustain and key
-	JR	NZ,J$7195		; one of then on,
+	JR	NZ,J7195		; one of then on,
 	LD	(IX+7),E
 	LD	(IX+8),D
-J$7195:	LD	BC,16
+J7195:	LD	BC,16
 	ADD	IX,BC
 	POP	BC
-	DJNZ	J$717D			; next channel
+	DJNZ	J717D			; next channel
 	POP	IX
 	LD	A,(HL)
 	LD	DE,6
@@ -7353,19 +7357,19 @@ J$7195:	LD	BC,16
 	LD	D,A
 	LD	B,(HL)
 	LD	C,0
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
 	LD	C,2
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
 	LD	C,4
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
 	LD	C,6
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	INC	HL
 	INC	HL
 	INC	HL
@@ -7373,26 +7377,26 @@ J$7195:	LD	BC,16
 	INC	HL
 	LD	B,(HL)
 	LD	C,1
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	INC	HL
 	LD	A,(HL)
 	AND	0C0H
 	OR	D
 	LD	D,A
 	LD	C,3
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	AND	18H
 	OR	D
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
 	LD	C,5
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	INC	HL
 	LD	B,(HL)
 	LD	C,7
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	LD	C,0			; instrument 0 (programable)
 	RET
 
@@ -7402,14 +7406,14 @@ J$7195:	LD	BC,16
 ;	     Outputs ________________________
 
 
-C$71F1:	LD	A,E
+C71F1:	LD	A,E
 	RRCA
 	RRCA
 	RRCA
 	AND	07H	; 7 
 	LD	(IX+2),A
 	PUSH	HL
-	CALL	C.7221
+	CALL	C7221
 	POP	HL
 	RET
 
@@ -7419,7 +7423,7 @@ C$71F1:	LD	A,E
 ;	     Outputs ________________________
 
 
-C$7200:	LD	A,C
+C7200:	LD	A,C
 	AND	1FH
 	RET	Z
 	PUSH	HL
@@ -7433,15 +7437,15 @@ C$7200:	LD	A,C
 	AND	07H	; 7 
 	LD	E,A
 	LD	B,05H	; 5 
-J$7213:	RR	D
-	JR	NC,J$7218
+J7213:	RR	D
+	JR	NC,J7218
 	LD	(HL),E
-J$7218:	INC	HL
-	DJNZ	J$7213
-	CALL	C.7221
+J7218:	INC	HL
+	DJNZ	J7213
+	CALL	C7221
 	POP	BC
 	POP	HL
-I$7220:	RET
+I7220:	RET
 
 
 ;	  Subroutine __________________________
@@ -7449,7 +7453,7 @@ I$7220:	RET
 ;	     Outputs ________________________
 
 
-C.7221:	LD	HL,I.FAB7
+C7221:	LD	HL,I.FAB7
 	LD	A,(I.FA27+6*16+1)
 	LD	D,A
 	ADD	A,(HL)
@@ -7460,13 +7464,13 @@ C.7221:	LD	HL,I.FAB7
 	RLCA
 	LD	B,A
 	LD	C,37H
-	CALL	C.725B			; change lower nibble of OPLL register
+	CALL	C725B			; change lower nibble of OPLL register
 	LD	A,D
 	ADD	A,(HL)
 	INC	HL
 	LD	B,A
 	LD	C,38H
-	CALL	C.7265			; change higher nibble of OPLL register
+	CALL	C7265			; change higher nibble of OPLL register
 	LD	A,D
 	ADD	A,(HL)
 	INC	HL
@@ -7475,19 +7479,19 @@ C.7221:	LD	HL,I.FAB7
 	RLCA
 	RLCA
 	LD	B,A
-	CALL	C.725B			; change lower nibble of OPLL register
+	CALL	C725B			; change lower nibble of OPLL register
 	LD	A,D
 	ADD	A,(HL)
 	INC	HL
 	LD	B,A
 	LD	C,37H
-	CALL	C.7265			; change higher nibble of OPLL register
+	CALL	C7265			; change higher nibble of OPLL register
 	LD	A,D
 	ADD	A,(HL)
 	INC	HL
 	LD	B,A
 	LD	C,36H
-	CALL	C.7265			; change higher nibble of OPLL register
+	CALL	C7265			; change higher nibble of OPLL register
 	RET
 
 ;	  Subroutine change lower nibble of OPLL register
@@ -7495,27 +7499,27 @@ C.7221:	LD	HL,I.FAB7
 ;	     Outputs ________________________
 
 
-C.725B:	CALL	C.7605			; read OPLL register with validation
+C725B:	CALL	C7605			; read OPLL register with validation
 	AND	0FH
-J$7260:	OR	B
+J7260:	OR	B
 	LD	B,A
-	JP	C.75DA			; write OPLL register with validation
+	JP	C75DA			; write OPLL register with validation
 
 ;	  Subroutine change higher nibble of OPLL register
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C.7265:	CALL	C.7605			; read OPLL register with validation
+C7265:	CALL	C7605			; read OPLL register with validation
 	AND	0F0H
-	JR	J$7260
+	JR	J7260
 
 ;	  Subroutine set KEY ON/OFF OPLL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 
-C$726C:	JP	C.747D
+C726C:	JP	C747D
 
 
 ;	  Subroutine __________________________
@@ -7523,9 +7527,9 @@ C$726C:	JP	C.747D
 ;	     Outputs ________________________
 
 
-C$726F:	PUSH	BC
+C726F:	PUSH	BC
 	PUSH	DE
-	CALL	C.747D			; set KEY ON/OFF OPLL
+	CALL	C747D			; set KEY ON/OFF OPLL
 	POP	DE
 	POP	BC
 	LD	A,0FH
@@ -7536,15 +7540,15 @@ C$726F:	PUSH	BC
 	RES	7,D
 	LD	(IX+3),E
 	LD	(IX+4),D
-	CALL	C.729D			; set octave and F-number OPLL
-	CALL	C$745F			; set VOL OPLL
+	CALL	C729D			; set octave and F-number OPLL
+	CALL	C745F			; set VOL OPLL
 	LD	A,(IX+0)
 	ADD	A,10H
 	LD	C,A
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	OR	10H			; KEY ON
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	RET
 
 ;	  Subroutine set octave and F-number OPLL
@@ -7552,7 +7556,7 @@ C$726F:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C.729D:	LD	L,(IX+5)
+C729D:	LD	L,(IX+5)
 	LD	H,(IX+6)		; transpose/pitch
 	LD	E,(IX+3)
 	LD	D,(IX+4)
@@ -7564,31 +7568,31 @@ C.729D:	LD	L,(IX+5)
 	ADD	HL,DE
 	LD	A,H
 	AND	A
-	JP	P,J.72CA
+	JP	P,J72CA
 	CP	0C4H
-	JR	NC,J.72C5
-J$72BE:	SUB	0CH
-	JP	M,J$72BE
-	JR	J.72CA
-J.72C5:	ADD	A,0CH
-	JP	M,J.72C5
-J.72CA:	LD	H,A
+	JR	NC,J72C5
+J72BE:	SUB	0CH
+	JP	M,J72BE
+	JR	J72CA
+J72C5:	ADD	A,0CH
+	JP	M,J72C5
+J72CA:	LD	H,A
 	LD	C,L
 	LD	L,0
 	LD	DE,0F404H
 	SUB	3CH
-	JR	C,J.72D8
+	JR	C,J72D8
 	LD	H,A
 	LD	L,14H
-J.72D8:	ADD	HL,DE
-	JP	C,J.72D8
+J72D8:	ADD	HL,DE
+	JP	C,J72D8
 	SBC	HL,DE
 	LD	B,L
 	LD	A,H
 	ADD	A,H
 	ADD	A,H			; * 3
-	LD	HL,I$7351
-	CALL	C.5539			; get entry A
+	LD	HL,I7351
+	CALL	C5539			; get entry A
 	LD	A,B
 	LD	E,(HL)
 	INC	HL
@@ -7598,68 +7602,68 @@ J.72D8:	ADD	HL,DE
 	LD	L,0
 	LD	B,L
 	ADD	HL,HL
-	JR	NC,J$72F5
+	JR	NC,J72F5
 	ADD	HL,BC
-J$72F5:	ADD	HL,HL
-	JR	NC,J$72F9
+J72F5:	ADD	HL,HL
+	JR	NC,J72F9
 	ADD	HL,BC
-J$72F9:	ADD	HL,HL
-	JR	NC,J$72FD
+J72F9:	ADD	HL,HL
+	JR	NC,J72FD
 	ADD	HL,BC
-J$72FD:	ADD	HL,HL
-	JR	NC,J$7301
+J72FD:	ADD	HL,HL
+	JR	NC,J7301
 	ADD	HL,BC
-J$7301:	ADD	HL,HL
-	JR	NC,J$7305
+J7301:	ADD	HL,HL
+	JR	NC,J7305
 	ADD	HL,BC
-J$7305:	ADD	HL,HL
-	JR	NC,J$7309
+J7305:	ADD	HL,HL
+	JR	NC,J7309
 	ADD	HL,BC
-J$7309:	ADD	HL,HL
-	JR	NC,J$730D
+J7309:	ADD	HL,HL
+	JR	NC,J730D
 	ADD	HL,BC
-J$730D:	ADD	HL,HL
-	JR	NC,J$7311
+J730D:	ADD	HL,HL
+	JR	NC,J7311
 	ADD	HL,BC
-J$7311:	LD	L,H
+J7311:	LD	L,H
 	LD	H,B
 	ADD	HL,DE
 	SRL	H
 	RR	L
 	SRL	H
 	RR	L
-	JR	NC,J.7324
+	JR	NC,J7324
 	INC	HL
 	BIT	2,H
-	JR	Z,J.7324
+	JR	Z,J7324
 	DEC	HL
-J.7324:	SUB	08H
-	JR	NC,J$7330
-J$7328:	SRL	H
+J7324:	SUB	08H
+	JR	NC,J7330
+J7328:	SRL	H
 	RR	L
 	ADD	A,04H
-	JR	NZ,J$7328
-J$7330:	CP	20H
-	JR	C,J$7336
+	JR	NZ,J7328
+J7330:	CP	20H
+	JR	C,J7336
 	LD	A,1CH
-J$7336:	OR	H
+J7336:	OR	H
 	RRA
 	LD	H,A
 	RR	L
 	LD	C,(IX+0)		; F-number LSB register
 	LD	B,L
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	LD	A,C
 	ADD	A,10H
 	LD	C,A
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	AND	30H			; leave sustian, key alone
 	OR	H			; set octave and F-number
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	RET
 
-I$7351:	DEFB	000H,008H,079H
+I7351:	DEFB	000H,008H,079H
 	DEFB	079H,008H,081H
 	DEFB	0FAH,008H,089H
 	DEFB	083H,009H,091H
@@ -7677,15 +7681,15 @@ I$7351:	DEFB	000H,008H,079H
 ;	     Outputs ________________________
 
 
-C$7375:	LD	D,B
+C7375:	LD	D,B
 	LD	E,C
-	CALL	C$7387
+	CALL	C7387
 	RET	C
 	LD	(D.F99D),DE
 	LD	HL,(D.F99F)
 	ADD	HL,DE
 	EX	DE,HL
-	JP	J$740E
+	JP	J740E
 
 
 ;	  Subroutine __________________________
@@ -7693,7 +7697,7 @@ C$7375:	LD	D,B
 ;	     Outputs ________________________
 
 
-C$7387:	LD	HL,0FE34H
+C7387:	LD	HL,0FE34H
 	ADD	HL,DE
 	RET	C
 	LD	HL,0FE66H
@@ -7701,14 +7705,14 @@ C$7387:	LD	HL,0FE34H
 	CCF
 	RET	C
 	ADD	HL,HL
-	LD	DE,I$739B
+	LD	DE,I739B
 	ADD	HL,DE
 	LD	E,(HL)
 	INC	HL
 	LD	D,(HL)
 	RET
 
-I$739B:	DEFW	0FEC7H
+I739B:	DEFW	0FEC7H
 	DEFW	0FED2H
 	DEFW	0FEDDH
 	DEFW	0FEE7H
@@ -7764,31 +7768,31 @@ I$739B:	DEFW	0FEC7H
 ;	     Outputs ________________________
 
 
-C$73FF:	LD	D,B
+C73FF:	LD	D,B
 	LD	E,C
-	CALL	C$7434
+	CALL	C7434
 	RET	C
 	LD	(D.F99F),DE
 	LD	HL,(D.F99D)
 	ADD	HL,DE
 	EX	DE,HL
-J$740E:	LD	IX,I.FA27
+J740E:	LD	IX,I.FA27
 	LD	B,9
 	LD	C,0EH
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	AND	20H
-	JR	Z,J.741F		; rhythm disabled, 9 channels
+	JR	Z,J741F		; rhythm disabled, 9 channels
 	LD	B,6			; rhythm enabled, 6 channels
-J.741F:	PUSH	BC
+J741F:	PUSH	BC
 	PUSH	DE
 	LD	(IX+5),E
 	LD	(IX+6),D		; transpose/pitch value
-	CALL	C.729D			; set octave and F-number OPLL
+	CALL	C729D			; set octave and F-number OPLL
 	LD	BC,16
 	ADD	IX,BC
 	POP	DE
 	POP	BC
-	DJNZ	J.741F
+	DJNZ	J741F
 	RET
 
 
@@ -7797,10 +7801,10 @@ J.741F:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C$7434:	LD	A,D
+C7434:	LD	A,D
 	AND	A
 	PUSH	AF
-	CALL	M,C$7457
+	CALL	M,C7457
 	LD	A,D
 	LD	H,E
 	LD	L,0
@@ -7808,19 +7812,19 @@ C$7434:	LD	A,D
 	ADD	HL,HL
 	RLA
 	CP	D
-	JR	C,J.7449
+	JR	C,J7449
 	POP	AF
 	SCF
 	RET
 
-J.7449:	ADD	HL,HL
+J7449:	ADD	HL,HL
 	RLA
 	CP	D
-	JR	C,J$7450
+	JR	C,J7450
 	SUB	D
 	INC	L
-J$7450:	DEC	E
-	JP	NZ,J.7449
+J7450:	DEC	E
+	JP	NZ,J7449
 	EX	DE,HL
 	POP	AF
 	RET	P
@@ -7829,7 +7833,7 @@ J$7450:	DEC	E
 ;	     Inputs  DE = value
 ;	     Outputs DE = -value
 
-C$7457:	XOR	A
+C7457:	XOR	A
 	LD	H,A
 	LD	L,A
 	SBC	HL,DE
@@ -7842,20 +7846,20 @@ C$7457:	XOR	A
 ;	     Outputs ________________________
 
 
-C$745F:	LD	A,(IX+2)
+C745F:	LD	A,(IX+2)
 	ADD	A,(IX+1)
 	CP	10H
-	JR	C,J$746B
+	JR	C,J746B
 	LD	A,0FH
-J$746B:	LD	B,A
+J746B:	LD	B,A
 	LD	A,(IX+0)
 	ADD	A,20H
 	LD	C,A
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	AND	0F0H			; leave instrument alone
 	OR	B			; set volume
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	RET
 
 ;	  Subroutine set KEY ON/OFF OPLL
@@ -7863,13 +7867,13 @@ J$746B:	LD	B,A
 ;	     Outputs ________________________
 
 
-C.747D:	LD	A,(IX+0)
+C747D:	LD	A,(IX+0)
 	ADD	A,10H
 	LD	C,A
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	AND	2FH			; leave sustain, octave, f-numb alone
 	LD	B,A			; set key ON/OFF
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	RET
 
 ;	  Subroutine do rhythm OPLL
@@ -7877,22 +7881,22 @@ C.747D:	LD	A,(IX+0)
 ;	     Outputs ________________________
 
 
-C$748D:	PUSH	HL
+C748D:	PUSH	HL
 	LD	A,C
 	AND	1FH
 	LD	D,A
 	CPL
 	LD	E,A
 	LD	C,0EH
-	CALL	C.7605			; read OPLL register with validation
+	CALL	C7605			; read OPLL register with validation
 	LD	L,A
 	AND	E			; selected rhythm instruments OFF
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	LD	A,L
 	OR	D			; selected rhythm instruments ON
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	POP	HL
 	RET
 
@@ -7902,17 +7906,17 @@ C$748D:	PUSH	HL
 ;	     Outputs ________________________
 
 
-C$74A7:	PUSH	HL
+C74A7:	PUSH	HL
 	LD	A,D
 	SUB	3CH
 	LD	H,0CH	; 12 
-	JR	C,J.74B3
-J$74AF:	SUB	H
-	JP	NC,J$74AF
-J.74B3:	ADD	A,H
-	JP	NC,J.74B3
+	JR	C,J74B3
+J74AF:	SUB	H
+	JP	NC,J74AF
+J74B3:	ADD	A,H
+	JP	NC,J74B3
 	LD	HL,(D.F9A1)
-	CALL	C.5539			; get entry A
+	CALL	C5539			; get entry A
 	LD	E,(HL)
 	POP	HL
 	BIT	7,E
@@ -7926,22 +7930,22 @@ J.74B3:	ADD	A,H
 ;	     Outputs ________________________
 
 
-C.74C4:	LD	A,C
+C74C4:	LD	A,C
 	CP	16H
 	CCF
 	RET	C
 	PUSH	HL
 	CP	10
-	JR	C,J$74D2
-	ADD	A,(I$756F-I$74F7-10)
-	JR	J$74D7
-J$74D2:	ADD	A,A
+	JR	C,J74D2
+	ADD	A,(I756F-I74F7-10)
+	JR	J74D7
+J74D2:	ADD	A,A
 	ADD	A,A
 	LD	H,A
 	ADD	A,A
 	ADD	A,H
-J$74D7:	LD	HL,I$74F7
-	CALL	C.5539			; get entry A
+J74D7:	LD	HL,I74F7
+	CALL	C5539			; get entry A
 	LD	DE,9
 	ADD	HL,DE
 	LD	C,(HL)
@@ -7949,17 +7953,17 @@ J$74D7:	LD	HL,I$74F7
 	LD	DE,I$F9A3
 	LD	(D.F9A1),DE
 	LD	B,12
-J$74ED:	LD	A,(HL)
+J74ED:	LD	A,(HL)
 	SUB	C
 	LD	(DE),A
 	INC	HL
 	INC	DE
-	DJNZ	J$74ED
+	DJNZ	J74ED
 	POP	HL
 	AND	A
 	RET
 
-I$74F7:	DEFB	0F1H,014H,0FBH,0E2H,005H,0ECH,00FH,0F6H,019H,000H,0E7H,00AH
+I74F7:	DEFB	0F1H,014H,0FBH,0E2H,005H,0ECH,00FH,0F6H,019H,000H,0E7H,00AH
 	DEFB	01AH,0DDH,009H,035H,0F7H,023H,0E6H,012H,0D4H,000H,02CH,0EEH
 	DEFB	01EH,005H,00AH,00FH,005H,019H,000H,014H,00AH,000H,014H,00AH
 	DEFB	01EH,005H,00AH,00FH,005H,019H,000H,014H,00AH,000H,014H,0FBH
@@ -7970,7 +7974,7 @@ I$74F7:	DEFB	0F1H,014H,0FBH,0E2H,005H,0ECH,00FH,0F6H,019H,000H,0E7H,00AH
 	DEFB	01AH,0F8H,009H,027H,0F7H,023H,0F3H,012H,0FDH,000H,02CH,0EEH
 	DEFB	000H,000H,000H,000H,000H,000H,000H,000H,000H,000H,000H,000H
 
-I$756F:	DEFB	029H,0DCH,033H,052H,005H,024H,0D7H,02EH
+I756F:	DEFB	029H,0DCH,033H,052H,005H,024H,0D7H,02EH
 	DEFB	0E1H,000H,056H,00AH,029H,0DCH,033H,052H
 	DEFB	005H,024H,0D7H,02EH,0E1H,000H,056H
 
@@ -7979,16 +7983,16 @@ I$756F:	DEFB	029H,0DCH,033H,052H,005H,024H,0D7H,02EH
 ;	     Outputs ________________________
 
 
-C.7586:	XOR	A			; value
+C7586:	XOR	A			; value
 	LD	C,0
 	LD	B,8
-	CALL	C.75A0			; write OPLL register 0-7
-J$758E:	LD	C,0EH
+	CALL	C75A0			; write OPLL register 0-7
+J758E:	LD	C,0EH
 	LD	B,11
-	CALL	C.75A0			; write OPLL register 14-24
+	CALL	C75A0			; write OPLL register 14-24
 	LD	C,20H
 	LD	B,9
-	CALL	C.75A0			; write OPLL register 32-41
+	CALL	C75A0			; write OPLL register 32-41
 	LD	C,30H
 	LD	B,9
 					; write OPLL register 48-57
@@ -7998,13 +8002,13 @@ J$758E:	LD	C,0EH
 ;	     Outputs ________________________
 
 
-C.75A0:	PUSH	BC
+C75A0:	PUSH	BC
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	EI
 	POP	BC
 	INC	C
-	DJNZ	C.75A0
+	DJNZ	C75A0
 	RET
 
 ;	  Subroutine setup OPLL for rhythm
@@ -8012,25 +8016,25 @@ C.75A0:	PUSH	BC
 ;	     Outputs ________________________
 
 
-C$75AB:	LD	C,0EH
-	CALL	C.7605			; read OPLL register with validation
+C75AB:	LD	C,0EH
+	CALL	C7605			; read OPLL register with validation
 	OR	20H			; enable rhythm
 	LD	B,A
-	CALL	C.75DA			; write OPLL register with validation
-	LD	HL,I$75C8
+	CALL	C75DA			; write OPLL register with validation
+	LD	HL,I75C8
 	LD	B,9
-J$75BB:	PUSH	BC
+J75BB:	PUSH	BC
 	LD	C,(HL)
 	INC	HL
 	LD	B,(HL)
 	INC	HL
-	CALL	C.75DA			; write OPLL register with validation
+	CALL	C75DA			; write OPLL register with validation
 	EI
 	POP	BC
-	DJNZ	J$75BB
+	DJNZ	J75BB
 	RET
 
-I$75C8:	DEFB	016H,020H
+I75C8:	DEFB	016H,020H
 	DEFB	017H,050H
 	DEFB	018H,0C0H
 	DEFB	026H,005H
@@ -8045,10 +8049,10 @@ I$75C8:	DEFB	016H,020H
 ;	     Outputs ________________________
 
 
-C.75DA:	PUSH	AF
+C75DA:	PUSH	AF
 	LD	A,C
-	CALL	C.7618			; validate OPLL registernumber
-	JR	C,J$7602		; invalid, quit with Cx set
+	CALL	C7618			; validate OPLL registernumber
+	JR	C,J7602		; invalid, quit with Cx set
 	PUSH	HL
 	LD	HL,I.F9C0
 	ADD	A,L
@@ -8061,18 +8065,18 @@ C.75DA:	PUSH	AF
 	LD	A,C
 	OUT	(7CH),A
 	LD	L,3
-	CALL	C.7631			; wait
+	CALL	C7631			; wait
 	LD	A,B
 	OUT	(7DH),A
 	LD	L,13
-	CALL	C.7631			; wait
+	CALL	C7631			; wait
 	POP	HL
 	POP	AF
 	SCF
 	CCF
 	RET
 
-J$7602:	POP	AF
+J7602:	POP	AF
 	SCF
 	RET
 
@@ -8080,8 +8084,8 @@ J$7602:	POP	AF
 ;	     Inputs  C = register
 ;	     Outputs A = data
 
-C.7605:	LD	A,C
-	CALL	C.7618			; validate OPLL registernumber
+C7605:	LD	A,C
+	CALL	C7618			; validate OPLL registernumber
 	RET	C			; invalid, quit
 	PUSH	HL
 	LD	HL,I.F9C0
@@ -8100,7 +8104,7 @@ C.7605:	LD	A,C
 ;	     Outputs ________________________
 
 
-C.7618:	CP	8
+C7618:	CP	8
 	CCF
 	RET	NC
 	CP	13+1
@@ -8124,12 +8128,12 @@ C.7618:	CP	8
 ;	     Outputs ________________________
 
 
-C.7631:	IN	A,(0E6H)
+C7631:	IN	A,(0E6H)
 	LD	H,A
-J$7634:	IN	A,(0E6H)
+J7634:	IN	A,(0E6H)
 	SUB	H
 	CP	L
-	JP	C,J$7634
+	JP	C,J7634
 	RET
 
 ;	  Subroutine wait
@@ -8137,14 +8141,14 @@ J$7634:	IN	A,(0E6H)
 ;	     Outputs ________________________
 
 
-C.763C:	OUT	(0E6H),A
-J$763E:	IN	A,(0E7H)
+C763C:	OUT	(0E6H),A
+J763E:	IN	A,(0E7H)
 	CP	C
-	JP	C,J$763E
+	JP	C,J763E
 	RET
 
 
-I$7645:	DEFM	'Piano 1 ',00H
+I7645:	DEFM	'Piano 1 ',00H
 	DEFB	00H
 	DEFB	0AH
 	DEFB	00H
@@ -9451,7 +9455,7 @@ I$7645:	DEFM	'Piano 1 ',00H
 
 ; midi timer interrupt handler
 
-C.7FED:	JP	J$5003
+C7FED:	JP	J5003
 
 	DEFS	08000H-$,0
 

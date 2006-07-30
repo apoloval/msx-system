@@ -14,8 +14,8 @@
 	ORG	4000H
 
 M0D0C	EQU	0D0CH	; bios: pop af, pop bc, pop de, pop hl, ret
-D0004	EQU	0004H	; --S-I
-D0006	EQU	0006H
+D0004	EQU	0004H	; address pattern generator
+D0006	EQU	0006H	; address vdp dataport (read)
 CALSLT	EQU	001CH	; JC---
 IDBYT2	EQU	002DH	; ---L-
 WRTVDP	EQU	0047H	; JC--I
@@ -44,9 +44,9 @@ CBFF0	EQU	0BFF0H
 S.PUTCHR	EQU	0139H	; ----I
 
 
-DF30F	EQU	0F30FH	; --S--
-DF349	EQU	0F349H	; --S--
-DF36B	EQU	0F36BH	; ---L-
+DF30F	EQU	0F30FH	; double byte header definition used by the disksystem
+DF349	EQU	0F349H	; bottom of disksystem
+DF36B	EQU	0F36BH	; enable tpa (ram) on page 1
 
 LINL40	EQU	0F3AEH	; ---L-
 LINL32	EQU	0F3AFH	; ---L-
@@ -252,20 +252,20 @@ I409B:	PUSH	AF
 	IN	A,(0A8H)
 	RRCA
 	RRCA
-	AND	03H	; 3 
+	AND	03H
 	LD	C,A
 	LD	B,00H
 	LD	HL,EXPTBL
 	ADD	HL,BC
 	BIT	7,(HL)
-	LD	A,00H
+	LD	A,0
 	JR	Z,J40B6
 	INC	HL
 	INC	HL
 	INC	HL
 	INC	HL
 	LD	A,(HL)
-	AND	0CH	; 12 
+	AND	0CH
 J40B6:	RLC	C
 	RLC	C
 	RLC	C
@@ -504,13 +504,13 @@ I41D4:	DEFB	"PALETTE",0
 	DEFW	A43FE
 	DEFB	0
 
-A4260:	XOR	A
+A4260:	XOR	A			; kanji mode 0, 8*16 characters
 	DEFB	001H
-A4262:	LD	A,040H
+A4262:	LD	A,040H			; kanji mode 1, 6*16 characters
 	DEFB	001H
-A4265:	LD	A,080H
+A4265:	LD	A,080H			; kanji mode 2, 8*8 characters
 	DEFB	001H
-A4268:	LD	A,0C0H
+A4268:	LD	A,0C0H			; kanji mode 3, 6*8 characters
 J426A:	PUSH	HL
 	PUSH	AF
 	LD	HL,I4067
@@ -750,10 +750,10 @@ J440A:	PUSH	HL
 	CALL	C4051			; clear all hooks used by me
 	CALL	C417C			; remove myself from the H.TIMI hook
 	CALL	C6C38			; force end of ESC "K" mode
-	CALL	C79B9
-	JR	Z,J4423
+	CALL	C79B9			; get japanese input frontend processor area
+	JR	Z,J4423			; not a MSX-JE,
 	BIT	0,(IY+8)
-	CALL	NZ,C6878
+	CALL	NZ,C6878		; restore functionkey F1-F8 definitions
 J4423:	LD	(IY+8),0
 	CALL	C4453			; get screenwidth previous textmode
 	LD	(LINLEN),A
@@ -1991,7 +1991,7 @@ A4A9E:	EI
 	NOP
 	CALL	C4504			; replace return address with quit routine
 J4AA3:	CALL	C4099			; get my SLTWRK entry
-	CALL	C79B9
+	CALL	C79B9			; get japanese input frontend processor area
 	AND	A
 	BIT	0,(IY+8)
 	CALL	NZ,C6B21
@@ -2015,8 +2015,8 @@ J4AD3:	LD	(FNKSWI),A
 	LD	HL,(CRTCNT)
 	LD	H,01H	; 1 
 	JR	NC,J4AE8
-	CALL	C79B9
-	JR	Z,J4AE8
+	CALL	C79B9			; get japanese input frontend processor area
+	JR	Z,J4AE8			; not a MSX-JE,
 	BIT	0,(IY+8)
 	JR	NZ,J4B3F
 J4AE8:	LD	A,(LINLEN)
@@ -7108,7 +7108,7 @@ J67D3:	OR	C
 J67E8:	LD	A,(DE)
 	INC	DE
 	AND	07H			; b2-b0 zero ?
-	JR	Z,J67F6
+	JR	Z,J67F6			; yep, usable MSX-JE
 	INC	DE
 	INC	DE
 	INC	DE
@@ -7185,7 +7185,7 @@ J682B:	POP	BC
 	LD	(IY+16),D		; size of MSX-JE workspace
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine restore functionkey F1-F8 definitions
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -7195,7 +7195,7 @@ C6878:	CALL	C6887
 	EI
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine save functionkey F1-F8 definitions
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -7231,8 +7231,8 @@ C6895:	CALL	C487E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C68A1:	CALL	C79B9
-	JP	Z,J741D
+C68A1:	CALL	C79B9			; get japanese input frontend processor area
+	JP	Z,J741D			; not a MSX-JE,
 	LD	L,(IY+9)
 	LD	H,(IY+10)
 	LD	A,L
@@ -7246,13 +7246,13 @@ J68B2:	BIT	1,(IY+8)
 	JR	NZ,J68D6
 	LD	A,3
 	CALL	C6A19			; MSX-JE release
-	CALL	C6878
+	CALL	C6878			; restore functionkey F1-F8 definitions
 	CALL	C69CC
 	CALL	NC,C6AC7
 J68D1:	CALL	C69DB
 	JR	J68B2
 
-J68D6:	CALL	C6880
+J68D6:	CALL	C6880			; save functionkey F1-F8 definitions
 	LD	E,(IY+15)
 	LD	D,(IY+16)
 	LD	A,2
@@ -7511,16 +7511,18 @@ J6A5B:	LD	A,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6A65:	CALL	C79B9
+C6A65:	CALL	C79B9			; get japanese input frontend processor area
 	BIT	0,(IY+8)
 	RET	Z
-	CALL	C79B9
-	JP	Z,C785C
+	CALL	C79B9			; get japanese input frontend processor area
+	JP	Z,C785C			; not a MSX-JE,
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C6A73:	CALL	C6AC7
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -7641,7 +7643,7 @@ C6B14:	LD	HL,(CRTCNT)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C6B21:	CALL	C79B9
+C6B21:	CALL	C79B9			; get japanese input frontend processor area
 	BIT	0,(IY+8)
 	SCF
 	RET	Z
@@ -10197,7 +10199,7 @@ J7949:	POP	DE
 	EX	DE,HL
 	RET
 
-;	  Subroutine MSX-JE replacement
+;	  Subroutine initialize simple japanese input frontend processor
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -10216,7 +10218,7 @@ J7967:	POP	BC
 	CALL	C4099			; get my SLTWRK entry
 	LD	(IX+4),L
 	LD	A,H
-	AND	7FH			; reset b7
+	AND	7FH			; reset b7 (to indicate not a real MSX-JE)
 	LD	(IX+5),A
 	PUSH	HL
 	POP	IY
@@ -10232,7 +10234,7 @@ J7967:	POP	BC
 	LD	DE,30
 	ADD	HL,DE
 	LD	(IY+1),L
-	LD	(IY+2),H		; start of MSX-JE replacement workarea
+	LD	(IY+2),H		; start of workarea
 	LD	DE,4
 	ADD	HL,DE
 	LD	(IY+32),L
@@ -10244,7 +10246,7 @@ J7967:	POP	BC
 	AND	A
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine get japanese input frontend processor area
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
