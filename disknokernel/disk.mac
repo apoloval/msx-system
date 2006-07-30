@@ -1,0 +1,723 @@
+; DISK.MAC
+;
+; diskinterface without dos kernel
+;
+; Source edited by Arjen Zeilemaker
+;
+; version 1.0 17-11-2005
+
+; code can be used to create a diskinterface without the dos kernel,
+; which is copyrighted
+; for the diskinterface to work, a DOS1 or DOS2 kernel must be available
+; by a other diskinterface
+
+	.Z80
+	ASEG
+	ORG	04000H
+
+
+; Some PUBLIC's for Disk driver
+
+;	EXTRN	INIHRD
+;	EXTRN	DRIVES
+;	EXTRN	INIENV
+;	EXTRN	DSKIO
+;	EXTRN	DSKCHG
+;	EXTRN	GETDPB
+;	EXTRN	CHOICE
+;	EXTRN	DSKFMT
+;	EXTRN	DSKSTP
+;	EXTRN	OEMSTA
+;	EXTRN	MYSIZE
+;	EXTRN	SECLEN
+;	EXTRN	DEFDPB
+
+;	PUBLIC	PROMPT
+;	PUBLIC	SETINT
+;	PUBLIC	PRVINT
+;	PUBLIC	GETSLT
+;	PUBLIC	GETWRK
+;	PUBLIC	DIV16
+;	PUBLIC	ENASLT
+;	PUBLIC	XFER
+
+RDSLT	equ	0000CH
+CALSLT	equ	0001CH
+ENASLT	equ	00024H
+CHGET	equ	0009FH
+CHPUT	equ	000A2H
+SNSMAT	equ	00141H
+KILBUF	equ	00156H
+
+RUNCRS	equ	05807H			; address H.HRUNC hooking code
+RUNCST	equ	05897H			; address H.HRUNC handler
+
+XF1C9	equ	0F1C9H			; bottom of static workarea disksystem
+
+XF24F	equ	0F24FH			; PROMPT hook
+XF27C	equ	0F27CH			; multiply hook
+XF27F	equ	0F27FH			; divide hook
+
+RAWFLG	equ	0F30DH			; verify hook
+YF336	equ	0F336H			; saved console input
+YF33F	equ	0F33FH			; saved driveid for PROMPT
+RAMAD0	equ	0F341H			; slotid DOS ram page 0
+RAMAD1	equ	0F342H			; slotid DOS ram page 1
+RAMAD2	equ	0F343H			; slotid DOS ram page 2
+RAMAD3	equ	0F344H			; slotid DOS ram page 3
+YF34B	equ	0F34BH			; bottom of workarea msxdos
+$SECBUF equ	0F34DH			; sectorbuffer for diskdriver
+YF355	equ	0F355H			; table of pointers to the DPBTBL
+XF365	equ	0F365H			; read primary slotregister
+XF368	equ	0F368H			; enable diskkernel in page 1
+XFER	equ	0F36EH			; routine transfer to/from dos ram
+
+MEMSIZ	equ	0F672H
+STKTOP	equ	0F674H
+AUTLIN	equ	0F6ABH			; used to temporary store the maximium sectorsize
+SAVSTK	equ	0F6B1H
+FILTAB	equ	0F860H
+NULBUF	equ	0F862H
+HOKVLD	equ	0FB20H
+YFB21	equ	0FB21H			; drivetable
+YFB29	equ	0FB29H			; interrupttable
+BOTTOM	equ	0FC48H
+HIMEM	equ	0FC4AH
+EXPTBL	equ	0FCC1H
+SLTWRK	equ	0FD09H
+DEVICE	equ	0FD99H			; used to temporary store the disksystem init flag
+H.TIMI	equ	0FD9FH
+H.RUNC	equ	0FECBH			; used to gain control when basic is initialized
+EXTBIO	equ	0FFCAH
+DISINT	equ	0FFCFH
+ENAINT	equ	0FFD4H
+
+	defb	"A","B"
+	defw	A576F
+	defw	0			; call statements are not handled
+	defw	0
+	defw	0
+	defs	6
+
+T4010:	jp	DSKIO
+;
+T4013:	jp	DSKCHG
+;
+T4016:	jp	GETDPB
+;
+T4019:	jp	CHOICE
+;
+T401C:	jp	DSKFMT
+;
+T401F:	jp	DSKSTP
+
+; start diskbasic
+
+A4022:	ret				; warm start diskbasic not supported, real kernel should do this
+	ret
+	ret
+
+; format
+
+A4025:	scf				; format not supported, real kernel should do this
+	ret
+	ret
+	ret
+
+; stop all drives
+
+A4029:	ret				; stop all drives not supported, real kernel should do this
+	ret
+	ret
+
+; Unused code ??
+;
+	nop
+;
+;
+A402D:	jp	A5FB3
+;
+;
+A4030:	ld	hl,(YF34B)
+	ret
+;
+
+A4078:	push	hl
+	ld	hl,YF336
+	xor	a
+	cp	(hl)			; saved input available ?
+	ld	(hl),a			; not anymore!
+	inc	hl
+	ld	a,(hl)
+	pop	hl
+	ret	nz			; yep, return it
+	push	ix
+	ld	ix,CHGET
+	call	A40AB
+	pop	ix			; get char
+	ret
+
+
+A408F:	push	ix
+	ld	ix,CHPUT
+	call	A40AB
+	pop	ix
+	ret
+
+
+A40AB:	push	iy
+	ld	iy,(EXPTBL-1+0)
+	call	CALSLT
+	ei
+	pop	iy
+	ret
+
+A4916:	call	XF27C
+	ld	hl,0
+A491C:	ld	a,b
+	ld	b,16+1
+	jr	A4928
+;
+A4921:	jr	nc,A4924
+	add	hl,de
+A4924:	rr	h
+	rr	l
+A4928:	rra
+	rr	c
+	djnz	A4921
+	ld	b,a
+	ret
+
+DIV16:
+A492F:	ld	hl,0
+A4932:	call	XF27F
+	ld	a,b
+	ld	b,16
+	rl	c
+	rla
+A493B:	rl	l
+	rl	h
+	jr	c,A494E
+	sbc	hl,de
+	jr	nc,A4946
+	add	hl,de
+A4946:	ccf
+A4947:	rl	c
+	rla
+	djnz	A493B
+	ld	b,a
+	ret
+;
+A494E:	or	a
+	sbc	hl,de
+	jr	A4947
+
+
+A576F:	call	INIHRD			; initialize diskhardware
+	di
+	ld	a,(DEVICE)
+	and	a			; abort disksystem init ?
+	ret	m			; yep, quit
+	jp	nz,A580C		; disksystem init already started by an other diskrom, skip init
+	ld	hl,HOKVLD
+	bit	0,(hl)			; EXTBIO hook valid ?
+	jr	nz,A578E
+	set	0,(hl)
+	ld	hl,EXTBIO
+	ld	b,3*5
+A5789:	ld	(hl),0C9H
+	inc	hl
+	djnz	A5789			; nop, init EXTBIO,DISINT and ENAINT hooks
+A578E:	ld	hl,(BOTTOM)
+	ld	de,0C000H+1
+	rst	020H			; at least 16Kb RAM ?
+	jr	nc,A57A3		; nop, abort
+	ld	a,6
+	call	SNSMAT
+	di
+	rrca				; SHIFT key pressed ?
+	jr	c,A57A9			; nop, cont
+	ld	a,7
+	rst	018H			; beep
+A57A3:	ld	a,0FFH
+	ld	(DEVICE),a		; flag abort disksystem init
+	ret
+;
+A57A9:	ld	hl,0F380H+MYSIZE
+	ld	de,XF1C9
+	and	a
+	sbc	hl,de
+	call	nc,A5EE8		; allocate basic disksystem memory
+	ret	c			; failed, quit
+A57B6:	push	hl
+	ld	hl,-439
+	ld	bc,XF1C9
+A57BD:	xor	a
+	ld	(bc),a
+	inc	bc
+	inc	hl
+	ld	a,l
+	or	h
+	jr	nz,A57BD		; clear memory
+	ld	(AUTLIN),hl		; SECLEN sofar zero
+	ld	b,4*2+4*3
+	ld	hl,YFB21
+A57CD:	ld	(hl),a
+	inc	hl
+	djnz	A57CD			; clear DRVTBL, DRVINT
+	ld	hl,XF24F
+	ld	b,069H
+A57D6:	ld	(hl),0C9H
+	inc	hl
+	djnz	A57D6			; init disksystem hooks
+	ld	a,0DBH
+	ld	hl,0C9A8H
+	ld	(XF365+0),a
+	ld	(XF365+1),hl
+	ld	a,6
+	call	SNSMAT
+	and	002H			; CTRL key pressed
+	ld	(YF33F),a		; saved for panthom drive
+	ld	a,7
+	rst	018H			; beep
+	ld	hl,T5807
+	ld	de,H.RUNC
+	ld	bc,00005H
+	ldir
+	call	A402D
+	ld	(H.RUNC+1),a		; init RUNC hook, to catch initialize interpeter
+	pop	de			; base diskdriver workarea
+	jr	A5825
+;
+;
+T5807:	rst	030H
+	defb	0
+	defw	A5897
+	ret
+;
+A580C:	ld	hl,YFB21		; DRVTBL
+	ld	b,4			; 4 diskroms
+	xor	a
+A5812:	add	a,(hl)
+	jp	c,A5ECC			; invalid DRVTBL, error
+	inc	hl
+	inc	hl
+	djnz	A5812
+	cp	8			; 8 or more drives ?
+	ret	nc			; yep, no more drives!
+	ld	hl,MYSIZE
+	call	A5EE8			; allocate diskdriver workarea
+	ret	c			; failed, quit
+	ex	de,hl
+A5825:	call	A5FCD			; get SLTWRK entry of this slot/page
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d			; save base workarea in SLTWRK
+	ld	hl,(AUTLIN)
+	ld	de,SECLEN
+	rst	020H			; SECLEN sofar big enough ?
+	jr	nc,A5838
+	ld	(AUTLIN),de		; nop, adjust
+A5838:	ld	de,YFB21		; DRVTBL
+	ld	bc,00400H		; 4 diskroms
+A583E:	ld	a,(de)
+	and	a
+	jr	z,A584B			; free entry, use it
+	add	a,c
+	ld	c,a
+	inc	de
+	inc	de
+	djnz	A583E			; next entry
+	jp	A5ECC			; none free, error
+;
+A584B:	ld	a,(YF33F)
+	and	a
+	ld	a,c			; phantom flag
+A5850:	call	DRIVES			; query no. of drives
+	add	a,l
+	cp	8+1
+	ld	a,l			; more as 8 drives ?
+	jr	c,A585C			; nop, ok
+	ld	a,8
+	sub	c			; as much as possible
+A585C:	push	bc
+	ld	(de),a			; save drives
+	inc	de
+	call	A402D
+	ld	(de),a			; save slotid diskrom
+	pop	bc			; drivenumber
+	ld	b,0
+	ld	hl,YF355
+	add	hl,bc
+	add	hl,bc			; DPBTBL
+	push	hl
+	dec	de
+	ld	a,(de)
+	push	af
+	ld	c,a			; drives
+	ld	de,21
+	call	A4916			; * size of DPB
+	ld	l,c
+	ld	h,b
+	call	A5EC8			; allocate space for DPB's
+	ex	de,hl
+	pop	af
+	pop	hl
+A587E:	ld	(hl),e
+	inc	hl
+	ld	(hl),d			; save in DPBTBL
+	inc	hl
+	push	hl
+	ld	hl,DEFDPB
+	ld	bc,21
+	ldir				; initialize DPB
+	pop	hl
+	dec	a
+	jr	nz,A587E		; next drive
+	call	INIENV			; initialize driver workarea
+	ld	hl,DEVICE
+	inc	(hl)			; increase diskdriver count
+	ret
+
+;
+; This is executed when this rom is the first diskrom
+;
+
+A5897:	ld	b,3
+	ld	de,YFB21+2		; skip the first DRVINF entry (because it is this rom)
+NXKERN:	ld	a,(de)
+	or	a			; no more entries ?
+	jr	z,NOKERN		; yep, no kernel found
+	inc	de
+	ld	a,(de)			; slotid diskrom
+	push	de
+	ld	hl,RUNCRS+2
+	call	RDSLT
+	pop	de
+	cp	LOW RUNCST		; diskrom has a dos 1 kernel ?
+	jr	nz,SKKERN		; nope, try the next one
+	ld	a,(de)
+	push	de
+	ld	hl,RUNCRS+3
+	call	RDSLT
+	pop	de
+	cp	HIGH RUNCST		; diskrom has a dos 1 kernel ?
+	jr	z,TOKERN		; yep, pass control to that diskrom
+SKKERN:	inc	de
+	djnz	NXKERN			; next
+
+NOKERN:	call	A5F86
+	defb	12
+	defb	"No DOS kernel found",0
+	nop
+	nop
+	nop
+	nop				; room for expansion ??
+	nop				; extra 5 bytes
+	di
+	halt
+
+
+TOKERN:	ld	a,(H.RUNC+1)
+	add	a,a			; this diskrom in a expanded slot ?
+	ld	hl,4
+	jr	nc,A6673		; nope, returnaddress at offset 4
+	ld	l,8+4			; yep, returnaddress at offset 12
+A6673:	add	hl,sp
+	ld	(hl),LOW H.RUNC
+	inc	hl
+	ld	(hl),HIGH H.RUNC	; at return, start H.RUNC again
+	ld	a,(de)
+	ld	(H.RUNC+1),a
+	ld	hl,RUNCST
+	ld	(H.RUNC+2),hl		; dos kernel initialization by a real DOS1 kernel (DOS2 automaticly takes over)
+	ret
+
+A5EC8:	call	A5EE8
+A5ECB:	ret	nc
+A5ECC:	call	A5F86
+	defb	12
+T5ED0:	defb	"No enough memory",0
+	nop
+	nop
+	nop
+	nop				; room for expansion ??
+	nop				; extra 5 bytes
+	di
+	halt
+
+A5EE8:	ld	a,l
+	or	h
+	ret	z
+	xor	a
+	sub	l
+	ld	l,a
+	ld	a,0
+	sbc	a,h
+	ld	h,a
+	ld	c,l
+	ld	b,h
+	add	hl,sp
+	ccf
+	ret	c
+	ld	de,(BOTTOM)
+	sbc	hl,de
+	ret	c
+	ld	a,h
+	cp	002H
+	ret	c
+	push	bc
+	ld	hl,0
+	add	hl,sp
+	ld	e,l
+	ld	d,h
+	add	hl,bc
+	push	hl
+	ld	hl,(STKTOP)
+	and	a
+	sbc	hl,de
+	ld	c,l
+	ld	b,h
+	inc	bc
+	pop	hl
+	ld	sp,hl
+	ex	de,hl
+	ldir
+	pop	bc
+	ld	hl,(HIMEM)
+	add	hl,bc
+	ld	(HIMEM),hl
+	ld	de,0FDEAH
+	add	hl,de
+	ld	(FILTAB),hl
+	ex	de,hl
+	ld	hl,(MEMSIZ)
+	add	hl,bc
+	ld	(MEMSIZ),hl
+	ld	hl,(NULBUF)
+	add	hl,bc
+	ld	(NULBUF),hl
+	ld	hl,(STKTOP)
+	add	hl,bc
+A5F3B:	ld	(STKTOP),hl
+	dec	hl
+	dec	hl
+	ld	(SAVSTK),hl
+	ld	l,e
+	ld	h,d
+	inc	hl
+	inc	hl
+	inc	hl
+A5F48:	inc	hl
+	ld	a,002H
+A5F4B:	ex	de,hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	inc	hl
+	ex	de,hl
+	ld	bc,7
+	ld	(hl),b
+	add	hl,bc
+	ld	(hl),b
+	ld	bc,256+2
+	add	hl,bc
+	dec	a
+	jr	nz,A5F4B
+	ret
+
+A5F86:	ex	(sp),hl
+	call	A5F8C			; print string
+	ex	(sp),hl
+	ret
+;
+A5F8C:	ld	a,(hl)
+	inc	hl
+	and	a
+	ret	z
+	call	A408F
+	jr	A5F8C
+
+
+GETSLT:
+A5FB3:	call	A5FE7
+	or	(hl)
+	ret	p
+	ld	c,a
+	inc	hl
+	inc	hl
+	inc	hl
+	inc	hl
+	ld	a,(hl)
+A5FBE:	and	00CH
+	or	c
+	ret
+;
+GETWRK:
+A5FC2:	call	A5FCD
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	push	hl
+	pop	ix
+	ret
+;
+A5FCD:	call	A5FE7
+	add	a,a
+	add	a,a
+	add	a,a
+	scf
+	adc	a,a
+	ld	c,a
+	ld	a,(hl)
+	add	a,a
+	sbc	a,a
+	and	00CH
+	inc	hl
+	inc	hl
+	inc	hl
+	inc	hl
+	and	(hl)
+	or	c
+	add	a,a
+	ld	hl,SLTWRK
+	jr	A5FF3
+;
+A5FE7:	call	XF365
+	rrca
+	rrca
+A5FEC:	and	003H
+	ld	hl,EXPTBL
+A5FF1:	ld	b,0
+A5FF3:	ld	c,a
+	add	hl,bc
+	ret
+;
+; This is used by the diskdriver to install his interrupt handler
+;
+
+SETINT:
+A5FF6:	ld	a,(H.TIMI+0)
+	cp	0C9H
+	jr	z,A6012			; H.TIMI not hooked, skip saving H.TIMI
+	push	hl
+	ld	a,(DEVICE)		; this diskdriver number
+	ld	hl,YFB29
+	call	A5FF1
+	add	hl,bc
+	add	hl,bc			; get DRVINT pointer
+	ex	de,hl
+	ld	hl,H.TIMI+1
+	ld	c,3
+	ldir				; save slotid and adres (assumes that is hooked by a CALLF!)
+	pop	hl
+A6012:	di
+	ld	a,0F7H
+	ld	(H.TIMI+0),a
+	ld	(H.TIMI+2),hl		; diskdriver interrupt handler
+	ld	a,0C9H
+	ld	(H.TIMI+4),a
+	call	A402D
+	ld	(H.TIMI+1),a		; slotid of this diskdriver
+	ret
+;
+; This is used by the diskdriver to give control to other interrupt handlers
+;
+PRVINT:
+A6027:	push	af
+	call	A402D			; slotid of this diskdriver
+	ld	b,4
+	ld	de,YFB29
+	ld	hl,YFB21+1
+A6033:	cp	(hl)			; is this my DRVTBL entry ?
+	jr	z,A603F			; yep, get the saved interrupt handler and jump to it
+	inc	de
+	inc	de
+	inc	de
+	inc	hl
+	inc	hl
+	djnz	A6033			; next DRVTBL and DRVINT entry
+A603D:	pop	af
+	ret
+;
+A603F:	ex	de,hl
+	ld	a,(hl)
+	and	a
+	jr	z,A603D			; DRVINT entry not used, quit
+	push	af
+	pop	iy			; slotid
+	inc	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	push	bc
+	pop	ix			; address
+	pop	af
+	jp	CALSLT
+
+A6166:	xor	a
+	ld	(YF336),a
+	ld	ix,KILBUF
+	call	A40AB
+	jp	A4078			; get consoleinput
+
+
+PROMPT:
+L625A:	ld	a,(YF33F)
+	add	a,"A"
+	call	XF24F
+	push	af
+	call	A5F86
+	defb	13,10,"Insert diskette for drive ",0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop				; room for expansion
+	nop				; extra 10 bytes
+	pop	af
+	call	A408F
+	call	A5F86
+	defb	":",13,10,"and strike a key when ready",0
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop				; room for expansion
+	nop				; extra 10 bytes
+A62BD:	call	A6166
+	cp	003H
+	jr	z,A62BD
+	jr	A62C9
+;
+A62C6:	call	A408F
+A62C9:	push	af
+	ld	a,00DH
+	call	A408F
+	ld	a,00AH
+	call	A408F
+A62D4:	pop	af
+	ret
+
+
+; DRIVER section starts here
+
+DSKDRV:
+
+	INCLUDE	DRIVER.MAC
+
+	DEFS	08000H-$,0
+
+
+	end
+
+
