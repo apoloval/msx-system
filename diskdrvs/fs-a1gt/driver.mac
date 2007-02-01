@@ -661,7 +661,7 @@ L73DB:	DB	0F9h
 	DW	1
 	DB	2
 	DB	112
-	DW	10
+	DW	12
 	DW	635
 	DB	2
 	DW	5

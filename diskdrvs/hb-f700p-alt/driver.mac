@@ -892,7 +892,7 @@ DpbTable:	db	0F8h		; Media F8
 		dw	1
 		db	2
 		db	112
-		dw	10
+		dw	12
 		dw	635
 		db	2
 		dw	5
