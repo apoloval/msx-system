@@ -1,6 +1,6 @@
 ; DOS1.MAC
 
-; DOS 1.02 kernel (latest version known)
+; DOS 1.01 kernel (as used in the SVI-738 diskinterface)
 ; version number is not offical, it is created by me
 
 ; Source re-created by Z80DIS 2.2
@@ -544,7 +544,7 @@ A40C5:	in	a,(0B5H)		; read data
 	xor	b
 	out	(0B5H),a		; change it and write back
 	ld	c,a
-	nop				; wait or patched code ??
+	nop				; wait/patched code (version 1.00 has two EX (SP),HL here)
 	in	a,(0B5H)
 	and	00FH
 	cp	c			; correctly readback ?
@@ -1266,11 +1266,7 @@ A450A:	sub	l			; current drive same as datasector buffer owner ?
 	jr	nz,A4516		; nope, leave the datasector buffer alone
 	ld	l,a
 	ld	h,a
-
-; VERSION 1.1 CHANGE
-; ld (YF23F),hl is removed, because it is not explicit needed
-; room is used later on to fix the FAT reading bug when one of the other FAT copies is used (when first FAT read generates a error)
-
+	ld	(YF23F),hl
 	dec	l
 	ld	(YF241),hl		; invalid datasector buffer
 A4516:	ld	a,0FFH
@@ -1304,14 +1300,6 @@ A4541:	ld	a,e
 	jr	nc,A4547
 	inc	d
 A4547:	pop	af			; adjust first FAT sector to the first FAT sector of the next FAT copy
-
-; VERSION 1.1 BUGFIX
-; Begin of change
-
-	ld	b,c			; restore sectors per FAT (B is destroyed by the DSKIO)
-
-; End of change
- 
 	dec	a
 	jr	nz,A4522		; there is a other FAT copy, try that one
 	call	A45FA			; get FAT parameters (so the first FAT copy is used)
@@ -1346,10 +1334,6 @@ A4563:	ld	a,(YF2E1)		; current driveid
 	ret	nc
 	inc	h
 	ret
-
-; CHANGED, TO KEEP ROUTINES ALIGNED WITH PREVIOUS VERSION
-
-	defs	0456FH-$,0
 
 ;	Subroutine	BDOS 10 (close file)
 ;	Inputs		
@@ -2302,12 +2286,7 @@ A4AF2:	ld	hl,(YF300)
 	ld	a,h
 	or	l
 	jr	nz,A4AA8
-
-; VERSION 1.1 CHANGE
-; CHANGED, BUGFIX
-; ld hl,128
-
-A4AF9:	ld	hl,127
+A4AF9:	ld	hl,128
 	ld	a,(YCONBF+0)
 	cp	l
 	jr	z,A4B05
@@ -2736,12 +2715,7 @@ A4E10:	ld	bc,0
 A4E26:	ld	bc,00FFFH
 	call	A4F9E			; mark end & release rest chain
 A4E2C:	dec	de
-
-; VERSION 1.1 CHANGE
-; CHANGED, BUGFIX
-; ld a,0FFH
-
-	ld	a,1
+	ld	a,0FFH
 	ld	(de),a			; flag FAT buffer changed
 	jr	A4E10
 
@@ -3246,12 +3220,7 @@ A50E0:	push	de
 	ld	ix,YCONTP
 	ld	a,e
 	cp	c			; is lengthbyte valid ?
-
-; VERSION 1.1 CHANGE
-; CHANGED, BUGFIX
-; jr nc,A5103
-
-	jr	nc,A5101		; equal, use the line in buffer as basis otherwise use empty line as basis
+	jr	nc,A5103		; equal, use the line in buffer as basis otherwise use empty line as basis
 	push	hl			; length smaller than size of buffer
 	add	hl,de
 	ld	a,(hl)
@@ -5628,7 +5597,7 @@ A607B:	pop	hl
 	jp	A636E
 
 ; Unused code
-; looks like the previous jump is a patch, may be the ´ei´ instruction at the end of the patch was forgotten ??
+; JP A636E is a patch, to insert the ´ei´ instruction after CALSLT
 ; patch code does not fit here, 1 byte too less
 
 	nop
@@ -5843,7 +5812,7 @@ A622D:	ld	a,(H.CLEA+0)
 A6232:	jr	z,A6245
 A6234:	ld	hl,T72F2
 	ld	de,H.LOPD
-	ld	bc,00005H
+	ld	bc,5
 	ldir
 	call	A402D
 	ld	(H.LOPD+1),a
@@ -7762,7 +7731,9 @@ A6DB5:	ld	a,8
 	call	M2F10			; copy variable content from DAC
 	jp	A61F1
 
-; Unused code, patched code ??
+; Unused code
+; JP A61F1 is a patch, reason unknown
+; patch code does not fit here
 
 	nop
 	nop
@@ -8401,20 +8372,26 @@ A72DA:	dec	hl
 A72DB:	ld	ix,M4666
 	jr	A731E			; continue in CHRGTR
 
-; unused code, patched ??
+; unused code, used for keeping the diskdrive code aligned at 07405H
 
 	nop
 	nop
 	nop
+
+;	Subroutine	register disksystem bottom when expansion has hooked H.CLEA
+;	Inputs		-
+;	Outputs		________________________
 
 A72E4:	ld	a,0C9H
-A72E6:	ld	(H.LOPD+0),a
+	ld	(H.LOPD+0),a
 	ld	de,(HIMEM)
 	ld	(YF349),de
 	ret
 
+;	routine for H.LOPD
+
 T72F2:	rst	030H
-	defb	000H
+	defb	0
 	defw	A72E4
 	ret
 
