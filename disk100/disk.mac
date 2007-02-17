@@ -1,6 +1,7 @@
 ; DOS1.MAC
 
-; DOS 1.x kernel
+; DOS 1.02 kernel (latest version known)
+; version number is not offical, it is created by me
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
@@ -5808,7 +5809,7 @@ A61F1:	ld	de,TEMPST+30
 	ld	hl,(TEMPPT)
 	ld	(DAC+2),hl
 	ld	a,3
-A61FC:	ld	(VALTYP),a
+	ld	(VALTYP),a
 	call	M2EF3			; copy stringdescriptor
 	ld	de,TEMPST+30+3
 	rst	020H
@@ -5817,9 +5818,9 @@ A61FC:	ld	(VALTYP),a
 	jp	A72F7
 
 A620D:	ld	hl,YFB21
-	ld	b,004H
+	ld	b,4
 A6212:	inc	hl
-	ld	a,(hl)
+	ld	a,(hl)			; number of drivers of this interface
 	push	af
 	pop	iy
 	inc	hl
@@ -5828,13 +5829,13 @@ A6212:	inc	hl
 	ld	hl,T401F
 	push	hl
 	pop	ix
-	and	a
-	call	nz,RDSLT
-A6224:	and	a
-	call	nz,CALSLT
+	and	a			; entry for interface used ?
+	call	nz,RDSLT		; yep, read DSKSTP entry
+	and	a			; entry for interface used AND a valid DSKSTP entry ?
+	call	nz,CALSLT		; yep, call DSKSTP of interface
 	pop	bc
 	pop	hl
-	djnz	A6212
+	djnz	A6212			; next interface
 	ret
 
 A622D:	ld	a,(H.CLEA+0)
