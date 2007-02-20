@@ -329,8 +329,8 @@ M3042	equ	03042H		; convert DAC from sgn to dbl
 M30D1	equ	030D1H		; dbl to integer
 M325C	equ	0325CH		; sgn multiply
 M3FD6	equ	03FD6H		; empty string
-M4055	equ	04055H
-M406D	equ	0406DH
+M4055	equ	04055H		; syntax error
+M406D	equ	0406DH		; type mismatch error
 M406F	equ	0406FH		; BASIC error
 M409B	equ	0409BH		; restart BASIC
 M4173	equ	04173H		; execute statement
@@ -339,7 +339,7 @@ M4601	equ	04601H		; execution loop
 M4666	equ	04666H		; CHRGTR
 M46FF	equ	046FFH		; convert to SNG
 M4756	equ	04756H		; evaluate word operand and check for 0-32767 range
-M475A	equ	0475AH
+M475A	equ	0475AH		; illegal function call error
 M4AFF	equ	04AFFH		; output back to screen
 M4C5F	equ	04C5FH		; evaluate =expression
 M4C64	equ	04C64H		; evaluate expression
@@ -352,25 +352,25 @@ M5432	equ	05432H		; convert address to integer
 M54F7	equ	054F7H		; convert pointers to linenumbers
 M5597	equ	05597H		; GETYPR
 M5EA4	equ	05EA4H		; get address of variable
-M6275	equ	06275H
+M6275	equ	06275H		; out of memory error
 M6627	equ	06627H		; allocate temp string
-M6671	equ	06671H
+M6671	equ	06671H		; string formula too complex error
 M668E	equ	0668EH		; allocate stringspace
 M67D0	equ	067D0H		; free temporary string
-M6825	equ	06825H
+M6825	equ	06825H		; push temporary descriptor to temporary desciptor heap and quit
 M6A0E	equ	06A0EH		; evaluate filespecification
 M6A6D	equ	06A6DH		; get i/o channel pointer
 M6AFA	equ	06AFAH		; open i/o channel
 M6B24	equ	06B24H		; close i/o channel
 M6C1C	equ	06C1CH		; close all i/o channels
 M6E41	equ	06E41H		; resume character putback routine
-M6E6B	equ	06E6BH
-M6E6E	equ	06E6EH
-M6E74	equ	06E74H
-M6E77	equ	06E77H
-M6E7A	equ	06E7AH
-M6E7D	equ	06E7DH
-M6E83	equ	06E83H
+M6E6B	equ	06E6BH		; bad filename error
+M6E6E	equ	06E6EH		; file already open error
+M6E74	equ	06E74H		; file not found error
+M6E77	equ	06E77H		; file not open error
+M6E7A	equ	06E7AH		; field overflow error
+M6E7D	equ	06E7DH		; bad filenumber error
+M6E83	equ	06E83H		; input past end error
 M6E92	equ	06E92H		; start of BSAVE routine
 M6EC6	equ	06EC6H		; start of BLOAD routine
 M6EF4	equ	06EF4H		; finish BLOAD
@@ -6420,7 +6420,7 @@ T65B1:	defb	"SYSTEM",0
 A65C4:	ret	nz
 	ld	a,(YF346)
 	and	a
-	jp	z,J7319
+	jp	z,J7319			; illegal function call error
 	ld	ix,M6C1C
 	call	CALBAS			; close all i/o channels
 	call	TOTEXT
@@ -6600,11 +6600,11 @@ C66B2:	LD	BC,256
 J66CB:	ADD	HL,SP
 	LD	A,(HL)
 	CP	04H	; 4 
-	JP	NZ,J731F
+	JP	NZ,J731F		; syntax error
 	INC	HL
 	LD	A,(HL)
 	CP	09H	; 9 
-	JP	NC,J731F
+	JP	NC,J731F		; syntax error
 	POP	HL
 	CALL	C72CC
 	RST	38H
@@ -6619,7 +6619,7 @@ J66CB:	ADD	HL,SP
 	DEC	DE
 	INC	D
 	DEC	D
-	JP	NZ,J7319
+	JP	NZ,J7319		; illegal function call error
 	INC	DE
 	LD	(YF33D),DE
 	POP	AF
@@ -6631,7 +6631,7 @@ C66FA:	RET	NC
 	CALL	C6663
 	CALL	C6FA5
 	CALL	A65EA
-	JP	Z,J7301
+	JP	Z,J7301			; file already open error
 	LD	(PTRFIL),HL
 	LD	A,E
 	CP	04H	; 4 
@@ -6644,7 +6644,7 @@ J671E:	POP	AF
 	PUSH	DE
 	LD	HL,YF345
 	CP	(HL)
-	JP	NC,J7307
+	JP	NC,J7307		; bad filenumber error
 	LD	BC,37
 	LD	E,A
 	LD	D,B
@@ -6681,7 +6681,7 @@ J671E:	POP	AF
 	LD	A,E
 	JR	NZ,J6775
 	AND	86H
-	JP	Z,J7313
+	JP	Z,J7313			; file not found error
 J675E:	PUSH	DE
 	PUSH	BC
 	LD	E,C
@@ -6824,7 +6824,7 @@ C6816:	LD	IX,RETRTN
 C6827:	PUSH	HL
 	LD	A,(HL)
 	CP	01H	; 1 
-	JP	NZ,J7195
+	JP	NZ,J7195		; bad file mode error
 	LD	E,L
 	LD	D,H
 	INC	HL
@@ -6902,7 +6902,7 @@ C688A:	LD	IX,RETRTN
 	CALL	C6663
 	LD	A,(HL)
 	CP	02H	; 2 
-	JP	NZ,J7195
+	JP	NZ,J7195		; bad file mode error
 	POP	AF
 	PUSH	AF
 	CALL	C68A3
@@ -7011,7 +7011,7 @@ C6935:	LD	IX,M739A
 	LD	IY,00200H
 	CALL	C6663
 	POP	AF
-	JP	Z,J7195
+	JP	Z,J7195			; bad file mode error
 	LD	IX,M6C1C
 	CALL	CALBAS
 	LD	HL,(YF353)
@@ -7023,22 +7023,22 @@ C6935:	LD	IX,M739A
 	ADD	HL,BC
 	LD	A,(HL)
 	AND	A
-	JP	NZ,J72E9
+	JP	NZ,J72E9		; out of memory error
 	DEC	HL
 	OR	(HL)
-	JP	NZ,J72E9
+	JP	NZ,J72E9		; out of memory error
 	DEC	HL
 	LD	D,(HL)
 	DEC	HL
 	LD	E,(HL)
 	LD	HL,(TXTTAB)
 	ADD	HL,DE
-	JP	C,J72E9
+	JP	C,J72E9			; out of memory error
 	LD	BC,128+19
 	ADD	HL,BC
-	JP	C,J72E9
+	JP	C,J72E9			; out of memory error
 	SBC	HL,SP
-	JP	NC,J72E9
+	JP	NC,J72E9		; out of memory error
 	EX	DE,HL
 	EX	(SP),HL
 	EX	DE,HL
@@ -7128,7 +7128,7 @@ C69DE:	LD	HL,1
 	EX	(SP),HL
 	EX	DE,HL
 	RST	20H
-	JP	C,J7319
+	JP	C,J7319			; illegal function call error
 	EX	DE,HL
 	EX	(SP),HL
 	CALL	C72D6
@@ -7149,7 +7149,7 @@ J6A17:	POP	BC
 	JR	NC,J6A1F
 	INC	B
 	DEC	B
-	JP	P,J7319
+	JP	P,J7319			; illegal function call error
 J6A1F:	POP	DE
 	PUSH	HL
 	PUSH	BC
@@ -7252,7 +7252,7 @@ J6ACC:	POP	DE
 	LD	DE,(YF353)
 	CALL	C69CC
 	CP	0FEH
-	JP	NZ,J7195
+	JP	NZ,J7195		; bad file mode error
 	POP	BC
 	CALL	C6B58
 	PUSH	HL
@@ -7368,7 +7368,7 @@ J6B9D:	PUSH	AF
 	LD	E,C
 	CALL	A505D
 	INC	A
-	JP	Z,J7198
+	JP	Z,J7198			; bad drive name error
 	POP	DE
 	POP	HL
 	POP	AF
@@ -7403,7 +7403,7 @@ C6BD6:	LD	IX,RETRTN
 	CALL	C6663
 	LD	A,(HL)
 	CP	04H	; 4 
-	JP	NZ,J7195
+	JP	NZ,J7195		; bad file mode error
 	INC	HL
 	LD	E,(HL)
 	INC	HL
@@ -7424,7 +7424,7 @@ C6BD6:	LD	IX,RETRTN
 	OR	B
 	OR	L
 	OR	H
-	JP	Z,J7319
+	JP	Z,J7319			; illegal function call error
 	LD	A,C
 	OR	B
 	DEC	BC
@@ -7453,7 +7453,7 @@ J6C25:	EX	(SP),HL
 	POP	AF
 	PUSH	HL
 	AND	A
-	LD	HL,I72F5
+	LD	HL,J72F5		; input past end error
 	LD	BC,A47B2
 	JR	Z,J6C3B
 	LD	HL,J71A4
@@ -7470,17 +7470,17 @@ C6C45:	CALL	C7381
 	CALL	Z,C72D7
 	LD	IX,M521C
 	CALL	CALBAS
-	JP	Z,J731F
+	JP	Z,J731F			; syntax error
 	PUSH	HL
 	LD	IX,M6A6D
 	CALL	CALBAS
 	LD	E,L
 	LD	D,H
-	JP	Z,J72EF
-	JP	C,J7319
+	JP	Z,J72EF			; file not open error
+	JP	C,J7319			; illegal function call error
 	LD	A,(HL)
 	CP	04H	; 4 
-	JP	NZ,J7195
+	JP	NZ,J7195		; bad file mode error
 	INC	HL
 	LD	A,(HL)
 	INC	HL
@@ -7514,7 +7514,7 @@ J6C87:	EX	DE,HL
 	CALL	CALBAS
 	LD	IX,M5597
 	CALL	CALBAS
-	JP	NZ,J72E3
+	JP	NZ,J72E3		; type mismatch error
 	POP	AF
 	EX	(SP),HL
 	PUSH	DE
@@ -7527,7 +7527,7 @@ J6C87:	EX	DE,HL
 	EX	DE,HL
 	LD	HL,(BUF+10)
 	RST	20H
-	JP	C,J72FB
+	JP	C,J72FB			; field overflow error
 	POP	DE
 	POP	HL
 	LD	(HL),C
@@ -7548,7 +7548,7 @@ C6CD3:	SCF
 	CALL	CALBAS
 	LD	IX,M5597
 	CALL	CALBAS
-	JP	NZ,J72E3
+	JP	NZ,J72E3		; type mismatch error
 	PUSH	DE
 	LD	IX,M4C5F
 	CALL	CALBAS
@@ -7678,7 +7678,7 @@ J6D79:	POP	AF
 	LD	DE,FRETOP
 	RST	20H
 	LD	(TEMPPT),HL
-	JP	Z,J72DD
+	JP	Z,J72DD			; string formula too complex error
 	POP	BC
 J6DA5:	EX	(SP),HL
 	PUSH	BC
@@ -7702,7 +7702,7 @@ C6DB1:	LD	A,8
 	LD	HL,(DSCTMP+1)
 	CALL	M2F10
 	LD	IX,M6825
-	JP	CALBAS
+	JP	CALBAS			; push temporary descriptor to temporary desciptor heap and quit
 
 C6DD3:	LD	A,2-1
 	DEFB	1
@@ -7717,7 +7717,7 @@ C6DD9:	LD	A,8-1
 	CALL	CALBAS
 	POP	AF
 	CP	(HL)
-	JP	NC,J7319
+	JP	NC,J7319		; illegal function call error
 	INC	A
 	INC	HL
 	LD	C,(HL)
@@ -7737,7 +7737,7 @@ C6DF7:	LD	IX,M5597
 	LD	BC,(DAC+2)
 	LD	HL,0
 	RET	M
-	JP	Z,J72E3
+	JP	Z,J72E3			; type mismatch error
 	LD	HL,DAC
 	LD	DE,BUF+158
 	LD	BC,8
@@ -7784,14 +7784,14 @@ C6E6C:	CALL	C7381
 	JR	NC,J6E79
 	DEC	HL
 J6E79:	PUSH	AF
-I6E7A:	CALL	M2F99
-I6E7D:	POP	AF
+	CALL	M2F99
+	POP	AF
 	POP	HL
 	INC	HL
 	INC	HL
 	INC	HL
 	LD	(HL),A
-I6E83:	RET
+	RET
 
 C6E84:	CALL	C7381
 	LD	D,00H
@@ -7807,7 +7807,7 @@ J6E95:	CALL	C6F5F
 	AND	A
 	PUSH	AF
 	CALL	A6645
-	JP	Z,J7313
+	JP	Z,J7313			; file not found error
 	LD	IX,M7323
 	CALL	CALBAS
 J6EAA:	LD	HL,BUF+85
@@ -7858,24 +7858,24 @@ C6EFC:	CALL	C7381
 	CALL	C72D6
 	RET	NZ
 	CALL	A65EA
-	JP	Z,J719E
+	JP	Z,J719E			; file still open error
 	CALL	C6F5F
 	PUSH	HL
 	LD	DE,BUF+10
 	CALL	A436C
 	AND	A
-	JP	NZ,J7313
+	JP	NZ,J7313		; file not found error
 	POP	HL
 	RET
 
 C6F1C:	CALL	C7381
 	CALL	C6F92
 	CALL	A65EA
-	JP	Z,J719E
+	JP	Z,J719E			; file still open error
 	CALL	C6F5F
 	PUSH	HL
 	CALL	A6645
-	JP	Z,J7313
+	JP	Z,J7313			; file not found error
 	POP	HL
 	CALL	C72CC
 	LD	B,C
@@ -7895,7 +7895,7 @@ J6F4D:	LD	DE,BUF+27
 	LD	DE,BUF+10
 	CALL	A4392
 	AND	A
-	JP	NZ,J71A1
+	JP	NZ,J71A1		; file already exists
 	POP	HL
 	RET
 
@@ -7924,7 +7924,7 @@ C6F6E:	LD	IX,M6A0E
 	LD	A,D
 	CP	09H	; 9 
 	RET	C
-	JP	J7198
+	JP	J7198			; bad drive name error
 
 
 ;	  Subroutine __________________________
@@ -8004,7 +8004,7 @@ J6FE8:	DEC	B
 	INC	HL
 	CP	(HL)
 	JR	Z,J6FE8
-J6FEE:	JP	J730D
+J6FEE:	JP	J730D			; bad filename error
 
 
 ;	  Subroutine __________________________
@@ -8040,8 +8040,8 @@ C7009:	LD	BC,33
 	CALL	CALBAS
 	LD	IX,M6A6D
 	CALL	CALBAS
-	JP	C,J7319
-	JP	Z,J72EF
+	JP	C,J7319			; illegal function call error
+	JP	Z,J72EF			; file not open error
 	POP	BC
 	INC	HL
 	LD	E,(HL)
@@ -8079,7 +8079,7 @@ C705D:	CALL	C7381
 	LD	HL,YF347
 	CP	(HL)
 	JR	Z,J7070
-	JP	NC,J7198
+	JP	NC,J7198		; bad drive name error
 J7070:	LD	E,A
 	CALL	A505D
 	JP	M2F99
@@ -8087,7 +8087,7 @@ J7070:	LD	E,A
 C7077:	CALL	C7381
 	CALL	C6F7C
 	CALL	A65EA
-	JP	Z,J719E
+	JP	Z,J719E			; file still open error
 	CALL	C6F5F
 	PUSH	HL
 	LD	A,(YF247)
@@ -8104,7 +8104,7 @@ C7077:	CALL	C7381
 	EXX
 	CALL	C6F7C
 	CALL	A65EA
-	JP	Z,J719E
+	JP	Z,J719E			; file still open error
 	CALL	A65E3
 	INC	A
 	LD	(BUF+47),A
@@ -8116,7 +8116,7 @@ C7077:	CALL	C7381
 	RET	NZ
 J70BF:	PUSH	HL
 	CALL	A6645
-	JP	Z,J7313
+	JP	Z,J7313			; file not found error
 J70C6:	CALL	CKCNTC
 	LD	BC,BUF+47
 	LD	DE,BUF+121
@@ -8143,7 +8143,7 @@ J70EB:	LD	A,(DE)
 	INC	HL
 	INC	DE
 	DJNZ	J70EB
-	JP	J7319
+	JP	J7319			; illegal function call error
 
 J70F6:	CALL	C7168
 	PUSH	HL
@@ -8311,7 +8311,7 @@ I71F1:	DEFB	0
 I72AA:	DEFW	J72AC
 
 J72AC:	BIT	7,C
-	JP	NZ,J7192
+	JP	NZ,J7192		; bad fat error
 	RES	0,C
 	LD	B,00H
 	LD	HL,I72BE
@@ -8337,7 +8337,7 @@ I72BE:	DEFW	J71AA
 C72CC:	CALL	C72D6
 	EX	(SP),HL
 	CP	(HL)
-	JR	NZ,J731F
+	JR	NZ,J731F		; syntax error
 	INC	HL
 	EX	(SP),HL
 	INC	HL
@@ -8367,7 +8367,7 @@ J72E9:	LD	IX,M6275
 J72EF:	LD	IX,M6E77
 	JR	J7323
 
-I72F5:	LD	IX,M6E83
+J72F5:	LD	IX,M6E83
 	JR	J7323
 
 J72FB:	LD	IX,M6E7A
@@ -8426,7 +8426,7 @@ J7352:	POP	DE
 	RET	C
 	LD	A,(HL)
 	CP	":"
-	JR	Z,J730D
+	JR	Z,J730D			; bad filename error
 	INC	HL
 	LD	A,(HL)
 	CP	":"
@@ -8441,7 +8441,7 @@ J7352:	POP	DE
 	CP	(HL)
 	POP	HL
 	JR	Z,J7376
-	JP	NC,J7198
+	JP	NC,J7198		; bad drive name error
 J7376:	INC	HL
 	INC	HL
 	DEC	E

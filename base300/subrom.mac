@@ -1,9 +1,21 @@
-;  
-;   SUBROM -> Source re-created by Z80DIS 2.2
-;      Z80DIS was written by Kenneth Gielow
-;                            Palo Alto, CA
+; SUBROM.MAC
+
+; MSX SUBROM, Sanyo_PHC-35J (version 3.0)
+
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+
 	.Z80
+	ASEG
 	ORG	0000H
+
+
 I.4000	EQU	4000H	; ----I
 I$4055	EQU	4055H	; ----I
 I$406A	EQU	406AH	; ----I
