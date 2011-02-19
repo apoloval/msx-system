@@ -1,0 +1,13632 @@
+	org	0268CH
+
+Y0004	equ	00004H
+RDSLT	equ	0000CH
+OUTDO	equ	00018H
+CALSLT	equ	0001CH
+ENASLT	equ	00024H
+INITIO	equ	0003BH
+INIFNK	equ	0003EH
+WRTVDP	equ	00047H
+RDVRM	equ	0004AH
+WRTVRM	equ	0004DH
+FILVRM	equ	00056H
+LDIRMV	equ	00059H
+LDIRVM	equ	0005CH
+CHGMOD	equ	0005FH
+CHGCLR	equ	00062H
+CLRSPR	equ	00069H
+INITXT	equ	0006CH
+INIT32	equ	0006FH
+SETTXT	equ	00078H
+SETGRP	equ	0007EH
+SETMLT	equ	00081H
+CALPAT	equ	00084H
+CALATR	equ	00087H
+GSPSIZ	equ	0008AH
+GRPPRT	equ	0008DH
+GICINI	equ	00090H
+WRTPSG	equ	00093H
+STRTMS	equ	00099H
+CHSNS	equ	0009CH
+CHGET	equ	0009FH
+CHPUT	equ	000A2H
+LPTOUT	equ	000A5H
+CNVCHR	equ	000ABH
+PINLIN	equ	000AEH
+INLIN	equ	000B1H
+QINLIN	equ	000B4H
+ISCNTC	equ	000BAH
+CKCNTC	equ	000BDH
+POSIT	equ	000C6H
+FNKSB	equ	000C9H
+ERAFNK	equ	000CCH
+DSPFNK	equ	000CFH
+TOTEXT	equ	000D2H
+GTSTCK	equ	000D5H
+GTTRIG	equ	000D8H
+GTPAD	equ	000DBH
+GTPDL	equ	000DEH
+TAPION	equ	000E1H
+TAPIN	equ	000E4H
+TAPIOF	equ	000E7H
+TAPOON	equ	000EAH
+TAPOUT	equ	000EDH
+TAPOOF	equ	000F0H
+STMOTR	equ	000F3H
+LFTQ	equ	000F6H
+PUTQ	equ	000F9H
+LEFTC	equ	000FFH
+TUPC	equ	00105H
+DOWNC	equ	00108H
+TDOWNC	equ	0010BH
+SCALXY	equ	0010EH
+MAPXYC	equ	00111H
+FETCHC	equ	00114H
+STOREC	equ	00117H
+SETATR	equ	0011AH
+READC	equ	0011DH
+SETC	equ	00120H
+NSETCX	equ	00123H
+GTASPC	equ	00126H
+PNTINI	equ	00129H
+SCANR	equ	0012CH
+SCANL	equ	0012FH
+ISFLIO	equ	0014AH
+OUTDLP	equ	0014DH
+GETVCP	equ	00150H
+GETVC2	equ	00153H
+
+CLPRM1	equ	0F398H
+LINL40	equ	0F3AEH
+LINL32	equ	0F3AFH
+LINLEN	equ	0F3B0H
+CLMLST	equ	0F3B2H
+CLIKSW	equ	0F3DBH
+CSRY	equ	0F3DCH
+CNSDFG	equ	0F3DEH
+RG1SAV	equ	0F3E0H
+FORCLR	equ	0F3E9H
+BAKCLR	equ	0F3EAH
+BDRCLR	equ	0F3EBH
+MAXUPD	equ	0F3ECH
+MINUPD	equ	0F3EFH
+ATRBYT	equ	0F3F2H
+FRCNEW	equ	0F3F5H
+ERRFLG	equ	0F414H
+LPTPOS	equ	0F415H
+PRTFLG	equ	0F416H
+NTMSXP	equ	0F417H
+VLZADR	equ	0F419H
+VLZDAT	equ	0F41BH
+CURLIN	equ	0F41CH
+KBFMIN	equ	0F41EH
+BUFMIN	equ	0F55DH
+BUF	equ	0F55EH
+TTYPOS	equ	0F661H
+DIMFLG	equ	0F662H
+VALTYP	equ	0F663H
+DORES	equ	0F664H
+DONUM	equ	0F665H
+CONTXT	equ	0F666H
+CONSAV	equ	0F668H
+CONTYP	equ	0F669H
+CONLO	equ	0F66AH
+MEMSIZ	equ	0F672H
+STKTOP	equ	0F674H
+TXTTAB	equ	0F676H
+TEMPPT	equ	0F678H
+DSCTMP	equ	0F698H
+FRETOP	equ	0F69BH
+TEMP3	equ	0F69DH
+TEMP8	equ	0F69FH
+ENDFOR	equ	0F6A1H
+DATLIN	equ	0F6A3H
+SUBFLG	equ	0F6A5H
+FLGINP	equ	0F6A6H
+TEMP	equ	0F6A7H
+PTRFLG	equ	0F6A9H
+AUTFLG	equ	0F6AAH
+AUTLIN	equ	0F6ABH
+AUTINC	equ	0F6ADH
+SAVTXT	equ	0F6AFH
+SAVSTK	equ	0F6B1H
+ERRLIN	equ	0F6B3H
+DOT	equ	0F6B5H
+ERRTXT	equ	0F6B7H
+ONELIN	equ	0F6B9H
+ONEFLG	equ	0F6BBH
+TEMP2	equ	0F6BCH
+OLDLIN	equ	0F6BEH
+OLDTXT	equ	0F6C0H
+VARTAB	equ	0F6C2H
+ARYTAB	equ	0F6C4H
+STREND	equ	0F6C6H
+DATPTR	equ	0F6C8H
+PRMSTK	equ	0F6E4H
+PRMLEN	equ	0F6E6H
+PRMPRV	equ	0F74CH
+PRMLN2	equ	0F74EH
+PRMFLG	equ	0F7B4H
+ARYTA2	equ	0F7B5H
+NOFUNS	equ	0F7B7H
+TEMP9	equ	0F7B8H
+FUNACT	equ	0F7BAH
+TRCFLG	equ	0F7C4H
+FBUFFR	equ	0F7C5H
+DECTMP	equ	0F7F0H
+DECTM2	equ	0F7F2H
+DECCNT	equ	0F7F4H
+YF7F5	equ	0F7F5H
+DAC	equ	0F7F6H
+HOLD8	equ	0F806H
+ARG	equ	0F847H
+MAXFIL	equ	0F85FH
+FILTAB	equ	0F860H
+NULBUF	equ	0F862H
+PTRFIL	equ	0F864H
+FILNAM	equ	0F866H
+NLONLY	equ	0F87CH
+SAVEND	equ	0F87DH
+CGPNT	equ	0F91FH
+MINDEL	equ	0F92DH
+MAXDEL	equ	0F92FH
+ASPECT	equ	0F931H
+CENCNT	equ	0F933H
+CLINEF	equ	0F935H
+CNPNTS	equ	0F936H
+CPLOTF	equ	0F938H
+CPCNT	equ	0F939H
+CPCNT8	equ	0F93BH
+CRCSUM	equ	0F93DH
+CSTCNT	equ	0F93FH
+CSCLXY	equ	0F941H
+CSAVEA	equ	0F942H
+CSAVEM	equ	0F944H
+CXOFF	equ	0F945H
+CYOFF	equ	0F947H
+LOHMSK	equ	0F949H
+LOHDIR	equ	0F94AH
+LOHADR	equ	0F94BH
+LOHCNT	equ	0F94DH
+SKPCNT	equ	0F94FH
+MOVCNT	equ	0F951H
+PDIREC	equ	0F953H
+LFPROG	equ	0F954H
+RTPROG	equ	0F955H
+MCLTAB	equ	0F956H
+MCLFLG	equ	0F958H
+PRSCNT	equ	0FB35H
+SAVSP	equ	0FB36H
+VOICEN	equ	0FB38H
+SAVVOL	equ	0FB39H
+MCLLEN	equ	0FB3BH
+MCLPTR	equ	0FB3CH
+MUSICF	equ	0FB3FH
+BASROM	equ	0FBB1H
+ONGSBF	equ	0FBD8H
+BOTTOM	equ	0FC48H
+HIMEM	equ	0FC4AH
+INTFLG	equ	0FC9BH
+JIFFY	equ	0FC9EH
+INTVAL	equ	0FCA0H
+INTCNT	equ	0FCA2H
+FLBMEM	equ	0FCAEH
+SCRMOD	equ	0FCAFH
+OLDSCR	equ	0FCB0H
+CASPRV	equ	0FCB1H
+GXPOS	equ	0FCB3H
+GYPOS	equ	0FCB5H
+GRPACX	equ	0FCB7H
+GRPACY	equ	0FCB9H
+DRWFLG	equ	0FCBBH
+DRWSCL	equ	0FCBCH
+DRWANG	equ	0FCBDH
+RUNBNF	equ	0FCBEH
+SAVENT	equ	0FCBFH
+DEVICE	equ	0FD99H
+
+H.ONGO	equ	0FDEAH
+H.DSKO	equ	0FDEFH
+H.SETS	equ	0FDF4H
+H.NAME	equ	0FDF9H
+H.KILL	equ	0FDFEH
+H.IPL	equ	0FE03H
+H.COPY	equ	0FE08H
+H.CMD	equ	0FE0DH
+H.DSKF	equ	0FE12H
+H.DSKI	equ	0FE17H
+H.ATTR	equ	0FE1CH
+H.LSET	equ	0FE21H
+H.RSET	equ	0FE26H
+H.FIEL	equ	0FE2BH
+H.MKI$	equ	0FE30H
+H.MKS$	equ	0FE35H
+H.MKD$	equ	0FE3AH
+H.CVI	equ	0FE3FH
+H.CVS	equ	0FE44H
+H.CVD	equ	0FE49H
+H.GETP	equ	0FE4EH
+H.SETF	equ	0FE53H
+H.NOFO	equ	0FE58H
+H.NULO	equ	0FE5DH
+H.NTFL	equ	0FE62H
+H.MERG	equ	0FE67H
+H.SAVE	equ	0FE6CH
+H.BINS	equ	0FE71H
+H.BINL	equ	0FE76H
+H.FILE	equ	0FE7BH
+H.DGET	equ	0FE80H
+H.FILO	equ	0FE85H
+H.INDS	equ	0FE8AH
+H.RSLF	equ	0FE8FH
+H.SAVD	equ	0FE94H
+H.LOC	equ	0FE99H
+H.LOF	equ	0FE9EH
+H.EOF	equ	0FEA3H
+H.FPOS	equ	0FEA8H
+H.BAKU	equ	0FEADH
+H.PARD	equ	0FEB2H
+H.NODE	equ	0FEB7H
+H.POSD	equ	0FEBCH
+H.GEND	equ	0FEC6H
+H.RUNC	equ	0FECBH
+H.CLEA	equ	0FED0H
+H.LOPD	equ	0FED5H
+H.STKE	equ	0FEDAH
+H.CRDO	equ	0FEE9H
+H.DSKC	equ	0FEEEH
+H.DOGR	equ	0FEF3H
+H.PRGE	equ	0FEF8H
+H.ERRP	equ	0FEFDH
+H.ERRF	equ	0FF02H
+H.READ	equ	0FF07H
+H.MAIN	equ	0FF0CH
+H.DIRD	equ	0FF11H
+H.FINI	equ	0FF16H
+H.FINE	equ	0FF1BH
+H.CRUN	equ	0FF20H
+H.CRUS	equ	0FF25H
+H.ISRE	equ	0FF2AH
+H.NTFN	equ	0FF2FH
+H.NOTR	equ	0FF34H
+H.SNGF	equ	0FF39H
+H.NEWS	equ	0FF3EH
+H.GONE	equ	0FF43H
+H.CHRG	equ	0FF48H
+H.RETU	equ	0FF4DH
+H.PRTF	equ	0FF52H
+H.COMP	equ	0FF57H
+H.FINP	equ	0FF5CH
+H.TRMN	equ	0FF61H
+H.FRME	equ	0FF66H
+H.NTPL	equ	0FF6BH
+H.EVAL	equ	0FF70H
+H.OKNO	equ	0FF75H
+H.FING	equ	0FF7AH
+H.ISMI	equ	0FF7FH
+H.WIDT	equ	0FF84H
+H.LIST	equ	0FF89H
+H.BUFL	equ	0FF8EH
+H.FRQI	equ	0FF93H
+H.SCNE	equ	0FF98H
+H.FRET	equ	0FF9DH
+H.PTRG	equ	0FFA2H
+H.ERRO	equ	0FFB1H
+H.SCRE	equ	0FFC0H
+H.PLAY	equ	0FFC5H
+
+; SUB DBL
+
+A268C:	ld	hl,ARG
+	ld	a,(hl)
+	or	a			; ARG = 0 ?
+	ret	z			; yep, result = DAC
+	xor	080H
+	ld	(hl),a			; ARG = -ARG
+	jr	A26A0			; add
+
+; ADD DBL
+
+A2697:	call	A2EEF			; HL to ARG
+A269A:	ld	hl,ARG
+	ld	a,(hl)
+	or	a			; ARG = 0 ?
+	ret	z			; yep, result = DAC
+A26A0:	and	07FH
+	ld	b,a			; exponent ARG
+	ld	de,DAC
+	ld	a,(de)
+	or	a			; DAC = 0 ?
+	jp	z,A2F05 		; yep, DAC = ARG & quit
+	and	07FH
+	sub	b			; compare exponents
+	jr	nc,A26C1		; DAC >= ARG,
+	cpl
+	inc	a
+	push	af
+	push	hl
+	ld	b,8
+A26B6:	ld	a,(de)
+	ld	c,(hl)
+	ld	(hl),a
+	ld	a,c
+	ld	(de),a
+	inc	de
+	inc	hl
+	djnz	A26B6			; exchange DAC,ARG
+	pop	hl
+	pop	af
+A26C1:	cp	16			; DAC & ARG more as 10^15 difference ?
+	ret	nc			; yep, result = biggest
+	push	af
+	xor	a
+	ld	(DAC+8),a
+	ld	(ARG+8),a
+	ld	hl,ARG+1
+	pop	af
+	call	A27A3			; shift ARG
+	ld	hl,ARG
+	ld	a,(DAC+0)
+	xor	(hl)			; signs equal ?
+	jp	m,A26F7 		; nop, subtract
+	ld	a,(ARG+8)
+	ld	(DAC+8),a
+	call	A2759			; add mantissen
+	jp	nc,A273C		; no carry, finish
+	ex	de,hl
+	ld	a,(hl)
+	inc	(hl)			; increase exponent
+	xor	(hl)
+	jp	m,A4067 		; sign changes, overflow
+	call	A27DB			; shift right
+	set	4,(hl)
+	jr	A273C			; finish
+;
+A26F7:	call	A276B			; subtract
+A26FA:	ld	hl,DAC+1
+	ld	bc,00800H
+A2700:	ld	a,(hl)
+	or	a
+	jr	nz,A270C
+	inc	hl
+	dec	c
+	dec	c
+	djnz	A2700			; all zero's ?
+	jp	A2E7D			; yep, DAC = 0
+;
+A270C:	and	0F0H
+	jr	nz,A2716		; not 0 digit
+	push	hl
+	call	A2797			; shift left
+	pop	hl
+	dec	c
+A2716:	ld	a,008H
+	sub	b
+	jr	z,A272D
+	push	af
+	push	bc
+	ld	c,b
+	ld	de,DAC+1
+	ld	b,000H
+	ldir
+	pop	bc
+	pop	af
+	ld	b,a
+	xor	a
+A2729:	ld	(de),a
+	inc	de
+	djnz	A2729
+A272D:	ld	a,c
+	or	a
+	jr	z,A273C
+	ld	hl,DAC
+	ld	b,(hl)
+	add	a,(hl)
+	ld	(hl),a
+	xor	b
+	jp	m,A4067 		; yep, overflow
+	ret	z
+A273C:	ld	hl,DAC+8
+	ld	b,007H
+A2741:	ld	a,(hl)
+	cp	050H
+	ret	c
+	dec	hl
+	xor	a
+	scf
+A2748:	adc	a,(hl)
+	daa
+	ld	(hl),a
+	ret	nc
+	dec	hl
+	djnz	A2748
+	ld	a,(hl)
+	inc	(hl)
+	xor	(hl)
+	jp	m,A4067 		; yep, overflow
+	inc	hl
+	ld	(hl),010H
+	ret
+;
+A2759:	ld	hl,ARG+7
+	ld	de,DAC+7
+	ld	b,7
+A2761:	xor	a
+A2762:	ld	a,(de)
+	adc	a,(hl)
+	daa
+	ld	(de),a
+	dec	de
+	dec	hl
+	djnz	A2762
+	ret
+;
+A276B:	ld	hl,ARG+8
+	ld	a,(hl)
+	cp	050H
+	jr	nz,A2774
+	inc	(hl)
+A2774:	ld	de,DAC+8
+	ld	b,008H
+	xor	a
+A277A:	ld	a,(de)
+	sbc	a,(hl)
+	daa
+	ld	(de),a
+	dec	de
+	dec	hl
+	djnz	A277A
+	ret	nc
+	ex	de,hl
+	ld	a,(hl)
+	xor	080H
+	ld	(hl),a
+	ld	hl,DAC+8
+	ld	b,008H
+	xor	a
+A278E:	ld	a,000H
+	sbc	a,(hl)
+	daa
+	ld	(hl),a
+	dec	hl
+	djnz	A278E
+	ret
+;
+A2797:	ld	hl,DAC+8
+A279A:	push	bc
+	xor	a
+A279C:	rld
+	dec	hl
+	djnz	A279C
+	pop	bc
+	ret
+;
+A27A3:	or	a
+	rra				; difference /2
+	push	af
+	or	a
+	jp	z,A27E2
+	push	af
+	cpl
+	inc	a
+	ld	c,a
+	ld	b,0FFH			; - difference /2
+	ld	de,7
+	add	hl,de			; behind number
+	ld	d,h
+	ld	e,l
+	add	hl,bc
+	ld	a,008H
+	add	a,c
+	ld	c,a
+	push	bc
+	ld	b,000H
+	lddr				; copy
+	pop	bc
+	pop	af
+	inc	hl
+	inc	de
+	push	de
+	ld	b,a
+	xor	a
+A27C7:	ld	(hl),a
+	inc	hl
+	djnz	A27C7			; clear remainer
+	pop	hl
+	pop	af
+	ret	nc			; shift was in byte, quit
+	ld	a,c
+A27CF:	push	hl
+	push	bc
+	ld	b,a
+	xor	a
+A27D3:	rrd
+	inc	hl
+	djnz	A27D3			; shift one BCD digit
+	pop	bc
+	pop	hl
+	ret
+;
+A27DB:	ld	hl,DAC+1
+A27DE:	ld	a,008H
+	jr	A27CF
+;
+A27E2:	pop	af
+	ret	nc
+	jr	A27DE
+
+; MUL DBL
+
+A27E6:	call	A2E71			; check DAC
+	ret	z			; DAC = 0, quit
+	ld	a,(ARG+0)
+	or	a
+	jp	z,A2E7D 		; yep, DAC = 0 & quit
+	ld	b,a
+	ld	hl,DAC
+	xor	(hl)
+	and	080H			; signs difference
+	ld	c,a
+	res	7,b
+	ld	a,(hl)
+	and	07FH
+	add	a,b
+	ld	b,a
+	ld	(hl),000H		; DAC = 0
+	and	0C0H
+	ret	z			;
+	cp	0C0H
+	jr	nz,A280C
+	jp	A4067			; Overflow
+;
+A280C:	ld	a,b
+	add	a,040H
+	and	07FH
+	ret	z
+	or	c
+	dec	hl
+	ld	(hl),a
+	ld	de,HOLD8+63
+	ld	bc,8
+	ld	hl,DAC+7
+	push	de
+	lddr
+	inc	hl
+	xor	a
+	ld	b,8
+A2825:	ld	(hl),a
+	inc	hl
+	djnz	A2825			; reset DAC
+	pop	de
+	ld	bc,A2883
+	push	bc
+A282E:	call	A288A
+	push	hl
+	ld	bc,8
+	ex	de,hl
+	lddr
+	ex	de,hl
+	ld	hl,HOLD8+55
+	ld	b,008H
+	call	A2761
+	pop	de
+	call	A288A
+	ld	c,007H
+	ld	de,ARG+7
+A284A:	ld	a,(de)
+	or	a
+	jr	nz,A2852
+	dec	de
+	dec	c
+	jr	A284A
+;
+A2852:	ld	a,(de)
+	dec	de
+	push	de
+	ld	hl,HOLD8+7
+A2858:	add	a,a
+	jr	c,A2863
+	jr	z,A2871
+A285D:	ld	de,8
+	add	hl,de
+	jr	A2858
+;
+A2863:	push	af
+	ld	b,008H
+	ld	de,DAC+7
+	push	hl
+	call	A2761
+	pop	hl
+	pop	af
+	jr	A285D
+;
+A2871:	ld	b,00FH
+	ld	de,DAC+14
+	ld	hl,DAC+15
+	call	A2EFE
+	ld	(hl),000H
+	pop	de
+	dec	c
+	jr	nz,A2852
+	ret
+;
+A2883:	dec	hl
+	ld	a,(hl)
+	inc	hl
+	ld	(hl),a
+	jp	A26FA
+;
+A288A:	ld	hl,-8
+	add	hl,de
+	ld	c,003H
+A2890:	ld	b,008H
+	or	a
+A2893:	ld	a,(de)
+	adc	a,a
+	daa
+	ld	(hl),a
+	dec	hl
+	dec	de
+	djnz	A2893
+	dec	c
+	jr	nz,A2890
+	ret
+
+; DIV DBL
+
+A289F:	ld	a,(ARG+0)
+	or	a			; ARG =0 ?
+	jp	z,A4058 		; yep, Division by zero
+	ld	b,a
+	ld	hl,DAC
+	ld	a,(hl)
+	or	a
+	jp	z,A2E7D 		; yep DAC = 0
+	xor	b
+	and	080H
+	ld	c,a
+	res	7,b
+	ld	a,(hl)
+	and	07FH
+	sub	b
+	ld	b,a
+	rra
+	xor	b
+	and	040H
+	ld	(hl),000H
+	jr	z,A28C9
+	ld	a,b
+	and	080H
+	ret	nz
+A28C6:	jp	A4067			; Overflow
+;
+A28C9:	ld	a,b
+	add	a,041H
+	and	07FH
+	ld	(hl),a
+	jr	z,A28C6
+	or	c
+	ld	(hl),000H
+	dec	hl
+	ld	(hl),a
+	ld	de,DAC+7
+	ld	hl,ARG+7
+	ld	b,007H
+	xor	a
+A28DF:	cp	(hl)
+	jr	nz,A28E6
+	dec	de
+	dec	hl
+	djnz	A28DF
+A28E6:	ld	(DECTM2),hl
+	ex	de,hl
+	ld	(DECTMP),hl
+	ld	a,b
+	ld	(DECCNT),a
+	ld	hl,HOLD8+56
+A28F4:	ld	b,00FH
+A28F6:	push	hl
+	push	bc
+	ld	hl,(DECTM2)
+	ex	de,hl
+	ld	hl,(DECTMP)
+	ld	a,(DECCNT)
+	ld	c,0FFH
+A2904:	inc	c
+	ld	b,a
+	push	hl
+	push	de
+	xor	a
+	ex	de,hl
+A290A:	ld	a,(de)
+	sbc	a,(hl)
+	daa
+	ld	(de),a
+	dec	hl
+	dec	de
+	djnz	A290A
+	ld	a,(de)
+	sbc	a,b
+	ld	(de),a
+	pop	de
+	pop	hl
+	ld	a,(DECCNT)
+	jr	nc,A2904
+	ld	b,a
+	ex	de,hl
+	call	A2761
+	jr	nc,A2925
+	ex	de,hl
+	inc	(hl)
+A2925:	ld	a,c
+	pop	bc
+	ld	c,a
+	push	bc
+	srl	b
+	inc	b
+	ld	e,b
+	ld	d,000H
+	ld	hl,DAC-1
+	add	hl,de
+	call	A279A
+	pop	bc
+	pop	hl
+	ld	a,b
+	inc	c
+	dec	c
+	jr	nz,A2973
+	cp	00FH
+	jr	z,A2964
+	rrca
+	rlca
+	jr	nc,A2973
+	push	bc
+	push	hl
+	ld	hl,DAC
+	ld	b,008H
+	xor	a
+A294D:	cp	(hl)
+	jr	nz,A295F
+	inc	hl
+	djnz	A294D
+	pop	hl
+	pop	bc
+	srl	b
+	inc	b
+	xor	a
+A2959:	ld	(hl),a
+	inc	hl
+	djnz	A2959
+	jr	A2985
+;
+A295F:	pop	hl
+	pop	bc
+	ld	a,b
+	jr	A2973
+;
+A2964:	ld	a,(YF7F5)
+	ld	e,a
+	dec	a
+	ld	(YF7F5),a
+	xor	e
+	jp	p,A28F4
+	jp	A2E7D			; DAC = 0
+;
+A2973:	rra
+	ld	a,c
+	jr	c,A297C
+	or	(hl)
+	ld	(hl),a
+	inc	hl
+	jr	A2981
+;
+A297C:	add	a,a
+	add	a,a
+	add	a,a
+	add	a,a
+	ld	(hl),a
+A2981:	dec	b
+	jp	nz,A28F6
+A2985:	ld	hl,DAC+8
+	ld	de,HOLD8+63
+	ld	b,008H
+	call	A2EFE
+	jp	A2883
+
+; COS DBL
+
+A2993:	ld	hl,T2D63
+	call	A2C3B			; DAC = DAC * 1/(2*pi)
+	ld	a,(DAC+0)
+	and	07FH
+	ld	(DAC+0),a		; COS (A) = COS (-A)
+	ld	hl,T2D23
+	call	A2C32			; DAC = DAC - 0.25
+	call	A2E8D			; DAC = -DAC
+	jr	A29B2			; SIN
+
+; SIN DBL
+
+A29AC:	ld	hl,T2D63
+	call	A2C3B			; DAC = DAC * 1/(2*pi)
+A29B2:	ld	a,(DAC+0)
+	or	a			; negative ?
+	call	m,A2C80 		; yep, -SIN (A) = SIN (-A)
+	call	A2CCC			; push DAC
+	call	A30CF			; DAC = INT(DAC)
+	call	A2C4D			; ARG = DAC
+	call	A2CE1			; pop DAC
+	call	A268C			; DAC = DAC - ARG (dbl)
+	ld	a,(DAC+0)
+	cp	040H
+	jp	c,A29F5
+	ld	a,(DAC+1)
+	cp	025H
+	jp	c,A29F5 		; 0.00-0.25, nothing
+	cp	075H
+	jp	nc,A29EC		; 0.75-1.00,
+	call	A2C4D			; ARG = DAC
+	ld	hl,T2D11
+	call	A2C5C			; DAC = 0.5
+	call	A268C			; DAC = DAC - ARG (dbl)
+	jp	A29F5
+;
+A29EC:	ld	hl,T2D1B
+	call	A2C50			; ARG = 1.0
+	call	A268C			; DAC = DAC - ARG (dbl)
+A29F5:	ld	hl,T2DEF
+	jp	A2C88			; Taylor row
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2CCC			; push DAC
+	call	A2993			; COS (DAC)
+	call	A2C6F			; ex (sp),DAC
+	call	A29AC			; SIN (DAC)
+	call	A2CDC			; pop ARG
+	ld	a,(ARG+0)
+	or	a			; ARG = 0 ?
+	jp	nz,A289F		; nop, DAC = DAC / ARG
+	jp	A4067			; Overflow
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(DAC+0)
+	or	a			; DAC = 0 ?
+	ret	z			; yep, ATAN(0) = 0, quit
+	call	m,A2C80 		; negative, -ATAN(A) = ATAN(-A)
+	cp	041H
+	jp	c,A2A3C 		; <1.0 (45 gr)
+	call	A2C4D			; ARG = DAC
+	ld	hl,T2D1B
+	call	A2C5C			; DAC = 1.0
+	call	A289F			; DAC = DAC / ARG
+	call	A2A3C
+	call	A2C4D			; ARG = DAC
+	ld	hl,T2D43
+	call	A2C5C			; DAC = pi/2
+	jp	A268C			; DAC = DAC - ARG (dbl)
+;
+A2A3C:	ld	hl,T2D4B
+	call	A2C47			; cp DAC, TAN(pi/12)
+	jp	m,A2A6C 		; DAC <,
+	call	A2CCC			; push DAC
+	ld	hl,T2D53
+	call	A2C2C			; DAC = DAC + TAN(pi/3)
+	call	A2C6F			; ex (sp),DAC
+	ld	hl,T2D53
+	call	A2C3B			; DAC = DAC * TAN(pi/3)
+	ld	hl,T2D1B
+	call	A2C32			; DAC = DAC - 1.0
+	call	A2CDC			; pop ARG
+	call	A289F			; DAC = DAC / ARG
+	call	A2A6C
+	ld	hl,T2D5B
+	jp	A2C2C			; DAC = DAC + pi/6
+;
+A2A6C:	ld	hl,T2E30
+	jp	A2C88			; Taylor row
+;
+A2A72:	call	A2E71
+	jp	m,A475A 		; negative, Illegal function call
+	jp	z,A475A 		; zero, Illegal function call
+	ld	hl,DAC
+	ld	a,(hl)
+	push	af
+	ld	(hl),041H
+	ld	hl,T2D2B
+	call	A2C47			; cp DAC, sqr(10)
+	jp	m,A2A92
+	pop	af
+	inc	a
+	push	af
+	ld	hl,DAC
+	dec	(hl)
+A2A92:	pop	af
+	ld	(TEMP3),a
+	call	A2CCC			; push DAC
+	ld	hl,T2D1B
+	call	A2C2C			; DAC = DAC + 1.0
+	call	A2C6F			; ex (sp),DAC
+	ld	hl,T2D1B
+	call	A2C32			; DAC = DAC - 1.0
+	call	A2CDC			; pop ARG
+	call	A289F			; DAC = DAC / ARG
+	call	A2CCC			; push DAC
+	call	A2C38			; DAC = DAC^2
+	call	A2CCC			; push DAC
+	call	A2CCC			; push DAC
+	ld	hl,T2DC6
+	call	A2CA3
+	call	A2C6F			; ex (sp),DAC
+	ld	hl,T2DA5
+	call	A2CA3
+	call	A2CDC			; pop ARG
+	call	A289F			; DAC = DAC / ARG
+	call	A2CDC			; pop ARG
+	call	A27E6			; DAC = DAC * ARG
+	ld	hl,T2D33
+	call	A2C2C			; DAC = DAC + 2*LOG(e)
+	call	A2CDC			; pop ARG
+	call	A27E6			; DAC = DAC * ARG
+	call	A2CCC			; push DAC
+	ld	a,(TEMP3)
+	sub	041H
+	ld	l,a
+	add	a,a
+	sbc	a,a
+	ld	h,a
+	call	A2FCB
+	call	A3042
+	call	A2CDC			; pop ARG
+	call	A269A			; DAC = DAC + ARG
+	ld	hl,T2D3B
+	jp	A2C3B			; DAC = DAC * 1/LOG(e)
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2E71
+	ret	z
+	jp	m,A475A 		; negative, Illegal function call
+	call	A2C4D			; ARG = DAC
+	ld	a,(DAC+0)
+	or	a
+	rra
+	adc	a,020H
+	ld	(ARG+0),a
+	ld	a,(DAC+1)
+	or	a
+	rrca
+	or	a
+	rrca
+	and	033H
+	add	a,010H
+	ld	(ARG+1),a
+	ld	a,7			; 7 times
+A2B23:	ld	(TEMP3),a
+	call	A2CCC			; push DAC
+	call	A2CC7			; push ARG
+	call	A289F			; DAC = DAC / ARG
+	call	A2CDC			; pop ARG
+	call	A269A			; DAC = DAC + ARG
+	ld	hl,T2D11
+	call	A2C3B			; DAC = DAC * 0.5
+	call	A2C4D			; ARG = DAC
+	call	A2CE1			; pop DAC
+	ld	a,(TEMP3)
+	dec	a
+	jr	nz,A2B23
+	jp	A2C59			; DAC = ARG
+;
+A2B4A:	ld	hl,T2D09
+	call	A2C3B			; DAC = DAC * LOG(e)
+	call	A2CCC			; push DAC
+	call	A2F8A
+	ld	a,l
+	rla
+	sbc	a,a
+	cp	h
+	jr	z,A2B70
+	ld	a,h
+	or	a
+	jp	p,A2B6D
+	call	A304F
+	call	A2CE1			; pop DAC
+	ld	hl,T2D13
+	jp	A2C5C			; DAC = 0.0
+;
+A2B6D:	jp	A4067			; Overflow
+;
+A2B70:	ld	(TEMP3),hl
+	call	A303A
+	call	A2C4D			; ARG = DAC
+	call	A2CE1			; pop DAC
+	call	A268C			; DAC = DAC - ARG (dbl)
+	ld	hl,T2D11
+	call	A2C47
+	push	af
+	jr	z,A2B90
+	jr	c,A2B90
+	ld	hl,T2D11
+	call	A2C32			; DAC = DAC - 0.5
+A2B90:	call	A2CCC			; push DAC
+	ld	hl,T2D8C
+	call	A2C88
+	call	A2C6F			; ex (sp),DAC
+	ld	hl,T2D6B
+	call	A2C9A
+	call	A2CDC			; pop ARG
+	call	A2CC7			; push ARG
+	call	A2CCC			; push DAC
+	call	A268C			; DAC = DAC - ARG (dbl)
+	ld	hl,HOLD8+56
+	call	A2C67
+	call	A2CDC			; pop ARG
+	call	A2CE1			; pop DAC
+	call	A269A			; DAC = DAC + ARG
+	ld	hl,HOLD8+56
+	call	A2C50			; ARG =
+	call	A289F			; DAC = DAC / ARG
+	pop	af
+	jr	c,A2BD1
+	jr	z,A2BD1
+	ld	hl,T2D2B
+	call	A2C3B			; DAC = DAC * SQR(10)
+A2BD1:	ld	a,(TEMP3)
+	ld	hl,DAC
+	ld	c,(hl)
+	add	a,(hl)
+	ld	(hl),a
+	xor	c
+	ret	p
+	jp	A4067			; Overflow
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2E71
+	ld	hl,RNDX
+	jr	z,A2C15
+	call	m,A2C67
+	ld	hl,HOLD8+56
+	ld	de,RNDX
+	call	A2C6A
+	ld	hl,T2CF9
+	call	A2C50			; ARG = RND2
+	ld	hl,T2CF1
+	call	A2C5C			; DAC = RND1
+	ld	de,HOLD8+63
+	call	A282E
+	ld	de,DAC+8
+	ld	hl,RNDX+1
+	ld	b,007H
+	call	A2EF7
+	ld	hl,RNDX
+	ld	(hl),000H
+A2C15:	call	A2C5C			; DAC = RNDX
+	ld	hl,DAC
+	ld	(hl),040H
+	xor	a
+	ld	(DAC+8),a
+	jp	A26FA
+;
+A2C24:	ld	de,T2D01
+	ld	hl,RNDX
+	jr	A2C6A
+;
+A2C2C:	call	A2C50			; copy HL to ARG
+	jp	A269A			; ADD
+;
+A2C32:	call	A2C50			; copy HL to ARG
+	jp	A268C			; SUB (dbl)
+;
+A2C38:	ld	hl,DAC
+A2C3B:	call	A2C50			; copy HL to ARG
+	jp	A27E6			; MUL
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2C50
+	jp	A289F			; DAC = DAC / ARG
+;
+A2C47:	call	A2C50			; copy HL to ARG
+	jp	A2F5C
+;
+A2C4D:	ld	hl,DAC
+A2C50:	ld	de,ARG
+A2C53:	ex	de,hl
+	call	A2C6A
+	ex	de,hl
+	ret
+;
+A2C59:	ld	hl,ARG
+A2C5C:	ld	de,DAC
+	jr	A2C53
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2FCB
+	ld	hl,RNDX
+A2C67:	ld	de,DAC
+A2C6A:	ld	b,008H
+	jp	A2EF7
+;
+A2C6F:	pop	hl
+	ld	(FBUFFR),hl
+	call	A2CDC			; pop ARG
+	call	A2CCC			; push DAC
+	call	A2C59			; DAC = ARG
+	ld	hl,(FBUFFR)
+	jp	(hl)
+;
+A2C80:	call	A2E8D
+	ld	hl,A2E8D
+	ex	(sp),hl
+	jp	(hl)
+;
+A2C88:	ld	(FBUFFR),hl
+	call	A2CCC			; push DAC
+	ld	hl,(FBUFFR)
+	call	A2C9A			; calc even reeks
+	call	A2CDC			; pop ARG
+	jp	A27E6			; DAC = DAC * ARG
+;
+A2C9A:	ld	(FBUFFR),hl
+	call	A2C38			; DAC = DAC^2
+	ld	hl,(FBUFFR)
+A2CA3:	ld	a,(hl)
+	push	af
+	inc	hl
+	push	hl
+	ld	hl,FBUFFR
+	call	A2C67
+	pop	hl
+	call	A2C5C			; DAC =
+A2CB1:	pop	af
+	dec	a
+	ret	z
+	push	af
+	push	hl
+	ld	hl,FBUFFR
+	call	A2C3B			; DAC = DAC * FBUFFR
+	pop	hl
+	call	A2C50			; ARG =
+	push	hl
+	call	A269A			; DAC = DAC + ARG
+	pop	hl
+	jr	A2CB1
+;
+A2CC7:	ld	hl,ARG+7
+	jr	A2CCF
+;
+A2CCC:	ld	hl,DAC+7
+A2CCF:	ld	a,004H
+	pop	de
+A2CD2:	ld	b,(hl)
+	dec	hl
+	ld	c,(hl)
+	dec	hl
+	push	bc
+	dec	a
+	jr	nz,A2CD2
+	ex	de,hl
+	jp	(hl)
+;
+A2CDC:	ld	hl,ARG
+	jr	A2CE4
+;
+A2CE1:	ld	hl,DAC
+A2CE4:	ld	a,004H
+	pop	de
+A2CE7:	pop	bc
+	ld	(hl),c
+	inc	hl
+	ld	(hl),b
+	inc	hl
+	dec	a
+	jr	nz,A2CE7
+	ex	de,hl
+	jp	(hl)
+;
+T2CF1:	NUMBR	<.14389820420821>
+
+T2CF9:	NUMBR	<.21132486540519>
+
+T2D01:	NUMBR	<.40649651372358>
+
+T2D09:	NUMB	<.43429448190324>
+
+T2D11:	NUMB	<.50000000000000>
+T2D13	equ	T2D11+2
+	db	0,0
+
+T2D1B:	NUMB	<1.0000000000000>
+
+T2D23:	NUMB	<.25000000000000>
+
+T2D2B:	NUMB	<3.1622776601684>
+
+T2D33:	NUMB	<.86858896380650>
+
+T2D3B:	NUMB	<2.3025850929940>
+
+T2D43:	NUMB	<1.5707963267949>
+
+T2D4B:	NUMB	<.26794919243112>
+
+T2D53:	NUMB	<1.7320508075689>
+
+T2D5B:	NUMB	<.52359877559830>
+
+T2D63:	NUMB	<.15915494309190>
+
+T2D6B:	db	4
+	NUMB	<1.0000000000000>
+	NUMB	<159.37415236031>
+	NUMB	<2709.3169408516>
+	NUMB	<4497.6335574058>
+
+T2D8C:	db	3
+	NUMB	<18.312360159275>
+	NUMB	<831.40672129371>
+	NUMB	<5178.0919915162>
+
+T2DA5:	db	4
+	NUMB	<-.71433382153226>
+	NUMB	<6.2503651127908>
+	NUMB	<-13.682370241503>
+	NUMB	<8.5167319872389>
+
+T2DC6:	db	5
+	NUMB	<1.0000000000000>
+	NUMB	<-13.210478350156>
+	NUMB	<47.925256043873>
+	NUMB	<-64.906682740943>
+	NUMB	<29.415750172323>
+
+T2DEF:	db	8
+	NUMB	<-.69215692291809>
+	NUMB	<3.8172886385771>
+	NUMB	<-15.094499474801>
+	NUMB	<42.058689667355>
+	NUMB	<-76.705859683291>
+	NUMB	<81.605249275513>
+	NUMB	<-41.341702240398>
+	NUMB	<6.2831853071796>
+
+T2E30:	db	8
+	NUMB	<-.052086939040000>
+	NUMB	<.075307149134800>
+	NUMB	<-.090813432247050>
+	NUMB	<.11110794184029>
+	NUMB	<-.14285708554884>
+	NUMB	<.19999999948967>
+	NUMB	<-.33333333333160>
+	NUMB	<1.0000000000000>
+
+A2E71:	ld	a,(DAC+0)
+	or	a
+	ret	z			; yep, Z & NC
+	cp	02FH
+A2E78:	rla
+A2E79:	sbc	a,a
+	ret	nz
+	inc	a
+	ret
+;
+A2E7D:	xor	a
+	ld	(DAC+0),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2EA1
+	ret	p
+A2E86:	rst	GETYPR
+	jp	m,A322B
+	jp	z,A406D 		; string, Type mismatch
+A2E8D:	ld	hl,DAC
+	ld	a,(hl)
+	or	a
+	ret	z
+	xor	080H
+	ld	(hl),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2EA1
+A2E9A:	ld	l,a
+	rla
+	sbc	a,a
+	ld	h,a
+	jp	A2F99			; in DAC & set INT
+;
+A2EA1:	rst	GETYPR
+	jp	z,A406D 		; string, Type mismatch
+	jp	p,A2E71
+	ld	hl,(DAC+2)
+A2EAB:	ld	a,h
+	or	l
+	ret	z
+	ld	a,h
+	jr	A2E78
+;
+A2EB1:	ex	de,hl
+	ld	hl,(DAC+2)
+	ex	(sp),hl
+	push	hl
+	ld	hl,(DAC+0)
+	ex	(sp),hl
+	push	hl
+	ex	de,hl
+	ret
+;
+A2EBE:	call	A2EDF
+A2EC1:	ex	de,hl
+	ld	(DAC+2),hl
+	ld	h,b
+	ld	l,c
+	ld	(DAC+0),hl
+	ex	de,hl
+	ret
+;
+A2ECC:	ld	hl,(DAC+2)
+	ex	de,hl
+	ld	hl,(DAC+0)
+	ld	c,l
+	ld	b,h
+	ret
+;
+A2ED6:	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	inc	hl
+	ret
+;
+A2EDF:	ld	e,(hl)
+	inc	hl
+A2EE1:	ld	d,(hl)
+	inc	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+A2EE6:	inc	hl
+	ret
+;
+A2EE8:	ld	de,DAC
+	ld	b,004H
+	jr	A2EF7
+;
+A2EEF:	ld	de,ARG
+T2EF2:	ex	de,hl
+A2EF3:	ld	a,(VALTYP)
+	ld	b,a
+A2EF7:	ld	a,(de)
+	ld	(hl),a
+	inc	de
+	inc	hl
+	djnz	A2EF7
+	ret
+;
+A2EFE:	ld	a,(de)
+	ld	(hl),a
+	dec	de
+	dec	hl
+	djnz	A2EFE
+	ret
+;
+A2F05:	ld	hl,ARG
+A2F08:	ld	de,T2EF2
+	jr	A2F13
+;
+A2F0D:	ld	hl,ARG
+A2F10:	ld	de,A2EF3
+A2F13:	push	de
+	ld	de,DAC
+	ld	a,(VALTYP)
+	cp	004H
+	ret	nc
+	ld	de,DAC+2
+	ret
+;
+A2F21:	ld	a,c
+	or	a
+	jp	z,A2E71
+	ld	hl,A2E77
+	push	hl
+	call	A2E71
+	ld	a,c
+	ret	z
+	ld	hl,DAC
+	xor	(hl)
+	ld	a,c
+	ret	m
+	call	A2F3B
+	rra
+	xor	c
+	ret
+;
+A2F3B:	ld	a,c
+	cp	(hl)
+	ret	nz
+	inc	hl
+	ld	a,b
+	cp	(hl)
+	ret	nz
+	inc	hl
+	ld	a,e
+	cp	(hl)
+	ret	nz
+	inc	hl
+	ld	a,d
+	sub	(hl)
+	ret	nz
+	pop	hl
+	pop	hl
+	ret
+;
+A2F4D:	ld	a,d
+	xor	h
+	ld	a,h
+	jp	m,A2E78
+	cp	d
+	jr	nz,A2F59
+	ld	a,l
+	sub	e
+	ret	z
+A2F59:	jp	A2E79
+;
+A2F5C:	ld	de,ARG
+	ld	a,(de)
+	or	a
+	jp	z,A2E71
+	ld	hl,A2E77
+	push	hl
+	call	A2E71
+	ld	a,(de)
+	ld	c,a
+	ret	z
+	ld	hl,DAC
+	xor	(hl)
+	ld	a,c
+	ret	m
+	ld	b,008H
+A2F76:	ld	a,(de)
+	sub	(hl)
+	jr	nz,A2F80
+	inc	de
+	inc	hl
+	djnz	A2F76
+	pop	bc
+	ret
+;
+A2F80:	rra
+	xor	c
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2F5C
+	jp	nz,A2E77
+	ret
+;
+A2F8A:	rst	GETYPR
+	ld	hl,(DAC+2)
+	ret	m
+	jp	z,A406D 		; string, Type mismatch
+	call	A305D
+	jp	c,A4067 		; ,Overflow
+	ex	de,hl
+A2F99:	ld	(DAC+2),hl
+A2F9C:	ld	a,002H
+A2F9E:	ld	(VALTYP),a
+	ret
+;
+A2FA2:	ld	bc,032C5H
+	ld	de,08076H		; -32768!
+	call	A2F21
+	ret	nz
+	ld	hl,-32768
+A2FAF:	pop	de
+	jr	A2F99			; in DAC & set INT
+;
+A2FB2:	rst	GETYPR
+	ret	po			; already SNG, quit
+	jp	m,A2FC8
+	jp	z,A406D 		; string, Type mismatch
+	call	A3053
+	call	A3752
+	inc	hl
+	ld	a,b
+	or	a
+	rra
+	ld	b,a
+	jp	A2741
+;
+A2FC8:	ld	hl,(DAC+2)
+A2FCB:	ld	a,h
+A2FCC:	or	a
+	push	af
+	call	m,A3221 		; yep, negate HL
+	call	A3053
+	ex	de,hl
+	ld	hl,0
+	ld	(DAC+0),hl
+	ld	(DAC+2),hl
+	ld	a,d
+	or	e
+	jp	z,A66A7 		; quit
+	ld	bc,00500H
+	ld	hl,DAC+1
+	push	hl
+	ld	hl,T3030
+A2FED:	ld	a,0FFH
+	push	de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	inc	hl
+	ex	(sp),hl
+	push	bc
+A2FF6:	ld	b,h
+	ld	c,l
+	add	hl,de
+	inc	a
+	jr	c,A2FF6
+	ld	h,b
+	ld	l,c
+	pop	bc
+	pop	de
+	ex	de,hl
+	inc	c
+	dec	c
+	jr	nz,A3010
+	or	a
+	jr	z,A3024
+	push	af
+	ld	a,040H
+	add	a,b
+	ld	(DAC+0),a
+	pop	af
+A3010:	inc	c
+	ex	(sp),hl
+	push	af
+	ld	a,c
+	rra
+	jr	nc,A301F
+	pop	af
+	add	a,a
+	add	a,a
+	add	a,a
+	add	a,a
+	ld	(hl),a
+	jr	A3023
+;
+A301F:	pop	af
+	or	(hl)
+	ld	(hl),a
+	inc	hl
+A3023:	ex	(sp),hl
+A3024:	ld	a,d
+	or	e
+	jr	z,A302A
+	djnz	A2FED
+A302A:	pop	hl
+	pop	af
+	ret	p
+	jp	A2E8D
+;
+T3030:	dw	-10000
+	dw	-1000
+	dw	-100
+	dw	-10
+	dw	-1
+
+A303A:	rst	GETYPR
+	ret	nc
+	jp	z,A406D 		; string, Type mismatch
+	call	m,A2FC8
+A3042:	ld	hl,0
+	ld	(DAC+4),hl
+	ld	(DAC+6),hl
+	ld	a,h
+	ld	(DAC+8),a
+A304F:	ld	a,008H
+	jr	A3055
+;
+A3053:	ld	a,004H
+A3055:	jp	A2F9E
+;
+A3058:	rst	GETYPR
+	ret	z
+	jp	A406D			; Type mismatch
+;
+A305D:	ld	hl,T30BA
+	push	hl
+	ld	hl,DAC
+	ld	a,(hl)
+	and	07FH
+	cp	046H
+	ret	nc
+	sub	041H
+	jr	nc,A3074
+	or	a
+	pop	de
+	ld	de,0
+	ret
+;
+A3074:	inc	a
+	ld	b,a
+	ld	de,0
+	ld	c,d
+	inc	hl
+A307B:	ld	a,c
+	inc	c
+	rra
+	ld	a,(hl)
+	jr	c,A3087
+	rra
+	rra
+	rra
+	rra
+	jr	A3088
+;
+A3087:	inc	hl
+A3088:	and	00FH
+	ld	(DECTMP),hl
+	ld	h,d
+	ld	l,e
+	add	hl,hl
+	ret	c
+	add	hl,hl
+	ret	c
+	add	hl,de
+	ret	c
+	add	hl,hl
+	ret	c
+	ld	e,a
+	ld	d,000H
+	add	hl,de
+	ret	c
+	ex	de,hl
+	ld	hl,(DECTMP)
+	djnz	A307B
+	ld	hl,32768
+	rst	DCOMPR
+	ld	a,(DAC+0)
+	ret	c
+	jr	z,A30B6
+	pop	hl
+	or	a
+	ret	p
+	ex	de,hl
+	call	A3221			; negate HL
+	ex	de,hl
+	or	a
+	ret
+;
+A30B6:	or	a
+	ret	p
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+T30BA:	scf
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	dec	bc
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	rst	GETYPR
+	ret	m
+	call	A2E71
+	jp	p,A30CF
+	call	A2E8D
+	call	A30CF
+	jp	A2E86
+;
+A30CF:	rst	GETYPR
+	ret	m
+	ld	hl,DAC+8
+	ld	c,00EH
+	jr	nc,A30E0
+	jp	z,A406D 		; string, Type mismatch
+	ld	hl,DAC+4
+	ld	c,006H
+A30E0:	ld	a,(DAC+0)
+	or	a
+	jp	m,A3100
+	and	07FH
+	sub	041H
+	jp	c,A2E7D 		; yep, DAC = 0
+	inc	a
+	sub	c
+	ret	nc
+	cpl
+	inc	a
+	ld	b,a
+A30F4:	dec	hl
+	ld	a,(hl)
+	and	0F0H
+	ld	(hl),a
+	dec	b
+	ret	z
+	xor	a
+	ld	(hl),a
+	djnz	A30F4
+	ret
+;
+A3100:	and	07FH
+	sub	041H
+	jr	nc,A310C
+	ld	hl,-1
+	jp	A2F99			; in DAC & set INT
+;
+A310C:	inc	a
+	sub	c
+	ret	nc
+	cpl
+	inc	a
+	ld	b,a
+	ld	e,000H
+A3114:	dec	hl
+	ld	a,(hl)
+	ld	d,a
+	and	0F0H
+	ld	(hl),a
+	cp	d
+	jr	z,A311E
+	inc	e
+A311E:	dec	b
+	jr	z,A3129
+	xor	a
+	ld	(hl),a
+	cp	d
+	jr	z,A3127
+	inc	e
+A3127:	djnz	A3114
+A3129:	inc	e
+	dec	e
+	ret	z
+	ld	a,c
+	cp	006H
+	ld	bc,010C1H
+	ld	de,00000H		; -1.0
+	jp	z,A324E 		; yep, DAC = DAC + cbed
+	ex	de,hl
+	ld	(ARG+6),hl
+	ld	(ARG+4),hl
+	ld	(ARG+2),hl
+	ld	h,b
+	ld	l,c
+	ld	(ARG+0),hl
+	jp	A269A			; DAC = DAC + ARG
+;
+A314A:	push	hl
+	ld	hl,0
+	ld	a,b
+	or	c
+	jr	z,A3164
+	ld	a,010H
+A3154:	add	hl,hl
+	jp	c,A601D 		; overflow, Subscript out of range
+	ex	de,hl
+	add	hl,hl
+	ex	de,hl
+	jr	nc,A3161
+	add	hl,bc
+	jp	c,A601D 		; overflow, Subscript out of range
+A3161:	dec	a
+	jr	nz,A3154
+A3164:	ex	de,hl
+	pop	hl
+	ret
+
+; SUB (INT)
+
+A3167:	ld	a,h
+	rla
+	sbc	a,a
+	ld	b,a
+	call	A3221			; negate HL
+	ld	a,c
+	sbc	a,b
+	jr	A3175
+
+; ADD (INT)
+
+A3172:	ld	a,h
+	rla
+	sbc	a,a			; sign op1
+A3175:	ld	b,a
+	push	hl
+	ld	a,d
+	rla
+	sbc	a,a			; sign op2
+	add	hl,de			; add
+	adc	a,b
+	rrca
+	xor	h
+	jp	p,A2FAF 		; yep, result in DAC
+	push	bc
+	ex	de,hl
+	call	A2FCB			; convert op2 SNG
+	pop	af
+	pop	hl
+	call	A2EB1			; push DAC (sng)
+	call	A2FCB			; convert op1 SNG
+	pop	bc
+	pop	de
+	jp	A324E			; DAC = DAC + cbed
+;
+A3193:	ld	a,h
+	or	l
+	jp	z,A2F99 		; yep, in DAC & set INT
+	push	hl
+	push	de
+	call	A3215			; make HL,DE positive
+	push	bc
+	ld	b,h
+	ld	c,l
+	ld	hl,0
+	ld	a,010H
+A31A5:	add	hl,hl
+	jr	c,A31C7
+	ex	de,hl
+	add	hl,hl
+	ex	de,hl
+	jr	nc,A31B0
+	add	hl,bc
+	jr	c,A31C7
+A31B0:	dec	a
+	jr	nz,A31A5
+	pop	bc
+	pop	de
+A31B5:	ld	a,h
+	or	a
+	jp	m,A31BF
+	pop	de
+	ld	a,b
+	jp	A321D			; if ?,make HL positive
+;
+A31BF:	xor	080H
+	or	l
+	jr	z,A31D8
+	ex	de,hl
+	jr	A31C9
+;
+A31C7:	pop	bc
+	pop	hl
+A31C9:	call	A2FCB
+	pop	hl
+	call	A2EB1			; push DAC (sng)
+	call	A2FCB
+	pop	bc
+	pop	de
+	jp	A325C			; DAC = DAC * cbed
+;
+A31D8:	ld	a,b
+	or	a
+	pop	bc
+	jp	m,A2F99 		; yep, in DAC & set INT
+	push	de
+	call	A2FCB
+	pop	de
+	jp	A2E8D
+;
+A31E6:	ld	a,h
+A31E7:	or	l
+	jp	z,A4058 		; yep, division by zero
+	call	A3215			; make HL,DE positive
+	push	bc
+	ex	de,hl
+	call	A3221			; negate HL
+	ld	b,h
+	ld	c,l
+	ld	hl,0
+	ld	a,011H
+	or	a
+	jr	A3206
+;
+A31FD:	push	hl
+	add	hl,bc
+	jr	nc,A3205
+	inc	sp
+	inc	sp
+	scf
+	jr	nc,A31E7
+A3206:	rl	e
+	rl	d
+	adc	hl,hl
+	dec	a
+	jr	nz,A31FD
+	ex	de,hl
+	pop	bc
+	push	de
+	jp	A31B5
+;
+A3215:	ld	a,h
+	xor	d
+	ld	b,a
+	call	A321C			; make HL positive
+	ex	de,hl
+A321C:	ld	a,h
+A321D:	or	a
+	jp	p,A2F99 		; yep, in DAC & set INT
+A3221:	xor	a
+	ld	c,a
+	sub	l
+	ld	l,a
+	ld	a,c
+	sbc	a,h
+	ld	h,a
+	jp	A2F99			; in DAC & set INT
+;
+A322B:	ld	hl,(DAC+2)
+	call	A3221			; negate HL
+	ld	a,h
+	xor	080H
+	or	l
+	ret	nz
+A3236:	xor	a
+	jp	A2FCC
+;
+A323A:	push	de
+	call	A31E6
+	xor	a
+	add	a,d
+	rra
+	ld	h,a
+	ld	a,e
+	rra
+	ld	l,a
+	call	A2F9C
+	pop	af
+	jr	A321D			; if ?,make HL positive
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2EDF
+A324E:	call	A3280			; ARG = CDBL(cbed)
+	call	A3042
+	jp	A269A			; DAC = DAC + ARG
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A2E8D
+	jr	A324E			; DAC = DAC + cbed
+;
+A325C:	call	A3280			; ARG = CDBL(cbed)
+	call	A3042
+	jp	A27E6			; DAC = DAC * ARG
+;
+A3265:	pop	bc
+	pop	de
+A3267:	ld	hl,(DAC+2)
+	ex	de,hl
+	ld	(DAC+2),hl
+	push	bc
+	ld	hl,(DAC+0)
+	ex	(sp),hl
+	ld	(DAC+0),hl
+	pop	bc
+	call	A3280
+	call	A3042
+	jp	A289F			; DAC = DAC / ARG
+;
+A3280:	ex	de,hl
+	ld	(ARG+2),hl
+	ld	h,b
+	ld	l,c
+	ld	(ARG+0),hl
+	ld	hl,0
+	ld	(ARG+4),hl
+	ld	(ARG+6),hl
+	ret
+;
+A3293:	dec	a
+	ret
+;
+A3295:	dec	hl
+	ret
+;
+A3297:	pop	hl
+	ret
+;
+A3299:	ex	de,hl
+	ld	bc,000FFH
+	ld	h,b
+	ld	l,b			; 0
+	call	A2F99			; in DAC & set INT
+	ex	de,hl
+	ld	a,(hl)
+	cp	'&'
+	jp	z,A4EB8 		; convert bin/oct/hex
+	cp	'-'
+	push	af			; flag negative
+	jr	z,A32B3
+	cp	'+'
+	jr	z,A32B3
+	dec	hl
+A32B3:	rst	CHRGTR
+	jp	c,A3386
+	cp	'.'
+	jp	z,A334F
+	cp	'e'
+	jr	z,A32C2
+	cp	'E'
+A32C2:	jr	nz,A32DE
+	push	hl
+T32C5:	rst	CHRGTR
+	cp	'l'
+	jr	z,A32D4
+	cp	'L'
+	jr	z,A32D4
+	cp	'q'
+	jr	z,A32D4
+	cp	'Q'
+A32D4:	pop	hl
+	jr	z,A32DD
+	rst	GETYPR
+	jr	nc,A32F5
+	xor	a
+	jr	A32F6
+;
+A32DD:	ld	a,(hl)
+A32DE:	cp	'%'
+	jp	z,A3362
+	cp	'#'
+	jp	z,A3370
+	cp	'!'
+	jp	z,A3371
+	cp	'd'
+	jr	z,A32F5
+	cp	'D'
+	jr	nz,A331E
+A32F5:	or	a
+A32F6:	call	A3377
+	rst	CHRGTR
+	push	de
+	ld	d,000H
+	call	A4F47			; search + or - token
+	ld	c,d
+	pop	de
+A3302:	rst	CHRGTR
+	jr	nc,A3318
+	ld	a,e
+	cp	00CH
+	jr	nc,A3314
+	rlca
+	rlca
+	add	a,e
+	rlca
+	add	a,(hl)
+	sub	030H
+	ld	e,a
+	jr	A3302
+;
+A3314:	ld	e,080H
+	jr	A3302
+;
+A3318:	inc	c
+	jr	nz,A331E
+	xor	a
+	sub	e
+	ld	e,a
+A331E:	rst	GETYPR
+	jp	m,A3334
+	ld	a,(DAC+0)
+	or	a
+	jr	z,A3334
+	ld	a,d
+	sub	b
+	add	a,e
+	add	a,040H
+	ld	(DAC+0),a
+	or	a
+	call	m,A334C
+A3334:	pop	af
+	push	hl
+	call	z,A2E86
+	rst	GETYPR
+	jr	nc,A3347
+	pop	hl
+	ret	pe
+	push	hl
+	ld	hl,A3297
+	push	hl
+	call	A2FA2
+	ret
+;
+A3347:	call	A273C
+	pop	hl
+	ret
+;
+A334C:	jp	A4067			; Overflow
+;
+A334F:	rst	GETYPR
+	inc	c
+	jr	nz,A331E
+	jr	nc,A335F
+	call	A3377
+	ld	a,(DAC+0)
+	or	a
+	jr	nz,A335F
+	ld	d,a
+A335F:	jp	A32B3
+;
+A3362:	rst	CHRGTR
+	pop	af
+	push	hl
+	ld	hl,A3297
+	push	hl
+	ld	hl,A2F8A
+	push	hl
+	push	af
+	jr	A331E
+;
+A3370:	or	a
+A3371:	call	A3377
+	rst	CHRGTR
+	jr	A331E
+;
+A3377:	push	hl
+	push	de
+	push	bc
+	push	af
+	call	z,A2FB2
+	pop	af
+	call	nz,A303A
+	pop	bc
+	pop	de
+	pop	hl
+	ret
+;
+A3386:	sub	030H
+	jp	nz,A3393
+	or	c
+	jp	z,A3393
+	and	d
+	jp	z,A32B3
+A3393:	inc	d
+	ld	a,d
+	cp	007H
+	jr	nz,A339D
+	or	a
+	call	A3377
+A339D:	push	de
+	ld	a,b
+	add	a,c
+	inc	a
+	ld	b,a
+	push	bc
+	push	hl
+	ld	a,(hl)
+	sub	030H
+	push	af
+	rst	GETYPR
+	jp	p,A33D1
+	ld	hl,(DAC+2)
+	ld	de,(32768/10)+1
+	rst	DCOMPR
+	jr	nc,A33CE
+	ld	d,h
+	ld	e,l
+	add	hl,hl
+	add	hl,hl
+	add	hl,de
+	add	hl,hl
+	pop	af
+	ld	c,a
+	add	hl,bc
+	ld	a,h
+	or	a
+	jp	m,A33CC
+	ld	(DAC+2),hl
+A33C6:	pop	hl
+	pop	bc
+	pop	de
+	jp	A32B3
+;
+A33CC:	ld	a,c
+	push	af
+A33CE:	call	A2FC8
+A33D1:	pop	af
+	pop	hl
+	pop	bc
+	pop	de
+	jr	nz,A33E3
+	ld	a,(DAC+0)
+	or	a
+	ld	a,000H
+	jr	nz,A33E3
+	ld	d,a
+	jp	A32B3
+;
+A33E3:	push	de
+	push	bc
+	push	hl
+	push	af
+	ld	hl,DAC
+	ld	(hl),001H
+	ld	a,d
+	cp	010H
+	jr	c,A33F4
+	pop	af
+	jr	A33C6
+;
+A33F4:	inc	a
+	or	a
+	rra
+	ld	b,000H
+	ld	c,a
+	add	hl,bc
+	pop	af
+	ld	c,a
+	ld	a,d
+	rra
+	ld	a,c
+	jr	nc,A3406
+	add	a,a
+	add	a,a
+	add	a,a
+	add	a,a
+A3406:	or	(hl)
+	ld	(hl),a
+	jr	A33C6
+;
+A340A:	push	hl
+	ld	hl,T3FD2
+	call	A6678			; print " in "
+	pop	hl
+A3412:	ld	bc,A6677
+	push	bc
+	call	A2F99			; in DAC & set INT
+	xor	a
+	ld	(TEMP3),a
+	ld	hl,FBUFFR+1
+	ld	(hl),020H
+	or	(hl)
+	jr	A3441
+;
+A3425:	xor	a
+A3426:	call	A375F
+	and	008H
+	jr	z,A342F
+	ld	(hl),02BH
+A342F:	ex	de,hl
+	call	A2EA1
+	ex	de,hl
+	jp	p,A3441
+	ld	(hl),02DH
+	push	bc
+	push	hl
+	call	A2E86
+	pop	hl
+	pop	bc
+	or	h
+A3441:	inc	hl
+	ld	(hl),030H
+	ld	a,(TEMP3)
+	ld	d,a
+	rla
+	ld	a,(VALTYP)
+	jp	c,A34F7
+	jp	z,A34EF
+	cp	004H
+	jp	nc,A34A1
+	ld	bc,0
+	call	A36DB
+A345D:	ld	hl,FBUFFR+1
+	ld	b,(hl)
+	ld	c,020H
+	ld	a,(TEMP3)
+	ld	e,a
+	and	020H
+	jr	z,A3477
+	ld	a,b
+	cp	c
+	ld	c,02AH
+	jr	nz,A3477
+	ld	a,e
+	and	004H
+	jr	nz,A3477
+	ld	b,c
+A3477:	ld	(hl),c
+	rst	CHRGTR
+	jr	z,A348F
+	cp	045H
+	jr	z,A348F
+	cp	044H
+	jr	z,A348F
+	cp	030H
+	jr	z,A3477
+	cp	02CH
+	jr	z,A3477
+	cp	02EH
+	jr	nz,A3492
+A348F:	dec	hl
+	ld	(hl),030H
+A3492:	ld	a,e
+	and	010H
+	jr	z,A349A
+	dec	hl
+	ld	(hl),024H
+A349A:	ld	a,e
+	and	004H
+	ret	nz
+	dec	hl
+	ld	(hl),b
+	ret
+;
+A34A1:	push	hl
+	call	A3752
+	ld	d,b
+	inc	d
+	ld	bc,00300H
+	ld	a,(DAC+0)
+	sub	03FH
+	jr	c,A34B9
+	inc	d
+	cp	d
+	jr	nc,A34B9
+	inc	a
+	ld	b,a
+	ld	a,002H
+A34B9:	sub	002H
+	pop	hl
+	push	af
+	call	A368E
+	ld	(hl),030H
+	call	z,A2EE6
+	call	A36B3
+A34C8:	dec	hl
+	ld	a,(hl)
+	cp	030H
+	jr	z,A34C8
+	cp	02EH
+	call	nz,A2EE6
+	pop	af
+	jr	z,A34F0
+A34D6:	ld	(hl),045H
+	inc	hl
+	ld	(hl),02BH
+	jp	p,A34E2
+	ld	(hl),02DH
+	cpl
+	inc	a
+A34E2:	ld	b,02FH
+A34E4:	inc	b
+	sub	00AH
+	jr	nc,A34E4
+	add	a,03AH
+	inc	hl
+	ld	(hl),b
+	inc	hl
+	ld	(hl),a
+A34EF:	inc	hl
+A34F0:	ld	(hl),000H
+	ex	de,hl
+	ld	hl,FBUFFR+1
+	ret
+;
+A34F7:	inc	hl
+	push	bc
+	cp	004H
+	ld	a,d
+	jp	nc,A3566
+	rra
+	jp	c,A35EF
+	ld	bc,00603H
+	call	A3686
+	pop	de
+	ld	a,d
+	sub	005H
+	call	p,A3666
+	call	A36DB
+A3513:	ld	a,e
+	or	a
+	call	z,A3295
+	dec	a
+	call	p,A3666
+A351C:	push	hl
+	call	A345D
+	pop	hl
+	jr	z,A3525
+	ld	(hl),b
+	inc	hl
+A3525:	ld	(hl),000H
+	ld	hl,FBUFFR
+A352A:	inc	hl
+A352B:	ld	a,(TEMP2)
+	sub	l
+	sub	d
+	ret	z
+	ld	a,(hl)
+	cp	020H
+	jr	z,A352A
+	cp	02AH
+	jr	z,A352A
+	dec	hl
+	push	hl
+T353C:	push	af
+	ld	bc,T353C
+	push	bc
+	rst	CHRGTR
+	cp	02DH
+	ret	z
+	cp	02BH
+	ret	z
+	cp	024H
+	ret	z
+	pop	bc
+	cp	030H
+	jr	nz,A355F
+	inc	hl
+	rst	CHRGTR
+	jr	nc,A355F
+	dec	hl
+	jr	A3559
+;
+A3557:	dec	hl
+	ld	(hl),a
+A3559:	pop	af
+	jr	z,A3557
+	pop	bc
+	jr	A352B
+;
+A355F:	pop	af
+	jr	z,A355F
+	pop	hl
+	ld	(hl),025H
+	ret
+;
+A3566:	push	hl
+	rra
+	jp	c,A35F5
+	call	A3752
+	ld	d,b
+	ld	a,(DAC+0)
+	sub	04FH
+	jr	c,A3581
+	pop	hl
+	pop	bc
+	call	A3425
+	ld	hl,FBUFFR
+	ld	(hl),025H
+	ret
+;
+A3581:	call	A2E71
+	call	nz,A37A2
+	pop	hl
+	pop	bc
+	jp	m,A35A6
+	push	bc
+	ld	e,a
+	ld	a,b
+	sub	d
+	sub	e
+	call	p,A3666
+	call	A367A
+	call	A36B3
+	or	e
+	call	nz,A3674
+	or	e
+	call	nz,A36A0
+	pop	de
+	jp	A3513
+;
+A35A6:	ld	e,a
+	ld	a,c
+	or	a
+	call	nz,A3293
+	add	a,e
+	jp	m,A35B1
+	xor	a
+A35B1:	push	bc
+	push	af
+	call	m,A377B
+	pop	bc
+	ld	a,e
+	sub	b
+	pop	bc
+	ld	e,a
+	add	a,d
+	ld	a,b
+	jp	m,A35CB
+	sub	d
+	sub	e
+	call	p,A3666
+	push	bc
+	call	A367A
+	jr	A35DC
+;
+A35CB:	call	A3666
+	ld	a,c
+	call	A36A3
+	ld	c,a
+	xor	a
+	sub	d
+	sub	e
+	call	A3666
+	push	bc
+	ld	b,a
+	ld	c,a
+A35DC:	call	A36B3
+	pop	bc
+	or	c
+	jr	nz,A35E6
+	ld	hl,(TEMP2)
+A35E6:	add	a,e
+	dec	a
+	call	p,A3666
+	ld	d,b
+	jp	A351C
+;
+A35EF:	push	hl
+	push	de
+	call	A2FC8
+	pop	de
+A35F5:	call	A3752
+	ld	e,b
+	call	A2E71
+	push	af
+	call	nz,A37A2
+	pop	af
+	pop	hl
+	pop	bc
+	push	af
+	ld	a,c
+	or	a
+	push	af
+	call	nz,A3293
+	add	a,b
+	ld	c,a
+	ld	a,d
+	and	004H
+	cp	001H
+	sbc	a,a
+	ld	d,a
+	add	a,c
+	ld	c,a
+	sub	e
+	push	af
+	jp	p,A3628
+	call	A377B
+	jr	nz,A3628
+	push	hl
+	call	A27DB
+	ld	hl,DAC
+	inc	(hl)
+	pop	hl
+A3628:	pop	af
+	push	bc
+	push	af
+	jp	m,A362F
+	xor	a
+A362F:	cpl
+	inc	a
+	add	a,b
+	inc	a
+	add	a,d
+	ld	b,a
+	ld	c,000H
+	call	z,A368E
+	call	A36B3
+	pop	af
+	call	p,A366E
+	call	A36A0
+	pop	bc
+	pop	af
+	jr	nz,A3654
+	call	A3295
+	ld	a,(hl)
+	cp	02EH
+	call	nz,A2EE6
+	ld	(TEMP2),hl
+A3654:	pop	af
+	ld	a,(DAC+0)
+	jr	z,A365D
+	add	a,e
+	sub	b
+	sub	d
+A365D:	push	bc
+	call	A34D6
+	ex	de,hl
+	pop	de
+	jp	A351C
+;
+A3666:	or	a
+A3667:	ret	z
+	dec	a
+	ld	(hl),030H
+	inc	hl
+	jr	A3667
+;
+A366E:	jr	nz,A3674
+A3670:	ret	z
+	call	A36A0
+A3674:	ld	(hl),030H
+	inc	hl
+	dec	a
+	jr	A3670
+;
+A367A:	ld	a,e
+	add	a,d
+	inc	a
+	ld	b,a
+	inc	a
+A367F:	sub	003H
+	jr	nc,A367F
+	add	a,005H
+	ld	c,a
+A3686:	ld	a,(TEMP3)
+	and	040H
+	ret	nz
+	ld	c,a
+	ret
+;
+A368E:	dec	b
+	jp	p,A36A1
+	ld	(TEMP2),hl
+	ld	(hl),02EH
+A3697:	inc	hl
+	ld	(hl),030H
+	inc	b
+	ld	c,b
+	jr	nz,A3697
+	inc	hl
+	ret
+;
+A36A0:	dec	b
+A36A1:	jr	nz,A36AB
+A36A3:	ld	(hl),02EH
+	ld	(TEMP2),hl
+	inc	hl
+	ld	c,b
+	ret
+;
+A36AB:	dec	c
+	ret	nz
+	ld	(hl),02CH
+	inc	hl
+	ld	c,003H
+	ret
+;
+A36B3:	push	de
+	push	hl
+	push	bc
+	call	A3752
+	ld	a,b
+	pop	bc
+	pop	hl
+	ld	de,DAC+1
+	scf
+A36C0:	push	af
+	call	A36A0
+	ld	a,(de)
+	jr	nc,A36CD
+	rra
+	rra
+	rra
+	rra
+	jr	A36CE
+;
+A36CD:	inc	de
+A36CE:	and	00FH
+	add	a,030H
+	ld	(hl),a
+	inc	hl
+	pop	af
+	dec	a
+	ccf
+	jr	nz,A36C0
+	jr	A370A
+;
+A36DB:	push	de
+	ld	de,T3710
+	ld	a,005H
+A36E1:	call	A36A0
+	push	bc
+	push	af
+	push	hl
+	ex	de,hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	push	bc
+	inc	hl
+	ex	(sp),hl
+	ex	de,hl
+	ld	hl,(DAC+2)
+	ld	b,02FH
+A36F4:	inc	b
+	ld	a,l
+	sub	e
+	ld	l,a
+	ld	a,h
+	sbc	a,d
+	ld	h,a
+	jr	nc,A36F4
+	add	hl,de
+	ld	(DAC+2),hl
+	pop	de
+	pop	hl
+	ld	(hl),b
+	inc	hl
+	pop	af
+	pop	bc
+	dec	a
+	jr	nz,A36E1
+A370A:	call	A36A0
+	ld	(hl),a
+	pop	de
+	ret
+;
+T3710:	dw	10000
+	dw	1000
+	dw	100
+	dw	10
+	dw	1
+
+A371A:	ld	b,001H
+	jr	A3724
+;
+A371E:	ld	b,003H
+	jr	A3724
+;
+A3722:	ld	b,004H
+A3724:	push	bc
+	call	A5439			; transfer DAC to HL
+	ld	de,FBUFFR+17
+	xor	a
+	ld	(de),a
+	pop	bc
+	ld	c,a
+A372F:	push	bc
+	dec	de
+A3731:	and	a
+	ld	a,h
+	rra
+	ld	h,a
+	ld	a,l
+	rra
+	ld	l,a
+	ld	a,c
+	rra
+	ld	c,a
+	djnz	A3731
+	pop	bc
+	push	bc
+A373F:	rlca
+	djnz	A373F
+	add	a,030H
+	cp	03AH
+	jr	c,A374A
+	add	a,007H
+A374A:	ld	(de),a
+	pop	bc
+	ld	a,l
+	or	h
+	jr	nz,A372F
+	ex	de,hl
+	ret
+;
+A3752:	rst	GETYPR
+	ld	hl,DAC+7
+	ld	b,00EH
+	ret	nc
+	ld	hl,DAC+3
+	ld	b,006H
+	ret
+;
+A375F:	ld	(TEMP3),a
+	push	af
+	push	bc
+	push	de
+	call	A303A
+	ld	hl,T2D13
+	ld	a,(DAC+0)
+	and	a
+	call	z,A2C5C 		; yep, DAC = 0.0
+	pop	de
+	pop	bc
+	pop	af
+	ld	hl,FBUFFR
+	ld	(hl),020H
+	ret
+;
+A377B:	push	hl
+	push	de
+	push	bc
+	push	af
+	cpl
+	inc	a
+	ld	e,a
+	ld	a,001H
+	jp	z,A379C
+	call	A3752
+	push	hl
+A378B:	call	A27DB
+	dec	e
+	jr	nz,A378B
+	pop	hl
+	inc	hl
+	ld	a,b
+	rrca
+	ld	b,a
+	call	A2741
+	call	A37B4
+A379C:	pop	bc
+	add	a,b
+	pop	bc
+	pop	de
+	pop	hl
+	ret
+;
+A37A2:	push	bc
+	push	hl
+	call	A3752
+	ld	a,(DAC+0)
+	sub	040H
+	sub	b
+	ld	(DAC+0),a
+	pop	hl
+	pop	bc
+	or	a
+	ret
+;
+A37B4:	push	bc
+	call	A3752
+A37B8:	ld	a,(hl)
+	and	00FH
+	jr	nz,A37C5
+	dec	b
+	ld	a,(hl)
+	or	a
+	jr	nz,A37C5
+	dec	hl
+	djnz	A37B8
+A37C5:	ld	a,b
+	pop	bc
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A3280
+	call	A3042
+	call	A2CC7			; push ARG
+	call	A2C6F			; ex (sp),DAC
+	call	A2CDC			; pop ARG
+	ld	a,(ARG+0)
+	or	a
+	jp	z,A3843
+	ld	h,a
+	ld	a,(DAC+0)
+	or	a
+	jp	z,A384D
+	call	A2CCC			; push DAC
+	call	A391A
+	jr	c,A382A
+	ex	de,hl
+	ld	(TEMP8),hl
+	call	A304F
+	call	A2CDC			; pop ARG
+	call	A391A
+	call	A304F
+	ld	hl,(TEMP8)
+	jp	nc,A385A
+	ld	a,(ARG+0)
+	push	af
+	push	hl
+	call	A2C59			; DAC = ARG
+	ld	hl,FBUFFR
+	call	A2C67
+	ld	hl,T2D1B
+	call	A2C5C			; DAC = 1.0
+	pop	hl
+	ld	a,h
+	or	a
+	push	af
+	jp	p,A3826
+	xor	a
+	ld	c,a
+	sub	l
+	ld	l,a
+	ld	a,c
+	sbc	a,h
+	ld	h,a
+A3826:	push	hl
+	jp	A3894
+;
+A382A:	call	A304F
+	call	A2C59			; DAC = ARG
+	call	A2C6F			; ex (sp),DAC
+	call	A2A72
+	call	A2CDC			; pop ARG
+	call	A27E6			; DAC = ARG
+	jp	A2B4A
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,h
+	or	l
+	jr	nz,A3849
+A3843:	ld	hl,1
+	jp	A3857
+;
+A3849:	ld	a,d
+	or	e
+	jr	nz,A385A
+A384D:	ld	a,h
+	rla
+	jr	nc,A3854
+	jp	A4058			; division by zero
+;
+A3854:	ld	hl,0
+A3857:	jp	A2F99			; in DAC & set INT
+;
+A385A:	ld	(TEMP8),hl
+	push	de
+	ld	a,h
+	or	a
+	push	af
+	call	m,A3221 		; yep, negate HL
+	ld	b,h
+	ld	c,l
+	ld	hl,1
+A3869:	or	a
+	ld	a,b
+	rra
+	ld	b,a
+	ld	a,c
+	rra
+	ld	c,a
+	jr	nc,A3877
+	call	A390D
+	jr	nz,A38C3
+A3877:	ld	a,b
+	or	c
+	jr	z,A38DE
+	push	hl
+	ld	h,d
+	ld	l,e
+	call	A390D
+	ex	de,hl
+	pop	hl
+	jr	z,A3869
+	push	bc
+	push	hl
+	ld	hl,FBUFFR
+	call	A2C67
+	pop	hl
+	call	A2FCB
+	call	A3042
+A3894:	pop	bc
+	ld	a,b
+	or	a
+	rra
+	ld	b,a
+	ld	a,c
+	rra
+	ld	c,a
+	jr	nc,A38A6
+	push	bc
+	ld	hl,FBUFFR
+	call	A2C3B			; DAC = DAC * FBUFFR
+	pop	bc
+A38A6:	ld	a,b
+	or	c
+	jr	z,A38DE
+	push	bc
+	call	A2CCC			; push DAC
+	ld	hl,FBUFFR
+	push	hl
+	call	A2C5C			; DAC = FBUFFR
+	pop	hl
+	push	hl
+	call	A2C3B			; DAC = DAC * FBUFFR
+	pop	hl
+	call	A2C67
+	call	A2CE1			; pop DAC
+	jr	A3894
+;
+A38C3:	push	bc
+	push	de
+	call	A303A
+	call	A2C4D			; ARG = DAC
+	pop	hl
+	call	A2FCB
+	call	A3042
+	ld	hl,FBUFFR
+	call	A2C67
+	call	A2C59			; DAC = ARG
+	pop	bc
+	jr	A38A6
+;
+A38DE:	pop	af
+	pop	bc
+	ret	p
+	ld	a,(VALTYP)
+	cp	002H
+	jr	nz,A38F0
+	push	bc
+	call	A2FCB
+	call	A3042
+	pop	bc
+A38F0:	ld	a,(DAC+0)
+	or	a
+	jr	nz,A3901
+	ld	hl,(TEMP8)
+	or	h
+	ret	p
+	ld	a,l
+	rrca
+	and	b
+	jp	A4067			; Overflow
+;
+A3901:	call	A2C4D			; ARG = DAC
+	ld	hl,T2D1B
+	call	A2C5C			; DAC = 1.0
+	jp	A289F			; DAC = DAC / ARG
+;
+A390D:	push	bc
+	push	de
+	call	A3193
+	ld	a,(VALTYP)
+	cp	002H
+	pop	de
+	pop	bc
+	ret
+;
+A391A:	call	A2C59			; DAC = ARG
+	call	A2CC7			; push ARG
+	call	A30CF
+	call	A2CDC			; pop ARG
+	call	A2F5C
+	scf
+	ret	nz
+	jp	A305D
+;
+T392E:	dw	A63EA
+	dw	A4524
+	dw	A6527
+	dw	A485B
+	dw	A4B6C
+	dw	A5E9F
+	dw	A4B9F
+	dw	A4880
+	dw	A47E8
+	dw	A479E
+	dw	A49E5
+	dw	A63C9
+	dw	A47B2
+	dw	A4821
+	dw	A485D
+	dw	A63E3
+	dw	A4A24
+	dw	A64AF
+	dw	A522E
+	dw	A6286
+	dw	A48E4
+	dw	A401C
+	dw	A501D
+	dw	A5423
+	dw	A6424
+	dw	A6FB7
+	dw	A703F
+	dw	A4016
+	dw	A4A1D
+	dw	A5229
+	dw	A00C3
+	dw	A51C9
+	dw	A485D
+	dw	A6438
+	dw	A6439
+	dw	A643E
+	dw	A6477
+	dw	A49AA
+	dw	A495D
+	dw	A53E2
+	dw	A49B5
+	dw	A5468
+	dw	A4718
+	dw	A471B
+	dw	A471E
+	dw	A4721
+	dw	A4B0E
+	dw	A6AB7
+	dw	A7C52
+	dw	A775B
+	dw	A7758
+	dw	A6C14
+	dw	A6B5D
+	dw	A6B5E
+	dw	A6C2F
+	dw	A7C48
+	dw	A7C4D
+	dw	A6BA3
+	dw	A6C2A
+	dw	A5B11
+	dw	A7980
+	dw	A5D6E
+	dw	A59C5
+	dw	A00C0
+	dw	A73E5
+	dw	A57EA
+	dw	A57E5
+	dw	A73CA
+	dw	A79CC
+	dw	A7BE2
+	dw	A7A48
+	dw	A7B37
+	dw	A7B5A
+	dw	A55A8
+	dw	A7911
+	dw	A786C
+	dw	A7E4B
+	dw	A73B7
+	dw	A6EC6
+	dw	A6E92
+	dw	A7C16
+	dw	A7C1B
+	dw	A7C20
+	dw	A7C25
+	dw	A7C2A
+	dw	A7C2F
+	dw	A7C34
+	dw	A7766
+
+T39DE:	dw	A6861
+	dw	A6891
+	dw	A689A
+	dw	A2E97
+	dw	A30CF
+	dw	A2E82
+	dw	A2AFF
+	dw	A2BDF
+	dw	A29AC
+	dw	A2A72
+	dw	A2B4A
+	dw	A2993
+	dw	A29FB
+	dw	A2A14
+	dw	A69F2
+	dw	A4001
+	dw	A4FCC
+	dw	A67FF
+	dw	A6604
+	dw	A68BB
+	dw	A680B
+	dw	A681B
+	dw	A541C
+	dw	A7BF5
+	dw	A6848
+	dw	A65F5
+	dw	A65FA
+	dw	A4FC7
+	dw	A65FF
+	dw	A2F8A
+	dw	A2FB2
+	dw	A303A
+	dw	A30BE
+	dw	A7940
+	dw	A794C
+	dw	A795A
+	dw	A7969
+	dw	A7C39
+	dw	A6D39
+	dw	A7C66
+	dw	A7C6B
+	dw	A7C70
+	dw	A6D25
+	dw	A6D03
+	dw	A6D14
+	dw	A7C57
+	dw	A7C5C
+	dw	A7C61
+
+T3A3E:	dw	T3A72
+	dw	T3A88
+	dw	T3A9F
+	dw	T3AF3
+	dw	T3B2E
+	dw	T3B4F
+	dw	T3B69
+	dw	T3B7B
+	dw	T3B80
+	dw	T3B9F
+	dw	T3BA0
+	dw	T3BA8
+	dw	T3BE8
+	dw	T3C09
+	dw	T3C18
+	dw	T3C2B
+	dw	T3C5D
+	dw	T3C5E
+	dw	T3C8E
+	dw	T3CDB
+	dw	T3CF6
+	dw	T3CFF
+	dw	T3D16
+	dw	T3D20
+	dw	T3D24
+	dw	T3D25
+
+T3A72:	KEYWRD	<AUTO>,0A9H
+	KEYWRD	<AND>,0F6H
+	KEYWRD	<ABS>,006H
+	KEYWRD	<ATN>,00EH
+	KEYWRD	<ASC>,015H
+	KEYWRD	<ATTR$>,0E9H
+	db	0
+T3A88:	KEYWRD	<BASE>,0C9H
+	KEYWRD	<BSAVE>,0D0H
+	KEYWRD	<BLOAD>,0CFH
+	KEYWRD	<BEEP>,0C0H
+	KEYWRD	<BIN$>,01DH
+	db	0
+T3A9F:	KEYWRD	<CALL>,0CAH
+	KEYWRD	<CLOSE>,0B4H
+	KEYWRD	<COPY>,0D6H
+	KEYWRD	<CONT>,099H
+	KEYWRD	<CLEAR>,092H
+	KEYWRD	<CLOAD>,09BH
+	KEYWRD	<CSAVE>,09AH
+	KEYWRD	<CSRLIN>,0E8H
+	KEYWRD	<CINT>,01EH
+	KEYWRD	<CSNG>,01FH
+	KEYWRD	<CDBL>,020H
+	KEYWRD	<CVI>,028H
+	KEYWRD	<CVS>,029H
+	KEYWRD	<CVD>,02AH
+	KEYWRD	<COS>,00CH
+	KEYWRD	<CHR$>,016H
+	KEYWRD	<CIRCLE>,0BCH
+	KEYWRD	<COLOR>,0BDH
+	KEYWRD	<CLS>,09FH
+	KEYWRD	<CMD>,0D7H
+	db	0
+T3AF3:	KEYWRD	<DELETE>,0A8H
+	KEYWRD	<DATA>,084H
+	KEYWRD	<DIM>,086H
+	KEYWRD	<DEFSTR>,0ABH
+	KEYWRD	<DEFINT>,0ACH
+	KEYWRD	<DEFSNG>,0ADH
+	KEYWRD	<DEFDBL>,0AEH
+	KEYWRD	<DSKO$>,0D1H
+	KEYWRD	<DEF>,097H
+	KEYWRD	<DSKI$>,0EAH
+	KEYWRD	<DSKF>,026H
+	KEYWRD	<DRAW>,0BEH
+	db	0
+T3B2E:	KEYWRD	<ELSE>,0A1H
+	KEYWRD	<END>,081H
+	KEYWRD	<ERASE>,0A5H
+	KEYWRD	<ERROR>,0A6H
+	KEYWRD	<ERL>,0E1H
+	KEYWRD	<ERR>,0E2H
+	KEYWRD	<EXP>,00BH
+	KEYWRD	<EOF>,02BH
+	KEYWRD	<EQV>,0F9H
+	db	0
+T3B4F:	KEYWRD	<FOR>,082H
+	KEYWRD	<FIELD>,0B1H
+	KEYWRD	<FILES>,0B7H
+	KEYWRD	<FN>,0DEH
+	KEYWRD	<FRE>,00FH
+	KEYWRD	<FIX>,021H
+	KEYWRD	<FPOS>,027H
+	db	0
+T3B69:	KEYWRD	<GOTO>,089H
+	KEYWRD	<GO TO>,089H
+	KEYWRD	<GOSUB>,08DH
+	KEYWRD	<GET>,0B2H
+	db	0
+T3B7B:	KEYWRD	<HEX$>,01BH
+	db	0
+T3B80:	KEYWRD	<INPUT>,085H
+	KEYWRD	<IF>,08BH
+	KEYWRD	<INSTR>,0E5H
+	KEYWRD	<INT>,005H
+	KEYWRD	<INP>,010H
+	KEYWRD	<IMP>,0FAH
+	KEYWRD	<INKEY$>,0ECH
+	KEYWRD	<IPL>,0D5H
+	db	0
+T3B9F:	db	0
+T3BA0:	KEYWRD	<KILL>,0D4H
+	KEYWRD	<KEY>,0CCH
+	db	0
+T3BA8:	KEYWRD	<LPRINT>,09DH
+	KEYWRD	<LLIST>,09EH
+	KEYWRD	<LPOS>,01CH
+	KEYWRD	<LET>,088H
+	KEYWRD	<LOCATE>,0D8H
+	KEYWRD	<LINE>,0AFH
+	KEYWRD	<LOAD>,0B5H
+	KEYWRD	<LSET>,0B8H
+	KEYWRD	<LIST>,093H
+	KEYWRD	<LFILES>,0BBH
+	KEYWRD	<LOG>,00AH
+	KEYWRD	<LOC>,02CH
+	KEYWRD	<LEN>,012H
+	KEYWRD	<LEFT$>,001H
+	KEYWRD	<LOF>,02DH
+	db	0
+T3BE8:	KEYWRD	<MOTOR>,0CEH
+	KEYWRD	<MERGE>,0B6H
+	KEYWRD	<MOD>,0FBH
+	KEYWRD	<MKI$>,02EH
+	KEYWRD	<MKS$>,02FH
+	KEYWRD	<MKD$>,030H
+	KEYWRD	<MID$>,003H
+	KEYWRD	<MAX>,0CDH
+	db	0
+T3C09:	KEYWRD	<NEXT>,083H
+	KEYWRD	<NAME>,0D3H
+	KEYWRD	<NEW>,094H
+	KEYWRD	<NOT>,0E0H
+	db	0
+T3C18:	KEYWRD	<OPEN>,0B0H
+	KEYWRD	<OUT>,09CH
+	KEYWRD	<ON>,095H
+	KEYWRD	<OR>,0F7H
+	KEYWRD	<OCT$>,01AH
+	KEYWRD	<OFF>,0EBH
+	db	0
+T3C2B:	KEYWRD	<PRINT>,091H
+	KEYWRD	<PUT>,0B3H
+	KEYWRD	<POKE>,098H
+	KEYWRD	<POS>,011H
+	KEYWRD	<PEEK>,017H
+	KEYWRD	<PSET>,0C2H
+	KEYWRD	<PRESET>,0C3H
+	KEYWRD	<POINT>,0EDH
+	KEYWRD	<PAINT>,0BFH
+	KEYWRD	<PDL>,024H
+	KEYWRD	<PAD>,025H
+	KEYWRD	<PLAY>,0C1H
+	db	0
+T3C5D:	db	0
+T3C5E:	KEYWRD	<RETURN>,08EH
+	KEYWRD	<READ>,087H
+	KEYWRD	<RUN>,08AH
+	KEYWRD	<RESTORE>,08CH
+	KEYWRD	<REM>,08FH
+	KEYWRD	<RESUME>,0A7H
+	KEYWRD	<RSET>,0B9H
+	KEYWRD	<RIGHT$>,002H
+	KEYWRD	<RND>,008H
+	KEYWRD	<RENUM>,0AAH
+	db	0
+T3C8E:	KEYWRD	<SCREEN>,0C5H
+	KEYWRD	<SPRITE>,0C7H
+	KEYWRD	<STOP>,090H
+	KEYWRD	<SWAP>,0A4H
+	KEYWRD	<SET>,0D2H
+	KEYWRD	<SAVE>,0BAH
+	KEYWRD	<SPC(>,0DFH
+	KEYWRD	<STEP>,0DCH
+	KEYWRD	<SGN>,004H
+	KEYWRD	<SQR>,007H
+	KEYWRD	<SIN>,009H
+	KEYWRD	<STR$>,013H
+	KEYWRD	<STRING$>,0E3H
+	KEYWRD	<SPACE$>,019H
+	KEYWRD	<SOUND>,0C4H
+	KEYWRD	<STICK>,022H
+	KEYWRD	<STRIG>,023H
+	db	0
+T3CDB:	KEYWRD	<THEN>,0DAH
+	KEYWRD	<TRON>,0A2H
+	KEYWRD	<TROFF>,0A3H
+	KEYWRD	<TAB(>,0DBH
+	KEYWRD	<TO>,0D9H
+	KEYWRD	<TIME>,0CBH
+	KEYWRD	<TAN>,00DH
+	db	0
+T3CF6:	KEYWRD	<USING>,0E4H
+	KEYWRD	<USR>,0DDH
+	db	0
+T3CFF:	KEYWRD	<VAL>,014H
+	KEYWRD	<VARPTR>,0E7H
+	KEYWRD	<VDP>,0C8H
+	KEYWRD	<VPOKE>,0C6H
+	KEYWRD	<VPEEK>,018H
+	db	0
+T3D16:	KEYWRD	<WIDTH>,0A0H
+	KEYWRD	<WAIT>,096H
+	db	0
+T3D20:	KEYWRD	<XOR>,0F8H
+	db	0
+T3D24:	db	0
+T3D25:	db	0
+
+T3D26:	TOKEN	!+,0F1H
+	TOKEN	!-,0F2H
+	TOKEN	!*,0F3H
+	TOKEN	!/,0F4H
+	TOKEN	!^,0F5H
+	TOKEN	!\,0FCH
+	TOKEN	!',0E6H
+	TOKEN	!<,0EEH
+	TOKEN	!=,0EFH
+	TOKEN	!>,0F0H
+	db	0
+
+T3D3B:	db	079H
+	db	079H
+	db	07CH
+	db	07CH
+	db	07FH
+	db	050H
+	db	046H
+	db	03CH
+	db	032H
+	db	028H
+	db	07AH
+	db	07BH
+
+T3D47:	dw	A303A
+	dw	0
+	dw	A2F8A
+	dw	A3058
+	dw	A2FB2
+
+T3D51:	dw	A269A
+	dw	A268C
+	dw	A27E6
+	dw	A289F
+	dw	A37D7
+	dw	A2F83
+
+T3D5D:	dw	A324E
+	dw	A3257
+	dw	A325C
+	dw	A3267
+	dw	A37C8
+	dw	A2F21
+
+T3D69:	dw	A3172
+	dw	A3167
+	dw	A3193
+	dw	A4DB8
+	dw	A383F
+	dw	A2F4D
+
+T3D75:	db	0
+	db	"NEXT without FOR",0
+	db	"Syntax error",0
+	db	"RETURN without GOSUB",0
+	db	"Out of DATA",0
+	db	"Illegal function call",0
+	db	"Overflow",0
+	db	"Out of memory",0
+	db	"Undefined line number",0
+	db	"Subscript out of range",0
+	db	"Redimensioned array",0
+	db	"Division by zero",0
+	db	"Illegal direct",0
+	db	"Type mismatch",0
+	db	"Out of string space",0
+	db	"String too long",0
+	db	"String formula too complex",0
+	db	"Can't CONTINUE",0
+	db	"Undefined user function",0
+	db	"Device I/O error",0
+	db	"Verify error",0
+	db	"No RESUME",0
+	db	"RESUME without error",0
+	db	"Unprintable error",0
+	db	"Missing operand",0
+	db	"Line buffer overflow",0
+	db	"FIELD overflow",0
+	db	"Internal error",0
+	db	"Bad file name",0
+	db	"File not found",0
+	db	"File already open",0
+	db	"Input past end",0
+	db	"Bad file name",0
+	db	"Direct statement in file",0
+	db	"Sequential I/O only",0
+	db	"File not OPEN",0
+
+T3FD2:	db	" in "
+T3FD6:	db	0
+
+T3FD7:	db	"Ok",13,10,0
+
+	db	"Break",0
+
+A3FE2:	ld	hl,4
+	add	hl,sp			; two words are on stack
+A3FE6:	ld	a,(hl)
+	inc	hl
+	cp	082H			; FOR block ?
+	ret	nz			; nop, quit
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	inc	hl			; adres loopvar
+	push	hl
+	ld	h,b
+	ld	l,c
+	ld	a,d
+	or	e			; loopvar specified ?
+	ex	de,hl
+	jr	z,A3FF9 		; nop, found & quit
+	ex	de,hl
+	rst	DCOMPR			; check if correct block
+A3FF9:	ld	bc,25-3
+	pop	hl
+	ret	z			; nop, quit
+	add	hl,bc
+	jr	A3FE6
+;
+	call	A5439			; get number
+	ld	b,h
+	ld	c,l
+	in	a,(c)			; read from I/O port
+	jp	A4FCF			; set in DAC
+;
+A400B:	call	A542F			; get number
+	push	de
+	rst	SYNCHR
+	db	','                     ; ',' must follow
+	call	A521C			; get byte operand
+	pop	bc
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A400B			; get word,byte operand
+	out	(c),a			; write to I/O port
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A400B			; get word,byte operand
+	push	bc
+	push	af
+	ld	e,000H			; default XOR parameter
+	dec	hl
+	rst	CHRGTR			; end of statement ?
+	jr	z,A402C 		; yep, skip XOR operand
+	rst	SYNCHR
+	db	','
+	call	A521C			; get byte operand
+A402C:	pop	af
+	ld	d,a
+	pop	bc
+A402F:	call	CKCNTC
+	in	a,(c)
+	xor	e			; XOR mask
+	and	d			; AND mask
+	jr	z,A402F 		; not active, try again
+	ret
+;
+A4039:	call	H.PRGE
+	ld	hl,(CURLIN)
+	ld	a,h
+	and	l
+	inc	a			; direct mode ?
+	jr	z,A404C 		; yep, skip
+	ld	a,(ONEFLG)
+	or	a			; end in ONERROR routine ?
+	ld	e,015H
+	jr	nz,A406F		; yep, No RESUME
+A404C:	jp	A6401
+;
+A404F:	ld	hl,(DATLIN)
+	ld	(CURLIN),hl
+A4055:	ld	e,002H
+	db	1
+A4058:	ld	e,00BH
+	db	1
+A405B:	ld	e,001H
+	db	1
+A405E:	ld	e,00AH
+	db	1
+A4061:	ld	e,012H
+	db	1
+A4064:	ld	e,016H
+	db	1
+A4067:	ld	e,006H
+	db	1
+A406A:	ld	e,018H
+	db	1
+A406D:	ld	e,00DH
+A406F:	call	H.ERRO
+	xor	a
+	ld	(NLONLY),a		; no channel stays open
+	ld	hl,(VLZADR)
+	ld	a,h
+	or	l			; programtext changed by VAL ?
+	jr	z,A4087
+	ld	a,(VLZDAT)
+	ld	(hl),a			; yep, restore
+	ld	hl,0
+	ld	(VLZADR),hl		; programtext unchanged
+A4087:	ei
+	ld	hl,(CURLIN)
+	ld	(ERRLIN),hl		; error in linenumber
+	ld	a,h
+	and	l
+	inc	a			; program executing ?
+	jr	z,A4096
+	ld	(DOT),hl		; yep, last linenumber for edit
+A4096:	ld	bc,A40A4
+	jr	A409E
+;
+; >> NO EXECUTION PATH TO HERE <<
+A409B:	ld	bc,A411E
+A409E:	ld	hl,(SAVSTK)
+	jp	A62F0
+;
+A40A4:	pop	bc
+	ld	a,e
+	ld	c,e
+	ld	(ERRFLG),a		; errorcode
+	ld	hl,(SAVTXT)
+	ld	(ERRTXT),hl		; save basicpointer for RESUME
+	ex	de,hl
+	ld	hl,(ERRLIN)
+	ld	a,h
+	and	l
+	inc	a			; program executing ?
+	jr	z,A40C0
+	ld	(OLDLIN),hl
+	ex	de,hl
+	ld	(OLDTXT),hl		; yep, save for CONT
+A40C0:	ld	hl,(ONELIN)
+	ld	a,h
+	or	l
+	ex	de,hl
+	ld	hl,ONEFLG
+	jr	z,A40D3 		; no ON ERROR routine defined,
+	and	(hl)
+	jr	nz,A40D3		; ON ERROR active,
+	dec	(hl)			; flag ON ERROR active
+	ex	de,hl
+	jp	A4620			; execute ON ERROR routine
+;
+A40D3:	xor	a
+	ld	(hl),a			; clear ON ERROR active
+	ld	e,c
+	call	A7323			; OUTDO new line
+	ld	hl,T3D75		; pointer to errormsg
+	call	H.ERRP
+	ld	a,e
+	cp	60
+	jr	nc,A40EC		; >=60, ERROR 23
+	cp	50
+	jr	nc,A40EE		; >=50, rescale to 26
+	cp	26
+	jr	c,A40F1 		; <26,
+A40EC:	ld	a,23+24 		; ERROR 23
+A40EE:	sub	24
+	ld	e,a
+A40F1:	call	A485D			; find errormsg
+	inc	hl
+	dec	e
+	jr	nz,A40F1		; next errormsg
+	push	hl
+	ld	hl,(ERRLIN)
+	ex	(sp),hl
+A40FD:	call	H.ERRF
+	push	hl
+	call	TOTEXT			; screen to textmode
+	pop	hl
+	ld	a,(hl)
+	cp	'?'
+	jr	nz,A4110
+	pop	hl
+	ld	hl,T3D75
+	jr	A40EC			; ERROR 23
+;
+A4110:	ld	a,007H
+	rst	OUTDO			; beep
+	call	A6678			; print errormsg
+	pop	hl
+	ld	a,h
+	and	l
+	inc	a			; executing program ?
+	call	nz,A340A		; yep, in print linenumber
+	db	03EH
+A411E:	pop	bc
+
+A411F:	call	TOTEXT			; screen to textmode
+	call	A7304			; stop printer
+	call	A6D7B			; close I/O channel 0
+	call	H.READ
+	call	A7323			; OUTDO newline
+	ld	hl,T3FD7
+	call	A6678			; print "Ok"
+A4134:	call	H.MAIN
+	ld	hl,65535
+	ld	(CURLIN),hl		; direct mode
+	ld	hl,ENDPRG
+	ld	(SAVTXT),hl		;
+	ld	a,(AUTFLG)
+	or	a			; AUTO active ?
+	jr	z,A415F
+	ld	hl,(AUTLIN)		; AUTO linenumber
+	push	hl
+	call	A3412			; print linenumber
+	pop	de
+	push	de
+	call	A4295			; search line from start
+	ld	a,'*'
+	jr	c,A415B 		; linenumber exists, print '*'
+	ld	a,' '
+A415B:	rst	OUTDO
+	ld	(AUTFLG),a		; save exists flag
+A415F:	call	ISFLIO
+	jr	nz,A4170		; LOAD statement active,
+	call	PINLIN			; get basicline from keyboard
+	jr	nc,A4173
+	xor	a			; CTRL-STOP pressed
+	ld	(AUTFLG),a		; AUTO off
+	jp	A4134			; headloop
+;
+A4170:	call	A7374			; get basicline from device
+A4173:	rst	CHRGTR
+	inc	a
+	dec	a
+	jr	z,A4134 		; nul char, headloop
+	push	af			; Cx flag if digit
+	call	A4769			; get linenumber
+	jr	nc,A4184
+	call	ISFLIO			; LOAD active ?
+	jp	z,A4055 		; no, syntax error
+A4184:	call	A4514
+	ld	a,(AUTFLG)
+	or	a
+	jr	z,A4195 		; AUTO not active
+	cp	'*'
+	jr	nz,A4195		; not an extisting linenumber
+	cp	(hl)
+	jr	nz,A4195
+	inc	hl			; skip asterix extisting linenumber
+A4195:	ld	a,d
+	or	e
+	jr	z,A419F
+	ld	a,(hl)
+	cp	' '
+	jr	nz,A419F
+	inc	hl			; skip space
+A419F:	push	de
+	call	A42B2			; code basicline
+	pop	de
+	pop	af
+	ld	(SAVTXT),hl
+	call	H.DIRD
+	jr	c,A41B4
+	xor	a
+	ld	(AUTFLG),a		; AUTO off
+	jp	A6D48			; execute basicline
+;
+A41B4:	push	de
+	push	bc
+	rst	CHRGTR
+	or	a			; empty line ?
+	push	af
+	ld	a,(AUTFLG)
+	and	a
+	jr	z,A41C2
+	pop	af
+	scf
+	push	af
+A41C2:	ld	(DOT),de		; last line edit
+	ld	hl,(AUTINC)
+	add	hl,de
+	jr	c,A41D7 		; next AUTO linenumber illegal,
+	push	de
+	ld	de,65529+1
+	rst	DCOMPR
+	pop	de
+	ld	(AUTLIN),hl		; next AUTO linenumber
+	jr	c,A41DB
+A41D7:	xor	a
+	ld	(AUTFLG),a		; AUTO off
+A41DB:	call	A4295			; search line from start
+	jr	c,A41ED 		; exists
+	pop	af
+	push	af
+	jr	nz,A41EA		; line, insert line
+	jp	nc,A481C		; no auto, Undefined linenumber
+A41E7:	push	bc
+	jr	A4237			; no line & auto, next linenumber
+;
+A41EA:	or	a
+	jr	A41F4
+;
+A41ED:	pop	af
+	push	af
+	jr	nz,A41F3		; line, delete old line
+	jr	c,A41E7 		; no line & auto, next linenumber
+A41F3:	scf
+A41F4:	push	bc
+	push	af
+	push	hl
+	call	A54EA			; force linenumbers
+	pop	hl
+	pop	af
+	pop	bc
+	push	bc
+	call	c,A5405 		; delete, delete basicline
+	pop	de
+	pop	af
+	push	de
+	jr	z,A4237 		; empty line, do not insert
+	pop	de
+	ld	hl,0
+	ld	(ONELIN),hl
+	ld	hl,(VARTAB)
+	ex	(sp),hl
+	pop	bc
+	push	hl
+	add	hl,bc
+	push	hl
+	call	A6250			; make space
+	pop	hl
+	ld	(VARTAB),hl
+	ex	de,hl
+	ld	(hl),h
+	pop	bc
+	pop	de
+	push	hl
+	inc	hl
+	inc	hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	inc	hl
+	ld	de,KBUF
+	dec	bc
+	dec	bc
+	dec	bc
+	dec	bc
+A422E:	ld	a,(de)
+	ld	(hl),a
+	inc	hl
+	inc	de
+	dec	bc
+	ld	a,c
+	or	b
+	jr	nz,A422E		; copy line to basicmem
+A4237:	call	H.FINI
+	pop	de
+	call	A4257			; convert linenumbers to pointers
+	ld	hl,(PTRFIL)
+T4241:	ld	(TEMP2),hl
+	call	A629A			; clear varmem
+	call	H.FINE
+	ld	hl,(TEMP2)
+	ld	(PTRFIL),hl
+	jp	A4134			; headloop
+;
+A4253:	ld	hl,(TXTTAB)		; start of basicprogram
+	ex	de,hl
+A4257:	ld	h,d
+	ld	l,e
+	ld	a,(hl)
+	inc	hl
+	or	(hl)
+	ret	z			; zero pointer, end of program
+	inc	hl
+	inc	hl			; skip linenumber
+A425F:	inc	hl
+	ld	a,(hl)
+A4261:	or	a
+	jr	z,A4272 		; end of basicline
+	cp	020H
+	jr	nc,A425F		; skip basicshit
+	cp	00BH			; numbertoken ?
+	jr	c,A425F 		; no, skip
+	call	A466A			; get number
+	rst	CHRGTR			; get next char
+	jr	A4261
+;
+A4272:	inc	hl
+	ex	de,hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d			; pointer to next line
+	jr	A4257			; next line
+;
+A4279:	ld	de,0
+	push	de			; default startline is 0
+	jr	z,A4288 		; no parameters, default
+	pop	de
+	call	A475F			; get linenumber
+	push	de
+	jr	z,A4291 		; nothing follows, one line only
+	rst	SYNCHR
+	db	0F2H			; '-' must follow
+A4288:	ld	de,65530		; default endline
+	call	nz,A475F		; parameter follows, get linenumber
+	jp	nz,A4055		; not end of statement, syntax error
+A4291:	ex	de,hl
+	pop	de
+A4293:	ex	(sp),hl 		; find adres of line and quit
+	push	hl
+
+A4295:	ld	hl,(TXTTAB)		; start of program
+A4298:	ld	b,h
+	ld	c,l
+	ld	a,(hl)
+	inc	hl
+	or	(hl)
+	dec	hl
+	ret	z			; endpointer, quit with Z & NC
+	inc	hl
+	inc	hl
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a			; linenumber
+	rst	DCOMPR			; is it the requested ?
+	ld	h,b
+	ld	l,c
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a			; pointer to next line
+	ccf
+	ret	z			; yep, quit with C & Z
+	ccf
+	ret	nc			; bigger, quit with NC & NZ
+	jr	A4298
+;
+A42B2:	xor	a
+	ld	(DONUM),a
+	ld	(DORES),a
+	call	H.CRUN
+	ld	bc,315
+	ld	de,KBUF
+A42C2:	ld	a,(hl)
+	or	a
+	jr	nz,A42D9
+A42C6:	ld	hl,320
+	ld	a,l
+	sub	c
+	ld	c,a
+	ld	a,h
+	sbc	a,b
+	ld	b,a
+	ld	hl,KBFMIN
+	xor	a
+	ld	(de),a			; endmark
+	inc	de
+	ld	(de),a
+	inc	de
+	ld	(de),a			; endpointer
+	ret
+;
+A42D9:	cp	'"'
+	jp	z,A4316 		; take "..." literature
+	cp	' '
+	jr	z,A42E9
+	ld	a,(DORES)
+	or	a			; translate ?
+	ld	a,(hl)
+	jr	z,A4326 		; yep, handle
+A42E9:	inc	hl
+	push	af
+	cp	001H			; MSX char prefix ?
+	jr	nz,A42F3		; no, put in KBUF
+	ld	a,(hl)
+	and	a			; end mark ?
+	ld	a,001H			; no, put 1 in KBUF
+A42F3:	call	nz,A44E0
+	pop	af
+	sub	':'
+	jr	z,A4301
+	cp	084H-':'                ; DATA token ?
+	jr	nz,A4307		; nop
+	ld	a,001H
+A4301:	ld	(DORES),a
+	ld	(DONUM),a		; yep, set flags
+A4307:	sub	08FH-':'                ; REM token ?
+	jr	nz,A42C2		; nop
+	push	af
+A430C:	ld	a,(hl)
+	or	a
+	ex	(sp),hl
+	ld	a,h
+	pop	hl
+	jr	z,A42C6 		; endmark, quit
+	cp	(hl)
+	jr	z,A42E9
+A4316:	push	af
+	ld	a,(hl)
+A4318:	inc	hl
+	cp	001H
+	jr	nz,A4321
+	ld	a,(hl)
+	and	a
+	ld	a,001H
+A4321:	call	nz,A44E0
+	jr	A430C
+;
+A4326:	inc	hl
+	or	a
+	jp	m,A42C2 		; char >127, not in KBUF
+	cp	001H			; MSX char prefix ?
+	jr	nz,A4336		; no,
+	ld	a,(hl)
+	and	a
+	jr	z,A42C6 		; endmark, quit
+	inc	hl
+	jr	A42C2			; MSX char not in KBUF
+;
+A4336:	dec	hl
+	cp	'?'
+	ld	a,091H
+	push	de
+	push	bc
+	jp	z,A43A3 		; ? becomes PRINT token
+	ld	a,(hl)
+	cp	'_'
+	jp	z,A43A3
+	ld	de,T3D26
+	call	A4EA9			; make upcase
+	call	A64A8			; is upcase letter ?
+	jp	c,A441D 		; no,
+	push	hl
+	call	H.CRUS
+	ld	hl,T3A3E
+	sub	041H
+	add	a,a
+	ld	c,a
+	ld	b,000H
+	add	hl,bc
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; pointer to table of keywords
+	pop	hl
+	inc	hl
+A4365:	push	hl
+A4366:	call	A4EA9			; make upcase
+	ld	c,a
+	ld	a,(de)
+	and	07FH
+	jp	z,A44EB 		; end of block
+	inc	hl
+	cp	c
+	jr	nz,A4398		; not this keyword
+	ld	a,(de)
+	inc	de
+	or	a
+	jp	p,A4366 		; not end of statmentstr
+	pop	af
+	ld	a,(de)			; token
+	call	H.ISRE
+	or	a
+	jp	m,A43A2 		; proceduretoken
+	pop	bc
+	pop	de
+	or	080H
+	push	af
+	ld	a,0FFH
+	call	A44E0			; FFH (functionprefix)
+	xor	a
+	ld	(DONUM),a
+	pop	af
+	call	A44E0			; functiontoken
+	jp	A42C2
+;
+A4398:	pop	hl
+A4399:	ld	a,(de)
+	inc	de
+	or	a
+	jp	p,A4399 		; skip keyword
+	inc	de
+	jr	A4365
+;
+A43A2:	dec	hl
+A43A3:	push	af
+	call	H.NTFN
+	ld	de,T43B5
+	ld	c,a
+A43AB:	ld	a,(de)
+	or	a
+	jr	z,A43C4
+	inc	de
+	cp	c
+	jr	nz,A43AB
+	jr	A43C6
+;
+T43B5:	db	08CH
+	db	0A9H
+	db	0AAH
+	db	0A8H
+	db	0A7H
+	db	0E1H
+	db	0A1H
+	db	08AH
+	db	093H
+	db	09EH
+	db	089H
+	db	08EH
+	db	0DAH
+	db	08DH
+	db	0
+
+A43C4:	xor	a
+	db	0C2H
+A43C6:	ld	a,001H
+A43C8:	ld	(DONUM),a
+	pop	af
+A43CC:	pop	bc
+	pop	de
+	cp	0A1H
+	push	af
+	call	z,A44DE 		; ELSE token, put ':'
+	pop	af
+	cp	0CAH
+	jr	z,A43DD 		; CALL token, put
+	cp	'_'                     ; _ = short for CALL, put
+	jr	nz,A4406
+A43DD:	call	nc,A44E0
+A43E0:	inc	hl
+	call	A4EA9
+	and	a
+A43E5:	jp	z,A42C6
+	jp	m,A43E0
+	cp	001H
+	jr	nz,A43F6
+	inc	hl
+	ld	a,(hl)
+	and	a
+	jr	z,A43E5
+	jr	A43E0
+;
+A43F6:	cp	' '
+	jr	z,A43DD
+	cp	':'
+	jr	z,A443A
+	cp	'('
+	jr	z,A443A
+	cp	030H
+	jr	A43DD
+;
+A4406:	cp	0E6H			; "'" token
+	jp	nz,A44B4
+	push	af
+	call	A44DE			; ':'
+	ld	a,08FH
+	call	A44E0			; REM token
+	pop	af
+	push	hl
+	ld	hl,0
+	ex	(sp),hl
+	jp	A4318
+;
+A441D:	ld	a,(hl)
+	cp	'.'
+	jr	z,A442C
+	cp	'9'+1
+	jp	nc,A44A2
+	cp	'0'
+	jp	c,A44A2
+A442C:	ld	a,(DONUM)
+	or	a
+	ld	a,(hl)
+	pop	bc
+	pop	de
+	jp	m,A42E9
+	jr	z,A4457
+	cp	02EH
+A443A:	jp	z,A42E9
+	ld	a,00EH
+	call	A44E0			; linenumber token
+	push	de
+	call	A4769
+	call	A4514
+A4449:	ex	(sp),hl
+	ex	de,hl
+A444B:	ld	a,l
+	call	A44E0
+	ld	a,h
+A4450:	pop	hl
+	call	A44E0
+	jp	A42C2
+;
+A4457:	push	de
+	push	bc
+	ld	a,(hl)
+	call	A3299
+	call	A4514
+	pop	bc
+	pop	de
+	push	hl
+	ld	a,(VALTYP)
+	cp	002H
+	jr	nz,A447F
+	ld	hl,(DAC+2)
+	ld	a,h
+	or	a
+	ld	a,002H
+	jr	nz,A447F
+	ld	a,l
+	ld	h,l
+	ld	l,00FH
+	cp	00AH
+	jr	nc,A444B
+	add	a,011H
+	jr	A4450
+;
+A447F:	push	af
+	rrca
+	add	a,01BH
+	call	A44E0
+	ld	hl,DAC+0
+	ld	a,(VALTYP)
+	cp	002H
+	jr	nz,A4493
+	ld	hl,DAC+2
+A4493:	pop	af
+A4494:	push	af
+	ld	a,(hl)
+	call	A44E0
+	pop	af
+	inc	hl
+	dec	a
+	jr	nz,A4494
+	pop	hl
+	jp	A42C2
+;
+A44A2:	ld	de,T3D26-1
+A44A5:	inc	de
+	ld	a,(de)
+	and	07FH
+	jp	z,A44FA
+	inc	de
+	cp	(hl)
+	ld	a,(de)
+	jr	nz,A44A5
+	jp	A4509
+;
+A44B4:	cp	'&'
+	jp	nz,A42E9
+	push	hl
+	rst	CHRGTR
+	pop	hl
+	call	A4EAA			; make upcase
+	cp	'H'
+	jr	z,A44D0
+	cp	'O'
+	jr	z,A44CC
+	ld	a,'&'
+	jp	A42E9
+;
+A44CC:	ld	a,00BH
+	jr	A44D2
+;
+A44D0:	ld	a,00CH
+A44D2:	call	A44E0
+	push	de
+	push	bc
+	call	A4EB8
+	pop	bc
+	jp	A4449
+;
+A44DE:	ld	a,03AH
+A44E0:	ld	(de),a
+	inc	de
+	dec	bc
+	ld	a,c
+	or	b
+	ret	nz
+	ld	e,019H
+	jp	A406F
+;
+A44EB:	call	H.NOTR
+	pop	hl
+	dec	hl
+	dec	a
+	ld	(DONUM),a
+	call	A4EA9			; make upcase
+	jp	A43CC
+;
+A44FA:	ld	a,(hl)
+	cp	020H
+	jr	nc,A4509
+	cp	009H
+	jr	z,A4509
+	cp	00AH
+	jr	z,A4509
+	ld	a,020H
+A4509:	push	af
+	ld	a,(DONUM)
+	inc	a
+	jr	z,A4511
+	dec	a
+A4511:	jp	A43C8
+;
+A4514:	dec	hl
+	ld	a,(hl)
+	cp	020H
+	jr	z,A4514
+	cp	009H
+	jr	z,A4514
+	cp	00AH
+	jr	z,A4514
+	inc	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,064H
+	ld	(SUBFLG),a		; force normal var
+	call	A4880			; do LET for startval
+	pop	bc
+	push	hl
+	call	A485B			; find end of statement
+	ld	(ENDFOR),hl		; save
+	ld	hl,2
+	add	hl,sp
+A4538:	call	A3FE6			; search FOR block(s) with same var
+	jr	nz,A4554		; nop
+	add	hl,bc
+	push	de
+	dec	hl
+	ld	d,(hl)
+	dec	hl
+	ld	e,(hl)			; ENDFOR adres
+	inc	hl
+	inc	hl
+	push	hl
+	ld	hl,(ENDFOR)
+	rst	DCOMPR			; same as this FOR statement ?
+	pop	hl
+	pop	de
+	jr	nz,A4538		; nop, try next block
+	pop	de
+	ld	sp,hl
+	ld	(SAVSTK),hl		; remove block
+	ld	c,0D1H
+	ex	de,hl			; basicpointer
+	ld	c,00CH
+	call	A625E			; check if 12 words space left
+	push	hl
+	ld	hl,(ENDFOR)
+	ex	(sp),hl
+	push	hl
+	ld	hl,(CURLIN)
+	ex	(sp),hl 		; save ENDFOR & CURLIN
+	rst	SYNCHR
+	db	0D9H			; TO must follow
+	rst	GETYPR
+	jp	z,A406D 		; string, type mismatch
+	push	af
+	call	A4C64			; eval expression
+	pop	af
+	push	hl
+	jr	nc,A458B		; DBL
+	jp	p,A45C2 		; SNG
+	call	A2F8A			; do CINT
+	ex	(sp),hl
+	ld	de,1			; default stepval = 1
+	ld	a,(hl)
+	cp	0DCH			; STEP ?
+	call	z,A520E 		; yep get stepval
+	push	de			; save stepval
+	push	hl
+	ex	de,hl
+	call	A2EAB			; get sign
+	jr	A45E8
+;
+A458B:	call	A303A			; CDBL
+	pop	de
+	ld	hl,-8
+	add	hl,sp
+	ld	sp,hl			; 8 bytes on stack
+	push	de
+	call	A2F10			; copy DAC to stack
+	pop	hl
+	ld	a,(hl)
+	cp	0DCH			; STEP ?
+	ld	de,T2D1B		; pointer to 1.0#
+	ld	a,001H			; positive
+	jr	nz,A45B2		; nop, take default
+	rst	CHRGTR			; get basicchar
+	call	A4C64			; eval expression
+	push	hl
+	call	A303A			; CDBL
+	call	A2E71			; get sign
+	ld	de,DAC
+	pop	hl
+A45B2:	ld	b,h
+	ld	c,l
+	ld	hl,-8
+	add	hl,sp
+	ld	sp,hl
+	push	af
+	push	bc
+	call	A2EF3			; copy DAC on stack
+	pop	hl
+	pop	af
+	jr	A45EF
+;
+A45C2:	call	A2FB2			; CSNG
+	call	A2ECC			; get DAC in BCDE
+	pop	hl
+	push	bc
+	push	de			; save
+	ld	bc,01041H
+	ld	de,00000H		; 1.0!
+	call	H.SNGF
+	ld	a,(hl)
+	cp	0DCH			; STEP ?
+	ld	a,001H			; positive
+	jr	nz,A45E9		; nop, take default
+	call	A4C65			; eval expression
+	push	hl
+	call	A2FB2			; CSNG
+	call	A2ECC			; get DAC in BCDE
+	call	A2E71			; get sign
+A45E8:	pop	hl
+A45E9:	push	de
+	push	bc			; stepval
+	push	bc
+	push	bc
+	push	bc
+	push	bc			; dummy for DBL align
+A45EF:	or	a
+	jr	nz,A45F4
+	ld	a,002H
+A45F4:	ld	c,a
+	rst	GETYPR
+	ld	b,a
+	push	bc			; var type & STEP direction
+	push	hl			; adres var
+	ld	hl,(TEMP)
+	ex	(sp),hl
+A45FD:	ld	b,082H
+	push	bc
+	inc	sp			; FOR token
+
+A4601:	call	H.NEWS
+	ld	(SAVSTK),sp		; save stackpointer for errorhandling
+	call	ISCNTC			; check CTRL/STOP
+	ld	a,(ONGSBF)
+	or	a			; event pending
+	call	nz,A6389		; yep, handle
+A4612:	ei
+	ld	(SAVTXT),hl		; save basicpointer
+	ld	a,(hl)
+	cp	':'
+	jr	z,A4640 		; next statement
+	or	a
+	jp	nz,A4055		; illegal char, syntax error
+	inc	hl
+A4620:	ld	a,(hl)
+	inc	hl
+	or	(hl)			; endpointer ?
+	jp	z,A4039 		; yep, quit program
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ex	de,hl
+	ld	(CURLIN),hl		; new linenumber
+	ld	a,(TRCFLG)
+	or	a
+	jr	z,A463F 		; TRACE off
+	push	de
+	ld	a,'['
+	rst	OUTDO
+	call	A3412
+	ld	a,']'
+	rst	OUTDO			; print [linenumber]
+	pop	de
+A463F:	ex	de,hl
+A4640:	rst	CHRGTR
+	ld	de,A4601
+	push	de
+	ret	z			; end of line, next statement
+A4646:	call	H.GONE
+	cp	'_'
+	jp	z,A55A7 		; call statement
+	sub	081H
+	jp	c,A4880 		; not a statementtoken, LET
+	cp	0D9H-81H
+	jp	nc,A51AD		; not a statementtoken,
+	rlca
+	ld	c,a
+	ld	b,000H
+	ex	de,hl
+	ld	hl,T392E
+	add	hl,bc
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)			; adres of statement
+	push	bc
+	ex	de,hl
+
+A4666:	call	H.CHRG
+	inc	hl
+A466A:	ld	a,(hl)
+	cp	':'
+	ret	nc			; ':' -> Z & NC else NZ & NC
+	cp	' '
+	jr	z,A4666 		; skip spaces
+	jr	nc,A46E0		; normal char or token
+	or	a
+	ret	z			; endmark -> Z & NC
+	cp	00BH
+	jr	c,A46DB 		; no numbertoken
+	cp	01EH
+	jr	nz,A4683		; it is a numbertoken
+	ld	a,(CONSAV)
+	or	a			; token 01EH, return numbertoken
+	ret
+;
+A4683:	cp	010H
+	jr	z,A46BB
+	push	af
+	inc	hl
+	ld	(CONSAV),a		; save numbertoken
+	sub	01CH
+	jr	nc,A46C0		; normal BASIC numbertypes
+	sub	0F5H
+	jr	nc,A469A		; 1 digit numbertoken
+	cp	0FEH
+	jr	nz,A46AE		; not byte numbertoken
+	ld	a,(hl)
+	inc	hl
+A469A:	ld	(CONTXT),hl		; save basicpointer
+	ld	h,000H
+A469F:	ld	l,a
+	ld	(CONLO),hl		; save number
+	ld	a,002H
+	ld	(CONTYP),a		; INT type
+	ld	hl,T46E6
+	pop	af
+	or	a			; numbertoken, NZ & NC
+	ret
+;
+A46AE:	ld	a,(hl)
+	inc	hl
+	inc	hl
+	ld	(CONTXT),hl
+	dec	hl
+	ld	h,(hl)			; number
+	jr	A469F
+;
+A46B8:	call	A46E8
+A46BB:	ld	hl,(CONTXT)
+	jr	A466A
+;
+A46C0:	inc	a
+	rlca
+	ld	(CONTYP),a		; typecode
+	push	de
+	push	bc
+	ld	de,CONLO
+	ex	de,hl
+	ld	b,a
+	call	A2EF7			; copy number to CONLO
+	ex	de,hl
+	pop	bc
+	pop	de
+	ld	(CONTXT),hl
+	pop	af
+	ld	hl,T46E6
+	or	a
+	ret
+;
+A46DB:	cp	009H
+	jp	nc,A4666		; skip tab & lf
+A46E0:	cp	'0'
+	ccf
+	inc	a			; '0'-'9' NZ & C
+	dec	a			; others NZ & NC
+	ret
+;
+T46E6:	db	01EH
+	db	010H
+
+A46E8:	ld	a,(CONSAV)
+	cp	00FH
+	jr	nc,A4702
+	cp	00DH
+	jr	c,A4702 		; not a linenumber token
+	ld	hl,(CONLO)
+	jr	nz,A46FF		; already linenumber
+	inc	hl
+	inc	hl
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ex	de,hl			; get linenumber
+A46FF:	jp	A3236			; CSNG & put in DAC
+;
+A4702:	ld	a,(CONTYP)
+	ld	(VALTYP),a
+	cp	002H
+	jr	nz,A4712		; not INT
+	ld	hl,(CONLO)
+	ld	(DAC+2),hl		; put in DAC
+A4712:	ld	hl,CONLO
+	jp	A2F08			; copy in DAC
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	e,003H
+	db	1
+	ld	e,002H
+	db	1
+	ld	e,004H
+	db	1
+	ld	e,008H
+A4723:	call	A64A7			; check if upcase letter
+	ld	bc,A4055
+	push	bc
+	ret	c			; nop, syntax error
+	sub	'A'
+	ld	c,a
+	ld	b,a
+	rst	CHRGTR
+	cp	0F2H			; is it '-'
+	jr	nz,A473D		; nop,
+	rst	CHRGTR			; get next basicchar
+	call	A64A7			; check if upcase letter
+	ret	c			; nop, syntax error
+	sub	'A'
+	ld	b,a
+	rst	CHRGTR
+A473D:	ld	a,b
+	sub	c
+	ret	c			; start bigger as end, syntax error
+	inc	a
+	ex	(sp),hl
+	ld	hl,DEFTBL
+	ld	b,000H
+	add	hl,bc
+A4748:	ld	(hl),e
+	inc	hl
+	dec	a
+	jr	nz,A4748		; fill default type table
+	pop	hl
+	ld	a,(hl)
+	cp	','
+	ret	nz			; no more, quit
+	rst	CHRGTR			; get next basicchar
+	jr	A4723			; next
+;
+A4755:	rst	CHRGTR
+A4756:	call	A520F
+	ret	p
+A475A:	ld	e,005H
+	jp	A406F
+;
+A475F:	ld	a,(hl)
+	cp	'.'
+	ld	de,(DOT)
+	jp	z,A4666
+A4769:	dec	hl
+A476A:	rst	CHRGTR
+	cp	00EH
+	jr	z,A4771
+	cp	00DH
+A4771:	ld	de,(CONLO)
+	jp	z,A4666
+	xor	a
+	ld	(CONSAV),a
+	ld	de,0
+	dec	hl
+A4780:	rst	CHRGTR
+	ret	nc
+	push	hl
+	push	af
+	ld	hl,(65530/10)-1
+	rst	DCOMPR
+	jr	c,A479B
+	ld	h,d
+	ld	l,e
+	add	hl,de
+	add	hl,hl
+	add	hl,de
+	add	hl,hl
+	pop	af
+	sub	030H
+	ld	e,a
+	ld	d,000H
+	add	hl,de
+	ex	de,hl
+	pop	hl
+	jr	A4780
+;
+A479B:	pop	af
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jp	z,A629A 		; no linenumber, start program
+	cp	00EH
+	jr	z,A47AA 		; linenumber,
+	cp	00DH
+	jp	nz,A6B5B		; no linepointer, RUN"file"
+A47AA:	call	A62A1			; run clear
+	ld	bc,A4601		; executionloop
+	jr	A47E7			; GOTO linenumber
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	c,003H
+	call	A625E			; check if 3 words space left
+	call	A4769			; get linenumber
+	pop	bc
+	push	hl			; save basicpointer
+	push	hl
+	ld	hl,(CURLIN)
+	ex	(sp),hl 		; save linenumber
+	ld	bc,0
+	push	bc			; no event
+	ld	bc,A4601
+	ld	a,08DH
+	push	af
+	inc	sp			; GOSUB token
+	push	bc
+	jr	A47EB			; GOTO linenumber
+;
+A47CF:	push	hl
+	push	hl
+	ld	hl,(CURLIN)
+	ex	(sp),hl
+	push	bc
+	ld	a,08DH
+	push	af
+	inc	sp
+	ex	de,hl
+	dec	hl
+	ld	(SAVTXT),hl
+	inc	hl
+	ld	(SAVSTK),sp
+	jp	A4620
+;
+A47E7:	push	bc
+A47E8:	call	A4769			; get linenumber
+A47EB:	ld	a,(CONSAV)
+	cp	00DH
+	ex	de,hl
+	ret	z			; linepointer, cont at pointer
+	cp	00EH
+	jp	nz,A4055		; no linenumber, syntax error
+	ex	de,hl
+	push	hl
+	ld	hl,(CONTXT)
+	ex	(sp),hl 		; save CONTXT
+	call	A485D			; skip bullshit after GOTO
+	inc	hl
+	push	hl
+	ld	hl,(CURLIN)
+	rst	DCOMPR			; jump back or forth ?
+	pop	hl
+	call	c,A4298 		; forth, search line from here
+	call	nc,A4295		; back, search line from start
+	jr	nc,A481C		; linenumber not found,
+	dec	bc			; at endmark
+	ld	a,00DH
+	ld	(PTRFLG),a		; linenumber converted
+	pop	hl
+	call	A5583
+	ld	h,b
+	ld	l,c
+	ret
+;
+A481C:	ld	e,008H
+	jp	A406F
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.RETU
+	ld	(TEMP),hl		; save basicpointer
+	ld	d,0FFH
+	call	A3FE2			; find parameterblock not from FOR
+	cp	08DH
+	jr	z,A4831 		; GOSUB block, ok
+	dec	hl
+A4831:	ld	sp,hl
+	ld	(SAVSTK),hl		; reinit stack
+	ld	e,003H
+	jp	nz,A406F		; Return without GOSUB
+	pop	hl
+	ld	a,h
+	or	l			; interrupt GOSUB ?
+	jr	z,A4845 		; no, normal
+	ld	a,(hl)
+	and	001H			; event still ON
+	call	nz,A633E		; yes, restore from STOP status
+A4845:	pop	bc
+	ld	hl,A4601
+	ex	(sp),hl 		; executionloop
+	ex	de,hl
+	ld	hl,(TEMP)
+	dec	hl
+	rst	CHRGTR
+	jp	nz,A47E8		; parameter follows, do GOTO
+	ld	h,b
+	ld	l,c
+	ld	(CURLIN),hl		; return linenumber
+	ex	de,hl			; basicpointer after GOSUB
+	ld	a,0E1H
+A485B:	db	1
+	db	03AH			; ld bc,0003AH
+A485D:	ld	c,000H
+	ld	b,000H
+A4861:	ld	a,c
+	ld	c,b
+	ld	b,a
+A4864:	dec	hl
+A4865:	rst	CHRGTR
+	or	a
+	ret	z			; endmark, quit
+	cp	b
+	ret	z			; char found, quit
+	inc	hl
+	cp	'"'
+	jr	z,A4861
+	inc	a
+	jr	z,A4865 		; skip function token
+	sub	08CH
+	jr	nz,A4864		; not GOSUB
+	cp	b
+	adc	a,d
+	ld	d,a			; d = d + 1 if B<>0
+	jr	A4864
+;
+; >> NO EXECUTION PATH TO HERE <<
+T487B:	pop	af
+	add	a,003H
+	jr	A4892
+;
+A4880:	call	A5EA4			; find var
+	rst	SYNCHR
+	db	0EFH			; '=' must follow
+	ld	(TEMP),de
+	push	de			; save adres var
+	ld	a,(VALTYP)
+	push	af
+	call	A4C64			; eval expression
+	pop	af
+A4892:	ex	(sp),hl
+A4893:	ld	b,a
+	ld	a,(VALTYP)
+	cp	b
+	ld	a,b
+	jr	z,A48A1 		; operand & var same type,
+	call	A517A			; convert to
+A489E:	ld	a,(VALTYP)
+A48A1:	ld	de,DAC+0
+	cp	002H
+	jr	nz,A48AB
+	ld	de,DAC+2
+A48AB:	push	hl
+	cp	003H
+	jr	nz,A48DE
+	ld	hl,(DAC+2)
+	push	hl
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; adres string
+	ld	hl,KBFMIN
+	rst	DCOMPR
+	jr	c,A48D2 		; string in KBUF, copy string
+	ld	hl,(STREND)
+	rst	DCOMPR
+	pop	de
+	jr	nc,A48DA		; string in var or program, no copy
+	ld	hl,TEMPST+30-1
+	rst	DCOMPR
+	jr	c,A48D1 		; no temp descriptor, copy string
+	ld	hl,TEMPST-1
+	rst	DCOMPR
+	jr	c,A48DA 		; temp descriptor, do not copy string
+A48D1:	db	03EH
+A48D2:	pop	de
+	call	A67EE			; dispose temp descriptor
+	ex	de,hl
+	call	A6611			; copy string to stringarea
+A48DA:	call	A67EE			; dispose temp descriptor
+	ex	(sp),hl 		; adres var
+A48DE:	call	A2EF3			; copy to var
+	pop	de
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	cp	0A6H
+	jr	nz,A490D		; not ON ERROR,
+	rst	CHRGTR			; skip ERROR
+	rst	SYNCHR
+	db	089H			; must be GOTO
+	call	A4769			; get linenumber
+	ld	a,d
+	or	e
+	jr	z,A48FB 		; 0, undefine
+	call	A4293			; search line from start, save HL
+	ld	d,b
+	ld	e,c
+	pop	hl
+	jp	nc,A481C		; not there, undefined linenumber
+A48FB:	ld	(ONELIN),de
+	ret	c			; define, quit
+	ld	a,(ONEFLG)
+	or	a
+	ld	a,e
+	ret	z			; no error pending, quit
+	ld	a,(ERRFLG)
+	ld	e,a
+	jp	A4096			; do pending error
+;
+A490D:	call	A7810			; check if device
+	jr	c,A4943 		; nop, ON exp GOTO/GOSUB
+	push	bc
+	rst	CHRGTR			; skip device token
+	rst	SYNCHR
+	db	08DH			; GOSUB must follow
+	xor	a
+A4917:	pop	bc
+	push	bc
+	cp	c
+	jp	nc,A4055
+	push	af
+	call	A4769
+	ld	a,d
+	or	e
+	jr	z,A492E
+	call	A4293			; save line from start, save HL
+	ld	d,b
+	ld	e,c
+	pop	hl
+	jp	nc,A481C
+A492E:	pop	af
+	pop	bc
+	push	af
+	add	a,b
+	push	bc
+	call	A785C
+	dec	hl
+	rst	CHRGTR
+	pop	bc
+	pop	de
+	ret	z
+	push	bc
+	push	de
+	rst	SYNCHR
+	db	','
+	pop	af
+	inc	a
+	jr	A4917
+;
+A4943:	call	A521C
+	ld	a,(hl)
+	ld	b,a
+	cp	08DH
+	jr	z,A494F
+	rst	SYNCHR
+	db	089H
+	dec	hl
+A494F:	ld	c,e
+A4950:	dec	c
+	ld	a,b
+	jp	z,A4646
+	call	A476A
+	cp	02CH
+	ret	nz
+	jr	A4950
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(ONEFLG)
+	or	a
+	jr	nz,A496C
+	ld	(ONELIN+0),a
+	ld	(ONELIN+1),a
+	jp	A4064
+;
+A496C:	inc	a
+	ld	(ERRFLG),a
+	ld	a,(hl)
+	cp	083H
+	jr	z,A4985
+	call	A4769
+	ret	nz
+	ld	a,d
+	or	e
+	jr	z,A4989
+	call	A47EB
+	xor	a
+	ld	(ONEFLG),a
+	ret
+;
+A4985:	rst	CHRGTR
+	ret	nz
+	jr	A498E
+;
+A4989:	xor	a
+	ld	(ONEFLG),a
+	inc	a
+A498E:	ld	hl,(ERRTXT)
+	ex	de,hl
+	ld	hl,(ERRLIN)
+	ld	(CURLIN),hl
+	ex	de,hl
+	ret	nz
+	ld	a,(hl)
+	or	a
+	jr	nz,A49A2
+	inc	hl
+	inc	hl
+	inc	hl
+	inc	hl
+A49A2:	inc	hl
+	xor	a
+	ld	(ONEFLG),a
+	jp	A485B
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A521C
+	ret	nz
+	or	a
+	jp	z,A475A
+	jp	A406F
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	de,10
+	push	de
+	jr	z,A49D1
+	call	A475F
+	ex	de,hl
+	ex	(sp),hl
+	jr	z,A49D2
+	ex	de,hl
+	rst	SYNCHR
+	db	','
+	ld	de,(AUTINC)
+	jr	z,A49D1
+	call	A4769
+	jp	nz,A4055
+A49D1:	ex	de,hl
+A49D2:	ld	a,h
+	or	l
+	jp	z,A475A
+	ld	(AUTINC),hl
+	ld	(AUTFLG),a
+	pop	hl
+	ld	(AUTLIN),hl
+	pop	bc
+	jp	A4134
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A4C64			; eval expression
+	ld	a,(hl)
+	cp	02CH
+	call	z,A4666
+	cp	089H
+	jr	z,A49F5
+	rst	SYNCHR
+	db	0DAH
+	dec	hl
+	push	hl
+	call	A2EA1
+	pop	hl
+	jr	z,A4A0C
+A49FC:	rst	CHRGTR
+	ret	z
+	cp	00EH
+	jp	z,A47E8
+	cp	00DH
+	jp	nz,A4646
+	ld	hl,(CONLO)
+	ret
+;
+A4A0C:	ld	d,001H
+A4A0E:	call	A485B
+	or	a
+	ret	z
+	rst	CHRGTR
+	cp	0A1H
+	jr	nz,A4A0E
+	dec	d
+	jr	nz,A4A0E
+	jr	A49FC
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,001H
+	ld	(PRTFLG),a
+	jr	A4A29
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	c,002H
+	call	A6D57
+A4A29:	dec	hl
+	rst	CHRGTR			; end of statement ?
+	call	z,A7328 		; yep, OUTDO next line
+A4A2E:	jp	z,A4AFF 		; yep, output back to screen
+	cp	0E4H
+	jp	z,A60B1
+	cp	0DBH
+	jp	z,A4AC6
+	cp	0DFH
+	jp	z,A4AC6
+	push	hl
+	cp	02CH
+	jr	z,A4A94
+	cp	03BH
+	jp	z,A4AFA
+	pop	bc
+	call	A4C64			; eval expression
+	push	hl
+	rst	GETYPR
+	jr	z,A4A8D
+	call	A3425
+	call	A6635
+	ld	(hl),020H
+	ld	hl,(DAC+2)
+	inc	(hl)
+	call	H.PRTF
+	call	ISFLIO
+	jr	nz,A4A89
+	ld	hl,(DAC+2)
+	ld	a,(PRTFLG)
+	or	a
+	jr	z,A4A77
+	ld	a,(LPTPOS)
+	add	a,(hl)
+	cp	0FFH
+	jr	A4A81
+;
+A4A77:	ld	a,(LINLEN)
+	ld	b,a
+	ld	a,(TTYPOS)
+	add	a,(hl)
+	dec	a
+	cp	b
+A4A81:	jr	c,A4A89
+	call	z,A7331
+	call	nz,A7328		; ?, OUTDO next line
+A4A89:	call	A667B
+	or	a
+A4A8D:	call	z,A667B
+	pop	hl
+	jp	A4A29
+;
+A4A94:	call	H.COMP
+	ld	bc,8
+	ld	hl,(PTRFIL)
+	add	hl,bc
+	call	ISFLIO
+	ld	a,(hl)
+	jr	nz,A4ABF
+	ld	a,(PRTFLG)
+	or	a
+	jr	z,A4AB1
+	ld	a,(LPTPOS)
+	cp	0EEH
+	jr	A4AB9
+;
+A4AB1:	ld	a,(CLMLST)
+	ld	b,a
+	ld	a,(TTYPOS)
+	cp	b
+A4AB9:	call	nc,A7328		; ?, OUTDO next line
+	jp	nc,A4AFA
+A4ABF:	sub	00EH
+	jr	nc,A4ABF
+	cpl
+	jr	A4AF3
+;
+A4AC6:	push	af
+	call	A521B
+	rst	SYNCHR
+	db	'('
+	dec	hl
+	pop	af
+	sub	0DFH
+	push	hl
+	jr	z,A4AEF
+	ld	bc,8
+	ld	hl,(PTRFIL)
+	add	hl,bc
+	call	ISFLIO
+	ld	a,(hl)
+	jr	nz,A4AEF
+	ld	a,(PRTFLG)
+	or	a
+	jp	z,A4AEC
+	ld	a,(LPTPOS)
+	jr	A4AEF
+;
+A4AEC:	ld	a,(TTYPOS)
+A4AEF:	cpl
+	add	a,e
+	jr	nc,A4AFA
+A4AF3:	inc	a
+	ld	b,a
+	ld	a,020H
+A4AF7:	rst	OUTDO
+	djnz	A4AF7
+A4AFA:	pop	hl
+	rst	CHRGTR
+	jp	A4A2E
+;
+A4AFF:	call	H.FINP
+	xor	a
+	ld	(PRTFLG),a
+	push	hl
+	ld	h,a
+	ld	l,a
+	ld	(PTRFIL),hl
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	cp	085H
+	jp	nz,A58A7
+	rst	SYNCHR
+	db	085H
+	cp	023H
+	jp	z,A6D8F
+	call	A4B7B
+	call	A5EA4
+	call	A3058
+	push	de
+	push	hl
+	call	INLIN
+	pop	de
+	pop	bc
+	jp	c,A63FE
+	push	bc
+	push	de
+	ld	b,000H
+	call	A6638
+	pop	hl
+	ld	a,003H
+	jp	A4892
+;
+T4B3A:	db	"?Redo from start",13,10,0
+
+A4B4D:	call	H.TRMN
+	ld	a,(FLGINP)
+	or	a
+	jp	nz,A404F
+	pop	bc
+	ld	hl,T4B3A
+	call	A6678
+	ld	hl,(SAVTXT)
+	ret
+;
+A4B62:	call	A6D55
+	push	hl
+	ld	hl,BUFMIN
+	jp	A4B9B
+;
+; >> NO EXECUTION PATH TO HERE <<
+	cp	023H
+	jr	z,A4B62
+	push	hl
+	push	af
+	call	TOTEXT
+	pop	af
+	pop	hl
+	ld	bc,T4B8B
+	push	bc
+A4B7B:	cp	022H
+	ld	a,000H
+	ret	nz
+	call	A6636
+	rst	SYNCHR
+	db	';'
+	push	hl
+	call	A667B
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+T4B8B:	push	hl
+	call	QINLIN
+	pop	bc
+	jp	c,A63FE
+	inc	hl
+	ld	a,(hl)
+	or	a
+	dec	hl
+	push	bc
+	jp	z,A485A
+A4B9B:	ld	(hl),02CH
+	jr	A4BA4
+;
+; >> NO EXECUTION PATH TO HERE <<
+	push	hl
+	ld	hl,(DATPTR)
+	or	0AFH
+	ld	(FLGINP),a
+	ex	(sp),hl
+	db	001H
+	rst	SYNCHR
+	db	','
+	call	A5EA4
+	ex	(sp),hl
+	push	de
+	ld	a,(hl)
+	cp	02CH
+	jr	z,A4BD1
+	ld	a,(FLGINP)
+	or	a
+	jp	nz,A4C40
+	ld	a,03FH
+	rst	OUTDO
+	call	QINLIN
+	pop	de
+	pop	bc
+	jp	c,A63FE
+	inc	hl
+	ld	a,(hl)
+	dec	hl
+	or	a
+	push	bc
+	jp	z,A485A
+	push	de
+A4BD1:	call	ISFLIO
+	jp	nz,A6D83
+	rst	GETYPR
+	push	af
+	jr	nz,A4BFD
+	rst	CHRGTR
+	ld	d,a
+	ld	b,a
+	cp	022H
+	jr	z,A4BEE
+	ld	a,(FLGINP)
+	or	a
+	ld	d,a
+	jr	z,A4BEB
+	ld	d,03AH
+A4BEB:	ld	b,02CH
+	dec	hl
+A4BEE:	call	A6639
+T4BF1:	pop	af
+	add	a,003H
+	ex	de,hl
+	ld	hl,T4C05
+	ex	(sp),hl
+	push	de
+	jp	A4893
+;
+A4BFD:	rst	CHRGTR
+	ld	bc,T4BF1
+	push	bc
+	jp	A3299
+;
+; >> NO EXECUTION PATH TO HERE <<
+T4C05:	dec	hl
+	rst	CHRGTR
+	jr	z,A4C0E
+	cp	02CH
+	jp	nz,A4B4D
+A4C0E:	ex	(sp),hl
+	dec	hl
+	rst	CHRGTR
+	jp	nz,A4BAA
+	pop	de
+	ld	a,(FLGINP)
+	or	a
+	ex	de,hl
+	jp	nz,A63DE
+	push	de
+	call	ISFLIO
+	jr	nz,A4C2B
+	ld	a,(hl)
+	or	a
+	ld	hl,T4C2F
+	call	nz,A6678
+A4C2B:	pop	hl
+	jp	A4AFF			; output back to screen
+;
+T4C2F:	db	"?Extra ignored",13,10,0
+
+A4C40:	call	A485B
+	or	a
+	jr	nz,A4C57
+	inc	hl
+	ld	a,(hl)
+	inc	hl
+	or	(hl)
+	ld	e,004H
+	jp	z,A406F
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ld	(DATLIN),de
+A4C57:	rst	CHRGTR
+	cp	084H
+	jr	nz,A4C40
+	jp	A4BD1
+;
+A4C5F:	rst	SYNCHR
+	db	0EFH
+	db	1
+	rst	SYNCHR
+	db	'('
+A4C64:	dec	hl
+A4C65:	ld	d,000H			; nivo = 0
+A4C67:	push	de
+	ld	c,001H
+	call	A625E			; check if 1 word space left
+	call	H.FRME
+	call	A4DC7			; eval factor
+T4C73:	ld	(TEMP2),hl
+A4C76:	ld	hl,(TEMP2)
+	pop	bc
+	ld	a,(hl)
+	ld	(TEMP3),hl
+	cp	0EEH
+	ret	c			; not a arthimeric operation
+	cp	0F1H
+	jr	c,A4CE4 		; compare operator (>, =, <)
+	sub	0F1H
+	ld	e,a
+	jr	nz,A4C93
+	ld	a,(VALTYP)
+	cp	003H
+	ld	a,e
+	jp	z,A6787 		; do + operation for strings
+A4C93:	cp	00CH
+	ret	nc			; not a arthimetic operation
+	ld	hl,T3D3B
+	ld	d,000H
+	add	hl,de
+	ld	a,b
+	ld	d,(hl)
+	cp	d			; APPLY this operation ?
+	ret	nc			; yes, APPLY
+	push	bc
+	ld	bc,A4C76
+	push	bc			;
+	ld	a,d
+	call	H.NTPL
+	cp	051H
+	jr	c,A4CFD 		; logical operation
+	and	0FEH
+	cp	07AH
+	jr	z,A4CFD 		; MOD or \
+A4CB3:	ld	hl,DAC+2
+	ld	a,(VALTYP)
+	sub	003H
+	jp	z,A406D 		; Type mismatch
+	or	a
+	ld	hl,(DAC+2)
+	push	hl
+	jp	m,A4CD5 		; INT
+	ld	hl,(DAC+0)
+	push	hl
+	jp	po,A4CD5		; SNG
+	ld	hl,(DAC+6)
+	push	hl
+	ld	hl,(DAC+4)
+	push	hl
+A4CD5:	add	a,003H
+	ld	c,e
+	ld	b,a
+	push	bc
+	ld	bc,A4D22
+A4CDD:	push	bc			; APPLY
+	ld	hl,(TEMP3)
+	jp	A4C67
+;
+A4CE4:	ld	d,000H
+A4CE6:	sub	0EEH
+	jr	c,A4D08
+	cp	003H
+	jr	nc,A4D08
+	cp	001H
+	rla
+	xor	d
+	cp	d
+	ld	d,a
+	jp	c,A4055
+	ld	(TEMP3),hl
+	rst	CHRGTR
+	jr	A4CE6
+;
+A4CFD:	push	de
+	call	A2F8A			; CINT
+	pop	de
+	push	hl
+	ld	bc,T4F78
+	jr	A4CDD
+;
+A4D08:	ld	a,b
+	cp	064H
+	ret	nc
+	push	bc
+	push	de
+	ld	de,T6405
+	ld	hl,T4F57
+	push	hl
+	rst	GETYPR
+	jp	nz,A4CB3
+	ld	hl,(DAC+2)
+	push	hl
+	ld	bc,T65C8
+	jr	A4CDD
+;
+A4D22:	pop	bc
+	ld	a,c
+	ld	(DORES),a
+	ld	a,(VALTYP)
+	cp	b
+	jr	nz,A4D38		; factors not of the same type
+	cp	002H
+	jr	z,A4D50 		; INT
+	cp	004H
+	jp	z,A4D9D 		; SNG
+	jr	nc,A4D63		; DBL
+A4D38:	ld	d,a
+	ld	a,b
+	cp	008H
+	jr	z,A4D60 		; first is DBL
+	ld	a,d
+	cp	008H
+	jr	z,A4D87 		; second is DBL
+	ld	a,b
+	cp	004H
+	jr	z,A4D9A 		; first is SNG
+	ld	a,d
+	cp	003H
+	jp	z,A406D 		; second is STR, type mismatch
+	jr	nc,A4DA4		; second is DBL or SNG
+A4D50:	ld	hl,T3D69		; INT operation table
+	ld	b,000H
+	add	hl,bc
+	add	hl,bc
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	pop	de			; first factor
+	ld	hl,(DAC+2)		; second factor
+	push	bc
+	ret
+;
+A4D60:	call	A303A			; CDBL second factor
+A4D63:	call	A2F0D			; copy DAC to ARG
+	pop	hl
+	ld	(DAC+4),hl
+	pop	hl
+	ld	(DAC+6),hl
+A4D6E:	pop	bc
+	pop	de
+	call	A2EC1			; put BCDE in DAC
+A4D73:	call	A303A			; CDBL factor
+	ld	hl,T3D51		; DBL operation table
+A4D79:	ld	a,(DORES)
+	rlca
+	add	a,l
+	ld	l,a
+	adc	a,h
+	sub	l
+	ld	h,a
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	jp	(hl)
+;
+A4D87:	ld	a,b
+	push	af
+	call	A2F0D			; copy DAC to ARG
+	pop	af
+	ld	(VALTYP),a
+	cp	004H
+	jr	z,A4D6E 		; SNG
+	pop	hl
+	ld	(DAC+2),hl
+	jr	A4D73
+;
+A4D9A:	call	A2FB2			; CSNG
+A4D9D:	pop	bc
+	pop	de
+A4D9F:	ld	hl,T3D5D		; SNG operation table
+	jr	A4D79
+;
+A4DA4:	pop	hl
+	call	A2EB1			; push DAC (sng)
+	call	A2FCB			; ?CSNG
+	call	A2ECC			; get DAC in BCDE
+	pop	hl
+	ld	(DAC+0),hl
+	pop	hl
+	ld	(DAC+2),hl
+	jr	A4D9F
+;
+; >> NO EXECUTION PATH TO HERE <<
+	push	hl
+	ex	de,hl
+	call	A2FCB
+	pop	hl
+	call	A2EB1			; push DAC (sng)
+	call	A2FCB
+	jp	A3265
+;
+A4DC7:	rst	CHRGTR
+	jp	z,A406A 		; end, Missing operand
+	jp	c,A3299 		; digit, translate in DAC
+	call	A64A8			; check if upcase char
+	jp	nc,A4E9B		; yep, get value of var
+	cp	020H
+	jp	c,A46B8 		; number token, copy to DAC
+	call	H.EVAL
+	inc	a
+	jp	z,A4EFC 		; handle functions
+	dec	a
+	cp	0F1H
+	jr	z,A4DC7 		; skip + (monadic)
+	cp	0F2H
+	jp	z,A4E8D
+	cp	022H
+	jp	z,A6636
+	cp	0E0H
+	jp	z,A4F63
+	cp	026H
+	jp	z,A4EB8
+	cp	0E2H
+	jr	nz,A4E07
+	rst	CHRGTR
+	ld	a,(ERRFLG)
+	push	hl
+	call	A4FCF
+	pop	hl
+	ret
+;
+A4E07:	cp	0E1H
+	jr	nz,A4E15
+	rst	CHRGTR
+	push	hl
+	ld	hl,(ERRLIN)
+	call	A3236
+	pop	hl
+	ret
+;
+A4E15:	cp	0EDH
+	jp	z,A5803
+	cp	0CBH
+	jp	z,A7900
+	cp	0C7H
+	jp	z,A7A84
+	cp	0C8H
+	jp	z,A7B47
+	cp	0C9H
+	jp	z,A7BCB
+	cp	0C1H
+	jp	z,A791B
+	cp	0EAH
+	jp	z,A7C3E
+	cp	0E9H
+	jp	z,A7C43
+	cp	0E7H
+	jr	nz,A4E64
+	rst	CHRGTR
+	rst	SYNCHR
+	db	' '
+	cp	023H
+	jr	nz,A4E53
+	call	A521B
+	push	hl
+	call	A6A6D			; get I/O channel pointer
+	ex	de,hl
+	pop	hl
+	jr	A4E56
+;
+A4E53:	call	A5F5D
+A4E56:	rst	SYNCHR
+	db	')'
+	push	hl
+	ex	de,hl
+	ld	a,h
+	or	l
+	jp	z,A475A
+	call	A2F99
+	pop	hl
+	ret
+;
+A4E64:	cp	0DDH
+	jp	z,A4FD5
+	cp	0E5H
+	jp	z,A68EB
+	cp	0ECH
+	jp	z,A7347
+	cp	0E3H
+	jp	z,A6829
+	cp	085H
+	jp	z,A6C87
+	cp	0E8H
+	jp	z,A790A
+	cp	0DEH
+	jp	z,A5040
+A4E87:	call	A4C62
+	rst	SYNCHR
+	db	')'
+	ret
+;
+A4E8D:	ld	d,07DH
+	call	A4C67
+	ld	hl,(TEMP2)
+	push	hl
+	call	A2E86
+T4E99:	pop	hl
+	ret
+;
+A4E9B:	call	A5EA4
+	push	hl
+	ex	de,hl
+	ld	(DAC+2),hl
+	rst	GETYPR
+	call	nz,A2F08
+	pop	hl
+	ret
+;
+A4EA9:	ld	a,(hl)
+A4EAA:	cp	061H
+	ret	c
+	cp	07BH
+	ret	nc
+	and	05FH
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	cp	026H
+	jp	nz,A4769
+A4EB8:	ld	de,0
+	rst	CHRGTR
+	call	A4EAA
+	ld	bc,00102H
+	cp	042H
+	jr	z,A4ED5
+	ld	bc,00308H
+	cp	04FH
+	jr	z,A4ED5
+	ld	bc,00410H
+	cp	048H
+	jp	nz,A4055
+A4ED5:	inc	hl
+	ld	a,(hl)
+	ex	de,hl
+	call	A4EAA
+	cp	03AH
+	jr	c,A4EE5
+	cp	041H
+	jr	c,A4EF7
+	sub	007H
+A4EE5:	sub	030H
+	cp	c
+	jr	nc,A4EF7
+	push	bc
+A4EEB:	add	hl,hl
+	jp	c,A4067
+	djnz	A4EEB
+	pop	bc
+	or	l
+	ld	l,a
+	ex	de,hl
+	jr	A4ED5
+;
+A4EF7:	call	A2F99
+	ex	de,hl
+	ret
+;
+A4EFC:	inc	hl
+	ld	a,(hl)
+	sub	081H
+	ld	b,000H
+	rlca
+	ld	c,a
+	push	bc
+	rst	CHRGTR
+	ld	a,c
+	cp	005H
+	jr	nc,A4F21
+	call	A4C62
+	rst	SYNCHR
+	db	','
+	call	A3058
+	ex	de,hl
+	ld	hl,(DAC+2)
+	ex	(sp),hl
+	push	hl
+	ex	de,hl
+	call	A521C
+	ex	de,hl
+	ex	(sp),hl
+	jr	A4F3B
+;
+A4F21:	call	A4E87
+	ex	(sp),hl
+	ld	a,l
+	cp	00CH
+	jr	c,A4F37
+	cp	01BH
+	call	H.OKNO
+	jr	nc,A4F37
+	rst	GETYPR
+	push	hl
+	call	c,A303A
+	pop	hl
+A4F37:	ld	de,T4E99
+	push	de
+A4F3B:	ld	bc,T39DE
+	call	H.FING
+A4F41:	add	hl,bc
+	ld	c,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,c
+	jp	(hl)
+;
+A4F47:	dec	d
+	cp	0F2H
+	ret	z
+	cp	'-'
+	ret	z
+	inc	d
+	cp	'+'
+	ret	z
+	cp	0F1H
+	ret	z
+	dec	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+T4F57:	inc	a
+	adc	a,a
+	pop	bc
+	and	b
+	add	a,0FFH
+	sbc	a,a
+	call	A2E9A
+	jr	A4F75
+;
+A4F63:	ld	d,05AH
+	call	A4C67
+	call	A2F8A
+	ld	a,l
+	cpl
+	ld	l,a
+	ld	a,h
+	cpl
+	ld	h,a
+	ld	(DAC+2),hl
+	pop	bc
+A4F75:	jp	A4C76
+;
+T4F78:	ld	a,b
+	push	af
+	call	A2F8A			; CINT
+	pop	af
+	pop	de
+	cp	07AH
+	jp	z,A323A 		; MOD, do it
+	cp	07BH
+	jp	z,A31E6 		; \, do it
+	ld	bc,T4FD1
+	push	bc
+	cp	046H			; OR ?
+	jr	nz,A4F97		; nop, other
+	ld	a,e
+	or	l
+	ld	l,a
+	ld	a,h
+	or	d
+	ret
+;
+A4F97:	cp	050H			; AND ?
+	jr	nz,A4FA1		; nop, other
+	ld	a,e
+	and	l
+	ld	l,a
+	ld	a,h
+	and	d
+	ret
+;
+A4FA1:	cp	03CH			; XOR ?
+	jr	nz,A4FAB		; nop, other
+	ld	a,e
+	xor	l
+	ld	l,a
+	ld	a,h
+	xor	d
+	ret
+;
+A4FAB:	cp	032H			; EQV ?
+	jr	nz,A4FB7		; nop, other
+	ld	a,e
+	xor	l
+	cpl
+	ld	l,a
+	ld	a,h
+	xor	d
+	cpl
+	ret
+;
+A4FB7:	ld	a,l
+	cpl
+	and	e
+	cpl
+	ld	l,a
+	ld	a,h
+	cpl
+	and	d
+	cpl
+	ret
+;
+A4FC1:	or	a
+	sbc	hl,de
+	jp	A3236
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(LPTPOS)
+	jr	A4FCF
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(TTYPOS)
+A4FCF:	ld	l,a
+	xor	a
+T4FD1:	ld	h,a
+	jp	A2F99
+;
+A4FD5:	call	A4FF4			; get pointer in USRTAB
+	push	de
+	call	A4E87			; eval expression between brackets
+	ex	(sp),hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; adres usrroutine
+	ld	hl,A3297
+	push	hl			; return routine
+	push	de			; userroutine
+	ld	a,(VALTYP)
+	push	af
+	cp	003H			; string parameter ?
+	call	z,A67D3 		; yep, free string if temp
+	pop	af
+	ex	de,hl
+	ld	hl,DAC
+	ret
+;
+A4FF4:	rst	CHRGTR
+	ld	bc,0
+	cp	01BH
+	jr	nc,A5007		; not a digit
+	cp	011H
+	jr	c,A5007 		; not a digit
+	rst	CHRGTR			; get digit
+	ld	a,(CONLO)
+	or	a
+	rla
+	ld	c,a
+A5007:	ex	de,hl
+	ld	hl,USRTAB
+	add	hl,bc
+	ex	de,hl
+	ret
+;
+A500E:	call	A4FF4
+	push	de
+	rst	SYNCHR
+	db	0EFH
+	call	A542F
+	ex	(sp),hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	cp	0DDH
+	jr	z,A500E 		; USR, DEFUSR
+	call	A51A1			; localize define var
+	call	A5193			; check if executing program
+	ex	de,hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d			; var points to FN function
+	ex	de,hl
+	ld	a,(hl)
+	cp	'('
+	jp	nz,A485B		; no parameters, skip function & quit
+	rst	CHRGTR
+A5033:	call	A5EA4			; localize parametervar
+	ld	a,(hl)
+	cp	')'
+	jp	z,A485B 		; no more, skip function & quit
+	rst	SYNCHR
+	db	','
+	jr	A5033			; next parameter
+;
+A5040:	call	A51A1			; localize definevar
+	ld	a,(VALTYP)
+	or	a
+	push	af
+	ld	(TEMP2),hl		; save basicpointer
+	ex	de,hl
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	ld	a,h
+	or	l			; pointer to function
+	jp	z,A4061 		; nop, Undefined user function
+	ld	a,(hl)
+	cp	'('
+	jp	nz,A50F4		; no parameters
+	rst	CHRGTR
+	ld	(TEMP3),hl		; save basicpointer
+	ex	de,hl
+	ld	hl,(TEMP2)		; basicpointer at execution
+	rst	SYNCHR
+	db	'('                     ; '(' must follow
+	xor	a
+	push	af
+	push	hl
+	ex	de,hl
+A5069:	ld	a,080H
+	ld	(SUBFLG),a		; FN var search
+	call	A5EA4			; localize definition var
+	ex	de,hl
+	ex	(sp),hl 		; save adres var
+	ld	a,(VALTYP)
+	push	af
+	push	de
+	call	A4C64			; eval expression
+	ld	(TEMP2),hl
+	pop	hl
+	ld	(TEMP3),hl
+	pop	af
+	call	A517A			; convert to
+	ld	c,004H
+	call	A625E			; check if 4 words space left
+	ld	hl,-8
+	add	hl,sp
+	ld	sp,hl
+	call	A2F10			; parameter on stack
+	ld	a,(VALTYP)
+	push	af			; type on stack
+	ld	hl,(TEMP2)
+	ld	a,(hl)
+	cp	')'
+	jr	z,A50AD 		; end of parameters
+	rst	SYNCHR
+	db	','                     ; ',' must follow
+	push	hl
+	ld	hl,(TEMP3)
+	rst	SYNCHR
+	db	','                     ; also in definition
+	jr	A5069
+;
+; >> NO EXECUTION PATH TO HERE <<
+T50A9:	pop	af
+	ld	(PRMLN2),a
+A50AD:	pop	af
+	or	a
+	jr	z,A50E9 		; no more parameters on stack
+	ld	(VALTYP),a
+	ld	hl,0
+	add	hl,sp
+	call	A2F08			; copy to DAC
+	ld	hl,8
+	add	hl,sp
+	ld	sp,hl			; from stack
+	pop	de			; adres var
+	ld	l,003H
+	dec	de
+	dec	de
+	dec	de
+	ld	a,(VALTYP)
+	add	a,l
+	ld	b,a
+	ld	a,(PRMLN2)
+	ld	c,a
+	add	a,b
+	cp	100
+	jp	nc,A475A
+	push	af
+	ld	a,l
+	ld	b,000H
+	ld	hl,PARM2
+	add	hl,bc			; in PARM2
+	ld	c,a
+	call	A518E			; copy to PARM1
+	ld	bc,T50A9
+	push	bc
+	push	bc
+	jp	A489E
+;
+A50E9:	ld	hl,(TEMP2)
+	rst	CHRGTR
+	push	hl
+	ld	hl,(TEMP3)
+	rst	SYNCHR
+	db	')'
+	ld	a,0D5H
+	ld	(TEMP3),hl
+	ld	a,(PRMLEN)
+	add	a,004H
+	push	af
+	rrca
+	ld	c,a
+	call	A625E			; check if C words space left
+	pop	af
+	ld	c,a
+	cpl
+	inc	a
+	ld	l,a
+	ld	h,0FFH
+	add	hl,sp
+	ld	sp,hl
+	push	hl
+	ld	de,PRMSTK
+	call	A518E
+	pop	hl
+	ld	(PRMSTK),hl
+	ld	hl,(PRMLN2)
+	ld	(PRMLEN),hl
+	ld	b,h
+	ld	c,l
+	ld	hl,PARM1
+	ld	de,PARM2
+	call	A518E
+	ld	h,a
+	ld	l,a
+	ld	(PRMLN2),hl
+	ld	hl,(FUNACT)
+	inc	hl
+	ld	(FUNACT),hl
+	ld	a,h
+	or	l
+	ld	(NOFUNS),a
+	ld	hl,(TEMP3)
+	call	A4C5F			; eval =expression
+	dec	hl
+	rst	CHRGTR
+	jp	nz,A4055
+	rst	GETYPR
+	jr	nz,A5156
+	ld	de,DSCTMP
+	ld	hl,(DAC+2)
+	rst	DCOMPR
+	jr	c,A5156
+	call	A6611			; copy string to stringarea
+	call	A6658
+A5156:	ld	hl,(PRMSTK)
+	ld	d,h
+	ld	e,l
+	inc	hl
+	inc	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	inc	bc
+	inc	bc
+	inc	bc
+	inc	bc
+	ld	hl,PRMSTK
+	call	A518E
+	ex	de,hl
+	ld	sp,hl
+	ld	hl,(FUNACT)
+	dec	hl
+	ld	(FUNACT),hl
+	ld	a,h
+	or	l
+	ld	(NOFUNS),a
+	pop	hl
+	pop	af
+A517A:	push	hl
+	and	007H
+	ld	hl,T3D47
+	ld	c,a
+	ld	b,000H
+	add	hl,bc
+	call	A4F41
+	pop	hl
+	ret
+;
+A5189:	ld	a,(de)
+	ld	(hl),a
+	inc	hl
+	inc	de
+	dec	bc
+A518E:	ld	a,b
+	or	c
+	jr	nz,A5189
+	ret
+;
+A5193:	push	hl
+	ld	hl,(CURLIN)
+	inc	hl
+	ld	a,h
+	or	l
+	pop	hl
+	ret	nz
+	ld	e,00CH
+	jp	A406F
+;
+A51A1:	rst	SYNCHR
+	db	0DEH			; FN must follow
+	ld	a,080H
+	ld	(SUBFLG),a		; FN flag
+	or	(hl)
+	ld	c,a
+	jp	A5EA9			; allocate var
+;
+A51AD:	cp	0FFH-81H
+	jr	nz,A51C6		; not a functiontoken, syntax error
+	inc	hl
+	ld	a,(hl)
+	inc	hl
+	cp	083H
+	jp	z,A696E 		; MID$, execute MID$ statement
+	cp	0A3H
+	jp	z,A77BF 		; STRIG, execute STRIG statement
+	cp	085H
+	jp	z,A77B1 		; INT, could be INTERVAL
+	call	H.ISMI
+A51C6:	jp	A4055
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A521C
+	call	H.WIDT
+	and	a
+	jr	z,A51DF
+	ld	a,(OLDSCR)
+	and	a
+	ld	a,e
+	jr	z,A51DD
+	cp	32+1
+	jr	nc,A51DF
+A51DD:	cp	40+1
+A51DF:	jp	nc,A475A
+	ld	a,(LINLEN)
+	cp	e
+	ret	z
+	ld	a,00CH
+	rst	OUTDO
+	ld	a,e
+	ld	(LINLEN),a
+	ld	a,(OLDSCR)
+	dec	a
+	ld	a,e
+	jr	nz,A51FA
+	ld	(LINL32),a
+	jr	A51FD
+;
+A51FA:	ld	(LINL40),a
+A51FD:	ld	a,00CH
+	rst	OUTDO
+	ld	a,e
+A5201:	sub	00EH
+	jr	nc,A5201
+	add	a,01CH
+	cpl
+	inc	a
+	add	a,e
+	ld	(CLMLST),a
+	ret
+;
+A520E:	rst	CHRGTR
+A520F:	call	A4C64			; eval expression
+A5212:	push	hl
+	call	A2F8A			; CINT
+	ex	de,hl
+	pop	hl
+	ld	a,d
+	or	a
+	ret
+;
+A521B:	rst	CHRGTR
+A521C:	call	A4C64			; eval expression
+A521F:	call	A5212			; convert INT
+	jp	nz,A475A		; >255, illegal function call
+	dec	hl
+	rst	CHRGTR
+	ld	a,e
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,001H
+	ld	(PRTFLG),a
+A522E:	call	H.LIST
+	pop	bc
+	call	A4279			; get parameters and find first line
+	push	bc
+A5236:	ld	hl,65535
+	ld	(CURLIN),hl		; after LIST in direct mode
+	pop	hl
+	pop	de
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)			; pointer
+	inc	hl
+	ld	a,b
+	or	c
+	jp	z,A411F 		; end of program, headloop
+	call	ISFLIO			;
+	call	z,ISCNTC		; yep, check CTRL/STOP
+	push	bc
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	inc	hl
+	push	bc			; linenumber
+	ex	(sp),hl
+	ex	de,hl
+	rst	DCOMPR
+	pop	bc
+	jp	c,A411E 		; endnumber reached, headloop
+	ex	(sp),hl
+	push	hl
+	push	bc
+	ex	de,hl
+	ld	(DOT),hl
+	call	A3412			; print linenumber
+	pop	hl
+	ld	a,(hl)
+	cp	009H
+	jr	z,A526D 		; line starts with tab
+	ld	a,' '
+	rst	OUTDO			; space after linenumber
+A526D:	call	A5284
+	ld	hl,BUF
+	call	A527B
+	call	A7328			; OUTDO next line
+	jr	A5236
+;
+A527B:	ld	a,(hl)
+	or	a
+	ret	z
+	call	A7367
+	inc	hl
+	jr	A527B
+;
+A5284:	ld	bc,BUF
+	ld	d,255
+	xor	a
+	ld	(DORES),a
+	jr	A5293
+;
+A528F:	inc	bc
+	inc	hl
+	dec	d
+	ret	z
+A5293:	ld	a,(hl)
+	or	a
+	ld	(bc),a
+	ret	z			; endmark, quit
+	cp	00BH
+	jr	c,A52C0 		; char 1-10, no special action
+	cp	020H
+	jp	c,A5361 		; numbertoken,
+	cp	'"'
+	jr	nz,A52AE
+	ld	a,(DORES)
+	xor	001H
+	ld	(DORES),a		; set/reset litature flag
+	ld	a,'"'
+A52AE:	cp	':'
+	jr	nz,A52C0
+	ld	a,(DORES)
+	rra
+	jr	c,A52BE
+	rla
+	and	0FDH			; reset data flag
+	ld	(DORES),a
+A52BE:	ld	a,':'
+A52C0:	or	a
+	jp	p,A528F 		; no special action
+	ld	a,(DORES)
+	rra
+	jr	c,A52F8 		; litature flag set, skip
+	rra
+	rra
+	jr	nc,A530C
+	ld	a,(hl)
+	cp	0E6H
+	push	hl
+	push	bc
+	ld	hl,T52F5
+	push	hl
+	ret	nz
+	dec	bc
+	ld	a,(bc)
+	cp	'M'
+	ret	nz
+	dec	bc
+	ld	a,(bc)
+	cp	'E'
+	ret	nz
+	dec	bc
+	ld	a,(bc)
+	cp	'R'
+	ret	nz
+	dec	bc
+	ld	a,(bc)
+	cp	':'
+	ret	nz
+	pop	af
+	pop	af
+	pop	hl
+	inc	d
+	inc	d
+	inc	d
+	inc	d
+	jr	A531A
+;
+; >> NO EXECUTION PATH TO HERE <<
+T52F5:	pop	bc
+	pop	hl
+	ld	a,(hl)
+A52F8:	jp	A528F
+;
+A52FB:	ld	a,(DORES)
+	or	002H
+A5300:	ld	(DORES),a
+	xor	a
+	ret
+;
+A5305:	ld	a,(DORES)
+	or	004H
+	jr	A5300
+;
+A530C:	rla
+	jr	c,A52F8
+	ld	a,(hl)
+	cp	084H			; DATA token ?
+	call	z,A52FB 		; yep, set data bit
+	cp	08FH			; REM token ?
+	call	z,A5305 		; yep, set rem bit
+A531A:	ld	a,(hl)
+	inc	a
+	ld	a,(hl)
+	jr	nz,A5323
+	inc	hl
+	ld	a,(hl)
+	and	07FH
+A5323:	inc	hl
+	cp	0A1H
+	jr	nz,A532A
+	dec	bc
+	inc	d
+A532A:	push	hl
+	push	bc
+	push	de
+	call	H.BUFL
+	ld	hl,T3A72-1
+	ld	b,a
+	ld	c,040H
+A5336:	inc	c
+A5337:	inc	hl
+	ld	d,h
+	ld	e,l
+A533A:	ld	a,(hl)
+	or	a
+	jr	z,A5336
+	inc	hl
+	jp	p,A533A
+	ld	a,(hl)
+	cp	b
+	jr	nz,A5337
+	ex	de,hl
+	ld	a,c
+	pop	de
+	pop	bc
+	cp	05BH
+	jr	nz,A5350
+A534E:	ld	a,(hl)
+	inc	hl
+A5350:	ld	e,a
+	and	07FH
+	ld	(bc),a
+	inc	bc
+	dec	d
+	jp	z,A66A7
+	or	e
+	jp	p,A534E
+	pop	hl
+	jp	A5293
+;
+A5361:	dec	hl
+	rst	CHRGTR
+	push	de
+	push	bc
+	push	af
+	call	A46E8
+	pop	af
+	ld	bc,T537E
+	push	bc
+	cp	00BH
+	jp	z,A371E
+	cp	00CH
+	jp	z,A3722
+	ld	hl,(CONLO)
+	jp	A3425
+;
+; >> NO EXECUTION PATH TO HERE <<
+T537E:	pop	bc
+	pop	de
+	ld	a,(CONSAV)
+	ld	e,04FH
+	cp	00BH
+	jr	z,A538F
+	cp	00CH
+	ld	e,048H
+	jr	nz,A539A
+A538F:	ld	a,026H
+	ld	(bc),a
+	inc	bc
+	dec	d
+	ret	z
+	ld	a,e
+	ld	(bc),a
+	inc	bc
+	dec	d
+	ret	z
+A539A:	ld	a,(CONTYP)
+	cp	004H
+	ld	e,000H
+	jr	c,A53A9
+	ld	e,021H
+	jr	z,A53A9
+	ld	e,023H
+A53A9:	ld	a,(hl)
+	cp	020H
+	jr	nz,A53AF
+	inc	hl
+A53AF:	ld	a,(hl)
+	inc	hl
+	or	a
+	jr	z,A53D4
+	ld	(bc),a
+	inc	bc
+	dec	d
+	ret	z
+	ld	a,(CONTYP)
+	cp	004H
+	jr	c,A53AF
+	dec	bc
+	ld	a,(bc)
+	inc	bc
+	jr	nz,A53C8
+	cp	02EH
+	jr	z,A53D0
+A53C8:	cp	044H
+	jr	z,A53D0
+	cp	045H
+	jr	nz,A53AF
+A53D0:	ld	e,000H
+	jr	A53AF
+;
+A53D4:	ld	a,e
+	or	a
+	jr	z,A53DC
+	ld	(bc),a
+	inc	bc
+	dec	d
+	ret	z
+A53DC:	ld	hl,(CONTXT)
+	jp	A5293
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A4279
+	push	bc
+	call	A54EA			; force linenumbers
+	pop	bc
+	pop	de
+	push	bc
+	push	bc
+	call	A4295			; search line from start
+	jr	nc,A53F7
+	ld	d,h
+	ld	e,l
+	ex	(sp),hl
+	push	hl
+	rst	DCOMPR
+A53F7:	jp	nc,A475A
+	ld	hl,T3FD7
+	call	A6678
+	pop	bc
+	ld	hl,A4237
+	ex	(sp),hl
+A5405:	ex	de,hl
+	ld	hl,(VARTAB)
+A5409:	ld	a,(de)
+	ld	(bc),a
+	inc	bc
+	inc	de
+	rst	DCOMPR
+	jr	nz,A5409
+	ld	h,b
+	ld	l,c
+	ld	(VARTAB),hl
+	ld	(ARYTAB),hl
+	ld	(STREND),hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A5439
+	ld	a,(hl)
+	jp	A4FCF
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A542F
+	push	de
+	rst	SYNCHR
+	db	','
+	call	A521C
+	pop	de
+	ld	(de),a
+	ret
+;
+A542F:	call	A4C64			; eval expression
+	push	hl
+	call	A5439
+	ex	de,hl
+	pop	hl
+	ret
+;
+A5439:	ld	bc,A2F8AH
+	push	bc			; after this do CINT
+	rst	GETYPR
+	ret	m
+	call	H.FRQI
+	call	A2E71
+	ret	m
+	call	A2FB2
+	ld	bc,03245H
+	ld	de,08076H		; 32768!
+	call	A2F21
+	ret	c
+	ld	bc,T6545
+	ld	de,T6053
+	call	A2F21
+	jp	nc,A4067
+	ld	bc,T65C5
+	ld	de,T6053
+	jp	A324E
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	bc,10
+	push	bc
+	ld	d,b
+	ld	e,b
+	jr	z,A5496
+	cp	02CH
+	jr	z,A547D
+	push	de
+	call	A475F
+	ld	b,d
+	ld	c,e
+	pop	de
+	jr	z,A5496
+A547D:	rst	SYNCHR
+	db	','
+	call	A475F
+	jr	z,A5496
+	pop	af
+	rst	SYNCHR
+	db	','
+	push	de
+	call	A4769
+	jp	nz,A4055
+	ld	a,d
+	or	e
+	jp	z,A475A
+	ex	de,hl
+	ex	(sp),hl
+	ex	de,hl
+A5496:	push	bc
+	call	A4295			; search line from start
+	pop	de
+	push	de
+	push	bc
+	call	A4295			; search line from start
+	ld	h,b
+	ld	l,c
+	pop	de
+	rst	DCOMPR
+	ex	de,hl
+	jp	c,A475A
+	pop	de
+	pop	bc
+	pop	af
+	push	hl
+	push	de
+	jr	A54BD
+;
+A54AF:	add	hl,bc
+	jp	c,A475A
+	ex	de,hl
+	push	hl
+	ld	hl,65529
+	rst	DCOMPR
+	pop	hl
+	jp	c,A475A
+A54BD:	push	de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ld	a,d
+	or	e
+	ex	de,hl
+	pop	de
+	jr	z,A54CE
+	ld	a,(hl)
+	inc	hl
+	or	(hl)
+	dec	hl
+	ex	de,hl
+	jr	nz,A54AF
+A54CE:	push	bc
+	call	A54F6			; convert linenumbers to pointers
+	pop	bc
+	pop	de
+	pop	hl
+A54D5:	push	de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ld	a,d
+	or	e
+	jr	z,A54F1
+	ex	de,hl
+	ex	(sp),hl
+	ex	de,hl
+	inc	hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	ex	de,hl
+	add	hl,bc
+	ex	de,hl
+	pop	hl
+	jr	A54D5
+;
+A54EA:	ld	a,(PTRFLG)
+	or	a			; have converted to linenumber ?
+	ret	z			; yep, quit
+	jr	A54F7			; convert pointers to linenumbers
+;
+A54F1:	ld	bc,A411E
+	push	bc
+	db	0FEH
+A54F6:	db	0F6H			; or n, skip xor a
+A54F7:	xor	a
+	ld	(PTRFLG),a		; convert flag
+	ld	hl,(TXTTAB)
+	dec	hl
+A54FF:	inc	hl
+	ld	a,(hl)
+	inc	hl
+	or	(hl)
+	ret	z			; endpointer, quit
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; linenumber
+A5508:	rst	CHRGTR
+A5509:	or	a
+	jr	z,A54FF 		; end of line, next
+	ld	c,a
+	ld	a,(PTRFLG)
+	or	a			; convert to linenumbers ?
+	ld	a,c
+	jr	z,A556A 		; yep,
+	call	H.SCNE
+	cp	0A6H			; ERROR token ?
+	jr	nz,A552F		; nop,
+	rst	CHRGTR
+	cp	089H			; GOTO token ?
+	jr	nz,A5509		; nop, cont
+	rst	CHRGTR
+	cp	00EH
+	jr	nz,A5509		; no linenumber token, cont
+	push	de
+	call	A4771			; get linenumber
+	ld	a,d
+	or	e
+	jr	nz,A5537		; not 0,
+	jr	A5556			; 0, cont
+;
+A552F:	cp	00EH
+	jr	nz,A5508		; no linenumber token, cont
+	push	de
+	call	A4771			; get linenumber
+A5537:	push	hl
+	call	A4295			; search line from start
+	dec	bc
+	ld	a,00DH
+	jr	c,A557C 		; found, change in pointer
+	call	A7323			; OUTDO new line
+	ld	hl,T555A
+	push	de
+	call	A6678			; print undefined line
+	pop	hl
+	call	A3412			; print linenumber
+	pop	bc
+	pop	hl
+	push	hl
+	push	bc
+	call	A340A			; print in linenumber
+T5555:	pop	hl
+A5556:	pop	de
+	dec	hl
+A5558:	jr	A5508
+;
+T555A:	db	"Undefined line ",0
+
+A556A:	cp	00DH
+	jr	nz,A5558		; no pointer token, cont
+	push	de
+	call	A4771			; get pointer
+	push	hl
+	ex	de,hl
+	inc	hl
+	inc	hl
+	inc	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)			; linenumber
+	ld	a,00EH
+A557C:	ld	hl,T5555
+	push	hl			; resume
+	ld	hl,(CONTXT)
+A5583:	push	hl
+	dec	hl
+	ld	(hl),b
+	dec	hl
+	ld	(hl),c
+	dec	hl
+	ld	(hl),a			; change pointer <-> linenumber
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(hl)
+	ex	(sp),hl
+	cp	(hl)
+	inc	hl
+	ex	(sp),hl
+T5591:	jp	nz,A4055
+	jp	A4666
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(VALTYP)
+	cp	008H
+	jr	nc,A55A3
+	sub	003H
+	or	a
+	scf
+	ret
+;
+A55A3:	sub	003H
+	or	a
+	ret
+;
+A55A7:	rst	CHRGTR
+	ld	de,PROCNM
+	ld	b,00FH
+A55AD:	ld	a,(hl)
+	and	a
+	jr	z,A55BE 		; end of line, end of name
+	cp	':'
+	jr	z,A55BE 		; next statement, end of name
+	cp	'('
+	jr	z,A55BE 		; parameters, end of name
+	ld	(de),a
+	inc	de
+	inc	hl
+	djnz	A55AD
+A55BE:	ld	a,b
+	cp	00FH
+	jr	z,A55D8 		; empty name, syntax error
+A55C3:	xor	a
+	ld	(de),a			; endmark for name
+	dec	de
+	ld	a,(de)
+	cp	" "
+	jr	z,A55C3 		; delete spaces at end
+	ld	b,040H
+	ld	de,SLTATR
+A55D0:	ld	a,(de)
+	and	020H			; has expansion ROM STATEMENT ?
+	jr	nz,A55DB		; yep, try it
+A55D5:	inc	de
+	djnz	A55D0
+A55D8:	jp	A4055			; syntax error
+;
+A55DB:	push	bc
+	push	de
+	push	hl
+	call	A7E2A			; get slotid & page
+	push	af
+	ld	c,a
+	ld	l,004H			; statement at off 4
+	call	A7E1A			; get word
+	push	de
+	pop	ix
+	pop	iy
+	pop	hl
+	dec	hl
+	rst	CHRGTR			; set correct flags
+	call	CALSLT			; try ROM
+	pop	de
+	pop	bc
+	jr	c,A55D5 		; statement not recognized, try other
+	ret				; ok, quit
+;
+A55F8:	pop	hl
+	ld	a,b
+	cp	16
+	jr	c,A5600
+	ld	b,15			; maxium 15 kars
+A5600:	call	A7FB7			; Bug fix
+A5603:	call	A4EA9			; get upcase char
+	ld	(de),a
+	inc	hl
+	inc	de
+	djnz	A5603			; copy name to PROCNM
+	xor	a
+	ld	(de),a			; endmark
+	ld	b,040H
+	ld	de,SLTATR
+A5612:	ld	a,(de)
+	and	040H			; has expansion ROM DEVICE ?
+	jr	nz,A561D		; yep, try it
+A5617:	inc	de
+	djnz	A5612
+A561A:	jp	A6E6B			; bad filename
+;
+A561D:	push	bc
+	push	de
+	call	A7E2A			; get slotid & page
+	push	af
+	ld	c,a
+	ld	l,006H			; DEVICE at off 6
+	call	A7E1A			; get word
+	push	de
+	pop	ix
+	pop	iy
+	ld	a,0FFH
+	call	CALSLT			; device request
+	pop	de
+	pop	bc
+	jr	c,A5617 		; device not recognized, try next
+	ld	c,a			; device number
+	ld	a,040H
+	sub	b
+	add	a,a
+	add	a,a			; slot & page code
+	or	c			; devicecode
+	cp	009H
+	jr	c,A561A 		; codes for diskdrive, illegal
+	cp	0FCH
+	jr	nc,A561A		; codes for standard devices, illegal
+	pop	hl
+	pop	de
+	and	a
+	ret
+;
+A564A:	push	bc
+	push	af
+	rra
+	rra
+	and	03FH
+	call	A7E2D			; get slotid & page
+	push	af
+	ld	c,a
+	ld	l,006H			; DEVICE at off 6
+	call	A7E1A			; get word
+	push	de
+	pop	ix
+	pop	iy
+	pop	af
+	and	003H
+	ld	(DEVICE),a		; device number
+	pop	bc
+	pop	af
+	pop	de
+	pop	hl
+	jp	CALSLT			; handle device
+;
+A566C:	ld	(MCLTAB),de		; adres commandtable
+	call	A4C64			; eval expression
+	push	hl
+	ld	de,0
+	push	de
+	push	af
+A5679:	call	A67D0			; free temp string
+	call	A2EDF			; init EDCB
+	ld	b,c
+	ld	c,d
+	ld	d,e			; get adres & length of string
+	ld	a,b
+	or	c
+	jr	z,A568C
+	ld	a,d
+	or	a
+	jr	z,A568C 		; empty string,
+	push	bc
+	push	de
+A568C:	pop	af
+	ld	(MCLLEN),a		; length of commandstring
+	pop	hl
+	ld	a,h
+	or	l
+	jr	nz,A569F		; not the end, proces string
+	ld	a,(MCLFLG)
+	or	a
+	jp	z,A5709 		; end of DRAW
+	jp	A7494			; end of PLAY
+;
+A569F:	ld	(MCLPTR),hl		; pointer in string
+A56A2:	call	A56EE			; get commandstring char
+	jr	z,A568C 		; end of string, quit
+	add	a,a
+	ld	c,a
+	ld	hl,(MCLTAB)
+A56AC:	ld	a,(hl)
+	add	a,a
+A56AE:	call	z,A475A 		; end of table, illegal function call
+	cp	c
+	jr	z,A56B9 		; command found, exec
+	inc	hl
+	inc	hl
+	inc	hl
+	jr	A56AC			; try next command
+;
+A56B9:	ld	bc,A56A2
+	push	bc			; resume to next command
+	ld	a,(hl)
+	ld	c,a
+	add	a,a
+	jr	nc,A56E2		; no parameters, exec
+	or	a
+	rra
+	ld	c,a
+	push	bc
+	push	hl
+	call	A56EE			; get commandstring char
+	ld	de,1
+	jp	z,A56DF 		; end of string, take default
+	call	A64A8			; check if char is letter
+	jp	nc,A56DC		; yep, must be next command
+	call	A571C			; eval parameter
+	scf
+	jr	A56E0
+;
+A56DC:	call	A570B			; backup char in commandstring
+A56DF:	or	a
+A56E0:	pop	hl
+	pop	bc
+A56E2:	inc	hl
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	jp	(hl)			; exec command
+;
+A56E8:	call	A56EE
+	jr	z,A56AE
+	ret
+;
+A56EE:	push	hl
+A56EF:	ld	hl,MCLLEN
+	ld	a,(hl)
+	or	a
+	jr	z,A5709
+	dec	(hl)
+	ld	hl,(MCLPTR)
+	ld	a,(hl)
+	inc	hl
+	ld	(MCLPTR),hl
+	cp	020H
+	jr	z,A56EF
+	cp	060H
+	jr	c,A5709
+	sub	020H
+A5709:	pop	hl
+	ret
+;
+A570B:	push	hl
+	ld	hl,MCLLEN
+	inc	(hl)
+	ld	hl,(MCLPTR)
+	dec	hl
+	ld	(MCLPTR),hl
+	pop	hl
+	ret
+;
+A5719:	call	A56E8			; must get commandstring char
+A571C:	cp	'='
+	jp	z,A577A
+	cp	'+'
+	jr	z,A5719 		; to number
+	cp	'-'
+	jr	nz,A572F
+	ld	de,T5795
+	push	de			; resume at negation
+	jr	A5719			; to number
+;
+A572F:	ld	de,0			; default 0
+A5732:	cp	','
+	jr	z,A570B 		; backup, quit
+	cp	';'
+	ret	z
+	cp	'9'+1
+	jr	nc,A570B
+	cp	'0'
+	jr	c,A570B 		; backup, quit
+	ld	hl,0
+	ld	b,00AH
+A5746:	add	hl,de
+	jr	c,A5773
+	djnz	A5746			; *10
+	sub	'0'
+	ld	e,a
+	ld	d,000H
+	add	hl,de
+	jr	c,A5773
+	ex	de,hl
+	call	A56EE			; get commandstring char
+	jr	nz,A5732		; not end, cont
+	ret				; quit
+;
+A575A:	call	A56E8			; must get commandstring char
+	ld	de,BUF
+	push	de
+	ld	b,40			; max varname len
+	call	A64A8			; check if letter
+	jr	c,A5773 		; nop, illegal function call
+A5768:	ld	(de),a
+	inc	de
+	cp	';'
+	jr	z,A5776 		; end of name
+	call	A56E8			; must get commandstring char
+	djnz	A5768			; next
+A5773:	call	A475A
+A5776:	pop	hl
+	jp	A4E9B			; get value of var
+;
+A577A:	call	A575A			; get varname
+	call	A2F8A			; CINT
+	ex	de,hl
+	ret
+;
+A5782:	call	A575A			; get varname
+	ld	a,(MCLLEN)
+	ld	hl,(MCLPTR)
+	ex	(sp),hl
+	push	af			; save where we are
+	ld	c,002H
+	call	A625E			; check if 2 words space left
+	jp	A5679			; cont with macrostring
+;
+T5795:	xor	a
+	sub	e
+	ld	e,a
+	sbc	a,d
+	sub	e
+	ld	d,a
+	ret				; negate
+;
+A579C:	ld	a,(hl)
+	cp	'@'
+	call	z,A4666 		; get next basicchar
+	ld	bc,0
+	ld	d,b
+	ld	e,c
+	cp	0F2H			; - token ?
+	jr	z,A57C1 		; yep, take current pos
+A57AB:	ld	a,(hl)
+	cp	0DCH			; STEP token
+	push	af
+	call	z,A4666 		; yep, get next basicchar
+	rst	SYNCHR
+	db	'('                     ; must be '('
+	call	A520F			; eval X parameter
+	push	de
+	rst	SYNCHR
+	db	','                     ; ',' must follow
+	call	A520F			; eval Y parameter
+	rst	SYNCHR
+	db	')'                     ; ')' must follow
+	pop	bc
+	pop	af
+A57C1:	push	hl
+	ld	hl,(GRPACX)
+	jr	z,A57CA 		; step from current
+	ld	hl,0
+A57CA:	add	hl,bc
+	ld	(GRPACX),hl
+	ld	(GXPOS),hl
+	ld	b,h
+	ld	c,l
+	ld	hl,(GRPACY)
+	jr	z,A57DB 		; step from current
+	ld	hl,0
+A57DB:	add	hl,de
+	ld	(GRPACY),hl
+	ld	(GYPOS),hl
+	ex	de,hl
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(BAKCLR)
+	jr	A57ED
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(FORCLR)
+A57ED:	push	af
+	call	A57AB
+	pop	af
+	call	A5850
+	push	hl
+	call	SCALXY
+	jr	nc,A5801
+	call	MAPXYC
+	call	SETC
+A5801:	pop	hl
+	ret
+;
+A5803:	rst	CHRGTR
+	push	hl
+	call	FETCHC
+	pop	de
+	push	hl
+	push	af
+	ld	hl,(GYPOS)
+	push	hl
+	ld	hl,(GXPOS)
+	push	hl
+	ld	hl,(GRPACY)
+	push	hl
+	ld	hl,(GRPACX)
+	push	hl
+	ex	de,hl
+	call	A57AB
+	push	hl
+	call	SCALXY
+	ld	hl,-1
+	jr	nc,A5831
+	call	MAPXYC
+	call	READC
+	ld	l,a
+	ld	h,000H
+A5831:	call	A2F99
+	pop	de
+	pop	hl
+	ld	(GRPACX),hl
+	pop	hl
+	ld	(GRPACY),hl
+	pop	hl
+	ld	(GXPOS),hl
+	pop	hl
+	ld	(GYPOS),hl
+	pop	af
+	pop	hl
+	push	de
+	call	STOREC
+	pop	hl
+	ret
+;
+A584D:	ld	a,(FORCLR)
+A5850:	push	bc
+	push	de
+	ld	e,a
+	call	A59BC
+	dec	hl
+	rst	CHRGTR
+	jr	z,A5863
+	rst	SYNCHR
+	db	','
+	cp	02CH
+	jr	z,A5863
+	call	A521C
+A5863:	ld	a,e
+	push	hl
+	call	SETATR
+	jp	c,A475A
+	pop	hl
+	pop	de
+	pop	bc
+	jp	A466A
+;
+A5871:	ld	hl,(GXPOS)
+	ld	a,l
+	sub	c
+	ld	l,a
+	ld	a,h
+	sbc	a,b
+	ld	h,a
+A587A:	ret	nc
+A587B:	xor	a
+	sub	l
+	ld	l,a
+	sbc	a,h
+	sub	l
+	ld	h,a
+	scf
+	ret
+;
+A5883:	ld	hl,(GYPOS)
+	ld	a,l
+	sub	e
+	ld	l,a
+	ld	a,h
+	sbc	a,d
+	ld	h,a
+	jr	A587A
+;
+A588E:	push	hl
+	ld	hl,(GYPOS)
+	ex	de,hl
+	ld	(GYPOS),hl
+	pop	hl
+	ret
+;
+A5898:	call	A588E
+A589B:	push	hl
+	push	bc
+	ld	hl,(GXPOS)
+	ex	(sp),hl
+	ld	(GXPOS),hl
+	pop	bc
+	pop	hl
+	ret
+;
+A58A7:	call	A579C
+	push	bc
+	push	de
+	rst	SYNCHR
+	db	0F2H
+	call	A57AB
+	call	A584D
+	pop	de
+	pop	bc
+	jr	z,A58FC
+	rst	SYNCHR
+	db	','
+	rst	SYNCHR
+	db	'B'
+	jp	z,A5912
+	rst	SYNCHR
+	db	'F'
+	push	hl
+	call	SCALXY
+	call	A5898
+	call	SCALXY
+	call	A5883
+	call	c,A588E
+	inc	hl
+	push	hl
+	call	A5871
+	call	c,A589B
+	inc	hl
+	push	hl
+	call	MAPXYC
+	pop	de
+	pop	bc
+A58E0:	push	de
+	push	bc
+	call	FETCHC
+	push	af
+	push	hl
+	ex	de,hl
+	call	NSETCX
+	pop	hl
+	pop	af
+	call	STOREC
+	call	DOWNC
+	pop	bc
+	pop	de
+	dec	bc
+	ld	a,b
+	or	c
+	jr	nz,A58E0
+	pop	hl
+	ret
+;
+A58FC:	push	bc
+	push	de
+	push	hl
+	call	A593C
+	ld	hl,(GRPACX)
+	ld	(GXPOS),hl
+	ld	hl,(GRPACY)
+	ld	(GYPOS),hl
+	pop	hl
+	pop	de
+	pop	bc
+	ret
+;
+A5912:	push	hl
+	ld	hl,(GYPOS)
+	push	hl
+	push	de
+	ex	de,hl
+	call	A58FC
+	pop	hl
+	ld	(GYPOS),hl
+	ex	de,hl
+	call	A58FC
+	pop	hl
+	ld	(GYPOS),hl
+	ld	hl,(GXPOS)
+	push	bc
+	ld	b,h
+	ld	c,l
+	call	A58FC
+	pop	hl
+	ld	(GXPOS),hl
+	ld	b,h
+	ld	c,l
+	call	A58FC
+	pop	hl
+	ret
+;
+A593C:	call	H.DOGR
+	call	SCALXY
+	call	A5898
+	call	SCALXY
+	call	A5883
+	call	c,A5898
+	push	de
+	push	hl
+	call	A5871
+	ex	de,hl
+	ld	hl,RIGHTC
+	jr	nc,A595C
+	ld	hl,LEFTC
+A595C:	ex	(sp),hl
+	rst	DCOMPR
+	jr	nc,A5970
+	ld	(MINDEL),hl
+	pop	hl
+	ld	(MAXUPD+1),hl
+	ld	hl,DOWNC
+	ld	(MINUPD+1),hl
+	ex	de,hl
+	jr	A597F
+;
+A5970:	ex	(sp),hl
+	ld	(MINUPD+1),hl
+	ld	hl,DOWNC
+	ld	(MAXUPD+1),hl
+	ex	de,hl
+	ld	(MINDEL),hl
+	pop	hl
+A597F:	pop	de
+	push	hl
+	call	A587B
+	ld	(MAXDEL),hl
+	call	MAPXYC
+	pop	de
+	push	de
+	call	A59B4
+	pop	bc
+	inc	bc
+	jr	A599A
+;
+A5993:	pop	hl
+	ld	a,b
+	or	c
+	ret	z
+A5997:	call	MAXUPD
+A599A:	call	SETC
+	dec	bc
+	push	hl
+	ld	hl,(MINDEL)
+	add	hl,de
+	ex	de,hl
+	ld	hl,(MAXDEL)
+	add	hl,de
+	jr	nc,A5993
+	ex	de,hl
+	pop	hl
+	ld	a,b
+	or	c
+	ret	z
+	call	MINUPD
+	jr	A5997
+;
+A59B4:	ld	a,d
+	or	a
+	rra
+	ld	d,a
+	ld	a,e
+	rra
+	ld	e,a
+	ret
+;
+A59BC:	ld	a,(SCRMOD)
+	cp	002H
+	ret	p
+	jp	A475A
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A579C
+	push	bc
+	push	de
+	call	A584D
+	ld	a,(ATRBYT)
+	ld	e,a
+	dec	hl
+	rst	CHRGTR
+	jr	z,A59DA
+	rst	SYNCHR
+	db	','
+	call	A521C
+A59DA:	ld	a,e
+	call	PNTINI
+	jp	c,A475A
+	pop	de
+	pop	bc
+	push	hl
+	call	A5E91
+	call	MAPXYC
+	ld	de,1
+	ld	b,000H
+	call	A5ADC
+	jr	z,A5A08
+	push	hl
+	call	A5AED
+	pop	de
+	add	hl,de
+	ex	de,hl
+	xor	a
+	call	A5ACE
+	ld	a,040H
+	call	A5ACE
+	ld	b,0C0H
+	jr	A5A26
+;
+A5A08:	pop	hl
+	ret
+;
+A5A0A:	call	CKCNTC
+	ld	a,(LOHDIR)
+	or	a
+	jr	z,A5A1F
+	ld	hl,(LOHADR)
+	push	hl
+	ld	hl,(LOHMSK)
+	push	hl
+	ld	hl,(LOHCNT)
+	push	hl
+A5A1F:	pop	de
+	pop	bc
+	pop	hl
+	ld	a,c
+	call	STOREC
+A5A26:	ld	a,b
+	ld	(PDIREC),a
+	add	a,a
+	jr	z,A5A08
+	push	de
+	jr	nc,A5A35
+	call	TUPC
+	jr	A5A38
+;
+A5A35:	call	TDOWNC
+A5A38:	pop	de
+	jr	c,A5A1F
+	ld	b,000H
+	call	A5ADC
+	jp	z,A5A1F
+	xor	a
+	ld	(LOHDIR),a
+	call	A5AED
+	ld	e,l
+	ld	d,h
+	or	a
+	jr	z,A5A69
+	dec	hl
+	dec	hl
+	ld	a,h
+	add	a,a
+	jr	c,A5A69
+	ld	(LOHCNT),de
+	call	FETCHC
+	ld	(LOHADR),hl
+	ld	(LOHMSK),a
+	ld	a,(PDIREC)
+	cpl
+	ld	(LOHDIR),a
+A5A69:	ld	hl,(MOVCNT)
+	add	hl,de
+	ex	de,hl
+	call	A5AC2
+	ld	hl,(CSAVEA)
+	ld	a,(CSAVEM)
+	call	STOREC
+A5A7A:	ld	hl,(SKPCNT)
+	ld	de,(MOVCNT)
+	or	a
+	sbc	hl,de
+	jr	z,A5ABF
+	jr	c,A5AA4
+	ex	de,hl
+	ld	b,001H
+	call	A5ADC
+	jr	z,A5ABF
+	or	a
+	jr	z,A5A7A
+	ex	de,hl
+	ld	hl,(CSAVEA)
+	ld	a,(CSAVEM)
+	ld	c,a
+	ld	a,(PDIREC)
+	ld	b,a
+	call	A5AD3
+	jr	A5A7A
+;
+A5AA4:	call	A587B
+	dec	hl
+	dec	hl
+	ld	a,h
+	add	a,a
+	jr	c,A5ABF
+	inc	hl
+	push	hl
+A5AAF:	call	LEFTC
+	dec	hl
+	ld	a,h
+	or	l
+	jr	nz,A5AAF
+	pop	de
+	ld	a,(PDIREC)
+	cpl
+	call	A5ACE
+A5ABF:	jp	A5A0A
+;
+A5AC2:	ld	a,(LFPROG)
+	ld	c,a
+	ld	a,(RTPROG)
+	or	c
+	ret	z
+	ld	a,(PDIREC)
+A5ACE:	ld	b,a
+	call	FETCHC
+	ld	c,a
+A5AD3:	ex	(sp),hl
+	push	bc
+	push	de
+	push	hl
+	ld	c,002H
+	jp	A625E			; check if 2 words space left
+;
+A5ADC:	call	SCANR
+	ld	(SKPCNT),de
+	ld	(MOVCNT),hl
+	ld	a,h
+	or	l
+	ld	a,c
+	ld	(RTPROG),a
+	ret
+;
+A5AED:	call	FETCHC
+	push	hl
+	push	af
+	ld	hl,(CSAVEA)
+	ld	a,(CSAVEM)
+	call	STOREC
+	pop	af
+	pop	hl
+	ld	(CSAVEA),hl
+	ld	(CSAVEM),a
+	call	SCANL
+	ld	a,c
+	ld	(LFPROG),a
+	ret
+;
+A5B0B:	ex	de,hl
+	call	A587B
+	ex	de,hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A579C
+	rst	SYNCHR
+	db	','
+	call	A520F
+	push	hl
+	ex	de,hl
+	ld	(GXPOS),hl
+	call	A2F99
+	call	A2FB2
+	ld	bc,07040H
+	ld	de,00771H		; 0.707107!
+	call	A325C
+	call	A2F8A
+	ld	(CNPNTS),hl
+	xor	a
+	ld	(CLINEF),a
+	ld	(CSCLXY),a
+	pop	hl
+	call	A584D
+	ld	c,001H
+	ld	de,0
+	call	A5D17
+	push	de
+	ld	c,080H
+	ld	de,-1
+	call	A5D17
+	ex	(sp),hl
+	xor	a
+	ex	de,hl
+	rst	DCOMPR
+	ld	a,000H
+	jr	nc,A5B66
+	dec	a
+	ex	de,hl
+	push	af
+	ld	a,(CLINEF)
+	ld	c,a
+	rlca
+	rlca
+	or	c
+	rrca
+	ld	(CLINEF),a
+	pop	af
+A5B66:	ld	(CPLOTF),a
+	ld	(CSTCNT),de
+	ld	(CENCNT),hl
+	pop	hl
+	dec	hl
+	rst	CHRGTR
+	jr	nz,A5B85
+	push	hl
+	call	GTASPC
+	ld	a,h
+	or	a
+	jr	z,A5BAF
+	ld	a,001H
+	ld	(CSCLXY),a
+	ex	de,hl
+	jr	A5BAF
+;
+A5B85:	rst	SYNCHR
+	db	','
+	call	A4C64			; eval expression
+	push	hl
+	call	A2FB2
+	call	A2E71
+	jp	z,A475A
+	jp	m,A475A
+	call	A5D63
+	jr	nz,A5BA3
+	inc	a
+	ld	(CSCLXY),a
+	call	A3267
+A5BA3:	ld	bc,02543H
+	ld	de,00060H		; 256!
+	call	A325C
+	call	A2F8A
+A5BAF:	ld	(ASPECT),hl
+	ld	de,0
+	ld	(CRCSUM),de
+	ld	hl,(GXPOS)
+	add	hl,hl
+A5BBD:	call	CKCNTC
+	ld	a,e
+	rra
+	jr	c,A5BDA
+	push	de
+	push	hl
+	inc	hl
+	ex	de,hl
+	call	A59B4
+	ex	de,hl
+	inc	de
+	call	A59B4
+	call	A5C06
+	pop	de
+	pop	hl
+	rst	DCOMPR
+	jp	nc,A5A08
+	ex	de,hl
+A5BDA:	ld	b,h
+	ld	c,l
+	ld	hl,(CRCSUM)
+	inc	hl
+	add	hl,de
+	add	hl,de
+	ld	a,h
+	add	a,a
+	jr	c,A5BF2
+	push	de
+	ex	de,hl
+	ld	h,b
+	ld	l,c
+	add	hl,hl
+	dec	hl
+	ex	de,hl
+	or	a
+	sbc	hl,de
+	dec	bc
+	pop	de
+A5BF2:	ld	(CRCSUM),hl
+	ld	h,b
+	ld	l,c
+	inc	de
+	jr	A5BBD
+;
+A5BFA:	push	de
+	call	A5CEB
+	pop	hl
+	ld	a,(CSCLXY)
+	or	a
+	ret	z
+	ex	de,hl
+	ret
+;
+A5C06:	ld	(CPCNT),de
+	push	hl
+	ld	hl,0
+	ld	(CPCNT8),hl
+	call	A5BFA
+	ld	(CXOFF),hl
+	pop	hl
+	ex	de,hl
+	push	hl
+	call	A5BFA
+	ld	(CYOFF),de
+	pop	de
+	call	A5B0B
+	call	A5C48
+	push	hl
+	push	de
+	ld	hl,(CNPNTS)
+	ld	(CPCNT8),hl
+	ld	de,(CPCNT)
+	or	a
+	sbc	hl,de
+	ld	(CPCNT),hl
+	ld	hl,(CXOFF)
+	call	A587B
+	ld	(CXOFF),hl
+	pop	de
+	pop	hl
+	call	A5B0B
+A5C48:	ld	a,004H
+A5C4A:	push	af
+	push	hl
+	push	de
+	push	hl
+	push	de
+	ld	de,(CPCNT8)
+	ld	hl,(CNPNTS)
+	add	hl,hl
+	add	hl,de
+	ld	(CPCNT8),hl
+	ld	hl,(CPCNT)
+	add	hl,de
+	ex	de,hl
+	ld	hl,(CSTCNT)
+	rst	DCOMPR
+	jr	z,A5C80
+	jr	nc,A5C70
+	ld	hl,(CENCNT)
+	rst	DCOMPR
+	jr	z,A5C78
+	jr	nc,A5C90
+A5C70:	ld	a,(CPLOTF)
+	or	a
+	jr	nz,A5C9A
+	jr	A5C96
+;
+A5C78:	ld	a,(CLINEF)
+	add	a,a
+	jr	nc,A5C9A
+	jr	A5C86
+;
+A5C80:	ld	a,(CLINEF)
+	rra
+	jr	nc,A5C9A
+A5C86:	pop	de
+	pop	hl
+	call	A5CDC
+	call	A5CCD
+	jr	A5CAA
+;
+A5C90:	ld	a,(CPLOTF)
+	or	a
+	jr	z,A5C9A
+A5C96:	pop	de
+	pop	hl
+	jr	A5CAA
+;
+A5C9A:	pop	de
+	pop	hl
+	call	A5CDC
+	call	SCALXY
+	jr	nc,A5CAA
+	call	MAPXYC
+	call	SETC
+A5CAA:	pop	de
+	pop	hl
+	pop	af
+	dec	a
+	ret	z
+	push	af
+	push	de
+	ld	de,(CXOFF)
+	call	A5B0B
+	ld	(CXOFF),hl
+	ex	de,hl
+	pop	de
+	push	hl
+	ld	hl,(CYOFF)
+	ex	de,hl
+	ld	(CYOFF),hl
+	call	A5B0B
+	pop	hl
+	pop	af
+	jp	A5C4A
+;
+A5CCD:	ld	hl,(GRPACX)
+	ld	(GXPOS),hl
+	ld	hl,(GRPACY)
+	ld	(GYPOS),hl
+	jp	A593C
+;
+A5CDC:	push	de
+	ld	de,(GRPACX)
+	add	hl,de
+	ld	b,h
+	ld	c,l
+	pop	de
+	ld	hl,(GRPACY)
+	add	hl,de
+	ex	de,hl
+	ret
+;
+A5CEB:	ld	hl,(ASPECT)
+	ld	a,l
+	or	a
+	jr	nz,A5CF6
+	or	h
+	ret	nz
+	ex	de,hl
+	ret
+;
+A5CF6:	ld	c,d
+	ld	d,000H
+	push	af
+	call	A5D0A
+	ld	e,080H
+	add	hl,de
+	ld	e,c
+	ld	c,h
+	pop	af
+	call	A5D0A
+	ld	e,c
+	add	hl,de
+	ex	de,hl
+	ret
+;
+A5D0A:	ld	b,008H
+	ld	hl,0
+A5D0F:	add	hl,hl
+	add	a,a
+	jr	nc,A5D14
+	add	hl,de
+A5D14:	djnz	A5D0F
+	ret
+;
+A5D17:	dec	hl
+	rst	CHRGTR
+	ret	z
+	rst	SYNCHR
+	db	','
+	cp	02CH
+	ret	z
+	push	bc
+	call	A4C64			; eval expression
+	ex	(sp),hl
+	push	hl
+	call	A2FB2
+	pop	bc
+	ld	hl,DAC
+	ld	a,(hl)
+	or	a
+	jp	p,A5D3A
+	and	07FH
+	ld	(hl),a
+	ld	hl,CLINEF
+	ld	a,(hl)
+	or	c
+	ld	(hl),a
+A5D3A:	ld	bc,01540H
+	ld	de,05591H		; 0.159155
+	call	A325C
+	call	A5D63
+	jp	z,A475A
+	call	A2EB1			; push DAC (sng)
+	ld	hl,(CNPNTS)
+	add	hl,hl
+	add	hl,hl
+	add	hl,hl
+	call	A2F99
+	call	A2FB2
+	pop	bc
+	pop	de
+	call	A325C
+	call	A2F8A
+	pop	de
+	ex	de,hl
+	ret
+;
+A5D63:	ld	bc,01041H
+	ld	de,00000H		; 1.0!
+	call	A2F21
+	dec	a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(SCRMOD)
+	cp	002H
+	jp	c,A475A
+	ld	de,T5D83
+	xor	a
+	ld	(DRWFLG),a
+	ld	(MCLFLG),a
+	jp	A566C
+;
+T5D83:	db	"U"+128
+	dw	A5DB1
+	db	"D"+128
+	dw	A5DB4
+	db	"L"+128
+	dw	A5DB9
+	db	"R"+128
+	dw	A5DBC
+	db	"M"
+	dw	A5DD8
+	db	"E"+128
+	dw	A5DCA
+	db	"F"+128
+	dw	A5DC6
+	db	"G"+128
+	dw	A5DD1
+	db	"H"+128
+	dw	A5DC3
+	db	"A"+128
+	dw	A5E4E
+	db	"B"
+	dw	A5E46
+	db	"N"
+	dw	A5E42
+	db	"X"
+	dw	A5782
+	db	"C"+128
+	dw	A5E87
+	db	"S"+128
+	dw	A5E59
+	db	0
+
+	call	A5B0B
+	ld	bc,0
+	jr	A5DFF
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A5B0B
+	ld	b,d
+	ld	c,e
+	ld	de,0
+	jr	A5DFF
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A5B0B
+	ld	b,d
+	ld	c,e
+	jr	A5DFF
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	b,d
+	ld	c,e
+A5DCC:	call	A5B0B
+	jr	A5DFF
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A5B0B
+	ld	b,d
+	ld	c,e
+	jr	A5DCC
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A56E8
+	ld	b,000H
+	cp	02BH
+	jr	z,A5DE6
+	cp	02DH
+	jr	z,A5DE6
+	inc	b
+A5DE6:	ld	a,b
+	push	af
+	call	A570B
+	call	A5719
+	push	de
+	call	A56E8
+	cp	02CH
+	jp	nz,A475A
+	call	A5719
+	pop	bc
+	pop	af
+	or	a
+	jr	nz,A5E22
+A5DFF:	call	A5E66
+	push	de
+	ld	d,b
+	ld	e,c
+	call	A5E66
+	ex	de,hl
+	pop	de
+	ld	a,(DRWANG)
+	rra
+	jr	nc,A5E16
+	push	af
+	call	A587B
+	ex	de,hl
+	pop	af
+A5E16:	rra
+	jr	nc,A5E1F
+	call	A587B
+	call	A5B0B
+A5E1F:	call	A5CDC
+A5E22:	ld	a,(DRWFLG)
+	add	a,a
+	jr	c,A5E31
+	push	af
+	push	bc
+	push	de
+	call	A5CCD
+	pop	de
+	pop	bc
+	pop	af
+A5E31:	add	a,a
+	jr	c,A5E3D
+	ld	(GRPACY),de
+	ld	h,b
+	ld	l,c
+	ld	(GRPACX),hl
+A5E3D:	xor	a
+	ld	(DRWFLG),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,040H
+	jr	A5E48
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,080H
+A5E48:	ld	hl,DRWFLG
+	or	(hl)
+	ld	(hl),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jr	nc,A5E59
+	ld	a,e
+	cp	004H
+	jr	nc,A5E59
+	ld	(DRWANG),a
+	ret
+;
+A5E59:	jp	nc,A475A
+	ld	a,d
+	or	a
+	jp	nz,A475A
+	ld	a,e
+	ld	(DRWSCL),a
+	ret
+;
+A5E66:	ld	a,(DRWSCL)
+	or	a
+	ret	z
+	ld	hl,0
+A5E6E:	add	hl,de
+	dec	a
+	jr	nz,A5E6E
+	ex	de,hl
+	ld	a,d
+	add	a,a
+	push	af
+	jr	nc,A5E79
+	dec	de
+A5E79:	call	A59B4
+	call	A59B4
+	pop	af
+	ret	nc
+	ld	a,d
+	or	0C0H
+	ld	d,a
+	inc	de
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jr	nc,A5E59
+	ld	a,e
+	call	SETATR
+	jp	c,A475A
+	ret
+;
+A5E91:	push	hl
+	call	SCALXY
+	jp	nc,A475A
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+T5E9A:	dec	hl
+	rst	CHRGTR
+	ret	z
+	rst	SYNCHR
+	db	','
+	ld	bc,T5E9A
+	push	bc
+	db	0F6H
+A5EA4:	xor	a
+	ld	(DIMFLG),a
+	ld	c,(hl)			; first varname char
+A5EA9:	call	H.PTRG
+	call	A64A7			; check if upcaseletter
+	jp	c,A4055 		; nop, syntax error
+	xor	a
+	ld	b,a			; default second varname char
+	rst	CHRGTR			; get second varname char
+	jr	c,A5EBC 		; it's a digit
+	call	A64A8			; check if upcaseletter
+	jr	c,A5EC5 		; nop, quit name
+A5EBC:	ld	b,a
+A5EBD:	rst	CHRGTR
+	jr	c,A5EBD
+	call	A64A8
+	jr	nc,A5EBD
+A5EC5:	cp	'%'+1
+	jr	nc,A5EE0		; no type identifier
+	ld	de,T5EEE
+	push	de			; resume
+	ld	d,002H
+	cp	'%'
+	ret	z			; INT
+	inc	d
+	cp	'$'
+	ret	z			; STR
+	inc	d
+	cp	'!'
+	ret	z			; SNG
+	ld	d,008H
+	cp	'#'
+	ret	z			; DBL
+	pop	af
+A5EE0:	ld	a,c
+	and	07FH			; ignore b7
+	ld	e,a
+	ld	d,000H
+	push	hl
+	ld	hl,DEFTBL-'A'
+	add	hl,de
+	ld	d,(hl)			; default type
+	pop	hl
+	dec	hl
+T5EEE:	ld	a,d
+	ld	(VALTYP),a		; type to search
+	rst	CHRGTR			; get next basicchar
+	ld	a,(SUBFLG)
+	dec	a
+	jp	z,A5FE8 		; ERASE, must be array without index
+	jp	p,A5F08 		; FN & FOR, no arrays
+	ld	a,(hl)
+	sub	'('
+	jp	z,A5FBA
+	sub	'['-'('
+	jp	z,A5FBA 		; array
+A5F08:	xor	a
+	ld	(SUBFLG),a		; search variable
+	push	hl
+	ld	a,(NOFUNS)
+	or	a
+	ld	(PRMFLG),a
+	jr	z,A5F52 		; no FN
+	ld	hl,(PRMLEN)
+	ld	de,PARM1
+	add	hl,de
+	ld	(ARYTA2),hl		; end of FN vars
+	ex	de,hl
+	jr	A5F3A			; first search FN in vars
+;
+A5F23:	ld	a,(de)
+	ld	l,a			; vartype
+	inc	de
+	ld	a,(de)			; first varname char
+	inc	de
+	cp	c
+	jr	nz,A5F36		; not good, skip var
+	ld	a,(VALTYP)
+	cp	l			; type good ?
+	jr	nz,A5F36		; nop, skip var
+	ld	a,(de)
+	cp	b			; second varname char good ?
+	jp	z,A5FA4 		; yep, found
+A5F36:	inc	de
+	ld	h,000H
+	add	hl,de			; skip var
+A5F3A:	ex	de,hl
+	ld	a,(ARYTA2+0)
+	cp	e
+	jp	nz,A5F23
+	ld	a,(ARYTA2+1)
+	cp	d			; end of area ?
+	jr	nz,A5F23		; nop, cont
+	ld	a,(PRMFLG)
+	or	a			; search again for FN ?
+	jr	z,A5F66 		; nop, make var
+	xor	a
+	ld	(PRMFLG),a
+A5F52:	ld	hl,(ARYTAB)
+	ld	(ARYTA2),hl
+	ld	hl,(VARTAB)
+	jr	A5F3A
+;
+A5F5D:	call	A5EA4
+	ret
+;
+A5F61:	ld	d,a
+	ld	e,a			; de = 0 (var not found)
+	pop	bc
+	ex	(sp),hl
+	ret
+;
+A5F66:	pop	hl
+	ex	(sp),hl
+	push	de
+	ld	de,A5F60+3
+	rst	DCOMPR			; called by A5F5D ?
+	jr	z,A5F61 		; yep,
+	ld	de,A4E9B+3
+	rst	DCOMPR			; called by A4E9B ?
+	pop	de
+	jr	z,A5FA7 		; yep,
+	ex	(sp),hl
+	push	hl
+	push	bc
+	ld	a,(VALTYP)
+	ld	c,a
+	push	bc
+	ld	b,000H
+	inc	bc
+	inc	bc
+	inc	bc			; size of var
+	ld	hl,(STREND)
+	push	hl
+	add	hl,bc			; end of dest
+	pop	bc			; end of source
+	push	hl
+	call	A6250			; move array area
+	pop	hl
+	ld	(STREND),hl		; new start of free area
+	ld	h,b
+	ld	l,c
+	ld	(ARYTAB),hl		; new start of array area
+A5F96:	dec	hl
+	ld	(hl),000H
+	rst	DCOMPR
+	jr	nz,A5F96		; clear space
+	pop	de
+	ld	(hl),e			; vartype
+	inc	hl
+	pop	de
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d			; varname
+	ex	de,hl
+A5FA4:	inc	de
+	pop	hl
+	ret
+;
+A5FA7:	ld	(DAC+0),a		; 0.0 for SNG & DBL
+	ld	h,a
+	ld	l,a
+	ld	(DAC+2),hl		; 0 for INT
+	rst	GETYPR
+	jr	nz,A5FB8		; no string
+	ld	hl,T3FD6
+	ld	(DAC+2),hl		; empty string descriptor
+A5FB8:	pop	hl
+	ret
+;
+A5FBA:	push	hl
+	ld	hl,(DIMFLG)
+	ex	(sp),hl 		; save DIMFLG & VALTYP
+	ld	d,a
+A5FC0:	push	de
+	push	bc
+	call	A4755			; eval operand (index)
+	pop	bc
+	pop	af
+	ex	de,hl
+	ex	(sp),hl
+	push	hl			; save index
+	ex	de,hl
+	inc	a
+	ld	d,a			; dimension so far
+	ld	a,(hl)
+	cp	','
+	jp	z,A5FC0 		; next index
+	cp	')'
+	jr	z,A5FDC
+	cp	']'
+	jp	nz,A4055		; no, syntax error
+A5FDC:	rst	CHRGTR
+	ld	(TEMP2),hl		; save basicpointer
+	pop	hl
+	ld	(DIMFLG),hl		; restore DIMFLG & VALTYP
+	ld	e,000H
+	push	de			; dimension
+	db	011H			; skip push hl,push af
+A5FE8:	push	hl
+	push	af
+	ld	hl,(ARYTAB)
+	db	03EH
+A5FEE:	add	hl,de
+	ld	de,(STREND)
+	rst	DCOMPR			; end of array area ?
+	jr	z,A6023 		; yep,
+	ld	e,(hl)			; var type
+	inc	hl
+	ld	a,(hl)
+	inc	hl
+	cp	c			; first char varname good ?
+	jr	nz,A6005		; nop, next
+	ld	a,(VALTYP)
+	cp	e			; vartype good ?
+	jr	nz,A6005		; nop, next
+	ld	a,(hl)
+	cp	b
+A6005:	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; length
+	inc	hl
+	jr	nz,A5FEE		; not good, to next
+	ld	a,(DIMFLG)
+	or	a
+	jp	nz,A405E		; DIM, redimensioned array
+	pop	af
+	ld	b,h
+	ld	c,l
+	jp	z,A3297 		; ERASE, quit
+	sub	(hl)			; dimension = # of index
+	jp	z,A607D 		; yep,
+A601D:	ld	de,00009H
+	jp	A406F			; subscript out of range
+;
+A6023:	ld	a,(VALTYP)
+	ld	(hl),a			; vartype
+	inc	hl
+	ld	e,a
+	ld	d,000H
+	pop	af
+	jp	z,A475A 		; ERASE, illegal function call
+	ld	(hl),c
+	inc	hl
+	ld	(hl),b			; varname
+	inc	hl
+	ld	c,a			; dimension
+	call	A625E			; check if C words space left
+	inc	hl
+	inc	hl
+	ld	(TEMP3),hl		; save ptr
+	ld	(hl),c			; dimension
+	inc	hl
+	ld	a,(DIMFLG)
+	rla
+	ld	a,c
+A6043:	ld	bc,11
+	jr	nc,A604A		; not DIM, standard 0..10
+	pop	bc
+	inc	bc
+A604A:	ld	(hl),c
+	push	af
+	inc	hl
+	ld	(hl),b
+	inc	hl			; counter
+	call	A314A			; size in bytes
+	pop	af
+T6053:	dec	a
+	jr	nz,A6043		; next dimension
+	push	af
+	ld	b,d
+	ld	c,e			; arraysize
+	ex	de,hl
+	add	hl,de			; behind array
+	jp	c,A6275 		; out of memory
+	call	A6267			; check if 200 bytes left
+	ld	(STREND),hl		; new start of free area
+A6064:	dec	hl
+	ld	(hl),000H
+	rst	DCOMPR
+	jr	nz,A6064		; clear array
+	inc	bc
+	ld	d,a
+	ld	hl,(TEMP3)
+	ld	e,(hl)
+	ex	de,hl
+	add	hl,hl			; dimsize * 2 (counters)
+	add	hl,bc			; array + dimbyte
+	ex	de,hl
+	dec	hl
+	dec	hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d			; arraylength
+	inc	hl
+	pop	af
+	jr	c,A60AD 		; DIM, quit
+A607D:	ld	b,a
+	ld	c,a			; =0
+	ld	a,(hl)			; dimension
+	inc	hl
+	db	016H
+A6082:	pop	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	inc	hl			; counter
+	ex	(sp),hl
+	push	af
+	rst	DCOMPR			; is index valid ?
+	jp	nc,A601D		; nop, subscript out of range
+	call	A314A
+	add	hl,de
+	pop	af
+	dec	a
+	ld	b,h
+	ld	c,l
+	jr	nz,A6082		; next dimension
+	ld	a,(VALTYP)
+	ld	b,h
+	ld	c,l
+	add	hl,hl			; *2
+	sub	004H
+	jr	c,A60A5 		; INT & STR
+	add	hl,hl			; *4
+	jr	z,A60AA 		; SNG
+	add	hl,hl			; *8 (DBL)
+A60A5:	or	a
+	jp	po,A60AA
+	add	hl,bc			; *3 (STR)
+A60AA:	pop	bc
+	add	hl,bc
+	ex	de,hl
+A60AD:	ld	hl,(TEMP2)
+	ret
+;
+A60B1:	call	A4C65			; eval operand
+	call	A3058			; check if string
+	rst	SYNCHR
+	db	';'                     ; ';' must follow
+	ex	de,hl
+	ld	hl,(DAC+2)		; stringdescriptor
+	jr	A60C7
+;
+A60BF:	ld	a,(FLGINP)
+	or	a
+	jr	z,A60D2
+	pop	de
+	ex	de,hl
+A60C7:	push	hl
+	xor	a
+	ld	(FLGINP),a
+	inc	a
+	push	af
+	push	de
+	ld	b,(hl)			; stringlength
+	inc	b
+	dec	b			; empty string ?
+A60D2:	jp	z,A475A 		; yep, illegal function call
+	inc	hl
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a			; adres string
+	jr	A60F6
+;
+A60DC:	ld	e,b
+	push	hl
+	ld	c,002H
+A60E0:	ld	a,(hl)
+	inc	hl
+	cp	'\'
+	jp	z,A6210
+	cp	' '
+	jr	nz,A60EE
+	inc	c
+	djnz	A60E0
+A60EE:	pop	hl
+	ld	b,e
+	ld	a,'\'
+A60F2:	call	A6246			; print + if flag
+	rst	OUTDO
+A60F6:	xor	a
+	ld	e,a
+	ld	d,a			; DE = 0
+A60F9:	call	A6246			; print + if flag
+	ld	d,a
+	ld	a,(hl)			; char
+	inc	hl
+	cp	'!'
+	jp	z,A620D 		; handle
+	cp	'#'
+	jr	z,A6144 		; handle
+	cp	'&'
+	jp	z,A6209 		; handle
+	dec	b
+	jp	z,A61F5 		; last char,
+	cp	'+'
+	ld	a,008H
+	jr	z,A60F9 		; yep, set flag
+	dec	hl
+	ld	a,(hl)
+	inc	hl
+	cp	'.'
+	jr	z,A615E 		; handle
+	cp	'\'
+	jr	z,A60DC 		; handle
+	cp	(hl)			; double char ?
+	jr	nz,A60F2		; nope, just print
+	cp	'$'
+	jr	z,A613D 		; handle
+	cp	'*'
+	jr	nz,A60F2		; nope, just print
+	inc	hl
+	ld	a,b
+	cp	002H
+	jr	c,A6136 		; nope
+	ld	a,(hl)
+	cp	'$'
+A6136:	ld	a,020H			; ** flag
+	jr	nz,A6141
+	dec	b
+	inc	e
+	db	0FEH
+A613D:	xor	a
+	add	a,010H			; $ flag
+	inc	hl
+A6141:	inc	e
+	add	a,d
+	ld	d,a
+A6144:	inc	e
+	ld	c,000H
+	dec	b
+	jr	z,A6192
+	ld	a,(hl)
+	inc	hl
+	cp	'.'
+	jr	z,A6169
+	cp	'#'
+	jr	z,A6144
+	cp	','
+	jr	nz,A6173
+	ld	a,d
+	or	040H
+	ld	d,a
+	jr	A6144
+;
+A615E:	ld	a,(hl)
+	cp	'#'
+	ld	a,'.'
+	jp	nz,A60F2
+	ld	c,001H
+	inc	hl
+A6169:	inc	c
+	dec	b
+	jr	z,A6192
+	ld	a,(hl)
+	inc	hl
+	cp	'#'
+	jr	z,A6169
+A6173:	push	de
+	ld	de,T6190
+	push	de
+	ld	d,h
+	ld	e,l
+	cp	'^'
+	ret	nz
+	cp	(hl)
+	ret	nz
+	inc	hl
+	cp	(hl)
+	ret	nz
+	inc	hl
+	cp	(hl)
+	ret	nz
+	inc	hl
+	ld	a,b
+	sub	004H
+	ret	c
+	pop	de
+	pop	de
+	ld	b,a
+	inc	d
+	inc	hl
+	db	0CAH
+	ex	de,hl
+	pop	de
+A6192:	ld	a,d
+	dec	hl
+	inc	e
+	and	008H
+	jr	nz,A61AE
+	dec	e
+	ld	a,b
+	or	a
+	jr	z,A61AE
+	ld	a,(hl)
+	sub	02DH
+	jr	z,A61A9
+	cp	0FEH
+	jr	nz,A61AE
+	ld	a,008H
+A61A9:	add	a,004H
+	add	a,d
+	ld	d,a
+	dec	b
+A61AE:	pop	hl
+	pop	af
+	jr	z,A61FE
+	push	bc
+	push	de
+	call	A4C64			; eval expression
+	pop	de
+	pop	bc
+	push	bc
+	push	hl
+	ld	b,e
+	ld	a,b
+	add	a,c
+	cp	019H
+	jp	nc,A475A
+	ld	a,d
+	or	080H
+	call	A3426
+	call	A6678
+A61CC:	pop	hl
+	dec	hl
+	rst	CHRGTR
+	scf
+	jr	z,A61DD
+	ld	(FLGINP),a
+	cp	03BH
+	jr	z,A61DC
+	rst	SYNCHR
+	db	','
+	ld	b,0D7H
+A61DD:	pop	bc
+	ex	de,hl
+	pop	hl
+	push	hl
+	push	af
+	push	de
+	ld	a,(hl)
+	sub	b
+	inc	hl
+	ld	d,000H
+	ld	e,a
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	add	hl,de
+	ld	a,b
+	or	a
+	jp	nz,A60F6
+	jr	A61F9
+;
+A61F5:	call	A6246			; print + if flag
+	rst	OUTDO
+A61F9:	pop	hl
+	pop	af
+	jp	nz,A60BF
+A61FE:	call	c,A7328 		; ?, OUTDO next line
+	ex	(sp),hl
+	call	A67D6
+	pop	hl
+	jp	A4AFF			; output back to screen
+;
+A6209:	ld	c,000H
+	jr	A6211
+;
+A620D:	ld	c,001H
+	ld	a,0F1H
+A6211:	dec	b
+	call	A6246			; print + if flag
+	pop	hl
+	pop	af
+	jr	z,A61FE
+	push	bc
+	call	A4C64			; eval expression
+	call	A3058
+	pop	bc
+	push	bc
+	push	hl
+	ld	hl,(DAC+2)
+	ld	b,c
+	ld	c,000H
+	ld	a,b
+	push	af
+	or	a
+	call	nz,A6868
+	call	A667B
+	ld	hl,(DAC+2)
+	pop	af
+	or	a
+	jp	z,A61CC
+	sub	(hl)
+	ld	b,a
+	ld	a,020H
+	inc	b
+A623F:	dec	b
+	jp	z,A61CC
+	rst	OUTDO
+	jr	A623F
+;
+A6246:	push	af
+	ld	a,d
+	or	a
+	ld	a,'+'
+	call	nz,OUTDO
+	pop	af
+	ret
+;
+A6250:	call	A6267			; check stackspace
+A6253:	push	bc
+	ex	(sp),hl
+	pop	bc
+A6256:	rst	DCOMPR
+	ld	a,(hl)
+	ld	(bc),a
+	ret	z
+	dec	bc
+	dec	hl
+	jr	A6256
+;
+A625E:	push	hl
+	ld	hl,(STREND)
+	ld	b,000H
+	add	hl,bc
+	add	hl,bc
+	db	03EH
+A6267:	push	hl
+	ld	a,LOW 0FF88H
+	sub	l
+	ld	l,a
+	ld	a,HIGH 0FF88H
+	sbc	a,h
+	ld	h,a			; there must be 120 bytes left
+	jr	c,A6275 		; out of memory
+	add	hl,sp
+	pop	hl
+	ret	c
+A6275:	call	A4253			; convert linenumbers to pointers
+	ld	hl,(STKTOP)
+	dec	hl
+	dec	hl
+	ld	(SAVSTK),hl
+	ld	de,00007H
+	jp	A406F
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ret	nz			; not end of statement, quit
+A6287:	ld	hl,(TXTTAB)
+	call	A6439			; TRACE off
+	ld	(AUTFLG),a		; AUTO off
+	ld	(PTRFLG),a		; OUTDO to screen
+	ld	(hl),a
+	inc	hl
+	ld	(hl),a			; endpointer at start programmem
+	inc	hl
+	ld	(VARTAB),hl		; vars start after program
+A629A:	call	H.RUNC
+	ld	hl,(TXTTAB)
+	dec	hl
+A62A1:	call	H.CLEA
+	ld	(TEMP),hl		; pointer to endmark
+A62A7:	call	A636E			; events off
+	ld	b,26
+	ld	hl,DEFTBL
+	call	H.LOPD
+A62B2:	ld	(hl),008H
+	inc	hl
+	djnz	A62B2			; default type is DBL
+	call	A2C24			; init RNDX
+	xor	a
+	ld	(ONEFLG),a		; no errorroutine pending
+	ld	l,a
+	ld	h,a
+	ld	(ONELIN),hl		; no errorroutine
+	ld	(OLDTXT),hl		; no CONT possible
+	ld	hl,(MEMSIZ)
+	ld	(FRETOP),hl		; clear stringspace
+	call	A63C9			; init DATPTR
+	ld	hl,(VARTAB)
+	ld	(ARYTAB),hl
+	ld	(STREND),hl		; clear arrays & vars
+	call	A6C1C			; close I/O channels
+	ld	a,(NLONLY)
+	and	001H			; close channel 0 ?
+	jr	nz,A62E5
+	ld	(NLONLY),a		; yep, no channel stays open
+A62E5:	pop	bc
+	ld	hl,(STKTOP)		; start of stack
+	dec	hl
+	dec	hl			; dummy word on stack
+	ld	(SAVSTK),hl		; stack at headloop entry
+	inc	hl
+	inc	hl
+A62F0:	call	H.STKE
+	ld	sp,hl			; set Z80 stack
+	ld	hl,TEMPST
+	ld	(TEMPPT),hl		; clear temp descriptors
+	call	A7304			; stop printer
+	call	A4AFF			; output back to screen
+	xor	a
+	ld	h,a
+	ld	l,a
+	ld	(PRMLEN),hl
+	ld	(NOFUNS),a
+	ld	(PRMLN2),hl
+	ld	(FUNACT),hl
+	ld	(PRMSTK),hl		; init FN vars
+	ld	(SUBFLG),a		; normal varsearch
+	push	hl			; end of stack
+	push	bc			;
+T6317:	ld	hl,(TEMP)		; basicpointer
+	ret
+;
+A631B:	di
+	ld	a,(hl)
+	and	004H
+	or	001H
+	cp	(hl)
+	ld	(hl),a
+	jr	z,A6329
+	and	004H
+	jr	nz,A634F
+A6329:	ei
+	ret
+;
+A632B:	di
+	ld	a,(hl)
+	ld	(hl),000H
+	jr	A6338
+;
+A6331:	di
+	ld	a,(hl)
+	push	af
+	or	002H
+	ld	(hl),a
+	pop	af
+A6338:	xor	005H
+	jr	z,A6362
+	ei
+	ret
+;
+A633E:	di
+	ld	a,(hl)
+	and	005H
+	cp	(hl)
+	ld	(hl),a
+	jr	nz,A6348
+	ei
+	ret
+;
+A6348:	xor	005H
+	jr	z,A634F
+	ei
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	di
+A634F:	ld	a,(ONGSBF)
+	inc	a
+	ld	(ONGSBF),a
+	ei
+	ret
+;
+A6358:	di
+	ld	a,(hl)
+	and	003H
+	cp	(hl)
+	ld	(hl),a
+	jr	nz,A6362
+A6360:	ei
+	ret
+;
+A6362:	ld	a,(ONGSBF)
+	sub	001H
+	jr	c,A6360
+	ld	(ONGSBF),a
+	ei
+	ret
+;
+A636E:	ld	hl,TRPTBL
+	ld	b,01AH
+	xor	a
+A6374:	ld	(hl),a
+	inc	hl
+	ld	(hl),a
+	inc	hl
+	ld	(hl),a
+	inc	hl
+	djnz	A6374
+	ld	hl,FNKFLG
+	ld	b,00AH
+A6381:	ld	(hl),a
+	inc	hl
+	djnz	A6381
+	ld	(ONGSBF),a
+	ret
+;
+A6389:	ld	a,(ONEFLG)
+	or	a
+	ret	nz
+	push	hl
+	ld	hl,(CURLIN)
+	ld	a,h
+	and	l
+	inc	a
+	jr	z,A63A6
+	ld	hl,TRPTBL
+	ld	b,01AH
+A639C:	ld	a,(hl)
+	cp	005H
+	jr	z,A63A8
+A63A1:	inc	hl
+	inc	hl
+	inc	hl
+	djnz	A639C
+A63A6:	pop	hl
+	ret
+;
+A63A8:	push	bc
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	dec	hl
+	dec	hl
+	ld	a,d
+	or	e
+	pop	bc
+	jr	z,A63A1
+	push	de
+	push	hl
+	call	A6358
+	call	A6331
+	ld	c,003H
+	call	A625E			; check if 3 words space left
+	pop	bc
+	pop	de
+	pop	hl
+	ex	(sp),hl
+	pop	hl
+	jp	A47CF
+;
+A63C9:	ex	de,hl
+	ld	hl,(TXTTAB)
+	jr	z,A63DD
+	ex	de,hl
+	call	A4769
+	push	hl
+	call	A4295			; search line from start
+	ld	h,b
+	ld	l,c
+	pop	de
+	jp	nc,A481C
+A63DD:	dec	hl
+A63DE:	ld	(DATPTR),hl
+	ex	de,hl
+	ret
+;
+A63E3:	jp	nz,A77A5
+	ret	nz
+	inc	a			; NZ flag (STOP)
+	jr	A63F4
+;
+A63EA:	ret	nz			; text behind END, quit
+	xor	a
+	ld	(ONEFLG),a		; No ONERROR active
+	push	af
+	call	z,A6C1C 		; close I/O channels
+	pop	af
+A63F4:	ld	(SAVTXT),hl		; current basicpointer
+	ld	hl,TEMPST
+	ld	(TEMPPT),hl		; dispose temp descriptors
+	db	021H
+	or	0FFH
+	pop	bc			; returnadres (executionloop)
+A6401:	ld	hl,(CURLIN)
+	push	hl
+T6405:	push	af
+	ld	a,l
+	and	h
+	inc	a			; in direct mode ?
+	jr	z,A6414 		; yep, skip
+	ld	(OLDLIN),hl
+	ld	hl,(SAVTXT)
+	ld	(OLDTXT),hl		; save for CONT
+A6414:	call	A7304			; stop printer
+	call	A7323			; OUTDO new line
+	pop	af
+	ld	hl,T3FDC		; "Break"
+	jp	nz,A40FD		; STOP, print msg
+	jp	A411E			; headloop-Ok
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	hl,(OLDTXT)
+	ld	a,h
+	or	l
+	ld	de,00011H
+	jp	z,A406F
+	ld	de,(OLDLIN)
+	ld	(CURLIN),de
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	db	03EH
+	xor	a
+	ld	(TRCFLG),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A5EA4
+	push	de
+	push	hl
+	ld	hl,SWPTMP
+	call	A2EF3
+	ld	hl,(ARYTAB)
+	ex	(sp),hl
+	rst	GETYPR
+	push	af
+	rst	SYNCHR
+	db	','
+	call	A5EA4
+	pop	af
+	ld	b,a
+	rst	GETYPR
+	cp	b
+	jp	nz,A406D
+	ex	(sp),hl
+	ex	de,hl
+	push	hl
+	ld	hl,(ARYTAB)
+	rst	DCOMPR
+	jr	nz,A6474
+	pop	de
+	pop	hl
+	ex	(sp),hl
+	push	de
+	call	A2EF3
+	pop	hl
+	ld	de,SWPTMP
+	call	A2EF3
+	pop	hl
+	ret
+;
+A6474:	jp	A475A
+;
+A6477:	ld	a,001H
+	ld	(SUBFLG),a
+	call	A5EA4
+	push	hl
+	ld	(SUBFLG),a
+	ld	h,b
+	ld	l,c
+	dec	bc
+	dec	bc
+	dec	bc
+	dec	bc
+	dec	bc
+	add	hl,de
+	ex	de,hl
+	ld	hl,(STREND)
+A648F:	rst	DCOMPR
+	ld	a,(de)
+	ld	(bc),a
+	inc	de
+	inc	bc
+	jr	nz,A648F
+	dec	bc
+	ld	h,b
+	ld	l,c
+	ld	(STREND),hl
+	pop	hl
+	ld	a,(hl)
+	cp	02CH
+	ret	nz
+	rst	CHRGTR
+	jr	A6477
+;
+; >> NO EXECUTION PATH TO HERE <<
+	pop	af
+	pop	hl
+	ret
+;
+A64A7:	ld	a,(hl)
+A64A8:	cp	041H
+	ret	c
+	cp	05BH
+	ccf
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jp	z,A62A1 		; no parameters, just run clear
+	call	A4756			; get operand
+	dec	hl
+	rst	CHRGTR
+	push	hl
+	ld	hl,(HIMEM)
+	ld	b,h
+	ld	c,l
+	ld	hl,(MEMSIZ)
+	jr	z,A64EC 		; end of statement, no himem
+	pop	hl
+	rst	SYNCHR
+	db	','                     ; ',' must follow
+	push	de
+	call	A542F			; get operand
+	dec	hl
+	rst	CHRGTR
+	jp	nz,A4055		; statement, syntax error
+	ex	(sp),hl
+	ex	de,hl
+	ld	a,h
+	and	a
+	jp	p,A475A 		; < 08000H, illegal function call
+	push	de
+	ld	de,VARWRK+1
+	rst	DCOMPR
+	jp	nc,A475A		; > VARWRK, illegal function call
+	pop	de
+	push	hl
+	ld	bc,-(256+9+2)
+	ld	a,(MAXFIL)
+A64E5:	add	hl,bc
+	dec	a
+	jp	p,A64E5
+	pop	bc
+	dec	hl
+A64EC:	ld	a,l
+	sub	e
+	ld	e,a
+	ld	a,h
+	sbc	a,d
+	ld	d,a
+	jp	c,A6275
+	push	hl
+	ld	hl,(VARTAB)
+	push	bc
+	ld	bc,160
+	add	hl,bc
+	pop	bc
+	rst	DCOMPR
+	jp	nc,A6275
+	ex	de,hl
+	ld	(STKTOP),hl
+	ld	h,b
+	ld	l,c
+	ld	(HIMEM),hl
+	pop	hl
+	ld	(MEMSIZ),hl
+	pop	hl
+	call	A62A1			; run clear
+	ld	a,(MAXFIL)
+	call	A7E6B
+	ld	hl,(TEMP)
+	jp	A4601
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,l
+	sub	e
+	ld	e,a
+	ld	a,h
+	sbc	a,d
+	ld	d,a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	de,0
+A652A:	call	nz,A5EA4
+	ld	(TEMP),hl
+	call	A3FE2
+	jp	nz,A405B
+	ld	sp,hl
+	push	de
+	ld	a,(hl)
+	push	af
+	inc	hl
+	push	de
+	ld	a,(hl)
+	inc	hl
+	or	a
+	jp	m,A656B
+	dec	a
+	jr	nz,A6549
+T6545:	ld	bc,8
+	add	hl,bc
+A6549:	add	a,004H
+	ld	(VALTYP),a
+	call	A2F08
+	ex	de,hl
+	ex	(sp),hl
+	push	hl
+	rst	GETYPR
+	jr	nc,A65A5
+	call	A2ED6			; init CBED
+	call	A324E
+	pop	hl
+	call	A2EE8			; copy DAC to HL
+	pop	hl
+	call	A2EDF			; init EDCB
+	push	hl
+	call	A2F21
+	jr	A6594
+;
+A656B:	ld	bc,12
+	add	hl,bc
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	inc	hl
+	ex	(sp),hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	push	hl
+	ld	l,c
+	ld	h,b
+	call	A3172
+	ld	a,(VALTYP)
+	cp	002H
+	jp	nz,A4067
+	ex	de,hl
+	pop	hl
+	ld	(hl),d
+	dec	hl
+	ld	(hl),e
+	pop	hl
+	push	de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	inc	hl
+	ex	(sp),hl
+	call	A2F4D
+A6594:	pop	hl
+	pop	bc
+	sub	b
+	call	A2EDF			; init EDCB
+	jr	z,A65B6
+	ex	de,hl
+	ld	(CURLIN),hl
+	ld	l,c
+	ld	h,b
+	jp	A45FD
+;
+A65A5:	call	A2697
+	pop	hl
+	call	A2F10
+	pop	hl
+	call	A2EEF			; copy HL to ARG
+	push	de
+	call	A2F5C
+	jr	A6594
+;
+A65B6:	ld	sp,hl
+	ld	(SAVSTK),hl
+	ex	de,hl
+	ld	hl,(TEMP)
+	ld	a,(hl)
+	cp	02CH
+	jp	nz,A4601
+	rst	CHRGTR
+T65C5:	call	A652A
+T65C8:	call	A67D0			; free temp string
+	ld	a,(hl)
+	inc	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	pop	de
+	push	bc
+	push	af
+	call	A67D7
+	pop	af
+	ld	d,a
+	ld	e,(hl)
+	inc	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)
+	pop	hl
+A65DE:	ld	a,e
+	or	d
+	ret	z
+	ld	a,d
+	sub	001H
+	ret	c
+	xor	a
+	cp	e
+	inc	a
+	ret	nc
+	dec	d
+	dec	e
+	ld	a,(bc)
+	inc	bc
+	cp	(hl)
+	inc	hl
+	jr	z,A65DE
+	ccf
+	jp	A2E79
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A371E
+	jr	A6607
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A3722
+	jr	A6607
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A371A
+	jr	A6607
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A3425
+A6607:	call	A6635
+	call	A67D3
+	ld	bc,A6825
+	push	bc
+A6611:	ld	a,(hl)			; stringlength
+	inc	hl
+	push	hl
+	call	A668E			; allocate stringspace
+	pop	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)			; adres string
+	call	A662A			; make temp descriptor
+	push	hl
+	ld	l,a
+	call	A67C7			; copy string to stringarea
+	pop	de
+	ret
+;
+A6625:	ld	a,001H
+A6627:	call	A668E			; allocate stringspace
+A662A:	ld	hl,DSCTMP
+	push	hl
+	ld	(hl),a
+	inc	hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	pop	hl
+	ret
+;
+A6635:	dec	hl
+A6636:	ld	b,'"'
+A6638:	ld	d,b
+A6639:	push	hl
+	ld	c,0FFH
+A663C:	inc	hl
+	ld	a,(hl)
+	inc	c
+	or	a
+	jr	z,A6648 		; endmark
+	cp	d
+	jr	z,A6648 		; endchar1
+	cp	b
+	jr	nz,A663C		; not endchar2, cont
+A6648:	cp	'"'
+	call	z,A4666 		; CHRGTR
+	ex	(sp),hl
+	inc	hl
+	ex	de,hl
+	ld	a,c			; length
+	call	A662A			; make temp descriptor
+					; push temp descriptor
+
+A6654:	ld	de,DSCTMP
+	db	03EH			; skip push de
+	push	de
+	ld	hl,(TEMPPT)
+	ld	(DAC+2),hl		; temp descriptor
+	ld	a,003H
+	ld	(VALTYP),a		; type is string
+	call	A2EF3			; copy descriptor
+	ld	de,DSCTMP+3
+	rst	DCOMPR			; space for descriptor ?
+	ld	(TEMPPT),hl
+	pop	hl
+	ld	a,(hl)
+	ret	nz			; yep, quit
+	ld	de,00010H
+	jp	A406F			; nop, string formula too complex
+;
+A6677:	inc	hl
+A6678:	call	A6635
+A667B:	call	A67D3			; remove temp descriptor
+	call	A2EE1
+	inc	d
+A6682:	dec	d
+	ret	z
+	ld	a,(bc)
+	rst	OUTDO
+	cp	00DH
+	call	z,A7331
+	inc	bc
+	jr	A6682
+;
+A668E:	or	a
+	db	00EH
+A6690:	pop	af
+	push	af
+	ld	hl,(STKTOP)
+	ex	de,hl
+	ld	hl,(FRETOP)
+	cpl
+	ld	c,a
+	ld	b,0FFH
+	add	hl,bc
+	inc	hl
+	rst	DCOMPR			; does string fit ?
+	jr	c,A66A9 		; nop,
+	ld	(FRETOP),hl		; adjust FRETOP
+	inc	hl
+	ex	de,hl
+A66A7:	pop	af
+	ret
+;
+A66A9:	pop	af
+	ld	de,0000EH
+	jp	z,A406F 		; still nop, out of string space
+	cp	a
+	push	af
+	ld	bc,A6690		; do a garbage collect
+	push	bc			;  then try again
+
+A66B6:	ld	hl,(MEMSIZ)		; stringspace empty
+A66B9:	ld	(FRETOP),hl
+	ld	hl,0
+	push	hl
+	ld	hl,(STREND)
+	push	hl
+	ld	hl,TEMPST
+T66C7:	ld	de,(TEMPPT)
+	rst	DCOMPR			; temp descriptors ?
+	ld	bc,T66C7
+	jp	nz,A6742		; yep, handle them
+	ld	hl,PRMPRV
+	ld	(TEMP9),hl
+	ld	hl,(ARYTAB)
+	ld	(ARYTA2),hl
+	ld	hl,(VARTAB)
+A66E1:	ld	de,(ARYTA2)
+	rst	DCOMPR
+	jr	z,A66FA 		; end of varspace
+	ld	a,(hl)			; var type
+	inc	hl
+	inc	hl
+	inc	hl			; skip name
+	cp	003H
+	jr	nz,A66F4		; not a string, skip
+	call	A6743
+	xor	a
+A66F4:	ld	e,a
+	ld	d,000H
+	add	hl,de
+	jr	A66E1
+;
+A66FA:	ld	hl,(TEMP9)
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ld	a,d
+	or	e
+	ld	hl,(ARYTAB)
+	jr	z,A671A 		; no FN strings,
+	ex	de,hl
+	ld	(TEMP9),hl
+	inc	hl
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	inc	hl
+	ex	de,hl
+	add	hl,de
+	ld	(ARYTA2),hl
+	ex	de,hl
+	jr	A66E1
+;
+A6719:	pop	bc
+A671A:	ld	de,(STREND)
+	rst	DCOMPR
+	jp	z,A6763 		; end of arrayspace
+	ld	a,(hl)			; arraytype
+	inc	hl
+	call	A2EDF			; get EDCB
+	push	hl
+	add	hl,bc
+	cp	003H
+	jr	nz,A6719		; not a string array, skip
+	ld	(TEMP8),hl		; end of array
+	pop	hl
+	ld	c,(hl)			; dimsize
+	ld	b,000H
+	add	hl,bc
+	add	hl,bc
+	inc	hl			; skip indexs
+T6737:	ex	de,hl
+	ld	hl,(TEMP8)
+	ex	de,hl
+	rst	DCOMPR
+	jr	z,A671A 		; end of array, next
+	ld	bc,T6737
+A6742:	push	bc
+A6743:	xor	a
+	or	(hl)			; empty string ?
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; adres string
+	inc	hl
+	ret	z			; yes, quit
+	ld	b,h
+	ld	c,l
+	ld	hl,(FRETOP)
+	rst	DCOMPR			; string below FRETOP ?
+	ld	h,b
+	ld	l,c
+	ret	c			; no, quit
+	pop	hl
+	ex	(sp),hl
+	rst	DCOMPR			; string above highest so far ?
+	ex	(sp),hl
+	push	hl
+	ld	h,b
+	ld	l,c
+	ret	nc			; no, quit
+	pop	bc
+	pop	af
+	pop	af
+	push	hl			; next var
+	push	de			; start string
+	push	bc
+	ret
+;
+A6763:	pop	de
+	pop	hl
+	ld	a,h
+	or	l
+	ret	z			; no (more) strings, quit
+	dec	hl
+	ld	b,(hl)
+	dec	hl
+	ld	c,(hl)			; adres string
+	push	hl
+	dec	hl
+	ld	l,(hl)
+	ld	h,000H
+	add	hl,bc
+	ld	d,b
+	ld	e,c			; start of string
+	dec	hl
+	ld	b,h
+	ld	c,l			; end of string
+	ld	hl,(FRETOP)		; end whereto
+	call	A6253			; copy string
+	pop	hl
+	ld	(hl),c
+	inc	hl
+	ld	(hl),b			; new adres string
+	ld	h,b
+	ld	l,c
+	dec	hl			; new FRETOP
+	jp	A66B9
+;
+A6787:	push	bc
+	push	hl
+	ld	hl,(DAC+2)		; descriptor
+	ex	(sp),hl
+	call	A4DC7			; evaluate expression
+	ex	(sp),hl
+	call	A3058			; check if string
+	ld	a,(hl)
+	push	hl
+	ld	hl,(DAC+2)
+	push	hl
+	add	a,(hl)			; total length > 255 ?
+	ld	de,0000FH
+	jp	c,A406F 		; yep, string too long
+	call	A6627			; alloc stringspace with descriptor
+	pop	de
+	call	A67D7			; free space str2
+	ex	(sp),hl
+	call	A67D6			; free space str1
+	push	hl
+	ld	hl,(DSCTMP+1)
+	ex	de,hl
+	call	A67BF			; put in stringspace
+	call	A67BF			; put in stringspace
+	ld	hl,T4C73
+	ex	(sp),hl
+	push	hl
+	jp	A6654			; push temp descriptor
+;
+A67BF:	pop	hl
+	ex	(sp),hl 		; descriptor
+	ld	a,(hl)			; length
+	inc	hl
+	ld	c,(hl)
+	inc	hl
+	ld	b,(hl)			; adres string
+	ld	l,a
+A67C7:	inc	l
+A67C8:	dec	l
+	ret	z			; empty string, quit
+	ld	a,(bc)
+	ld	(de),a
+	inc	bc
+	inc	de
+	jr	A67C8			; copy string
+;
+A67D0:	call	A3058			; check if string
+A67D3:	ld	hl,(DAC+2)		; string descriptor
+A67D6:	ex	de,hl
+A67D7:	call	A67EE			; if last temp descriptor, dispose
+	ex	de,hl
+	ret	nz			; no, quit
+	push	de
+	ld	d,b
+	ld	e,c			; adres of string
+	dec	de
+	ld	c,(hl)			; length of string
+	ld	hl,(FRETOP)
+	rst	DCOMPR			; lowest string ?
+	jr	nz,A67EC
+	ld	b,a
+	add	hl,bc
+	ld	(FRETOP),hl		; yep, adjust FRETOP
+A67EC:	pop	hl
+	ret
+;
+A67EE:	call	H.FRET
+	ld	hl,(TEMPPT)
+	dec	hl
+	ld	b,(hl)
+	dec	hl
+	ld	c,(hl)
+	dec	hl
+	rst	DCOMPR			; is descriptor the last ?
+A67FA:	ret	nz			; nop, quit
+	ld	(TEMPPT),hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	bc,A4FCF
+	push	bc
+A6803:	call	A67D0			; free temp string
+	xor	a
+	ld	d,a
+	ld	a,(hl)
+	or	a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	bc,A4FCF
+	push	bc
+A680F:	call	A6803
+	jp	z,A475A
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	ld	a,(de)
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A6625			; if 1 byte space make descriptor
+	call	A521F
+A6821:	ld	hl,(DSCTMP+1)
+	ld	(hl),e
+A6825:	pop	bc
+	jp	A6654			; push temp descriptor
+;
+A6829:	rst	CHRGTR
+	rst	SYNCHR
+	db	'('
+	call	A521C
+	push	de
+	rst	SYNCHR
+	db	','
+	call	A4C64			; eval expression
+	rst	SYNCHR
+	db	')'
+	ex	(sp),hl
+	push	hl
+	rst	GETYPR
+	jr	z,A6841
+	call	A521F
+	jr	A6844
+;
+A6841:	call	A680F
+A6844:	pop	de
+	call	A684D
+	call	A521F
+	ld	a,020H
+A684D:	push	af
+	ld	a,e
+	call	A6627			; alloc stringspace with descriptor
+	ld	b,a
+	pop	af
+	inc	b
+	dec	b
+	jr	z,A6825
+	ld	hl,(DSCTMP+1)
+A685B:	ld	(hl),a
+	inc	hl
+	djnz	A685B
+	jr	A6825
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A68E3
+	xor	a
+A6865:	ex	(sp),hl
+	ld	c,a
+	ld	a,0E5H
+T6869:	push	hl
+	ld	a,(hl)
+	cp	b
+	jr	c,A6870
+	ld	a,b
+	db	011H
+A6870:	ld	c,0
+	push	bc
+	call	A668E			; allocate stringspace
+	pop	bc
+	pop	hl
+	push	hl
+	inc	hl
+	ld	b,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,b
+	ld	b,000H
+	add	hl,bc
+	ld	b,h
+	ld	c,l
+	call	A662A			; make temp descriptor
+	ld	l,a
+	call	A67C7
+	pop	de
+	call	A67D7
+	jp	A6654			; push temp descriptor
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A68E3
+	pop	de
+	push	de
+	ld	a,(de)
+	sub	b
+	jr	A6865
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ex	de,hl
+	ld	a,(hl)
+	call	A68E6
+	inc	b
+	dec	b
+	jp	z,A475A
+	push	bc
+	call	A69E4
+	pop	af
+	ex	(sp),hl
+	ld	bc,T6869
+	push	bc
+	dec	a
+	cp	(hl)
+	ld	b,000H
+	ret	nc
+	ld	c,a
+	ld	a,(hl)
+	sub	c
+	cp	e
+	ld	b,a
+	ret	c
+	ld	b,e
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A6803
+	jp	z,A4FCF
+	ld	e,a
+	inc	hl
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	push	hl
+	add	hl,de
+	ld	b,(hl)
+	ld	(VLZADR),hl
+	ld	a,b
+	ld	(VLZDAT),a
+	ld	(hl),d
+	ex	(sp),hl
+	push	bc
+	dec	hl
+	rst	CHRGTR
+	call	A3299
+	ld	hl,0
+	ld	(VLZADR),hl
+	pop	bc
+	pop	hl
+	ld	(hl),b
+	ret
+;
+A68E3:	ex	de,hl
+	rst	SYNCHR
+	db	')'
+A68E6:	pop	bc
+	pop	de
+	push	bc
+	ld	b,e
+	ret
+;
+A68EB:	rst	CHRGTR
+	call	A4C62
+	rst	GETYPR
+	ld	a,001H
+	push	af
+	jr	z,A6906
+	pop	af
+	call	A521F
+	or	a
+	jp	z,A475A
+	push	af
+	rst	SYNCHR
+	db	','
+	call	A4C64			; eval expression
+	call	A3058
+A6906:	rst	SYNCHR
+	db	','
+	push	hl
+	ld	hl,(DAC+2)
+	ex	(sp),hl
+	call	A4C64			; eval expression
+	rst	SYNCHR
+	db	')'
+	push	hl
+	call	A67D0			; free temp string
+	ex	de,hl
+	pop	bc
+	pop	hl
+	pop	af
+	push	bc
+	ld	bc,A3297
+	push	bc
+	ld	bc,A4FCF
+	push	bc
+	push	af
+	push	de
+	call	A67D6
+	pop	de
+	pop	af
+	ld	b,a
+	dec	a
+	ld	c,a
+	cp	(hl)
+	ld	a,000H
+	ret	nc
+	ld	a,(de)
+	or	a
+	ld	a,b
+	ret	z
+	ld	a,(hl)
+	inc	hl
+	ld	b,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,b
+	ld	b,000H
+	add	hl,bc
+A693E:	sub	c
+	ld	b,a
+	push	bc
+	push	de
+	ex	(sp),hl
+	ld	c,(hl)
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	pop	hl
+A6949:	push	hl
+	push	de
+	push	bc
+A694C:	ld	a,(de)
+	cp	(hl)
+	jr	nz,A6966
+	inc	de
+	dec	c
+	jr	z,A695D
+	inc	hl
+	djnz	A694C
+	pop	de
+	pop	de
+	pop	bc
+A695A:	pop	de
+	xor	a
+	ret
+;
+A695D:	pop	hl
+	pop	de
+	pop	de
+	pop	bc
+	ld	a,b
+	sub	h
+	add	a,c
+	inc	a
+	ret
+;
+A6966:	pop	bc
+	pop	de
+	pop	hl
+	inc	hl
+	djnz	A6949
+	jr	A695A
+;
+A696E:	rst	SYNCHR
+	db	'('                     ; '(' must follow
+	call	A5EA4
+	call	A3058			; check if string
+	push	hl
+	push	de
+	ex	de,hl
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; adres string
+	ld	hl,(STREND)
+	rst	DCOMPR
+	jr	c,A6993 		; string not in var or program
+	ld	hl,(TXTTAB)
+	rst	DCOMPR
+	jr	nc,A6993		; string not in var or program
+	pop	hl
+	push	hl
+	call	A6611			; copy string to stringarea
+	pop	hl
+	push	hl
+	call	A2EF3			; copy descriptor
+A6993:	pop	hl
+	ex	(sp),hl
+	rst	SYNCHR
+	db	','                     ; ',' must follow
+	call	A521C			; get byte operand
+	or	a
+	jp	z,A475A 		; 0, Illegal function call
+	push	af
+	ld	a,(hl)
+	call	A69E4
+	push	de
+	call	A4C5F			; eval =expression
+	push	hl
+	call	A67D0			; free temp string
+	ex	de,hl
+	pop	hl
+	pop	bc
+	pop	af
+	ld	b,a
+	ex	(sp),hl
+	push	hl
+	ld	hl,A3297
+	ex	(sp),hl
+	ld	a,c
+	or	a
+	ret	z
+	ld	a,(hl)
+	sub	b
+	jp	c,A475A
+	inc	a
+	cp	c
+	jr	c,A69C3
+	ld	a,c
+A69C3:	ld	c,b
+	dec	c
+	ld	b,000H
+	push	de
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,e
+	add	hl,bc
+	ld	b,a
+	pop	de
+	ex	de,hl
+	ld	c,(hl)
+	inc	hl
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	ex	de,hl
+	ld	a,c
+	or	a
+	ret	z
+A69DB:	ld	a,(de)
+	ld	(hl),a
+	inc	de
+	inc	hl
+	dec	c
+	ret	z
+	djnz	A69DB
+	ret
+;
+A69E4:	ld	e,0FFH
+	cp	029H
+	jr	z,A69EF
+	rst	SYNCHR
+	db	','
+	call	A521C
+A69EF:	rst	SYNCHR
+	db	')'
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	hl,(STREND)
+	ex	de,hl
+	ld	hl,0
+	add	hl,sp
+	rst	GETYPR
+	jp	nz,A4FC1
+	call	A67D3
+	call	A66B6
+	ld	de,(STKTOP)
+	ld	hl,(FRETOP)
+	jp	A4FC1
+;
+A6A0E:	call	A4C64			; eval expression
+	push	hl
+	call	A67D0			; free temp string
+	ld	a,(hl)
+	or	a			; zero string ?
+	jr	z,A6A47 		; yep, error
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,e
+	ld	e,a
+	call	A6F15			; parse devicename
+	push	af
+	ld	bc,FILNAM
+	ld	d,00BH
+	inc	e
+A6A29:	dec	e			; end of string ?
+	jr	z,A6A61 		; yep, fill remainer
+	ld	a,(hl)
+	cp	020H			; control char ?
+	jr	c,A6A47 		; yep, error
+	cp	"."
+	jr	z,A6A4D 		; extension,
+	ld	(bc),a
+	inc	bc
+	inc	hl
+	dec	d
+	jr	nz,A6A29		; next
+A6A3B:	pop	af
+	push	af
+	ld	d,a			; deviceid
+	ld	a,(FILNAM+0)
+	inc	a			; 0FFH at start ?
+	jr	z,A6A47 		; yep, error
+	pop	af
+	pop	hl
+	ret
+;
+A6A47:	jp	A6E6B
+;
+A6A4A:	inc	hl
+	jr	A6A29
+;
+A6A4D:	ld	a,d
+	cp	00BH			; . at start ?
+	jp	z,A6A47 		; yep, error
+	cp	003H			; main file too long ?
+	jp	c,A6A47 		; yep, error
+	jr	z,A6A4A 		; ok, cont
+	ld	a," "
+	ld	(bc),a
+	inc	bc
+	dec	d
+	jr	A6A4D			; fill remainer
+;
+A6A61:	ld	a," "
+	ld	(bc),a
+	inc	bc
+	dec	d
+	jr	nz,A6A61		; fill remainer
+	jr	A6A3B			; fini
+;
+A6A6A:	call	A521F
+A6A6D:	ld	l,a
+	ld	a,(MAXFIL)
+	cp	l			; channel valid ?
+	jp	c,A6E7D 		; nop, Bad file number
+	ld	h,000H
+	add	hl,hl			; WORD
+	ex	de,hl
+	ld	hl,(FILTAB)
+	add	hl,de
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a			; pointer to channel
+	ld	a,(NLONLY)
+	inc	a
+	ret	z			; FF, quit
+	ld	a,(hl)
+	or	a
+	ret	z			; channel closed, quit
+	push	hl
+	ld	de,4
+	add	hl,de
+	ld	a,(hl)
+	cp	009H			; Diskdrive ?
+	jr	nc,A6A99		; nop,
+	call	H.GETP			; DSKROM should intercept here!
+	jp	A6E80			; Internal error
+;
+A6A99:	pop	hl
+	ld	a,(hl)
+	or	a			; MOD byte
+	scf
+	ret
+;
+A6A9E:	dec	hl
+	rst	CHRGTR
+	cp	023H
+	call	z,A4666
+	call	A521C
+	ex	(sp),hl
+	push	hl
+A6AAA:	call	A6A6D			; get I/O channel pointer
+	jp	z,A6E77 		; not open,
+	ld	(PTRFIL),hl
+	call	H.SETF
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	bc,A4AFF
+	push	bc			; after this, output back to screen
+	call	A6A0E			; eval filespec
+	ld	a,(hl)
+	cp	082H			; FOR token ?
+	ld	e,004H
+	jr	nz,A6AE4		; nop, random file
+	rst	CHRGTR			; get next basicchar
+	cp	085H			; INPUT token ?
+	ld	e,001H
+	jr	z,A6AE3 		; yep, input file
+	cp	09CH			; OUT token ?
+	jr	z,A6ADC 		; yep, check on PUT
+	rst	SYNCHR
+	db	'A'
+	rst	SYNCHR
+	db	'P'
+	rst	SYNCHR
+	db	'P'
+	rst	SYNCHR
+	db	081H			; APPEND must follow
+	ld	e,008H
+	jr	A6AE4			; append file
+;
+A6ADC:	rst	CHRGTR
+	rst	SYNCHR
+	db	0B3H			; PUT must follow
+	ld	e,002H
+	jr	A6AE4			; output file
+;
+A6AE3:	rst	CHRGTR
+A6AE4:	rst	SYNCHR
+	db	'A'
+	rst	SYNCHR
+	db	'S'                     ; AS must follow
+	push	de
+	ld	a,(hl)
+	cp	'#'
+	call	z,A4666 		; skip if '#'
+	call	A521C			; get byte operand
+	or	a
+	jp	z,A6E7D 		; 0, Bad file number
+	call	H.NOFO			; EXPANSION HOOK
+	db	01EH
+A6AFA:	push	de
+	dec	hl
+	ld	e,a
+	rst	CHRGTR			; end of statement ?
+	jp	nz,A4055		; nop, error
+	ex	(sp),hl
+	ld	a,e
+	push	af
+	push	hl
+	call	A6A6D			; get channel pointer
+	jp	nz,A6E6E		; already open, error
+	pop	de
+	ld	a,d
+	cp	009H			; Diskdrive ?
+	call	H.NULO			; DSKROM should intercept here!
+	jp	c,A6E80 		; yep, Internal error
+	push	hl
+	ld	bc,4
+	add	hl,bc
+	ld	(hl),d			; device
+	ld	a,000H			; open
+	pop	hl
+	call	A6F8F			; channel dispatcher
+	pop	af
+	pop	hl
+	ret
+;
+A6B24:	push	hl
+	or	a			; channel 0 ?
+	jr	nz,A6B30		; nop, no check
+	ld	a,(NLONLY)
+	and	001H			; close channel 0 ?
+	jp	nz,A6CF3		; nop, quit
+A6B30:	call	A6A6D			; get channel pointer
+	jr	z,A6B4A 		; not open or do not close,
+	ld	(PTRFIL),hl
+	push	hl
+	jr	c,A6B41 		; standard device, cont
+	call	H.NTFL			; DSKROM should intercept here!?
+	jp	A6E80			; Internal error
+;
+A6B41:	ld	a,002H			; close
+	call	A6F8F			; channel dispatcher
+	call	A6CEA			; clear channelbuffer
+	pop	hl
+A6B4A:	push	hl
+	ld	de,7
+	add	hl,de
+	ld	(hl),a			; clear FLG
+	ld	h,a
+	ld	l,a
+	ld	(PTRFIL),hl
+	pop	hl
+	add	a,(hl)
+	ld	(hl),000H		; channel is closed
+	pop	hl
+	ret
+;
+A6B5B:	scf
+	db	011H			; ld de,0AFF6H
+	db	0F6H			; or 0AFH
+	xor	a
+	push	af
+	call	A6A0E			; analyse filespec
+	call	H.MERG
+	pop	af
+	push	af			; MERGE ?
+	jr	z,A6B76 		; yep, no ,R
+	ld	a,(hl)
+	sub	','
+	or	a
+	jr	nz,A6B76		; no ,R specified
+	rst	CHRGTR
+	rst	SYNCHR
+	db	'R'
+	pop	af
+	scf
+	push	af
+A6B76:	push	af
+	xor	a
+	ld	e,001H			; FOR INPUT
+	call	A6AFA			; open I/O channel 0
+	ld	hl,(PTRFIL)
+	ld	bc,7
+	add	hl,bc
+	pop	af
+	sbc	a,a
+	and	080H			; ,R parameter
+	or	001H			; channel 0 stays open
+	ld	(NLONLY),a
+	pop	af
+	push	af
+	sbc	a,a
+	ld	(FILNAM+0),a		; runflag
+	ld	a,(hl)
+	or	a
+	jp	m,A6BD4 		; binload
+	pop	af			; LOAD or RUN ?
+	call	nz,A6287		; yep, NEW
+	xor	a
+	call	A6AAA			; select I/O channel 0
+	jp	A4134			; load/merge program
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A6A0E			; analyse filespec
+	call	H.SAVE
+	dec	hl
+	rst	CHRGTR
+	ld	e,080H			; FOR BINSAVE
+	scf
+	jr	z,A6BB7
+	rst	SYNCHR
+	db	','
+	rst	SYNCHR
+	db	'A'                     ; ',A' must follow
+	or	a
+	ld	e,002H			; FOR OUTPUT
+A6BB7:	push	af
+	ld	a,d
+	cp	009H
+	jr	c,A6BC2 		; diskdrive
+	ld	e,002H			; FOR OUTPUT
+	pop	af
+	xor	a
+	push	af
+A6BC2:	xor	a
+	call	A6AFA			; open I/O channel 0
+	pop	af
+	jr	c,A6BCE 		; binsave
+	dec	hl
+	rst	CHRGTR
+	jp	A522E
+;
+A6BCE:	call	H.BINS
+	jp	A6E6B			; Bad file name
+;
+A6BD4:	call	H.BINL
+	jp	A6E6B
+;
+; >> NO EXECUTION PATH TO HERE <<
+	push	hl
+	push	de
+	ld	hl,(PTRFIL)
+	ld	de,4
+	add	hl,de
+	ld	a,(hl)
+	pop	de
+	pop	hl
+	ret
+;
+A6BE7:	jr	nz,A6C02		; parameters, eval
+	push	hl
+A6BEA:	push	bc			; save routine adres
+	push	af			; channelnumber
+	ld	de,T6BF3
+	push	de			; return after routine
+	push	bc			; routine
+	or	a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+T6BF3:	pop	af
+	pop	bc
+	dec	a
+	jp	p,A6BEA 		; next channel
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+T6BFB:	pop	bc
+	pop	hl
+	ld	a,(hl)
+	cp	","
+	ret	nz
+	rst	CHRGTR
+A6C02:	push	bc
+	ld	a,(hl)
+	cp	"#"
+	call	z,A4666
+	call	A521C
+	ex	(sp),hl
+	push	hl
+	ld	de,T6BFB
+	push	de
+	scf
+	jp	(hl)
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	bc,A6B24		; close I/O channel
+	ld	a,(MAXFIL)
+	jr	A6BE7
+;
+A6C1C:	ld	a,(NLONLY)
+	or	a
+	ret	m			; b7 set, do not close anything
+	ld	bc,A6B24		; close I/O channel
+	xor	a
+	ld	a,(MAXFIL)		; start with last channel
+	jr	A6BE7
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,001H
+	ld	(PRTFLG),a
+	call	H.FILE
+	jp	A475A
+;
+A6C35:	push	af
+	call	A6A9E
+	jr	c,A6C41
+	call	H.DGET
+	jp	A6E6B
+;
+A6C41:	pop	de
+	pop	bc
+	ld	a,004H			; random files
+	jp	A6F8F			; channel dispatcher
+;
+; >> NO EXECUTION PATH TO HERE <<
+	push	hl
+	push	de
+	push	bc
+	push	af
+	call	A6C62
+	jr	nc,A6C57
+	call	H.FILO
+	jp	A6E6B
+;
+A6C57:	pop	af
+	push	af
+	ld	c,a
+	ld	a,006H			; seq. output
+	call	A6F8F			; channel dispatcher
+	jp	A72FF
+;
+A6C62:	push	de
+	ld	hl,(PTRFIL)
+	ex	de,hl
+	ld	hl,4
+	add	hl,de
+	ld	a,(hl)
+	ex	de,hl
+	pop	de
+	cp	009H
+	ret
+;
+A6C71:	push	hl
+A6C72:	push	de
+	push	bc
+	call	A6C62
+	jr	nc,A6C7F
+	call	H.INDS
+	jp	A6E80			; Internal error
+;
+A6C7F:	ld	a,008H			; seq. input
+	call	A6F8F			; channel dispatcher
+	jp	A7300
+;
+A6C87:	rst	CHRGTR
+	rst	SYNCHR
+	db	'$'
+	rst	SYNCHR
+	db	'('
+	push	hl
+	ld	hl,(PTRFIL)
+	push	hl
+	ld	hl,0
+	ld	(PTRFIL),hl
+	pop	hl
+	ex	(sp),hl
+	call	A521C
+	push	de
+	ld	a,(hl)
+	cp	02CH
+	jr	nz,A6CB3
+	rst	CHRGTR
+	call	A6A9E
+	cp	001H
+	jp	z,A6CB0
+	cp	004H
+	jp	nz,A6E83
+A6CB0:	pop	hl
+	xor	a
+	ld	a,(hl)
+A6CB3:	push	af
+	rst	SYNCHR
+	db	')'
+	pop	af
+	ex	(sp),hl
+	push	af
+	ld	a,l
+	or	a
+	jp	z,A475A
+	push	hl
+	call	A6627			; alloc stringspace with descriptor
+	ex	de,hl
+	pop	bc
+A6CC4:	pop	af
+	push	af
+	jr	z,A6CE2
+	call	CHGET
+	push	af
+	call	CKCNTC
+	pop	af
+A6CD0:	ld	(hl),a
+	inc	hl
+	dec	c
+	jr	nz,A6CC4
+	pop	af
+	pop	bc
+	pop	hl
+	call	H.RSLF
+	ld	(PTRFIL),hl
+	push	bc
+	jp	A6654			; push temp descriptor
+;
+A6CE2:	call	A6C71
+	jp	c,A6E83
+	jr	A6CD0
+;
+A6CEA:	call	A6CFB
+	push	hl
+	ld	b,000H
+	call	A6CF5
+A6CF3:	pop	hl
+	ret
+;
+A6CF5:	xor	a
+A6CF6:	ld	(hl),a
+	inc	hl
+	djnz	A6CF6
+	ret
+;
+A6CFB:	ld	hl,(PTRFIL)
+	ld	de,9
+	add	hl,de
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.SAVD
+	call	A6A6A
+	jr	z,A6D2B
+	ld	a,00AH
+	jr	c,A6D30
+	call	H.LOC
+	jr	A6D36
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.SAVD
+	call	A6A6A
+	jr	z,A6D2B
+	ld	a,00CH
+	jr	c,A6D30
+	call	H.LOF
+	jr	A6D36
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.SAVD
+	call	A6A6A
+A6D2B:	jp	z,A6E77
+	ld	a,00EH			; eof
+A6D30:	jp	c,A6F8F 		; ?, channel dispatcher
+	call	H.EOF
+A6D36:	jp	A6E80			; Internal error
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.SAVD
+	call	A6A6A
+	ld	a,010H
+	jr	c,A6D30
+	call	H.FPOS
+	jr	A6D36
+;
+A6D48:	call	ISFLIO
+	jp	z,A4640
+	xor	a
+	call	A6B24			; close I/O channel 0
+	jp	A6E71
+;
+A6D55:	ld	c,001H
+A6D57:	cp	023H
+	ret	nz
+	push	bc
+	call	A521B
+	rst	SYNCHR
+	db	','
+	ld	a,e
+	push	hl
+	call	A6AAA
+	ld	a,(hl)
+	pop	hl
+	pop	bc
+	cp	c
+	jr	z,A6D79
+	cp	004H
+	jr	z,A6D79
+	cp	008H
+	jr	nz,A6D76
+	ld	a,c
+	cp	002H
+A6D76:	jp	nz,A6E7D
+A6D79:	ld	a,(hl)
+	ret
+;
+A6D7B:	ld	bc,T6317
+	push	bc
+	xor	a
+	jp	A6B24			; close I/O channel 0
+;
+A6D83:	rst	GETYPR
+	ld	bc,A4BF1
+	ld	de,02C20H
+	jr	nz,A6DA3
+	ld	e,d
+	jr	A6DA3
+;
+A6D8F:	ld	bc,A4AFF
+	push	bc			; after this, output back to screen
+	call	A6D55
+	call	A5EA4
+	call	A3058
+	push	de
+	ld	bc,T487B
+	xor	a
+	ld	d,a
+	ld	e,a
+A6DA3:	push	af
+	push	bc
+	push	hl
+A6DA6:	call	A6C71
+	jp	c,A6E83
+	cp	020H
+	jr	nz,A6DB4
+	inc	d
+	dec	d
+	jr	nz,A6DA6
+A6DB4:	cp	022H
+	jr	nz,A6DC6
+	ld	a,e
+	cp	02CH
+	ld	a,022H
+	jr	nz,A6DC6
+	ld	d,a
+	ld	e,a
+	call	A6C71
+	jr	c,A6E0D
+A6DC6:	ld	hl,BUF
+	ld	b,0FFH
+A6DCB:	ld	c,a
+	ld	a,d
+	cp	022H
+	ld	a,c
+	jr	z,A6DFC
+	cp	00DH
+	push	hl
+	jr	z,A6E27
+	pop	hl
+	cp	00AH
+	jr	nz,A6DFC
+A6DDC:	ld	c,a
+	ld	a,e
+	cp	02CH
+	ld	a,c
+	call	nz,A6E61
+	call	A6C71
+	jr	c,A6E0D
+	cp	00AH
+	jr	z,A6DDC
+	cp	00DH
+	jr	nz,A6DFC
+	ld	a,e
+	cp	020H
+	jr	z,A6E08
+	cp	02CH
+	ld	a,00DH
+	jr	z,A6E08
+A6DFC:	or	a
+	jr	z,A6E08
+	cp	d
+	jr	z,A6E0D
+	cp	e
+	jr	z,A6E0D
+	call	A6E61
+A6E08:	call	A6C71
+	jr	nc,A6DCB
+A6E0D:	push	hl
+	cp	022H
+	jr	z,A6E16
+	cp	020H
+	jr	nz,A6E41
+A6E16:	call	A6C71
+	jr	c,A6E41
+	cp	020H
+	jr	z,A6E16
+	cp	02CH
+	jr	z,A6E41
+	cp	00DH
+	jr	nz,A6E30
+A6E27:	call	A6C71
+	jr	c,A6E41
+	cp	00AH
+	jr	z,A6E41
+A6E30:	ld	c,a
+	call	A6C62
+	jr	nc,A6E3C
+	call	H.BAKU
+	jp	A6E80			; Internal error
+;
+A6E3C:	ld	a,012H			; backup
+	call	A6F8F			; channel dispatcher
+A6E41:	pop	hl
+A6E42:	ld	(hl),000H
+	ld	hl,BUFMIN
+	ld	a,e
+	sub	020H
+	jr	z,A6E53
+	ld	b,000H
+	call	A6638
+	pop	hl
+	ret
+;
+A6E53:	rst	GETYPR
+	push	af
+	rst	CHRGTR
+	pop	af
+	push	af
+	call	c,A3299
+	pop	af
+	call	nc,A3299
+	pop	hl
+	ret
+;
+A6E61:	or	a
+	ret	z
+	ld	(hl),a
+	inc	hl
+	dec	b
+	ret	nz
+	pop	af
+	jp	A6E42
+;
+A6E6B:	ld	e,038H
+	db	1
+A6E6E:	ld	e,036H
+	db	1
+A6E71:	ld	e,039H
+	db	1
+A6E74:	ld	e,035H
+	db	1
+A6E77:	ld	e,03BH
+	db	1
+A6E7A:	ld	e,032H
+	db	1
+A6E7D:	ld	e,034H
+	db	1
+A6E80:	ld	e,033H
+	db	1
+A6E83:	ld	e,037H
+	db	1
+A6E86:	ld	e,03AH
+	xor	a
+	ld	(NLONLY),a		; no channel stays open
+	ld	(FLBMEM),a
+	jp	A406F
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A6A0E			; analyse filespec
+	push	de
+	rst	SYNCHR
+	db	','                     ; ',' must follow
+	call	A6F0B
+	ex	de,hl
+	ld	(SAVENT),hl		; start adres
+	ex	de,hl
+	push	de
+	rst	SYNCHR
+	db	','                     ; ',' must follow
+	call	A6F0B
+	ex	de,hl
+	ld	(SAVEND),hl		; end adres
+	ex	de,hl
+	dec	hl
+	rst	CHRGTR
+	jr	z,A6EB9
+	rst	SYNCHR
+	db	','
+	call	A6F0B
+	ex	de,hl
+	ld	(SAVENT),hl
+	ex	de,hl
+A6EB9:	pop	bc
+	pop	de
+	push	hl
+	push	bc
+	ld	a,d
+	cp	0FFH
+	jp	z,A6FD7
+	jp	A6E6B
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A6A0E			; analyse filespec
+	push	de
+	xor	a
+	ld	(RUNBNF),a
+	dec	hl
+	rst	CHRGTR
+	ld	bc,0
+	jr	z,A6EE8
+	rst	SYNCHR
+	db	','
+	cp	052H
+	jr	nz,A6EE3
+	ld	(RUNBNF),a
+	rst	CHRGTR
+	jr	z,A6EE8
+	rst	SYNCHR
+	db	','
+A6EE3:	call	A6F0B
+	ld	b,d
+	ld	c,e
+A6EE8:	pop	de
+	push	hl
+	push	bc
+	ld	a,d
+	cp	0FFH
+	jp	z,A7014
+	jp	A6E6B
+;
+A6EF4:	ld	a,(RUNBNF)
+	or	a
+	jr	z,A6F06
+	xor	a
+	call	A6B24			; close I/O channel 0
+	ld	hl,A6CF3
+	push	hl
+	ld	hl,(SAVENT)
+	jp	(hl)
+;
+A6F06:	pop	hl
+	xor	a
+	jp	A6B24			; close I/O channel 0
+;
+A6F0B:	call	A4C64			; eval expression
+	push	hl
+	call	A5439
+	pop	de
+	ex	de,hl
+	ret
+;
+A6F15:	call	H.PARD
+	ld	a,(hl)
+	cp	03AH			; 00-39 ?
+	jr	c,A6F37 		; yes, possible expansion identifier
+	push	hl
+	ld	d,e			; length string
+	ld	a,(hl)
+	inc	hl
+	dec	e
+	jr	z,A6F2E 		; 1 kar, no device
+A6F24:	cp	":"
+	jr	z,A6F3D 		; device seperator, device!
+	ld	a,(hl)
+	inc	hl
+	dec	e
+	jp	p,A6F24 		; parse for devicename
+A6F2E:	ld	e,d
+	pop	hl
+	xor	a
+	ld	a,0FFH			; default is CAS:
+	call	H.NODE			; EXPANSION HOOK
+	ret
+;
+A6F37:	call	H.POSD			; EXPANSION HOOK
+	jp	A6E6B			; error
+;
+A6F3D:	ld	a,d
+	sub	e
+	dec	a			; length devicename
+	pop	bc
+	push	de
+	push	bc
+	ld	c,a
+	ld	b,a
+	ld	de,T6F76		; devicename table
+	ex	(sp),hl
+	push	hl
+A6F4A:	call	A4EA9			; get upcased char
+	push	bc
+	ld	b,a
+	ld	a,(de)
+	inc	hl
+	inc	de
+	cp	b			; ok ?
+	pop	bc
+	jr	nz,A6F63		; nop,
+	dec	c
+	jr	nz,A6F4A		; next
+A6F59:	ld	a,(de)
+	or	a			; also end in table ?
+	jp	p,A6F63 		; nop, skip
+	pop	hl
+	pop	hl
+	pop	de
+	or	a
+	ret
+;
+A6F63:	or	a			; equal but longer than in table ?
+	jp	m,A6F59 		; yep, but take it
+A6F67:	ld	a,(de)
+	add	a,a
+	inc	de
+	jr	nc,A6F67		; skip rest
+	ld	c,b
+	pop	hl
+	push	hl
+	ld	a,(de)
+	or	a			; end of table ?
+	jr	nz,A6F4A		; nop, try next
+	jp	A55F8			; try device expansions
+;
+T6F76:	db	"CAS",0FFH
+	db	"LPT",0FEH
+	db	"CRT",0FDH
+	db	"GRP",0FCH
+	db	0
+
+T6F87:	dw	A71C7
+	dw	A72A6
+	dw	A71A2
+	dw	A7182
+
+A6F8F:	call	H.GEND
+	push	hl
+	push	de
+	push	af
+	ld	de,4
+	add	hl,de
+	ld	a,(hl)			; dev
+	cp	0FCH
+	jp	c,A564A 		; dispatch for device expensions
+	ld	a,0FFH
+	sub	(hl)
+	add	a,a
+	ld	e,a
+	ld	hl,T6F87
+	add	hl,de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; pointer to dispatch table
+	pop	af
+	ld	l,a
+	ld	h,000H
+	add	hl,de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)			; function routine
+	ex	de,hl
+	pop	de
+	ex	(sp),hl
+	ret				; invoke routine
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A7098
+	dec	hl
+	rst	CHRGTR
+	jr	z,A6FC3
+	rst	SYNCHR
+	db	','
+	call	A7A2D
+A6FC3:	push	hl
+	ld	a,0D3H
+	call	A7125
+	ld	hl,(VARTAB)
+	ld	(SAVEND),hl
+	ld	hl,(TXTTAB)
+	call	A713E
+	pop	hl
+	ret
+;
+A6FD7:	ld	a,0D0H
+	call	A7125
+	xor	a
+	call	A72F8
+	pop	hl
+	push	hl
+	call	A7003
+	ld	hl,(SAVEND)
+	push	hl
+	call	A7003
+	ld	hl,(SAVENT)
+	call	A7003
+	pop	de
+	pop	hl
+A6FF4:	ld	a,(hl)
+	call	A72DE
+	rst	DCOMPR
+	jr	nc,A6FFE
+	inc	hl
+	jr	A6FF4
+;
+A6FFE:	call	TAPOOF
+	pop	hl
+	ret
+;
+A7003:	ld	a,l
+	call	A72DE
+	ld	a,h
+	jp	A72DE
+;
+A700B:	call	A72D4
+	ld	l,a
+	call	A72D4
+	ld	h,a
+	ret
+;
+A7014:	ld	c,0D0H
+	call	A70B8
+	call	A72E9
+	pop	bc
+	call	A700B
+	add	hl,bc
+	ex	de,hl
+	call	A700B
+	add	hl,bc
+	push	hl
+	call	A700B
+	ld	(SAVENT),hl
+	ex	de,hl
+	pop	de
+A702F:	call	A72D4
+	ld	(hl),a
+	rst	DCOMPR
+	jr	z,A7039
+	inc	hl
+	jr	A702F
+;
+A7039:	call	TAPIOF
+	jp	A6EF4
+;
+A703F:	sub	091H
+	jr	z,A7045
+	xor	a
+	db	001H
+A7045:	cpl
+	inc	hl
+	cp	001H
+	push	af
+	call	A708C			; evaluate filename
+	ld	c,0D3H
+	call	A70B8			; search BINBAS file
+	pop	af
+	ld	(DAC+2),a
+	call	c,A6287 		; CLOAD, do a NEW
+	ld	a,(DAC+2)
+	cp	001H
+	ld	(FRCNEW),a
+	push	af
+	call	A54EA			; force linenumbers
+	pop	af
+	ld	hl,(TXTTAB)
+	call	A715D			; load/compare basicprogram
+	jr	nz,A707E		; not equal
+	ld	(VARTAB),hl		; start of vararea
+A7071:	ld	hl,T3FD7
+	call	A6678			; print prompt
+	ld	hl,(TXTTAB)
+	push	hl
+	jp	A4237			; manage pointers & vars, headloop
+;
+A707E:	inc	hl
+	ex	de,hl
+	ld	hl,(VARTAB)
+	rst	DCOMPR			; difference in programarea ?
+	jp	c,A7071 		; nop, then it is ok
+	ld	e,014H
+	jp	A406F			; Verify error
+;
+A708C:	dec	hl
+	rst	CHRGTR
+	jr	nz,A7098
+	push	hl
+	ld	hl,FILNAM
+	ld	b,006H
+	jr	A70B1
+;
+A7098:	call	A4C64			; eval expression
+	push	hl
+	call	A680F			; free if temp
+	dec	hl
+	dec	hl
+	ld	b,(hl)			; length of string
+	ld	c,006H
+	ld	hl,FILNAM
+A70A7:	ld	a,(de)
+	ld	(hl),a
+	inc	hl
+	inc	de
+	dec	c
+	jr	z,A70B6 		; FILNAM filled, quit
+	djnz	A70A7
+	ld	b,c
+A70B1:	ld	(hl),' '
+	inc	hl
+	djnz	A70B1			; fill remainer with spaces
+A70B6:	pop	hl
+	ret
+;
+A70B8:	call	A72E9			; Check until header
+	ld	b,10
+A70BD:	call	A72D4			; read byte
+	cp	c
+	jr	nz,A70B8		; other filetype, try again
+	djnz	A70BD
+	ld	hl,FILNM2
+	push	hl
+	ld	b,6
+A70CB:	call	A72D4
+	ld	(hl),a
+	inc	hl
+	djnz	A70CB			; read filename
+	pop	hl
+	ld	de,FILNAM
+	ld	b,006H
+A70D8:	ld	a,(de)
+	inc	de
+	cp	' '
+	jr	nz,A70E2
+	djnz	A70D8			; FILNAM all spaces ?
+	jr	A70EF			; yep, found
+;
+A70E2:	ld	de,FILNAM
+	ld	b,006H
+A70E7:	ld	a,(de)
+	cp	(hl)
+	jr	nz,A70F5		; not the same, skip
+	inc	hl
+	inc	de
+	djnz	A70E7			; compare next
+A70EF:	ld	hl,T70FF
+	jp	A710D			; found
+;
+A70F5:	push	bc
+	ld	hl,T7106
+	call	A710D			; print Skip
+	pop	bc
+	jr	A70B8			; try again
+;
+T70FF:	db	"Found:",0
+
+T7106:	db	"Skip :",0
+
+A710D:	ld	de,(CURLIN)
+	inc	de
+	ld	a,d
+	or	e
+	ret	nz
+	call	A6678
+	ld	hl,FILNM2
+	ld	b,006H
+A711D:	ld	a,(hl)
+	inc	hl
+	rst	OUTDO
+	djnz	A711D
+	jp	A7328			; OUTDO next line
+;
+A7125:	call	A72F8
+	ld	b,00AH
+A712A:	call	A72DE
+	djnz	A712A
+	ld	b,006H
+	ld	hl,FILNAM
+A7134:	ld	a,(hl)
+	inc	hl
+	call	A72DE
+	djnz	A7134
+	jp	TAPOOF
+;
+A713E:	push	hl
+	call	A54EA			; force linenumbers
+	xor	a
+	call	A72F8
+	pop	de
+	ld	hl,(SAVEND)
+A714A:	ld	a,(de)
+	inc	de
+	call	A72DE
+	rst	DCOMPR
+	jr	nz,A714A
+	ld	l,007H
+A7154:	call	A72DE
+	dec	l
+	jr	nz,A7154
+	jp	TAPOOF
+;
+A715D:	call	A72E9
+	sbc	a,a
+	cpl
+	ld	d,a
+A7163:	ld	b,00AH
+A7165:	call	A72D4
+	ld	e,a
+	call	A6267
+	ld	a,e
+	sub	(hl)
+	and	d
+	jp	nz,TAPIOF
+	ld	(hl),e
+	ld	a,(hl)
+	or	a
+	inc	hl
+	jr	nz,A7163
+	djnz	A7165
+	ld	bc,-6
+	add	hl,bc
+	xor	a
+	jp	TAPIOF
+;
+	dw	A71B6
+	dw	A71C2
+	dw	A6E86
+	dw	A7196
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+
+	ld	a,(SCRMOD)
+	cp	002H
+	jp	c,A475A
+	ld	a,c
+	jp	GRPPRT
+;
+	dw	A71B6
+	dw	A71C2
+	dw	A6E86
+	dw	A71C3
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+
+	call	A72CD
+	cp	001H
+	jp	z,A6E6B
+A71BE:	ld	(PTRFIL),hl
+	ld	(hl),e
+	ret
+;
+	ld	a,c
+	jp	CHPUT
+;
+	dw	A71DB
+	dw	A7205
+	dw	A6E86
+	dw	A722A
+	dw	A723F
+	dw	A475A
+	dw	A475A
+	dw	A726D
+	dw	A475A
+	dw	A727C
+
+	push	hl
+	push	de
+	ld	bc,6
+	add	hl,bc
+	xor	a
+	ld	(hl),a
+	ld	(CASPRV),a
+	call	A72CD
+	cp	004H
+	jp	z,A6E6B
+	cp	001H
+	jr	z,A71FB
+	ld	a,0EAH
+	call	A7125
+A71F7:	pop	de
+	pop	hl
+	jr	A71BE
+;
+A71FB:	ld	c,0EAH
+	call	A70B8
+	call	TAPIOF
+	jr	A71F7
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,(hl)
+	cp	001H
+	jr	z,A7225
+	ld	a,01AH
+	push	hl
+	call	A728B
+	call	z,A722F
+	pop	hl
+	call	A7281
+	jr	z,A7225
+	push	hl
+	add	hl,bc
+A721B:	ld	(hl),01AH
+	inc	hl
+	inc	c
+	jr	nz,A721B
+	pop	hl
+	call	A722F
+A7225:	xor	a
+	ld	(CASPRV),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,c
+	call	A728B
+	ret	nz
+A722F:	xor	a
+	call	A72F8
+	ld	b,000H
+A7235:	ld	a,(hl)
+	call	A72DE
+	inc	hl
+	djnz	A7235
+	jp	TAPOOF
+;
+A723F:	ex	de,hl
+	ld	hl,CASPRV
+	call	A72BE
+	ex	de,hl
+	call	A729B
+	jr	nz,A7260
+	push	hl
+	call	A72E9
+	pop	hl
+	ld	b,000H
+A7253:	call	A72D4
+	ld	(hl),a
+	inc	hl
+	djnz	A7253
+	call	TAPIOF
+	dec	h
+	xor	a
+	ld	b,a
+A7260:	ld	c,a
+	add	hl,bc
+	ld	a,(hl)
+	cp	01AH
+	scf
+	ccf
+	ret	nz
+	ld	(CASPRV),a
+	scf
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A723F
+	ld	hl,CASPRV
+	ld	(hl),a
+	sub	01AH
+	sub	001H
+	sbc	a,a
+	jp	A2E9A
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	hl,CASPRV
+	ld	(hl),c
+	ret
+;
+A7281:	ld	bc,6
+	add	hl,bc
+	ld	a,(hl)
+	ld	c,a
+	ld	(hl),000H
+	jr	A72A1
+;
+A728B:	ld	e,a
+	ld	bc,6
+	add	hl,bc
+	ld	a,(hl)
+	inc	(hl)
+	inc	hl
+	inc	hl
+	inc	hl
+	push	hl
+	ld	c,a
+	add	hl,bc
+	ld	(hl),e
+	pop	hl
+	ret
+;
+A729B:	ld	bc,6
+	add	hl,bc
+	ld	a,(hl)
+	inc	(hl)
+A72A1:	inc	hl
+	inc	hl
+	inc	hl
+	and	a
+	ret
+;
+	dw	A71B6
+	dw	A71C2
+	dw	A6E86
+	dw	A72BA
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+
+	ld	a,c
+	jp	OUTDLP
+;
+A72BE:	ld	a,(hl)
+	ld	(hl),000H
+	and	a
+	ret	z
+	inc	sp
+	inc	sp
+	cp	01AH
+	scf
+	ccf
+	ret	nz
+	ld	(hl),a
+	scf
+	ret
+;
+A72CD:	ld	a,e
+	cp	008H
+	jp	z,A6E6B
+	ret
+;
+A72D4:	push	hl
+	push	de
+	push	bc
+	call	TAPIN
+	jr	nc,A7300
+	jr	A72F2
+;
+A72DE:	push	hl
+	push	de
+	push	bc
+	push	af
+	call	TAPOUT
+	jr	nc,A72FF
+	jr	A72F2
+;
+A72E9:	push	hl
+	push	de
+	push	bc
+	push	af
+	call	TAPION
+	jr	nc,A72FF
+A72F2:	call	TAPIOF
+	jp	A73B2
+;
+A72F8:	push	hl
+	push	de
+	push	bc
+	push	af
+	call	TAPOON
+A72FF:	pop	af
+A7300:	pop	bc
+	pop	de
+	pop	hl
+	ret
+;
+A7304:	xor	a
+	ld	(PRTFLG),a
+	ld	a,(LPTPOS)
+	or	a
+	ret	z
+	ld	a,00DH
+	call	A731C
+	ld	a,00AH
+	call	A731C
+	xor	a
+	ld	(LPTPOS),a
+	ret
+;
+A731C:	call	LPTOUT
+	ret	nc
+	jp	A73B2
+;
+A7323:	ld	a,(TTYPOS)
+	or	a
+	ret	z
+A7328:	call	H.CRDO
+	ld	a,00DH
+	rst	OUTDO
+	ld	a,00AH
+	rst	OUTDO
+A7331:	call	ISFLIO
+	jr	z,A7338
+	xor	a
+	ret
+;
+A7338:	ld	a,(PRTFLG)
+	or	a
+	jr	z,A7343
+	xor	a
+	ld	(LPTPOS),a
+	ret
+;
+A7343:	ld	(TTYPOS),a
+	ret
+;
+A7347:	rst	CHRGTR
+	push	hl
+	call	CHSNS
+	jr	z,A735A
+	call	CHGET
+	push	af
+	call	A6625			; if 1 byte space make descriptor
+	pop	af
+	ld	e,a
+	call	A6821
+A735A:	ld	hl,T3FD6
+	ld	(DAC+2),hl
+	ld	a,003H
+	ld	(VALTYP),a
+	pop	hl
+	ret
+;
+A7367:	rst	OUTDO
+	cp	00AH
+	ret	nz
+	ld	a,00DH
+	rst	OUTDO
+	call	A7331
+	ld	a,00AH
+	ret
+;
+A7374:	call	H.DSKC
+	ld	b,255
+	ld	hl,BUF
+A737C:	call	A6C71			; seq. read byte
+	jr	c,A7397 		; end of file,
+	ld	(hl),a
+	cp	00DH
+	jr	z,A7391 		; CR, end of line
+	cp	009H
+	jr	z,A738E 		; tab is ok
+	cp	00AH
+	jr	z,A737C 		; skip LF's
+A738E:	inc	hl
+	djnz	A737C
+A7391:	xor	a
+	ld	(hl),a			; endmarker
+	ld	hl,BUFMIN
+	ret
+;
+A7397:	inc	b
+	jr	nz,A7391		; first return this line
+	ld	a,(NLONLY)
+	and	080H
+	ld	(NLONLY),a		; channel 0 shall be closed
+	call	A6D7B			; close channel 0
+	ld	a,(FILNAM+0)
+	and	a
+	jp	z,A411E 		; headloop
+	call	A629A			; run-clear
+	jp	A4601			; executionloop
+;
+A73B2:	ld	e,013H
+	jp	A406F
+;
+A73B7:	ld	e,0FFH
+	jr	z,A73C6 		; end of statement, toggle
+	sub	0EBH
+	ld	e,a			; OFF token ?
+	jr	z,A73C5 		; yep, off
+	rst	SYNCHR
+	db	095H			; ON must follow
+	ld	e,001H			; on
+	db	03EH
+A73C5:	rst	CHRGTR
+A73C6:	ld	a,e
+	jp	STMOTR
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A521C
+	cp	00EH
+	jp	nc,A475A
+	push	af
+	rst	SYNCHR
+	db	','
+	call	A521C
+	pop	af
+	cp	007H
+	jr	nz,A73E1
+	res	6,e
+	set	7,e
+A73E1:	jp	WRTPSG
+;
+T73E4:	db	' '
+
+	call	H.PLAY
+	push	hl
+	ld	hl,T752E
+	ld	(MCLTAB),hl
+	ld	a,000H
+	ld	(PRSCNT),a
+	ld	hl,-10
+	add	hl,sp
+	ld	(SAVSP),hl
+	pop	hl
+	push	af
+A73FD:	call	A4C64			; eval expression
+	ex	(sp),hl
+	push	hl
+	call	A67D0			; free temp string
+	call	A2EDF			; get EDCB
+	ld	a,e
+	or	a
+	jr	nz,A7413
+	ld	e,001H
+	ld	bc,T73E4
+	ld	d,c
+	ld	c,b
+A7413:	pop	af
+	push	af
+	call	GETVCP
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	inc	hl
+	ld	(hl),c
+	inc	hl
+	ld	d,h
+	ld	e,l
+	ld	bc,28
+	add	hl,bc
+	ex	de,hl
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	pop	bc
+	pop	hl
+	inc	b
+	ld	a,b
+	cp	003H
+	jr	nc,A7446
+	dec	hl
+	rst	CHRGTR
+	jr	z,A7439
+	push	bc
+	rst	SYNCHR
+	db	','
+	jr	A73FD
+;
+A7439:	ld	a,b
+	ld	(VOICEN),a
+	call	A7507
+	inc	b
+	ld	a,b
+	cp	003H
+	jr	c,A7439
+A7446:	dec	hl
+	rst	CHRGTR
+	jp	nz,A4055
+	push	hl
+A744C:	xor	a
+A744D:	push	af
+	ld	(VOICEN),a
+	ld	b,a
+	call	A7521
+	jp	c,A74D6
+	ld	a,b
+	call	GETVCP
+	ld	a,(hl)
+	or	a
+	jp	z,A74D6
+	ld	(MCLLEN),a
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	inc	hl
+	ld	(MCLPTR),de
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	inc	hl
+	push	hl
+	ld	l,024H
+	call	GETVC2
+	push	hl
+	ld	hl,(SAVSP)
+	dec	hl
+	pop	bc
+	di
+	call	A6253
+	pop	de
+	ld	h,b
+	ld	l,c
+	ld	sp,hl
+	ei
+	ld	a,0FFH
+	ld	(MCLFLG),a
+	jp	A56A2
+;
+A748E:	ld	a,(MCLLEN)
+	or	a
+	jr	nz,A7497
+A7494:	call	A7507
+A7497:	ld	a,(VOICEN)
+	call	GETVCP
+	ld	a,(MCLLEN)
+	ld	(hl),a
+	inc	hl
+	ld	de,(MCLPTR)
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	ld	hl,0
+	add	hl,sp
+	ex	de,hl
+	ld	hl,(SAVSP)
+	di
+	ld	sp,hl
+	pop	bc
+	pop	bc
+	pop	bc
+	push	hl
+	or	a
+	sbc	hl,de
+	jr	z,A74D4
+	ld	a,0F0H
+	and	l
+	or	h
+	jp	nz,A475A
+	ld	l,024H
+	call	GETVC2
+	pop	bc
+	dec	bc
+	call	A6253
+	pop	hl
+	dec	hl
+	ld	(hl),b
+	dec	hl
+	ld	(hl),c
+	jr	A74D6
+;
+A74D4:	pop	bc
+	pop	bc
+A74D6:	ei
+	pop	af
+	inc	a
+	cp	003H
+	jp	c,A744D
+	di
+	ld	a,(INTFLG)
+	cp	003H
+	jr	z,A7502
+	ld	a,(PRSCNT)
+	rlca
+	jr	c,A74F3
+	ld	hl,PLYCNT
+	inc	(hl)
+	call	STRTMS
+A74F3:	ei
+	ld	hl,PRSCNT
+	ld	a,(hl)
+	or	080H
+	ld	(hl),a
+	cp	083H
+	jp	nz,A744C
+A7500:	pop	hl
+	ret
+;
+A7502:	call	GICINI
+	jr	A7500
+;
+A7507:	ld	a,(PRSCNT)
+	inc	a
+	ld	(PRSCNT),a
+	ld	e,0FFH
+A7510:	push	hl
+	push	bc
+A7512:	push	de
+	ld	a,(VOICEN)
+	di
+	call	PUTQ
+	ei
+	pop	de
+	jr	z,A7512
+	pop	bc
+	pop	hl
+	ret
+;
+A7521:	ld	a,(VOICEN)
+	push	bc
+	di
+	call	LFTQ
+	ei
+	pop	bc
+	cp	008H
+	ret
+;
+T752E:	db	"A"
+	dw	A763E
+	db	"B"
+	dw	A763E
+	db	"C"
+	dw	A763E
+	db	"D"
+	dw	A763E
+	db	"E"
+	dw	A763E
+	db	"F"
+	dw	A763E
+	db	"G"
+	dw	A763E
+	db	"M"+128
+	dw	A759E
+	db	"V"+128
+	dw	A7586
+	db	"S"+128
+	dw	A75BE
+	db	"N"+128
+	dw	A7621
+	db	"O"+128
+	dw	A75EF
+	db	"R"+128
+	dw	A75FC
+	db	"T"+128
+	dw	A75E2
+	db	"L"+128
+	dw	A75C8
+	db	"X"
+	dw	A5782
+	db	0
+
+T755F:	db	010H,012H,014H,016H,000H,000H,002H,004H
+	db	006H,008H,00AH,00AH,00CH,00EH,010H
+
+T756E:	dw	00D5DH
+	dw	00C9CH
+	dw	00BE7H
+	dw	00B3CH
+	dw	00A9BH
+	dw	00A02H
+	dw	00973H
+	dw	008EBH
+	dw	0086BH
+	dw	007F2H
+	dw	00780H
+	dw	00714H
+
+	jr	c,A758A
+	ld	e,008H
+A758A:	ld	a,00FH
+	cp	e
+	jr	c,A75DF
+A758F:	xor	a
+	or	d
+	jr	nz,A75DF
+	ld	l,012H
+	call	GETVC2
+	ld	a,040H
+	and	(hl)
+	or	e
+	ld	(hl),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,e
+	jr	c,A75A4
+	cpl
+	inc	a
+	ld	e,a
+A75A4:	or	d
+	jr	z,A75DF
+	ld	l,013H
+	call	GETVC2
+	push	hl
+	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	rst	DCOMPR
+	pop	hl
+	ret	z
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	dec	hl
+	dec	hl
+	ld	a,040H
+	or	(hl)
+	ld	(hl),a
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,e
+	cp	010H
+	jr	nc,A75DF
+	or	010H
+	ld	e,a
+	jr	A758F
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jr	c,A75CC
+	ld	e,004H
+A75CC:	ld	a,e
+	cp	041H
+	jr	nc,A75DF
+	ld	l,010H
+A75D3:	call	GETVC2
+	xor	a
+	or	d
+	jr	nz,A75DF
+	or	e
+	jr	z,A75DF
+	ld	(hl),a
+	ret
+;
+A75DF:	call	A475A
+	jr	c,A75E6
+	ld	e,078H
+A75E6:	ld	a,e
+	cp	020H
+	jr	c,A75DF
+	ld	l,011H
+	jr	A75D3
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jr	c,A75F3
+	ld	e,004H
+A75F3:	ld	a,e
+	cp	009H
+	jr	nc,A75DF
+	ld	l,00FH
+	jr	A75D3
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jr	c,A7600
+	ld	e,004H
+A7600:	xor	a
+	or	d
+	jr	nz,A75DF
+	or	e
+	jr	z,A75DF
+	cp	041H
+	jr	nc,A75DF
+A760B:	ld	hl,0
+	push	hl
+	ld	l,010H
+	call	GETVC2
+	push	hl
+	inc	hl
+	inc	hl
+	ld	a,(hl)
+	ld	(SAVVOL),a
+	ld	(hl),080H
+	dec	hl
+	dec	hl
+	jr	A769C
+;
+; >> NO EXECUTION PATH TO HERE <<
+	jr	nc,A75DF
+	xor	a
+	or	d
+	jr	nz,A75DF
+	or	e
+	jr	z,A760B
+	cp	061H
+	jr	nc,A75DF
+	ld	a,e
+	ld	b,000H
+	ld	e,b
+A7632:	sub	00CH
+	inc	e
+	jr	nc,A7632
+	add	a,00CH
+	add	a,a
+	ld	c,a
+	jp	A7673
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	b,c
+	ld	a,c
+	sub	040H
+	add	a,a
+	ld	c,a
+	call	A56EE
+	jr	z,A7665
+	cp	023H
+	jr	z,A7666
+	cp	02BH
+	jr	z,A7666
+	cp	02DH
+	jr	z,A765A
+	call	A570B
+	jr	A7665
+;
+A765A:	dec	c
+	ld	a,b
+	cp	043H
+	jr	z,A7664
+	cp	046H
+	jr	nz,A7665
+A7664:	dec	c
+A7665:	dec	c
+A7666:	ld	l,00FH
+	call	GETVC2
+	ld	e,(hl)
+	ld	b,000H
+	ld	hl,T755F
+	add	hl,bc
+	ld	c,(hl)
+A7673:	ld	hl,T756E
+	add	hl,bc
+	ld	a,e
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+A767B:	dec	a
+	jr	z,A7687
+	srl	d
+	rr	e
+	jr	A767B
+;
+A7684:	call	A475A
+A7687:	adc	a,e
+	ld	e,a
+	adc	a,d
+	sub	e
+	ld	d,a
+	push	de
+	ld	l,010H
+	call	GETVC2
+	ld	c,(hl)
+	push	hl
+	call	A56EE
+	jr	z,A76A9
+	call	A572F
+A769C:	ld	a,040H
+	cp	e
+	jr	c,A7684
+	xor	a
+	or	d
+	jr	nz,A7684
+	or	e
+	jr	z,A76A9
+	ld	c,e
+A76A9:	pop	hl
+	ld	d,000H
+	ld	b,d
+	inc	hl
+	ld	e,(hl)
+	push	hl
+	call	A314A
+	ex	de,hl
+	call	A2FCB
+	call	A2F0D
+	ld	hl,T7754
+	call	A2EBE
+	call	A289F
+	call	A2F8A
+	ld	d,h
+	ld	e,l
+A76C8:	call	A56EE
+	jr	z,A76E3
+	cp	02EH
+	jr	nz,A76E0
+	srl	d
+	rr	e
+	adc	hl,de
+	ld	a,0E0H
+	and	h
+	jr	z,A76C8
+	xor	h
+	ld	h,a
+	jr	A76E3
+;
+A76E0:	call	A570B
+A76E3:	ld	de,5
+	rst	DCOMPR
+	jr	c,A76EA
+	ex	de,hl
+A76EA:	ld	bc,9
+	pop	hl
+	push	hl
+	add	hl,bc
+	ld	(hl),d
+	inc	hl
+	ld	(hl),e
+	inc	hl
+	ld	c,002H
+	ex	(sp),hl
+	inc	hl
+	ld	e,(hl)
+	ld	a,e
+	and	0BFH
+	ld	(hl),a
+	ex	(sp),hl
+	ld	a,080H
+	or	e
+	ld	(hl),a
+	inc	hl
+	inc	c
+	ex	(sp),hl
+	ld	a,e
+	and	040H
+	jr	z,A7716
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	pop	hl
+	ld	(hl),d
+	inc	hl
+	ld	(hl),e
+	inc	hl
+	inc	c
+	inc	c
+	cp	0E1H
+	pop	de
+	ld	a,d
+	or	e
+	jr	z,A7721
+	ld	(hl),d
+	inc	hl
+	ld	(hl),e
+	inc	c
+	inc	c
+A7721:	ld	l,007H
+	call	GETVC2
+	ld	(hl),c
+	ld	a,c
+	sub	002H
+	rrca
+	rrca
+	rrca
+	inc	hl
+	or	(hl)
+	ld	(hl),a
+	dec	hl
+	ld	a,d
+	or	e
+	jr	nz,A7741
+	push	hl
+	ld	a,(SAVVOL)
+	or	080H
+	ld	bc,11
+	add	hl,bc
+	ld	(hl),a
+	pop	hl
+A7741:	pop	de
+	ld	b,(hl)
+	inc	hl
+A7744:	ld	e,(hl)
+	inc	hl
+	call	A7510
+	djnz	A7744
+	call	A7521
+	jp	c,A748E
+	jp	A56A2
+;
+T7754:	db	000H,000H,045H,012H
+
+	ld	b,080H
+	db	011H
+	ld	b,000H
+	cp	0C7H
+	jp	z,A7AAF
+	ld	a,b
+	jp	A6C35
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	de,(CSRY)
+	push	de
+	cp	02CH
+	jr	z,A777A
+	call	A521C
+	inc	a
+	pop	de
+	ld	d,a
+	push	de
+	dec	hl
+	rst	CHRGTR
+	jr	z,A779F
+A777A:	rst	SYNCHR
+	db	','
+	cp	02CH
+	jr	z,A778B
+	call	A521C
+	inc	a
+	pop	de
+	ld	e,a
+	push	de
+	dec	hl
+	rst	CHRGTR
+	jr	z,A779F
+A778B:	rst	SYNCHR
+	db	','
+	call	A521C
+	and	a
+	ld	a,079H
+	jr	nz,A7796
+	dec	a
+A7796:	push	af
+	ld	a,01BH
+	rst	OUTDO
+	pop	af
+	rst	OUTDO
+	ld	a,035H
+	rst	OUTDO
+A779F:	ex	(sp),hl
+	call	POSIT
+	pop	hl
+	ret
+;
+A77A5:	push	hl
+	ld	hl,TRPTBL+10*3
+	jr	A77CF
+;
+A77AB:	push	hl
+	ld	hl,TRPTBL+11*3
+	jr	A77CF
+;
+A77B1:	rst	SYNCHR
+	db	'E'
+	rst	SYNCHR
+	db	'R'
+	rst	SYNCHR
+	db	0FFH
+	rst	SYNCHR
+	db	094H
+	push	hl
+	ld	hl,TRPTBL+17*3
+	jr	A77CF
+;
+A77BF:	ld	a,004H
+	call	A7C08
+	dec	hl
+	rst	CHRGTR
+	push	hl
+	ld	d,000H
+	ld	hl,TRPTBL+12*3
+	add	hl,de
+	add	hl,de
+	add	hl,de
+A77CF:	call	A77FE
+	jr	A77E2
+;
+A77D4:	call	A521C
+	dec	a
+	cp	00AH
+	jp	nc,A475A
+	ld	a,(hl)
+	push	hl
+	call	A77E8
+A77E2:	pop	hl
+	pop	af
+	rst	CHRGTR
+	jp	A4612
+;
+A77E8:	ld	d,000H
+	ld	hl,FNKFLG-1
+	add	hl,de
+	push	hl
+	ld	hl,TRPTBL-1*3
+	add	hl,de
+	add	hl,de
+	add	hl,de
+	call	A77FE
+	ld	a,(hl)
+	and	001H
+	pop	hl
+	ld	(hl),a
+	ret
+;
+A77FE:	cp	095H
+	jp	z,A631B
+	cp	0EBH
+	jp	z,A632B
+	cp	090H
+	jp	z,A6331
+	jp	A4055
+;
+A7810:	call	H.ONGO
+	ld	bc,0000AH
+	cp	0CCH
+	ret	z
+	ld	bc,00A01H
+	cp	090H
+	ret	z
+	inc	b
+	cp	0C7H
+	ret	z
+	cp	0FFH
+	ret	c
+	push	hl
+	rst	CHRGTR
+	cp	0A3H
+	jr	z,A7833
+	cp	085H
+	jr	z,A7838
+A7830:	pop	hl
+	scf
+	ret
+;
+A7833:	pop	bc
+	ld	bc,00C05H
+	ret
+;
+A7838:	rst	CHRGTR
+	cp	045H
+	jr	nz,A7830
+	pop	bc
+	rst	CHRGTR
+	rst	SYNCHR
+	db	'R'
+	rst	SYNCHR
+	db	0FFH
+	rst	SYNCHR
+	db	094H
+	rst	SYNCHR
+	db	0EFH
+	call	A542F
+	ld	a,d
+	or	e
+	jp	z,A475A
+	ex	de,hl
+	ld	(INTVAL),hl
+	ld	(INTCNT),hl
+	ex	de,hl
+	ld	bc,01101H
+	dec	hl
+	ret
+;
+A785C:	push	hl
+	ld	b,a
+	add	a,a
+	add	a,b
+	ld	l,a
+	ld	h,000H
+	ld	bc,TRPTBL+1
+	add	hl,bc
+	ld	(hl),e
+	inc	hl
+	ld	(hl),d
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	cp	093H
+	jr	nz,A78AE
+	rst	CHRGTR
+	push	hl
+	ld	hl,FNKSTR
+	ld	c,00AH
+A7877:	ld	b,010H
+A7879:	ld	a,(hl)
+	inc	hl
+	call	CNVCHR
+	jr	c,A7891
+	dec	b
+	jr	z,A789E
+	ld	a,(hl)
+	inc	hl
+	ld	e,a
+	call	CNVCHR
+	jr	z,A7891
+	ld	a,001H
+	rst	OUTDO
+	ld	a,e
+	jr	A789B
+;
+A7891:	cp	07FH
+	jr	z,A7899
+	cp	020H
+	jr	nc,A789B
+A7899:	ld	a,020H
+A789B:	rst	OUTDO
+	djnz	A7879
+A789E:	call	A7328			; OUTDO next line
+	dec	c
+	jr	nz,A7877
+	pop	hl
+	ret
+;
+A78A6:	rst	CHRGTR
+	jp	DSPFNK
+;
+A78AA:	rst	CHRGTR
+	jp	ERAFNK
+;
+A78AE:	cp	028H
+	jp	z,A77D4
+	cp	095H
+	jr	z,A78A6
+	cp	0EBH
+	jr	z,A78AA
+	call	A521C
+	dec	a
+	cp	00AH
+	jp	nc,A475A
+	ex	de,hl
+	ld	l,a
+	ld	h,000H
+	add	hl,hl
+	add	hl,hl
+	add	hl,hl
+	add	hl,hl
+	ld	bc,FNKSTR
+	add	hl,bc
+	push	hl
+	ex	de,hl
+	rst	SYNCHR
+	db	','
+	call	A4C64			; eval expression
+	push	hl
+	call	A67D0			; free temp string
+	ld	b,(hl)
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	pop	hl
+	ex	(sp),hl
+	ld	c,00FH
+	ld	a,b
+	and	a
+	jr	z,A78F5
+A78E8:	ld	a,(de)
+	and	a
+	jp	z,A475A
+	ld	(hl),a
+	inc	de
+	inc	hl
+	dec	c
+	jr	z,A78FA
+	djnz	A78E8
+A78F5:	ld	(hl),b
+	inc	hl
+	dec	c
+	jr	nz,A78F5
+A78FA:	ld	(hl),c
+	call	FNKSB
+	pop	hl
+	ret
+;
+A7900:	rst	CHRGTR
+	push	hl
+	ld	hl,(JIFFY)
+	call	A3236
+	pop	hl
+	ret
+;
+A790A:	rst	CHRGTR
+	push	hl
+	ld	a,(CSRY)
+	jr	A7932
+;
+; >> NO EXECUTION PATH TO HERE <<
+	rst	SYNCHR
+	db	0EFH
+	call	A542F
+	ld	(JIFFY),de
+	ret
+;
+A791B:	rst	CHRGTR
+	ld	a,003H
+	call	A7C08
+	push	hl
+	ld	a,(MUSICF)
+	dec	e
+	jp	m,A7938
+A7929:	rrca
+	dec	e
+	jp	p,A7929
+	ld	a,000H
+	jr	nc,A7933
+A7932:	dec	a
+A7933:	call	A2E9A
+	pop	hl
+	ret
+;
+A7938:	and	007H
+	jr	z,A7933
+	ld	a,0FFH
+	jr	A7933
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A521F
+	cp	003H
+	jr	nc,A7951
+	call	GTSTCK
+	jr	A7966
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A521F
+	cp	005H
+A7951:	jp	nc,A475A
+	call	GTTRIG
+A7957:	jp	A2E9A
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A521F
+	dec	a
+	cp	00CH
+	jr	nc,A7951
+	inc	a
+	call	GTPDL
+A7966:	jp	A4FCF
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A521F
+	cp	008H
+	jr	nc,A7951
+	push	af
+	call	GTPAD
+	ld	b,a
+	pop	af
+	and	003H
+	dec	a
+	cp	002H
+	ld	a,b
+	jr	c,A7966
+	jr	A7957
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	bc,A475A
+	push	bc
+	ld	de,(FORCLR)
+	push	de
+	cp	02CH
+	jr	z,A799A
+	call	A521C
+	pop	de
+	cp	010H
+	ret	nc
+	ld	e,a
+	push	de
+	dec	hl
+	rst	CHRGTR
+	jr	z,A79BC
+A799A:	rst	SYNCHR
+	db	','
+	jr	z,A79BC
+	cp	02CH
+	jr	z,A79AF
+	call	A521C
+	pop	de
+	cp	010H
+	ret	nc
+	ld	d,a
+	push	de
+	dec	hl
+	rst	CHRGTR
+	jr	z,A79BC
+A79AF:	rst	SYNCHR
+	db	','
+	call	A521C
+	pop	de
+	cp	010H
+	ret	nc
+	ld	(BDRCLR),a
+	push	de
+A79BC:	pop	de
+	pop	af
+	push	hl
+	ex	de,hl
+	ld	(FORCLR),hl
+	ld	a,l
+	ld	(ATRBYT),a
+	call	CHGCLR
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.SCRE
+	cp	02CH
+	jr	z,A79EA
+	call	A521C
+	cp	004H
+	jp	nc,A475A
+	push	hl
+	call	CHGMOD
+	ld	a,(LINLEN)
+	ld	e,a
+	call	A5201
+	pop	hl
+	dec	hl
+	rst	CHRGTR
+	ret	z
+A79EA:	rst	SYNCHR
+	db	','
+	cp	02CH
+	jr	z,A7A09
+	call	A521C
+	cp	004H
+	jp	nc,A475A
+	ld	a,(RG1SAV)
+	and	0FCH
+	or	e
+	ld	(RG1SAV),a
+	push	hl
+	call	CLRSPR
+	pop	hl
+	dec	hl
+	rst	CHRGTR
+	ret	z
+A7A09:	rst	SYNCHR
+	db	','
+	cp	02CH
+	jr	z,A7A18
+	call	A521C
+	ld	(CLIKSW),a
+	dec	hl
+	rst	CHRGTR
+	ret	z
+A7A18:	rst	SYNCHR
+	db	','
+	cp	02CH
+	jr	z,A7A24
+	call	A7A2D
+	dec	hl
+	rst	CHRGTR
+	ret	z
+A7A24:	rst	SYNCHR
+	db	','
+	call	A521C
+	ld	(NTMSXP),a
+	ret
+;
+A7A2D:	call	A521C
+	dec	a
+	cp	002H
+	jp	nc,A475A
+	push	hl
+	ld	bc,5
+	and	a
+	ld	hl,CS1200
+	jr	z,A7A41
+	add	hl,bc
+A7A41:	ld	de,LOW
+	ldir
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	cp	024H
+	jp	nz,A77AB
+	ld	a,(SCRMOD)
+	and	a
+	jp	z,A475A
+	call	A7AA0
+	push	de
+	call	A4C5F			; eval =expression
+	ex	(sp),hl
+	push	hl
+	call	A67D0			; free temp string
+	inc	hl
+	ld	e,(hl)
+	inc	hl
+	ld	d,(hl)
+	call	GSPSIZ
+	ld	c,a
+	ld	b,000H
+	dec	hl
+	dec	hl
+	dec	a
+	cp	(hl)
+	ld	a,(hl)
+	jr	c,A7A7D
+	pop	hl
+	push	hl
+	push	af
+	xor	a
+	call	FILVRM
+	pop	af
+	and	a
+	ld	c,a
+	ld	b,000H
+A7A7D:	ex	de,hl
+	pop	de
+	call	nz,LDIRVM
+	pop	hl
+	ret
+;
+A7A84:	call	A7A9F
+	push	hl
+	push	de
+	call	GSPSIZ
+	ld	c,a
+	ld	b,000H
+	push	bc
+	call	A6627			; alloc stringspace with descriptor
+	ld	hl,(DSCTMP+1)
+	ex	de,hl
+	pop	bc
+	pop	hl
+	call	LDIRMV
+	jp	A6654			; push temp descriptor
+;
+A7A9F:	rst	CHRGTR
+A7AA0:	rst	SYNCHR
+	db	'$'
+	ld	a,0FFH
+	call	A7C08
+	push	hl
+	ld	a,e
+	call	CALPAT
+	ex	de,hl
+	pop	hl
+	ret
+;
+A7AAF:	dec	b
+	jp	m,A475A
+	ld	a,(SCRMOD)
+	and	a
+	jp	z,A475A
+	rst	CHRGTR
+	call	A521C
+	cp	020H
+	jp	nc,A475A
+	push	hl
+	call	CALATR
+	ex	(sp),hl
+	rst	SYNCHR
+	db	','
+	cp	02CH
+	jr	z,A7AF9
+	call	A579C
+	ex	(sp),hl
+	ld	a,e
+	call	WRTVRM
+	ld	a,b
+	add	a,a
+	ld	a,c
+	ld	b,000H
+	jr	nc,A7AE1
+	add	a,020H
+	ld	b,080H
+A7AE1:	inc	hl
+	call	WRTVRM
+	inc	hl
+	inc	hl
+	call	RDVRM
+	and	00FH
+	or	b
+	call	WRTVRM
+	dec	hl
+	dec	hl
+	dec	hl
+	ex	(sp),hl
+	dec	hl
+	rst	CHRGTR
+	pop	bc
+	ret	z
+	push	bc
+A7AF9:	rst	SYNCHR
+	db	','
+	cp	02CH
+	jr	z,A7B1D
+	call	A521C
+	cp	010H
+	jp	nc,A475A
+	ex	(sp),hl
+	inc	hl
+	inc	hl
+	inc	hl
+	call	RDVRM
+	and	080H
+	or	e
+	call	WRTVRM
+	dec	hl
+	dec	hl
+	dec	hl
+	ex	(sp),hl
+	dec	hl
+	rst	CHRGTR
+	pop	bc
+	ret	z
+	push	bc
+A7B1D:	rst	SYNCHR
+	db	','
+	call	A521C
+	call	GSPSIZ
+	ld	a,e
+	jr	nc,A7B2F
+	cp	040H
+	jp	nc,A475A
+	add	a,a
+	add	a,a
+A7B2F:	ex	(sp),hl
+	inc	hl
+	inc	hl
+	call	WRTVRM
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,007H
+	call	A7C08
+	push	de
+	rst	SYNCHR
+	db	0EFH
+	call	A521C
+	pop	bc
+	ld	b,a
+	jp	WRTVDP
+;
+A7B47:	rst	CHRGTR
+	ld	a,008H
+	call	A7C08
+	push	hl
+	ld	d,000H
+	ld	hl,RG0SAV
+	add	hl,de
+	ld	a,(hl)
+	call	A4FCF
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	a,013H
+	call	A7C08
+	ld	d,000H
+	push	de
+	rst	SYNCHR
+	db	0EFH
+	call	A4C64			; eval expression
+	ex	(sp),hl
+	push	hl
+	call	A7BFE
+	ld	c,l
+	ld	b,h
+	pop	hl
+	ld	a,l
+	push	af
+	add	hl,hl
+	ex	de,hl
+	ld	hl,T7BA3
+	add	hl,de
+	ld	a,c
+	and	(hl)
+	jr	nz,A7B7E
+	inc	hl
+	ld	a,b
+	and	(hl)
+A7B7E:	jp	nz,A475A
+	ld	hl,TXTNAM
+	add	hl,de
+	ld	(hl),c
+	inc	hl
+	ld	(hl),b
+	pop	af
+	ld	e,0FFH
+A7B8B:	inc	e
+	sub	005H
+	jr	nc,A7B8B
+	ld	a,(SCRMOD)
+	cp	e
+	call	z,A7B99
+	pop	hl
+	ret
+;
+A7B99:	dec	a
+	jp	m,SETTXT
+	jp	z,SETGRP
+	jp	SETMLT
+;
+T7BA3:	dw	003FFH
+	dw	0003FH
+	dw	007FFH
+	dw	0007FH
+	dw	007FFH
+	dw	003FFH
+	dw	0003FH
+	dw	007FFH
+	dw	0007FH
+	dw	007FFH
+	dw	003FFH
+	dw	01FFFH
+	dw	01FFFH
+	dw	0007FH
+	dw	007FFH
+	dw	003FFH
+	dw	0003FH
+	dw	007FFH
+	dw	0007FH
+	dw	007FFH
+
+A7BCB:	rst	CHRGTR
+	ld	a,013H
+	call	A7C08
+	push	hl
+	ld	d,000H
+	ld	hl,TXTNAM
+	add	hl,de
+	add	hl,de
+A7BD9:	ld	a,(hl)
+	inc	hl
+	ld	h,(hl)
+	ld	l,a
+	call	A3236
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A4C64			; eval expression
+	push	hl
+	call	A7BFE
+	ex	(sp),hl
+	rst	SYNCHR
+	db	','
+	call	A521C
+	ex	(sp),hl
+	call	WRTVRM
+	pop	hl
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	A7BFE
+	call	RDVRM
+	jp	A4FCF
+;
+A7BFE:	call	A2F8A
+	ld	de,04000H
+	rst	DCOMPR
+	ret	c
+	jr	A7C73
+;
+A7C08:	push	af
+	rst	SYNCHR
+	db	'('
+	call	A521C
+	pop	af
+	cp	e
+	jr	c,A7C73
+	rst	SYNCHR
+	db	')'
+	ld	a,e
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.DSKO
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.SETS
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.NAME
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.KILL
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.IPL
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.COPY
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.CMD
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.DSKF
+	jr	A7C73
+;
+A7C3E:	call	H.DSKI
+	jr	A7C73
+;
+A7C43:	call	H.ATTR
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.LSET
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.RSET
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.FIEL
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.MKI$
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.MKS$
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.MKD$
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.CVI
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.CVS
+	jr	A7C73
+;
+; >> NO EXECUTION PATH TO HERE <<
+	call	H.CVD
+A7C73:	jp	A475A
+;
+; >> NO EXECUTION PATH TO HERE <<
+	ld	sp,0F376H		; (temp) stack
+	ld	bc,(H.PLAY+5-HOKWRK)-1
+	ld	de,HOKWRK+1
+	ld	hl,HOKWRK
+	ld	(hl),0C9H
+	ldir				; init hooks
+	ld	hl,VARWRK
+	ld	(HIMEM),hl		; init HIMEM
+	call	A7D5D			; find lowest RAM adres
+	ld	(BOTTOM),hl		; init BOTTOM
+	ld	bc,00090H
+	ld	de,VARWRK
+	ld	hl,T7F27
+	ldir				; init part workarea
+	call	INIFNK			; init functionkeys
+	xor	a
+	ld	(BUF+258),a
+	ld	(NLONLY),a		; no channel stays open
+	ld	a,','
+	ld	(BUFMIN),a
+	ld	a,':'
+	ld	(KBFMIN),a		; init buffer(s) end
+	ld	hl,(Y0004)
+	ld	(CGPNT+1),hl		; init karset pointer
+	ld	hl,PRMSTK
+	ld	(PRMPRV),hl
+	ld	(STKTOP),hl
+	ld	bc,200
+	add	hl,bc
+	ld	(MEMSIZ),hl
+	ld	a,001H
+	ld	(VARTAB+1),a		;
+	call	A7E6B			; init I/O channels
+	call	A62E5			; init Z80 stack
+	ld	hl,(BOTTOM)
+	xor	a
+	ld	(hl),a			; program prefix
+	inc	hl
+	ld	(TXTTAB),hl		; start of program
+	call	A6287			; NEW
+	call	INITIO			; init i/o hardware
+	call	INIT32			; screen 1
+	call	CLRSPR			; clear sprites
+	ld	hl,00A0BH
+	ld	(CSRY),hl		; cursor at 10,11
+	ld	hl,T7ED8
+	call	A6678			; print MSX system
+	ld	hl,00A0CH
+	ld	(CSRY),hl		; cursor at 10,12
+	ld	hl,T7EE4
+	call	A6678			; print version 1.0
+	ld	hl,0020EH
+	ld	(CSRY),hl		; cursor at 2,14
+	ld	hl,T7EFD
+	call	A6678			; print copyright 1983 by Microsoft
+	ld	b,006H
+A7D0D:	dec	hl
+	ld	a,l
+	or	h
+	jr	nz,A7D0D
+	djnz	A7D0D			; wait 3 seconds
+	call	A7D75			; expansion roms
+	ld	hl,(BOTTOM)
+	xor	a
+	ld	(hl),a
+	inc	hl
+	ld	(TXTTAB),hl
+	call	A6287			; NEW
+	call	A7D29
+	jp	A411F			; headloop
+;
+A7D29:	ld	a,0FFH
+	ld	(CNSDFG),a		; KEY ON
+	call	INITXT			; text mode
+	ld	hl,T7EF2
+	call	A6678
+	ld	hl,T7EE4
+	call	A6678
+	ld	hl,T7EFD
+	call	A6678
+	ld	hl,(VARTAB)
+	ex	de,hl
+	ld	hl,(STKTOP)
+	ld	a,l
+	sub	e
+	ld	l,a
+	ld	a,h
+	sbc	a,d
+	ld	h,a
+	ld	bc,-14
+	add	hl,bc
+	call	A3412
+	ld	hl,T7F1B
+	jp	A6678
+;
+A7D5D:	ld	hl,0EFFFH-0FFH
+A7D60:	ld	a,(hl)
+	cpl
+	ld	(hl),a
+	cp	(hl)
+	cpl
+	ld	(hl),a
+	jr	nz,A7D71
+	inc	l
+	jr	nz,A7D60
+	ld	a,h
+	dec	a
+	ret	p
+	ld	h,a
+	jr	A7D60
+;
+A7D71:	ld	l,000H
+	inc	h
+	ret
+;
+A7D75:	di
+	ld	c,000H
+	ld	de,EXPTBL
+	ld	hl,SLTATR
+A7D7E:	ld	a,(de)
+	or	c
+	ld	c,a			; slotid
+	push	de
+A7D82:	inc	hl
+	push	hl
+	ld	hl,04000H
+A7D87:	call	A7E1A			; read word
+	push	hl
+	ld	hl,04241H
+	rst	DCOMPR			; ROM identifier ?
+	pop	hl
+	ld	b,000H
+	jr	nz,A7DBE		; nop, next
+	call	A7E1A			; read INIT adres
+	push	hl
+	push	bc
+	push	de
+	pop	ix
+	ld	a,c
+	push	af
+	pop	iy
+	call	nz,CALSLT		; if INIT, execute it
+	pop	bc
+	pop	hl
+	call	A7E1A			; read STAT adres
+	add	a,0FFH
+	rr	b
+	call	A7E1A			; read DEV adres
+	add	a,0FFH
+	rr	b
+	call	A7E1A			; read BASIC adres
+	add	a,0FFH
+	rr	b
+	ld	de,-8
+	add	hl,de
+A7DBE:	ex	(sp),hl
+	ld	(hl),b			; put in SLTATR
+	inc	hl
+	ex	(sp),hl
+	ld	de,04000H-2
+	add	hl,de			; page 2
+	ld	a,h
+	cp	0C0H
+	jr	c,A7D87 		; handle
+	pop	hl
+	inc	hl
+	ld	a,c
+	and	a
+	ld	de,16-4
+	jp	p,A7DE0
+	add	a,004H
+	ld	c,a
+	cp	090H
+	jr	c,A7D82
+	and	003H
+	ld	c,a
+	ld	a,019H
+	pop	de
+	inc	de
+	inc	c
+	ld	a,c
+	cp	004H
+	jr	c,A7D7E
+	ld	hl,SLTATR
+	ld	b,040H
+A7DEE:	ld	a,(hl)
+	add	a,a
+	jr	c,A7DF6
+	inc	hl
+	djnz	A7DEE
+	ret
+;
+A7DF6:	call	A7E2A
+	call	ENASLT
+	ld	hl,(VARTAB)
+	ld	de,0C000H
+	rst	DCOMPR
+	jr	nc,A7E09
+	ex	de,hl
+	ld	(VARTAB),hl
+A7E09:	ld	hl,(08008H)
+	inc	hl
+	ld	(TXTTAB),hl
+	ld	a,h
+	ld	(BASROM),a
+	call	A629A
+	jp	A4601
+;
+A7E1A:	call	A7E1E
+	ld	e,d
+A7E1E:	ld	a,c
+	push	bc
+	push	de
+	call	RDSLT
+	pop	de
+	pop	bc
+	ld	d,a
+	or	e
+	inc	hl
+	ret
+;
+A7E2A:	ld	a,040H
+	sub	b
+A7E2D:	ld	b,a
+	ld	h,000H
+	rra
+	rr	h
+	rra
+	rr	h
+	rra
+	rra
+	and	003H
+	ld	c,a
+	ld	a,b
+	ld	b,000H
+	push	hl
+	ld	hl,EXPTBL
+	add	hl,bc
+	and	00CH
+	or	c
+	ld	c,a
+	ld	a,(hl)
+	pop	hl
+	or	c
+	ret
+;
+; >> NO EXECUTION PATH TO HERE <<
+	rst	SYNCHR
+	db	0B7H			; FILES
+	rst	SYNCHR
+	db	0EFH			; =
+	call	A521C			; eval operand
+	jp	nz,A4055		; ?, syntax error
+	cp	16
+	jp	nc,A475A		; >15, illegal function call
+	ld	(TEMP),hl		; save basicpointer
+	push	af
+	call	A6C1C			; close I/O channels
+	pop	af
+	call	A7E6B			; init new I/O channels
+	call	A62A7
+	jp	A4601
+;
+A7E6B:	push	af
+	ld	hl,(HIMEM)
+	ld	de,-(256+9+2)		; mem for 1 I/O channel
+A7E72:	add	hl,de
+	dec	a
+	jp	p,A7E72 		; at least at I/O channel 0
+	ex	de,hl
+	ld	hl,(STKTOP)
+	ld	b,h
+	ld	c,l
+	ld	hl,(MEMSIZ)
+	ld	a,l
+	sub	c
+	ld	l,a
+	ld	a,h
+	sbc	a,b
+	ld	h,a			; size of stringspace
+	pop	af
+	push	hl
+	push	af
+	ld	bc,200
+	add	hl,bc			; +200 bytes stackspace
+	ld	b,h
+	ld	c,l
+	ld	hl,(VARTAB)
+	add	hl,bc
+	rst	DCOMPR			; enough space ?
+	jp	nc,A6275		; no, out of memory
+	pop	af
+	ld	(MAXFIL),a		; maxium filenumber
+	ld	l,e
+	ld	h,d
+	ld	(FILTAB),hl		; start of I/O channels
+	dec	hl
+	dec	hl
+	ld	(MEMSIZ),hl		; 1 word
+	pop	bc
+	ld	a,l
+	sub	c
+	ld	l,a
+	ld	a,h
+	sbc	a,b
+	ld	h,a			; stringspace
+	ld	(STKTOP),hl		; start of Z80 stack
+	dec	hl
+	dec	hl			; 1 word
+	pop	bc
+	ld	sp,hl			; new stack
+	push	bc
+	ld	a,(MAXFIL)
+	ld	l,a
+	inc	l
+	ld	h,000H
+	add	hl,hl
+	add	hl,de
+	ex	de,hl
+	push	de
+	ld	bc,256+9
+A7EC2:	ld	(hl),e
+	inc	hl
+	ld	(hl),d			; pointer to I/O channel
+	inc	hl
+	ex	de,hl
+	ld	(hl),000H		; channel closed
+	add	hl,bc
+	ex	de,hl
+	dec	a
+	jp	p,A7EC2 		; next buffer
+	pop	hl
+	ld	bc,9
+	add	hl,bc
+	ld	(NULBUF),hl		; pointer to I/O channel 0
+	ret
+;
+T7ED8:	db	"MSX  system",0
+
+T7EE4:	db	"version 1.0",13,10,0
+
+T7EF2:	db	"MSX BASIC ",0
+
+T7EFD:	db	"Copyright 1983 by Microsoft",13,10,0
+
+T7F1B:	db	" bytes free",0
+
+T7F27:
+	.PHASE	VARWRK
+
+	out	(0A8H),a
+	ld	e,(hl)
+	jr	A7F2F
+;
+	out	(0A8H),a
+	ld	(hl),e
+A7F2F:	ld	a,d
+	out	(0A8H),a
+	ret
+;
+	out	(0A8H),a
+	ex	af,af'
+	call	CLPRM1
+	ex	af,af'
+	pop	af
+	out	(0A8H),a
+	ex	af,af'
+	ret
+
+	.DEPHASE
+;
+	jp	(ix)
+;
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	dw	A475A
+	db	37
+	db	29
+	db	37
+	db	24
+	db	14
+
+	dw	0
+	dw	0
+	dw	00800H
+	dw	0
+	dw	0
+
+	dw	01800H
+	dw	02000H
+	dw	0
+	dw	01B00H
+	dw	03800H
+
+	dw	01800H
+	dw	02000H
+	dw	0
+	dw	01B00H
+	dw	03800H
+
+	dw	00800H
+	dw	0
+	dw	0
+	dw	01B00H
+	dw	03800H
+
+	db	1
+	db	1
+	db	1
+	db	0
+
+	db	000H,0E0H,000H,000H,000H,000H,000H,000H
+	db	000H
+	db	0FFH
+	db	15
+	db	4
+	db	4
+	jp	0
+	jp	0
+	db	15
+	dw	QUETAB
+	db	0FFH
+	db	1
+	db	50
+	dw	KEYBUF
+	dw	KEYBUF
+	db	053H,05CH,026H,02DH,00FH
+	db	025H,02DH,00EH,016H,01FH
+	db	053H,05CH,026H,02DH,00FH
+	dw	00100H
+	dw	00100H
+	db	':'
+
+A7FB7:	ld	de,PROCNM
+	and	a
+	ret	nz
+	inc	b
+	ret
+;
+	ds	08000H-$,0
+
+	end
+
