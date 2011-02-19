@@ -507,9 +507,9 @@ J7750:	LD	A,H
 	LD	A,(D7FFD)
 	PUSH	AF
 	AND	3FH
-	LD	(D7FFD),A		; motor off, not in use
+	LD	(D7FFD),A		; motor off, not in use, reset disk change
 	OR	03H
-	LD	(D7FFD),A		; deselect drive
+	LD	(D7FFD),A		; deselect drive, reset disk change
 	CALL	PROMPT
 	POP	AF
 	LD	(D7FFD),A		; motor on, in use, select drive, reset disk change
@@ -656,12 +656,12 @@ INIHRD:
 	EX	(SP),HL
 	EX	(SP),HL
 	EX	(SP),HL			; wait
-	LD	A,3CH			; motor off, not in use, do not reset disk change, select drive 0
+	LD	A,3CH			; motor off, not in use, leave disk change, select drive 0
 	CALL	C7840
-	LD	A,3DH			; motor off, not in use, do not reset disk change, select drive 1
+	LD	A,3DH			; motor off, not in use, leave disk change, select drive 1
 	CALL	C7840
 	LD	A,3FH
-	LD	(D7FFD),A		; motor off, not in use, do not reset disk change, deselect drive
+	LD	(D7FFD),A		; motor off, not in use, leave disk change, deselect drive
 	RET	
 
 ;	  Subroutine reset drive
@@ -694,7 +694,7 @@ DRIVES:
 	PUSH	AF
 	CALL	GETWRK
 	LD	A,3DH
-	LD	(D7FFD),A		; motor off, not in use, do not reset disk change, select drive 1
+	LD	(D7FFD),A		; motor off, not in use, leave disk change, select drive 1
 	CALL	C77F5			; wait for command ready
 	LD	A,0
 	LD	(D7FF8),A		; RESTORE command
@@ -712,7 +712,7 @@ J787E:	LD	A,(D7FF8)
 	DEFB	0CAH
 J788D:	LD	L,2
 	LD	A,3FH
-	LD	(D7FFD),A		; motor off, not in use, do not reset disk change, deselect drive
+	LD	(D7FFD),A		; motor off, not in use, leave disk change, deselect drive
 	POP	AF
 	JP	Z,J78A0			; SHIFT pressed, 1 physical drive and return 1 drive
 	LD	(IX+8),L		; number of physical drives
@@ -757,7 +757,7 @@ DSKCHG:
 	LD	B,A
 	PUSH	BC
 	AND	0FCH
-	LD	(D7FFD),A		; select drive 0, reset disk change
+	LD	(D7FFD),A		; select drive 0, leave disk change
 	LD	A,(D7FFD)
 	BIT	2,A			; disk changed ?
 	POP	BC
@@ -770,7 +770,7 @@ J78E0:	LD	A,(D7FFD)
 	PUSH	BC
 	AND	0FCH
 	OR	01H
-	LD	(D7FFD),A		; select drive 1, reset disk change
+	LD	(D7FFD),A		; select drive 1, leave disk change
 	LD	A,(D7FFD)
 	BIT	2,A			; disk changed ?
 	POP	BC
