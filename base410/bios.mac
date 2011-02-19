@@ -1026,11 +1026,11 @@ J04A2:	LD	(HL),A
 	LD	HL,I04E3
 	ADD	HL,BC
 	LD	A,6
-	OUT	(0E4H),A
+	OUT	(0E4H),A		; S1990 register 6
 	IN	A,(0E5H)
 	INC	B
-	BIT	5,A
-	JR	Z,J04B5
+	BIT	5,A			; R800 active ?
+	JR	Z,J04B5			; yep,
 	INC	B
 J04B5:	LD	C,0E5H
 	OTIR
@@ -1060,7 +1060,7 @@ J04B5:	LD	C,0E5H
 
 
 C04D2:	LD	A,6
-	OUT	(0E4H),A
+	OUT	(0E4H),A		; S1990 register 6
 	IN	A,(0E5H)
 	AND	60H
 	ADD	A,A
@@ -3484,7 +3484,7 @@ J127A:	BIT	5,A			; R800 initialized ?
 	ENDIF
 
 	LD	A,6
-	OUT	(0E4H),A
+	OUT	(0E4H),A		; S1990 register 6
 	LD	HL,I04E5
 	LD	BC,02E5H
 	OTIR				; R800 ROM mode, Z80 waits here for the R800 to complete
