@@ -1,6 +1,6 @@
 ; DOS1.MAC
 
-; DOS 1.03 kernel (latest version known, SONY HB-F1XV)
+; DOS 1.02 kernel (most common used)
 ; version number is not offical, it is created by me
 
 ; Source re-created by Z80DIS 2.2
@@ -3747,9 +3747,9 @@ A53A8:	call	XF2AF
 	pop	hl
 A53D5:	push	bc
 	ld	b,a
-	call	A408F			; output to screen
-	nop
 	call	A5412
+	ld	a,b
+	call	A408F			; output to screen
 	ld	a,(YF23B)
 	or	a			; console output also to printer ?
 	ld	a,b

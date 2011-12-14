@@ -1,4 +1,7 @@
-; Diskdriver Sony HBD-F1 (external floppydisk controller)
+; Diskdriver 2.05 Sony HBD-F1 (external floppydisk controller)
+; Diskdriver 2.05 Sony HB-F500P,Sony HB-F700P,Sony HB-F900P
+; Diskdriver 2.06 Sony HB-F1XDJ
+; Diskdriver 2.07 Sony HB-F1XV
 ;
 ; FDC	WD2793
 ; extra	SONY hardware for Disk Change
@@ -15,13 +18,30 @@
 MYSIZE		equ	9
 SECLEN		equ	512
 
+; driver version
+; 205,206 or 207
+
+DRVVER		equ	205
+
 ;
 I7405:
 		.PHASE	0C000H
 
 		db	0EBh,0FEh	; JMP 0100h (i8088)
 		db	090h		; NOP (i8088)
-		db	"SNYJX205"
+
+		db	"SNYJX"
+
+		IF	DRVVER EQ 205
+		db	"205"
+		END	IF
+		IF	DRVVER EQ 206
+		db	"206"
+		END	IF
+		IF	DRVVER EQ 207
+		db	"207"
+		END	IF
+		
 		dw	512
 		db	2
 		dw	1
@@ -1493,19 +1513,63 @@ J7DB8:	LD	A,(D7FFF)
 	LD	(D7FFB),A
 	DJNZ	J7DB8
 	POP	HL
+
+	IF	DRVVER EQ 205
 I7DC7:	LD	A,(D7FF8)
 	AND	0C4H
 	RET	Z
 	SCF	
 	LD	E,A
-	LD	A,02H	; 2 
+	LD	A,02H
 	JP	M,J7C07
 	BIT	6,E
 	LD	A,00H
 	JP	NZ,J7C07
-
-	LD	A,10H	; 16 
+	LD	A,10H
 	JP	J7C07
+	ENDIF
+
+	IF	DRVVER EQ 206
+I7DC7:	LD	A,(D7FF8)
+	BIT	1,A
+	JP	Z,J7DD6
+	LD	B,A
+	LD	A,4EH
+	LD	(D7FFB),A
+	LD	A,B
+J7DD6:	AND	0C4H
+	RET	Z
+	SCF	
+	LD	E,A
+	LD	A,02H
+	JP	M,J7C07
+	BIT	6,E
+	LD	A,00H
+	JP	NZ,J7C07
+	LD	A,10H
+	JP	J7C07
+	ENDIF
+
+	IF	DRVVER EQ 207
+I7DC7:	LD	A,(D$7FF8)
+	BIT	1,A
+	JP	Z,J7DD6
+	LD	B,A
+	LD	A,4EH
+	LD	(D7FFB),A
+	LD	A,B
+J7DD6:	AND	0C4H
+	RET	Z
+	SCF	
+	LD	E,A
+	LD	A,02H
+	JP	M,J7C07
+	BIT	6,E
+	LD	A,00H
+	JP	NZ,J7C07
+	LD	A,10H
+	JP	J7C07
+	ENDIF
 
 OEMSTA:
 	SCF	
