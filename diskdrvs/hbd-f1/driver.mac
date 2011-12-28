@@ -34,13 +34,13 @@ I7405:
 
 		IF	DRVVER EQ 205
 		db	"205"
-		END	IF
+		ENDIF
 		IF	DRVVER EQ 206
 		db	"206"
-		END	IF
+		ENDIF
 		IF	DRVVER EQ 207
 		db	"207"
-		END	IF
+		ENDIF
 		
 		dw	512
 		db	2
@@ -1588,6 +1588,8 @@ C7DE2:	LD	A,3CH
 	LD	(D7FFD),A		; motor off, not in use, leave disk change, deselect drive
 	RET	
 
+	DEFS	08000H-$,000H
+
 D7FF8	EQU	07FF8H			; WD2793
 D7FF9	EQU	07FF9H			; WD2793
 D7FFA	EQU	07FFAH			; WD2793
@@ -1597,3 +1599,4 @@ D7FFC	EQU	07FFCH			; side select
 D7FFD	EQU	07FFDH			; motor/in use/DC/drive select
 D7FFF	EQU	07FFFH			; INT,DRQ
 
+	END
