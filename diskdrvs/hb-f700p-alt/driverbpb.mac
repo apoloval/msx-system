@@ -4,7 +4,7 @@
 ; By:	Arjen Zeilemaker
 ;
 ; Last revision:	Tuesday 18-04-1995
-; Version:		2.02
+; Version:		2.03 (BPB version)
 
 
 ; Old driver has following problems:
@@ -51,8 +51,7 @@
 
 ; Problem 4
 ;
-; This problem can be corrected. But is too much work and not compatible with
-; MSX disks.
+; This problem can be corrected by using the BPB if available.
 
 
 ; Problem 5
@@ -105,6 +104,7 @@
 
 MYSIZE		equ	6		; Size of environment
 SECLEN		equ	512		; Size of biggest sector
+
 
 
 ; TMS 2793 NL	FDCS I/O addresses
@@ -684,9 +684,10 @@ Wait:		dec	hl
 ; error, but not recomended. This is very important when using disks with non
 ; default DPB in the bootsector.
 
-		IFDEF	DOS2
 
 DSKCHG:
+		IFNDEF	DOS2
+
 		push	hl
 		push	bc
 		push	af
@@ -698,21 +699,21 @@ DSKCHG:
 		ld	e,a
 		ld	a,(ix+0)
 		dec	a
-		jr	nz,CheckHrdDrv
+		jr	nz,CheckHrdDrv		; 2 drives, so always a physical drive!
 		ld	a,d
 		xor	(ix+5)			; an other logical drive ?
 		jr	nz,GetMedia		; yep, disk change unknown
 		ld	e,0
 CheckHrdDrv:	inc	e
 		dec	e
-		jr	z,CheckDrv0
-		ld	a,(ix+2)
-		ld	(ix+2),0FFH
+		jr	z,CheckDrv0		; driveid 0
+		ld	a,(ix+2)		; DC driveid 1 already initialized ?
+		ld	(ix+2),0FFH		; DC driveid 1 is initialized after this
 		jr	CheckIni
-CheckDrv0:	ld	a,(ix+1)
-		ld	(ix+1),0FFH
+CheckDrv0:	ld	a,(ix+1)		; DC driveid 0 already initialized ?
+		ld	(ix+1),0FFH		; DC driveid 0 is initialized after this
 CheckIni:	or	a
-		jr	z,GetMedia		; not initialized, unknown
+		jr	z,GetMedia		; DC not initialized, change status is unknown
 		inc	b			; disk unchanged
 		ld	a,e
 		or	038h			; motor off/not in use
@@ -723,46 +724,32 @@ CheckIni:	or	a
 		jr	z,CheckChange
 		ld	a,03Fh
 		ld	(DrivePrt),a		; unselect drive
-		ret
+		ret				; quit with disk unchanged
 CheckChange:	dec	b
 		dec	b			; disk changed
 		ld	a,(ComStsPrt)
-		and	00000100b		; Track 0 ?
-		call	nz,SetNxtTrk		; yep, Seek to 1
-		call	SetTrk0			; Seek to reset DC bit
+		and	00000100b		; drive currently on Track 0 ?
+		call	nz,SetNxtTrk		; yep, Seek to 1 (otherwise seek to track 0 does not reset DC bit)
+		call	SetTrk0			; Seek to track 0 to reset DC bit
 GetMedia:	push	bc
 		push	hl
-		or	a			; read
-		ld	a,d			; driveid
-		ld	b,1			; 1 sector
-		ld	de,1			; FAT sector
-		ld	hl,($SECBUF)
-		call	DSKIO
-		pop	hl
-		pop	bc
-		ret	c			; read error, quit
-		push	bc
-		push	hl
-		ld	hl,($SECBUF)
-		ld	b,(hl)
-		pop	hl
+		ld	a,d
 		call	GETDPB
+		pop	hl
 		pop	bc
-		ld	a,00CH			; other error
-		ret	c			; error, quit
+		ret	c
 		inc	b
 		dec	b
-		ret	nz			; changed, quit
-		ld	a,c
-		ld	hl,($SECBUF)
-		xor	(hl)			; unknown, but mediabyte same ?
-		ret	z			; yep, unknown
-		dec	b			; changed
+		ret	nz			; disk changed,  done
+		inc	hl
+		ld	a,c			; old mediadescriptor
+		xor	(hl)			; new mediadescriptor
+		ret	z			; same, disk change unknown
+		dec	b
 		ret
 
 		ELSE
 
-DSKCHG:
 		push	hl
 		push	bc
 		push	af
@@ -821,10 +808,151 @@ CheckQuit:	ld	a,03Fh
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
 GETDPB:
-		ex	de,hl
+		push	af
+		push	hl
+		or	a			; read
+		ld	bc,001F9H		; 1 sector, a mediadescriptor
+		ld	de,0			; sector 0, the bootsector
+		ld	hl,($SECBUF)
+		push	hl
+		call	DSKIO			; get sector
+		pop	iy			; $SECBUF
+		pop	hl
+		pop	bc			; B= driveid
+		jr	c,prebpb		; error reading the bootsector, try the old method
+		ld	a,(iy+0)
+		or	2
+		cp	0EBH
+		jr	nz,prebpb		; no BPB indicator, use the old method
+		ld	a,(iy+12)
+		sub	2
+		or	(iy+11)
+		jr	nz,prebpb		; sectorsize not 512, use the old method (a bit of a hack)
+		or	(iy+13)
+		jr	z,prebpb		; clustersize 0, use the old method (bpb invalid)
+		neg
+		and	(iy+13)
+		cp	(iy+13)
+		jr	nz,prebpb		; clustersize not a power of 2, use the old method (bpb invalid)
+		ld	a,(iy+16)
+		dec	a
+		cp	7
+		jr	nc,prebpb		; number of FAT copies not 1-7, use the old method
+		ld	a,(iy+22)
+		dec	a
+		cp	12
+		jr	nc,prebpb		; number of FAT sectors not 1-12, use the old method
+		ld	a,(iy+23)
+		or	a
+		jr	nz,prebpb
+
+		inc	hl
+		ld	a,(iy+21)
+		ld	(hl),a
+		inc	hl
+		ld	(hl),LOW 512
+		inc	hl
+		ld	(hl),HIGH 512
+		inc	hl
+		ld	(hl),00FH
+		inc	hl
+		ld	(hl),004H
+		inc	hl
+		ld	a,(iy+13)		; sectors per cluster
+		dec	a
+		ld	(hl),a			; clustermask
+		inc	hl
+		inc	a
+		ld	c,0
+cluslp:		inc	c
+		rra
+		jr	nc,cluslp
+		ld	(hl),c			; clustershift
+		inc	hl
+		ld	a,(iy+14)
+		ld	(hl),a
+		inc	hl
+		ld	d,(iy+15)
+		ld	(hl),d
+		inc	hl			; first FAT sector
+		ld	b,(iy+16)
+		ld	(hl),b
+		inc	hl			; number of FATs
+fatlp:		add	a,(iy+22)
+		jr	nc,fatjr1
+		inc	d
+fatjr1:		djnz	fatlp
+		ld	e,a			; first dir sector
+		ld	b,(iy+18)
+		inc	b
+		dec	b
+		jr	nz,dir254
+		ld	c,(iy+17)
+		ld	a,c
+		inc	c
+		jr	nz,dirent
+dir254:		ld	a,254
+dirent:		dec	c
+		ld	(hl),a
+		inc	hl
+		dec	bc
+		srl	b
+		rr	c
+		srl	b
+		rr	c
+		srl	b
+		rr	c
+		srl	b
+		rr	c
+		inc	bc			; number of directory sectors
+		ld	a,e
+		add	a,c
+		ld	c,a
+		ld	a,d
+		adc	a,b
+		ld	b,a			; + first dir sector
+		ld	(hl),c
+		inc	hl
+		id	(hl),b
+		inc	hl			; = first data sector
+		ld	a,(iy+19)
+		sub	c
+		ld	c,a
+		ld	a,(iy+20)
+		sbc	a,b
+		ld	b,a			; total number of sectors - first data sector = number of data sectors
+		ld	a,(iy+13)
+totcls:		rra
+		jr	c,totcls2
+		srl	b
+		rr	c
+		jr	totcls
+totcls2:	inc	bc
+		ld	(hl),c
+		inc	hl
+		ld	(hl),b			; number of clusters+1
+		inc	hl
+		ld	(hl),e			; first dir sector
+		xor	a
+		ret
+
+prebpb:		push	bc
+		push	hl
+		ld	a,b			; driveid
+		or	a
+		ld	bc,001F9H
+		ld	de,1
+		ld	hl,($SECBUF)
+		call	DSKIO
+		pop	de
+		pop	bc
+		ret	c			; error, quit
+		
 		inc	de
-		ld	a,b
+		ld	hl,($SECBUF)
+		ld	a,(hl)
 		sub	0F8H
+		ld	a,12
 		ret	c
 		ld	l,a
 		ld	h,0
@@ -892,7 +1020,7 @@ DpbTable:	db	0F8h		; Media F8
 		dw	1
 		db	2
 		db	112
-		dw	12
+		dw	10
 		dw	635
 		db	2
 		dw	5
