@@ -4,53 +4,13 @@
 ;                            Palo Alto, CA
 	.Z80
 	ORG	7405H
-C.0000	EQU	0000H	; -C--I
-I$0001	EQU	0001H	; ----I
-I$0002	EQU	0002H	; ----I
-I$000B	EQU	000BH	; ----I
-I$000F	EQU	000FH	; ----I
-I$0011	EQU	0011H	; ----I
-I$0012	EQU	0012H	; ----I
 CALSLT	EQU	001CH	; -C---
 ENASLT	EQU	0024H	; -C---
-I$0033	EQU	0033H	; ----I
 CHPUT	EQU	00A2H	; ----I
 BEEP	EQU	00C0H	; ----I
-J.0100	EQU	0100H	; J---I
 SNSMAT	EQU	0141H	; ----I
-D.0200	EQU	0200H	; --S-I
-I$028D	EQU	028DH	; ----I
-I$03FF	EQU	03FFH	; ----I
-I$0400	EQU	0400H	; ----I
-I$0B32	EQU	0B32H	; ----I
-D$2020	EQU	2020H	; --S--
-I$3120	EQU	3120H	; ----I
-I$3F00	EQU	3F00H	; ----I
-I.4000	EQU	4000H	; ----I
 J$4022	EQU	4022H	; J----
 
-I$8000	EQU	8000H	; ----I
-J$8002	EQU	8002H	; J----
-J$800E	EQU	800EH	; J----
-J$800F	EQU	800FH	; J----
-J$8010	EQU	8010H	; J----
-J.8012	EQU	8012H	; J----
-J$8018	EQU	8018H	; J----
-J$801A	EQU	801AH	; J----
-J.801F	EQU	801FH	; J----
-J$802F	EQU	802FH	; J----
-J$8033	EQU	8033H	; J----
-J$803A	EQU	803AH	; J----
-I$81FF	EQU	81FFH	; ----I
-D$C059	EQU	0C059H	; ---L-
-J$C063	EQU	0C063H	; J----
-J$C06A	EQU	0C06AH	; J----
-C$C077	EQU	0C077H	; -C---
-I$C085	EQU	0C085H	; ----I
-I.C0AB	EQU	0C0ABH	; ----I
-D$C0B9	EQU	0C0B9H	; --S--
-D.C0D0	EQU	0C0D0H	; --SL-
-I$D000	EQU	0D000H	; ----I
 
 
 MYSIZE	EQU	49
@@ -72,15 +32,15 @@ I$7405:	DEFB	0F0H
 
 DEFDPB	EQU	I$7405-1
 	
-?.7417:	JP	J$7454
-?.741A:	JP	J$7432
-?.741D:	JP	J$7442
-?.7420:	JP	C.74C5
-?.7423:	JP	J$7443
-?.7426:	JP	J$7447
-?.7429:	JP	J$76B0
-?.742C:	JP	J$7785
-?.742F:	JP	J$7452
+INIHRD:	JP	J$7454
+DRIVES:	JP	J$7432
+INIENV:	JP	J$7442
+DSKIO:	JP	C.74C5
+DSKCHG:	JP	J$7443
+GETDPB:	JP	J$7447
+CHOICE:	JP	J$76B0
+DSKFMT:	JP	J$7785
+OEMSTA:	JP	J$7452
 
 ;	  Subroutine DRIVES
 ;	     Inputs  ________________________
@@ -90,9 +50,9 @@ J$7432:	PUSH	BC
 	LD	L,1
 	CALL	C.7981			; port 07EH
 	IN	H,(C)
-	BIT	1,H
-	JR	NZ,J$7440
-	LD	L,2
+	BIT	1,H			; second drive connected ?
+	JR	NZ,J$7440		; nope, return 1 drive
+	LD	L,2			; return 2 drives
 J$7440:	POP	BC
 	RET	
 
@@ -108,7 +68,7 @@ J$7442:	RET
 
 J$7443:	LD	B,1
 	AND	A
-	RET	
+DSKSTP:	RET	
 
 ;	  Subroutine GETDPB
 ;	     Inputs  ________________________
@@ -147,8 +107,8 @@ J$7458:	CALL	C.7947
 	JR	C,J.7489
 	CALL	C.7981			; port 07EH
 	IN	A,(C)
-	BIT	1,A
-	JR	NZ,J.7487
+	BIT	1,A			; second drive connected ?
+	JR	NZ,J.7487		; nope,
 
 J$7479:	LD	D,20H
 	CALL	C.79FE
@@ -243,14 +203,14 @@ C.74F6:	PUSH	DE
 	LD	(IX+1),A
 	RET	
 
-J$751F:	LD	(IX+4),08H
+J$751F:	LD	(IX+4),08H		; operation read sector
 	JR	J.7538
 
 J$7525:	CALL	C.7981			; port 07EH
 	IN	A,(C)
 	BIT	2,A
 	JR	Z,J$7534		; write protect error
-	LD	(IX+4),0AH
+	LD	(IX+4),0AH		; operation write sector
 	JR	J.7538
 
 J$7534:	XOR	A			; WRITE PROTECT error
@@ -267,7 +227,7 @@ J.7538:	PUSH	HL
 	LD	L,(IX+2)		; sector (L)
 	CALL	C.7A4A
 	JR	C,J.758C
-	LD	BC,I$0033
+	LD	BC,L767D
 	LD	HL,I$767D
 	LD	DE,($SECBUF)
 	LDIR				; i/o routine in $SECBUF
@@ -422,7 +382,7 @@ J.7659:	AND	A
 J$765C:	LD	A,(RAWFLG)
 	AND	A			; verify ?
 	JR	Z,J.7659		; nope, quit
-	LD	C,05H
+	LD	C,05H			; operation
 	LD	B,(IX+3)		; number of sectors
 	LD	D,(IX+0)		; drive + cylinder
 	LD	H,(IX+1)		; track + sector (H)
@@ -436,7 +396,7 @@ J$765C:	LD	A,(RAWFLG)
 I$767D:	PUSH	IX
 	PUSH	HL
 	PUSH	BC
-	LD	HL,I.4000
+	LD	HL,04000H
 	LD	A,(RAMAD1)
 	CALL	ENASLT
 	POP	BC
@@ -460,6 +420,8 @@ J$769E:	POP	IX
 	POP	HL
 	POP	IX
 	RET	
+
+L767D	EQU	$-I$767D
 
 ;	  Subroutine CHOICE
 ;	     Inputs  ________________________
@@ -504,32 +466,33 @@ J$7785:	CP	01H	; 1
 	JR	Z,J$778D
 	LD	A,0CH	; 12 
 	JR	J.77F0
+
 J$778D:	PUSH	HL
 	PUSH	BC
 	CALL	GETWRK
 	POP	BC
 	POP	HL
-	LD	(IX+12),D
+	LD	(IX+12),D		; drive
 	RRC	D
 	RRC	D
 	RRC	D
 	LD	(IX+0),D
 	PUSH	HL
 	LD	A,H
-	AND	A
-	JP	M,J$77B5
+	AND	A			; workarea in page 2 or 3 ?
+	JP	M,J$77B5		; yep,
 	ADD	HL,BC
 	AND	A
-	LD	DE,I$81FF
+	LD	DE,08000H+512-1
 	SBC	HL,DE
 	JR	C,J$77BD
 	POP	HL
-	LD	HL,I$8000
+	LD	HL,08000H
 	JR	J$77C0
 J$77B5:	LD	H,B
 	LD	L,C
 	AND	A
-	LD	BC,I$0400
+	LD	BC,0400H
 	SBC	HL,BC
 J$77BD:	POP	HL
 	JR	C,J$7830
@@ -648,7 +611,7 @@ J$7868:	LD	A,(IX+0)
 	INC	HL
 	LD	(IX+14),H
 	LD	(IX+13),L
-	LD	DE,I$028D
+	LD	DE,653
 	AND	A
 	SBC	HL,DE
 	JR	NZ,J$7868
@@ -825,12 +788,14 @@ J.79C7:	RET
 J.79C8:	LD	A,40H	; "@"
 	JR	J$79C6
 
-I$79CC:	LD	(BC),A
-	LD	L,B
-	LD	(BC),A
-	LD	(BC),A
-	LD	L,C
-	LD	BC,I$0B32
+I$79CC:	DEFB	002H
+	DEFB	068H
+	DEFB	002H
+	DEFB	002H
+	DEFB	069H
+	DEFB	001H
+	DEFB	032H
+	DEFB	00BH
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1201,7 +1166,7 @@ J$7430:	LD	SP,KBUF+256
 	CALL	XF37D
 	INC	A
 	JP	Z,DC063
-	LD	DE,J.0100
+	LD	DE,0100H
 	LD	C,1AH
 	CALL	XF37D
 	LD	HL,1
@@ -1210,7 +1175,7 @@ J$7430:	LD	SP,KBUF+256
 	LD	DE,DC09F
 	LD	C,27H	; "'"
 	CALL	XF37D
-	JP	J.0100
+	JP	0100H
 
 DC056:	DEFW	DC058
 
