@@ -4,7 +4,7 @@
 ; Diskdriver 2.07 Sony HB-F1XV
 ;
 ; FDC	WD2793
-; extra	SONY hardware for Disk Change
+; extra	SONY hardware (CXD1032Q) for Disk Change
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
