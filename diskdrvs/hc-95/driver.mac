@@ -1,4 +1,4 @@
-; Diskdriver JVC HC-90/HC-95 (internal floppydisk controller)
+; Diskdriver JVC HC-95a (internal floppydisk controller)
 ; FDC	MB8877A
 
 ; Source re-created by Z80DIS 2.2
@@ -14,50 +14,14 @@
 MYSIZE		equ	8
 SECLEN		equ	512
 
-X.0000	EQU	0000H	; -C-LI
-I.0001	EQU	0001H	; ----I
-I$0004	EQU	0004H	; ----I
-CPMADR	EQU	0006H	; ----I
-I$0008	EQU	0008H	; ----I
-I$0012	EQU	0012H	; ----I
-I$00A0	EQU	00A0H	; ----I
-I$00D0	EQU	00D0H	; ----I
-I$00EE	EQU	00EEH	; ----I
-J.0100	EQU	0100H	; J---I
-I$0130	EQU	0130H	; ----I
-I$0155	EQU	0155H	; ----I
-I$01FD	EQU	01FDH	; ----I
-I.0200	EQU	0200H	; ----I
-J$022E	EQU	022EH	; J----
-I$0708	EQU	0708H	; ----I
-I$0A28	EQU	0A28H	; ----I
-I$0DF3	EQU	0DF3H	; ----I
-I$1450	EQU	1450H	; ----I
-I$3F00	EQU	3F00H	; ----I
-J$4022	EQU	4022H	; J----
-
-I$9470	EQU	9470H	; ----I
-I$9FC4	EQU	9FC4H	; ----I
-I$AF00	EQU	0AF00H	; ----I
-D.BC3E	EQU	0BC3EH	; --S--
-D$C059	EQU	0C059H	; ---L-
-J$C063	EQU	0C063H	; J----
-J$C06A	EQU	0C06AH	; J----
-C$C077	EQU	0C077H	; -C---
-I$C085	EQU	0C085H	; ----I
-I.C0AB	EQU	0C0ABH	; ----I
-D$C0B9	EQU	0C0B9H	; --S--
-D.C0D0	EQU	0C0D0H	; --SL-
-C.F37D	EQU	0F37DH	; -C---
-I$F51F	EQU	0F51FH	; ----I
-D$FBF1	EQU	0FBF1H	; --S--
+X.0000	EQU	0000H
 
 I7405:	DEFB	0F8H,00H,02H,0FH,04H,01H,02H,01H
 	DEFB	00H,02H,70H,0CH,00H,63H,01H,02H
 	DEFB	05H,00H
 
 DEFDPB	EQU	$-1
-	
+
 	DEFB	0F9H,00H,02H,0FH,04H,01H
 	DEFB	02H,01H,00H,02H,70H,0EH,00H,0CAH
 	DEFB	02H,03H,07H,00H
@@ -85,7 +49,7 @@ DEFDPB	EQU	$-1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-DSKIO:	DI	
+DSKIO:	DI
 	PUSH	AF
 	PUSH	AF
 	PUSH	AF
@@ -100,57 +64,57 @@ DSKIO:	DI
 	JR	Z,J74BA			; yep,
 	POP	AF
 	POP	AF
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	JR	C,J74DD
+	DEFB	0EDH
+	DEFB	038H
+	DEFB	032H			; IN0 A,(032H) save DMA/WAIT Control
 	PUSH	AF
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	JR	C,J74E5
+	DEFB	0EDH
+	DEFB	038H
+	DEFB	036H			; IN0 A,(036H) save Refresh Control
 	PUSH	AF
-	LD	A,0A0H
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	ADD	HL,SP
-	LD	(D.BC3E),A
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	ADD	HL,SP
-	LD	(HL),21H	; "!"
-J74BA	EQU	$-1
-	DI	
-	LD	(HL),H
-	PUSH	HL
+	LD	A,0A0H			; Memory wait=2, I/O wait=2, DREQ1 level, DREQ0 level, DMA1 mode 2
+	DEFB	0EDH
+	DEFB	039H
+	DEFB	032H			; OUT0 (032H),A DMA/WAIT Control
+	LD	A,0BCH			; refresh enable, no refresh wait, interval 10 states
+	DEFB	0EDH
+	DEFB	039H
+	DEFB	036H			; OUT0 (036H),A Refresh Control
+J74BA:	LD	HL,I74F3
+	PUSH	HL			; restore HD64180 registers at the end of DSKIO
 	DEC	SP
 	DEC	SP
 	DEC	SP
 	DEC	SP
-	POP	HL
-	POP	AF
-	EI	
+	POP	HL			; restore orginal HL
+	POP	AF			; restore orginal AF
+	EI
 	PUSH	AF
 	JP	NC,J763E
 	CALL	C7511
 J74CC:	POP	DE
 	PUSH	AF
-	EI	
+	EI
 	CALL	ENAINT
-	LD	C,3CH	; "<"
+	LD	C,60
 	JR	NC,J74D8
-	LD	C,00H
+	LD	C,0
 J74D8:	CALL	C793F
 	LD	A,(D7FFB)
-J74DD	EQU	$-1
 	LD	A,(D7FF8)
-	LD	(IX),78H	; "x"
+	LD	(IX+0),120
 J74E5:	LD	A,D
 	AND	A
 	JR	NZ,J74EE
 	LD	(IX+1),C
 	POP	AF
-	RET	
+	RET
 
 J74EE:	LD	(IX+2),C
 	POP	AF
-	RET	
+	RET
 
-?74F3:	DI	
+I74F3:	DI
 	INC	SP
 	INC	SP
 	INC	SP
@@ -166,21 +130,25 @@ J74EE:	LD	(IX+2),C
 	DEC	SP
 	DEC	SP
 	POP	AF
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	ADD	HL,SP
-	LD	(HL),0F1H
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	ADD	HL,SP
-	LD	(D$FBF1),A
-J750E	EQU	$-2
-	RET	
- ;	  Subroutine __________________________
+	DEFB	0EDH
+	DEFB	039H
+	DEFB	036H			; OUT0 (036H),A restore Refresh Control
+	POP	AF
+	DEFB	0EDH
+	DEFB	039H
+	DEFB	032H			; OUT0 (032H),A restore DMA/WAIT Control
+J750E:	POP	AF
+	EI
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7511:	CALL	C76F4
 	RET	C
 	CALL	DISINT
-	DI	
+	DI
 J7519:	LD	A,L
 	ADD	A,0FFH
 	LD	A,H
@@ -212,9 +180,11 @@ J754A:	RET	C
 	RET	Z
 	CALL	C7835
 	JP	J7519
- ;	  Subroutine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7555:	CALL	C78A6
 	LD	A,0A0H
 	PUSH	HL
@@ -228,17 +198,18 @@ C7555:	CALL	C78A6
 	LD	DE,D7FFB
 J756D:	LD	A,(BC)
 	ADD	A,A
-	RET	C
-	JP	P,J756D
+	RET	C			; INT, quit
+	JP	P,J756D			; no DRQ yet, wait
 	LD	A,(HL)
 	LD	(DE),A
 	INC	HL
 	JP	J756D
+
 I7579:	POP	BC
 	POP	DE
 	POP	HL
 	LD	A,(D7FF8)
-	AND	5CH	; "\"
+	AND	5CH
 	RET	Z
 	PUSH	AF
 	CALL	C793F
@@ -250,7 +221,7 @@ I7579:	POP	BC
 	POP	AF
 	DEC	E
 	JR	NZ,C7555
-	SCF	
+	SCF
 	LD	E,A
 	BIT	4,E
 	LD	A,08H	; 8 
@@ -259,7 +230,8 @@ I7579:	POP	BC
 	LD	A,04H	; 4 
 	RET	NZ
 	LD	A,0CH	; 12 
-	RET	
+	RET
+
 J75A2:	LD	A,80H
 	LD	(D7FF8),A
 	CALL	C795D
@@ -267,26 +239,28 @@ J75A2:	LD	A,80H
 	LD	DE,0
 J75B0:	LD	A,(HL)
 	ADD	A,A
-	JP	C,J75C5
-	JP	M,J75C5
+	JP	C,J75C5			; INT, yep,
+	JP	M,J75C5			; DRQ,
 	DEC	DE
 	LD	A,E
 	OR	D
 	JP	NZ,J75B0
 	CALL	C7949
 J75C1:	LD	A,02H	; 2 
-	SCF	
-	RET	
+	SCF
+	RET
 J75C5:	LD	A,(D7FF8)
 	CALL	C7949
 	BIT	4,A
 	JR	NZ,J75C1
 	XOR	A
-	SCF	
-	RET	
- ;	  Subroutine __________________________
+	SCF
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C75D2:	RET	C
 	LD	A,(RAWFLG)
 	OR	A
@@ -307,14 +281,14 @@ C75D2:	RET	C
 	LD	DE,0
 J75F9:	LD	A,(BC)
 	ADD	A,A
-	JP	M,J7614
-	RET	C
+	JP	M,J7614			; DRQ,
+	RET	C			; INT, quit
 	LD	A,(BC)
 	ADD	A,A
-	JP	M,J7614
-	RET	C
+	JP	M,J7614			; DRQ,
+	RET	C			; INT, quit
 	DEC	E
-	JP	NZ,J75F9
+	JP	NZ,J75F9		; try again
 	DEC	D
 	JP	NZ,J75F9
 	POP	BC
@@ -322,6 +296,7 @@ J75F9:	LD	A,(BC)
 	POP	DE
 	POP	HL
 	JP	J76ED
+
 J7614:	LD	DE,D7FFB
 	LD	A,(DE)
 	JP	J7622
@@ -331,7 +306,7 @@ J761B:	LD	A,(BC)
 	JP	P,J761B
 	LD	A,(DE)
 J7622:	INC	BC
-	CPI	
+	CPI
 	JP	Z,J761B
 J7628:	LD	A,(BC)
 	ADD	A,A
@@ -345,17 +320,19 @@ I762E:	POP	BC
 	RET	Z
 	CALL	C7949
 	LD	A,0AH	; 10 
-	SCF	
-	RET	
+	SCF
+	RET
 J763E:	CALL	C7644
 	JP	J74CC
- ;	  Subroutine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7644:	CALL	C76F4
 	RET	C
 	CALL	DISINT
-	DI	
+	DI
 J764C:	LD	A,L
 	ADD	A,0FFH
 	LD	A,H
@@ -389,9 +366,11 @@ J767C:	LD	E,07H	; 7
 	RET	Z
 	CALL	C7835
 	JR	J764C
- ;	  Subroutine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7685:	CALL	C78A6
 	LD	A,80H
 	PUSH	HL
@@ -401,25 +380,26 @@ C7685:	CALL	C78A6
 	PUSH	DE
 	LD	(D7FF8),A
 	CALL	C795D
-	LD	DE,X.0000
+	LD	DE,0
 	LD	BC,D7FFC
 J769D:	LD	A,(BC)
 	ADD	A,A
-	JP	M,J76B7
-	RET	C
+	JP	M,J76B7			; DRQ,
+	RET	C			; INT,
 	LD	A,(BC)
 	ADD	A,A
-	JP	M,J76B7
-	RET	C
+	JP	M,J76B7			; DRQ,
+	RET	C			; INT,
 	DEC	E
-	JP	NZ,J769D
+	JP	NZ,J769D		; try again
 	DEC	D
-	JP	NZ,J769D
+	JP	NZ,J769D		; try again
 	POP	BC
 	POP	BC
 	POP	DE
 	POP	HL
 	JR	J76ED
+
 J76B7:	LD	DE,D7FFB
 	LD	A,(DE)
 	JP	J76C5
@@ -443,7 +423,7 @@ I76CA:	POP	BC
 	POP	AF
 	DEC	E
 	JR	NZ,C7685
-	SCF	
+	SCF
 	LD	E,A
 	BIT	4,E
 	LD	A,08H	; 8 
@@ -452,14 +432,16 @@ I76CA:	POP	BC
 	LD	A,04H	; 4 
 	RET	NZ
 	LD	A,0CH	; 12 
-	RET	
+	RET
 J76ED:	CALL	C7949
 	LD	A,02H	; 2 
-	SCF	
-	RET	
- ;	  Subroutine __________________________
+	SCF
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C76F4:	PUSH	AF
 	PUSH	BC
 	PUSH	HL
@@ -470,8 +452,8 @@ C76F4:	PUSH	AF
 	CP	02H	; 2 
 	JR	C,J7705
 J7701:	LD	A,0CH	; 12 
-	SCF	
-	RET	
+	SCF
+	RET
 J7705:	PUSH	AF
 	LD	A,C
 	CP	0F0H
@@ -496,7 +478,7 @@ J771E:	CALL	DIV16
 	POP	BC
 	POP	AF
 	LD	H,A
-	XOR	A			; assume side 0
+	XOR	A			; drives enable, side 0
 	BIT	0,C
 	JR	Z,J7734
 	SRL	L
@@ -514,23 +496,24 @@ J7742:	SLA	A
 	SLA	A
 	OR	D			; drive number to b2
 	LD	D,A
-	SET	0,A			; b0 = 1
-	SET	1,A			; b1 = 1
+	SET	0,A			; drive 0 motor on
+	SET	1,A			; drive 1 motor on
 	CALL	DISINT
-	DI	
+	DI
 	LD	(D7FFC),A
-	LD	A,(IX)
-	AND	A
-	LD	(IX),0FFH
-	JR	NZ,J776D
+	LD	A,(IX+0)
+	AND	A			; was motor still on ?
+	LD	(IX+0),0FFH
+	JR	NZ,J776D		; yep, skip ..
 	CALL	C78C5
 	CALL	C78C5
 	CALL	C7911
 	JR	NZ,J776D
 J7768:	POP	HL
-	LD	A,02H	; 2 
-	SCF	
-	RET	
+	LD	A,2
+	SCF
+	RET
+
 J776D:	PUSH	DE
 	PUSH	BC
 	LD	A,(D7FFA)
@@ -540,31 +523,34 @@ J776D:	PUSH	DE
 	LD	A,0C0H
 	LD	(D7FF8),A
 	CALL	C795D
-	LD	DE,X.0000
+	LD	DE,0
 	LD	BC,D7FFC
 J7785:	LD	A,(BC)
 	ADD	A,A
-	JP	M,J779C
-	RET	C
+	JP	M,J779C			; DRQ,
+	RET	C			; INT, quit
 	DEC	E
-	JP	NZ,J7785
+	JP	NZ,J7785		; try again
 	DEC	D
-	JP	NZ,J7785
+	JP	NZ,J7785		; try again
 	POP	BC
 	POP	AF
 	LD	(D7FFA),A
 	POP	BC
 	POP	DE
 	JR	J77BC
+
 J779C:	LD	DE,D7FFB
 	LD	A,(DE)
 	JP	J77A3
+
 J77A3:	LD	A,(BC)
 	ADD	A,A
-	RET	C
-	JP	P,J77A3
+	RET	C			; INT, quit
+	JP	P,J77A3			; no DRQ yet, wait
 	LD	A,(DE)
 	JP	J77A3
+
 I77AD:	POP	AF
 	LD	(D7FFA),A
 	POP	BC
@@ -576,8 +562,8 @@ I77AD:	POP	AF
 J77BC:	LD	E,03H	; 3 
 J77BE:	CALL	C793F
 	LD	A,C
-	RRCA	
-	RRCA	
+	RRCA
+	RRCA
 	AND	0C0H
 	OR	D
 	LD	D,A
@@ -607,21 +593,21 @@ J77F5:	LD	A,H
 	PUSH	IX
 	PUSH	DE
 	PUSH	BC
-	LD	A,(D7FFC)
+	LD	A,(D7FFC)		; save drive control state
 	PUSH	AF
 	LD	A,10H
-	LD	(D7FFC),A		; motor off
-	EI	
+	LD	(D7FFC),A		; drives disabled, side 0, drive 0, drive 1 motor off, drive 0 motor off
+	EI
 	CALL	ENAINT
 	CALL	PROMPT
 	CALL	DISINT
-	DI	
+	DI
 	POP	AF
 	POP	BC
 	POP	DE
 	POP	IX
-	XOR	08H
-	LD	(D7FFC),A
+	XOR	08H			; side select was read back inverted
+	LD	(D7FFC),A		; restore drive control state
 	CALL	C78C5
 	CALL	C78C5
 	CALL	C7911
@@ -630,10 +616,12 @@ J782C:	LD	A,(D7FF9)
 J782F:	CP	C
 	CALL	NZ,C7887
 	POP	HL
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7835:	CALL	C78A6
 	INC	H
 	INC	H
@@ -642,44 +630,49 @@ C7835:	CALL	C78A6
 	LD	(D7FFA),A
 	BIT	7,D
 	JR	NZ,J7848
-	CP	0AH	; 10 
+	CP	9+1
 	RET	C
-J7848:	CP	09H	; 9 
+J7848:	CP	8+1
 	RET	C
-	LD	A,01H	; 1 
+	LD	A,1
 	LD	(D7FFA),A
 	CALL	C78FB
-	BIT	6,D
-	LD	A,(D7FFC)
-	JR	Z,J7869
+	BIT	6,D			; single sided media ?
+	LD	A,(D7FFC)		; save drive control state
+	JR	Z,J7869			; yep, side 0 and next track
 	BIT	3,D
-	JR	NZ,J7869
+	JR	NZ,J7869		; currently side 1, side 0 and next track
 	SET	3,D
-	SET	3,A
-	LD	(D7FFC),A
+	SET	3,A			; side 1
+	LD	(D7FFC),A		; update drive control state
 	CALL	C78E5
-	RET	
+	RET
+
 J7869:	RES	3,D
-	RES	3,A
-	LD	(D7FFC),A
+	RES	3,A			; side 0
+	LD	(D7FFC),A		; update drive control state
 	INC	C
 	CALL	C78A6
-	LD	A,58H	; "X"
+	LD	A,58H
 	LD	(D7FF8),A
 	CALL	C795D
 	CALL	C78A6
 	JR	C78E5
- ;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
-C7881:	BIT	0,E
-	RET	NZ
-	CALL	C78AD
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
+C7881:	BIT	0,E
+	RET	NZ
+	CALL	C78AD
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 C7887:	LD	A,C
-	CP	50H	; "P"
+	CP	80
 	JP	NC,J7701
 	LD	(D7FFB),A
 	CALL	C795D
@@ -690,16 +683,20 @@ J789B:	LD	(D7FF8),A
 	CALL	C795D
 	CALL	C78A6
 	JR	C78E5
- ;	  Subroutine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C78A6:	LD	A,(D7FF8)
-	RRA	
+	RRA
 	JR	C,C78A6
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C78AD:	CALL	C78A6
 	PUSH	BC
 	LD	B,02H	; 2 
@@ -711,7 +708,8 @@ J78B3:	LD	A,58H	; "X"
 	POP	BC
 	LD	A,08H	; 8 
 	JR	J789B
- ;	  Subroutine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -726,6 +724,7 @@ C78C5:	PUSH	HL
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C78D5:	PUSH	HL
 	LD	HL,45C4H
 	LD	A,(D7FFD)
@@ -747,27 +746,31 @@ C78E5:	PUSH	HL
 	LD	HL,1450H
 	LD	HL,0A28H
 	JR	J7909
- ;	  Subroutine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C78FB:	PUSH	HL
-	LD	HL,I$00EE
+	LD	HL,00EEH
 	LD	A,(D7FFD)
 	BIT	6,A			; Z80 mode ?
 	JR	Z,J7909			; yep,
-	LD	HL,I$0155
+	LD	HL,0155H
 J7909:	DEC	HL
 	LD	A,H
 	OR	L
 	JR	NZ,J7909
 	POP	HL
 	XOR	A
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7911:	PUSH	BC
-	LD	BC,I$9470
+	LD	BC,9470H
 	LD	A,0D0H
 	LD	(D7FF8),A
 	CALL	C795D
@@ -789,17 +792,21 @@ J7931:	LD	A,(D7FF8)
 	OR	B
 	JR	NZ,J7931
 J793D:	POP	BC
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C793F:	LD	A,(D7FFA)
 	CALL	C7949
 	LD	(D7FFA),A
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7949:	PUSH	AF
 	LD	A,0D0H
 	LD	(D7FF8),A
@@ -808,19 +815,23 @@ C7949:	PUSH	AF
 	LD	A,(X.0000)
 	CALL	C78A6
 	POP	AF
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C795D:	PUSH	AF
 	LD	A,(X.0000)
 	LD	A,(X.0000)
 	LD	A,(X.0000)
 	POP	AF
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7969:	PUSH	AF
 	EX	(SP),HL
 	EX	(SP),HL
@@ -832,28 +843,29 @@ C7969:	PUSH	AF
 	EX	(SP),HL
 	EX	(SP),HL
 J7977:	POP	AF
-	RET	
+	RET
 
 INIHRD:	LD	A,0D0H
 	LD	(D7FF8),A
 	CALL	C7969
-	LD	A,03H			; select drive 0
+	LD	A,03H			; drives enabled, side 0, drive 0, drive 1 motor on, drive 0 motor on
 	LD	(D7FFC),A
 	CALL	C78D5
 	CALL	C78D5
 	CALL	C799D
-	LD	A,07H			; select drive 1
+	LD	A,07H			; drives enabled, side 0, drive 1, drive 1 motor on, drive 0 motor on
 	LD	(D7FFC),A
 	CALL	C799D
 
 DSKSTP:
-	LD	A,10H			; select drive 0, motor off
+	LD	A,10H			; drives disabled, side 0, drive 0, drive 1 motor off, drive 0 motor off
 	LD	(D7FFC),A
 	RET
-	
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C799D:	CALL	C78A6
 	PUSH	BC
 	LD	B,02H	; 2 
@@ -872,7 +884,7 @@ J79A3:	LD	A,58H	; "X"
 	JR	Z,J79C4			; yep,
 	ADD	HL,HL
 J79C4:	LD	A,(D7FF8)
-	RRA	
+	RRA
 	RET	NC
 	EX	(SP),HL
 	EX	(SP),HL
@@ -881,17 +893,17 @@ J79C4:	LD	A,(D7FF8)
 	OR	H
 	JR	NZ,J79C4
 	CALL	C78E5
-	RET	
+	RET
 
 DRIVES:	PUSH	BC
 	PUSH	AF
 	CALL	GETWRK
-	LD	A,06H			; b0 =0, b1 =1, drive 1, side 0, motor on
+	LD	A,06H			; drives enabled, side 0, drive 1, drive 1 motor on, drive 0 motor off
 	LD	(D7FFC),A
 	CALL	C78D5
 	CALL	C78D5
 	CALL	C78A6
-	LD	A,08H			; b1 =0, b1 =0, drive 0, side 1, motor on
+	LD	A,08H			; drives enabled, side 1, drive 0, drive 0 motor off, drive 0 motor off
 	LD	(D7FF8),A
 	CALL	C7969
 	LD	HL,7530H
@@ -900,7 +912,7 @@ DRIVES:	PUSH	BC
 	JR	Z,J79FA			; yep,
 	ADD	HL,HL
 J79FA:	LD	A,(D7FF8)
-	RRA	
+	RRA
 	JR	NC,J7A09
 	EX	(SP),HL
 	EX	(SP),HL
@@ -912,7 +924,7 @@ J79FA:	LD	A,(D7FF8)
 	DEFB	0CAH
 J7A09:	LD	L,2
 	LD	(IX+7),L
-	LD	A,10H	; 16 
+	LD	A,10H			; drives disabled, side 0, drive 0, drive 1 motor off, drive 0 motor off
 	LD	(D7FFC),A
 	POP	AF
 	JR	NZ,J7A1D
@@ -921,7 +933,7 @@ J7A09:	LD	L,2
 	JR	J7A1F
 J7A1D:	LD	L,02H	; 2 
 J7A1F:	POP	BC
-	RET	
+	RET
 
 INIENV:	CALL	GETWRK
 	XOR	A
@@ -943,8 +955,8 @@ I7A31:	PUSH	AF
 	LD	(HL),A
 	JR	NZ,J7A4D
 	LD	A,(D7FFC)
-	AND	0CH			; leave side, drive select
-	OR	10H			; motor off
+	AND	0CH			; leave side and drive, drive 1 motor off, drive 0 motor off
+	OR	10H			; drives disabled
 	XOR	08H			; side is read back inverted
 	LD	(D7FFC),A
 J7A4D:	INC	HL
@@ -960,7 +972,7 @@ J7A53:	INC	HL
 J7A59:	POP	AF
 	JP	PRVINT
 
-DSKCHG:	EI	
+DSKCHG:	EI
 	PUSH	HL
 	PUSH	BC
 	PUSH	AF
@@ -992,19 +1004,21 @@ J7A70:	INC	B
 	POP	AF
 	POP	BC
 	CP	C
-	SCF	
-	CCF	
+	SCF
+	CCF
 	LD	B,0FFH
 	RET	NZ
 	INC	B
-	RET	
+	RET
 J7A99:	POP	DE
 	POP	DE
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-GETDPB:	EI	
+
+GETDPB:	EI
 	EX	DE,HL
 	INC	DE
 	LD	A,B
@@ -1021,40 +1035,36 @@ GETDPB:	EI
 	ADD	HL,BC
 	LD	BC,I7405
 	ADD	HL,BC
-	LD	BC,I$0012
-	LDIR	
+	LD	BC,18
+	LDIR
 	RET
-	
+
 CHOICE:	LD	HL,I7ABC
 	OR	A
 	RET
-	
-I7ABC:	DEFB	0DH
-	DEFB	0AH
-	DEFM	'1 -- single side',0DH
-	DEFB	0AH
-	DEFM	'2 --'
-	DEFM	' double side',0DH
-	DEFB	0AH
-	DEFB	0DH
-	DEFB	0AH
-	DEFM	' Select '
-	DEFM	'1 or 2',00H
 
-DSKFMT:	DI	
+I7ABC:	DEFB	13,10
+	DEFM	'1 -- single side',13,10
+	DEFM	'2 -- double side',13,10
+	DEFB	13,10
+	DEFM	' Select 1 or 2'
+	DEFB	0
+
+DSKFMT:	DI
 	PUSH	AF
 	LD	A,B
-	CP	01H	; 1 
+	CP	HIGH 0180H
 	JR	NC,J7B08
 	LD	A,C
-	CP	80H
+	CP	LOW 0180H
 	JR	NC,J7B08
 	POP	AF
 	LD	A,0EH	; 14 
-	SCF	
-	EI	
+	SCF
+	EI
 	CALL	ENAINT
-	RET	
+	RET
+
 J7B08:	POP	AF
 	PUSH	AF
 	PUSH	AF
@@ -1070,23 +1080,24 @@ J7B08:	POP	AF
 	JR	Z,J7B2D			; yep,
 	POP	AF
 	POP	AF
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	JR	C,J7B50
+	DEFB	0EDH
+	DEFB	038H
+	DEFB	032H			; IN0 A,(032H) DMA/WAIT Control
 	PUSH	AF
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	JR	C,J7B58
+	DEFB	0EDH
+	DEFB	038H
+	DEFB	036H			; IN0 A,(036H) Refresh Control
 	PUSH	AF
-	LD	A,0A0H
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	ADD	HL,SP
-	LD	(D.BC3E),A
-	DEFB	0EDH		; << Illegal Op Code Byte >>
- 	ADD	HL,SP
-	LD	(HL),21H	; "!"
-J7B2D	EQU	$-1
-	DI	
-	LD	(HL),H
-	PUSH	HL
+	LD	A,0A0H			; Memory wait=2, I/O wait=2, DREQ1 level, DREQ0 level, DMA1 mode 2
+	DEFB	0EDH
+	DEFB	039H
+	DEFB	032H			; OUT0 (032H),A DMA/WAIT Control
+	LD	A,0BCH			; refresh enable, no refresh wait, interval 10 states
+	DEFB	0EDH
+	DEFB	039H
+	DEFB	036H			; OUT0 (036H),A Refresh Control
+J7B2D:	LD	HL,I74F3
+	PUSH	HL			; restore HD64180 registers at the end of DSKFMT
 	DEC	SP
 	DEC	SP
 	DEC	SP
@@ -1105,7 +1116,7 @@ J7B2D	EQU	$-1
 	POP	AF
 J7B4C:	LD	A,0CH	; 12 
 	JP	J7BCD
-J7B50	EQU	$-1
+
 J7B51:	POP	AF
 	PUSH	HL
 	POP	IY
@@ -1173,7 +1184,7 @@ J7BB3:	LD	C,(IY+7)
 J7BC8:	PUSH	AF
 	CALL	C78AD
 	POP	AF
-J7BCD:	SCF	
+J7BCD:	SCF
 	JP	J74CC
 J7BD1:	PUSH	BC
 	PUSH	HL
@@ -1257,17 +1268,17 @@ J7C50:	POP	BC
 	PUSH	IX
 	PUSH	HL
 	LD	HL,I7F0F
-	LD	BC,I$00D0
+	LD	BC,L7F0F
 	LD	DE,($SECBUF)
-	LDIR	
-	LD	BC,I$0130
+	LDIR
+	LD	BC,512-L7F0F
 	EX	DE,HL
 	CALL	C7D44
 	POP	HL
 	LD	IX,($SECBUF)
 	LD	A,(IY+10)
 	LD	(IX+21),A
-	LD	BC,CPMADR
+	LD	BC,6
 	ADD	HL,BC
 	LD	A,(HL)
 	LD	(IX+13),A
@@ -1282,7 +1293,7 @@ J7C50:	POP	BC
 	INC	HL
 	LD	A,(HL)
 	LD	(IY+11),A
-	LD	BC,I$0004
+	LD	BC,4
 	ADD	HL,BC
 	LD	A,(HL)
 	LD	(IY+9),A
@@ -1291,10 +1302,10 @@ J7C50:	POP	BC
 	LD	A,(HL)
 	LD	(IY+12),A
 	LD	A,(IY+10)
-	LD	HL,I$00A0
+	LD	HL,160
 	BIT	2,A
 	JR	Z,J7CC0
-	LD	L,50H	; "P"
+	LD	L,80
 J7CC0:	BIT	0,A
 	JR	NZ,J7CC9
 	SRL	L
@@ -1326,7 +1337,7 @@ J7CED:	LD	HL,($SECBUF)
 	INC	HL
 	LD	(HL),A
 	INC	HL
-	LD	BC,I$01FD
+	LD	BC,512-3
 	CALL	C7D44
 	PUSH	DE
 	CALL	C7EF5
@@ -1358,25 +1369,29 @@ J7D2D:	LD	HL,($SECBUF)
 	DEC	D
 	JR	NZ,J7D2D
 	JP	J74CC
- ;	  Subroutine __________________________
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7D44:	LD	(HL),00H
 	INC	HL
 	DEC	BC
 	LD	A,C
 	OR	B
 	JR	NZ,C7D44
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7D4D:	CALL	C78A6
 	LD	HL,I7EF1
 	PUSH	HL
 	LD	L,(IY+5)
 	CALL	DISINT
-	DI	
+	DI
 	LD	A,0F0H
 	LD	(D7FF8),A
 	CALL	C795D
@@ -1384,8 +1399,8 @@ C7D4D:	CALL	C78A6
 	LD	H,4EH	; "N"
 J7D67:	LD	A,(D7FFC)
 	ADD	A,A
-	RET	C
-	JP	P,J7D67
+	RET	C			; INT, quit
+	JP	P,J7D67			; no DRQ yet, wait
 	LD	A,H
 	LD	(D7FFB),A
 	DJNZ	J7D67
@@ -1393,8 +1408,8 @@ J7D67:	LD	A,(D7FFC)
 	LD	H,00H
 J7D79:	LD	A,(D7FFC)
 	ADD	A,A
-	RET	C
-	JP	P,J7D79
+	RET	C			; INT, quit
+	JP	P,J7D79			; no DRQ yet, wait
 	LD	A,H
 	LD	(D7FFB),A
 	DJNZ	J7D79
@@ -1577,8 +1592,8 @@ J7EC5:	LD	A,(D7FFC)
 	LD	L,08H	; 8 
 J7EDF:	LD	A,(D7FFC)
 	ADD	A,A
-	RET	C
-	JP	P,J7EDF
+	RET	C			; INT, quit
+	JP	P,J7EDF			; no DRQ yet, wait
 	LD	A,H
 	LD	(D7FFB),A
 	DJNZ	J7EDF
@@ -1586,25 +1601,122 @@ J7EDF:	LD	A,(D7FFC)
 	JR	NZ,J7EDF
 	POP	HL
 I7EF1:	LD	A,(D7FF8)
-	RET	
- ;	  Subroutine __________________________
+	RET
+
+;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
+
 C7EF5:	LD	HL,($SECBUF)
 	LD	D,0
 	LD	E,(IY+5)
 	LD	B,1
 	LD	C,(IY+10)
 	LD	A,(IY+6)
-	SCF	
+	SCF
 	CALL	DSKIO
 	INC	(IY+5)
 	RET
-	
-OEMSTA:	SCF	
+
+OEMSTA:	SCF
 	RET
-	
-I7F0F:	DEFB	0EBH,0FEH,90H,4AH,56H,43H,20H,20H
+
+I7F0F:
+		.PHASE	0C000H
+
+		db	0EBh,0FEh	; JMP 0100h (i8088)
+		db	090h		; NOP (i8088)
+
+		db	"JVC  KTW"
+
+		dw	512
+		db	2
+		dw	1
+		db	2
+		dw	112
+		dw	05A0H
+		db	0F9H
+		dw	3
+		dw	9
+		dw	2
+		dw	0
+
+BootTrap:	ret	nc
+		ld	(SetRomPage+1),de
+		ld	(StartFlag),a
+		ld	(hl),LOW ErrorHand
+		inc	hl
+		ld	(hl),HIGH ErrorHand
+BootAgain:	ld	sp,0F51Fh
+		ld	de,MsxDosFcb
+		ld	c,0Fh
+		call	0F37Dh
+		inc	a
+		jp	z,OpenDosError
+		ld	de,0100h
+		ld	c,01Ah
+		call	0F37Dh
+		ld	hl,1
+		ld	(MsxDosFcb+0Eh),hl
+		ld	hl,04000h-0100h
+		ld	de,MsxDosFcb
+		ld	c,027h
+		call	0F37Dh
+		jp	0100h
+
+ErrorHand:	dw	SetRomPage
+
+SetRomPage:	call	0
+		ld	a,c
+		and	0FEh
+		cp	02h
+		jp	nz,DiskBootError
+OpenDosError:	ld	a,(StartFlag)
+		and	a			; Startup ?
+		jp	z,04022h		; yep, jump direct
+DiskBootError:	ld	de,BootErrorTxt
+		call	PrintMessage
+		ld	c,07h
+		call	0F37Dh
+		jr	BootAgain		; nop, boot again
+
+PrintMessage:	ld	a,(de)
+		or	a
+		ret	z
+		push	de
+		ld	e,a
+		ld	c,6
+		call	0F37DH
+		pop	de
+		inc	de
+		jr	PrintMessage
+
+BootErrorTxt:	db	"Boot error",13,10
+		db	"Press any key for retry",13,10
+		db	0
+
+MsxDosFcb:	db	0
+		db	"MSXDOS  SYS"
+		dw 	0
+		dw	0
+		db	0,0,0,0
+		dw	0
+		dw	0
+		db	0
+		db	0
+		dw	0
+		dw	0
+		dw	0
+		db	0
+		db	0,0,0,0
+
+StartFlag:	db	0
+
+		.DEPHASE
+
+
+
+	DEFB	0EBH,0FEH,90H,4AH,56H,43H,20H,20H
 	DEFB	4BH,54H,57H,00H,02H,02H,01H,00H
 	DEFB	02H,70H,00H,0A0H,05H,0F9H,03H,00H
 	DEFB	09H,00H,02H,00H,00H,00H
@@ -1620,19 +1732,19 @@ J7F3A:	LD	SP,I$F51F
 	CALL	C.F37D
 	INC	A
 	JP	Z,J$C063
-	LD	DE,J.0100
+	LD	DE,0100H
 	LD	C,1AH
 	CALL	C.F37D
-	LD	HL,I.0001
+	LD	HL,1
 	LD	(D$C0B9),HL
-	LD	HL,I$3F00
+	LD	HL,04000H-0100H
 	LD	DE,I.C0AB
 	LD	C,27H	; "'"
 	CALL	C.F37D
-	JP	J.0100
+	JP	0100H
 ?7F65:	LD	E,B
 	RET	NZ
-	CALL	X.0000
+	CALL	0
 	LD	A,C
 	AND	0FEH
 	CP	02H	; 2 
@@ -1655,6 +1767,7 @@ J7F86:	LD	A,(DE)
 	POP	DE
 	INC	DE
 	JR	J7F86
+
 ?7F94:	DEFB	42H,6FH,6FH,74H,20H,65H,72H,72H
 	DEFB	6FH,72H,0DH,0AH,50H,72H,65H,73H
 	DEFB	73H,20H,61H,6EH,79H,20H,6BH,65H
@@ -1664,7 +1777,11 @@ J7F86:	LD	A,(DE)
 	DEFB	59H,53H,00H,00H,00H,00H,00H,00H
 	DEFB	00H,00H,00H,00H,00H,00H,00H,00H
 	DEFB	00H,00H,00H,00H,00H,00H,00H,00H
-	DEFB	00H,00H,00H,00H,0FFH,0FFH,0FFH,0FFH
+	DEFB	00H,00H,00H,00H
+
+L7F0F	EQU	$-I7F0F
+
+	DEFB	0FFH,0FFH,0FFH,0FFH
 	DEFB	0FFH,0FFH,0FFH,0FFH,0FFH,0FFH,0FFH,0FFH
 	DEFB	0FFH,0FFH,0FFH,0FFH,0FFH,0FFH,0FFH,0FFH
 	DEFB	0FFH,0FFH,0FFH,0FFH
@@ -1683,15 +1800,15 @@ D7FFB	EQU	07FFBH			; MB8877A
 
 D7FFC	EQU	07FFCH			; R b7 = INT (1 = INT)
 					; R b6 = DRQ (1 = DRQ)
-					; W b4 = motor control (1 = motor off, 0 = motor on) ??
-					; R b4 = motor control (1 = motor off, 0 = motor on) ??
+					; W b4 = drive enable (1 = enable)
+					; R b4 = motor control (1 = enable)
 					; W b3 = side select (1 = side 1, 0 = side 0)
 					; R b3 = side select (1 = side 0, 1 = side 1)!
 					; W b2 = drive select (1 = drive 1, 0 = drive 0)
-					; R b2 = drive select
-					; W b1 = ?
-					; W b0 = ?
-D7FFD	EQU	07FFDH			; b6 = CPU mode (1 = HD64180, 0 = Z80)
+					; R b2 = drive select (1 = drive 1, 0 = drive 0)
+					; W b1 = motor control drive 1 (1 = motor on)
+					; W b0 = motor control drive 0 (1 = motor on)
+D7FFD	EQU	07FFDH			; R b6 = CPU mode (1 = HD64180, 0 = Z80)
 
 	END
 
