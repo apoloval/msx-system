@@ -14,8 +14,6 @@
 MYSIZE		equ	8
 SECLEN		equ	512
 
-X.0000	EQU	0000H
-
 I7405:	DEFB	0F8H,00H,02H,0FH,04H,01H,02H,01H
 	DEFB	00H,02H,70H,0CH,00H,63H,01H,02H
 	DEFB	05H,00H
@@ -100,8 +98,8 @@ J74CC:	POP	DE
 	JR	NC,J74D8
 	LD	C,0
 J74D8:	CALL	C793F
-	LD	A,(D7FFB)
-	LD	A,(D7FF8)
+	LD	A,(D7FFB)		; reset DRQ
+	LD	A,(D7FF8)		; reset INT
 	LD	(IX+0),120
 J74E5:	LD	A,D
 	AND	A
@@ -145,7 +143,7 @@ J750E:	POP	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7511:	CALL	C76F4
+C7511:	CALL	C76F4			; initialise for disk i/o
 	RET	C
 	CALL	DISINT
 	DI
@@ -185,15 +183,15 @@ J754A:	RET	C
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7555:	CALL	C78A6
-	LD	A,0A0H
+C7555:	CALL	C78A6			; wait for command ready
+	LD	A,0A0H			; WRITE SECTOR
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	LD	DE,I7579
 	PUSH	DE
 	LD	(D7FF8),A
-	CALL	C795D
+	CALL	C795D			; wait ??
 	LD	BC,D7FFC
 	LD	DE,D7FFB
 J756D:	LD	A,(BC)
@@ -233,8 +231,8 @@ I7579:	POP	BC
 	RET
 
 J75A2:	LD	A,80H
-	LD	(D7FF8),A
-	CALL	C795D
+	LD	(D7FF8),A		; READ SECTOR
+	CALL	C795D			; wait ??
 	LD	HL,D7FFC
 	LD	DE,0
 J75B0:	LD	A,(HL)
@@ -263,21 +261,21 @@ J75C5:	LD	A,(D7FF8)
 
 C75D2:	RET	C
 	LD	A,(RAWFLG)
-	OR	A
-	RET	Z
+	OR	A			; verify on ?
+	RET	Z			; nope, quit
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	CALL	C78E5
 	CALL	C78E5
 	CALL	C78E5
-	CALL	C78A6
-	LD	A,80H
+	CALL	C78A6			; wait for command ready
+	LD	A,80H			; READ SECTOR
 	LD	BC,D7FFC
 	LD	DE,I762E
 	PUSH	DE
 	LD	(D7FF8),A
-	CALL	C795D
+	CALL	C795D			; wait ??
 	LD	DE,0
 J75F9:	LD	A,(BC)
 	ADD	A,A
@@ -329,7 +327,7 @@ J763E:	CALL	C7644
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7644:	CALL	C76F4
+C7644:	CALL	C76F4			; initialise for disk i/o
 	RET	C
 	CALL	DISINT
 	DI
@@ -371,15 +369,15 @@ J767C:	LD	E,07H	; 7
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7685:	CALL	C78A6
-	LD	A,80H
+C7685:	CALL	C78A6			; wait for command ready
+	LD	A,80H			; READ SECTOR
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	LD	DE,I76CA
 	PUSH	DE
 	LD	(D7FF8),A
-	CALL	C795D
+	CALL	C795D			; wait ??
 	LD	DE,0
 	LD	BC,D7FFC
 J769D:	LD	A,(BC)
@@ -438,7 +436,7 @@ J76ED:	CALL	C7949
 	SCF
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine initialise for disk i/o
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -449,31 +447,31 @@ C76F4:	PUSH	AF
 	POP	HL
 	POP	BC
 	POP	AF
-	CP	02H	; 2 
-	JR	C,J7705
-J7701:	LD	A,0CH	; 12 
+	CP	2			; drivenumber valid (0-1) ?
+	JR	C,J7705			; yep,
+J7701:	LD	A,12
 	SCF
 	RET
 J7705:	PUSH	AF
 	LD	A,C
-	CP	0F0H
-	JR	NC,J770E
+	CP	0F0H			; mediadescriptor valid (0F0H-0FFH) ?
+	JR	NC,J770E		; yep,
 	POP	AF
 	JR	J7701
 J770E:	EX	(SP),HL
 	PUSH	HL
 	PUSH	BC
-	CALL	C78A6
-	BIT	1,C
+	CALL	C78A6			; wait for command ready
+	BIT	1,C			; 8 sectors/track ?
 	LD	C,E
 	LD	B,D
 	LD	DE,8
-	JR	NZ,J771E
-	INC	DE
+	JR	NZ,J771E		; yep,
+	INC	DE			; 9 sectors/track
 J771E:	CALL	DIV16
 	LD	A,L
 	INC	A
-	LD	(D7FFA),A
+	LD	(D7FFA),A		; sectornumber
 	LD	L,C
 	POP	BC
 	POP	AF
@@ -504,11 +502,11 @@ J7742:	SLA	A
 	LD	A,(IX+0)
 	AND	A			; was motor still on ?
 	LD	(IX+0),0FFH
-	JR	NZ,J776D		; yep, skip ..
+	JR	NZ,J776D		; yep, skip motor spinup
 	CALL	C78C5
-	CALL	C78C5
-	CALL	C7911
-	JR	NZ,J776D
+	CALL	C78C5			; wait ? ms (motor spinup)
+	CALL	C7911			; check if drive is ready
+	JR	NZ,J776D		; yep,
 J7768:	POP	HL
 	LD	A,2
 	SCF
@@ -520,9 +518,9 @@ J776D:	PUSH	DE
 	PUSH	AF
 	LD	DE,I77AD
 	PUSH	DE
-	LD	A,0C0H
+	LD	A,0C0H			; READ ADDRESS
 	LD	(D7FF8),A
-	CALL	C795D
+	CALL	C795D			; wait ??
 	LD	DE,0
 	LD	BC,D7FFC
 J7785:	LD	A,(BC)
@@ -584,7 +582,7 @@ J77BE:	CALL	C793F
 J77E7:	LD	(IX+5),A
 	LD	A,(IX+4)
 J77ED:	LD	(D7FF9),A
-	CALL	C795D
+	CALL	C795D			; wait ??
 	JR	J782F
 J77F5:	LD	A,H
 	CP	(IX+6)
@@ -609,9 +607,9 @@ J77F5:	LD	A,H
 	XOR	08H			; side select was read back inverted
 	LD	(D7FFC),A		; restore drive control state
 	CALL	C78C5
-	CALL	C78C5
-	CALL	C7911
-	JP	Z,J7768
+	CALL	C78C5			; wait ? ms (motor spinup)
+	CALL	C7911			; check if drive is ready
+	JP	Z,J7768			; nope,
 J782C:	LD	A,(D7FF9)
 J782F:	CP	C
 	CALL	NZ,C7887
@@ -622,7 +620,7 @@ J782F:	CP	C
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7835:	CALL	C78A6
+C7835:	CALL	C78A6			; wait for command ready
 	INC	H
 	INC	H
 	LD	A,(D7FFA)
@@ -652,11 +650,11 @@ J7869:	RES	3,D
 	RES	3,A			; side 0
 	LD	(D7FFC),A		; update drive control state
 	INC	C
-	CALL	C78A6
-	LD	A,58H
+	CALL	C78A6			; wait for command ready
+	LD	A,58H			; STEP-IN
 	LD	(D7FF8),A
-	CALL	C795D
-	CALL	C78A6
+	CALL	C795D			; wait ??
+	CALL	C78A6			; wait for command ready
 	JR	C78E5
 
 ;	  Subroutine __________________________
@@ -675,16 +673,16 @@ C7887:	LD	A,C
 	CP	80
 	JP	NC,J7701
 	LD	(D7FFB),A
-	CALL	C795D
-	LD	A,(X.0000)
-	LD	A,(X.0000)
-	LD	A,18H
+	CALL	C795D			; wait ??
+	LD	A,(0)
+	LD	A,(0)			; some sort of wait ???
+	LD	A,18H			; SEEK
 J789B:	LD	(D7FF8),A
-	CALL	C795D
-	CALL	C78A6
+	CALL	C795D			; wait ??
+	CALL	C78A6			; wait for command ready
 	JR	C78E5
 
-;	  Subroutine __________________________
+;	  Subroutine wait for command ready
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -697,19 +695,19 @@ C78A6:	LD	A,(D7FF8)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C78AD:	CALL	C78A6
+C78AD:	CALL	C78A6			; wait for command ready
 	PUSH	BC
-	LD	B,02H	; 2 
-J78B3:	LD	A,58H	; "X"
+	LD	B,2
+J78B3:	LD	A,58H			; STEP-IN
 	LD	(D7FF8),A
-	CALL	C795D
-	CALL	C78A6
+	CALL	C795D			; wait ??
+	CALL	C78A6			; wait for command ready
 	DJNZ	J78B3
 	POP	BC
-	LD	A,08H	; 8 
+	LD	A,08H			; RESTORE
 	JR	J789B
 
-;	  Subroutine __________________________
+;	  Subroutine wait 0.5 motor spinup time
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -765,28 +763,29 @@ J7909:	DEC	HL
 	XOR	A
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine check if drive is ready
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C7911:	PUSH	BC
 	LD	BC,9470H
 	LD	A,0D0H
-	LD	(D7FF8),A
-	CALL	C795D
-	LD	A,(X.0000)
-	LD	A,(X.0000)
+	LD	(D7FF8),A		; execute terminate without interrupt command
+	CALL	C795D			; wait ??
+	LD	A,(0)
+	LD	A,(0)
 J7923:	LD	A,(D7FF8)
-	BIT	1,A
-	JR	Z,J7931
+	BIT	1,A			; at INDEX MARK ?
+	JR	Z,J7931			; nope,
 	DEC	BC
 	LD	A,C
 	OR	B
-	JR	NZ,J7923
+	JR	NZ,J7923		; wait
 	JR	J793D
+
 J7931:	LD	A,(D7FF8)
-	BIT	1,A
-	JR	NZ,J793D
+	BIT	1,A			; at INDEX MARK ?
+	JR	NZ,J793D		; yep, then drive must be ready, quit
 	DEC	BC
 	LD	A,C
 	OR	B
@@ -809,11 +808,11 @@ C793F:	LD	A,(D7FFA)
 
 C7949:	PUSH	AF
 	LD	A,0D0H
-	LD	(D7FF8),A
-	CALL	C795D
-	LD	A,(X.0000)
-	LD	A,(X.0000)
-	CALL	C78A6
+	LD	(D7FF8),A		; execute terminate without interrupt command
+	CALL	C795D			; wait ??
+	LD	A,(0)
+	LD	A,(0)			; some sort of wait ??
+	CALL	C78A6			; wait for command ready
 	POP	AF
 	RET
 
@@ -822,9 +821,9 @@ C7949:	PUSH	AF
 ;	     Outputs ________________________
 
 C795D:	PUSH	AF
-	LD	A,(X.0000)
-	LD	A,(X.0000)
-	LD	A,(X.0000)
+	LD	A,(0)
+	LD	A,(0)
+	LD	A,(0)
 	POP	AF
 	RET
 
@@ -846,7 +845,7 @@ J7977:	POP	AF
 	RET
 
 INIHRD:	LD	A,0D0H
-	LD	(D7FF8),A
+	LD	(D7FF8),A		; execute terminate without interrupt command
 	CALL	C7969
 	LD	A,03H			; drives enabled, side 0, drive 0, drive 1 motor on, drive 0 motor on
 	LD	(D7FFC),A
@@ -866,16 +865,16 @@ DSKSTP:
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C799D:	CALL	C78A6
+C799D:	CALL	C78A6			; wait for command ready
 	PUSH	BC
-	LD	B,02H	; 2 
-J79A3:	LD	A,58H	; "X"
+	LD	B,2
+J79A3:	LD	A,58H			; STEP-IN
 	LD	(D7FF8),A
 	CALL	C7969
-	CALL	C78A6
+	CALL	C78A6			; wait for command ready
 	DJNZ	J79A3
 	POP	BC
-	LD	A,08H	; 8 
+	LD	A,08H			; RESTORE
 	LD	(D7FF8),A
 	CALL	C7969
 	LD	HL,7530H
@@ -902,8 +901,8 @@ DRIVES:	PUSH	BC
 	LD	(D7FFC),A
 	CALL	C78D5
 	CALL	C78D5
-	CALL	C78A6
-	LD	A,08H			; drives enabled, side 1, drive 0, drive 0 motor off, drive 0 motor off
+	CALL	C78A6			; wait for command ready
+	LD	A,08H			; RESTORE
 	LD	(D7FF8),A
 	CALL	C7969
 	LD	HL,7530H
@@ -1160,13 +1159,13 @@ J7B81:	ADD	A,0F8H
 J7B8F:	LD	(IY+10),A
 	LD	A,(IY+1)
 	LD	(IY+5),A
-	LD	DE,X.0000
+	LD	DE,0
 	LD	A,(IY+6)
 	LD	C,(IY+10)
 	LD	B,00H
 	LD	(IY+7),B
-	CALL	C76F4
-	LD	A,10H	; 16 
+	CALL	C76F4			; initialise for disk i/o
+	LD	A,10H
 	JP	C,J7BCD
 	CALL	C78AD
 	XOR	A
@@ -1229,12 +1228,12 @@ J7C1A:	INC	D
 	CP	(IY+2)
 	JR	NC,J7C50
 	LD	A,(IY+2)
-	LD	B,01H	; 1 
-	CP	50H	; "P"
+	LD	B,1
+	CP	80
 	JR	Z,J7C2B
 	INC	B
-J7C2B:	CALL	C78A6
-	LD	A,58H	; "X"
+J7C2B:	CALL	C78A6			; wait for command ready
+	LD	A,58H			; STEP-IN
 	LD	(D7FF8),A
 	CALL	C78E5
 	DJNZ	J7C2B
@@ -1386,15 +1385,15 @@ C7D44:	LD	(HL),00H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7D4D:	CALL	C78A6
+C7D4D:	CALL	C78A6			; wait for command ready
 	LD	HL,I7EF1
 	PUSH	HL
 	LD	L,(IY+5)
 	CALL	DISINT
 	DI
-	LD	A,0F0H
+	LD	A,0F0H			; WRITE TRACK
 	LD	(D7FF8),A
-	CALL	C795D
+	CALL	C795D			; wait ??
 	LD	B,50H	; "P"
 	LD	H,4EH	; "N"
 J7D67:	LD	A,(D7FFC)
