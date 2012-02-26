@@ -2473,7 +2473,7 @@ C4CED:	CP	61H	; "a"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4CF6:	LD	A,(IY)
+C4CF6:	LD	A,(IY+0)
 	SUB	35H	; "5"
 	CP	04H	; 4 
 	JR	NC,J4D17
@@ -3896,13 +3896,13 @@ J54E3:	LD	A,(NEWKEY+7)
 
 J551A:	LD	A,(NEWKEY+7)
 	BIT	2,A			; ESC key pressed ?
-	JP	Z,J554B			; yep,
+	JP	Z,J554B			; yep, start setup
 J5522:	LD	A,(NEWKEY+8)
 	BIT	3,A			; DEL key pressed ?
-	JR	Z,J5534			; yep,
+	JR	Z,J5534			; yep, disable functionkey functionality
 	LD	BC,5
 	LD	HL,I5546
-J552F:	LD	DE,H.KEYC
+	LD	DE,H.KEYC
 	LDIR
 J5534:	LD	HL,D.7FFD
 	LD	A,(NEWKEY+7)
@@ -3919,28 +3919,32 @@ I5546:	RST	30H
 	DEFW	J59E7
 	RET
 
+;	  Subroutine HC95 setup
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 J554B:	LD	A,00H
-J554D:	OUT	(99H),A
+	OUT	(99H),A
 	LD	A,8EH
 	OUT	(99H),A
 	LD	A,00H
 	CALL	C5697
 	EXX
 	LD	A,(D.7FFD)
-	LD	B,04H	; 4 
-	LD	D,02H	; 2 
+	LD	B,4
+	LD	D,2
 	BIT	6,A			; Z80 mode ?
 	JR	NZ,J5568		; nope,
-	LD	B,01H	; 1 
-	LD	D,04H	; 4 
-J5568:	LD	E,00H
+	LD	B,1
+	LD	D,4
+J5568:	LD	E,0
 	EXX
-	LD	HL,I.0000
+	LD	HL,0
 	ADD	HL,SP
-	LD	BC,I$000A
+	LD	BC,10
 	SUB	A
 	SBC	HL,BC
-	LD	BC,I.0000
+	LD	BC,0
 	PUSH	BC
 	PUSH	BC
 	PUSH	BC
@@ -3958,17 +3962,17 @@ J5568:	LD	E,00H
 	POP	IX
 	PUSH	IX
 J5595:	CALL	C5770
-	CP	0DH	; 13 
-	JP	Z,J5613
-	CP	00H
+	CP	0DH			; RETURN pressed ?
+	JP	Z,J5613			; yep,
+	CP	00H			; CURSOR LEFT pressed ?
 	JR	Z,J55F6
-	CP	01H	; 1 
+	CP	01H			; CURSOR UP pressed ?
 	JR	Z,J55C4
-	CP	02H	; 2 
+	CP	02H			; CURSOR DOWN pressed ?
 	JR	Z,J55E0
-	CP	03H	; 3 
+	CP	03H			; CURSOR RIGHT pressed ?
 	JR	Z,J5607
-	CP	10H	; 16 
+	CP	10H			; HOME pressed ?
 	JR	Z,J55B3
 	JR	J5595
 
@@ -3992,7 +3996,7 @@ J55C4:	CALL	C583A
 	PUSH	IY
 	EX	DE,HL
 	LD	E,B
-	LD	D,00H
+	LD	D,0
 	ADD	IY,DE
 	EX	DE,HL
 	LD	E,B
@@ -4010,44 +4014,46 @@ J55E0:	CALL	C583A
 	JR	C,J55F3
 	POP	IY
 	PUSH	IY
-	LD	A,00H
+	LD	A,0
 J55F3:	LD	E,A
 	JR	J55DA
 
-J55F6:	LD	A,(IY)
+J55F6:	LD	A,(IY+0)
 	DEC	A
 	JP	P,J55FF
 	LD	A,03H	; 3 
-J55FF:	LD	(IY),A
+J55FF:	LD	(IY+0),A
 	CALL	C5851
 	JR	J5595
 
-J5607:	LD	A,(IY)
+J5607:	LD	A,(IY+0)
 	INC	A
 	CP	04H	; 4 
 	JR	C,J55FF
 	LD	A,00H
 	JR	J55FF
 
+; RETURN
+
 J5613:	POP	IY
 	LD	HL,D.7FFD
-	BIT	0,(IY)
-	JR	Z,J5622
-	SET	5,(HL)
+	BIT	0,(IY+0)		; enable RS232 ?
+	JR	Z,J5622			; nope,
+	SET	5,(HL)			; enable RS232
 	JR	J5624
 
-J5622:	RES	5,(HL)
-J5624:	BIT	0,(IY+1)
-	JR	Z,J5635
+J5622:	RES	5,(HL)			; disable RS232
+J5624:	BIT	0,(IY+1)		; enable functionkeys ?
+	JR	Z,J5635			; nope,
 	LD	BC,5
 	LD	HL,I5546
 	LD	DE,H.KEYC
-	LDIR
+	LDIR				; install KEYC handler
 J5635:	LD	A,(D.7FFD)
 	BIT	6,A			; Z80 mode ?
-	JR	Z,J5681		; yep,
-	LD	A,(IY+2)
-	LD	B,(IY+3)
+	JR	Z,J5681			; yep, skip HD64180 settings
+	LD	A,(IY+2)		; memory wait states
+	LD	B,(IY+3)		; io wait states
 	RRCA
 	RRCA
 	SLA	B
@@ -4056,8 +4062,8 @@ J5635:	LD	A,(D.7FFD)
 	SLA	B
 	OR	B
 	LD	B,A
-	LD	A,(IY+4)
-	AND	03H	; 3 
+	LD	A,(IY+4)		; refresh interval
+	AND	03H
 	OR	0BCH
 	LD	C,A
 	LD	A,32H			; DMAs disabled
@@ -4106,8 +4112,8 @@ J5681:	POP	BC
 	LD	A,01H	; 1 
 	CALL	C5697
 	LD	A,(D.7FFD)
-	BIT	5,A
-	JP	NZ,J4075
+	BIT	5,A			; RS232 enabled ?
+	JP	NZ,J4075		; yep, initialize RS232
 	RET
 
 ;	  Subroutine __________________________
@@ -4244,33 +4250,33 @@ J576A:	POP	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5770:	LD	A,0AH	; 10 
+C5770:	LD	A,0AH
 	CALL	C580A
 	LD	A,(IX+8)
 	AND	0F0H
 	OR	07H
-	OUT	(0AAH),A
+	OUT	(0AAH),A		; select row 7
 	NOP
 	IN	A,(0A9H)
-	RLCA
-	JR	C,J5787
-	LD	A,0DH	; 13 
+	RLCA				; RETURN key pressed ?
+	JR	C,J5787			; nope,
+	LD	A,0DH
 	RET
 
 J5787:	LD	A,(IX+8)
 	AND	0F0H
-	OR	08H	; 8 
-	OUT	(0AAH),A
+	OR	08H
+	OUT	(0AAH),A		; select row 8
 	NOP
 	IN	A,(0A9H)
-	BIT	1,A
-	JR	NZ,J579B
-	LD	A,10H	; 16 
+	BIT	1,A			; HOME pressed ?
+	JR	NZ,J579B		; nope,
+	LD	A,10H
 	JR	J57CC
 
 J579B:	AND	0F0H
-	XOR	0F0H
-	JR	NZ,J57AA
+	XOR	0F0H			; cursor keys pressed ?
+	JR	NZ,J57AA		; yep,
 J57A1:	XOR	A
 	LD	(IX+6),A
 	CPL
@@ -4281,24 +4287,24 @@ J57AA:	RRCA
 	RRCA
 	RRCA
 	RRCA
-	CP	01H	; 1 
-	JR	NZ,J57B6
+	CP	01H			; cursor left pressed ?
+	JR	NZ,J57B6		; nope,
 	LD	A,00H
 	JR	J57CC
 
-J57B6:	CP	02H	; 2 
-	JR	NZ,J57BE
-	LD	A,01H	; 1 
+J57B6:	CP	02H			; cursor up pressed ?
+	JR	NZ,J57BE		; nope,
+	LD	A,01H
 	JR	J57CC
 
-J57BE:	CP	04H	; 4 
-	JR	NZ,J57C6
-	LD	A,02H	; 2 
+J57BE:	CP	04H			; cursor down pressed ? 
+	JR	NZ,J57C6		; nope,
+	LD	A,02H
 	JR	J57CC
 
-J57C6:	CP	08H	; 8 
-	JR	NZ,J57A1
-	LD	A,03H	; 3 
+J57C6:	CP	08H			; cursor right pressed ?
+	JR	NZ,J57A1		; nope,
+	LD	A,03H
 J57CC:	CP	(IX+5)
 	JR	Z,J57D9
 	LD	(IX+5),A
@@ -4311,7 +4317,7 @@ J57D9:	LD	C,A
 	INC	(IX+6)
 	LD	A,(IX+6)
 	AND	7FH
-	CP	0AH	; 10 
+	CP	0AH
 	JR	C,J57F2
 	LD	(IX+6),80H
 	LD	A,C
@@ -4552,12 +4558,17 @@ J59F4:	JR	NZ,J5A13		; nope,
 J59F9:	RET	NC			; nope, quit
 	CP	35H			; F1 pressed ?
 	JR	NZ,J5A05		; F2 pressed ,
+
+; CTRL+SHIFT+F1
+
 J59FE:	LD	A,(AVCSAV)
 	AND	0FBH
 	JR	J5A0A
 
+; CTRL+SHIFT+F2
+
 J5A05:	LD	A,(AVCSAV)
-	OR	04H
+	OR	04H			; select 
 J5A0A:	LD	(AVCSAV),A
 	OUT	(0F7H),A
 	LD	A,31H			; GRAPH pressed
@@ -4567,7 +4578,7 @@ J5A0A:	LD	(AVCSAV),A
 J5A13:	CP	01H			; CTRL pressed ?
 	JR	Z,J5A19			; yep,
 	POP	AF
-	RET
+	RET				; nope, quit
 
 J5A19:	PUSH	BC
 	PUSH	HL
@@ -4577,7 +4588,7 @@ J5A19:	PUSH	BC
 	LD	C,A
 	ADD	A,A
 	ADD	A,C
-	LD	C,A
+	LD	C,A			; *3
 	LD	HL,I5A5E
 	ADD	HL,BC
 	LD	B,(HL)
@@ -4588,7 +4599,7 @@ J5A19:	PUSH	BC
 	LD	(D.FFE7),A
 	OUT	(99H),A
 	LD	A,88H
-	OUT	(99H),A
+	OUT	(99H),A			; write VDP R#8
 	LD	B,(HL)
 	INC	HL
 	LD	A,(D.FFE8)
@@ -4597,9 +4608,9 @@ J5A19:	PUSH	BC
 	LD	(D.FFE8),A
 	OUT	(99H),A
 	LD	A,89H
-	OUT	(99H),A
+	OUT	(99H),A			; write VDP R#9
 	LD	A,(AVCSAV)
-	AND	04H	; 4 
+	AND	04H
 	LD	B,A
 	LD	A,(HL)
 	OR	B
@@ -4612,11 +4623,11 @@ J5A19:	PUSH	BC
 	LD	C,A
 	RET
 
-I5A5E:	DEFB	000H,010H,098H
-	DEFB	000H,020H,058H
-	DEFB	000H,000H,0D3H
-	DEFB	020H,010H,098H
-	DEFB	000H,010H,0B8H
+I5A5E:	DEFB	000H,010H,098H		; TP=0, S1=0, S0=1, superimpose, Ym=0, AV=1, audio mixed
+	DEFB	000H,020H,058H		; TP=0, S1=1, S0=0, television, Ym=0, AV=1, audio mixed
+	DEFB	000H,000H,0D3H		; TP=0, S1=0, S0=0, computer, Ym=0, AV=1, audio not mixed
+	DEFB	020H,010H,098H		; TP=1 (color 0 not transparent), S1=0, S0=1, superimpose, Ym=0, AV=1, audio mixed
+	DEFB	000H,010H,0B8H		; TP=0, S1=0, S0=1, superimpose, Ym=1 (half brightness), AV=1, audio mixed
 
 ; ROM CALL statement handler
 
