@@ -1,3 +1,8 @@
+J0000:	DI
+	JP	J01A7			; first initalize some HD64180 register
+
+; ....
+
 
 J0180:	PUSH	AF
 J0181:	IN	A,(C)
@@ -9,7 +14,8 @@ J0181:	IN	A,(C)
 	DEC	A
 	RET	
 
-?018C:	DEFB	0,0,0,0
+	DEFS	0190H-$,0
+
 J0190:	PUSH	AF
 J0191:	LD	A,(HL)
 	OUT	(C),A
@@ -20,7 +26,8 @@ J0191:	LD	A,(HL)
 	DEC	A
 	RET	
 
-?019C:	DEFB	0,0,0,0
+	DEFS	01A0H-$,0
+
 J01A0:	OUT	(98H),A
 	NOP	
 	DEC	C
@@ -36,24 +43,67 @@ J01A7:	LD	A,0A0H			; Memory wait=2, I/O wait=2, DREQ1 level, DREQ0 level, DMA1 m
 	DEFB	036H			; OUT0 (036H),A
 	JP	J0416
 
+; ....
+
+J0762:	CALL	J0180			; replace INIR and DEC A
+
+; ....
+
+J07A4:	CALL	J0190			; replace OTIR and DEC A
+
+; ....
+
+J084A:	CALL	J01A0			; replace OUT (98H),A and DEC C
+
+
+
 ;  
-;   SUB1 -> Source re-created by Z80DIS 2.2
+;   SUBROM -> Source re-created by Z80DIS 2.2
 ;      Z80DIS was written by Kenneth Gielow
 ;                            Palo Alto, CA
 ;
-	.Z80
-	ORG	11A3H
-;
-J.11E9	EQU	11E9H	; J----
-;
+
+J07BD:	CALL	J3FD4			; replace INIR and DEC A
+
+; ....
+
+J07D2:	CALL	J3FC0			; replace OTIR and DEC A
+
+; ....
+
+J0981:	CALL	J3FB0			; replace OUT (98H),A and DEC C
+
+; ....
+
+J0A5E:	CALL	J3FB8			; replace OUT (98H),A and INC A
+
+; ....
+
+J0AC5:	CALL	J3FB8			; replace OUT (98H),A and INC A
+
+; ....
+
+J0F28:	JP	J3FE0			; replace INIR and RET
+
+; ....
+
+J0F32:	JP	J3FF0			; replace OTIR and RET
+
+; ....
+
+J0F77:	EX	(SP),HL			; replace NOP
+	EX	(SP),HL			; replace NOP
+
+; ....
+
 ?11A3:	PUSH	BC
 	PUSH	AF
-	LD	A,02H	; 2 
+	LD	A,02H
 	OUT	(99H),A
 	LD	A,8FH
 	OUT	(99H),A
 	POP	AF
-	LD	B,07H	; 7 
+	LD	B,7
 J11B0:	PUSH	AF
 J11B1:	IN	A,(99H)
 	RRCA	
@@ -64,8 +114,8 @@ J11B1:	IN	A,(99H)
 	OUT	(99H),A
 	POP	AF
 	POP	BC
-	LD	B,01H	; 1 
-	JP	J.11E9
+	LD	B,1
+	JP	J11E9
 
 J11C5:	RLCA	
 	RLCA	
@@ -85,21 +135,18 @@ J11D3:	DJNZ	J11B0
 	OUT	(99H),A
 	POP	AF
 	POP	BC
-	JP	J.11E9
-;
-;	-----------------
+	JP	J11E9
+
 ?11E3:	DEFB	0,0,0,0,0,0
 
-;  
-;   SUB2 -> Source re-created by Z80DIS 2.2
-;      Z80DIS was written by Kenneth Gielow
-;                            Palo Alto, CA
-;
-	.Z80
-	ORG	3F90H
-;
-J$0984	EQU	0984H	; J----
-;
+; ....
+
+
+J35AA:	CALL	J3FCC
+	NOP				; replace 4x EX (SP),HL
+
+; ....
+
 ?3F90:	PUSH	AF
 	LD	C,98H
 J3F93:	LD	A,(HL)
@@ -126,20 +173,22 @@ J3FA3:	IN	A,(C)
 	DEC	A
 	RET	
 
-?3FB0:	OUT	(98H),A
+J3FB0:	OUT	(98H),A
 	NOP	
 	DEC	C
 	JP	J0984
 
-?3FB7:	NOP	
-	OUT	(98H),A
+	DEFS	03FB8H-$,0
+
+J3FB8:	OUT	(98H),A
 	PUSH	AF
 	POP	AF
 	INC	A
 	RET	
 
-?3FBE:	DEFB	0,0
-	PUSH	AF
+	DEFS	03FC0H-$,0
+
+J3FC0:	PUSH	AF
 J3FC1:	LD	A,(HL)
 	OUT	(C),A
 	INC	HL
@@ -149,14 +198,15 @@ J3FC1:	LD	A,(HL)
 	DEC	A
 	RET	
 
-?3FCC:	PUSH	BC
-	LD	B,0CH	; 12 
+J3FCC:	PUSH	BC
+	LD	B,12
 J3FCF:	DJNZ	J3FCF
 	POP	BC
 	RET	
 
-?3FD3:	NOP	
-	PUSH	AF
+	DEFS	03FD4H-$,0
+
+J3FD4:	PUSH	AF
 J3FD5:	IN	A,(C)
 	LD	(HL),A
 	INC	HL
@@ -166,7 +216,7 @@ J3FD5:	IN	A,(C)
 	DEC	A
 	RET	
 
-?3FE0:	PUSH	AF
+J3FE0:	PUSH	AF
 J3FE1:	IN	A,(C)
 	LD	(HL),A
 	INC	HL
@@ -179,8 +229,9 @@ J3FE1:	IN	A,(C)
 	DEC	B
 	RET	
 
-?3FEF:	NOP	
-	PUSH	AF
+	DEFS	03FF0H-$,0
+
+J3FF0:	PUSH	AF
 J3FF1:	LD	A,(HL)
 	OUT	(C),A
 	INC	HL
@@ -193,4 +244,4 @@ J3FF1:	LD	A,(HL)
 	DEC	B
 	RET	
 
-?3FFF:	NOP	
+	DEFS	04000H-$,0
