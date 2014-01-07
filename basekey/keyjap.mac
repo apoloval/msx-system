@@ -273,25 +273,30 @@ C0F10:	CALL	H.KEYA
 ;	Outputs		________________________
 
 C0F1F:
+
+	IF	MSXVER EQ 0
+
 ; #####################
 ; MSX 1 code: (0F1F-0F35)
 
-;	LD	HL,KANAST
-;	LD	A,(HL)
-;	CPL	
-;	LD	(HL),A			; toggle KANA mode
-;	LD	A,15
-;	OUT	(0A0H),A
-;	IN	A,(0A2H)
-;	AND	7FH
-;	LD	B,A			; PSG register 15 without KANA led bit
-;	LD	A,(HL)			; KANA status
-;	CPL
-;	AND	80H			; KANA led bit
-;	OR	B
-;	OUT	(0A1H),A		; change KANA led
-;	RET
+	LD	HL,KANAST
+	LD	A,(HL)
+	CPL	
+	LD	(HL),A			; toggle KANA mode
+	LD	A,15
+	OUT	(0A0H),A
+	IN	A,(0A2H)
+	AND	7FH
+	LD	B,A			; PSG register 15 without KANA led bit
+	LD	A,(HL)			; KANA status
+	CPL
+	AND	80H			; KANA led bit
+	OR	B
+	OUT	(0A1H),A		; change KANA led
+	RET
 
+	ELSE
+	
 ; #####################
 ; MSX 2 and above have extension for the new SHIFT KANA mode
 ; there was too little space for all of the code.
@@ -306,11 +311,13 @@ C0F1F:
 J0F29:	JP	J111C			; change KANA led
 
 J0F2C:	LD	A,(KANAST)
-	INC	A				; KANA ON ?
+	INC	A			; KANA ON ?
 	JP	Z,J0C36			; yes, KANA OFF
 	JP	J0C25			; nope, KANA ON or SHIFT KANA mode
 
 ; #####################
+
+	ENDIF
 
 ;	Subroutine	handler CAPS key
 ;	Inputs		-
@@ -347,23 +354,28 @@ C0F46:	LD	A,(NEWKEY+6)
 	INC	A			; STOP
 J0F50:	LD	(INTFLG),A
 	JR	C,J0F64			; STOP, continue in keyclick
-C0F55:
 
 ;	Subroutine	put keycode in keyboardbuffer
 ;	Inputs		A = keycode
 ;	Outputs		________________________
 ;	Remark		entrypoint compatible with MSX1
 
+C0F55:
+
+	IF	MSXVER EQ 0
+
 ; #####################
 ; MSX 1 code: (0F55-0F63)
 
-;	LD	HL,(PUTPNT)
-;	LD	(HL),A			; put in keyboardbuffer
-;	CALL	C10C2			; next postition in keyboardbuffer with roundtrip
-;	LD	A,(GETPNT)
-;	CP	L			; keyboard buffer full ?
-;	RET	Z			; yep, quit
-;	LD	(PUTPNT),HL		; update put pointer
+	LD	HL,(PUTPNT)
+	LD	(HL),A			; put in keyboardbuffer
+	CALL	C10C2			; next postition in keyboardbuffer with roundtrip
+	LD	A,(GETPNT)
+	CP	L			; keyboard buffer full ?
+	RET	Z			; yep, quit
+	LD	(PUTPNT),HL		; update put pointer
+
+	ELSE
 
 ; #####################
 ; MSX 2 and above have code in subrom to handle the new SHIFT KANA mode
@@ -377,6 +389,8 @@ C0F55:
 	JP	C029B			; put keycode in keyboardbuffer
 
 ; #####################
+
+	ENDIF
 
 ;	Subroutine	make keyclick
 ;	Inputs		-
