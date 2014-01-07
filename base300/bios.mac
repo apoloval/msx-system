@@ -1,6 +1,6 @@
 ; BIOS.MAC
 
-; MSX BIOS ROM, MSX Turbo-R version (version 4.1)
+; MSX BIOS ROM, MSX 2+ version (version 3.0)
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
@@ -76,6 +76,7 @@ M7FC4	EQU	7FC4H	; helper routine WRSLT in basicrom
 RDPRIM	EQU	0F380H
 WRPRIM	EQU	0F385H
 CLPRIM	EQU	0F38CH
+CLPRM1	equ	0F398H
 LINLEN	EQU	0F3B0H
 CRTCNT	EQU	0F3B1H
 T32COL	EQU	0F3BFH
@@ -97,6 +98,9 @@ SCNCNT	EQU	0F3F6H
 REPCNT	EQU	0F3F7H
 PUTPNT	EQU	0F3F8H
 GETPNT	EQU	0F3FAH
+LOW.	equ	0F406H
+HIGH.	equ	0F408H
+HEADER	equ	0F40AH
 ASPCT1	EQU	0F40BH
 ASPCT2	EQU	0F40DH
 LPTPOS	EQU	0F415H
@@ -128,6 +132,7 @@ ACPAGE	EQU	0FAF6H
 EXBRSA	EQU	0FAF8H
 CHRCNT	EQU	0FAF9H
 MODE	EQU	0FAFCH
+XSAVE	EQU	0FAFEH
 LOGOPR	EQU	0FB02H
 HOKVLD	EQU	0FB20H
 VOICEN	EQU	0FB38H
@@ -158,6 +163,8 @@ PADX	EQU	0FC9DH
 JIFFY	EQU	0FC9EH
 INTVAL	EQU	0FCA0H
 INTCNT	EQU	0FCA2H
+LOWLIM	equ	0FCA4H
+WINWID	equ	0FCA5H
 GRPHED	EQU	0FCA6H
 ESCCNT	EQU	0FCA7H
 INSFLG	EQU	0FCA8H
@@ -207,15 +214,9 @@ RG25SA	EQU	0FFFAH
 
 D.FFFD	EQU	0FFFDH	; used to store SP register during CPU change
 D.FFFF	EQU	0FFFFH	; secundairy slotregister
+
 CHKRAM:	DI
-
-; MSX2 and above had
-;	JP	J0416
-; Changed to initialize R800/Z80
-
-	JP	J126B
-
-
+	JP	J0416
 
 	DEFW	D1BBF			; address character pattern
 	DEFB	098H			; vdp dataregister i/o address for read
@@ -263,8 +264,8 @@ IDBYT0:
 	DEFB	CHRGEN+16*DATFMT+128
 	ENDIF
 IDBYT1:	DEFB	KEYTYP+16*BASVER
-IDBYT2:	DEFB	MSXVER			; MSX version 3 = Turbo-R
-IDBYT3:	DEFB	MSXMID			; b0 set,MSX-MIDI
+IDBYT2:	DEFB	MSXVER			; MSX version 2 = 2+
+IDBYT3:	DEFB	0			;
 
 	DEFS	00030H-$
 
@@ -338,11 +339,11 @@ GTSTCK:	JP	J11E4
 GTTRIG:	JP	J1249
 GTPAD:	JP	J12A2
 GTPDL:	JP	J1269
-TAPION:	JP	J19DD
-TAPIN:	JP	J19DD
-TAPIOF:	JP	J19DD
-TAPOON:	JP	J19DD
-TAPOUT:	JP	J19DD
+TAPION:	JP	J1A63
+TAPIN:	JP	J1ABC
+TAPIOF:	JP	J19E9
+TAPOON:	JP	J19F1
+TAPOUT:	JP	J1A19
 TAPOOF:	JP	J19DD
 STMOTR:	JP	J1387
 LFTQ:	JP	J14E9
@@ -391,10 +392,6 @@ NRDVRM:	JP	J07E9
 NWRVRM:	JP	J0769
 RDBTST:	JP	J146A
 WRBTST:	JP	J146E
-CHGCPU:	JP	C046A
-GETCPU:	JP	C04D2
-PCMPLY:	JP	J19DF
-PCMREC:	JP	J19E8
 
 	DEFS	001B6H-$
 
@@ -402,66 +399,57 @@ PCMREC:	JP	J19E8
 ;	Inputs		________________________
 ;	Outputs		________________________
 ;	Remark		this is done by this special routine, otherwise calslt crashes
-;			Turbo-R ignores secundairy slot, always secundairy slot 0 (main-bios)
-;			MSX2 and above had code to handle a interslot call to the subrom in a secundairy
-;			of slot 0. Turbo-R has no subrom in slot 0, so code only handles main-bios interslot
-;			calls. A jump is sufficient, because it is called from the main-bios itself.
-;			MSX2 code used 01B6H - 01F4H
+;			code to handle a interslot call to the subrom in a secundairy
+;			of slot 0.
 
 J01B6:	POP	AF
+	LD	D,0FCH
+	AND	0CH
+	RRCA
+	RRCA
+	LD	H,A
+	IN	A,(0A8H)
+	LD	B,A
+	AND	3FH
+	OUT	(0A8H),A
+	LD	A,(D.FFFF)
+	CPL
+	LD	C,A
+	AND	D
+	OR	H
+	LD	E,A
+	LD	(D.FFFF),A
+
+; from this point code continues to execute in subrom
+
+?01D0:	LD	A,B
+	AND	D
+	OUT	(0A8H),A
+	LD	A,E
+	LD	(SLTTBL),A
+	PUSH	BC
 	EXX
 	EX	AF,AF'
-	JP	(IX)
-
-
-; space left from orginal 01B6H routine used for kanji patches
-
-;	Subroutine	patch routine for PRINT USING, kanji characters
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C01BB:	CALL	M6246			; print + if needed
-	CALL	C01C9			; print kanji (handles 2 byte chars)
+	CALL	CLPRM1
+	DI
+	EX	AF,AF'
+	EXX
+	POP	BC
 	LD	A,B
-	OR	A
-	JP	Z,M61F9			; end of formatstring, exit print using
-	JP	M60F6			; headloop print using
+	AND	3FH
+	OUT	(0A8H),A
+	LD	A,C
+	LD	(D.FFFF),A
 
-;	Subroutine	print kanji char
-;	Inputs		________________________
-;	Outputs		________________________
+; from this point code returns executing from the subrom 
 
-
-C01C9:	RST	OUTDO
-	CP	81H
-	RET	C
-	CP	0A0H
-	JR	C,J01D7			; 081H - 09FH, if in kanji mode print 2nd byte
-	CP	0E0H
-	RET	C
-	CP	0FDH
-	RET	NC
-					; 0E0H - 0FCH, if in kanji mode print 2nd byte
-J01D7:	LD	A,(HOKVLD)
-	RRCA				; EXTBIO valid ?
-	RET	NC			; nope, quit
-	PUSH	DE
-	LD	DE,01100H
-	XOR	A
-	CALL	EXTBIO			; KANJI BIOS function 0
-	POP	DE
-	OR	A
-	RET	Z			; not in KANJI mode, quit
-	LD	A,(HL)
-	INC	HL
-	RST	OUTDO
-	DEC	B
-	RET	P
-	INC	B
+?01EB:	LD	A,B
+	OUT	(0A8H),A
+	LD	A,C
+	LD	(SLTTBL),A
+	EX	AF,AF'
+	EXX
 	RET
-
-	DEFS	001F5H-$
 
 ;	Subroutine	RDSLT
 ;	Inputs		________________________
@@ -871,47 +859,72 @@ J0390:	ADD	A,55H
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-
 J03AC:	DI
-	LD	BC,SUBSID		; Turbo-R has subrom always in slot 3-1
-	LD	HL,2
-	CALL	M7E1A			; read INIT entry of subrom
+	LD	C,0
+I03AF:	LD	DE,EXPTBL
+	LD	HL,SLTATR
+J03B5:	LD	A,(DE)
+	OR	C
+	LD	C,A
+	PUSH	DE
+J03B9:	PUSH	HL
+	LD	HL,0
+	CALL	M7E1A
+	PUSH	HL
+	LD	HL,04443H
+	RST	20H
+	POP	HL
+	LD	B,00H
+	JR	NZ,J03EF
+	CALL	M7E1A
 	PUSH	HL
 	PUSH	BC
 	PUSH	DE
 	POP	IX
-	LD	IY,256*SUBSID
-	CALL	NZ,C0217		; if it has INIT, CALSLT to initialize subrom
+	LD	A,C
+I03D3:	PUSH	AF
+	POP	IY
+	CALL	NZ,C0217
 	POP	BC
 	POP	HL
-	CALL	M7E1A			; read STATEMENT entry of subrom
+	CALL	M7E1A
 	ADD	A,0FFH
-	RR	B			; if it has, set bit
-	CALL	M7E1A			; read DEVICE entry of subrom
+	RR	B
+	CALL	M7E1A
 	ADD	A,0FFH
-	RR	B			; if it has, set bit
+	RR	B
 	SRL	B
-	LD	HL,SLTATR+(SUBSID AND 3)*16+(SUBSID AND 12)+0
+	LD	DE,-8
+	ADD	HL,DE
+J03EF:	EX	(SP),HL
 	LD	(HL),B
-	LD	A,0FCH
-	OUT	(0FEH),A
-	LD	HL,00000H
-	LD	DE,08000H
-	LD	BC,04000H
-	LDIR				; copies page 0 of mainrom
-	LD	A,0FDH
-	OUT	(0FEH),A
-	LD	HL,04000H
-	LD	DE,08000H
-	LD	BC,04000H
-	LDIR				; copies page 1 of mainrom
-	LD	A,01H
-	OUT	(0FEH),A
+	EX	(SP),HL
+	POP	HL
+	INC	HL
+	INC	HL
+	INC	HL
+	INC	HL
+	LD	A,C
+	AND	A
+	LD	DE,12
+	JP	P,J040A
+	ADD	A,04H
+	LD	C,A
+	CP	90H
+	JR	C,J03B9
+	AND	03H
+	LD	C,A
+	DEFB	03EH
+J040A:	ADD	HL,DE
+	POP	DE
+	INC	DE
+	INC	C
+	LD	A,C
+	CP	04H
+	JR	C,J03B5
+; MSX2+ patchcode
 	JP	J1472
-
-; because of simplfied search routine for Turbo-R, some space is unused
-
-	DEFS	0416H-$			; unused space
+; end patchcode
 
 ; orginal init MSX2 and above
 
@@ -930,155 +943,136 @@ J0416:	XOR	A
 	XOR	A
 	OUT	(0A8H),A		; initialize primary slotregister (all pages slot 0)
 
-	IF	INTHZ EQ 60
+;	IF	INTHZ EQ 60
 
 	LD	A,50H
 	OUT	(0AAH),A		; CAPS led off, cassette motor off
 
-	ELSE
+;	ELSE
 
-	JP	PTCPAL			; patch routine to setup VDP for PAL
-	NOP
+;	JP	PTCPAL			; patch routine to setup VDP for PAL
+;	NOP
 
-	ENDIF
+;	ENDIF
 
-J0431:	XOR	A
-	LD	C,A			; flag primary slots are not expanded
-	IN	A,(0A8H)
-	AND	3FH			; primary slot 0
-	LD	HL,D.FFFF
-J043A:	SLA	C			; shift left
-	LD	B,A
-	OUT	(0A8H),A
-	LD	(HL),0F0H		; secundairy slot 3 on page 3 and 2, slot 0 on page 1 and 0 (to avoid crash when doing slot 0)
-	LD	A,(HL)
-	SUB	0FH			; secundairy slot logic (inverted) ?
-	JR	NZ,J044D		; nope, slot not expanded
-	LD	(HL),A			; secundairy slot 0 on page 3,2,1 and 0
-	LD	A,(HL)
-	INC	A
-	JR	NZ,J044D		; not correctly inverted, slot not expanded
-	SET	0,C			; flag slot expanded
-J044D:	LD	A,B
-	ADD	A,40H
-	JR	NC,J043A		; do all primary slots
-	LD	A,00H+((RAMSID) AND 3)*80
-	OUT	(0A8H),A		; select primary slot of RAM on page 3 and 2, slot 0 on page 1 and 0
-	LD	A,00H+((RAMSID) AND 12)*20
-	LD	(D.FFFF),A		; select secundary slot of RAM on page 3 and 2
-	IN	A,(0A8H)
-	AND	0FH
-	OR	((RAMSID) AND 3)*80
-	LD	H,A
-	LD	L,00H+((RAMSID) AND 12)*20
-	LD	SP,HL			; primary and secundairy slot register value for systemstart
-	JP	M7B61
-
-
-
-; MSX2 has must longer init (detecting ram), remaining space (0468H-04EFH) used for cpu bios calls
-
-J0468:	POP	AF
-	RET
-
-;	Subroutine	CHGCPU
-;	Inputs		A(b6-b0) = cpumode, A(b7) = update turboled
-;	Outputs		________________________
-
-
-C046A:	PUSH	AF
-	AND	7FH
-	CP	03H
-	JR	NC,J0468		; invalid cpumode, quit
-	POP	AF
-	DI
-	PUSH	HL
-	PUSH	DE
-	PUSH	BC
-	PUSH	AF
-	PUSH	IX
-	PUSH	IY
-	EXX
-	EX	AF,AF'
-	PUSH	HL
-	PUSH	DE
-	PUSH	BC
-	PUSH	AF			; save all Z80 registers
-	LD	A,I
-	PUSH	AF			; save interrupttable pointer
-	LD	(D.FFFD),SP		; save stackpointer
-	EX	AF,AF'
-J0489:	AND	83H
+J0431:	LD	DE,D.FFFF
+	XOR	A
 	LD	C,A
-	LD	B,00H
-	LD	HL,CASPRV
-	LD	A,(HL)
+J0436:	OUT	(0A8H),A
 	SLA	C
-	RES	1,A
-	JR	NZ,J049A		; R800, b1=0
-	SET	1,A			; Z80, b1=1
-J049A:	JR	NC,J04A2		; flag update turboled not set, turboled unchanged
-	RES	7,A
-	JR	Z,J04A2			; Z80, turboled off
-	SET	7,A			; R800, turboled on
-J04A2:	LD	(HL),A
-	OUT	(0A7H),A
-	LD	HL,I04E3
-	ADD	HL,BC
-	LD	A,6
-	OUT	(0E4H),A		; S1990 register 6
-	IN	A,(0E5H)
-	INC	B
-	BIT	5,A			; R800 active ?
-	JR	Z,J04B5			; yep,
-	INC	B
-J04B5:	LD	C,0E5H
-	OTIR
-	DI
-	NOP
-	LD	SP,(D.FFFD)		; restore stackpointer
-	POP	AF
-	LD	I,A			; restore interrupttable pointer
-	POP	AF
-	POP	BC
-	POP	DE
-	POP	HL
-	EXX
-	EX	AF,AF'
-	POP	IY
-	POP	IX
-	POP	AF
-	POP	BC
-	POP	DE
-	POP	HL			; restore all Z80 registers
-	EI
-	RET
-
-;	Subroutine	GETCPU
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C04D2:	LD	A,6
-	OUT	(0E4H),A		; S1990 register 6
-	IN	A,(0E5H)
-	AND	60H
-	ADD	A,A
-	ADD	A,A
-	LD	A,00H
-	RET	NZ
+	LD	B,00H
+	LD	HL,D.FFFF
+	LD	(HL),0F0H
+	LD	A,(HL)
+	SUB	0FH
+	JR	NZ,J0451
+	LD	(HL),A
+	LD	A,(HL)
 	INC	A
-	RET	C
-	INC	A
-	RET
-
-I04E3:	DEFB	060H,060H		; Z80
-I04E5:	DEFB	040H,060H		; R800 ROM
-	DEFB	000H,060H		; R800 RAM
-
-
-
-	DEFS	04F0H-$			; remainer of init space is not used
+	JR	NZ,J0451
+	INC	B
+	SET	0,C
+J044E:	LD	(D.FFFF),A
+J0451:	LD	HL,0BF00H
+J0454:	LD	A,(HL)
+	CPL
+	LD	(HL),A
+I0457:	CP	(HL)
+	CPL
+	LD	(HL),A
+	JR	NZ,J0463
+	INC	L
+	JR	NZ,J0454
+	DEC	H
+	JP	M,J0454
+J0463:	LD	L,00H
+	INC	H
+	LD	A,L
+	SUB	E
+	LD	A,H
+	SBC	A,D
+	JR	NC,J0476
+	EX	DE,HL
+	LD	A,(D.FFFF)
+	CPL
+	LD	L,A
+	IN	A,(0A8H)
+	LD	H,A
+	LD	SP,HL
+J0476:	LD	A,B
+	AND	A
+	JR	Z,J0484
+	LD	A,(D.FFFF)
+	CPL
+	ADD	A,10H
+	CP	40H
+	JR	C,J044E
+J0484:	IN	A,(0A8H)
+	ADD	A,50H
+	JR	NC,J0436
+	LD	HL,0
+	ADD	HL,SP
+	LD	A,H
+	OUT	(0A8H),A
+	LD	A,L
+	LD	(D.FFFF),A
+	LD	A,C
+	RLCA
+	RLCA
+	RLCA
+	RLCA
+	LD	C,A
+	LD	DE,D.FFFF
+	IN	A,(0A8H)
+	AND	3FH
+J04A2:	OUT	(0A8H),A
+	LD	B,00H
+	RLC	C
+	JR	NC,J04B4
+	INC	B
+	LD	A,(D.FFFF)
+	CPL
+	AND	3FH
+J04B1:	LD	(D.FFFF),A
+J04B4:	LD	HL,0FE00H
+J04B7:	LD	A,(HL)
+	CPL
+	LD	(HL),A
+	CP	(HL)
+	CPL
+	LD	(HL),A
+	JR	NZ,J04C8
+	INC	L
+	JR	NZ,J04B7
+	DEC	H
+	LD	A,H
+	CP	0C0H
+	JR	NC,J04B7
+J04C8:	LD	L,00H
+	INC	H
+	LD	A,L
+	SUB	E
+	LD	A,H
+	SBC	A,D
+	JR	NC,J04DB
+	EX	DE,HL
+	LD	A,(D.FFFF)
+	CPL
+	LD	L,A
+	IN	A,(0A8H)
+	LD	H,A
+	LD	SP,HL
+J04DB:	LD	A,B
+	AND	A
+	JR	Z,J04E7
+	LD	A,(D.FFFF)
+	CPL
+	ADD	A,40H
+	JR	NC,J04B1
+J04E7:	IN	A,(0A8H)
+	ADD	A,40H
+	JR	NC,J04A2
+	JP	M7B61
 
 
 ;	Subroutine	ISCNTC
@@ -1326,7 +1320,9 @@ J0629:	LD	A,B
 	LD	B,00H
 	LD	HL,RG0SAV
 	ADD	HL,BC
+; MSX2+ patchcode
 	JP	J1440			; patch routine for V9958 digitize hardware
+; end patchcode
 
 ;	Subroutine	INITXT
 ;	Inputs		________________________
@@ -2021,7 +2017,7 @@ J090D:	CP	A
 	SCF
 J090F:	POP	HL
 	RET
-;	-----------------
+
 J0911:	POP	AF
 	CP	01H	; 1 
 	JR	NZ,J090D
@@ -2406,11 +2402,11 @@ C0ABE:	CALL	C0BE2			; get max linenumber
 
 C0AC6:	LD	(CSRY),HL
 	RET
-;	-----------------
+
 J0ACA:	DEC	L
 	XOR	A
 	JR	C0AC6			; update cursorpos
-;	-----------------
+
 C0ACE:	LD	A,20H	; " "
 	CALL	C093C
 	LD	A,(CSRX)
@@ -2418,7 +2414,7 @@ C0ACE:	LD	A,20H	; " "
 	AND	07H	; 7 
 	JR	NZ,C0ACE
 	RET
-;	-----------------
+
 C0ADC:	LD	L,01H	; 1 
 
 ;	Subroutine	screencode CR
@@ -2428,7 +2424,7 @@ C0ADC:	LD	L,01H	; 1
 
 C0ADE:	LD	H,1
 	JR	C0AC6			; update cursorpos
-;	-----------------
+
 C0AE2:	CALL	C0ADE
 
 ;	Subroutine	__________________________
@@ -2438,7 +2434,7 @@ C0AE2:	CALL	C0ADE
 C0AE5:	PUSH	IX
 	LD	IX,S.DELLNO
 	JP	J0295			; SUBROM
-;	-----------------
+
 C0AEE:	CALL	C0ADE
 
 ;	Subroutine	__________________________
@@ -2453,7 +2449,6 @@ J0AFA:	CALL	C0AA9			; cursor left with warp
 	RET	Z
 	LD	C," "
 	JP	C0B8D			; write char at screenlocation
-;	-----------------
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -2522,7 +2517,6 @@ C0B3F:	CALL	H.DSPF
 	PUSH	IX
 	LD	IX,S.DSPFNK
 	JP	J0295			; SUBROM
-;	-----------------
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -2780,6 +2774,7 @@ J0C1E:	ADD	HL,DE
 	JR	NZ,J0C1E
 J0C22:	POP	DE
 	RET
+
 ; The following NOP really puzzels me
 ; It has nothing to do with compatibility to MSX1 or so
 ; Maybe is just leftover space and 0C25 was pushed against 0C3C
@@ -2814,34 +2809,16 @@ J0C3C:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	PUSH	AF
-
-; Changed from orginal
-; Reason: expansion of interrupt routine to handle MIDI ints
-
-; MSX1 and above have:
-	IF	MSXMID EQ 0
-
 	PUSH	IY
 	PUSH	IX
-
-	ELSE
-
-; Turbo-R with MIDI has:
-	JP	J1A70			; expansion code
-	NOP
-
-	ENDIF
-
-; End of change
-
-J0C4A:	CALL	H.KEYI
+	CALL	H.KEYI
 ; Changed from orginal
 ; MSX1 and above have:
 ;	IN	A,(099H)
 ;	AND	A
 
-; Turbo-R has:
-	JP	J1A0B			; expansion code
+; 2+ has:
+	CALL	J1479			; expansion code
 
 ; Reason: expansion of interrupt routine to handle pause key
 ;	-----------------
@@ -3265,7 +3242,7 @@ J115C:	DEC	C
 	CALL	C1102			; WRTPSG
 	DEC	C
 	JR	J115C
-;	-----------------
+
 J1177:	LD	H,A
 	AND	80H
 	JR	Z,J118B
@@ -3292,7 +3269,7 @@ J118B:	LD	A,H
 	DEC	C
 	DEC	C
 	JR	J115C
-;	-----------------
+
 J11A6:	LD	A,B
 	ADD	A,08H	; 8 
 	LD	E,00H
@@ -3327,7 +3304,6 @@ J11BA:	LD	A,(MUSICF)
 	LD	A,07H	; 7 
 	LD	(MUSICF),A
 	RET
-;	-----------------
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3438,64 +3414,44 @@ J1262:	CALL	C121C
 ;	Subroutine	GTPDL
 ;	Inputs		________________________
 ;	Outputs		________________________
-;	Remark		Paddles are not supported by Turbo-R
 
-J1269:	XOR	A
-	RET
-
-; GTPDL not supported with Turbo-R, remaining space (126BH-12A1) used otherwise
-
-;	-----------------
-;	extra init routine for Z80/R800, used before original init routine
-;	-----------------
-
-J126B:	NOP
-	IN	A,(0F4H)
-	BIT	7,A			; ´cold´ boot ?
-	JR	Z,J127A			; yep,
-	LD	A,80H
-	CALL	C046A			; CHGCPU: Z80 mode, led changed
+J1269:	INC	A
+	AND	A
+	RRA
+	PUSH	AF
+	LD	B,A
+	XOR	A
+	SCF
+J1270:	RLA
+	DJNZ	J1270
+	LD	B,A
+	POP	AF
+	LD	C,10H	; 16 
+	LD	DE,003AFH
+	JR	NC,J1281
+	LD	C,20H	; " "
+	LD	DE,04C9FH
+J1281:	LD	A,0FH	; 15 
 	DI
-	JR	J1292			; start init
-
-J127A:	BIT	5,A			; R800 initialized ?
-	JR	NZ,J1295		; yep, cont
-	OR	20H
-	OUT	(0F4H),A
-
-	IF	MSXMID EQ 0
-
-; Panasonic FS-A1ST has PCM hardware init here
-
-	LD	A,80H
-	OUT	(0A4H),A
-	LD	A,3
-	OUT	(0A5H),A		; initialize PCM sampler
-	DEC	A
-	OUT	(0A7H),A
-
-	ELSE
-
-; Panasonic FS-A1GT has PCM hardware init in subrom
-
-	LD	A,02H
-	OUT	(0A7H),A		; pause led off, turbo led off, b1=1
-
-	ENDIF
-
-	LD	A,6
-	OUT	(0E4H),A		; S1990 register 6
-	LD	HL,I04E5
-	LD	BC,02E5H
-	OTIR				; R800 ROM mode, Z80 waits here for the R800 to complete
-J1292:	JP	J0416			; orginal init
-
-J1295:	IM	1
-	XOR	A			; Z80 mode, led unchanged
-	JP	J0489			; jump in CHGCPU to halt R800 and resume the Z80
-
-
-	DEFS	12A2H-$			; unused remaing space GTPDL
+	CALL	C110E
+	AND	E
+	OR	D
+	OR	C
+	OUT	(0A1H),A
+	XOR	C
+	OUT	(0A1H),A
+	LD	A,0EH	; 14 
+	OUT	(0A0H),A
+	LD	C,00H
+J1295:	IN	A,(0A2H)
+	AND	B
+	JR	Z,J129F
+	INC	C
+	JP	NZ,J1295
+	DEC	C
+J129F:	EI
+	LD	A,C
+	RET
 
 
 ;	Subroutine	GTPAD
@@ -3509,9 +3465,8 @@ J12A2:	CP	08H	; 8
 	LD	IX,S.NEWPAD
 	JP	J0295			; new style pads handled by SUBROM
 
-J12AF:	JP	J19EE			; patch routine for old style pads (use Z80)
-
-	DEFS	12B4H-$			; unused space
+J12AF:	CP	4
+	LD	DE,0CECH
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3674,11 +3629,18 @@ C1370:	PUSH	HL
 ;	Subroutine	STMOTR
 ;	Inputs		________________________
 ;	Outputs		________________________
-;	Remark		Cassette interface not supported by Turbo-R
 
-J1387:	RET
-
-	DEFS	139BH-$			; unused space
+J1387:	AND	A
+	JP	M,J1395
+J138B:	JR	NZ,J1390
+	LD	A,09H
+	DEFB	0C2H
+J1390:	LD	A,08H
+	OUT	(0ABH),A
+	RET
+J1395:	IN	A,(0AAH)
+	AND	10H	; 16 
+	JR	J138B
 
 ;	Subroutine	NMI (NonMaskable Interrupt routine Z80)
 ;	Inputs		________________________
@@ -3717,7 +3679,7 @@ J13B3:	LD	A,(DE)
 	POP	BC
 	DJNZ	J13B1
 	RET
-;	-----------------
+
 I13C3:	DEFM	'color ',0
 	DEFM	'auto ',0
 	DEFM	'goto ',0
@@ -3812,7 +3774,7 @@ C1428:	LD	HL,(CLOC)
 	JP	J16DE
 
 
-; patchcode Turbo-R, use for initializing digitize hardware
+; patchcode MSX2+, use for initializing digitize hardware
 
 J1440:	LD	(HL),A			; update RGSAV
 	LD	H,A
@@ -3858,15 +3820,30 @@ J146A:	IN	A,(0F4H)
 J146E:	NOP
 	OUT	(0F4H),A
 	RET
-;	-----------------
+
 J1472:	NOP
 	NOP
 	NOP
 	NOP
 	JP	M7D75
 
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
-	DEFS	1490H-$
+J1479:	IN	A,(0BAH)
+	AND	010H
+	JR	NZ,J148C
+	LD	HL,XSAVE+1
+	SET	7,(HL)
+	LD	A,020H
+	OUT	(0BBH),A
+	OR	008H
+	OUT	(0BBH),A
+J148C:	IN	A,(099H)
+	AND	A
+	RET
+
 
 ;	Subroutine	PUTQ
 ;	Inputs		________________________
@@ -3897,7 +3874,6 @@ J1490:	CALL	C14F8
 	POP	HL
 	LD	(HL),C
 	RET
-;	-----------------
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3933,14 +3909,13 @@ C14AB:	CALL	C14F8
 	INC	A
 	LD	A,00H
 	RET
-;	-----------------
+
 J14CF:	LD	C,A
 	LD	B,00H
 	LD	HL,QUEBAK-1
 	ADD	HL,BC
 	LD	A,(HL)
 	RET
-;	-----------------
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3979,7 +3954,6 @@ J14E9:	CALL	C14F8
 	LD	L,A
 	LD	H,00H
 	RET
-;	-----------------
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3993,7 +3967,6 @@ C14F8:	CALL	C1502			; get controlblok queue
 	LD	A,(HL)			; putback flag
 	OR	A
 	RET
-;	-----------------
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -4108,8 +4081,10 @@ C15A5:	PUSH	HL
 J15B3:	LD	DE,192			; msx1 style screenmodes have ymax=192
 	LD	A,(SCRMOD)
 	CP	5
+; MSX2+ patch code
 	CALL	NC,C141C		; new style screenmode, determine y-size
-	NOP				; ??
+	NOP
+; end patch code
 	RST	DCOMPR
 	JR	C,J15C6			; y-coordinate in range
 	EX	DE,HL
@@ -4196,7 +4171,7 @@ C1604:	LD	A,(SCRMOD)
 	LD	(CLOC),HL
 	POP	BC
 	RET
-;	-----------------
+
 I1636:	DEFB	080H,040H,020H,010H,008H,004H,002H,001H
 
 J163E:	LD	H,B
@@ -4205,7 +4180,7 @@ J163E:	LD	H,B
 	LD	A,E
 	LD	(CMASK),A
 	RET
-;	-----------------
+
 J1648:	PUSH	IX
 	LD	IX,S.MAPXYC
 	JP	J0295			; SUBROM
@@ -4336,7 +4311,10 @@ J16DE:	PUSH	IX
 	LD	IX,S.SETC
 	JP	J0295			; SUBROM
 
-J16E7:	CALL	C1428
+J16E7:
+; MSX2+ patch code
+	CALL	C1428
+; end patch code
 	LD	A,(CMASK)
 	PUSH	AF
 J16EE:	DI
@@ -4864,165 +4842,262 @@ C19D1:	PUSH	HL
 	LD	(FILNAM+3),A
 	RET
 
-;	Subroutine	TAPION,TAPIN,TAPIOF,TAPOON,TAPOUT,TAPOOF
-;	Inputs		________________________
-;	Outputs		________________________
-;	Remark		Cassette interface not supported with Turbo-R
-;			all routines just quit with error flag
-
-J19DD:	SCF
-	RET				; error!
-
-
-; MSX1 and above have cassette bios routines here (19DDH-1B44H)
-; In Turbo-R used for extensions
-
-
-;	Subroutine	PCMPLY
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-J19DF:	LD	IX,M71DB
-J19E3:	CALL	C02BF			; CALBAS
+J19DD:	PUSH	BC
+	PUSH	AF
+	LD	BC,0
+J19E2:	DEC	BC
+	LD	A,B
+	OR	C
+	JR	NZ,J19E2
+	POP	AF
+	POP	BC
+J19E9:	PUSH	AF
+	LD	A,09H	; 9 
+	OUT	(0ABH),A
+	POP	AF
 	EI
 	RET
 
-;	Subroutine	PCMREC
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-J19E8:	LD	IX,M7042
-	JR	J19E3			; call routine in basicrom
-
-;	Subroutine	patchroutine GTPAD
-;	Inputs		________________________
-;	Outputs		________________________
-
-J19EE:	PUSH	AF
-	CALL	C04D2			; GETCPU
-	LD	L,A
-	OR	A
-	LD	A,0
-	CALL	NZ,C046A		; not in Z80 mode, CHGCPU: Z80 mode without led change
+J19F1:	OR	A
+	PUSH	AF
+	LD	A,08H	; 8 
+	OUT	(0ABH),A
+	LD	HL,0
+J19FA:	DEC	HL
+	LD	A,H
+	OR	L
+	JR	NZ,J19FA
 	POP	AF
-	PUSH	HL
-	CP	04H
-	LD	DE,0CECH
-	CALL	C12B4
-	POP	HL
+	LD	A,(HEADER)
+	JR	Z,J1A07
+	ADD	A,A
+	ADD	A,A
+J1A07:	LD	B,A
+	LD	C,00H
+	DI
+J1A0B:	CALL	C1A4D
+	CALL	C1A3F
+	DEC	BC
+	LD	A,B
+	OR	C
+	JR	NZ,J1A0B
+	JP	C0564
+J1A19:	LD	HL,(LOW.)
 	PUSH	AF
 	LD	A,L
-	CALL	C046A			; CHGCPU: restore cpu mode
+	SUB	0EH	; 14 
+	LD	L,A
+	CALL	C1A50
+	POP	AF
+	LD	B,08H	; 8 
+J1A27:	RRCA
+	CALL	C,C1A40
+	CALL	NC,C1A39
+	DJNZ	J1A27
+	CALL	C1A40
+	CALL	C1A40
+	JP	C0564
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1A39:	LD	HL,(LOW.)
+	CALL	C1A50
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1A3F:	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1A40:	CALL	C1A4D
+	EX	(SP),HL
+	EX	(SP),HL
+	DEFB	0,0,0,0
+	CALL	C1A4D
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1A4D:	LD	HL,(HIGH.)
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1A50:	PUSH	AF
+J1A51:	DEC	L
+	JP	NZ,J1A51
+	LD	A,0BH	; 11 
+	OUT	(0ABH),A
+J1A59:	DEC	H
+	JP	NZ,J1A59
+	LD	A,0AH	; 10 
+	OUT	(0ABH),A
 	POP	AF
 	RET
 
-;	Subroutine	patchroutine for supporting PAUSE key
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-J1A0B:	IN	A,(99H)
-	AND	A			; orginal code at patchlocation
-	EX	AF,AF'
-	IN	A,(0A7H)
-	RRCA				; read pause key
-	JR	NC,J1A2D		; not pressed, quit
-	LD	A,(CASPRV)
-	OR	01H
-	OUT	(0A7H),A		; pause led on
-	LD	A,01H
-	OUT	(0A5H),A		; sound off
-J1A1F:	IN	A,(0A7H)
-	RRCA
-	JR	C,J1A1F			; wait until pause key pressed again
-	LD	A,(CASPRV)
-	OUT	(0A7H),A		; pause led off
-	LD	A,03H
-	OUT	(0A5H),A		; sound on
-J1A2D:	EX	AF,AF'
-	JP	J0C50			; resume orginal routine
-
-	IF	MSXMID EQ 1
-
-
-;	Subroutine	patchroutine for initializing MIDI hardware
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C1A31:	XOR	A
-	OUT	(0E9H),A
-	JR	J1A36			; wait
-J1A36:	OUT	(0E9H),A
-	JR	J1A3A			; wait
-J1A3A:	OUT	(0E9H),A
-	JR	J1A3E			; wait
-J1A3E:	LD	A,40H
-	OUT	(0E9H),A
-	JR	J1A44			; wait
-J1A44:	LD	A,4EH
-	OUT	(0E9H),A
-	JR	J1A4A			; wait
-J1A4A:	XOR	A
-	OUT	(0E9H),A
-	JR	J1A4F			; wait
-J1A4F:	LD	A,16H
-	OUT	(0EFH),A
-	JR	J1A55			; wait
-J1A55:	LD	A,08H
-	OUT	(0ECH),A
-	JR	J1A5B			; wait
-J1A5B:	LD	A,0B4H
-	OUT	(0EFH),A
-	JR	J1A61			; wait
-J1A61:	LD	A,20H
-	OUT	(0EEH),A
-	JR	J1A67			; wait
-J1A67:	LD	A,4EH
-	OUT	(0EEH),A
-	JR	J1A6D			; wait
-J1A6D:	JP	M7C76			; resume orginal routine
-
-;	Subroutine	patchroutine for supporting MIDI interrupts
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-J1A70:	PUSH	IY
-	PUSH	IX
-	IN	A,(0E9H)
-	AND	02H
-	CALL	NZ,H.MDIN
-	IN	A,(0E9H)
-	AND	80H
-	CALL	NZ,H.MDTM
-	JP	J0C4A			; resume orginal routine
-
-	ENDIF
-
-
-;	Subroutine	patchroutine for PAL setup of VDP
-;	Inputs		________________________
-;	Outputs		________________________
-;	Remark		This was not in the orginal Turbo-R code
-;			Added by Arjen Zeilemaker to support PAL countries
-
-PTCPAL:	LD	A,50H
-	OUT	(0AAH),A
-	LD	A,2
-	OUT	(99H),A
-	LD	A,89H
-	OUT	(99H),A
-	LD	HL,0A0F9H
-PTCPA1:	DEC	HL
+J1A63:	LD	A,08H	; 8 
+	OUT	(0ABH),A
+	DI
+	LD	A,0EH	; 14 
+	OUT	(0A0H),A
+J1A6C:	LD	HL,I0457
+J1A6F:	LD	D,C
+	CALL	C1B34
+	RET	C
+	LD	A,C
+	CP	0DEH
+	JR	NC,J1A6C
+	CP	05H	; 5 
+	JR	C,J1A6C
+	SUB	D
+	JR	NC,J1A82
+	CPL
+	INC	A
+J1A82:	CP	04H	; 4 
+	JR	NC,J1A6C
+	DEC	HL
 	LD	A,H
 	OR	L
-	JR	NZ,PTCPA1		; wait
-	JP	J0431			; resume orginal routine
+	JR	NZ,J1A6F
+	LD	HL,0
+	LD	B,L
+	LD	D,L
+J1A90:	CALL	C1B34
+	RET	C
+	ADD	HL,BC
+	DEC	D
+	JP	NZ,J1A90
+	LD	BC,06AEH
+	ADD	HL,BC
+	LD	A,H
+	RRA
+	AND	7FH
+	LD	D,A
+	ADD	HL,HL
+	LD	A,H
+	SUB	D
+	LD	D,A
+	SUB	06H	; 6 
+	LD	(LOWLIM),A
+	LD	A,D
+	ADD	A,A
+	LD	B,00H
+J1AAF:	SUB	03H	; 3 
+	INC	B
+	JR	NC,J1AAF
+	LD	A,B
+	SUB	03H	; 3 
+	LD	(WINWID),A
+	OR	A
+	RET
 
-	DEFS	1B45H-$,0		; unused space
+J1ABC:	LD	A,(LOWLIM)
+	LD	D,A
+J1AC0:	CALL	C0564
+	RET	C
+	IN	A,(0A2H)
+	RLCA
+	JR	NC,J1AC0
+J1AC9:	CALL	C0564
+	RET	C
+	IN	A,(0A2H)
+	RLCA
+	JR	C,J1AC9
+	LD	E,00H
+	CALL	C1B1F
+J1AD7:	LD	B,C
+	CALL	C1B1F
+	RET	C
+	LD	A,B
+	ADD	A,C
+	JP	C,J1AD7
+	CP	D
+	JR	C,J1AD7
+	LD	L,08H	; 8 
+J1AE6:	CALL	C1B03
+	CP	04H	; 4 
+	CCF
+	RET	C
+	CP	02H	; 2 
+	CCF
+	RR	D
+	LD	A,C
+	RRCA
+	CALL	NC,C1B23
+	CALL	C1B1F
+	DEC	L
+	JP	NZ,J1AE6
+	CALL	C0564
+	LD	A,D
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1B03:	LD	A,(WINWID)
+	LD	B,A
+	LD	C,00H
+J1B09:	IN	A,(0A2H)
+	XOR	E
+	JP	P,J1B17
+	LD	A,E
+	CPL
+	LD	E,A
+	INC	C
+	DJNZ	J1B09
+	LD	A,C
+	RET
+J1B17:	DEFB	0,0,0,0
+J1B1B:	DJNZ	J1B09
+	LD	A,C
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1B1F:	CALL	C0564
+	RET	C
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1B23:	LD	C,00H
+J1B25:	INC	C
+	JR	Z,J1B32
+	IN	A,(0A2H)
+	XOR	E
+	JP	P,J1B25
+	LD	A,E
+	CPL
+	LD	E,A
+	RET
+J1B32:	DEC	C
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C1B34:	CALL	C0564
+	RET	C
+	IN	A,(0A2H)
+	RLCA
+	JR	C,C1B34
+	LD	E,00H
+	CALL	C1B23
+	JP	J1B25
 
 ;	Subroutine	OUTDO
 ;	Inputs		________________________

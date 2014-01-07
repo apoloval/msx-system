@@ -11,6 +11,7 @@
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
+
 	.Z80
 	ASEG
 	ORG	0000H
@@ -117,7 +118,7 @@ PUTPNT	EQU	0F3F8H
 GETPNT	EQU	0F3FAH
 CS1200	EQU	0F3FCH
 CS2400	EQU	0F401H
-LOW	EQU	0F406H
+LOW.	EQU	0F406H
 ASPCT1	EQU	0F40BH
 ASPCT2	EQU	0F40DH
 NTMSXP	EQU	0F417H
@@ -169,9 +170,7 @@ MODE	EQU	0FAFCH	; b0	= SHIFT KANA mode
 			; b6	= JIS2 rom
 			; b7	= upcase status SHIFT KANA mode
 XSAVE	EQU	0FAFEH
-D.FAFF	EQU	0FAFFH
 YSAVE	EQU	0FB00H
-D.FB01	EQU	0FB01H
 LOGOPR	EQU	0FB02H
 HOKVLD	EQU	0FB20H
 LINTTB	EQU	0FBB2H
@@ -575,7 +574,7 @@ S.KEYINT:
 	JP	J10EB
 
 J01C1:	LD	A,B
-	AND	3FH	; "?"
+	AND	3FH
 	OUT	(0A8H),A
 	LD	A,(D.FFFF)
 	CPL
@@ -583,6 +582,10 @@ J01C1:	LD	A,B
 	AND	D
 	LD	E,A
 	LD	(D.FFFF),A
+
+; from this point code continues to execute in mainrom
+; This code is executed from mainrom when calling the subrom when it was a subslot of slot 0
+
 	LD	A,B
 	AND	D
 	OUT	(0A8H),A
@@ -597,10 +600,14 @@ J01C1:	LD	A,B
 	EXX
 	POP	BC
 	LD	A,B
-	AND	3FH	; "?"
+	AND	3FH
 	OUT	(0A8H),A
 	LD	A,C
 	LD	(D.FFFF),A
+
+; from this point code returns executing from the mainrom
+; This code is executed when mainrom was called from the subrom when the subrom was in a subslot of slot 0
+
 	LD	A,B
 	OUT	(0A8H),A
 	LD	A,C
@@ -663,7 +670,7 @@ J0233:	POP	BC
 	EX	(SP),HL
 	PUSH	AF
 	LD	A,B
-	AND	3FH	; "?"
+	AND	3FH
 	OR	C
 	OUT	(0A8H),A
 	LD	A,L
@@ -724,13 +731,13 @@ J0265:	EX	AF,AF'
 
 J0276:	LD	B,A
 	LD	A,(EXBRSA)
-	AND	03H	; 3 
+	AND	03H
 	JR	NZ,J0284
 	LD	A,D
 	CP	0F3H
 	JP	NZ,J01C1
 J0284:	LD	A,B
-	AND	3FH	; "?"
+	AND	3FH
 	OUT	(0A8H),A
 	LD	A,(D.FFFF)
 	CPL
@@ -756,7 +763,7 @@ I02A6:	DI
 	EX	AF,AF'
 	POP	BC
 	LD	A,B
-	AND	3FH	; "?"
+	AND	3FH
 	OUT	(0A8H),A
 	LD	A,C
 	LD	(D.FFFF),A
@@ -805,7 +812,7 @@ C02DD:	DI
 	LD	A,H
 	RLCA
 	RLCA
-	AND	03H	; 3 
+	AND	03H
 	LD	E,A
 	LD	A,0C0H
 J02E7:	RLCA
@@ -817,11 +824,11 @@ J02E7:	RLCA
 	LD	C,A
 	POP	AF
 	PUSH	AF
-	AND	03H	; 3 
+	AND	03H
 	INC	A
 	LD	B,A
 	LD	A,0ABH
-J02F8:	ADD	A,55H	; "U"
+J02F8:	ADD	A,55H
 	DJNZ	J02F8
 	LD	D,A
 	AND	E
@@ -844,16 +851,16 @@ C0302:	PUSH	AF
 	LD	D,A
 	IN	A,(0A8H)
 	LD	B,A
-	AND	3FH	; "?"
+	AND	3FH
 	OR	C
 	OUT	(0A8H),A
 	LD	A,D
 	RRCA
 	RRCA
-	AND	03H	; 3 
+	AND	03H
 	LD	D,A
 	LD	A,0ABH
-J031A:	ADD	A,55H	; "U"
+J031A:	ADD	A,55H
 	DEC	D
 	JP	P,J031A
 	AND	E
@@ -908,7 +915,7 @@ C035A:	LD	HL,I2C5A
 	LD	A,(HOKVLD)
 	BIT	0,A
 	JR	NZ,J03B2
-	OR	01H	; 1 
+	OR	01H
 	LD	(HOKVLD),A
 	LD	HL,EXTBIO+0
 J03A8:	LD	DE,EXTBIO+1
@@ -916,9 +923,9 @@ J03A8:	LD	DE,EXTBIO+1
 	LD	(HL),0C9H
 	LDIR
 J03B2:	LD	A,2CH
-	LD	(D.FAFF),A
+	LD	(XSAVE+1),A
 	LD	A,26H
-	LD	(D.FB01),A
+	LD	(YSAVE+1),A		; initialize lightpen variables
 	LD	A,0D3H
 	OUT	(0F7H),A
 	LD	(AVCSAV),A
@@ -926,13 +933,13 @@ J03B2:	LD	A,2CH
 	OUT	(0F5H),A
 	LD	C,0FFH
 	OUT	(0D8H),A
-	LD	A,02H	; 2 
+	LD	A,02H
 	OUT	(0D9H),A
 	LD	HL,I0586
-	LD	B,08H	; 8 
+	LD	B,08H
 J03D3:	IN	A,(0D9H)
 	CP	(HL)
-	JR	NZ,J03DD
+	JR	NZ,J03DD		; no JIS1 rom
 	INC	HL
 	DJNZ	J03D3
 	RES	0,C
@@ -944,8 +951,8 @@ J03E4:	IN	A,(0C0H)
 	JR	Z,J03EC
 	RES	2,C
 J03EC:	IN	A,(0F7H)
-	AND	77H	; "w"
-	CP	77H	; "w"
+	AND	77H
+	CP	77H
 	JR	Z,J03F6
 	RES	3,C
 J03F6:	IN	A,(0C8H)
@@ -962,13 +969,13 @@ J03FE:	XOR	A
 	OUT	(81H),A
 	PUSH	AF
 	POP	AF
-	LD	A,40H	; "@"
+	LD	A,40H
 	OUT	(81H),A
 	EX	(SP),HL
 	EX	(SP),HL
 	IN	A,(81H)
-	AND	3FH	; "?"
-	CP	05H	; 5 
+	AND	3FH
+	CP	05H
 	JR	NZ,J041B
 	RES	5,C
 J041B:	IN	A,(0BBH)
@@ -977,56 +984,56 @@ J041B:	IN	A,(0BBH)
 	RES	6,C
 J0423:	LD	A,C
 	OUT	(0F5H),A
-	CALL	C04E6
+	CALL	C04E6			; check for JIS2 rom
 	JR	NZ,J0430
 	LD	HL,MODE
 	SET	6,(HL)
-J0430:	CALL	C1C85
+J0430:	CALL	C1C85			; select bank 2 clockchip
 	LD	B,00H
-	CALL	C1C60
-	CP	0AH	; 10 
+	CALL	C1C60			; read nibble from clockchip
+	CP	0AH
 	JR	Z,J043F
-J043C:	CALL	C0497
-J043F:	CALL	C1C85
-	LD	B,03H	; 3 
-	CALL	C1C60
-	AND	01H	; 1 
+J043C:	CALL	C0497			; initialize bank 2 and 3 clockchip
+J043F:	CALL	C1C85			; select bank 2 clockchip
+	LD	B,03H
+	CALL	C1C60			; read nibble from clockchip
+	AND	01H
 	PUSH	AF
 	CALL	C1C69
 	POP	BC
-	CP	51H	; "Q"
+	CP	80+1
 	JP	NC,J043C
 	OR	A
 	JP	Z,J043C
 	DEC	B
 	JR	NZ,J045F
-	CP	21H	; "!"
+	CP	32+1
 	JP	NC,J043C
-J045F:	CALL	C1C85
-	LD	B,01H	; 1 
+J045F:	CALL	C1C85			; select bank 2 clockchip
+	LD	B,01H
 	CALL	C1C60
 	LD	D,A
 	CALL	C1C60
 	LD	E,A
 	CALL	C18E0
-	CALL	C2769
-	RLCA
-	JR	C,J0480
-	CALL	C05E1
+	CALL	C2769			; read reset register
+	RLCA				; cold boot ?
+	JR	C,J0480			; nope, skip bootup logo
+	CALL	C05E1			; count RAM
 	PUSH	HL
 	CALL	C05AA
 	POP	HL
 	CALL	C2C76
 J0480:	LD	A,80H
-	CALL	C276F
-	CALL	C067D
+	CALL	C276F			; flag cold boot happened
+	CALL	C067D			; disable vdp display output
 	XOR	A
 	LD	L,A
 	LD	H,A
 	LD	BC,04000H
-	CALL	C0A08
-	CALL	C0AAA
-	JP	J1041
+	CALL	C0A08			; fill first 16 Kb VRAM with zero's
+	CALL	C0AAA			; S.INIPLT (initialize palette)
+	JP	J1041			; S.INIT32 and quit
 
 
 ;	  Subroutine __________________________
@@ -1079,9 +1086,9 @@ J04D6:	SCF
 ;	     Outputs ________________________
 
 C04E6:	PUSH	BC
-	LD	A,3EH	; ">"
+	LD	A,3EH
 	OUT	(0DAH),A
-	LD	A,35H	; "5"
+	LD	A,35H
 	OUT	(0DBH),A
 	LD	BC,00800H
 J04F2:	IN	A,(0DBH)
@@ -1150,7 +1157,7 @@ J0548:	LD	(CNSDFG),A
 	LD	HL,CS1200
 	JR	Z,J055F
 	LD	HL,CS2400
-J055F:	LD	DE,LOW
+J055F:	LD	DE,LOW.
 	LDIR
 	POP	BC
 	RRC	C
@@ -1201,7 +1208,7 @@ I057B:	DEFB	00AH
 I0586:	DEFB	00H,40H,20H,10H,08H,04H,02H,01H
 
 
-;	  Subroutine __________________________
+;	  Subroutine get my slotid
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -1238,7 +1245,7 @@ C05AA:	LD	HL,EXPTBL
 J05AF:	LD	C,(HL)
 J05B0:	LD	A,C
 	OR	B
-	CALL	C05CD
+	CALL	C05CD			; clear RAM (catridge headers in RAM)
 	BIT	7,C
 	JR	Z,J05C1
 	LD	A,C
@@ -1340,7 +1347,7 @@ C0627:	LD	HL,04000H
 	LD	(HL),0AAH
 	INC	A
 	OUT	(0FDH),A
-	LD	(HL),55H	; "U"
+	LD	(HL),55H
 	DEC	A
 	OUT	(0FDH),A
 	LD	A,(HL)
@@ -1359,13 +1366,13 @@ J0647:	LD	A,B
 	LD	A,(HL)
 	CP	0AAH
 	JR	NZ,J0656
-	LD	A,55H	; "U"
+	LD	A,55H
 	LD	(HL),A
 	CP	(HL)
 	JR	Z,J0647
 J0656:	DEC	B
 	AND	A
-J0658:	LD	A,02H	; 2 
+J0658:	LD	A,02H
 	OUT	(0FDH),A
 	LD	A,B
 	RET
@@ -1617,7 +1624,7 @@ C0779:	LD	A,(RG1SAV)
 C0790:	LD	A,(FORCLR)
 	LD	E,A
 	LD	HL,(ATRBAS)
-	LD	BC,I2000
+	LD	BC,2000H
 J079A:	CALL	C0667
 	LD	A,0D1H
 	JR	C,J07A3
@@ -2233,7 +2240,7 @@ C0A75:	XOR	A
 	LD	HL,(TXTCGP)
 	CP	29H	; ")"
 	JR	C,J0A98
-	LD	HL,I1000
+	LD	HL,1000H
 J0A98:	LD	(CGPBAS),HL
 	CALL	C0BE6
 J0A9E:	CALL	C09E4
@@ -3169,7 +3176,7 @@ J0FF2:	CP	29H	; ")"
 J0FFC:	ADD	HL,BC
 	SUB	2AH	; "*"
 J0FFF:	ADD	HL,DE
-I1000:	CPL
+	CPL
 	AND	A
 	RRA
 	LD	E,A
@@ -3345,7 +3352,7 @@ J10EB:	PUSH	AF
 	JR	NC,J10E9
 J10FD:	LD	A,C
 	CP	21H	; "!"
-I1100:	JR	C,J10E9
+	JR	C,J10E9
 	CP	7FH
 	JR	NC,J10E9
 	POP	AF
@@ -4612,10 +4619,67 @@ I1833:	DEFB	05H,00H,04H,00H,3AH,03H,00H,02H
 	DEFB	00H,3AH,01H,00H,00H,00H,85H,00H
 	DEFB	84H,00H,3AH,83H,00H,82H,00H,3AH
 	DEFB	81H,00H,80H,00H
-I184F:	DEFB	0CH,08H,0BH,00H,2FH,0AH,00H,09H
-	DEFB	00H,2FH,08H,00H,07H,00H,0FFH,00H
-	DEFB	0FFH,00H,2FH,0FFH
-	DEFB	00H,0FFH,00H,2FH,88H,00H,87H,00H
+I184F:
+	IF	DATFMT EQ 0
+	DEFB	12,8
+	DEFB	11,0
+	DEFB	"/"
+	DEFB	10,0
+	DEFB	9,0
+	DEFB	"/"
+	DEFB	8,0
+	DEFB	7,0
+
+	DEFB	0FFH,0
+	DEFB	0FFH,0
+	DEFB	"/"
+	DEFB	0FFH,0
+	DEFB	0FFH,0
+	DEFB	"/"
+	DEFB	088H,0
+	DEFB	087H,0
+	ENDIF
+
+	IF	DATFMT EQ 1
+	DEFB	10,0
+	DEFB	9,0
+	DEFB	"/"
+	DEFB	8,0
+	DEFB	7,0
+	DEFB	"/"
+	DEFB	12,8
+	DEFB	11,0
+
+	DEFB	0FFH,0
+	DEFB	0FFH,0
+	DEFB	"/"
+	DEFB	088H,0
+	DEFB	087H,0
+	DEFB	"/"
+	DEFB	0FFH,0
+	DEFB	0FFH,0
+	ENDIF
+
+	IF	DATFMT EQ 2
+	DEFB	8,0
+	DEFB	7,0
+	DEFB	"/"
+	DEFB	10,0
+	DEFB	9,0
+	DEFB	"/"
+	DEFB	12,8
+	DEFB	11,0
+
+	DEFB	088H,0
+	DEFB	087H,0
+	DEFB	"/"
+	DEFB	0FFH,0
+	DEFB	0FFH,0
+	DEFB	"/"
+	DEFB	0FFH,0
+	DEFB	0FFH,0
+	ENDIF
+
 
 J186B:	RST	S.CHRGTR
 	PUSH	HL
@@ -4651,7 +4715,7 @@ J18AB:	LD	A,(NTMSXP)
 	JR	Z,J18B3
 	SET	2,C
 J18B3:	LD	A,(CS1200)
-	LD	HL,LOW
+	LD	HL,LOW.
 	CP	(HL)
 	JR	Z,J18BE
 	SET	3,C
@@ -4777,6 +4841,9 @@ C197F:	LD	A,"/"
 	PUSH	HL
 	EX	DE,HL
 	CALL	C1A4F
+
+	IF	DATFMT EQ 0
+
 	JR	Z,J1997
 	CP	24H	; "$"
 	JR	NC,J19B1
@@ -4797,6 +4864,66 @@ J19A3:	JR	NC,J19B1
 J19AF:	CP	32H	; "2"
 J19B1:	JP	NC,J274A
 	LD	D,A
+
+	ENDIF
+
+	IF	DATFMT EQ 1
+
+	JR	NZ,J199C		; time
+	CP	13H			; MM max 12
+	JR	NC,J19B6
+J199C:	CP	24H			; hh max 23
+	JR	NC,J19B6
+	LD	D,A
+	LD	B,A
+	CALL	C1A47			; check for seperator and get digit pair
+	JR	Z,J19A6			; date
+	CP	60H
+	JR	NC,J19B6		; mm max 59
+J19A6:	CP	32H
+J19A8:	JR	NC,J19B6		; DD max 31
+	LD	C,A
+	CALL	C1A47			; check for seperator and get digit pair
+	JR	NZ,J19B4		; time
+	LD	D,C			; D= day
+	LD	C,B			; C= month
+	LD	B,A			; B= year
+	JR	J19B9
+J19B4:	CP	60H			; ss max 59
+J19B6:	JP	NC,J274A		; illegal function call
+	LD	D,A
+J19B9:
+	ENDIF
+
+	IF	DATFMT EQ 2
+
+	JR	Z,J199C			; date
+	CP	24H			; HH max 23
+	JR	NC,J19B6
+J199C:	CP	32H			; DD max 31
+	JR	NC,J19B6
+	LD	D,A
+	LD	B,A
+J199D:	CALL	C1A47			; check for seperator and get digit pair
+	JR	NZ,J19A6		; time
+	CP	13H			; MM max 12
+	JR	NC,J19B6
+J19A6:	CP	60H			; MM max 59
+	JR	NC,J19B6
+	LD	C,A
+	CALL	C1A47			; check for seperator and get digit pair
+	JR	NZ,J19B4		; time
+	LD	B,A			; B=year
+	JR	J19B9			; YY
+J19B4:	CP	60H
+J19B6:	JP	NC,J274A		; SS max 59, illegal function call
+	LD	D,A
+J19B9:
+
+
+	ENDIF
+
+
 	POP	HL
 	PUSH	IX
 	DEC	HL
@@ -5716,7 +5843,7 @@ C1E6D:	LD	A,(SCRMOD)
 	RET	NC
 	PUSH	HL
 	XOR	A
-	LD	DE,I1100
+	LD	DE,1100H
 	CALL	C27AC
 	POP	HL
 	AND	A
@@ -5876,7 +6003,7 @@ C1F65:	RST	S.GETBYT
 	LD	HL,CS1200
 	JR	Z,J1F77
 	ADD	HL,BC
-J1F77:	LD	DE,LOW
+J1F77:	LD	DE,LOW.
 	LDIR
 	POP	HL
 	RET
@@ -5963,7 +6090,7 @@ J1FF8:	RST	S.CHRGTR
 	JR	Z,J2014
 	RST	S.GETBYT
 	CP	02H	; 2 
-I2000:	JP	NC,J274A
+	JP	NC,J274A
 	AND	A
 	PUSH	HL
 	LD	HL,RG25SA
@@ -6451,7 +6578,7 @@ J230C:	CP	02H	; 2
 	LD	A,(LINLEN)
 	CP	29H	; ")"
 	JR	C,J231C
-	LD	HL,I1000
+	LD	HL,1000H
 	JR	J2327
 
 J231C:	LD	HL,TXTNAM
@@ -8184,10 +8311,23 @@ J2C55:	EI
 	POP	AF
 	RET
 
-I2C5A:	DEFB	00H,20H,00H,00H,00H,00H,00H,00H
-	DEFB	08H,00H,00H,00H,00H,00H,00H,00H
-	DEFB	00H,00H,00H,00H,00H,3BH,05H,00H
-	DEFB	00H,00H,00H,00H
+I2C5A:	DEFB	000H,020H,000H,000H,000H,000H,000H,000H
+	DEFB	008H
+
+	IF	INTHZ EQ 60
+
+	DEFB	000H
+
+	ELSE
+
+	DEFB	002H
+
+	ENDIF
+
+	DEFB	000H,000H,000H,000H,000H,000H
+	DEFB	000H,000H,000H,000H,000H,03BH,005H,000H
+	DEFB	000H,000H,000H,000H
+
 
 
 ;	  Subroutine __________________________
@@ -9513,7 +9653,7 @@ C33E6:	LD	B,00H
 
 J33EE:	IN	A,(0BAH)
 	CPL
-	AND	08H	; 8 
+	AND	08H
 	RET	Z
 	LD	A,0FFH
 	RET
@@ -9522,11 +9662,11 @@ J33EE:	IN	A,(0BAH)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J33F7:	LD	HL,D.FAFF
+J33F7:	LD	HL,XSAVE+1
 	XOR	A
-	BIT	7,(HL)
-	RET	Z
-	RES	7,(HL)
+	BIT	7,(HL)			; lightpen interrupt ?
+	RET	Z			; nope, quit
+	RES	7,(HL)			; clear lightpen interrupt
 	IN	A,(0BAH)
 	AND	07H
 	LD	D,A
@@ -9558,15 +9698,15 @@ J33F7:	LD	HL,D.FAFF
 	IN	A,(0BAH)
 	AND	20H
 	RET	Z
-	LD	A,(D.FB01)
-	CALL	C33E6
+	LD	A,(YSAVE+1)
+	CALL	C33E6			; - Y offset
 	LD	BC,000D3H
 	CALL	C344A
 	LD	A,L
-	LD	(YSAVE),A
+	LD	(YSAVE),A		; lightpen Y
 	EX	DE,HL
-	LD	A,(D.FAFF)
-	CALL	C33E6
+	LD	A,(XSAVE+1)
+	CALL	C33E6			; - X offset
 	LD	BC,000FFH
 
 ;	  Subroutine __________________________
@@ -10014,34 +10154,34 @@ C3685:	DEC	HL
 J3697:	PUSH	HL
 	PUSH	DE
 	LD	A,(SLTWRK+0)
-	AND	A
-	JR	Z,J36A5
-	BIT	5,A
-	JR	NZ,J36FA
+	AND	A			; ram memini searched ?
+	JR	Z,J36A5			; nope, ´search´ ram
+	BIT	5,A			; ramdisk disabled ?
+	JR	NZ,J36FA		; yep, illegal function call
 	JR	J36FD
 
 J36A5:	LD	HL,EXPTBL
-	LD	BC,00400H
-	XOR	A
-J36AC:	AND	03H	; 3 
-	OR	(HL)
+	LD	BC,00400H		; four primairy slots, slotid 0
+	XOR	A			; begin at primairy slot 0
+J36AC:	AND	03H
+	OR	(HL)			; if slot expanded, start at secundairy slot 0
 J36AF:	PUSH	BC
 	PUSH	HL
 	LD	H,C
-J36B2:	LD	L,10H	; 16 
+J36B2:	LD	L,10H
 J36B4:	PUSH	AF
-	CALL	C278D
+	CALL	C278D			; read slot
 	CPL
 	LD	E,A
 	POP	AF
 	PUSH	DE
 	PUSH	AF
-	CALL	C2793
+	CALL	C2793			; write slot
 	POP	AF
 	POP	DE
 	PUSH	AF
 	PUSH	DE
-	CALL	C278D
+	CALL	C278D			; read slot
 	POP	BC
 	LD	B,A
 	LD	A,C
@@ -10050,11 +10190,11 @@ J36B4:	PUSH	AF
 	POP	AF
 	PUSH	AF
 	PUSH	BC
-	CALL	C2793
+	CALL	C2793			; write slot
 	POP	BC
 	LD	A,C
-	CP	B
-	JR	NZ,J36E9
+	CP	B			; writeable (RAM) ?
+	JR	NZ,J36E9		; nope, next slot
 	POP	AF
 	DEC	L
 	JR	NZ,J36B4
@@ -10065,21 +10205,21 @@ J36B4:	PUSH	AF
 	JP	P,J36B2
 	POP	HL
 	POP	HL
-	LD	(SLTWRK+0),A
+	LD	(SLTWRK+0),A		; slotid RAM for ramdisk
 	JR	J36FD
 
 J36E9:	POP	AF
 	POP	HL
 	POP	BC
-	AND	A
-	JP	P,J36F6
-	ADD	A,04H	; 4 
-	CP	90H
-	JR	C,J36AF
+	AND	A			; slot expanded ?
+	JP	P,J36F6			; nope, next primairy slot
+	ADD	A,04H
+	CP	90H			; done all secundairy slots ?
+	JR	C,J36AF			; nope, next secundairy slot
 J36F6:	INC	HL
 	INC	A
-	DJNZ	J36AC
-J36FA:	JP	J274A
+	DJNZ	J36AC			; next primairy slot
+J36FA:	JP	J274A			; illegal function call
 
 J36FD:	BIT	6,A
 	JR	Z,J3718
@@ -10153,7 +10293,7 @@ C379E:	CALL	C3B80
 	CALL	C27C4
 	PUSH	HL
 	LD	IX,00100H
-	LD	BC,I2000
+	LD	BC,2000H
 J37AC:	CALL	C3A5B
 	LD	HL,LINWRK
 	LD	A,(HL)
@@ -10338,15 +10478,12 @@ J38B5:	LD	A,(DE)
 	JR	NZ,J38B5
 	RET
 
-J38BF:	SUB	30H	; "0"
+J38BF:	SUB	"0"
 	RET	NZ
 	OR	(HL)
 	RET
 
-I38C4:	LD	C,L
-	LD	B,L
-	LD	C,L
-	JR	NC,C38C9
+I38C4:	DEFB	"MEM0",0
 
 C38C9:	CALL	C3894
 	CALL	C3B74
@@ -10863,6 +11000,16 @@ I3BFC:	DEFM	'RAM disk full',00H
 I3C0A:	DEFM	'Too many files',00H
 I3C19:	DEFM	'RAM disk offline',00H
 
+; *************************************
+; PUTCHR and KYKLOK
+; *************************************
+
+	IF	KEYTYP EQ 0
+
+; Japanese version
+
+; routine to handle special keys (non letter) in SHIFT KANA mode
+
 J3C2A:	LD	HL,KANAMD
 	INC	(HL)
 	DEC	(HL)
@@ -11319,5 +11466,83 @@ I3EF4:	DEFB	0FDH,0F4H,92H,0F5H,92H,0F6H,0F7H,0F8H
 	DEFB	0F9H,0FAH,0FBH,0FCH,93H,93H,93H,86H
 	DEFB	87H,88H,89H,8AH,8BH
 	DEFB	8CH,88H,8DH,8AH,8EH
+
+
+	ENDIF
+
+	IF	KEYTYP NE 0
+
+; International version, officially not needed
+
+;	Subroutine	PUTCHR
+;	Inputs		________________________
+;	Outputs		________________________
+
+J3C4C:	PUSH	AF
+	CALL	C3E78			; keyclick
+	POP	AF
+
+;	Subroutine	__________________________
+;	Inputs		________________________
+;	Outputs		________________________
+
+C3E62:	LD	HL,(PUTPNT)
+	LD	(HL),A
+	INC	HL
+	LD	A,L
+	CP	(KEYBUF+40) AND 255
+	JR	NZ,J3E6F
+	LD	HL,KEYBUF
+J3E6F:	LD	A,(GETPNT)
+	CP	L
+	RET	Z
+	LD	(PUTPNT),HL
+	RET
+
+;	Subroutine	KYKLOK
+;	Inputs		________________________
+;	Outputs		________________________
+
+J3E87:	LD	A,(NEWKEY+6)
+	LD	E,A
+	OR	0FEH			; only SHIFT status remains
+	BIT	4,E
+	JR	NZ,J3E96		; CODE not pressed,
+	AND	0FDH
+J3E96:	CPL
+	INC	A
+	LD	(KANAST),A		; dead status
+
+
+
+;	Subroutine	keyclick
+;	Inputs		________________________
+;	Outputs		________________________
+
+C3E78:	LD	A,(CLIKSW)
+	AND	A
+	RET	Z
+	LD	A,(CLIKFL)
+	AND	A
+	RET	NZ
+	LD	A,0FH
+	LD	(CLIKFL),A
+	DI
+	OUT	(0ABH),A
+	LD	A,0AH
+J3E8C:	DEC	A
+	JR	NZ,J3E8C		; wait 0.05 ms (in Z80 mode!)
+	LD	A,0EH
+	OUT	(0ABH),A
+	EI
+	RET
+
+	ENDIF
+
+; *************************************
+; End of PUTCHR and KYKLOK
+; *************************************
+
+	DEFS	04000H-$,0
 
 	END
