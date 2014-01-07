@@ -15,6 +15,8 @@
 	ASEG
 	ORG	0000H
 
+	INCLUDE	MSX.INC
+
 RDSLT	EQU	0000CH
 WRSLT	EQU	00014H
 OUTDO	EQU	00018H
@@ -154,9 +156,7 @@ CHRCNT	EQU	0FAF9H
 ROMA	EQU	0FAFAH
 MODE	EQU	0FAFCH
 XSAVE	EQU	0FAFEH
-DFAFF	EQU	0FAFFH		; X border skip lightpen
 YSAVE	EQU	0FB00H
-DFB01	EQU	0FB01H		; Y border skip lightpen
 LOGOPR	EQU	0FB02H
 
 LINTTB	EQU	0FBB2H
@@ -565,7 +565,7 @@ J01C1:	LD	A,B
 
 ; from this point code continues to execute in mainrom
 
-	LD	A,B
+?01D0:	LD	A,B
 	AND	D
 	OUT	(0A8H),A
 	LD	A,E
@@ -586,7 +586,7 @@ J01C1:	LD	A,B
 
 ; from this point code returns executing from the mainrom 
 
-	LD	A,B
+?01EB:	LD	A,B
 	OUT	(0A8H),A
 	LD	A,C
 	LD	(SLTTBL+0),A
@@ -884,9 +884,9 @@ C0336:	LD	HL,I29F6
 	LD	A,(EXPTBL+0)
 	LD	(DFFF7),A
 	LD	A,2CH
-	LD	(DFAFF),A		; initialize X border skip lightpen
+	LD	(XSAVE+1),A		; initialize X border skip lightpen
 	LD	A,26H
-	LD	(DFB01),A		; initialize Y border skip lightpen
+	LD	(YSAVE+1),A		; initialize Y border skip lightpen
 	LD	A,0D3H			; no external audio mixing, video input 21 pin, internal sync, AV control=1, Ym control=full, S1=0, S0=0
 	OUT	(0F7H),A		; initialize digitizer hardware
 
@@ -1720,7 +1720,7 @@ C076A:	LD	L,A
 C0775:	ADD	A,A
 	ADD	A,A
 	CALL	C076A			; get spritelane address
-	LD	DE,-256
+	LD	DE,-512
 	ADD	HL,DE
 	RET
 
@@ -3687,7 +3687,7 @@ J1210:	LD	HL,0
 	LD	(GRPACX),HL
 	LD	A,(GRPACY)
 	ADD	A,08H	; 8 
-	CP	112
+	CP	212
 	JR	C,J1220
 	XOR	A
 J1220:	LD	(GRPACY),A
@@ -9377,7 +9377,7 @@ J3401:	LD	HL,1
 	LD	A,H
 	OR	L
 	JR	NZ,J3428
-	LD	HL,-256
+	LD	HL,-512
 	ADD	HL,SP
 	JR	NC,J3421
 	LD	DE,(STREND)
@@ -9470,7 +9470,7 @@ J346B:	IN	A,(0BAH)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J3474:	LD	HL,DFAFF
+J3474:	LD	HL,XSAVE+1
 	XOR	A			; assume invalid data
 	BIT	7,(HL)
 	RET	Z
@@ -9506,14 +9506,14 @@ J3474:	LD	HL,DFAFF
 	IN	A,(0BAH)
 	AND	20H
 	RET	Z			; nope, quit with invalid data
-	LD	A,(DFB01)
+	LD	A,(YSAVE+1)
 	CALL	C3463
 	LD	BC,212-1
 	CALL	C34C7
 	LD	A,L
 	LD	(YSAVE),A
 	EX	DE,HL
-	LD	A,(DFAFF)
+	LD	A,(XSAVE+1)
 	CALL	C3463
 	LD	BC,255
 
@@ -11489,10 +11489,17 @@ I3CEC:	DEFB	00AH			; id
 	DEFB	0FFH
 
 	ENDIF
+
+
+	IFDEF	FS-5500
 	
 C3F8B:	LD	D,48
 J3F8D:	DEC	D
 	JR	NZ,J3F8D
 	JP	C3585
+
+	ENDIF
+
+	DEFS	04000H-$,0
 
 	END
