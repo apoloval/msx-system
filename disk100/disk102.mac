@@ -5506,14 +5506,14 @@ A5FCD:	call	A5FE7			; get my primairy slot
 
 ;	Subroutine	get my EXPTBL entry
 ;	Inputs		-
-;	Outputs		HL = pointer to SLTWRK entry
+;	Outputs		HL = pointer to EXPTBL entry
 
 A5FE7:	call	XF365
 	rrca
 	rrca
 A5FEC:	and	003H
 	ld	hl,EXPTBL
-A5FF1:	ld	b,000H
+A5FF1:	ld	b,0
 A5FF3:	ld	c,a
 	add	hl,bc
 	ret
