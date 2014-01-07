@@ -2,14 +2,9 @@
 
 	.Z80
 	ASEG
+	ORG	0000H
 
-	org	00000H
-
-
-
-MSX2	equ	1
-
-	INCLUDE MSXLIB
+	INCLUDE	MSX.INC
 
 YFAF7	EQU	0FAF7H		; backup superimpose I/O port 0F7
 YFAF8	EQU	0FAF8H		; slotid subrom
