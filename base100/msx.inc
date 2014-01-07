@@ -10,6 +10,17 @@ MSXVER	EQU	0			; MSX version
 
 OPTM	EQU	0
 
+;	NDEVFIX
+;		0 = Use null device bug
+;		1 = Use null device bugfix
+
+NDEVFIX	EQU	1
+
+;	SLOTFIX
+;		0 = Use slot bug
+;		1 = Use slot bugfix
+
+SLOTFIX	EQU	1
 
 ;	CNTRY	Country
 ;		0 = Japan
