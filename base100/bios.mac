@@ -1,6 +1,35 @@
+; BIOS.MAC
+
+; MSX BIOS ROM, MSX 1 version (version 1.0)
+
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+
+
+	.Z80
+	ASEG
 	org	00000H
 
-X63E6	equ	063E6H
+	INCLUDE	MSX.INC
+
+M409B	EQU	409BH	; Warm start msx basic
+M4666	EQU	4666H	; CHRGTR routine in basicrom
+M558C	EQU	558CH	; SYNCHR routine in basicrom
+M5597	EQU	5597H	; GETYPR routine in basicrom
+M63E6	EQU	63E6H	; STOP statement in basicrom
+M6C48	EQU	6C48H	; file i/o output
+M73B2	EQU	73B2H	; Device I/O error
+M7C76	EQU	7C76H	; init code msx basic
+M7FBE	EQU	7FBEH	; helper routine RDSLT in basicrom
+M7FC4	EQU	7FC4H	; helper routine WRSLT in basicrom
+
+VARWRK	EQU	0F380H
 RDPRIM	equ	0F380H
 WRPRIM	equ	0F385H
 CLPRIM	equ	0F38CH
@@ -31,16 +60,18 @@ CNSDFG	equ	0F3DEH
 RG0SAV	equ	0F3DFH
 RG1SAV	equ	0F3E0H
 STATFL	equ	0F3E7H
+TRGFLG	equ	0F3E8H
 FORCLR	equ	0F3E9H
 BAKCLR	equ	0F3EAH
 BDRCLR	equ	0F3EBH
 ATRBYT	equ	0F3F2H
 QUEUES	equ	0F3F3H
+SCNCNT	equ	0F3F6H
 REPCNT	equ	0F3F7H
 PUTPNT	equ	0F3F8H
 GETPNT	equ	0F3FAH
-LOW	equ	0F406H
-HIGH	equ	0F408H
+LOW.	equ	0F406H
+HIGH.	equ	0F408H
 HEADER	equ	0F40AH
 ASPCT1	equ	0F40BH
 ASPCT2	equ	0F40DH
@@ -49,10 +80,14 @@ PRTFLG	equ	0F416H
 NTMSXP	equ	0F417H
 RAWPRT	equ	0F418H
 CURLIN	equ	0F41CH
+BUFMIN	equ	0F55DH
+BUF	equ	0F55EH
 TTYPOS	equ	0F661H
+AUTFLG	equ	0F6AAH
 SAVSTK	equ	0F6B1H
 PTRFIL	equ	0F864H
 FILNAM	equ	0F866H
+FNKSTR	equ	0F87FH
 CGPNT	equ	0F91FH
 NAMBAS	equ	0F922H
 CGPBAS	equ	0F924H
@@ -62,20 +97,29 @@ CLOC	equ	0F92AH
 CMASK	equ	0F92CH
 CSAVEA	equ	0F942H
 CSAVEM	equ	0F944H
+QUEBAK	equ	0F971H
+VOICAQ	equ	0F975H
 VOICEN	equ	0FB38H
 QUEUEN	equ	0FB3EH
 MUSICF	equ	0FB3FH
+PLYCNT	equ	0FB40H
 VCBA	equ	0FB41H
 VCBB	equ	0FB66H
 VCBC	equ	0FB8BH
 ENSTOP	equ	0FBB0H
 BASROM	equ	0FBB1H
+LINTTB	equ	0FBB2H
+FSTPOS	equ	0FBCAH
 CURSAV	equ	0FBCCH
 FNKSWI	equ	0FBCDH
+FNKFLG	equ	0FBCEH
 ONGSBF	equ	0FBD8H
 CLIKFL	equ	0FBD9H
 OLDKEY	equ	0FBDAH
 NEWKEY	equ	0FBE5H
+KEYBUF	equ	0FBF0H
+LINWRK	equ	0FC18H
+PATWRK	equ	0FC40H
 TRPTBL	equ	0FC4CH
 INTFLG	equ	0FC9BH
 PADY	equ	0FC9CH
@@ -85,9 +129,12 @@ INTVAL	equ	0FCA0H
 INTCNT	equ	0FCA2H
 LOWLIM	equ	0FCA4H
 WINWID	equ	0FCA5H
+GRPHED	equ	0FCA6H
 ESCCNT	equ	0FCA7H
+INSFLG	equ	0FCA8H
 CSRSR	equ	0FCA9H
 CSTYLE	equ	0FCAAH
+CAPST	equ	0FCABH
 KANAST	equ	0FCACH
 KANAMD	equ	0FCADH
 SCRMOD	equ	0FCAFH
@@ -111,13 +158,16 @@ H.INIP	equ	0FDC7H
 H.KEYC	equ	0FDCCH
 H.KEYA	equ	0FDD1H
 H.NMI	equ	0FDD6H
+H.PINL	equ	0FDDBH
+H.QINL	equ	0FDE0H
+H.INLI	equ	0FDE5H
 H.ISFL	equ	0FEDFH
 H.OUTD	equ	0FEE4H
 H.PHYD	equ	0FFA7H
 H.FORM	equ	0FFACH
 H.LPTO	equ	0FFB6H
 H.LPTS	equ	0FFBBH
-YFFFF	equ	0FFFFH
+D.FFFF	equ	0FFFFH
 
 CHKRAM:	di
 	jp	A02D7
@@ -134,7 +184,7 @@ RDSLT:	jp	A01B6
 
 	defs	00010H-$,0
 
-CHRGTR	jp	A2686
+CHRGTR:	jp	A2686
 
 	defs	00014H-$,0
 
@@ -170,9 +220,11 @@ IDBYT1:	DEFB	KEYTYP+16*BASVER
 IDBYT2:	DEFB	MSXVER			; MSX version 0 = MSX1
 	DEFB	0
 
+	DEFS	00030H-$
+
 CALLF:	jp	A0205
 ;
-	defb	0
+	DEFS	00034H-$
 
 ;	The next bytes are used by the diskrom, to initialize the double byte header char
 ;	table (0F30FH). I have not seen a MSX with anything other than four zero's, meaning
@@ -267,8 +319,8 @@ CHGCLR:	jp	A07F7
 	jp	A18CF
 	jp	A18E4
 	jp	A197A
-	jp	A0F3D
-	jp	A0F7A
+	jp	K.BCAP
+	jp	K.BSND
 	jp	A144C
 	jp	A144F
 	jp	A1449
@@ -282,10 +334,70 @@ CHGCLR:	jp	A07F7
 	jp	A0468
 	jp	A01FF
 
-	defs	001B6H-$,0		; align to Z80 NMI entry at 0066H
+	IFNDEF	SLOTFIX
+
+	defs	001B6H-$,0
+
+	ELSE
+	
+	defs	0016FH-$,0
+
+C016F:	CALL	C01AD
+	JR	NZ,A01C6
+	PUSH	HL
+	CALL	C0199
+	EX	(SP),HL
+	CALL	M7FBE
+	JR	J018D
+
+C017E:	CALL	C01AD
+	JP	NZ,A01E1
+	POP	DE
+	PUSH	HL
+	CALL	C0199
+	EX	(SP),HL
+	CALL	M7FC4
+J018D:	EX	(SP),HL
+	PUSH	AF
+	LD	A,L
+	OUT	(0A8H),A
+	LD	A,H
+	LD	(D.FFFF),A
+	POP	AF
+	POP	HL
+	RET
+
+C0199:	PUSH	AF
+	LD	A,(D.FFFF)
+	CPL
+	LD	H,A
+	AND	0F3H
+	LD	(D.FFFF),A
+	IN	A,(0A8H)
+	LD	L,A
+	AND	0F3H
+	OUT	(0A8H),A
+	POP	AF
+	RET
+
+C01AD:	INC	D
+	DEC	D
+	RET	NZ
+	LD	B,A
+	LD	A,E
+	CP	3
+	LD	A,B
+	RET
+	ENDIF
 
 A01B6:	call	A027E			; make masks
+
+	IFDEF	SLOTFIX
+	jp	m,C016F
+	ELSE
 	jp	m,A01C6 		; expanded slot, handle
+	ENDIF
+
 	in	a,(0A8H)
 	ld	d,a
 	and	c			; clear slot of page
@@ -303,7 +415,13 @@ A01C6:	push	hl
 ;
 A01D1:	push	de
 	call	A027E			; make masks
+
+	IFDEF	SLOTFIX
+	jp	m,C017E
+	ELSE
 	jp	m,A01E1 		; expanded slot, handle
+	ENDIF
+
 	pop	de
 	in	a,(0A8H)
 	ld	d,a
@@ -326,7 +444,7 @@ A01EC:	pop	bc
 	or	c			; slot of sec. slotreg
 	out	(0A8H),a
 	ld	a,l
-	ld	(YFFFF),a		; restore register
+	ld	(D.FFFF),a		; restore register
 	ld	a,b
 	out	(0A8H),a		; restore prim. slotreg
 	pop	af
@@ -396,7 +514,7 @@ A022E:	call	A02A3
 	di
 	out	(0A8H),a
 	ld	a,e
-	ld	(YFFFF),a
+	ld	(D.FFFF),a
 	ld	a,b
 	out	(0A8H),a
 	ld	(hl),e
@@ -482,12 +600,12 @@ A02BB:	add	a,01010101b
 	ld	a,e
 	cpl
 	ld	h,a			; page clear mask
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	ld	l,a			; old sec. slotreg
 	and	h			; clear page
 	or	d			; set new slot
-	ld	(YFFFF),a
+	ld	(D.FFFF),a
 	ld	a,b
 	out	(0A8H),a		; restore primairy slot on page 3
 	pop	af
@@ -517,7 +635,7 @@ A02E7:	out	(0A8H),a
 	jr	nz,A0302
 	inc	b
 	set	0,c
-A02FF:	ld	(YFFFF),a
+A02FF:	ld	(D.FFFF),a
 A0302:	ld	hl,0C000H-256
 A0305:	ld	a,(hl)
 	cpl
@@ -538,7 +656,7 @@ A0314:	ld	l,000H
 	sbc	a,d
 	jr	nc,A0327
 	ex	de,hl
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	ld	l,a
 	in	a,(0A8H)
@@ -547,7 +665,7 @@ A0314:	ld	l,000H
 A0327:	ld	a,b
 	and	a
 	jr	z,A0335
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	add	a,010H
 	cp	040H
@@ -560,7 +678,7 @@ A0335:	in	a,(0A8H)
 	ld	a,h
 	out	(0A8H),a
 	ld	a,l
-	ld	(YFFFF),a
+	ld	(D.FFFF),a
 	ld	a,c
 	rlca
 	rlca
@@ -575,10 +693,10 @@ A0353:	out	(0A8H),a
 	rlc	c
 	jr	nc,A0365
 	inc	b
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	and	03FH
-A0362:	ld	(YFFFF),a
+A0362:	ld	(D.FFFF),a
 A0365:	ld	hl,0FF00H-256
 A0368:	ld	a,(hl)
 	cpl
@@ -601,7 +719,7 @@ A0379:	ld	l,000H
 	sbc	a,d
 	jr	nc,A038C
 	ex	de,hl
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	ld	l,a
 	in	a,(0A8H)
@@ -610,7 +728,7 @@ A0379:	ld	l,000H
 A038C:	ld	a,b
 	and	a
 	jr	z,A0398
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	add	a,040H
 	jr	nc,A0362
@@ -622,9 +740,9 @@ A0398:	in	a,(0A8H)
 	ld	a,h
 	out	(0A8H),a
 	ld	a,l
-	ld	(YFFFF),a
+	ld	(D.FFFF),a
 	ld	a,c
-	ld	bc,HOKEND-VARWRK-1
+	ld	bc,0C49H
 	ld	de,VARWRK+1
 	ld	hl,VARWRK
 	ld	(hl),000H
@@ -642,22 +760,22 @@ A03BD:	rr	c
 	ld	c,a
 	xor	a
 	out	(0A8H),a
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	ld	l,a
 	ld	a,040H
 	out	(0A8H),a
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	ld	h,a
 	ld	a,080H
 	out	(0A8H),a
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	ld	e,a
 	ld	a,0C0H
 	out	(0A8H),a
-	ld	a,(YFFFF)
+	ld	a,(D.FFFF)
 	cpl
 	ld	d,a
 	ld	a,c
@@ -707,7 +825,7 @@ A042C:	push	hl
 	jr	nc,A043F
 	ld	hl,TRPTBL+10*3
 	di
-	call	A0EF1
+	call	C0EF1
 	ei
 	pop	hl
 	ret
@@ -720,7 +838,7 @@ A043F:	call	A083B
 	xor	a
 	ld	sp,(SAVSTK)
 	push	bc
-	jp	X63E6
+	jp	M63E6
 ;
 A0454:	ld	a,(TRPTBL+10*3+0)
 	rrca
@@ -761,7 +879,7 @@ A046F:	in	a,(0AAH)
 	ld	a,(OLDKEY+7)
 	and	0EFH
 	ld	(OLDKEY+7),a
-	ld	a,00DH
+	LD	A,13
 	ld	(REPCNT),a
 	scf
 	ret
@@ -1281,7 +1399,7 @@ A0835:	ld	b,a
 	jp	A057F
 ;
 A083B:	call	A0B9F			; grafic mode ?
-A083E:	ret	c			; nop, quit
+	ret	c			; nop, quit
 	ld	a,(OLDSCR)
 	call	H.TOTE
 	jp	A084F
@@ -1624,8 +1742,9 @@ A0A4C:	call	A0A55
 	ret	nz
 	ld	a,(LINLEN)
 	ld	h,a
-	db	011H
-A0A55:	ld	a,025H
+	defb	011H
+A0A55:	dec	h
+	defb	03EH
 A0A57:	dec	l
 	ret	z
 	jr	A0A69
@@ -1687,7 +1806,7 @@ A0AA3:	push	af
 	jp	A0AEC
 
 A0AB4:	call	A0A81
-	call	A0C32
+A0AB7:	call	A0C32
 	ld	h,a
 	sub	l
 	ret	c
@@ -1799,7 +1918,8 @@ A0B6B:	inc	b
 	ld	a,b
 	and	a
 	jr	z,A0B94
-	ld	a,013H
+	defb	03EH
+A0B75:	inc	de
 	push	bc
 	ld	c,000H
 A0B79:	ld	a,(hl)
@@ -1923,7 +2043,8 @@ A0C1D:	push	hl
 	and	a
 	ret
 ;
-A0C29:	ld	a,0AFH
+A0C29:	defb	03EH
+A0C2A:	xor	a
 A0C2B:	push	af
 	call	A0C1D
 	pop	af
@@ -1958,14 +2079,14 @@ A0C3C:	push	hl
 	ld	(STATFL),a		; save statusregister
 	and	020H			; sprite collisionflag set ?
 	ld	hl,TRPTBL+11*3
-	call	nz,A0EF1		; yep, set sprite event
+	call	nz,C0EF1		; yep, set sprite event
 	ld	hl,(INTCNT)
 	dec	hl
 	ld	a,h
 	or	l			; intervaltime passed ?
 	jr	nz,A0C73		; nop, skip
 	ld	hl,TRPTBL+17*3
-	call	A0EF1			; set interval event
+	call	C0EF1			; set interval event
 	ld	hl,(INTVAL)		; reload INTCNT
 A0C73:	ld	(INTCNT),hl
 	ld	hl,(JIFFY)
@@ -2011,19 +2132,19 @@ A0C82:	rr	c			; handle this channel ?
 	ld	c,a
 	rrca				; spacebar being pressed ?
 	ld	hl,TRPTBL+12*3
-	call	c,A0EF1 		; yep, set STRIG0 event
+	call	c,C0EF1 		; yep, set STRIG0 event
 	rl	c			; firebutton 2 B being pressed ?
 	ld	hl,TRPTBL+16*3
-	call	c,A0EF1 		; yep, set STRIG4 event
+	call	c,C0EF1 		; yep, set STRIG4 event
 	rl	c
 	ld	hl,TRPTBL+14*3
-	call	c,A0EF1 		; yep, set STRIG2 event
+	call	c,C0EF1 		; yep, set STRIG2 event
 	rl	c
 	ld	hl,TRPTBL+15*3
-	call	c,A0EF1 		; yep, set STRIG3 event
+	call	c,C0EF1 		; yep, set STRIG3 event
 	rl	c
 	ld	hl,TRPTBL+13*3
-	call	c,A0EF1 		; yep, set STRIG1 event
+	call	c,C0EF1 		; yep, set STRIG1 event
 	xor	a
 	ld	(CLIKFL),a
 	call	A0D12			; scan keyboard
@@ -2071,7 +2192,7 @@ A0D1C:	ld	a,c
 	ld	a,(NEWKEY+6)
 	cp	11101000b		; CODE+GRAPH+CTRL+SHIFT pressed ?
 	jr	nz,A0D3A		; nop, quit
-	ld	ix,X409B		; start headloop
+	ld	ix,M409B		; start headloop
 	jp	A01FF			; with CALBAS
 ;
 A0D3A:	ld	de,OLDKEY+11
@@ -2137,315 +2258,46 @@ A0D89:	push	hl
 A0D97:	rra				; this key being pressed ?
 	push	bc
 	push	af
-	call	c,A1021 		; yep, handle key
+	call	c,K.HAND 		; yep, handle key
 	pop	af
 	pop	bc
 	inc	c
 	djnz	A0D97			; next key in row
 	jp	A08DB			; quit
-;
-T0DA5:	db	"0","1","2","3","4","5","6","7"
-	db	"8","9","-","=","\","[","]",";"
-	db	"'","`",",",".","/",255,"a","b"
-	db	"c","d","e","f","g","h","i","j"
-	db	"k","l","m","n","o","p","q","r"
-	db	"s","t","u","v","w","x","y","z"
 
-	db	")","!","@","#","$","%","^","&"
-	db	"*","(","_","+","|","{","}",":"
-	db	'"',"~","<",">","?",255,"A","B"
-	db	"C","D","E","F","G","H","I","J"
-	db	"K","L","M","N","O","P","Q","R"
-	db	"S","T","U","V","W","X","Y","Z"
 
-	db	9  ,"¬","«","º","ï","½","ô","û"
-	db	"ì",7  ,23 ,"ñ",30 ,1  ,13 ,6
-	db	5  ,"»","ó","ò",29 ,255,"Ä",17
-	db	"¼","Ç","Í",20 ,21 ,19 ,"Ü","Æ"
-	db	"Ý","È",11 ,27 ,"Â","Û","Ì",24
-	db	"Ò",18 ,"À",26 ,"Ï",28 ,25 ,15
+	IF	KEYTYP EQ 0
+	INCLUDE	KEYJAP
+	ENDIF
 
-	db	10 ,0  ,"ý","ü",0  ,0  ,"õ",0
-	db	0  ,8  ,31 ,"ð",22 ,2  ,14 ,4
-	db	3  ,"÷","®","¯","ö",255,"þ",0
-	db	"ú","Á","Î","Ô","P","Ö","ß","Ê"
-	db	"Þ","É",12 ,"Ó","Ã","×","Ë","©"
-	db	"Ñ",0  ,"Å","Õ","Ð","ù","ª","ø"
 
-	db	"ë","Ÿ","Ù","¿","›","˜","à","á"
-	db	"ç","‡","î","é",0  ,"í","Ú","·"
-	db	"¹","å","†","¦","§",255,"„","—"
-	db	"","‹","Œ","”","","±","¡","‘"
-	db	"³","µ","æ","¤","¢","£","ƒ","“"
-	db	"‰","–","‚","•","ˆ","Š"," ","…"
+	IF	KEYTYP EQ 1
+	INCLUDE KEYINT
+	ENDIF
 
-	db	"Ø","­","ž","¿","œ","",0  ,0
-	db	"â","€",0  ,0  ,0  ,"è","ê","¶"
-	db	"¸","ä","",0  ,"¨",255,"Ž",0
-	db	0  ,0  ,0  ,"™","š","°",0  ,"’"
-	db	"²","´",0  ,"¥",0  ,"ã",0  ,0
-	db	0  ,0  ,"",0  ,0  ,0  ,0  ,0
+	IF	KEYTYP EQ 2
+	INCLUDE KEYFR
+	ENDIF
 
-A0EC5:	ld	e,c
-	ld	d,000H
-	ld	hl,FNKFLG-035H
-	add	hl,de
-	ld	a,(hl)
-	and	a
-	jr	nz,A0EE3
-A0ED0:	ex	de,hl
-	add	hl,hl
-	add	hl,hl
-	add	hl,hl
-	add	hl,hl
-	ld	de,FNKSTR-(16*035H)
-	add	hl,de
-	ex	de,hl
-A0EDA:	ld	a,(de)
-	and	a
-	ret	z
-	call	A0F55
-	inc	de
-	jr	A0EDA
-;
-A0EE3:	ld	hl,(CURLIN)
-	inc	hl
-	ld	a,h
-	or	l
-	jr	z,A0ED0
-	ld	hl,TRPTBL+0*3-035H*3
-	add	hl,de
-	add	hl,de
-	add	hl,de
-A0EF1:	ld	a,(hl)
-	and	001H
-	ret	z
-	ld	a,(hl)
-	or	004H
-	cp	(hl)
-	ret	z
-	ld	(hl),a
-	xor	005H
-	ret	nz
-	ld	a,(ONGSBF)
-	inc	a
-	ld	(ONGSBF),a
-	ret
-;
-A0F06:	ld	a,(NEWKEY+6)
-	rrca				; shift key
-	ld	a,00CH			; CLS code
-	sbc	a,000H			; HOME code if shift not pressed
-	jr	A0F55			; put in KEYBUF
-;
-A0F10:	call	H.KEYA
-	ld	e,a
-	ld	d,000H
-	ld	hl,T1033-030H
-	add	hl,de
-	ld	a,(hl)
-	and	a			; has key a charcode ?
-	ret	z			; nop, quit
-	jr	A0F55			; yep, put in KEYBUF
-;
-A0F1F:	ld	a,(NEWKEY+6)
-	ld	e,a
-	or	0FEH			; b0 = SHIFT
-	bit	4,e			; CODE pressed ?
-	jr	nz,A0F2B		; nop
-	and	0FDH			; b1 = CODE
-A0F2B:	cpl
-	inc	a
-	ld	(KANAST),a
-	jr	A0F64
-;
-; >> NO EXECUTION PATH TO HERE <<
-	nop
-	nop
-	nop
-	ret
-;
-A0F36:	ld	hl,CAPST
-	ld	a,(hl)
-	cpl
-	ld	(hl),a			; invert capstatus
-	cpl				; change capsled
-A0F3D:	and	a
-	ld	a,00CH
-	jr	z,A0F43
-	inc	a
-A0F43:	out	(0ABH),a
-	ret
-;
-A0F46:	ld	a,(NEWKEY+6)
-	rrca
-	rrca
-	ld	a,003H
-	jr	nc,A0F50
-	inc	a
-A0F50:	ld	(INTFLG),a
-	jr	c,A0F64
-A0F55:	ld	hl,(PUTPNT)
-	ld	(hl),a
-	call	A105B
-	ld	a,(GETPNT)
-	cp	l
-	ret	z
-	ld	(PUTPNT),hl
-A0F64:	ld	a,(CLIKSW)
-	and	a
-	ret	z
-	ld	a,(CLIKFL)
-	and	a
-	ret	nz
-	ld	a,00FH
-	ld	(CLIKFL),a
-	out	(0ABH),a
-	ld	a,00AH
-A0F77:	dec	a
-	jr	nz,A0F77
-A0F7A:	and	a
-	ld	a,00EH
-	jr	z,A0F80
-	inc	a
-A0F80:	out	(0ABH),a
-	ret
+	IF	KEYTYP EQ 3
+	INCLUDE KEYUK
+	ENDIF
 
-A0F83:	ld	a,(NEWKEY+6)
-	ld	e,a
-	rra
-	rra
-	push	af
-	ld	a,e
-	cpl
-	jr	nc,A0F9E
-	rra
-	rra
-	rlca
-	and	003H
-	bit	1,a
-	jr	nz,A0FA0
-	bit	4,e
-	jr	nz,A0FA0
-	or	004H
-	db	011H
-A0F9E:	and	001H
-A0FA0:	ld	e,a
-	add	a,a
-	add	a,e
-	add	a,a
-	add	a,a
-	add	a,a
-	add	a,a
-	ld	e,a
-	ld	d,000H
-	ld	hl,T0DA5
-	add	hl,de
-	ld	b,d
-	add	hl,bc
-	pop	af
-	ld	a,(hl)
-	inc	a
-	jp	z,A0F1F
-	dec	a
-	ret	z
-	jr	c,A0FD0
-	and	0DFH
-	sub	040H
-	cp	020H
-	ret	nc
-A0FC1:	jr	A0F55
+	IF	KEYTYP EQ 4
+	INCLUDE KEYGER
+	ENDIF
 
-A0FC3:	ld	a,(NEWKEY+6)
-	rrca
-	jr	c,A0FCD
-	ld	a,c
-	add	a,005H
-	ld	c,a
-A0FCD:	jp	A0EC5
-;
-A0FD0:	cp	020H
-	jr	nc,A0FDF
-	push	af
-	ld	a,001H
-	call	A0F55
-	pop	af
-	add	a,040H
-	jr	A0FC1
-;
-A0FDF:	ld	hl,CAPST
-	inc	(hl)
-	dec	(hl)
-	jr	z,A0FF0
-	cp	061H
-	jr	c,A1011
-	cp	07BH
-	jr	nc,A1011
-	and	0DFH
-A0FF0:	ld	de,(KANAST)
-	inc	e
-	dec	e
-	jr	z,A0FC1
-	ld	d,a
-	or	020H
-	ld	hl,T1061+5
-	ld	c,6
-	cpdr
-	ld	a,d
-	jr	nz,A0FC1
-	inc	hl
-	ld	c,006H
-A1008:	add	hl,bc
-	dec	e
-	jr	nz,A1008
-	ld	a,(hl)
-	bit	5,d
-	jr	nz,A0FC1
-A1011:	ld	c,31
-	ld	hl,T107F+30
-	cpdr
-	jr	nz,A0FC1
-	ld	c,01FH
-	inc	hl
-	add	hl,bc
-	ld	a,(hl)
-	jr	A0FC1
-;
-A1021:	ld	a,c
-	ld	hl,T1B96
-	call	H.KEYC
-	ld	d,00FH
-A102A:	cp	(hl)
-	inc	hl
-	ld	e,(hl)
-	inc	hl
-	push	de
-	ret	c
-	pop	de
-	jr	A102A
-;
-T1033:	db	0  ,0  ,0  ,0  ,0  ,0  ,0  ,0
-	db	0  ,0  ,27 ,9  ,0  ,8  ,24 ,13
-	db	" ",12 ,18 ,127,29 ,30 ,31 ,28
-	db	0  ,0  ,0  ,"0","1","2","3","4"
-	db	"5","6","7","8","9","-",",","."
+	IF	KEYTYP EQ 5
+	INCLUDE KEYRUS
+	ENDIF
 
-A105B:	xor	a
-	ld	(KANAST),a
-	jr	A10C2
-;
-T1061:	db	"aeiouy"
-	db	"…Š•—y"
-	db	" ‚¡¢£y"
-	db	"ƒˆŒ“–y"
-	db	"„‰‹”˜"
+	IF	KEYTYP EQ 6
+	INCLUDE KEYSPA
+	ENDIF
 
-T107F:	db	"ƒˆŒ“–„‰‹”˜ ‚¡¢£…Š•—±³µ·¤†‡‘¹y"
-	db	"AEIOUŽEI™šYAIOUAEIOU°²´¶¥€’¸Y"
+	ORG	010C2H
 
-	ds	5,0
-
-A10C2:	inc	hl
+C10C2:	inc	hl
 	ld	a,l
 	cp	LOW (KEYBUF+40)
 	ret	nz
@@ -2469,7 +2321,7 @@ A10E1:	ld	hl,INTFLG
 	ld	(hl),000H
 A10EB:	ld	hl,(GETPNT)
 	ld	c,(hl)
-	call	A10C2
+	call	C10C2
 	ld	(GETPNT),hl
 	ld	a,c
 	jp	A08DB
@@ -2870,7 +2722,8 @@ A1384:	and	a
 	jp	m,A1392
 A1388:	jr	nz,A138D
 	ld	a,009H
-	jp	nz,A083E
+	defb	0C2H
+A138D:	ld	a,008H
 	out	(0ABH),a
 	ret
 ;
@@ -2897,8 +2750,14 @@ T13A9:	db	"color ",0
 	ds	16-6,0
 	db	"run",13,0
 	ds	16-5,0
-	db	"color 15,4,4",13,0
+
+	IF BASVER EQ 0
+	DEFM	'color 15,4,7',13,0
 	ds	16-14,0
+	ELSE
+	DEFM	'color 15,4,4',13,0
+	ds	16-14,0
+	ENDIF
 	db	'cload"',0
 	ds	16-7,0
 	db	"cont",13,0
@@ -2906,7 +2765,7 @@ T13A9:	db	"color ",0
 	db	"list.",13,30,30,0
 	ds	16-9,0
 	db	12,"run",13,0
-	db	16-6,0
+	ds	16-6,0
 
 A1449:	in	a,(099H)
 	ret
@@ -3654,7 +3513,7 @@ A189E:	ld	a,b
 	cpl
 	and	c
 	db	011H
-	ld	a,b
+A18A2:	ld	a,b
 	or	c
 A18A4:	ld	de,02000H
 	add	hl,de
@@ -3876,7 +3735,7 @@ A1A0B:	call	A1A4D			; high cycle
 	jr	nz,A1A0B		; next cyclus
 	jp	A046F			; quit with BREAKX
 ;
-A1A19:	ld	hl,(LOW)		; size of low cycle
+A1A19:	ld	hl,(LOW.)		; size of low cycle
 	push	af
 	ld	a,l
 	sub	00EH
@@ -3892,7 +3751,7 @@ A1A27:	rrca
 	call	A1A40			; write 2 marks (stopbits)
 	jp	A046F			; quit with BREAKX
 ;
-A1A39:	ld	hl,(LOW)		; low cycle size
+A1A39:	ld	hl,(LOW.)		; low cycle size
 	call	A1A50			; write low cycle
 A1A3F:	ret
 ;
@@ -3906,7 +3765,7 @@ A1A40:	call	A1A4D			; write high cycle
 	call	A1A4D			; write high cycle
 	ret
 ;
-A1A4D:	ld	hl,(HIGH)		; length of high cycle
+A1A4D:	ld	hl,(HIGH.)		; length of high cycle
 A1A50:	push	af
 A1A51:	dec	l
 	jp	nz,A1A51		; wait low part
@@ -4067,7 +3926,7 @@ A1B45:	push	af
 	call	A145F			; is file output ?
 	jr	z,A1B56 		; nop,
 	pop	af
-	ld	ix,X6C48		; seq. output
+	ld	ix,M6C48		; seq. output
 	jp	A01FF			; with CALBAS
 ;
 A1B56:	ld	a,(PRTFLG)
@@ -4102,34 +3961,74 @@ A1B87:	ld	a,(NTMSXP)
 	pop	af
 	call	A089D			; is grafic header ?
 	ret	nc			; header, quit
-	jr	nz,A1BB7		; grafic char, print space
-	jr	A1BAC			; print char
-;
-T1B96:	db	02FH+1,LOW A0F83
-	db	032H+1,LOW A0F10
-	db	033H+1,LOW A0F36
-	db	034H+1,LOW A0F10
-	db	039H+1,LOW A0FC3
-	db	03BH+1,LOW A0F10
-	db	03CH+1,LOW A0F46
-	db	040H+1,LOW A0F10
-	db	041H+1,LOW A0F06
-	db	0FEH+1,LOW A0F10
-	db	0
+	jr	nz,J1BB7		; grafic char, print space
+
+
+	IF	KEYTYP EQ 0
+
+; *************************************
+; *************************************
+
+
+	AND	A
+	JP	P,J1BAC			; plain ascii, print
+	CP	86H
+	JR	C,J1BB7			; 80H-85H, print space
+	CP	0A0H			; 86H-9FH ?
+	JR	NC,J1BA4		; nope,
+	ADD	A,20H
+	JR	J1BAC			; adjust to A6H-BFH and print
+
+J1BA4:	CP	0E0H			; E0H-FFH ?
+	JR	C,J1BAC			; nope, print
+	SUB	20H			; adjust to C0H-DFH
+	DEFB	038H			; JR C,xxxx (skip next instruction)
+
+
+; *************************************
+; *************************************
+
+	ENDIF
+
+	ORG	01BABH
 
 A1BAB:	pop	af
-A1BAC:	call	A085D			; to printer
+J1BAC:	call	A085D			; to printer
 	ret	nc			; no break, quit
-	ld	ix,X73B2		; Device I/O error
+	ld	ix,M73B2		; Device I/O error
 	jp	A01FF			; via CALBAS
 ;
-A1BB7:	ld	a,020H
-	jr	A1BAC
+J1BB7:	ld	a,020H
+	jr	J1BAC
 ;
 A1BBB:	pop	af
 	jp	A08BC
 
-T1BBF:	ds	2048,0
+T1BBF:	
+	IF	CHRGEN EQ 0
+
+	IF	CNTRY EQ 9
+	INCLUDE	CHRKOR
+	ELSE
+	INCLUDE CHRJAP
+	ENDIF
+
+	ENDIF
+
+	IF	CHRGEN EQ 1
+
+	IF	CNTRY EQ 10
+	INCLUDE	CHRRUS
+	ENDIF
+	IF	CNTRY EQ 5
+	INCLUDE CHRGER
+	ENDIF
+
+	IF	(CNTRY NE 10) AND (CNTRY NE 5)
+	INCLUDE CHRINT
+	ENDIF
+
+	ENDIF
 
 A23BF:	call	H.PINL
 	ld	a,(AUTFLG)
@@ -4193,7 +4092,8 @@ A2426:	rst	OUTDO
 ;
 A2428:	ld	(hl),000H
 	rst	OUTDO
-	ld	a,03EH
+	defb	03EH
+A242C:	defb	03EH
 A242D:	xor	a
 	push	af
 	call	A0A2E			; cursor off
@@ -4538,13 +4438,12 @@ A2674:	inc	l
 	ld	hl,(FSTPOS)
 	ret
 ;
-A2680:	jp	X7C76
+A2680:	jp	M7C76
 ;
-A2683:	jp	X558C
+A2683:	jp	M558C
 ;
-A2686:	jp	X4666
+A2686:	jp	M4666
 ;
-A2689:	jp	X5597
+A2689:	jp	M5597
 
 	end
-
