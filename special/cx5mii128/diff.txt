@@ -1,0 +1,126 @@
+J$0000:	DI
+	JP	J$7FE7			; initalize new stuff first
+
+
+J$016F:	CALL	C.01AD
+	JR	NZ,J$01C6
+	PUSH	HL
+	CALL	C.0199
+	EX	(SP),HL
+	CALL	C$7FBE
+	JR	J$018D
+
+J$017E:	CALL	C.01AD
+	JP	NZ,J$01E1
+	POP	DE
+	PUSH	HL
+	CALL	C.0199
+	EX	(SP),HL
+	CALL	C$7FC4
+J$018D:	EX	(SP),HL
+	PUSH	AF
+	LD	A,L
+	OUT	(0A8H),A
+	LD	A,H
+	LD	(D.FFFF),A
+	POP	AF
+	POP	HL
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.0199:	PUSH	AF
+	LD	A,(D.FFFF)
+	CPL	
+	LD	H,A
+	AND	0F3H
+	LD	(D.FFFF),A
+	IN	A,(0A8H)
+	LD	L,A
+	AND	0F3H
+	OUT	(0A8H),A
+	POP	AF
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.01AD:	INC	D
+	DEC	D
+	RET	NZ
+	LD	B,A
+	LD	A,E
+	CP	03H
+	LD	A,B
+	RET	
+
+
+X01B9:	JP	M,J$016F		; if slot 0 is expanded, handle carefull
+
+
+X01D5:	JP	M,J$017E		; if slot 0 is expanded, handle carefull
+
+
+X0C96:	LD	(HL),1			; SCNCNT = 1 (MSX1 had SCNCNT = 3)
+
+
+X0CF0:	LD	(HL),3			; REPCNT = 3 (MSX1 had REPCNT = 1)
+
+
+X0D49:	LD	A,39			; REPCNT = 39 (MSX1 had REPCNT = 13)
+
+
+;	  Subroutine helper routine RDSLT expanded slot 0
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7FBE:	CALL	C.7FCB
+	LD	E,(HL)
+	JR	J$7FC8
+
+;	  Subroutine helper routine WRSLT expanded slot 0
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7FC4:	CALL	C.7FCB
+	LD	(HL),E
+J$7FC8:	LD	A,B
+	JR	J$7FD9
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.7FCB:	RRCA	
+	RRCA	
+	AND	03H	; 3 
+	LD	D,A
+	LD	A,(D.FFFF)
+	CPL	
+	LD	B,A
+	AND	0FCH
+	OR	D
+	LD	D,A
+J$7FD9:	LD	(D.FFFF),A
+	LD	A,E
+	RET	
+
+?.7FDE:	DEFB	0,0,0,0,0,0,0,0,0		; unused space
+
+J$7FE7:	XOR	A
+	OUT	(0A8H),A			; primairy slot 0 for every page
+	OUT	(0FFH),A
+	INC	A
+	OUT	(0FEH),A
+	INC	A
+	OUT	(0FDH),A
+	INC	A
+	OUT	(0FCH),A			; initialize memory mapper
+	LD	A,02H
+	OUT	(99H),A				; dot count 192, no interlace, PAL, DLCLK output
+	LD	A,89H
+	OUT	(99H),A				; setup VDP register 9
+	JP	J$02D7				; orginal MSX1 init
