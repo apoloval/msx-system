@@ -148,10 +148,10 @@ C7511:	CALL	C76F4			; initialise for disk i/o
 	CALL	DISINT
 	DI
 J7519:	LD	A,L
-	ADD	A,0FFH
+	ADD	A,LOW (512-1)
 	LD	A,H
-	ADC	A,01H	; 1 
-	CP	40H	; "@"
+	ADC	A,HIGH (512-1)
+	CP	40H
 	JP	C,J7544
 	LD	A,H
 	AND	A
@@ -173,7 +173,7 @@ I7530:	PUSH	DE
 J7544:	CALL	C7555
 	CALL	C75D2
 J754A:	RET	C
-	LD	E,07H	; 7 
+	LD	E,07H
 	DEC	B
 	RET	Z
 	CALL	C7835
@@ -190,7 +190,7 @@ C7555:	CALL	C78A6			; wait for command ready
 	PUSH	BC
 	LD	DE,I7579
 	PUSH	DE
-	LD	(D7FF8),A
+	LD	(D7FF8),A		; start command
 	CALL	C795D			; wait ??
 	LD	BC,D7FFC
 	LD	DE,D7FFB
@@ -332,10 +332,10 @@ C7644:	CALL	C76F4			; initialise for disk i/o
 	CALL	DISINT
 	DI
 J764C:	LD	A,L
-	ADD	A,0FFH
+	ADD	A,LOW (512-1)
 	LD	A,H
-	ADC	A,01H	; 1 
-	CP	40H	; "@"
+	ADC	A,HIGH (512-1)
+	CP	40H
 	JP	C,J7678
 	LD	A,H
 	AND	A
@@ -509,13 +509,13 @@ J7742:	SLA	A
 	JR	NZ,J776D		; yep,
 J7768:	POP	HL
 	LD	A,2
-	SCF
+	SCF				; NOT READY error
 	RET
 
 J776D:	PUSH	DE
 	PUSH	BC
 	LD	A,(D7FFA)
-	PUSH	AF
+	PUSH	AF			; save sector register
 	LD	DE,I77AD
 	PUSH	DE
 	LD	A,0C0H			; READ ADDRESS
@@ -539,25 +539,25 @@ J7785:	LD	A,(BC)
 	JR	J77BC
 
 J779C:	LD	DE,D7FFB
-	LD	A,(DE)
+	LD	A,(DE)			; read data
 	JP	J77A3
 
 J77A3:	LD	A,(BC)
 	ADD	A,A
 	RET	C			; INT, quit
 	JP	P,J77A3			; no DRQ yet, wait
-	LD	A,(DE)
+	LD	A,(DE)			; read data
 	JP	J77A3
 
 I77AD:	POP	AF
-	LD	(D7FFA),A
+	LD	(D7FFA),A		; restore sector register
 	POP	BC
 	POP	DE
 	LD	A,(D7FF8)
-	AND	18H
-	LD	E,07H	; 7 
-	JR	Z,J77BE
-J77BC:	LD	E,03H	; 3 
+	AND	18H			; Record not found or CRC error ?
+	LD	E,7
+	JR	Z,J77BE			; nope, 7 tries
+J77BC:	LD	E,3			; 3 tries
 J77BE:	CALL	C793F
 	LD	A,C
 	RRCA
@@ -567,23 +567,23 @@ J77BE:	CALL	C793F
 	LD	D,A
 	LD	C,L
 	LD	A,(IX+7)
-	DEC	A
-	JR	Z,J77F5
+	DEC	A			; 1 physical drive ?
+	JR	Z,J77F5			; yep,
 	LD	A,(IX+3)
-	CP	H
-	JR	Z,J782C
-	XOR	01H	; 1 
-	LD	(IX+3),A
-	LD	A,(D7FF9)
+	CP	H			; physical drive same as the last one used ?
+	JR	Z,J782C			; yep, track register already ok
+	XOR	01H
+	LD	(IX+3),A		; new physical drive used last
+	LD	A,(D7FF9)		; save track register
 	JR	Z,J77E7
 	LD	(IX+4),A
 	LD	A,(IX+5)
 	JR	J77ED
 J77E7:	LD	(IX+5),A
 	LD	A,(IX+4)
-J77ED:	LD	(D7FF9),A
+J77ED:	LD	(D7FF9),A		; update track register
 	CALL	C795D			; wait ??
-	JR	J782F
+	JR	J782F			; seek to track if needed and quit
 J77F5:	LD	A,H
 	CP	(IX+6)
 	LD	(IX+6),A
@@ -856,7 +856,7 @@ INIHRD:	LD	A,0D0H
 	LD	(D7FFC),A
 	CALL	C799D
 
-DSKSTP:
+MTOFF:
 	LD	A,10H			; drives disabled, side 0, drive 0, drive 1 motor off, drive 0 motor off
 	LD	(D7FFC),A
 	RET
@@ -927,7 +927,7 @@ J7A09:	LD	L,2
 	LD	(D7FFC),A
 	POP	AF
 	JR	NZ,J7A1D
-	LD	L,01H	; 1 
+	LD	L,1
 	LD	(IX+7),L
 	JR	J7A1F
 J7A1D:	LD	L,02H	; 2 

@@ -25,7 +25,7 @@
 ;		PUBLIC	GETDPB
 ;		PUBLIC	CHOICE
 ;		PUBLIC	DSKFMT
-;		PUBLIC	DSKSTP
+;		PUBLIC	MTOFF
 ;		PUBLIC	OEMSTA
 ;
 ;		PUBLIC	MYSIZE
@@ -1507,7 +1507,7 @@ OEMSTA:
 	SCF				; does not have extra CALL statements
 	RET
 
-DSKSTP:
+MTOFF:
 	RET				; does nothing
 
 ADJRUN:

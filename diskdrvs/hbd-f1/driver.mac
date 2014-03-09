@@ -1579,7 +1579,7 @@ OEMSTA:
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-DSKSTP:
+MTOFF:
 C7DE2:	LD	A,3CH
 	LD	(D7FFD),A		; motor off, not in use, leave disk change, select drive 0
 	LD	A,3DH
@@ -1588,7 +1588,6 @@ C7DE2:	LD	A,3CH
 	LD	(D7FFD),A		; motor off, not in use, leave disk change, deselect drive
 	RET	
 
-	DEFS	08000H-$,000H
 
 D7FF8	EQU	07FF8H			; WD2793
 D7FF9	EQU	07FF9H			; WD2793

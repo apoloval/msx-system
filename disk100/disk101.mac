@@ -29,7 +29,7 @@
 ;	EXTRN	GETDPB
 ;	EXTRN	CHOICE
 ;	EXTRN	DSKFMT
-;	EXTRN	DSKSTP
+;	EXTRN	MTOFF
 ;	EXTRN	OEMSTA
 ;	EXTRN	MYSIZE
 ;	EXTRN	SECLEN
@@ -411,7 +411,7 @@ T4013:	jp	DSKCHG			; DSKCHG entrypoint
 T4016:	jp	GETDPB			; GETDPB entrypoint
 T4019:	jp	CHOICE			; CHOICE entrypoint
 T401C:	jp	DSKFMT			; DSKFMT entrypoint
-T401F:	jp	DSKSTP			; DSKSTP entrypoint
+T401F:	jp	MTOFF			; MTOFF entrypoint
 
 ; kernel entries
 
@@ -5799,9 +5799,9 @@ A6212:	inc	hl
 	push	hl
 	pop	ix
 	and	a			; entry for interface used ?
-	call	nz,RDSLT		; yep, read DSKSTP entry
-	and	a			; entry for interface used AND a valid DSKSTP entry ?
-	call	nz,CALSLT		; yep, call DSKSTP of interface
+	call	nz,RDSLT		; yep, read MTOFF entry
+	and	a			; entry for interface used AND a valid MTOFF entry ?
+	call	nz,CALSLT		; yep, call MTOFF of interface
 	pop	bc
 	pop	hl
 	djnz	A6212			; next interface

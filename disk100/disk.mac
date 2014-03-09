@@ -29,7 +29,7 @@
 ;	EXTRN	GETDPB
 ;	EXTRN	CHOICE
 ;	EXTRN	DSKFMT
-;	EXTRN	DSKSTP
+;	EXTRN	MTOFF
 ;	EXTRN	OEMSTA
 ;	EXTRN	MYSIZE
 ;	EXTRN	SECLEN
@@ -174,15 +174,21 @@ YF30B	equ	0F30BH			; saved current direntry number search first/next (FFh means 
 YF30C	equ	0F30CH			; original EX byte FCB
 RAWFLG	equ	0F30DH			; read after write (verify) flag
 YF30E	equ	0F30EH			; date format (0 japanese, 1 european, 2 american)
+KANJTA	equ	0F30FH
 YF30F	equ	0F30FH			; double byte header char table
-					; looks like F313-F322 are unused
+FUTURE	equ	0F313H			; looks like F313-F322 are unused
+DISKVE	equ	0F323H
 YF323	equ	0F323H			; diskerror handler pointer
+BREAKV	equ	0F325H
 YF325	equ	0F325H			; abort handler pointer
+AUXBOD	equ	0F327H
 XF327	equ	0F327H			; AUX input hook (MSXHOOK style), default returns CTRL-Z in register A
 XF32C	equ	0F32CH			; AUX output hook (MSXHOOK style), default does nothing
+BDOSBO	equ	0F331H
 XF331	equ	0F331H			; BDOS hook (MSXHOOK style)
 YF336	equ	0F336H			; flag saved input available (0 = none available)
 YF337	equ	0F337H			; save input
+TIMFLG	equ	0F338H
 YF338	equ	0F338H			; use clockchip flag
 YF339	equ	0F339H			; saved stackpointer format routine
 YF33B	equ	0F33BH			; days since 1-1-1980, used when no clockchip
@@ -196,22 +202,34 @@ RAMAD3	equ	0F344H			; slotid DOS ram page 3
 YF345	equ	0F345H			; maximum number of diskbasic FCB's
 YF346	equ	0F346H			; flag MSXDOS has been running (0 = no MSXDOS yet)
 YF347	equ	0F347H			; number of drives in disksystem
+MASTER	equ	0F348H
 YF348	equ	0F348H			; slotid disksytem rom
+HIMSAV	equ	0F349H
 YF349	equ	0F349H			; disksystem bottom (lowest address used by the disksystem)
+DOSHIM	equ	0F34BH
 YF34B	equ	0F34BH			; msxdos system bottom
 $SECBUF equ	0F34DH			; pointer to sectorbuffer, can be used by the diskdriver
 YF34F	equ	0F34FH			; pointer to datasectorbuffer
 YF351	equ	0F351H			; pointer to directorysectorbuffer
 YF353	equ	0F353H			; pointer to the diskbasic FCB's
 YF355	equ	0F355H			; DPB table for 8 drives
+RSLREG	equ	0F365H
 XF365	equ	0F365H			; routine read primary slotregister
+$DOSON	equ	0F368H
 XF368	equ	0F368H			; routine enable disksystem rom on page 1
+$DOSOF	equ	0F36BH
 XF36B	equ	0F36BH			; routine enable dos ram on page 1
 XFER	equ	0F36EH			; routine transfer to/from dos ram
+$AUXIN	equ	0F371H
 XF371	equ	0F371H			; auxiliary input routine
+$AUXOU	equ	0F374H
 XF374	equ	0F374H			; auxiliary output routine
+BLDCHK	equ	0F377H
 XF377	equ	0F377H			; routine diskbasic BLOAD
 XF37A	equ	0F37AH			; routine diskbasic BSAVE
+BSVCHK	equ	0F37AH
+XF37A	equ	0F37AH			; routine diskbasic BSAVE
+BDOS	equ	0F37DH
 XF37D	equ	0F37DH			; BDOS entry point
 
 RDPRIM	equ	0F380H
@@ -411,7 +429,7 @@ T4013:	jp	DSKCHG			; DSKCHG entrypoint
 T4016:	jp	GETDPB			; GETDPB entrypoint
 T4019:	jp	CHOICE			; CHOICE entrypoint
 T401C:	jp	DSKFMT			; DSKFMT entrypoint
-T401F:	jp	DSKSTP			; DSKSTP entrypoint
+T401F:	jp	MTOFF			; MTOFF entrypoint
 
 ; kernel entries
 
@@ -5830,9 +5848,9 @@ A6212:	inc	hl
 	push	hl
 	pop	ix
 	and	a			; entry for interface used ?
-	call	nz,RDSLT		; yep, read DSKSTP entry
-	and	a			; entry for interface used AND a valid DSKSTP entry ?
-	call	nz,CALSLT		; yep, call DSKSTP of interface
+	call	nz,RDSLT		; yep, read MTOFF entry
+	and	a			; entry for interface used AND a valid MTOFF entry ?
+	call	nz,CALSLT		; yep, call MTOFF of interface
 	pop	bc
 	pop	hl
 	djnz	A6212			; next interface

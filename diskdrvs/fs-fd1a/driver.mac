@@ -606,7 +606,7 @@ INIHRD:	LD	HL,0
 	CALL	C.777C				; initialize drive
 	LD	SP,IY
 
-DSKSTP:	CALL	C.78B4				; C6=1 (?? In Use LED off)
+MTOFF:	CALL	C.78B4				; C6=1 (?? In Use LED off)
 	LD	A,04H				; motor off, disable INTRQ/DRQ, enable FDC, drive 0
 	LD	(L7FF8),A
 	LD	(IX+6),A			; motor on status = all off
@@ -1921,8 +1921,6 @@ DC0C4:	DEFB	0
 	.DEPHASE
 
 L7F09	EQU	$-I$7F09
-
-	DEFS	08000H-$,0FFH
 
 L7FF8	EQU	07FF8H		; DOR, b0 = 0 drive 0, 1 drive 1
 				;      b1 = not used

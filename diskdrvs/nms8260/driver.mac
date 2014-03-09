@@ -68,7 +68,7 @@ J$7442:	RET
 
 J$7443:	LD	B,1
 	AND	A
-DSKSTP:	RET	
+MTOFF:	RET	
 
 ;	  Subroutine GETDPB
 ;	     Inputs  ________________________
@@ -694,7 +694,7 @@ J$7946:	RET
 
 C.7947:	CALL	C.797E			; port 07DH
 	OUT	(C),A
-	LD	D,14H
+	LD	D,20
 J$794E:	LD	B,0FFH
 J$7950:	DJNZ	J$7950
 	DEC	D
@@ -718,7 +718,7 @@ J$795B:	INC	C
 	JR	NZ,J$7959
 	DEC	E
 	JR	NZ,J$7957
-J.7977:	LD	A,41H	; "A"
+J.7977:	LD	A,41H
 	SCF	
 	RET	
 
@@ -825,7 +825,7 @@ C.79E3:	PUSH	DE
 	CALL	C.7AE0
 	JR	C,J.79FA
 	JR	J$79FC
-J.79FA:	LD	A,40H	; "@"
+J.79FA:	LD	A,40H
 J$79FC:	SCF	
 J$79FD:	RET	
 
@@ -897,7 +897,7 @@ J$7A54:	IN	A,(C)
 	DJNZ	J$7A54
 	POP	DE
 	POP	BC
-J.7A5E:	LD	A,40H	; "@"
+J.7A5E:	LD	A,40H
 	SCF	
 	RET
 	
@@ -910,7 +910,7 @@ J$7A62:	LD	D,0DH	; 13
 	CALL	C.797B			; port 07CH
 	OUT	(C),A
 	PUSH	DE
-	LD	D,0DH	; 13 
+	LD	D,0DH
 	CALL	C.7A9E
 	POP	DE
 	JR	C,J.7A5E

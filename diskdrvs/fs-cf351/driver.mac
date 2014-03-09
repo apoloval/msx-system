@@ -768,7 +768,7 @@ INIHRD:	LD	A,0D0H
 	LD	A,2				; drive 1, side 0, motor off
 	CALL	C.77DC
 
-DSKSTP:	XOR	A
+MTOFF:	XOR	A
 	LD	(D.7FBC),A			; deselect drive, side 0, motor off
 	RET	
 

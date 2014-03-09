@@ -47,11 +47,10 @@ TMPWRK		EQU	TRPTBL+72
 ;	b7	partition is bootable when set
 
 
-;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.6B03:	POP	HL
 	LD	A,(HL)
 	INC	HL
@@ -156,7 +155,6 @@ J$6C47:	PUSH	AF
 	LD	A,D
 	CP	01H
 	JR	Z,J$6C87
-;
 J$6C6C:	CALL	C.6B03
 
 	DEFB	13
@@ -596,7 +594,7 @@ DSKFMT:
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-DSKSTP:
+MTOFF:
 	RET
 
 
@@ -829,12 +827,11 @@ J.708C:	LD	A,(IY+0)
 
 C$70CB:	CALL	C.70D8			; search partinfo entry
 	JR	C,J$7070		; not found, quit
-;
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.70D0:	LD	DE,-16
 	ADD	IY,DE
 	EX	AF,AF'
@@ -935,11 +932,11 @@ J$7135:	PUSH	AF
 	CALL	C.70F5			; get partitioninfo pointer in workarea
 	EXX	
 	POP	AF
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C$7141:	BIT	4,(IX+0)
 	JR	NZ,J$712D
 J$7147:	PUSH	AF
@@ -1115,12 +1112,10 @@ J$724F:	POP	HL
 	POP	BC
 	CP	06H	; 6 
 	JR	Z,J$725D
-;
 	OR	A
 	LD	B,01H	; 1 
 	BIT	3,(IX)
 	RET	NZ
-;
 J$725D:	SET	3,(IX)
 	LD	B,0FFH
 	OR	A
@@ -1346,13 +1341,11 @@ J$739B:	BIT	2,(IX+52)
 J$73AF:	LD	L,C
 	LD	C,(IX+50)
 	CALL	C.73CF
-;
 	LD	A,H
 	INC	A
 	LD	(D.7E03),A
 	LD	C,(IX+48)
 	CALL	C.73CF
-;
 	LD	A,(D.7E06)
 	AND	0F0H
 	LD	(D.7E04),DE
@@ -1374,11 +1367,9 @@ J$73D3:	EX	DE,HL
 	LD	A,H
 	SUB	C
 	JR	C,J$73DE
-;
 	LD	H,A
 	INC	E
 J$73DE:	DJNZ	J$73D3
-;
 	RET	
 
 J$73E1:	CALL	C.7446
@@ -1414,40 +1405,30 @@ J$7411:	XOR	A
 	RET	
 
 J.7414:	JR	Z,J.745E
-;
 	LD	E,C
 	LD	C,08H	; 8 
 	RRCA	
 	JR	C,J.7460
-;
 	RRCA	
 	JR	C,J.7460
-;
 	CALL	C.749D			; request sense
-;
 	JR	C,J.745E
-;
 	AND	0FH	; 15 
 	LD	C,02H	; 2 
 	CP	02H	; 2 
 	JR	Z,J.7460
-;
 	LD	C,04H	; 4 
 	CP	03H	; 3 
 	JR	Z,J.7460
-;
 	LD	C,00H
 	CP	07H	; 7 
 	JR	Z,J.7460
-;
 	CP	06H	; 6 
 	JR	NZ,J.745E
-;
 	LD	A,E
 	LD	DE,0FFCAH
 	ADD	HL,DE
 	CALL	C.75B7
-;
 	JR	J.7460
 
 ;	  Subroutine __________________________
@@ -1594,7 +1575,6 @@ J.7528:	BIT	5,A
 	LD	A,(D.7E01)
 	LD	C,0AH	; 10 
 	JR	NZ,J.759D
-;
 	LD	C,00H
 	JR	J.759D
 
@@ -1648,23 +1628,18 @@ J$7581:	LD	A,(D.7E01)
 	LD	C,08H	; 8 
 	RRCA	
 	JR	C,J.759D
-;
 	RRCA	
 	JR	C,J.759D
-;
 	RRCA	
 	LD	C,08H	; 8 
 	RRCA	
 	RRCA	
 	JR	C,J.759D
-;
 	RRCA	
 	JR	C,J$75A3
-;
 	LD	C,04H	; 4 
 	RRCA	
 	JR	C,J.759D
-;
 	LD	C,02H	; 2 
 J.759D:	POP	AF
 J$759E:	EX	AF,AF'
@@ -1694,12 +1669,10 @@ J$75BF:	LD	A,(HL)
 	AND	07H	; 7 
 	CP	C
 	JR	NZ,J$75C9
-;
 	RES	3,(HL)
 	SET	4,(HL)
 J$75C9:	ADD	HL,DE
 	DJNZ	J$75BF
-;
 	LD	C,18H
 	RET	
 
@@ -1729,11 +1702,11 @@ C.75D7:	PUSH	AF
 	LD	(D.7E06),A		; select device
 	EX	(SP),HL
 	EX	(SP),HL
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C.75E9:	LD	BC,0
 J$75EC:	LD	A,(D.7E07)
 	AND	88H
@@ -1746,7 +1719,6 @@ J$75EC:	LD	A,(D.7E07)
 J$75FA:	LD	A,(D.7E07)
 	AND	88H
 	RET	Z
-;
 	PUSH	BC
 	LD	BC,0960H
 J$7604:	EX	(SP),HL
@@ -1755,13 +1727,11 @@ J$7604:	EX	(SP),HL
 	LD	A,B
 	OR	C
 	JR	NZ,J$7604
-;
 	POP	BC
 	DEC	BC
 	LD	A,B
 	OR	C
 	JR	NZ,J$75FA
-;
 	XOR	A
 	SCF	
 	RET	
@@ -1901,34 +1871,26 @@ J.76D0:	CALL	C.7614			; get command status
 	LD	B,A
 	OR	C
 	CALL	NZ,C.779C
-;
 	POP	BC
 	SRL	B
 	JR	Z,J$76F6
-;
 J$76EC:	PUSH	BC
 	LD	BC,512
 	CALL	C.779C
-;
 	POP	BC
 	DJNZ	J$76EC
-;
 J$76F6:	LD	A,(D.7E02)
 	AND	02H	; 2 
 	JR	Z,J$7723
-;
 	BIT	7,D
 	JR	Z,J$7718
-;
 	PUSH	IY
 	POP	BC
 	LD	HL,(D.7C00)
 J$7707:	LD	A,(D.7E07)
 	RLCA	
 	CALL	NC,C.7789
-;
 	JR	NC,J$7707
-;
 	EX	DE,HL
 	LD	(HL),E
 	INC	HL
@@ -1940,12 +1902,10 @@ J$7707:	LD	A,(D.7E07)
 J$7718:	LD	HL,D.7C00
 	LD	BC,2
 	CALL	C.77C3
-;
 	JR	J.76D0
 
 J$7723:	BIT	7,D
 	JR	Z,J$7759
-;
 	LD	A,(DE)
 	LD	(D.7C00+0),A
 	INC	DE
@@ -1957,25 +1917,20 @@ J$7723:	BIT	7,D
 J$7734:	LD	A,(D.7E07)
 	RLCA	
 	CALL	NC,C.7789
-;
 	JR	NC,J$7734
-;
 	JR	J.76D0
 
 J$773F:	LD	A,(D.7E02)
 	AND	03H	; 3 
 	CP	03H	; 3 
 	JR	NZ,J.76D0
-;
 	LD	A,(D.7E07)
 	RLCA	
 	JR	C,J.76D0
-;
 	LD	A,(D.7E02)
 	AND	03H	; 3 
 	CP	03H	; 3 
 	RET	Z
-;
 	JP	J.76D0
 
 J$7759:	EX	DE,HL
@@ -1984,7 +1939,6 @@ J$7759:	EX	DE,HL
 	PUSH	IX
 	PUSH	IY
 	CALL	XFER
-;
 	POP	IY
 	POP	IX
 	PUSH	HL
@@ -1999,9 +1953,7 @@ J$7759:	EX	DE,HL
 J$777C:	LD	A,(D.7E07)
 	RLCA	
 	CALL	NC,C.7789
-;
 	JR	NC,J$777C
-;
 	POP	DE
 	JP	J.76D0
 

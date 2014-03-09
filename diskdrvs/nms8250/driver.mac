@@ -762,11 +762,11 @@ J$7838:	CALL	C.77DE
 ?.783F:	CALL	C.7851			; reset FDC
 	JR	C.784B			; stop motor
 
-;	  Subroutine DSKSTP
+;	  Subroutine MTOFF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-?.7844:	CALL	C.5FC2			; GETWRK
+MTOFF:	CALL	C.5FC2			; GETWRK
 
 ;	  Subroutine motor off (and reset counter)
 ;	     Inputs  ________________________

@@ -581,11 +581,11 @@ INIHRD:	LD	HL,0
 	CALL	C776F			; recalibrate drive 0
 	LD	SP,IY			; restore stackpointer
 
-;	  Subroutine DSKSTP
+;	  Subroutine MTOFF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-DSKSTP:	CALL	C7885			; Motor off both drives
+MTOFF:	CALL	C7885			; Motor off both drives
 	LD	(IX+6),A		; last current motor on status both drives = OFF
 	RET	
 
@@ -1963,12 +1963,21 @@ DC0C4:	DEFB	0
 	.DEPHASE
 
 D7FF8	EQU	07FF8H		; DOR, b0 = 0 drive 0, 1 drive 1
+				;      b1 = not used
 				;      b2 = 0 reset FDC, 1 enable FDC
 				;      b3 = 0 disable INTRQ and DRQ2 pins, 1 enable INTRQ and DRQ2 pins
 				;      b4 = 1 motor select drive 0
-				;      b5 = 1 motor select drive 1 
-D7FF9	EQU	07FF9H		; TDR, b0 = TC
-				;      b4 = FORCE READY
+				;      b5 = 1 motor select drive 1
+				;      b6 = not used
+				;      b7 = not used
+D7FF9	EQU	07FF9H		; TDR, b0 = Terminate Count
+				;      b1 = enable TC
+				;      b2 = Standby Mode
+				;      b3 = enable SB
+				;      b4 = C4 output (force READY high)
+				;      b5 = enable C4
+				;      b4 = C6 output (not connected)
+				;      b5 = enable C6
 D7FFA	EQU	07FFAH		; MSR, Statusport FDC
 D7FFB	EQU	07FFBH		; DAT, Dataport FDC
 

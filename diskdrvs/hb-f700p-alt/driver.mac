@@ -95,7 +95,7 @@
 ;		PUBLIC	GETDPB
 ;		PUBLIC	CHOICE
 ;		PUBLIC	DSKFMT
-;		PUBLIC	DSKSTP
+;		PUBLIC	MTOFF
 ;		PUBLIC	OEMSTA
 
 ;		PUBLIC	MYSIZE
@@ -1721,13 +1721,13 @@ quitsta:	pop	hl
 		scf				; statement not recognized
 		ret
 
-; DSKSTP (Not the offical name)
+; MTOFF
 ;
 ; Input:	None
 ; Output:	None
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
-DSKSTP:
+MTOFF:
 		ld	a,03Fh			; motor off/not in use/drv 3 (unselect)
 		ld	(DrivePrt),a
 		ret

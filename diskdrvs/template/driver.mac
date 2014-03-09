@@ -33,7 +33,7 @@
 ; GETDPB	build Drive Parameter Block
 ; CHOICE	get format choice string
 ; DSKFMT	format disk
-; DSKSTP	stop diskmotor
+; MTOFF		stop diskmotor
 ; OEMSTA	diskdriver special call statements
 
 ; MYSIZE	size of diskdriver workarea
@@ -265,13 +265,13 @@ OEMSTA:
 
 
 
-; DSKSTP (Not the offical name)
+; MTOFF
 ;
 ; Input:	None
 ; Output:	None
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
-DSKSTP:
+MTOFF:
 		ret
 
 

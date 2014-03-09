@@ -1137,11 +1137,11 @@ INIHRD:	LD	HL,0
 	LD	SP,IY		; Restore stack
 
 
-; DSKSTP
+; MTOFF
 ;
 ; Motor off
 
-DSKSTP:	JP	L7867
+MTOFF:	JP	L7867
 
 L7716:	LD	(L7FF2),A	; reset FDC
 	LD	A,0FAH		; 11111010 (C6 output true, force READY input true, no standby, reset TC)
@@ -2507,7 +2507,7 @@ L_BOOT	EQU	$-L7F2D
 
 	IFDEF	DOS2
 
-	DEFS	07FE4H-$,0
+	DEFS	07FD0H-$,0
 
 L7FD0:	LD	(L7FF0),A
 	RET
@@ -2530,7 +2530,7 @@ L7FD4:	EX	AF,AF'
 
 	ELSE
 
-	DEFS	07FE8H-$,0
+	DEFS	07FD4H-$,0
 
 L7FD4:	JP	L7789
 
@@ -2545,18 +2545,21 @@ L7FF1	EQU	07FF1H		; ???, b4 = -DC0, b5 = -DC1, b1 = -HD1, b0 = -HD0
 ; TC8566AF FDC registers
 
 L7FF2	EQU	07FF2H		; DOR, b0 = 0 drive 0, 1 drive 1
+				;      b1 = not used
 				;      b2 = 0 reset FDC, 1 enable FDC
-				;      b3 = 0 disable DMA, 1 enable DMA
+				;      b3 = 0 disable INTRQ and DRQ2 pins, 1 enable INTRQ and DRQ2 pins
 				;      b4 = 1 motor select drive 0
 				;      b5 = 1 motor select drive 1
-L7FF3	EQU	07FF3H		; TDR, b0 = TC
-				;      b1 = enable writing to TC bit
-				;      b2 = STANDBY
-				;      b3 = enable writing to STANDBY bit
-				;      b4 = C4 = FORCE READY
-				;      b5 = enable writing to C4
-                   		;      b6 = C6 = not used
-				;      b7 = enable writing to C6
+				;      b6 = not used
+				;      b7 = not used
+L7FF3	EQU	07FF3H		; TDR, b0 = Terminate Count
+				;      b1 = enable TC
+				;      b2 = Standby Mode
+				;      b3 = enable SB
+				;      b4 = C4 output (force READY high)
+				;      b5 = enable C4
+				;      b4 = C6 output (not connected)
+				;      b5 = enable C6
 L7FF4	EQU	07FF4H		; MSR, Statusport FDC
 L7FF5	EQU	07FF5H		; DAT, Dataport FDC
 
