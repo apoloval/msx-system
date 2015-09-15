@@ -1,6 +1,6 @@
 ; SERIAL.MAC
 ;
-; MSX-SERIAL first generation
+; MSX-SERIAL first generation (as used in the Spectravideo SVI-738 serial interface)
 ;
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
@@ -28,28 +28,33 @@ LPTOUT  equ     000A5H
 BREAKX	equ	000B7H
 
 CHRGTR	equ	04666H
+M4769	equ	04769H
 FRMEVL	equ	04C64H
 FRMQNT	equ	0542FH
 GETBYT	equ	0521CH
 FRESTR	equ	067D0H
 PTRGET	equ	05EA4H
-DOCNVF  EQU     0517AH
-SNERR   EQU     04055H
-FCERR   EQU     0475AH
-USERR   EQU     0481CH
-TMERR   EQU     0406DH
-DIOERR  EQU     073B2H
-DERFAO  EQU     06E6EH
-DERFNO  EQU     06E77H
-DERIER  EQU     06E80H
-DERSOO  EQU     06E86H
-DERBFN  EQU     06E6BH
+DOCNVF  equ     0517AH
+SNERR   equ     04055H
+FCERR   equ     0475AH
+USERR   equ     0481CH
+TMERR   equ     0406DH
+DIOERR  equ     073B2H
+DERFAO  equ     06E6EH
+DERFNO  equ     06E77H
+DERIER  equ     06E80H
+DERSOO  equ     06E86H
+DERBFN  equ     06E6BH
+M631B	equ	0631BH
+M632B	equ	0632BH
+M6331	equ	06331H
 
 BUF     equ     0F55EH
+VALTYP	equ	0F663H
 DAC     equ     0F7F6H
 NULBUF  equ     0F862H
 PTRFIL  equ     0F864H
-
+FNKSTR	equ	0F87FH
 TOCNT   equ     0FB03H			; timeout value
 RSFCB   equ     0FB04H			; saved channel
 RSIQLN  equ     0FB06H			; buffersize
@@ -66,9 +71,12 @@ LSTCOM  equ     0FB1EH                  ; command byte
 LSTMOD  equ     0FB1FH                  ; mode byte
 
 HOKVLD	equ	0FB20H
+ONGSBF	equ	0FBD8H
+TRPTBL	equ	0FC4CH
 INTFLG  equ     0FC9BH
 CSRSR   equ     0FCA9H
-EXPTBL  equ     0FCC0H
+EXPTBL  equ     0FCC1H
+PROCNM	EQU	0FD89H
 H.KEYI  equ     0FD9AH
 H.NEWS  equ     0FF3EH
 EXTBIO  equ     0FFCAH
@@ -86,8 +94,28 @@ ENAINT	equ	0FFD4H
 ; BIOS table for RS232
 ;
 
-T4010:  db      010H			; +00 no TxReady INT, No Sync detect, No Timer INT, Have CD, No RI
-        db      0			; +01 msx serial version 1
+;     Device information byte indicates following options are installed or not:
+;	bits #  76543210
+;		||||||||
+;		|||||||+----- reserved
+;		|||||||
+;		||||||+------ TXREADY interrupt
+;		||||||
+;		|||||+------- sync/break character detected
+;		|||||
+;		||||+-------- timer interrupt
+;		||||
+;		|||+--------- carrier detect
+;		|||
+;		||+---------- ring indicator
+;		||
+;		|+----------- reserved
+;		|
+;		+------------ reserved
+
+
+T4010:  db      010H			; +00 MSX serial features (no TxReady INT, No Sync detect, No Timer INT, Have CD, No RI)
+        db      0			; +01 MSX serial version (version 1.0)
         db      0			; +02 reserved
         jp      A4040			; +03 INIT
         jp      A426A			; +06 OPEN
@@ -402,7 +430,7 @@ A4243:  ld      a,(hl)
 ;
 T424A:  dw      A425E			; OPEN (BASIC)
         dw      A429A			; CLOSE (BASIC)
-        dw      A4282
+        dw      A4482
         dw      A42BC
         dw      A42C8
         dw      A4313			; LOC (BASIC)
@@ -1518,9 +1546,9 @@ T49AA:  db      "Initialize statement options",13,10
         db      "<stop bits {1,2,3}>",13,10
         db      "<XON/XOFF {X,N}>",13,10
         db      "<CTS hand-shake {H,N}>",13,10
-        db      "auto LF on receive {A,N}>",13,10
-        db      "auto LF on transmit {A,N}>",13,10
-        db      'SI/SO {S,N}>"',13,10
+        db      "<auto LF on receive {A,N}>",13,10
+        db      "<auto LF on transmit {A,N}>",13,10
+        db      '<SI/SO {S,N}>"',13,10
         db      ",<receiver baud rate>",13,10
         db      ",<transmitter baud rate>",13,10
         db      ",<time out count>",13,10
@@ -1540,7 +1568,7 @@ A4B54:  call    A4523
         defb	","
 A4B58:  call    A4523
         defb	08DH			; GOSUB token
-A4B5C:  ld      ix,T4769
+A4B5C:  ld      ix,M4769
         call    A4585
         push    hl
         ld      a,e
@@ -1575,7 +1603,7 @@ A4B82:  call    A4C38			; evaluate comidentifier and check if this one
         defb	")"
 A4B94:  call    A4C25			; trap entry
         jp      c,A44A0			; all traps are used,
-        ld      ix,T632B
+        ld      ix,M632B
         jr      A4BE7
 
 ; _COMON
@@ -1591,7 +1619,7 @@ A4BA0:  call    A4C38			; evaluate comidentifier and check if this one
         defb	")"
 A4BB2:  call    A4C25			; trap entry
         jp      c,A44A0			; all traps are used,
-        ld      ix,T631B
+        ld      ix,M631B
         jr      A4BDA
 
 ; _COMSTOP
@@ -1607,7 +1635,7 @@ A4BBE:  call    A4C38			; evaluate comidentifier and check if this one
         defb	")"
 A4BD0:  call    A4C25			; trap entry
         jp      c,A44A0			; all traps are used,
-        ld      ix,T6331
+        ld      ix,M6331
 A4BDA:  push    hl
         push    af
         call    A4C12
@@ -2605,4 +2633,6 @@ A51E9:  out     (087H),a
         pop     af
         ret
 
+	defs	06000H-$,000H
+	
         end

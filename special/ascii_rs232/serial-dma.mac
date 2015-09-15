@@ -3,32 +3,17 @@
 ;      Z80DIS was written by Kenneth Gielow
 ;                            Palo Alto, CA
 	.Z80
-	ORG	4000H
-D6000	EQU	6000H	; --SLI
-D.6002	EQU	6002H	; --SL-
-D.6003	EQU	6003H	; --SLI
-D.6004	EQU	6004H	; --SLI
-D.6005	EQU	6005H	; --SLI
-D.6006	EQU	6006H	; --SL-
-D.6007	EQU	6007H	; --SL-
-D.6009	EQU	6009H	; --SLI
-I.6016	EQU	6016H	; ----I
-D.660E	EQU	660EH	; --SL-
-D.660F	EQU	660FH	; --SL-
-D.6611	EQU	6611H	; --SLI
-J.6612	EQU	6612H	; J---I
-J.6617	EQU	6617H	; J---I
-X.661C	EQU	661CH	; J-SLI
-D.6621	EQU	6621H	; ---LI
-D.6622	EQU	6622H	; ---LI
-D$6623	EQU	6623H	; ---L-
-D.6625	EQU	6625H	; --SLI
-D.6626	EQU	6626H	; --SLI
-D.6627	EQU	6627H	; --SLI
-D.6628	EQU	6628H	; --S-I
-D.6629	EQU	6629H	; --SL-
-D.662A	EQU	662AH	; --SL-
-I6800	EQU	6800H			; transmit buffer ?
+	ASEG
+	ORG	04000H
+
+RDSLT	EQU	0000CH
+WRSLT	EQU	00014H
+CALSLT  EQU     0001CH
+CHSNS   EQU     0009CH
+CHGET   EQU     0009FH
+CHPUT   EQU     000A2H
+LPTOUT  EQU     000A5H
+BREAKX	EQU	000B7H
 
 M4055	EQU	04055H			; syntax error
 M406D	EQU	0406DH			; type mismatch error
@@ -53,29 +38,6 @@ M6E77	EQU	06E77H			; file not open error
 M6E86	EQU	06E86H			; sequential I/O only error
 M73B2	EQU	073B2H			; device I/O error
 
-I7000	EQU	7000H			; receive buffer ?
-D7800	EQU	7800H	; --SL-
-D7802	EQU	7802H	; --S-I
-I7803	EQU	7803H	; ----I
-D7804	EQU	7804H	; --SL-
-D7806	EQU	7806H	; --S--
-I7808	EQU	7808H	; ----I
-D7809	EQU	7809H	; --S--
-I7FE0	EQU	7FE0H			; hardware port ? i8237 channel 0 base
-I7FE6	EQU	7FE6H			; hardware port ? i8237 channel 3 base
-D7FE8	EQU	7FE8H			; hardware port ? i8237 write command/read status
-I7FEB	EQU	7FEBH			; hardware port ? i8237 write mode
-D7FEC	EQU	7FECH			; hardware port ? i8237 clear byte pointer
-D7FED	EQU	7FEDH			; hardware port ? i8237 master clear
-D7FEF	EQU	7FEFH			; hardware port ? i8237 write all mask register bits
-D7FF8	EQU	7FF8H			; hardware port i8251 data
-D7FF9	EQU	7FF9H			; hardware port i8251 control
-D7FFA	EQU	7FFAH			; hardware port status/interrupt mask
-I7FFC	EQU	7FFCH			; hardware port i8253 channel 0
-I7FFD	EQU	7FFDH			; hardware port i8253 channel 1
-I7FFE	EQU	7FFEH			; hardware port i8253 channel 2
-D7FFF	EQU	7FFFH			; hardware port i8253 write mode
-
 VALTYP	EQU	0F663H
 DAC	EQU	0F7F6H
 NULBUF	EQU	0F862H
@@ -90,6 +52,59 @@ CSRSW	EQU	0FCA9H
 EXPTBL	EQU	0FCC1H
 PROCNM	EQU	0FD89H
 H.TIMI	EQU	0FD9FH
+H.NEWS  EQU     0FF3EH
+EXTBIO  EQU     0FFCAH
+DISINT	EQU	0FFCFH
+ENAINT	EQU	0FFD4H
+
+
+D6000	EQU	6000H
+D6002	EQU	6002H
+D6003	EQU	6003H
+D6004	EQU	6004H
+D6005	EQU	6005H
+D6006	EQU	6006H
+D6007	EQU	6007H
+D6009	EQU	6009H
+I6016	EQU	6016H
+D660E	EQU	660EH
+D660F	EQU	660FH
+D6611	EQU	6611H
+J6612	EQU	6612H
+J6617	EQU	6617H
+X661C	EQU	661CH
+D6621	EQU	6621H
+D6622	EQU	6622H
+D6623	EQU	6623H
+D6625	EQU	6625H
+D6626	EQU	6626H
+D6627	EQU	6627H
+D6628	EQU	6628H
+D6629	EQU	6629H
+D662A	EQU	662AH
+I6800	EQU	6800H			; transmit buffer ?
+I7000	EQU	7000H			; receive buffer ?
+D7800	EQU	7800H
+D7802	EQU	7802H
+I7803	EQU	7803H
+D7804	EQU	7804H
+D7806	EQU	7806H
+I7808	EQU	7808H
+D7809	EQU	7809H
+I7FE0	EQU	7FE0H			; hardware port i8237 channel 0 base
+I7FE6	EQU	7FE6H			; hardware port i8237 channel 3 base
+D7FE8	EQU	7FE8H			; hardware port i8237 write command/read status
+I7FEB	EQU	7FEBH			; hardware port i8237 write mode
+D7FEC	EQU	7FECH			; hardware port i8237 clear byte pointer
+D7FED	EQU	7FEDH			; hardware port i8237 master clear
+D7FEF	EQU	7FEFH			; hardware port i8237 write all mask register bits
+D7FF8	EQU	7FF8H			; hardware port i8251 data
+D7FF9	EQU	7FF9H			; hardware port i8251 control
+D7FFA	EQU	7FFAH			; hardware port status/interrupt mask
+I7FFC	EQU	7FFCH			; hardware port i8253 channel 0
+I7FFD	EQU	7FFDH			; hardware port i8253 channel 1
+I7FFE	EQU	7FFEH			; hardware port i8253 channel 2
+D7FFF	EQU	7FFFH			; hardware port i8253 write mode
 
 	DEFB	"AB"
 	DEFW	C40E1		; INIT
@@ -98,8 +113,28 @@ H.TIMI	EQU	0FD9FH
 	DEFW	0		; no basic program
 	DEFS	6,0
 
-	DEFB	034H		; +00 MSX serial features (RI,CD, Sync/Break)
-	DEFB	0		; +01 MSX serial version
+
+;     Device information byte indicates following options are installed or not:
+;	bits #  76543210
+;		||||||||
+;		|||||||+----- reserved
+;		|||||||
+;		||||||+------ TXREADY interrupt
+;		||||||
+;		|||||+------- sync/break character detected
+;		|||||
+;		||||+-------- timer interrupt
+;		||||
+;		|||+--------- carrier detect
+;		|||
+;		||+---------- ring indicator
+;		||
+;		|+----------- reserved
+;		|
+;		+------------ reserved
+
+	DEFB	034H		; +00 MSX serial features (no TxReady INT, Sync detect, No Timer INT, Have CD, Have RI)
+	DEFB	0		; +01 MSX serial version (version 1.0)
 	DEFB	0		; +02 reserved
 	JP	J4046		; +03 RS232.INIT
 ?4016:	JP	C42CB		; +06 RS232.OPEN
@@ -254,15 +289,15 @@ C40E1:	LD	HL,D6000
 	LD	IY,I41AE
 	CALL	C4C51                   ; initialize RS232 port
 	XOR	A
-	LD	(X.661C),A
+	LD	(X661C),A		; no H.TIMI handler already installed
 	CALL	C407B
 	CALL	C419C
 	DI
-	LD	DE,J.6617
+	LD	DE,J6617
 	LD	HL,H.NEWS
 	LD	BC,5
 	LDIR
-	CALL	C4DA5
+	CALL	C4DA5			; get current slotid page 1
 	LD	(H.NEWS+1),A
 	LD	A,0F7H
 	LD	(H.NEWS+0),A
@@ -283,7 +318,7 @@ J4138:	LD	(HL),0C9H
 J413D:	XOR	A
 	LD	DE,00801H
 	CALL	EXTBIO                  ; count RS232's sofar
-	LD	HL,D.6621
+	LD	HL,D6621
 	LD	(HL),A                  ; this interface devicenumber
 	XOR	A
 	LD	DE,00001H
@@ -294,12 +329,12 @@ J413D:	XOR	A
 	ADD	A,A
 	OR	(HL)
 	LD	(HL),A
-	LD	DE,J.6612
+	LD	DE,J6612
 	DI
 	LD	HL,EXTBIO
 	LD	BC,5
 	LDIR
-	CALL	C4DA5
+	CALL	C4DA5			; get current slotid page 1
 	LD	(EXTBIO+1),A
 	LD	A,0F7H
 	LD	(EXTBIO+0),A
@@ -335,14 +370,14 @@ J418C:	LD	D,00H
 ;	     Outputs ________________________
 
 C419C:	XOR	A
-	LD	(D.6626),A
+	LD	(D6626),A
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C$41A0:	PUSH	HL
-	LD	HL,D.6622
+	LD	HL,D6622
 	XOR	A
 	LD	(HL),A
 	INC	HL
@@ -450,7 +485,7 @@ I4218:	DEFB    "INI",0
         DEFW    C4719
         DEFB    "TERM",0
         DEFW    C475E
-        DEFB    "",0
+        DEFB    0
         DEFW    C4AAC
         DEFB    "ON",0
         DEFW    C4B04
@@ -493,7 +528,7 @@ J4279:	SUB	"0"
 	JR	NC,J4292
 	PUSH	BC
 	PUSH	AF
-	LD	A,(D.6621)
+	LD	A,(D6621)
 	AND	0FH	; 15 
 	LD	B,A
 	POP	AF
@@ -530,7 +565,7 @@ I42A5:	DEFW    C42B9			; OPEN (BASIC)
         DEFW    C4385			; LOC (BASIC)
         DEFW    C43B8			; LOF (BASIC)
         DEFW    C43D2			; EOF (BASIC)
-        DEFW    C451E			; FPOS (BASIC)
+        DEFW    J451E			; FPOS (BASIC)
         DEFW    C43FB			; BACKUP (BASIC)
 
 ;	  Subroutine OPEN (BASIC)
@@ -551,12 +586,12 @@ J42C4:	DEC	A
 ;	     Outputs ________________________
 
 C42CB:	OR	A
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	3,A
 	LD	A,02H	; 2 
 	SCF
 	RET	NZ
-	CALL	C500E
+	CALL	C500E			; install H.TIMI handler if not already done
 	CALL	C407B
 	LD	A,E
 	CP	08H	; 8 
@@ -566,9 +601,9 @@ C42CB:	OR	A
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	LD	(D.660F),HL
+	LD	(D660F),HL
 	LD	A,C
-	LD	(D.6611),A
+	LD	(D6611),A
 	LD	(HL),E
 	XOR	A
 	INC	HL
@@ -581,7 +616,7 @@ C42CB:	OR	A
 	INC	HL
 	LD	(HL),A
 	CALL	C419C
-	LD	HL,D.6626
+	LD	HL,D6626
 	SET	3,(HL)
 	DI
 	CALL	C4DCC
@@ -598,7 +633,7 @@ C42CB:	OR	A
 ;	     Outputs ________________________
 
 C430C:	PUSH	HL
-	LD	HL,(D.660F)
+	LD	HL,(D660F)
 	LD	A,(HL)
 	CP	02H			; ouput mode ?
 	SCF
@@ -607,11 +642,11 @@ C430C:	PUSH	HL
 	LD	A,1AH
 	CALL	C50A6			; RS232.SNDCHR
 J431C:	DI
-	CALL	C52D9
+	CALL	C52D9			; wait for transmitter ready
 	CALL	C5283
 	CALL	C4DC4
 	EI
-	LD	HL,D.6626
+	LD	HL,D6626
 	RES	3,(HL)
 	POP	HL
 	RET
@@ -646,7 +681,7 @@ C4341:	PUSH	HL
 	LD	(HL),00H
 	DEC	HL
 	LD	A,(HL)
-	LD	(D.6625),A
+	LD	(D6625),A
 	LD	(HL),00H
 	INC	HL
 	AND	A
@@ -662,7 +697,7 @@ C4341:	PUSH	HL
 	JR	C,J437B
 	JR	Z,J437B
 J4367:	PUSH	HL
-	LD	HL,(D.660F)
+	LD	HL,(D660F)
 	LD	A,(HL)
 	POP	HL
 	CP	04H	; 4 
@@ -701,7 +736,7 @@ J4389:	LD	(DAC+2),HL
 
 C4393:	PUSH	AF
 	EI
-	LD	HL,(D.660F)
+	LD	HL,(D660F)
 	LD	A,(HL)
 	CP	01H	; 1 
 	JR	NZ,J43B0
@@ -738,7 +773,7 @@ C43BE:	PUSH	AF
 	CALL	C4393			; RS232.LOC
 	PUSH	DE
 	EX	DE,HL
-	LD	A,(D.6611)
+	LD	A,(D6611)
 	LD	L,A
 	LD	H,00H
 	AND	A
@@ -792,7 +827,7 @@ C43FB:	PUSH	HL
 	LD	(HL),C
 	PUSH	AF
 	DEC	HL
-	LD	A,(D.6625)
+	LD	A,(D6625)
 	AND	38H
 	LD	(HL),A
 	POP	AF
@@ -814,7 +849,7 @@ C440B:	PUSH	HL
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4413:	LD	HL,(D.660F)
+C4413:	LD	HL,(D660F)
 	INC	HL
 	INC	HL
 	INC	HL
@@ -846,14 +881,14 @@ J4430:	POP	HL
 ;	     Outputs ________________________
 
 C$4433:	PUSH	DE
-	LD	A,(D$6623)
-	LD	HL,D.6611
+	LD	A,(D6623)
+	LD	HL,D6611
 	ADD	A,B
 	JR	C,J4440
 	CP	(HL)
 	JR	C,J4441
 J4440:	SUB	(HL)
-J4441:	LD	HL,(D.660F)
+J4441:	LD	HL,(D660F)
 	LD	E,09H	; 9 
 	LD	D,00H
 	ADD	HL,DE
@@ -912,11 +947,11 @@ J44A1:	JP	J44DF
 J44A4:	LD	A,E
 	AND	A
 	JR	NZ,J44C2
-	CALL	C4DA5
+	CALL	C4DA5			; get current slotid page 1
 	CALL	C4531
-	LD	A,40H	; "@"
+	LD	A,40H
 	CALL	C4531
-	LD	A,40H	; "@"
+	LD	A,40H
 	CALL	C4531
 	LD	A,00H
 	CALL	C4531
@@ -939,13 +974,13 @@ J44DC:	POP	AF
 	INC	A
 	PUSH	AF
 J44DF:	POP	AF
-	JP	J.6612
+	JP	J6612
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$44E3:	CALL	C4DA5
+C$44E3:	CALL	C4DA5			; get current slotid page 1
 	CALL	C4531
 	LD	A,10H	; 16 
 	CALL	C4531
@@ -1027,7 +1062,7 @@ C455A:	PUSH	IX
 
 C4566:	PUSH	BC
 	LD	B,A
-	LD	A,(D.6003)
+	LD	A,(D6003)
 	AND	A
 	JR	Z,J458C
 	LD	A,B
@@ -1056,7 +1091,7 @@ J458C:	LD	A,B
 C458E:	PUSH	AF
 	CALL	CHPUT
 	EI
-	LD	A,(D.6005)
+	LD	A,(D6005)
 	AND	A
 	JR	Z,J459F
 	POP	AF
@@ -1180,9 +1215,9 @@ C4614:	CALL	C4B9C
 	DI
 	CALL	C4DC4
 	EI
-	LD	A,(D.6629)		; last i8251 command
-	LD	(D.6002),A
-	LD	IY,D.6009
+	LD	A,(D6629)		; last i8251 command
+	LD	(D6002),A
+	LD	IY,D6009
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
@@ -1269,7 +1304,7 @@ J46C0:	EI
 	JP	C,J451E
 	CALL	C4B96
 	CALL	NZ,C4DCC
-	LD	A,(D.6002)
+	LD	A,(D6002)
 	BIT	5,A
 	CALL	NZ,C5271
 	AND	A
@@ -1366,16 +1401,16 @@ C475E:	CALL	C4B9C
 	JR	Z,J4770
 	CALL	C45A1
 	DEFB	")"
-J4770:	LD	(D.6007),HL
+J4770:	LD	(D6007),HL
 	CALL	C4B96
 	JP	NZ,J4506
 	XOR	A
 	LD	(D6000),A
-	LD	(D.6005),A
-	LD	(D.6003),A
-	LD	(D.6004),A
+	LD	(D6005),A
+	LD	(D6003),A
+	LD	(D6004),A
 	LD	HL,FNKSTR+5*16
-	LD	DE,I.6016
+	LD	DE,I6016
 	LD	BC,00030H
 	PUSH	BC
 	PUSH	HL
@@ -1402,9 +1437,9 @@ J4797:	LD	(HL),00H
 	LDIR
 	POP	BC
 	XOR	A
-	LD	(D.6009),A
+	LD	(D6009),A
 	LD	A,(CSRSW)
-	LD	(D.6006),A
+	LD	(D6006),A
 	CALL	C486D
 	LD	HL,(NULBUF)
 	LD	E,04H	; 4 
@@ -1431,7 +1466,7 @@ J47DC:	CALL	C$48AA
 	JP	Z,J482B
 	CALL	C$4860
 	LD	C,A
-	LD	A,(D.6004)
+	LD	A,(D6004)
 	AND	A
 	JP	Z,J47CC
 I4800	EQU	$-1
@@ -1439,12 +1474,12 @@ I4800	EQU	$-1
 	CALL	C4566
 	JP	J47CC
 J4808:	CALL	C430C			; RS232.CLOSE
-	LD	HL,I.6016
+	LD	HL,I6016
 	LD	DE,FNKSTR+5*16
 	LD	BC,00030H
 	LDIR
-	LD	HL,(D.6007)
-	LD	A,(D.6006)
+	LD	HL,(D6007)
+	LD	A,(D6006)
 	AND	A
 	PUSH	AF
 	CALL	Z,C488A
@@ -1462,11 +1497,11 @@ J482B:	CALL	CHGET
 	JR	Z,J4843
 	DEC	A
 	JR	NZ,J4849
-	LD	HL,D.6005
+	LD	HL,D6005
 	JR	J4846
-J483E:	LD	HL,D.6003
+J483E:	LD	HL,D6003
 	JR	J4846
-J4843:	LD	HL,D.6004
+J4843:	LD	HL,D6004
 J4846:	LD	A,(HL)
 	CPL
 	LD	(HL),A
@@ -1517,11 +1552,11 @@ C$4865:	LD	DE,100
 C486D:	LD	A,(ESCCNT)
 	OR	A
 	RET	NZ
-	LD	A,(D.6009)
+	LD	A,(D6009)
 	OR	A
 	RET	NZ
 	CPL
-	LD	(D.6009),A
+	LD	(D6009),A
 	LD	A,1BH
 	CALL	CHPUT
 	LD	A,79H	; "y"
@@ -1536,11 +1571,11 @@ J4887:	JP	CHPUT
 C488A:	LD	A,(ESCCNT)
 	OR	A
 	RET	NZ
-	LD	A,(D.6009)
+	LD	A,(D6009)
 	OR	A
 	RET	Z
 	CPL
-	LD	(D.6009),A
+	LD	(D6009),A
 	LD	A,1BH
 	CALL	CHPUT
 	LD	A,78H	; "x"
@@ -1581,9 +1616,9 @@ C48B5:	CALL	C4B9C
 	CALL	C45A1
 	DEFB	")"
 J48C7:	XOR	A
-	LD	(D.6003),A
-	LD	(D.6005),A
-	LD	(D.6004),A
+	LD	(D6003),A
+	LD	(D6005),A
+	LD	(D6004),A
 	PUSH	HL
 	CALL	C$48A1
 	LD	HL,I490E
@@ -1629,9 +1664,9 @@ I490E:	DEFB    "Initialize statement options",13,10
         DEFB    "<stop bits {1,2,3}>",13,10
         DEFB    "<XON/XOFF {X,N}>",13,10
         DEFB    "<CTS hand-shake {H,N}>",13,10
-        DEFB    "auto LF on receive {A,N}>",13,10
-        DEFB    "auto LF on transmit {A,N}>",13,10
-        DEFB    'SI/SO {S,N}>"',13,10
+        DEFB    "<auto LF on receive {A,N}>",13,10
+        DEFB    "<auto LF on transmit {A,N}>",13,10
+        DEFB    '<SI/SO {S,N}>"',13,10
         DEFB    ",<receiver baud rate>",13,10
         DEFB    ",<transmitter baud rate>",13,10
         DEFB    ",<time out count>",13,10
@@ -1751,7 +1786,7 @@ I4B55:	EI
 	PUSH	HL
 	CALL	NZ,C4B61		; yep,
 	POP	HL
-	JP	J.6617			; H.NEWS chain
+	JP	J6617			; H.NEWS chain
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1793,7 +1828,7 @@ C4B76:	CALL	C4B89
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4B89:	LD	A,(D.6621)
+C4B89:	LD	A,(D6621)
 	AND	0F0H
 	RRCA
 	RRCA
@@ -1807,7 +1842,7 @@ C4B89:	LD	A,(D.6621)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4B96:	LD	A,(D.6626)
+C4B96:	LD	A,(D6626)
 	BIT	3,A
 	RET
 
@@ -1863,7 +1898,7 @@ J4BDA:	DEC	HL
 	DEC	B
 	DEC	B
 J4BE8:	LD	E,A
-	LD	A,(D.6621)
+	LD	A,(D6621)
 	AND	0FH	; 15 
 	PUSH	HL
 	EXX
@@ -2028,10 +2063,10 @@ J4CD6:	LD	A,(IY+7)
 J4CE7:	CP	"N"
 	JP	NZ,J4C72
 J4CEC:	LD	A,C
-	LD	(D.6627),A
+	LD	(D6627),A
 	LD	A,02H	; 2 
 	OR	B
-	LD	(D.662A),A
+	LD	(D662A),A
 	CALL	C5189			; initalize i8251
 	LD	E,(IY+8)
 	LD	D,(IY+9)		; receive baudrate
@@ -2046,7 +2081,7 @@ J4CEC:	LD	A,C
 	LD	C,1			; channel 1
 	CALL	C5357			; set baudrate channel
 	LD	A,(IY+12)
-	LD	(D.660E),A
+	LD	(D660E),A
 	CALL	C529C			; enable DTR
 	OR	A
 	RET
@@ -2064,7 +2099,7 @@ C$4D26:	PUSH	AF
 J4D2F:	SRL	C
 	DJNZ	J4D2F
 J4D33:	LD	A,C
-	LD	(D.6628),A
+	LD	(D6628),A
 	POP	BC
 	POP	AF
 	RET
@@ -2109,50 +2144,23 @@ J4D67:	SCF
 J4D68:	CCF
 	POP	HL
 	RET
-I4D6B:	LD	(D.0000),A
-	ADD	HL,BC
-	LD	C,E
-	DEFB	0,0
-	LD	B,6EH	; "n"
-	NOP
-	RLA
-	INC	B
-	INC	L
-	LD	BC,I$0180
-	LD	E,B
-	LD	(BC),A
-	RET	NZ
-	NOP
-	OR	B
-	INC	B
-	LD	H,B
-	NOP
-	EX	AF,AF'
-	RLCA
-	LD	B,B
-	NOP
-	RET	NC
-	RLCA
-	LD	A,(D6000)
-	ADD	HL,BC
-	JR	NC,J4D8F
-J4D8F:	DJNZ	J4D9F
-	JR	NZ,J4D93
-J4D93:	RET	NZ
-	LD	(DE),A
-	JR	J4D97
-J4D97:	JR	NZ,J4DB5
-	DJNZ	J4D9B
-J4D9B:	ADD	A,B
-	DEC	H
-	INC	C
-	DEFB	0
-J4D9F:	DEFB	0
-	LD	C,E
-	LD	B,00H
-	DEFB	0,0
+I4D6B:  DEFW       50,00900h
+        DEFW       75,00600h
+        DEFW      110,00417h
+        DEFW      300,00180h
+        DEFW      600,000C0h
+        DEFW     1200,00060h
+        DEFW     1800,00040h
+        DEFW     2000,0003Ah
+        DEFW     2400,00030h
+        DEFW     3600,00020h
+        DEFW     4800,00018h
+        DEFW     7200,00010h
+        DEFW     9600,0000Ch
+        DEFW    19200,00006h
+        DEFW    0
 
-;	  Subroutine __________________________
+;	  Subroutine get current slotid page 1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -2206,7 +2214,7 @@ C4DCC:	PUSH	HL
 ;	     Outputs ________________________
 
 I4DD4:	CALL	C$4F2B
-	JP	X.661C			; H.TIMI chain
+	JP	X661C			; H.TIMI chain
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2226,7 +2234,7 @@ J4DE6:	ADD	A,B
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4DE9:	LD	A,(D.6622)
+C4DE9:	LD	A,(D6622)
 	AND	A
 	RET
 
@@ -2237,7 +2245,7 @@ C4DE9:	LD	A,(D.6622)
 C4DEE:	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	HL,D.6622
+	LD	HL,D6622
 J4DF4:	EI
 	CALL	C455A
 	JR	C,J4E39
@@ -2267,7 +2275,7 @@ J4E20:	DI
 	LD	B,80H
 	INC	HL
 	LD	A,(HL)
-	LD	(D.6625),A
+	LD	(D6625),A
 	AND	A
 	JR	Z,J4E31
 	INC	B
@@ -2447,7 +2455,7 @@ J4F27:	POP	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$4F2B:	LD	HL,D.6626
+C$4F2B:	LD	HL,D6626
 	BIT	3,(HL)
 	RET	Z
 	CALL	C$4EA2
@@ -2471,7 +2479,7 @@ J4F51:	POP	DE
 	SBC	HL,DE
 	CALL	C,C5071
 J4F5A:	CALL	C$4EDD
-	LD	HL,D.6626
+	LD	HL,D6626
 	CP	11H			; XON ?
 	JR	NZ,J4F68
 	RES	2,(HL)
@@ -2483,8 +2491,8 @@ J4F6E:	LD	HL,(D7804)
 	LD	A,H
 	OR	L
 	RET	Z
-	LD	HL,D.6622
-	LD	A,(D.6611)
+	LD	HL,D6622
+	LD	A,(D6611)
 	SUB	(HL)
 	RET	Z
 	CALL	C$4F81
@@ -2498,16 +2506,16 @@ C$4F81:	CALL	C$4E6A
 	AND	38H	; "8"
 	LD	B,A
 	CALL	C$4E41
-	LD	HL,D.6628
+	LD	HL,D6628
 	AND	(HL)
 	LD	C,A
 	LD	A,B
 	AND	A
 	JR	NZ,J4FA6
-	LD	A,(D.6627)
+	LD	A,(D6627)
 	BIT	0,A			; XON/XOFF protcol enabled ?
 	JR	Z,J4FB4			; nope,
-	LD	HL,D.6626
+	LD	HL,D6626
 	LD	A,C
 	CP	11H			; XON ?
 	RET	Z
@@ -2519,13 +2527,13 @@ J4FA6:	AND	20H	; " "
 	LD	A,C
 	AND	A
 	JR	NZ,J4FCC
-	LD	HL,D.6626
+	LD	HL,D6626
 	SET	4,(HL)
 	RET
-J4FB4:	LD	A,(D.6627)
+J4FB4:	LD	A,(D6627)
 	BIT	4,A			; SI/SO control ?
 	JR	Z,J4FCC			; nope,
-	LD	HL,D.6626
+	LD	HL,D6626
 	LD	A,C
 	SUB	0FH
 	JR	NZ,J4FC6
@@ -2535,19 +2543,19 @@ J4FC6:	INC	A
 	JR	NZ,J4FCC
 	SET	7,(HL)
 	RET
-J4FCC:	LD	HL,D.6622
+J4FCC:	LD	HL,D6622
 	INC	(HL)
 	INC	HL
 	PUSH	BC
 	CALL	C503C
 	POP	BC
-	LD	A,(D.6627)
+	LD	A,(D6627)
 	BIT	4,A			; SI/SO control ?
 	LD	A,C
 	JR	Z,J4FEC			; nope,
 	CP	20H
 	JR	C,J4FEC
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	7,A
 	LD	A,C
 	JR	Z,J4FEC
@@ -2566,7 +2574,7 @@ J4FF9:	POP	HL
 	DEC	HL
 	AND	A
 	RET	NZ
-	LD	A,(D.6627)
+	LD	A,(D6627)
 	BIT	3,A			; auto LF receive ?
 	RET	Z			; nope,
 	LD	A,(HL)
@@ -2575,22 +2583,22 @@ J4FF9:	POP	HL
 	LD	C,0AH
 	JR	J4FCC
 
-;	  Subroutine __________________________
+;	  Subroutine install H.TIMI handler if not already done
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C500E:	DI
-	LD	A,(X.661C)
-	OR	A
-	RET	NZ
+	LD	A,(X661C)
+	OR	A			; H.TIMI handler already installed ?
+	RET	NZ			; yep, quit
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
-	LD	DE,X.661C
+	LD	DE,X661C
 	LD	HL,H.TIMI
 	LD	BC,5
 	LDIR
-	CALL	C4DA5
+	CALL	C4DA5			; get current slotid page 1
 	LD	(H.TIMI+1),A
 	LD	A,0F7H
 	LD	(H.TIMI+0),A
@@ -2612,14 +2620,14 @@ C503C:	INC	HL
 	LD	C,A
 	INC	A
 	PUSH	HL
-	LD	HL,D.6611
+	LD	HL,D6611
 	CP	(HL)
 	POP	HL
 	JR	C,J5049
 	XOR	A
 J5049:	LD	(HL),A
 	EX	DE,HL
-	LD	HL,(D.660F)
+	LD	HL,(D660F)
 	LD	B,00H
 	ADD	HL,BC
 	ADD	HL,BC
@@ -2632,7 +2640,7 @@ J5049:	LD	(HL),A
 ;	     Outputs ________________________
 
 C5057:	DI
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	1,A
 	JR	NZ,J5062
 	XOR	A
@@ -2643,7 +2651,7 @@ J5062:	LD	C,11H	; 17
 	RET	C
 	RET	Z
 	PUSH	HL
-	LD	HL,D.6626
+	LD	HL,D6626
 	RES	1,(HL)
 	POP	HL
 	RET
@@ -2655,14 +2663,14 @@ J5062:	LD	C,11H	; 17
 C5071:	DI
 	XOR	A
 	INC	A
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	1,A
 	RET	NZ
 	LD	C,13H	; 19 
 	CALL	C508D
-	CALL	C52D9
+	CALL	C52D9			; wait for transmitter ready
 	PUSH	HL
-	LD	HL,D.6626
+	LD	HL,D6626
 	SET	1,(HL)
 	POP	HL
 	CALL	C5279
@@ -2672,21 +2680,21 @@ C5071:	DI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C508D:	LD	A,(D.6627)
+C508D:	LD	A,(D6627)
 	BIT	0,A			; XON/XOFF protocol enabled ?
 	JR	NZ,J5097		; yep,
 	XOR	A
 	INC	A
 	RET
 
-J5097:	CALL	C52D9
+J5097:	CALL	C52D9			; wait for transmitter ready
 	PUSH	DE
-	CALL	C52E9
+	CALL	C52E9			; wait for CTS (if RTS/CTS enabled)
 	POP	DE
 	RET	C
 	RET	Z
 	LD	A,C
-	LD	(D7FF8),A
+	LD	(D7FF8),A		; transmit data
 	RET
 
 ;	  Subroutine RS232.SNDCHR
@@ -2707,34 +2715,34 @@ C50A6:	PUSH	BC
 C50AE:	EI
 	PUSH	BC
 	LD	C,A
-	LD	A,(D.6627)
+	LD	A,(D6627)
 	BIT	4,A
 	JR	Z,J50F0
 	LD	A,C
-	CP	20H	; " "
+	CP	20H
 	JR	C,J50F0
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	0,A
 	JR	NZ,J50DA
 	BIT	7,C
 	JR	Z,J50F0
-	LD	A,0EH	; 14 
+	LD	A,0EH
 	CALL	C50F2
 	JR	C,J513E
 	JR	Z,J513E
 	PUSH	HL
-	LD	HL,D.6626
+	LD	HL,D6626
 	SET	0,(HL)
 	POP	HL
 	JR	J50EE
 J50DA:	BIT	7,C
 	JR	NZ,J50EE
-	LD	A,0FH	; 15 
+	LD	A,0FH
 	CALL	C50F2
 	JR	C,J513E
 	JR	Z,J513E
 	PUSH	HL
-	LD	HL,D.6626
+	LD	HL,D6626
 	RES	0,(HL)
 	POP	HL
 J50EE:	RES	7,C
@@ -2746,18 +2754,18 @@ J50F0:	LD	A,C
 ;	     Outputs ________________________
 
 C50F2:	PUSH	HL
-	LD	HL,D.6627
+	LD	HL,D6627
 	BIT	2,(HL)			; auto LF send ?
 	POP	HL
 	JR	Z,J5111			; nope,
 	CP	0AH
 	JR	NZ,J5111
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	5,A
 	LD	A,0AH	; 10 
 	JR	Z,J5111
 	PUSH	HL
-	LD	HL,D.6626
+	LD	HL,D6626
 	RES	5,(HL)
 	POP	HL
 	AND	A
@@ -2769,16 +2777,16 @@ J5111:	PUSH	BC
 	POP	DE
 	JR	C,J513E
 	JR	Z,J513E
-	CALL	C52D9
+	CALL	C52D9			; wait for transmitter ready
 	JR	C,J513E
-	CALL	C52E9
+	CALL	C52E9			; wait for CTS (if RTS/CTS enabled)
 	JR	C,J513E
 	JR	Z,J513E
 	LD	A,C
-	LD	(D7FF8),A
+	LD	(D7FF8),A		; transmit data
 	EI
 	PUSH	HL
-	LD	HL,D.6626
+	LD	HL,D6626
 	CP	0DH	; 13 
 	JR	NZ,J5139
 	SET	5,(HL)
@@ -2796,10 +2804,10 @@ J513E:	CALL	C5177
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C5144:	LD	A,(D.6627)
+C5144:	LD	A,(D6627)
 	BIT	0,A			; XON/XOFF protocol enabled ?
 	JR	Z,J5174			; nope,
-	LD	A,(D.660E)
+	LD	A,(D660E)
 	LD	D,A
 J514F:	LD	E,100
 J5151:	CALL	C5343			; setup channel 2 i8253 for 10 ms
@@ -2807,10 +2815,10 @@ J5154:	EI
 	CALL	C455A
 	DI
 	RET	C
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	2,A
 	JR	Z,J5174
-	LD	A,(D.660E)
+	LD	A,(D660E)
 	AND	A
 	JR	Z,J5154
 	CALL	C5351			; channel 2 i8253 finished ?
@@ -2830,7 +2838,7 @@ J5174:	XOR	A
 ;	     Outputs ________________________
 
 C5177:	PUSH	HL
-	LD	HL,D.6625
+	LD	HL,D6625
 	LD	(HL),00H
 	JR	C,J5185
 	JR	NZ,J5187
@@ -2910,7 +2918,7 @@ J51F9:	BIT	6,(HL)			; channel 2 i8253 finished ?
 	POP	HL
 	POP	DE
 	POP	AF
-	LD	A,(D.662A)
+	LD	A,(D662A)
 	LD	(D7FF9),A
 	PUSH	AF
 	PUSH	DE
@@ -2927,12 +2935,12 @@ J5219:	BIT	6,(HL)			; channel 2 i8253 finished ?
 	POP	HL
 	POP	DE
 	POP	AF
-	LD	A,(D7FF8)
-	CALL	C525C
-	LD	A,07H	; 7 
+	LD	A,(D7FF8)		; read receiver (empty receiver ?)
+	CALL	C525C			; read status i8251 and clear error bits
+	LD	A,07H			; no HUNT mode, RTS clear, ERROR RESET clear, SEND BREAK clear, RECEIVE ENABLED, DTR set, TRANSMIT ENABLED
 	CALL	C531B			; write i8251 command (with error clear)
-	LD	A,(D7FF8)
-	JP	C525C
+	LD	A,(D7FF8)		; read receiver (empty receiver ?)
+	JP	C525C			; read status i8251 and clear error bits
 
 ;	  Subroutine RS232.SNDBRK
 ;	     Inputs  ________________________
@@ -2940,12 +2948,12 @@ J5219:	BIT	6,(HL)			; channel 2 i8253 finished ?
 
 C5231:	PUSH	BC
 	EI
-	LD	A,(D.6629)		; last i8251 command
+	LD	A,(D6629)		; last i8251 command
 	OR	08H			; send break character flag set
 	LD	B,A
 J5239:	CALL	C455A
 	JR	C,J524E
-	CALL	C52D9
+	CALL	C52D9			; wait for transmitter ready
 	XOR	A
 	LD	(D7FF8),A
 	LD	A,B
@@ -2955,7 +2963,7 @@ J5239:	CALL	C455A
 	OR	D
 	JR	NZ,J5239
 J524E:	PUSH	AF
-	CALL	C52D9
+	CALL	C52D9			; wait for transmitter ready
 	LD	A,B
 	AND	0F7H
 	CALL	C531B			; write i8251 command (with error clear)
@@ -2964,19 +2972,19 @@ J524E:	PUSH	AF
 	POP	BC
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine read status i8251 and clear error bits
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C525C:	LD	A,(D7FF9)		; read i8251 status
-	AND	38H
+	AND	38H			; only FE,OE,PE (error) bits
 	PUSH	AF
-	LD	A,(D.6629)		; last i8251 command
+	LD	A,(D6629)		; last i8251 command
 	PUSH	AF
 	OR	10H			; error reset flag set
 	CALL	C531B			; write i8251 command (with error clear)
 	POP	AF
-	LD	(D.6629),A
+	LD	(D6629),A
 	POP	AF
 	RET
 
@@ -2985,7 +2993,7 @@ C525C:	LD	A,(D7FF9)		; read i8251 status
 ;	     Outputs ________________________
 
 C5271:	PUSH	AF
-	LD	A,(D.6629)		; last i8251 command
+	LD	A,(D6629)		; last i8251 command
 	SET	5,A			; RTS set
 	JR	J5289
 
@@ -2994,7 +3002,7 @@ C5271:	PUSH	AF
 ;	     Outputs ________________________
 
 C5279:	PUSH	AF
-	LD	A,(D.6627)
+	LD	A,(D6627)
 	BIT	1,A			; RTS/CTS handshake ?
 	JR	NZ,J5284		; yep,
 	POP	AF
@@ -3005,14 +3013,14 @@ C5279:	PUSH	AF
 ;	     Outputs ________________________
 
 C5283:	PUSH	AF
-J5284:	LD	A,(D.6629)		; last i8251 command
+J5284:	LD	A,(D6629)		; last i8251 command
 	RES	5,A			; RTS reset
 J5289:	CALL	C531B			; write i8251 command (with error clear)
 	POP	AF
 	RET
 
 ?.528E:	PUSH	AF
-	LD	A,(D.6629)		; last i8251 command
+	LD	A,(D6629)		; last i8251 command
 	SET	7,A			; enter hunt mode set
 	LD	(D7FF9),A
 	POP	AF
@@ -3031,13 +3039,13 @@ C5299:	AND	A
 
 C529C:	DI
 	PUSH	AF
-	LD	A,(D.6629)		; last i8251 command
+	LD	A,(D6629)		; last i8251 command
 	OR	02H			; DTR set
 	JR	J52AC
 
 J52A5:	DI
 	PUSH	AF
-	LD	A,(D.6629)		; last i8251 command
+	LD	A,(D6629)		; last i8251 command
 	AND	0FDH			; DTR reset
 J52AC:	CALL	C531B			; write i8251 command (with error clear)
 	POP	AF
@@ -3053,46 +3061,47 @@ C52B1:	PUSH	AF
 	XOR	L
 	AND	L			; clear reserved bits
 	LD	L,A
-	LD	A,(D7FF9)
-	AND	80H
+	LD	A,(D7FF9)		; read i8251 status
+	AND	80H			; only DSR bit
 	JR	Z,J52C3
 	SET	3,L
 J52C3:	DI
-	LD	A,(D.6626)
+	LD	A,(D6626)
 	BIT	4,A
 	JR	Z,J52D2
 	SET	2,L
 	RES	4,A
-	LD	(D.6626),A
+	LD	(D6626),A
 J52D2:	EI
-	LD	A,(D.6625)
+	LD	A,(D6625)
 	LD	H,A
 	POP	AF
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine wait for transmitter ready
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C52D9:	PUSH	AF
 J52DA:	EI
-	DEFB	0,0
+	NOP
+	NOP
 	DI
-	LD	A,(D7FF9)
-	AND	01H	; 1 
-	CP	01H	; 1 
-	JR	NZ,J52DA
+	LD	A,(D7FF9)		; read i8251 status
+	AND	01H			; only TxRDY bit
+	CP	01H			; transmitter ready ?
+	JR	NZ,J52DA		; nope, wait
 	POP	AF
 	RET
 
-;	  Subroutine __________________________
+;	  Subroutine wait for CTS (if RTS/CTS enabled)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C52E9:	LD	A,(D.6627)
+C52E9:	LD	A,(D6627)
 	BIT	1,A			; RTS/CTS handshake ?
 	JR	Z,J5318			; nope,
-	LD	A,(D.660E)
+	LD	A,(D660E)
 	LD	D,A
 J52F4:	LD	E,100
 J52F6:	CALL	C5343			; setup channel 2 i8253 for 10 ms
@@ -3102,7 +3111,7 @@ J52F9:	CALL	C455A
 	LD	A,(D7FFA)
 	BIT	7,A			; CTS set ?
 	JR	Z,J5318			; yep,
-	LD	A,(D.660E)
+	LD	A,(D660E)
 	AND	A
 	JR	Z,J52F9
 	CALL	C5351			; channel 2 i8253 finished ?
@@ -3122,7 +3131,7 @@ J5318:	XOR	A
 ;	     Outputs ________________________
 
 C531B:	LD	(D7FF9),A
-	LD	(D.6629),A		; save last command
+	LD	(D6629),A		; save last command
 	PUSH	AF
 	OR	10H			; error reset flag set
 	LD	(D7802),A
@@ -3189,5 +3198,7 @@ J5366:	LD	(D7FFF),A
 	POP	BC
 	POP	AF
 	RET
+
+	DEFS	06000H-$,0FFH
 
 	END

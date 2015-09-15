@@ -1,6 +1,6 @@
 ; SERIAL.MAC
 ;
-; MSX-SERIAL second generation (multi channel)
+; MSX-SERIAL second generation (multi channel), (as used in the Sony HBI-232 serial interface)
 ;
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
@@ -140,8 +140,27 @@ YFFFF	equ	0FFFFH
 	dw	0
 	ds	6
 
-A4010	db	0		; +00 MSX serial features
-	db	1		; +01 MSX serial version
+;     Device information byte indicates following options are installed or not:
+;	bits #  76543210
+;		||||||||
+;		|||||||+----- reserved
+;		|||||||
+;		||||||+------ TXREADY interrupt
+;		||||||
+;		|||||+------- sync/break character detected
+;		|||||
+;		||||+-------- timer interrupt
+;		||||
+;		|||+--------- carrier detect
+;		|||
+;		||+---------- ring indicator
+;		||
+;		|+----------- reserved
+;		|
+;		+------------ reserved
+
+A4010:	db	0		; +00 MSX serial features (no TxReady INT, No Sync detect, No Timer INT, No CD, No RI)
+	db	1		; +01 MSX serial version (version 2.0)
 	db	0		; +02 reserved
 	jp	A4040		; +03 RS232.INIT
 	jp	A44B9		; +06 RS232.OPEN
@@ -167,7 +186,7 @@ A4010	db	0		; +00 MSX serial features
 ; RS232.INIT
 ;
 
-A4040	ei
+A4040:	ei
 	push	bc
 	push	de
 	push	hl
@@ -3936,4 +3955,6 @@ A5A45:	ld	hl,(Y668B)	; memory mapped adres
 	pop	af
 	ret
 
+	defs	06000H-$,0FFH
+	
 	end
