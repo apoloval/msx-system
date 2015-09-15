@@ -334,11 +334,32 @@ I$40CC:	JP	C.5190
 ?.4141:	JP	C.5037
 ?.4144:	JP	J$55F5
 
-; RS232C jumptable
+;
+; BIOS table for RS232
+;
 
-?.4147:	DEFB	030H
-	DEFB	0			; RS232.version
-	DEFB	0
+;     Device information byte indicates following options are installed or not:
+;	bits #  76543210
+;		||||||||
+;		|||||||+----- reserved
+;		|||||||
+;		||||||+------ TXREADY interrupt
+;		||||||
+;		|||||+------- sync/break character detected
+;		|||||
+;		||||+-------- timer interrupt
+;		||||
+;		|||+--------- carrier detect
+;		|||
+;		||+---------- ring indicator
+;		||
+;		|+----------- reserved
+;		|
+;		+------------ reserved
+
+?.4147:	DEFB	030H			; +00 MSX serial features (no TxReady INT, No Sync detect, No Timer INT, Have CD, Have RI)
+	DEFB	0			; +01 MSX serial version (version 1.0)
+	DEFB	0			; +02 reserved
 	JP	J$46E9			; RS232.INIT
 ?.414D:	JP	J.47F1			; RS232.OPEN
 ?.4150:	JP	J$5508			; RS232.STAT
@@ -353,7 +374,7 @@ I$40CC:	JP	C.5190
 ?.416B:	RET				; RS232.DTR (not supported)
 	RET
 	RET
-?.416E:	RET				; RS232.SETCHN (not supported)
+?.416E:	RET				; RS232.SETCHN (not supported in msx serial 1.0)
 	RET
 	RET
 ?.4171:	JP	J$553C			; MODEM.NCUSTA

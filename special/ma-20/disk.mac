@@ -8587,8 +8587,8 @@ A7421:	JP	M,A622D			; diskinterface count not cleared, continue normally
 	LD	C,A
 	LD	A,B
 	LD	B,0
-	OR	A
-	JP	P,J7444
+	OR	A			; slot expanded ?
+	JP	P,J7444			; nope,
 	AND	0CH
 	ADD	A,C
 	LD	C,A
@@ -8745,9 +8745,9 @@ J74F9:	LD	A,(EXPTBL+0)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-A750F:	CALL	C74F7			; search RAM in page 0
+A750F:	CALL	C74F7			; search RAM in page 0 other than NEOS primary slot
 	RET	NC			; found, quit
-	CALL	C7526			; search RAM in page 0 NEOS slot
+	CALL	C7526			; search RAM in page 0 in NEOS primary slot
 	RET	C			; not found, quit
 	LD	H,A
 	RRCA

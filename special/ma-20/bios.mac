@@ -979,7 +979,7 @@ J0416:	XOR	A
 	EX	(SP),HL
 	EX	(SP),HL
 	IN	A,(99H)			; clear pending interrupts MSX1 VDP
-	CALL	C0217			; CALSLT
+	CALL	C0217			; CALSLT (change system RAM page 3 if RAM in same slot as MA-20 found)
 	JP	M7B61
 
 J044C:	DI	

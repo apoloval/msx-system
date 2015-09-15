@@ -134,7 +134,7 @@ DBFFA	EQU	0BFFAH
 ;		|
 ;		+------------ reserved
 
-	DEFB	010H		; +00 MSX serial features (no TxReady INT, No Sync detect, No Timer INT, Have CD, No RI)
+A4010:	DEFB	010H		; +00 MSX serial features (no TxReady INT, No Sync detect, No Timer INT, Have CD, No RI)
 	DEFB	1		; +01 MSX serial version (version 2.0)
 	DEFB	0		; +02 reserved
 J4013:	JP	J4040		; +03 RS232.INIT
@@ -173,7 +173,7 @@ J4040:	EI
 	LD	SP,IY
 	PUSH	IY
 	POP	DE
-	LD	C,0DH	; 13 
+	LD	C,13
 J4056:	CALL	C488E
 	LD	(DE),A
 	INC	DE
@@ -239,7 +239,7 @@ C40B2:	XOR	A
 	DI
 	CALL	C53A8
 	PUSH	AF
-	CALL	C5389
+	CALL	C5389			; get current slotid page 1
 	LD	(D6683),A
 	LD	H,80H
 	CALL	ENASLT
@@ -1249,28 +1249,35 @@ J4712:	INC	B
 	POP	BC
 	POP	AF
 	RET
+
+;	  Subroutine EXTBIO handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I4727:	EI
 	PUSH	AF
 	LD	A,D
-	INC	A
-	JP	Z,J47EC
-	DEC	A
-	JP	NZ,J47FF
+	INC	A			; system exclusive ?
+	JP	Z,J47EC			; yep, handle it
+	DEC	A			; broadcast ?
+	JP	NZ,J47FF		; nope,
 	LD	A,E
-	OR	A
-	JR	Z,J4742
-	DEC	A
-	JR	Z,J474F
-	DEC	A
+	OR	A			; build device name table ?
+	JR	Z,J4742			; yep,
+	DEC	A			; return numer of trap entries ?
+	JR	Z,J474F			; yep,
+	DEC	A			; disable interrupt ?
 	JR	Z,J4761
-	DEC	A
+	DEC	A			; enable interrupt ?
 	JR	Z,J47A7
-	JP	J4826
-J4742:	LD	A,08H	; 8 
-	CALL	C4878
+	JP	J4826			; unknown function, quit
+
+J4742:	LD	A,08H
+	CALL	C4878			; RS232 device (8)
 	LD	A,00H
-	CALL	C4878
-	JP	J4826
+	CALL	C4878			; reserved byte
+	JP	J4826			; quit
+
 J474F:	PUSH	BC
 	PUSH	DE
 	CALL	C53C7
@@ -1282,7 +1289,8 @@ J474F:	PUSH	BC
 	ADD	A,(HL)
 	POP	HL
 	PUSH	AF
-	JP	J4826
+	JP	J4826			; quit
+
 J4761:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
@@ -1321,6 +1329,7 @@ J47A1:	POP	HL
 	POP	DE
 	POP	BC
 	JP	J4826
+
 J47A7:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
@@ -1357,27 +1366,29 @@ J47DA:	INC	HL
 	CALL	C549F
 	LD	SP,(D6678)
 	JR	J47A1
+
 J47EC:	LD	A,E
-	OR	A
-	JR	NZ,J47FD
-	CALL	C482A
+	OR	A			; Build slot address table ?
+	JR	NZ,J47FD		; nope, quit
+	CALL	C482A			; slotid + jumptable start
 	LD	A,00H
-	CALL	C4878
+	CALL	C4878			; reserved byte
 	LD	A,00H
-	CALL	C4878
-J47FD:	JR	J4826
-J47FF:	CP	08H	; 8 
-	JR	NZ,J4826
+	CALL	C4878			; reserved byte
+J47FD:	JR	J4826			; quit
+J47FF:	CP	08H			; device RS232 ?
+	JR	NZ,J4826		; nope, quit
 	LD	A,E
 	OR	A
 	JR	Z,J480D
 	CP	01H	; 1 
 	JR	Z,J4817
 	JR	J4826
-J480D:	CALL	C482A
+J480D:	CALL	C482A			; slotid + jumptable start
 	LD	A,00H
-	CALL	C4878
+	CALL	C4878			; reserved byte
 	JR	J4826
+
 J4817:	PUSH	BC
 	PUSH	DE
 	CALL	C53C7
@@ -1396,11 +1407,11 @@ J4826:	POP	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C482A:	CALL	C5389
+C482A:	CALL	C5389			; get current slotid page 1
+	CALL	C4878			; slotid
+	LD	A,LOW A4010
 	CALL	C4878
-	LD	A,10H	; 16 
-	CALL	C4878
-	LD	A,40H	; "@"
+	LD	A,HIGH A4010
 	CALL	C4878
 	RET
 J483B:	LD	IX,M6E6B

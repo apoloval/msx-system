@@ -133,7 +133,7 @@ D7FFF	EQU	7FFFH			; hardware port i8253 write mode
 ;		|
 ;		+------------ reserved
 
-	DEFB	034H		; +00 MSX serial features (no TxReady INT, Sync detect, No Timer INT, Have CD, Have RI)
+A4010:	DEFB	034H		; +00 MSX serial features (no TxReady INT, Sync detect, No Timer INT, Have CD, Have RI)
 	DEFB	0		; +01 MSX serial version (version 1.0)
 	DEFB	0		; +02 reserved
 	JP	J4046		; +03 RS232.INIT
@@ -982,9 +982,9 @@ J44DF:	POP	AF
 
 C$44E3:	CALL	C4DA5			; get current slotid page 1
 	CALL	C4531
-	LD	A,10H	; 16 
+	LD	A,LOW A4010
 	CALL	C4531
-	LD	A,40H	; "@"
+	LD	A,HIGH A4010
 	CALL	C4531
 	RET
 
