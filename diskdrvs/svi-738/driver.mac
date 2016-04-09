@@ -712,11 +712,11 @@ C7727:	LD	A,0D0H
 	LD	A,02H		; motor off, side 1, select drive 1
 	CALL	C773D
 
-	  Subroutine DSKSTP
+	  Subroutine MTOFF
 	     Inputs  ________________________
 	     Outputs ________________________
 
-DSKSTP:
+MTOFF:
 ?7738:	XOR	A		; motor off, side 0, unselect drive
 	LD	(D.7FBC),A
 	RET	

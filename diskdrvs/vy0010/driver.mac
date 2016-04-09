@@ -1643,7 +1643,5 @@ J7FDA:	RET
 J7FE0:	DEFB	"Designed by S. Isozaki"
 	DEFB	0
 
-	DEFS	08000H-$,0FFH
-
 	END
 

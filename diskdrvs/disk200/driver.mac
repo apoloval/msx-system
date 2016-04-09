@@ -32,7 +32,7 @@
 ;		PUBLIC	GETDPB
 ;		PUBLIC	CHOICE
 ;		PUBLIC	DSKFMT
-;		PUBLIC	DSKSTP
+;		PUBLIC	MTOFF
 ;		PUBLIC	OEMSTA
 ;
 ;		PUBLIC	MYSIZE
@@ -184,13 +184,13 @@ OEMSTA:
 		scf
 		ret
 
-; DSKSTP (Not the offical name)
+; MTOFF
 ;
 ; Input:	None
 ; Output:	None
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
-DSKSTP:
+MTOFF:
 		ret
 
 ; DEFDPB

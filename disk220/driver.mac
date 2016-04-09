@@ -1,0 +1,452 @@
+; Diskdriver MSXDOS 2.20 cartridge (No real diskdriver)
+
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+
+
+DEFDPB	EQU	$-1
+MYSIZE	EQU	0
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+INIHRD:
+C6EFA:	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+DRIVES:
+C6EFB:	LD	L,0
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+DSKIO:
+DSKCHG:
+GETDPB:
+J6EFE:	LD	A,0CH
+	SCF	
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+MTOFF:
+INIENV:
+C6F01:	RET	
+
+CHOICE:
+J6F02:	LD	HL,I$6F06
+	RET	
+
+I$6F06:	DEFB	0
+
+DSKFMT:
+J6F07:	LD	A,10H	; 16 
+	SCF	
+	RET	
+
+OEMSTA:
+J6F0B:	PUSH	HL
+	LD	DE,PROCNM
+	LD	HL,I72C7
+J6F12:	LD	A,(DE)
+	CP	(HL)
+	INC	DE
+	INC	HL
+	JR	Z,J6F1B
+	POP	HL
+	SCF	
+	RET	
+
+J6F1B:	AND	A
+	JR	NZ,J6F12
+	CALL	C728E
+
+	DEFB	12
+	DEFB	"**********************************",13,10
+	DEFB	"*                                *",13,10
+	DEFB	"* MSX-DOS2 Cartrige Self Checker *",13,10
+	DEFB	"*                                *",13,10
+	DEFB	"*       W A R N I N G ! !        *",13,10
+	DEFB	"*                                *",13,10
+	DEFB	"* The system will go into a halt *",13,10
+	DEFB	"* state after the check.         *",13,10
+	DEFB	"*                                *",13,10
+	DEFB	"**********************************",13,10
+	DEFB	13,10
+	DEFB	" Proceed? (Y/N) "
+	DEFB	0
+
+J709D:	CALL	C.009F
+	CALL	C7294
+	AND	0DFH
+	CP	"N"
+	POP	HL
+	RET	Z
+	CALL	C7294
+	LD	HL,I7101
+	LD	DE,0C000H
+	LD	BC,L7101
+	LDIR	
+	LD	HL,(C4092+1)		; bank switch address
+	LD	(CC024+1),HL
+	XOR	A			; bank 0
+	LD	H,A
+J70BF:	LD	L,A			; current checksum 0
+	PUSH	HL
+J70C1:	CALL	CC016			; calculate checksum
+	EX	DE,HL
+	POP	HL
+	ADD	HL,DE
+	PUSH	HL
+	EX	DE,HL
+	CALL	C7139			; print checksum
+	INC	A
+	CP	3+1			; next bank ?
+	JR	C,J70C1		; yep,
+	POP	HL
+	CALL	C7139			; print checksum
+	LD	A,(C.4092+2)
+	CP	7FH
+	CALL	Z,C717D
+	CALL	C728E
+
+	DEFB	13
+	DEFB	"Check finished. Please RESET"
+	DEFB	0
+
+J70FE:	DI	
+	JR	J70FE
+
+I7101:
+	.PHASE	0C000H
+
+CC000:	CALL	C.402D			; GETSLT
+	PUSH	AF			; save current slot page 1
+	LD	A,E
+	LD	H,40H
+	CALL	C.0024			; select slot on page 1
+	CALL	CC028			; calculate checksum
+	POP	AF
+	PUSH	HL
+	LD	H,40H
+	CALL	C.0024			; restore slot page 1
+	POP	HL
+	RET	
+
+CC016:	DI	
+	PUSH	AF
+	CALL	CC024			; select bank
+	CALL	CC028			; calculate checksum
+	XOR	A
+	CALL	CC024			; select bank 0
+	POP	AF
+	RET	
+
+CC024:	LD	(D.0000),A
+	RET	
+
+CC028:	LD	HL,0
+	LD	B,H
+	LD	DE,04000H
+J7130:	LD	A,(DE)
+	INC	DE
+	LD	C,A
+	ADD	HL,BC
+	BIT	7,D
+	JR	Z,J7130
+	RET	
+
+	.DEPHASE
+
+L7101	EQU	$-I7101
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7139:	CALL	C728E
+
+	DEFB	"Check sum of "
+	DEFB	0
+
+J714A:	PUSH	HL
+J714B:	LD	HL,I716C
+J714E:	CP	3+1
+	JR	C,J715A
+	LD	HL,I7171
+	JR	Z,J715A
+	LD	HL,I7177
+J715A:	CALL	C7297
+	POP	HL
+	CALL	C,C72BA		; if bank, print bank nummer
+	CALL	C728E
+
+	DEFB	"="
+	DEFB	0
+
+	CALL	C72A6
+	JP	C7294
+
+I716C:	DEFB	"BANK"
+	DEFB	0
+
+I7171:	DEFB	"Total"
+	DEFB	0
+
+I7177:	DEFB	"KANJI"
+	DEFB	0
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C717D:	CALL	C.0138
+	AND	0CH
+	RRCA	
+	RRCA	
+	OR	88H
+	LD	E,A			; slotid KANJI ROM (secundairy slot 2)
+	CALL	CC000			; caculate checksum of KANJI ROM
+	LD	A,5
+	CALL	C7139			; print checksum
+	DI	
+	CALL	C.0138
+	AND	0CH
+	RRCA	
+	RRCA	
+	OR	84H			; slotid memory mapper (secundairy slot 1)
+	LD	H,80H
+	CALL	C.0024			; select memory mapper in page 2
+	XOR	A
+	OUT	(0FEH),A		; select segment 0 in page 2
+	LD	HL,0C000H
+	LD	DE,08000H
+	LD	BC,04000H
+	LDIR				; copy current page 3
+	CALL	C.0138
+	AND	0CH
+	RRCA	
+	RRCA	
+	OR	84H			; slotid memory mapper (secundairy slot 1)
+	LD	HL,0C000H
+	CALL	C.0024			; select memory mapper in page 3
+	CALL	C71E3
+	LD	C,A
+	LD	B,C
+J71C0:	LD	A,B
+	CALL	C7209
+	DJNZ	J71C0
+	LD	B,C
+J71C7:	LD	A,B
+	CALL	C7232
+	DJNZ	J71C7
+	LD	HL,0C000H
+	LD	DE,08000H
+	LD	BC,04000H
+	LDIR	
+	OUT	(0FFH),A
+	XOR	A
+	CALL	C7209
+	XOR	A
+	CALL	C7232
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C71E3:	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	LD	HL,08000H+03FFFH
+	XOR	A
+	LD	BC,0AA55H
+J71ED:	OUT	(0FEH),A
+	LD	(HL),B
+	INC	A
+	JR	NZ,J71ED
+	LD	D,A
+J71F4:	LD	A,D
+	OUT	(0FEH),A
+	LD	A,(HL)
+	CP	B
+	JR	NZ,J7203
+	LD	(HL),C
+	LD	A,(HL)
+	CP	C
+	JR	NZ,J7203
+	INC	D
+	JR	NZ,J71F4
+J7203:	DEC	D
+	LD	A,D
+	POP	HL
+	POP	DE
+	POP	BC
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7209:	OUT	(0FEH),A
+	CALL	C728E
+
+	DEFB	13
+	DEFB	"Writing segment "
+	DEFB	0
+
+	CALL	C72B1
+	LD	HL,08000H
+J7226:	LD	(HL),A
+	INC	HL
+	INC	A
+	INC	A
+	JR	Z,J722D
+	DEC	A
+J722D:	BIT	6,H
+	JR	Z,J7226
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7232:	LD	D,01H	; 1 
+	OUT	(0FEH),A
+	CALL	C728E
+
+	DEFB	13
+	DEFB	"Reading segment "
+	DEFB	0
+
+	CALL	C72B1
+	LD	HL,08000H
+J7251:	LD	E,(HL)
+	CP	E
+	CALL	NZ,C7265
+	INC	HL
+	INC	A
+	INC	A
+	JR	Z,J725C
+	DEC	A
+J725C:	BIT	6,H
+	JR	Z,J7251
+	DEC	D
+	CALL	NZ,C7294
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7265:	PUSH	AF
+	CALL	C728E
+
+	DEFB	13,10
+	DEFB	" "
+	DEFB	0
+
+J726D:	RES	7,H
+	CALL	C72A6
+	SET	7,H
+	CALL	C728E
+
+	DEFB	"  W:"
+	DEFB	0
+
+	CALL	C72B1
+	CALL	C728E
+
+	DEFB	" R:"
+	DEFB	0
+	
+	LD	A,E
+	CALL	C72B1
+	POP	AF
+J728B:	LD	D,02H	; 2 
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C728E:	EX	(SP),HL
+	CALL	C7297
+	EX	(SP),HL
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7294:	LD	HL,I72D2
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7297:	PUSH	AF
+J7298:	LD	A,(HL)
+J7299:	AND	A
+	JR	Z,J72A4
+	INC	HL
+	PUSH	HL
+	CALL	C.00A2
+	POP	HL
+	JR	J7298
+
+J72A4:	POP	AF
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C72A6:	PUSH	AF
+	LD	A,H
+	CALL	C72B1
+	LD	A,L
+	CALL	C72B1
+	POP	AF
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C72B1:	PUSH	AF
+	RRCA	
+	RRCA	
+	RRCA	
+	RRCA	
+J72B6:	CALL	C72BA
+	POP	AF
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C72BA:	PUSH	AF
+	AND	0FH
+	CP	0AH
+	SBC	A,69H
+	DAA	
+	CALL	C.00A2
+	POP	AF
+	RET	
+
+I72C7:	DEFB	"DOS2MEMCHK"
+	DEFB	0
+
+I72D2:	DEFB	13,10
+	DEFB	0

@@ -32,6 +32,7 @@ CSPRFIX	EQU	1
 CNTRY	EQU	0
 
 
+
 ;	symbols used to procedure alternate code
 
 ;	INTHZ 	interrupt frequency

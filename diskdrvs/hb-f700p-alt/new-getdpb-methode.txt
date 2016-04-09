@@ -1,0 +1,15 @@
+This descripes the new getdpb methode for msx, using the bpb in sector 0 instead of the mediabyte in sector 1
+
+read sector 0
+if error then goto "mediadescriptor methode"
+if sectorbyte[0]<>0E9h and sectorbyte[0]<>0EBh then goto "mediadescriptor methode"
+
+"bpb methode"
+
+
+"mediadescriptor methode"
+read sector 1
+if error then "return error"
+if sectorbyte[0]<0F8H then "return error"
+fill dpb with defaults
+"return no error"

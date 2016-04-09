@@ -42,7 +42,7 @@
 ;	EXTRN	GETDPB
 ;	EXTRN	CHOICE
 ;	EXTRN	DSKFMT
-;	EXTRN	DSKSTP
+;	EXTRN	MTOFF
 ;	EXTRN	OEMSTA
 ;	EXTRN	MYSIZE
 ;	EXTRN	SECLEN
@@ -419,7 +419,7 @@ T4013:	jp	DSKCHG			; DSKCHG entrypoint
 T4016:	jp	GETDPB			; GETDPB entrypoint
 T4019:	jp	CHOICE			; CHOICE entrypoint
 T401C:	jp	DSKFMT			; DSKFMT entrypoint
-T401F:	jp	DSKSTP			; DSKSTP entrypoint
+T401F:	jp	MTOFF			; MTOFF entrypoint
 
 ; kernel entries
 

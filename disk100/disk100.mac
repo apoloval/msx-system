@@ -4649,7 +4649,7 @@ C5A11:	XOR	A
 	LD	(YF34B),HL		; bottom MSX-DOS system
 	CALL	C5AE2			; try reading bootsector of drive 0
 	JP	C,J5B35			; error, start diskbasic
-?5A21:	LD	A,0FFH
+	LD	A,0FFH
 	LD	(YF346),A
 	LD	A,(RAMAD0)
 	LD	H,0

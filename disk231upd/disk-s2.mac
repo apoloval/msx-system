@@ -1,11 +1,11 @@
 ; DOS22-NEW.MAC
 ;
-; DOS 2.31 kernel bank 2 with FAT16 support
+; DOS 2.31 kernel bank 2 with FAT16 support (patches based on FAT16 v0.12 by OKEI)
 ;
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
 ;
-; Code Copyrighted by ASCII and maybe others
+; Code Copyrighted by ASCII,OKEI and maybe others
 ; Source comments and updates by Arjen Zeilemaker
 ;
 ; Sourcecode supplied for STUDY ONLY
@@ -886,7 +886,7 @@ C0278:	PUSH	HL
 	PUSH	BC
 	EX	AF,AF'
 
-	IF	USESBF NE 1
+	IF	USESBF EQ 1
 
 	LD	A,(DF2BE)
 	DEC	A			; screenoutput timer finished ?
@@ -932,8 +932,8 @@ I02A2:	defw	A0CFB,A03A8,A03B6,A042E,A043D,A0441,A03D4,A03FE
 	defw	A1E1D,A1E2D,A1E3D,A1E81,A200D,A1F14,A1F3B,A1F60
 	defw	A1F85,A1FBE,A1F1E,A1F45,A1F6A,A1F9D,A1FE0,A0CCF
 	defw	A0CD5,A1836,A184D,A186D,A1882,A1894,A189D,A0CE0
-	defw	A2029,A2070,A0CFD,A029C,A029C,A0D05,A0D0A,A0D39
-	defw	A0D93,A0E44,A0E8B,A0EDE,A0EFF,A0F55,A0EB6,A0EC8
+	defw	A2029,A2070,A0CFD,A029C,A029C,A0D05,A0D0A,A029C
+	defw	A029C,A0E44,A0E8B,A0EDE,A0EFF,A0F55,A0EB6,A0EC8
 	defw	A0ED2
 
 C0384:	LD	HL,IB0D0
@@ -1177,7 +1177,6 @@ J0495:	POP	BC
 J0499:	POP	HL
 	LD	(HL),C
 	CALL	C086C
-;
 J049E:	POP	HL
 	PUSH	HL
 	LD	A,(HL)
@@ -1235,7 +1234,6 @@ J04D9:	INC	DE
 J04E6:	POP	BC
 	POP	DE
 	JR	Z,J04FE
-;
 J04EA:	LD	HL,(DBB80)
 J04ED:	INC	DE
 	LD	A,(DE)
@@ -1257,7 +1255,6 @@ J0501:	CP	0DH
 J050C:	LD	A,(DBB7F)
 	OR	A
 	JR	Z,J04BB
-;
 	LD	HL,(DBB82)
 J0515:	CALL	C0579			; previous position in buffered input linebuffer
 	LD	A,(HL)
@@ -1430,29 +1427,21 @@ J05EA:	JP	Z,J07A1
 	LD	(DBB86),A
 J0623:	LD	A,(HL)
 	CALL	C17E0			; check for double byte header char if enabled
-;
 	INC	HL
 	CALL	NC,C07CD
-;
 	DEC	HL
 	JR	J0678
-;
-;	-----------------
+
 J062E:	CALL	C07CD
-;
 	JR	C,J06A3
-;
 	LD	A,(HL)
 	CP	20H	; " "
 	JR	C,J06A3
-;
 	LD	A,E
 	CP	20H	; " "
 	JR	C,J06A3
-;
 	JR	J0649
-;
-;	-----------------
+
 J063F:	CP	C
 	JR	NC,J06AE
 	LD	A,E
@@ -1504,13 +1493,11 @@ J0678:	LD	(HL),E
 J0687:	LD	A,(DBB86)
 	CP	C
 	JR	NC,J06AE
-;
 	INC	A
 	LD	(DBB86),A
 	DEC	A
 	SUB	B
 	JR	Z,J06A2
-;
 	PUSH	DE
 	PUSH	BC
 	LD	C,A
@@ -1525,7 +1512,6 @@ J0687:	LD	A,(DBB86)
 J06A2:	INC	HL
 J06A3:	LD	(HL),E
 	CALL	C07DC
-;
 	INC	B
 	JP	C06FD
 
@@ -1568,39 +1554,30 @@ J06C5:	PUSH	BC
 	POP	HL
 	POP	BC
 	RET	
-;
-;	-----------------
+
 J06DB:	LD	A,(DBB86)
 	CP	B
 	RET	Z
-;
 	INC	HL
 	INC	B
 	LD	A,(HL)
 	CALL	C17E0			; check for double byte header char if enabled
-;
 	JP	NC,C0836
-;
 	CALL	C0836
-;
 	INC	HL
 	INC	B
 	LD	A,(HL)
 	JP	C0836
-;
-;	-----------------
+
 J06F2:	LD	A,B
 	OR	A
 	RET	Z
-;
 	LD	B,00H
 	JR	C06FD
-;
-;	-----------------
+
 J06F9:	LD	A,B
 	OR	A
 	RET	Z
-;
 	DEC	B
 ;
 ;	  Subroutine __________________________
@@ -1612,92 +1589,72 @@ C06FD:	LD	HL,(DBB84)
 	PUSH	BC
 	INC	B
 	JR	J0729
-;
-;	-----------------
+
 J0708:	INC	HL
 	LD	A,(HL)
 	CALL	C17E0			; check for double byte header char if enabled
-;
 	JR	NC,J0719
-;
 	INC	HL
 	DJNZ	J0727
-;
 	DEC	HL
 	DEC	HL
 	POP	BC
 	DEC	B
 	PUSH	BC
 	JR	J072B
-;
-;	-----------------
+
 J0719:	CP	09H	; 9 
 	JR	NZ,J0723
-;
 	LD	A,E
 	OR	07H	; 7 
 	LD	E,A
 	JR	J0728
-;
-;	-----------------
+
 J0723:	CP	20H	; " "
 	JR	NC,J0728
-;
 J0727:	INC	DE
 J0728:	INC	DE
 J0729:	DJNZ	J0708
-;
 J072B:	PUSH	HL
 	LD	HL,(DBB8B)
 	OR	A
 	SBC	HL,DE
 	JR	Z,J073E
-;
 J0734:	LD	A,08H	; 8 
 	CALL	C0836
-;
 	DEC	HL
 	LD	A,H
 	OR	L
 	JR	NZ,J0734
-;
 J073E:	POP	HL
 	POP	BC
 	RET	
-;
-;	-----------------
+
 J0741:	LD	A,B
 	OR	A
 	RET	Z
-;
 	DEC	B
 	CALL	C06FD
-;
 J0748:	LD	A,(DBB86)
 	CP	B
 	RET	Z
-;
 	DEC	A
 	LD	(DBB86),A
 	SUB	B
 	JR	Z,J0784
-;
 	LD	E,A
 	INC	HL
 	LD	A,(HL)
 	DEC	HL
 	CALL	C17E0			; check for double byte header char if enabled
-;
 	LD	A,E
 	JR	NC,J0777
-;
 	PUSH	HL
 	LD	HL,DBB86
 	DEC	(HL)
 	POP	HL
 	DEC	A
 	JR	Z,J0784
-;
 	PUSH	BC
 	PUSH	HL
 	LD	C,A
@@ -1711,8 +1668,7 @@ J0748:	LD	A,(DBB86)
 	POP	HL
 	POP	BC
 	JR	J0784
-;
-;	-----------------
+
 J0777:	PUSH	BC
 	PUSH	HL
 	LD	C,A
@@ -1726,11 +1682,9 @@ J0777:	PUSH	BC
 	POP	BC
 J0784:	INC	HL
 	CALL	C07DC
-;
 	DEC	HL
 	JP	C06FD
-;
-;	-----------------
+
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1740,20 +1694,15 @@ C078C:	XOR	A
 	CP	B
 	LD	B,A
 	CALL	NZ,C06FD
-;
 	CALL	C07D7
-;
 	LD	B,00H
 	CALL	C06FD
-;
 	LD	HL,(DBB84)
 	LD	(HL),00H
 	DEC	HL
 	RET	
-;
-;	-----------------
+
 J07A1:	CALL	C078C
-;
 	POP	DE
 	JP	J0595
 
@@ -1769,22 +1718,17 @@ J07A8:	INC	HL
 	POP	HL
 	XOR	A
 	RET	
-;
-;	-----------------
+
 J07BF:	POP	HL
 	CALL	C078C
-;
 	LD	A,01H	; 1 
 	RET	
-;
-;	-----------------
+
 J07C6:	POP	HL
 	CALL	C078C
-;
 	LD	A,02H	; 2 
 	RET	
-;
-;	-----------------
+
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1792,16 +1736,12 @@ J07C6:	POP	HL
 ;
 C07CD:	LD	A,(HL)
 	CALL	C17E0			; check for double byte header char if enabled
-;
 	RET	NC
-;
 	INC	HL
 	LD	(HL),20H	; " "
 	DEC	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -1811,12 +1751,11 @@ C07D7:	PUSH	BC
 	PUSH	HL
 	JR	J07E7
 ;
-;	-----------------
+
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
 C07DC:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
@@ -1824,23 +1763,18 @@ C07DC:	PUSH	BC
 	SUB	B
 	LD	B,A
 	CALL	C0811
-;
 J07E7:	LD	DE,(DBB8B)
 	LD	HL,(DBB7D)
 	OR	A
 	SBC	HL,DE
 	JR	Z,J0803
-;
 	JR	C,J0803
-;
 J07F5:	LD	A,20H	; " "
 	CALL	C0836
-;
 	DEC	HL
 	LD	A,H
 	OR	L
 	JR	NZ,J07F5
-;
 	LD	(DBB7D),DE
 J0803:	LD	A,1BH
 	CALL	C0A6C
@@ -1858,8 +1792,7 @@ J0803:	LD	A,1BH
 C0811:	PUSH	BC
 	INC	B
 	JR	J081D
-;
-;	-----------------
+
 J0815:	LD	A,(HL)
 	CALL	C0836
 	CALL	C0821
@@ -1867,8 +1800,7 @@ J0815:	LD	A,(HL)
 J081D:	DJNZ	J0815
 	POP	BC
 	RET	
-;
-;	-----------------
+
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1881,13 +1813,12 @@ C0821:	PUSH	HL
 	OR	A
 	SBC	HL,BC
 	JR	NC,J0833
-;
 	LD	(DBB7D),BC
 J0833:	POP	BC
 	POP	HL
 	RET	
 ;
-;	-----------------
+
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1897,9 +1828,7 @@ C0836:	PUSH	BC
 	PUSH	DE
 	PUSH	HL
 	CALL	C085A
-;
 	JR	NC,J0847
-;
 	PUSH	AF
 	LD	A,"^"
 	CALL	C084E
@@ -2261,7 +2190,7 @@ C0A20:	LD	A,(LINLEN)
 
 C0A2D:	CALL	CF25B
 
-	IF	USESBF NE 1
+	IF	USESBF EQ 1
 
 	CALL	C0AB9			; empty screenoutput buffer
 
@@ -2284,7 +2213,7 @@ C0A42:	CALL	CF261
 	JR	NZ,J0A69		; not yet, quit
 	INC	(HL)
 
-	IF	USESBF NE 1
+	IF	USESBF EQ 1
 
 	LD	A,(DF2BE)
 	DEC	A			; timer finished ?
@@ -2448,7 +2377,7 @@ J0B1A:	POP	IY
 
 C0B25:	CALL	CF267
 
-	IF	USESBF NE 1
+	IF	USESBF EQ 1
 
 	CALL	C0AB9			; empty screenoutput buffer
 
@@ -2476,7 +2405,7 @@ C0B37:	CALL	CF26A
 ;	     Outputs ________________________
 
 C0B46:
-	IF	USESBF NE 1
+	IF	USESBF EQ 1
 
 	CALL	C0AB9			; empty screenoutput buffer
 
@@ -2496,7 +2425,7 @@ J0B50:	LD	A,C
 ;	     Outputs ________________________
 
 C0B51:	
-	IF	USESBF NE 1
+	IF	USESBF EQ 1
 
 	CALL	C0AB9			; empty screenoutput buffer
 
@@ -2651,11 +2580,12 @@ A0BEC:	LD	C,E
 	LD	E,(IX+22)
 	LD	D,(IX+23)
 	PUSH	DE
-	LD	DE,2			; begin with FAT entry 2 (first two are reserved)
-	LD	B,D
+	JP	ALLOC
+
+J0C07:	LD	B,D
 	LD	C,D			; free = 0
 J0C09:	PUSH	DE
-	CALL	C2DA4			; get FAT entry content
+	CALL	FATRED			; get FAT entry content
 	LD	A,D
 	OR	E			; free cluster ?
 	JR	NZ,J0C12
@@ -2670,7 +2600,7 @@ J0C12:	POP	DE
 	PUSH	BC
 	LD	E,(IX+12)
 	LD	D,(IX+13)		; first FAT sector
-	CALL	C2B88			; get FAT sector
+	CALL	BUF_1
 	LD	DE,11
 	ADD	HL,DE			; the buffer itself
 	LD	DE,(DF34D)		; pointer to diskdriver sectorbuffer
@@ -2766,7 +2696,6 @@ A0C50:	LD	IX,IB9DA
 	ADD	HL,BC
 	INC	(HL)
 	JR	NZ,J0CA4
-;
 	INC	HL
 	INC	(HL)
 J0CA4:	EX	DE,HL
@@ -2776,25 +2705,20 @@ J0CA4:	EX	DE,HL
 J0CA9:	LD	(DE),A
 	INC	DE
 	DJNZ	J0CA9
-;
 	POP	DE
 	LDI	
 	LD	L,(IX+22)
 	LD	H,(IX+23)
 	DEC	HL
 	LD	B,(IX+11)
-	JR	J0CBD
-;
-;	-----------------
-J0CBC:	ADD	HL,HL
-J0CBD:	DJNZ	J0CBC
-;
+	DEFB	0EH			; LD C,xx
+J0CBB:	ADD	HL,HL
+	ADC	A,A
+	DJNZ	J0CBB
 	LD	C,(IX+20)
 	LD	B,(IX+21)
 	ADD	HL,BC
-	EX	DE,HL
-	DEC	HL
-	DEC	HL
+	CALL	ALLSEC
 	LD	(HL),D
 	DEC	HL
 	LD	(HL),E
@@ -2887,8 +2811,7 @@ A0D0A:	LD	A,B
 	LD	(HL),A
 	POP	DE
 	RET	
-;
-;	-----------------
+
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2898,17 +2821,17 @@ C0D26:	LD	C,0FFH
 J0D28:	INC	C
 	SUB	0AH	; 10 
 	JR	NC,J0D28
-;
 	ADD	A,3AH	; ":"
 	PUSH	AF
 	LD	A,C
 	OR	A
 	CALL	NZ,C0D26
-;
 	POP	AF
 	LD	(HL),A
 	INC	HL
 	RET	
+
+	IF	1 EQ 0
 
 ;	  Subroutine _FORMAT
 ;	     Inputs  A = subfunction, B = drivenumber, HL = start of buffer, DE = size of buffer
@@ -2974,6 +2897,10 @@ J0D81:	SET	7,D			; page 2 based
 	ADD	HL,BC
 	LD	(HL),0			; drivetable status = init please
 	RET	
+
+	ENDIF
+
+	IF	1 EQ 0
 
 ;	  Subroutine _RAMD
 ;	     Inputs  ________________________
@@ -3063,6 +2990,8 @@ J0E2F:	LD	A,(DBE00)
 	LD	B,A
 	LD	A,C
 	RET	
+
+	ENDIF
 
 ;	  Subroutine clear ramdisk bootsector and ramdisk segmenttable
 ;	     Inputs  ________________________
@@ -4319,8 +4248,7 @@ C151A:	PUSH	BC
 	ADD	HL,DE
 	LD	E,(HL)
 	INC	HL
-	LD	D,(HL)			; start cluster of the current directory
-	BIT	7,D
+	CALL	CLST_1
 	JR	NZ,J1597		; rootdir, register rootdir as directory operating on
 	LD	BC,(DBB9E)
 	PUSH	BC			; save current parsestring pointer
@@ -4364,8 +4292,10 @@ J1582:	POP	HL
 	LD	(HL),E
 	POP	BC
 	LD	(DBB9E),BC		; restore parsestring pointer
-	SET	3,(IY+DBBA0-DBB80)	; b3 set
-	BIT	7,D
+	CALL	CLST_2
+	NOP
+	NOP
+	NOP
 	JR	Z,J1597
 	INC	HL
 	INC	HL
@@ -5048,7 +4978,7 @@ J1929:	BIT	2,(IY+DBBAF-DBB80)
 	BIT	5,B			; filename ambiguous ?
 	JR	Z,J195F			; nope,
 	INC	IX
-	LD	(DDBB9E),IX		; current parse string pointer = filename of FIB
+	LD	(DBB9E),IX		; current parse string pointer = filename of FIB
 	DEC	IX
 	LD	B,0
 	LD	DE,IB91B
@@ -5100,8 +5030,7 @@ J198D:	PUSH	AF
 	CALL	Z,C1999			; if no error, update FIB with directory entry info
 	POP	AF
 	CALL	C1A45
-	EX	DE,HL
-	LDIR				; update FIB with directory entry locator info
+	CALL	STOR_7
 	RET	
 
 ;	  Subroutine update FIB with directory entry info
@@ -5195,7 +5124,7 @@ C1A02:	PUSH	BC
 
 J1A10:	CALL	C1A45
 	LDIR				; setup directory entry locator with info from FIB
-	LD	C,(IX+25)		; driveid
+	CALL	STOR_8
 	LD	B,1			; for file
 	CALL	C31AB			; check diskchange
 	POP	BC
@@ -5364,7 +5293,7 @@ C1B31:	PUSH	DE
 	EX	(SP),IX
 	PUSH	BC
 	LD	B,1			; real read, ignore not recommended
-	CALL	C2B96			; get directory sector
+	CALL	BUF_2
 	POP	BC
 	PUSH	BC
 	LD	DE,11
@@ -5413,8 +5342,7 @@ J1B7D:	LD	(DE),A
 J1B8D:	INC	HL
 	LD	(HL),C
 	DJNZ	J1B8D			; rest of direntry fields clear
-	POP	DE
-	BIT	7,D
+	CALL	CLST_8
 	JR	Z,J1B98			; subdirectory, use given clusternumber for first cluster
 	LD	D,B
 	LD	E,B			; rootdirectory, use 0 for first cluster
@@ -5503,7 +5431,7 @@ C1BF0:	PUSH	HL
 	PUSH	BC
 	CALL	C1A45
 	EX	DE,HL
-	LD	DE,IBBD2
+	CALL	STOR_1
 	LDIR				; save directory entry locator info free entry
 	SET	0,(IY+DBBAF-DBB80)	; flag free entry found
 	POP	BC
@@ -5520,13 +5448,15 @@ C1C04:	PUSH	BC
 	JR	Z,J1C17			; no free directory entry found, try to expand directory
 	PUSH	HL
 	CALL	C1A45
-	LD	HL,IBBD2
+	CALL	STOR_2
 	LDIR				; restore directory entry locator info free entry
 	POP	HL
 	JR	J1C37			; ok
 
-J1C17:	LD	DE,(DBBE6)		; current directory cluster
-	BIT	7,D
+J1C17:	CALL	CLST_3
+	NOP
+	NOP
+	NOP
 	LD	A,.DRFUL
 	JR	NZ,J1C38		; current directory is the rootdirectory, quit with "directory full" error
 	LD	A,0FFH			; clear directorycluster
@@ -5581,8 +5511,10 @@ J1C5B:	POP	HL
 ;	     Inputs  HL = pointer to drivetable
 ;	     Outputs ________________________
 
-C1C5D:	LD	DE,(DBBE8)		; start cluster of directory operating on
-	BIT	7,D
+C1C5D:	CALL	CLST_4
+	NOP
+	NOP
+	NOP
 	JR	Z,J1CC4			; subdir, these have no fixed size, handled per cluster
 	PUSH	BC
 	PUSH	HL
@@ -5638,26 +5570,28 @@ J1C98:	PUSH	HL
 	JR	J1D03			; actually read the sector in buffer and return
 
 J1CAE:	POP	HL
-	INC	DE
-	LD	A,(DBBE1)
+	CALL	SUB_16
+	NOP
 	DEC	A			; still sectors left ?
 	JR	NZ,J1CEB		; yep, next sector
 	CP	(IY+DBBDE-DBB80)	; partly dirsector ?
 	JR	NZ,J1CED		; yep, partly (=last) sector
-	LD	DE,(DBBE4)
-	BIT	7,D			; next directory cluster ?
+	CALL	CLST_9
+	NOP
+	NOP
+	NOP
 	SCF	
 	POP	BC
 	RET	NZ			; nop, then is the end of directory, quit
 J1CC4:	PUSH	BC
 	PUSH	DE			; cluster
-	CALL	C2DA4			; get FAT entry content
+	CALL	FATRED			; get FAT entry content
 	LD	B,D
 	LD	C,E			; cluster content
 	POP	DE			; cluster
 	PUSH	DE
 	XOR	A			; sectoroffset 0
-	CALL	C2DD4			; convert clusternumber to sectornumber
+	CALL	GETSUB
 	PUSH	DE
 	EX	DE,HL
 	LD	HL,10
@@ -5687,7 +5621,7 @@ J1CF7:	LD	(DBBE1),A		; number of sectors left
 J1D03:	EX	(SP),IX
 	PUSH	AF
 	LD	B,1			; real read, ignore not recommended
-	CALL	C2B96			; get directory sector
+	CALL	BUF_4
 	POP	BC
 	EX	(SP),IX
 	LD	DE,11-32
@@ -5708,7 +5642,6 @@ J1D23:	LD	(DBBE0),A
 J1D29:	LD	A,(DE)
 	OR	A
 	RET	
-
 
 ;	  Subroutine write to filehandle
 ;	     Inputs  ________________________
@@ -6587,7 +6520,7 @@ J2199:	LD	E,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C21AD:	LD	HL,50+3
+C21AD:	LD	HL,50+3+3
 	CALL	C01CB			; allocate BDOS data block
 	RET	NZ			; error, quit
 	PUSH	DE
@@ -6743,7 +6676,7 @@ C228E:	PUSH	BC
 	LD	(IX+33),H		; pointer to drivetable
 	LD	BC,(DBBE2)
 	LD	(IX+34),C
-	LD	(IX+35),B		; current directory sector
+	CALL	STOR_3
 	LD	A,(DBBDF)
 	SUB	(IY+DBBE0-DBB80)
 	LD	(IX+36),A		; current directory entry in sector
@@ -6824,8 +6757,7 @@ C2312:	BIT	7,(IX+30)		; device ?
 	LD	DE,(DBBE2)		; current directory sector
 	LD	L,(IX+34)
 	LD	H,(IX+35)
-	OR	A
-	SBC	HL,DE			; same as directorysector in FIB ?
+	CALL	STOR_4
 	POP	HL
 	RET	NZ			; nope, quit
 	LD	E,(IX+32)
@@ -7003,7 +6935,7 @@ J244E:	LD	(HL),A
 	INC	DE
 	LD	A,(DE)
 	DJNZ	J244E
-	LD	HL,DBBDE
+	CALL	STOR_5
 	LD	DE,IBBC6
 	LD	BC,12
 	LDIR				; save directoryentry locators
@@ -7031,7 +6963,7 @@ J244E:	LD	(HL),A
 	RET	NZ
 	CALL	C1BF0			; register directory entry
 	PUSH	HL
-	LD	HL,IBBC6
+	CALL	STOR_6
 	LD	DE,DBBDE
 	LD	BC,12
 	LDIR				; restore directoryentry locators
@@ -7137,11 +7069,11 @@ C2522:	XOR	A
 	LD	(HL),B			; update date directory entry
 	POP	DE
 	POP	HL
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2541:	PUSH	HL
 	LD	HL,11
 	ADD	HL,DE
@@ -7207,7 +7139,7 @@ J258E:	LD	A,.OV64K		; check for warparound page3 - page0
 	RET	NZ			; error, quit
 	CALL	C2C67			; write dirty sectorbuffers of drivetable
 	CALL	C2C77			; mark all sectorbuffers of drivetable unused
-	CALL	C25B7
+	CALL	ABSSEC
 	CALL	C2C67			; write dirty sectorbuffers of drivetable
 	CALL	C2C77			; mark all sectorbuffers of drivetable unused
 	LD	DE,9
@@ -7255,7 +7187,7 @@ J25E6:	PUSH	BC
 	PUSH	DE
 	PUSH	DE
 	EX	(SP),IX
-	LD	DE,(DBBB4)		; sectornumber
+	CALL	RAMRED
 	PUSH	DE
 	DEC	A
 	JR	Z,J2602
@@ -7274,7 +7206,7 @@ J2604:	EX	AF,AF'
 	LD	L,B
 	LD	H,0
 	ADD	HL,DE
-	LD	(DBBB4),HL		; sectornumber
+	CALL	NUM_1
 	POP	HL
 	POP	DE
 	LD	A,D
@@ -7302,8 +7234,7 @@ J2604:	EX	AF,AF'
 	ADD	A,C
 	LD	(IY+DBBC2+1-DBB80),A
 	JP	C25B7
-;
-;	-----------------
+
 J263A:	POP	HL
 	DEC	B
 	PUSH	BC
@@ -7314,17 +7245,14 @@ J263A:	POP	HL
 	POP	BC
 	INC	(IY+DBBB4-DBB80+0)
 	JR	NZ,J264E
-	INC	(IY+DBBB4-DBB80+1)
+	CALL	NUM_2
 J264E:	JP	C25B7
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2651:	CALL	C2C8D
-;
 J2654:	PUSH	BC
 	EXX	
 	CALL	C2CBD			; find marked sectorbuffer
@@ -7336,14 +7264,14 @@ J2654:	PUSH	BC
 	LD	D,(HL)
 	EX	DE,HL
 	LD	BC,(DBBB4)		; sectornumber
-	SBC	HL,BC
-	POP	BC
-	LD	A,H
+	JP	DSKBUF
+
+J266A:	LD	A,H
 	INC	A
 	JR	NZ,J2683
 	LD	A,L
 	ADD	A,B
-	JR	NC,J2683
+J2670:	JR	NC,J2683
 	DEC	DE
 	DEC	DE
 	EX	DE,HL
@@ -7376,18 +7304,15 @@ J2686:	BIT	7,(HL)
 	LD	BC,512
 	CALL	CF1D6			; transfer with page 0
 	JR	J2683
-;
-;	-----------------
+
 J26A3:	EXX	
 	POP	BC
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C26A6:	PUSH	HL
 	EX	(SP),IX
 	PUSH	DE
@@ -7414,12 +7339,11 @@ C26A6:	PUSH	HL
 
 J26D3:	ADD	HL,BC
 	JR	NC,J26D9
-;
 J26D6:	LD	B,3			; real read, ignore not problem
 	defb	021H			; LD HL,xxxx
 J26D9:	LD	B,2			; no real read, ignore not problem
 	LD	DE,(DBBB4)		; sectornumber
-	CALL	C2B96			; get sector
+	CALL	BUF_2
 	POP	DE
 	ADD	HL,DE
 	LD	BC,11
@@ -7635,7 +7559,6 @@ J2812:	POP	HL			; orginal size
 	LD	C,L			; = bytes written
 J2818:	JR	J27A1
 
-
 J281A:	LD	L,(IX+28)
 	LD	H,(IX+29)		; device handler for read
 	PUSH	BC
@@ -7761,7 +7684,7 @@ J28F1:	LD	A,B
 	CP	C
 	JR	NC,J2918
 	PUSH	DE
-	CALL	C2DA4			; get FAT entry content
+	CALL	FATRED			; get FAT entry content
 	EX	(SP),HL
 	OR	A
 	INC	HL
@@ -7852,7 +7775,7 @@ C297D:	XOR	A
 	INC	DE
 	LD	(DBBBC),DE
 	LD	DE,(DBBB6)
-	CALL	C2DA4			; get FAT entry content
+	CALL	FATRED			; get FAT entry content
 	LD	(DBBB6),DE
 	BIT	7,D			; end of file cluster ?
 	POP	DE
@@ -7862,13 +7785,11 @@ C297D:	XOR	A
 J29AC:	LD	(DBBBB),A
 	XOR	A
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C29B1:	PUSH	DE
 	LD	A,(DBBBB)		; sectoroffset
 	LD	DE,(DBBB6)
@@ -7876,13 +7797,11 @@ C29B1:	PUSH	DE
 	LD	(DBBB4),DE		; sectornumber
 	POP	DE
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C29C2:	PUSH	HL
 	LD	HL,(DBBBE)
 	ADD	HL,BC
@@ -7982,11 +7901,11 @@ J2A37:	JR	NZ,J2AB0
 	CALL	C2B58
 	JR	NZ,J2AB2
 	PUSH	DE
-	CALL	C2DA4			; get FAT entry content
-	BIT	7,D			; end of file cluster ?
-	CALL	Z,C301A			; nope, delete cluster chain
+	CALL	FATRED
+	CALL	Z,C301A			;#3010
 	POP	DE
-	LD	B,0FFH
+	LD	BC,0FFFFh
+	NOP	
 	CALL	C2DF1			; reset deleted files status disk and set FAT entry
 	LD	C,(IX+39)
 	LD	B,(IX+40)
@@ -8025,8 +7944,7 @@ J2AB0:	POP	DE
 J2AB1:	POP	DE
 J2AB2:	POP	DE
 	RET	
-;
-;	-----------------
+
 J2AB4:	LD	(IX+39),C
 	LD	(IX+40),B
 	XOR	A
@@ -8038,14 +7956,11 @@ J2AC7:	SET	7,(IX+49)		; flag file is changed
 	EXX	
 	EX	AF,AF'
 	JR	NZ,J2AD1
-;
 	JR	NC,J2AE3
-;
 J2AD1:	INC	BC
 	LD	A,B
 	OR	C
 	JR	NZ,J2AD7
-;
 	INC	DE
 J2AD7:	LD	(IX+21),C
 	LD	(IX+22),B
@@ -8057,62 +7972,50 @@ J2AE3:	POP	BC
 	OR	C
 	DEC	BC
 	JR	NZ,J2AEB
-;
 	DEC	HL
 J2AEB:	BIT	7,H
 	JR	Z,J2AFF
-;
 	LD	A,H
 	AND	L
 	INC	A
 	LD	HL,0FFFFH
 	JR	NZ,J2B02
-;
 	INC	HL
 	SBC	HL,BC
 	JR	NZ,J2B02
-;
 	DEC	HL
 	JR	J2B02
-;
-;	-----------------
+
 J2AFF:	LD	HL,0
 J2B02:	LD	(DBBB2),HL
 	EXX	
 	XOR	A
 	RET	
-;
-;	-----------------
+
 J2B08:	EX	AF,AF'
 	POP	DE
 	EX	(SP),HL
 	JR	NZ,J2B19
-;
 	JR	NC,J2B20
-;
 	EXX	
 	LD	A,H
 	AND	L
 	INC	A
 	EXX	
 	JR	NZ,J2B19
-;
 	ADD	HL,DE
 	JR	C,J2B1C
-;
 J2B19:	LD	HL,0FFFFH
 J2B1C:	INC	HL
 	LD	(DBBC0),HL
 J2B20:	XOR	A
 	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2B23:	PUSH	HL
 	LD	A,B
 	SRL	D
@@ -8133,20 +8036,16 @@ C2B23:	PUSH	HL
 	INC	HL
 	LD	B,(HL)
 	JR	J2B45
-;
-;	-----------------
+
 J2B40:	SRL	D
 	RR	E
 	RRA	
 J2B45:	DJNZ	J2B40
-;
 	INC	D
 	DEC	D
 	JR	NZ,J2B53
-;
 	BIT	7,E
 	JR	NZ,J2B53
-;
 	LD	D,E
 	LD	E,A
 	LD	A,C
@@ -8180,8 +8079,9 @@ J2B77:	LD	A,B
 	OR	C
 	RET	Z
 	DEC	BC
-	CALL	C2DA4			; get FAT entry content
-	BIT	7,D			; end of file cluster ?
+	CALL	FATRED			; get FAT entry content
+	NOP
+	NOP
 	JR	Z,J2B77			; nope,
 	DEFB	03EH			; LD A,xx
 J2B83:	POP	HL
@@ -8250,9 +8150,9 @@ J2BC5:	CALL	C2D2D			; write buffer if dirty
 	LD	A,(IY+DBBA2-DBB80)
 	LD	(HL),A			; times
 	INC	HL
-	LD	C,(IX+17)
-	LD	(HL),C			; offset = number of sectors per FAT
+	CALL	SECNUM
 	INC	HL
+	LD	(HL),A
 	PUSH	DE
 	INC	HL
 	INC	HL
@@ -8289,7 +8189,7 @@ J2C0C:	PUSH	DE
 	LD	A,(DF2CF)
 	LD	C,A			; BDOS datasegment
 	LD	A,0			; DSKIO read
-	CALL	C326D			; diskdriver
+	CALL	REDBUF
 	POP	BC
 	POP	DE
 	JR	Z,J2C31			; no error,
@@ -8332,9 +8232,7 @@ C2C44:	PUSH	HL
 	LD	A,(HL)
 	SUB	E
 	JR	NZ,J2C54
-	INC	HL
-	LD	A,(HL)
-	SUB	D
+	CALL	CMPSEC
 J2C54:	POP	HL
 	RET	
 
@@ -8392,20 +8290,17 @@ J2C7D:	CALL	C2CBD			; find marked sectorbuffer
 	INC	HL
 	LD	(HL),00H		; sectorbuffer unused
 	JR	J2C7D
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2C8B:	JR	C,J2C96
-;
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2C8D:	PUSH	HL
 	PUSH	BC
 	LD	BC,8
@@ -8443,13 +8338,11 @@ J2CB4:	LD	A,D
 	POP	DE
 J2CBB:	POP	HL
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2CBD:	LD	HL,(DBBF8)		; start of bufferchain
 J2CC0:	PUSH	HL
 	INC	HL
@@ -8466,13 +8359,11 @@ J2CC0:	PUSH	HL
 	OR	H			; end of bufferchain ?
 	JR	NZ,J2CC0		; nope, continue
 	RET	
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2CD2:	CALL	C2D2D			; write buffer if dirty
 
 ;	  Subroutine make buffer the first buffer
@@ -8590,8 +8481,7 @@ J2D43:	PUSH	HL
 	JR	Z,J2D59			; update all FATs
 	LD	A,E
 J2D50:	ADD	A,(HL)			; number of sectors per FAT
-	JR	NC,J2D54
-	INC	D
+	CALL	FSIZE1
 J2D54:	DJNZ	J2D50
 	LD	E,A			; to the last FAT
 	LD	B,1			; 1 FAT
@@ -8614,7 +8504,7 @@ J2D68:	PUSH	DE
 	LD	A,(DF2CF)
 	LD	C,A			; BDOS datasegment
 	LD	A,1			; DSKIO write
-	CALL	C326D			; diskdriver
+	CALL	WRTBUF
 	POP	BC
 	POP	DE
 	JR	NZ,J2D7A		; error,
@@ -8624,7 +8514,7 @@ J2D7A:	CP	.NOUPB
 	LD	BC,0101H		; disk changed, quit writing FAT (flag no FAT copy writen)
 J2D81:	PUSH	AF
 	LD	A,E
-	ADD	A,(IX-4)		; number of sectors per FAT
+	CALL	FSIZE2
 	LD	E,A
 	JR	NC,J2D8A
 	INC	D
@@ -8690,23 +8580,22 @@ C2DD4:	PUSH	HL
 	EX	DE,HL
 	DEC	HL
 	DEC	HL
-	DEFB	00EH			; LD C,xx
-J2DDF:	ADD	HL,HL
-	DJNZ	J2DDF
+	LD	C,A
+	XOR	A
+	JR	Z0022
+Z0023:	ADD	HL,HL			;bit 0-15 of sector number
+	ADC	A,A			;bit16-23 of sector number
+Z0022:	DJNZ	Z0023
+	LD	B,A			;bit16-23
+	LD	A,C
 	ADD	A,L
 	LD	L,A
-	EX	DE,HL
-	LD	C,20-11
-	ADD	HL,BC
-	LD	A,(HL)
-	INC	HL
-	LD	H,(HL)
-	LD	L,A			; first datasector
-	ADD	HL,DE
-	EX	DE,HL
-	POP	BC
-	POP	HL
-	RET	
+	EX	DE,HL			;BDE=sector number
+	LD	A,B
+	JP	GETSEC
+	NOP
+	NOP
+
 
 ;	  Subroutine reset deleted files status disk and set FAT entry
 ;	     Inputs  ________________________
@@ -8719,9 +8608,9 @@ C2DF1:	CALL	C2EC0			; reset deleted files status disk
 ;	     Outputs ________________________
 
 C2DF4:	PUSH	DE
-	LD	A,B
-	CP	0FH+1
-	JR	C,J2DFD
+	JP	FATWRT
+
+J2DF8:	JR	C,J2DFD
 	LD	BC,0FFFH		; cluster 0F00-FFFF, use endmarker
 J2DFD:	CALL	C2E55			; get pointer to FAT entry
 	JR	Z,J2E13			; no error,
@@ -8766,7 +8655,7 @@ J2E2D:	CALL	C2C56			; mark buffer last read as changed
 	LD	DE,(DBBA7)		; sectornumber of spaned FAT entry
 	EX	(SP),IX
 	PUSH	AF
-	CALL	C2B88			; get FAT sector
+	CALL	BUF_1
 	CALL	C2C56			; mark buffer last read as changed
 	LD	BC,8+511
 	ADD	HL,BC
@@ -8774,7 +8663,7 @@ J2E2D:	CALL	C2C56			; mark buffer last read as changed
 	LD	(HL),A			; first FAT byte
 	EX	(SP),IX
 J2E52:	POP	HL
-	POP	DE
+J2E53:	POP	DE
 	RET	
 
 ;	  Subroutine get pointer to FAT entry
@@ -8807,7 +8696,7 @@ C2E55:	PUSH	IX
 	LD	H,(IX+13)		; first FAT sector
 	ADD	HL,DE			; FAT sector
 	EX	DE,HL
-	CALL	C2B88			; get FAT sector
+	CALL	BUF_1
 	LD	BC,11
 	ADD	HL,BC			; to sectorbuffer
 	POP	BC
@@ -8822,7 +8711,7 @@ C2E55:	PUSH	IX
 	LD	(DBBA7),DE		; register sector
 	LD	(DBBA5+0),A		; register first byte fatentry content
 	INC	DE
-	CALL	C2B88			; get FAT sector
+	CALL	BUF_1
 	LD	BC,11
 	ADD	HL,BC			; to sectorbuffer
 	LD	A,(HL)
@@ -8871,7 +8760,8 @@ C2EC0:	PUSH	HL
 C2ECC:	PUSH	HL
 	EX	(SP),IX
 	BIT	7,(IX+25)
-	JR	NZ,J2F34		; disk has not serialnumber, quit
+	NOP
+	NOP
 	BIT	0,(IX+24)
 	JR	NZ,J2F34		; disk is already in deleted files mode, quit
 	LD	A,1
@@ -8879,7 +8769,7 @@ J2EDD:	PUSH	BC
 	PUSH	DE
 	LD	B,(IX+14)
 	DEC	B
-	JR	Z,J2F14		; disk has only 1 FAT,
+	JR	Z,J2F14			; disk has only 1 FAT,
 	LD	E,(IX+12)
 	LD	D,(IX+13)		; first FAT sector
 	LD	B,(IX+17)		; number of sectors per FAT
@@ -8888,10 +8778,10 @@ J2EEE:	PUSH	BC
 	DEC	A
 	LD	B,00H			; no real read, ignore not recommended
 	JR	NZ,J2EFA		; disk currently in delete file mode,
-	CALL	C2B96			; get sector
+	CALL	BUF_3
 	JR	J2F07
 
-J2EFA:	CALL	C2B88			; get FAT sector
+J2EFA:	CALL	BUF_1
 	CALL	C2D2D			; write buffer if dirty
 	PUSH	HL
 	CALL	C2C56			; mark buffer last read as changed
@@ -8912,11 +8802,10 @@ J2F14:	LD	A,B
 	PUSH	BC
 	LD	DE,0
 	LD	B,1			; real read, ignore not recommended
-	CALL	C2B96			; get sector
+	CALL	BUF_3
 	CALL	C2CD5			; make buffer the first buffer
 	CALL	C2C56			; mark buffer last read as changed
-	LD	DE,46
-	ADD	HL,DE
+	CALL	CHKVOL
 	POP	BC
 	LD	(HL),B
 	LD	(IX+24),B
@@ -8979,7 +8868,7 @@ J2F72:	INC	DE
 	POP	HL
 	JR	C,J2FB7			; all clusters done,
 	PUSH	DE
-	CALL	C2DA4			; get FAT entry content
+	CALL	FATRED			; get FAT entry content
 	LD	A,D
 	OR	E			; free cluster ?
 	POP	DE
@@ -8987,8 +8876,7 @@ J2F72:	INC	DE
 	LD	B,D
 	LD	C,E
 	POP	DE
-	PUSH	BC
-	BIT	7,D			; already allocated a cluster ?
+	CALL	CLST_5
 	JR	Z,J2F96			; yep, set FAT entry
 	LD	(DBBA3),BC		; no, register free cluster found, do not set FAT entry
 J2F96:	CALL	Z,C2DF4			; set FAT entry
@@ -9011,8 +8899,10 @@ J2F96:	CALL	Z,C2DF4			; set FAT entry
 
 J2FB7:	POP	DE
 	POP	DE
-	LD	DE,(DBBA3)
-	BIT	7,D			; allocated any clusters ?
+	CALL	CLST_6
+	NOP
+	NOP
+	NOP
 	CALL	Z,C301A			; yep, delete cluster chain
 	POP	DE
 	LD	A,.DKFUL
@@ -9040,9 +8930,7 @@ C2FC7:	PUSH	DE
 	LD	H,D
 	LD	L,E
 	SBC	HL,BC			; number of sectors rootdirectory
-	LD	B,L
-	DEC	B
-	DEC	DE
+	CALL	BUF_5
 	POP	HL
 	JR	J2FED
 
@@ -9064,7 +8952,7 @@ J2FF5:	PUSH	BC
 	JR	NZ,J2FFB
 	CALL	C2CD5			; make buffer the first buffer
 J2FFB:	LD	B,0			; no real read, ignore not recommended
-	CALL	C2B96			; get sector
+	CALL	BUF_2
 	PUSH	HL
 	LD	BC,11
 	ADD	HL,BC			; the buffer itself
@@ -9090,7 +8978,7 @@ J3006:	LD	(HL),A
 ;	     Outputs ________________________
 
 C301A:	PUSH	DE
-	CALL	C2DA4			; get FAT entry content
+	CALL	FATRED			; get FAT entry content
 	POP	BC
 	PUSH	DE			; save content (next cluster)
 	LD	D,B
@@ -9100,10 +8988,11 @@ C301A:	PUSH	DE
 	POP	DE
 	LD	A,D
 	OR	E			; no next cluster (cluster 0) ?
-	RET	Z			; yep, quit
-	BIT	7,D			; end cluster ?
+	CALL	CLST_7
 	JR	Z,C301A			; nope, next in chain
 	RET
+
+	IF	1 EQ 0
 
 ;	  Subroutine get choicestring pointer
 ;	     Inputs  HL = pointer to drivetable
@@ -9291,6 +9180,7 @@ RC0B7:
 	.DEPHASE
 	.PHASE	I3112+RC0B7-RC01E
 
+	ENDIF
 
 ;	  Subroutine check diskchange
 ;	     Inputs  C = drive, B = type (0 = for disk, 1 = for file ,2 = only write dirty sectorbuffers), IX = pointer to FIB
@@ -9417,7 +9307,7 @@ J3268:	POP	HL
 ;	     Outputs ________________________
 
 C326D:	CALL	C3282
-	CALL	C34FA			; call diskdriver
+	CALL	J34FE
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -9518,7 +9408,7 @@ C32E9:	PUSH	IX
 	LD	B,6
 J32F5:	LD	A,(DE)
 	CP	(HL)
-	JR	NZ,J3300
+	JR	NZ,GETVOL
 	INC	HL
 	INC	DE
 	DJNZ	J32F5
@@ -9564,23 +9454,37 @@ J3321:	LD	DE,0
 	JR	NZ,J3364		; error,
 	CALL	C336C			; validate bootsector and update BPB
 	JR	Z,J335F			; valid, quit
-	LD	DE,1
-	LD	B,1			; only sector 1
-	LD	A,(DF2CF)
-	LD	C,A			; BDOS datasegment
-	LD	A,0			; DSKIO read
-	CALL	C34FA			; call diskdriver
-	JR	NZ,J3364		; error,
-	LD	A,(IX+1)
-	AND	(IX+2)
-	INC	A			; byte 1 and 2 must be 0FFH
-	JR	NZ,J3362		; invalid FAT, not a dos disk and quit
-	LD	A,(IX+0)
-	CP	0F8H			; mediadescriptor must be 0F8H-0FFH
-	JR	C,J3362			; invalid mediadescriptor, not a dos disk and quit
-	CALL	C33A8			; create bootsector BPB
-	JR	NZ,J3364		; error,
-	LD	(IX+32),00H
+	JR	J3362
+
+GETVOL:
+	PUSH	IX
+	POP	HL
+	LD	DE,000Ah
+	ADD	HL,DE
+	LD	A,(HL)			;UNDEL FLG (DOS1,FAT16)
+	CP	01h
+	JR	Z,GETV_1
+	XOR	A
+GETV_1:	LD	HL,I3306+6
+	LD	(HL),A
+	INC	HL
+	XOR	A
+	DEC	A
+	RET
+
+CHKVOL:
+	PUSH	AF
+	LD	A,(IX+19h)		;check VOL
+	CP	0FFh
+	LD	DE,002Eh
+	JR	NZ,VOL_1
+	LD	DE,0012h
+VOL_1:	POP	AF
+	RET
+
+	NOP
+	NOP
+
 J335F:	POP	DE
 	POP	BC
 	RET	
@@ -9636,21 +9540,27 @@ BPBFND:
 	LD	DE,6
 	ADD	HL,DE
 	LD	A,(HL)			; number of FAT sectors
-	INC	HL
-	DEC	A
-	CP	0CH
-	JR	NC,J33A5		; lowbyte not 1-12, quit with error
-	LD	A,(HL)
-	OR	A
 	POP	HL
 	LD	B,(IX+21)		; mediadescriptor
 	LD	A,3			; GETDPB
-	CALL	Z,C34FA			; highbyte zero (ok), call diskdriver
-	RET	
+	CALL	C34FA			; call diskdriver
+	RET
+
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
 
 J33A5:	POP	HL
 	OR	H
 	RET	
+
+
+	IF	1 EQ 0
 
 ;	  Subroutine create bootsector BPB
 ;	     Inputs  ________________________
@@ -9738,6 +9648,10 @@ J340D:	ADD	HL,HL
 	POP	HL
 	RET	
 
+	ENDIF
+
+
+
 ;	  Subroutine update drivetable with bootsector BPB info
 ;	     Inputs  HL = pointer to drivetable, IX = pointer to bootsector
 ;	     Outputs ________________________
@@ -9775,7 +9689,7 @@ J3456:	SRL	D
 	RR	E
 	DEC	A
 	JR	NZ,J3456
-	CP	(HL)
+	NOP
 	INC	HL
 	LD	(HL),E
 	INC	HL
@@ -9790,8 +9704,7 @@ J3464:	LD	A,(IX+22)
 	XOR	A
 	LD	D,A
 J346E:	ADD	A,E
-	JR	NC,J3472
-	INC	D
+	CALL	FSIZE3
 J3472:	DJNZ	J346E
 	LD	E,A
 	ADD	HL,DE
@@ -9811,8 +9724,8 @@ J3472:	DJNZ	J346E
 	PUSH	HL
 	LD	L,(IX+19)
 	LD	H,(IX+20)
-	OR	A
-	SBC	HL,DE
+	JP	TALCLS
+
 J348D:	DEC	C
 	JR	Z,J3496
 	SRL	H
@@ -9832,8 +9745,8 @@ J3496:	INC	HL
 	LD	BC,5
 	LDIR	
 	EX	DE,HL
-	LD	A,(IX+21)
-	LD	(HL),A
+	CALL	DPBSET
+	NOP
 	POP	HL
 	PUSH	HL
 	INC	HL
@@ -9889,8 +9802,7 @@ C34E9:	PUSH	HL
 	LD	BC,31
 	ADD	HL,BC
 	POP	BC
-	XOR	A
-	BIT	7,(HL)
+	CALL	CLST_A
 	JR	NZ,J34F8
 	LD	(HL),A
 	DEC	HL
@@ -9902,9 +9814,9 @@ J34F8:	POP	HL
 ;	     Inputs  A=function, HL=drivetable, BC=, DE=, IX=diskdriver HL
 ;	     Outputs ________________________
 
-C34FA:	CP	6
-	JR	NC,J3543		; unknown function, quit with "Internal Error"
-	PUSH	IY
+C34FA:	JP	DSKROM
+	NOP
+J34FE:	PUSH	IY
 	PUSH	HL
 	PUSH	HL
 	EX	(SP),IX
@@ -9977,7 +9889,7 @@ J3558:	EX	AF,AF'
 	LD	HL,04000H		; DSKIO
 	EXX	
 	LD	A,C
-	LD	C,(IX+29)		; mediadescriptor
+	CALL	SETNUM
 	PUSH	BC
 	CALL	C35EC
 	JR	C,J356A
@@ -10090,7 +10002,7 @@ I35E2:	defb	9+1
 ;	     Outputs ________________________
 ;
 C35EC:
-	IF	USESBF NE 1
+	IF	USESBF EQ 1
 
 	CALL	C0AB9			; empty screenoutput buffer
 
@@ -10708,7 +10620,6 @@ A3981:	LD	(IY+DBBAF-DBB80),4	; search directory entry
 	LD	L,A
 	ADD	HL,BC
 	JR	NC,J39A5
-;
 	INC	DE
 J39A5:	ADD	HL,HL
 	LD	A,H
@@ -10750,8 +10661,8 @@ C39C3:	EX	DE,HL
 	LD	DE,IB9DA+37
 	LD	BC,8
 	LDIR				; FIB start cluster parent directory, start cluster, current cluster and current relative cluster
-	LD	A,(IX+43+1)
-	LD	B,0
+	JP	CLUST
+J39F4:	LD	B,0
 	BIT	6,A			; b14 of FCB current relative cluster has read only flag
 	JR	Z,J39FC
 	LD	B,1
@@ -10770,7 +10681,7 @@ J3A0D:	LD	(IX+30),B		; FIB deviceflags
 	LD	B,80H			; file is changed, read and write, not inheritable
 J3A18:	LD	(IX+49),B		; FIB filemode
 	AND	0FH
-	LD	(IX+43+1),A		; clear b15-b12 bit of current relative cluster
+	LD	(IX+42),A		; clear b15-b12 bit of current relative cluster
 	XOR	A
 	BIT	7,(IX+30)		; device ?
 	RET	Z			; nope, quit
@@ -10852,8 +10763,7 @@ J3A9D:	OR	A
 	PUSH	HL
 	CALL	C1999			; update FIB with directory entry info
 	CALL	C1A45
-	EX	DE,HL
-	LDIR				; update FIB with directory entry locator info
+	CALL	STOR_7
 	POP	HL
 	POP	DE
 	POP	BC
@@ -11236,8 +11146,8 @@ C3CDA:	PUSH	IX
 	LD	HL,IB9DA+37
 	LD	BC,8
 	LDIR	
-	LD	A,(IX+30+1)
-	AND	0FH
+	JP	CLUST2
+J3CFD:	AND	0FH
 	LD	B,A
 	LD	A,(IB9DA+14)		; attribute
 	BIT	0,A			; read only bit
@@ -11255,7 +11165,7 @@ J3D1B:	LD	A,(IB9DA+49)
 	BIT	7,A
 	JR	Z,J3D24
 	SET	7,B
-J3D24:	LD	(IX+30+1),B
+J3D24:	LD	(IX+29),B
 	RET	
 
 ;	  Subroutine __________________________
@@ -11445,6 +11355,615 @@ J3E4E:	DJNZ	J3E41
 	LD	H,A
 	POP	BC
 	RET	
+
+; FAT16 extra routines
+
+GETSEC:	
+	LD	BC,9
+	ADD	HL,BC		;DPB+14h start sector of data area
+	LD	C,(HL)
+	INC	HL
+	LD	H,(HL)
+	LD	L,C
+	ADD	HL,DE
+	JR	NC,Z0024;
+	INC	A
+Z0024:	EX	DE,HL		;BDE=sector number
+	LD	(BIT16),A	;save bit16-23 
+	POP	BC
+	POP	HL
+	RET
+;----------------------------------------
+FSIZE1:
+	JR	NC,FSIZ_1
+	INC	D
+FSIZ_1:	INC	(HL)	
+	DEC	(HL)
+	RET	NZ
+	INC	D
+	RET
+	
+FSIZE2:	
+	LD	A,(IX-4)
+	OR	A
+	JR	NZ,FSIZ_2
+	INC	D
+FSIZ_2:	ADD	A,E
+	RET
+	
+FSIZE3:
+	JR	NC,FSIZ_3
+	INC	D
+FSIZ_3:	INC	E
+	DEC	E
+	RET	NZ
+	INC	D
+	RET
+	
+
+;------------------------------------
+;#1Bh PATCH
+ALLOC:
+	LD	DE,0002h
+	CALL	CHKDRV
+	JP	J0C07			;Not use buffer
+	
+
+;--------------------------------------
+;349Fh FAT12,16の判別
+;FAT16はデータセグメントのドライブ情報　MEDIA ID bit7=0にする
+DPBSET:
+	LD	A,(IX+15h)
+	LD	(HL),A
+@DPBST:	PUSH	HL
+	PUSH	IX
+	POP	HL
+	LD	BC,0200h
+DPB_1:	LD	A,'F'
+	CPIR
+	JR	Z,DPB_2
+	OR	A
+	JR	DPB_3
+	
+DPB_2:	PUSH	HL
+	PUSH	BC
+	LD	B,04h
+	LD	DE,MOJI	;'AT16'
+DPB_4:	LD	A,(DE)
+	XOR	(HL)
+	JR	NZ,DPB_5
+	INC	HL
+	INC	DE
+	DJNZ	DPB_4
+	SCF
+DPB_5:	POP	BC
+	POP	HL
+	JR	NC,DPB_1
+
+DPB_3:	POP	HL
+	LD	A,(HL)
+	RET	NC
+	RES	7,(HL)
+	RET
+
+MOJI:	DB	'AT16'
+;-------------------------------------
+
+BIT16:	DB	0		;bit16-23 for caluclation of sector
+DSKEX:	DB	0		;bit16-23 for Disk buffer
+SDIR_1:	DB	0		;BBE2h   bit16-23
+SDIR_2:	DB	0		;BBD2h+4 bit16-23
+SDIR_3:	DB	0		;BBC6h+4 bit16-23
+RW_16:	DB	0		;bit16-23 for DISKIO
+
+
+
+
+
+
+SECNUM:	
+	DB	0DDh,0CBh,1Dh,7Eh	;BIT	7,(IX+1Dh)
+	LD	A,0
+	JR	NZ,SECN_1	;FAT12
+	LD	A,(DSKEX)	;FAT16
+SECN_1:	LD	C,(IX+11h)
+	LD	(HL),C
+	RET
+	
+	
+;-----------------------------------------------
+;Compare sector number at buffer
+CMPSEC:				;#6C33 (#6C47)
+	INC	HL
+	LD	A,(HL)
+	SUB	D
+	RET	NZ		;Z=0 different sector
+	DB	0DDh,0CBh,1Dh,7Eh	;BIT	7,(IX+1Dh)
+	JR	Z,CMPS_1	;Z=1 FAT16
+	XOR	A
+	RET			;
+CMPS_1:	LD	A,(DSKEX)	;
+	INC	HL
+	INC	HL
+	INC	HL
+	CP	(HL)		;bit16-23 of sector number
+	RET
+	
+
+;------------------------------------------------------
+;Set to bit16-23 of sector number at registerC
+;
+SETNUM:
+	PUSH	AF		;#3540 (#3554)
+	LD	A,(IX+1Dh)
+	BIT	7,A
+	JR	NZ,MED_ID	;FAT12
+	LD	A,(RW_16)
+	LD	C,A		;FAT16 C=bit16-23
+	POP	AF
+	RET
+MED_ID:	LD	C,A		;C=MEDIA ID
+	POP	AF
+	RET
+	
+;-------------------------------------------------------
+;Total of cluster
+TALCLS:
+	LD	A,L		;HL=BOOT +13h,14h
+	OR	H
+	JR	Z,WINFMT	;Format with Windows95
+	SBC	HL,DE
+	JP	J348D		;12bitFAT
+
+WINFMT:	LD	L,(IX+20h)	;Cluster size
+	LD	H,(IX+21h)
+	LD	A,(IX+22h)
+	OR	A
+	SBC	HL,DE
+	SBC	A,0
+WINFM_:	DEC	C
+	JP	Z,J3496
+	SRL	A
+	RR	H
+	RR	L
+	JR	WINFM_
+
+;-----------------------------
+;DISK BUFFER
+DSKBUF:
+	SBC	HL,BC
+	PUSH	AF
+	PUSH	DE
+	DEC	DE
+	DEC	DE
+	DEC	DE
+	EX	DE,HL
+	LD	A,(HL)		;Drive number of buffer
+	DEC	A
+	ADD	A,A
+	LD	HL,0BA25h	;(DRIVE-1)*2+BA25h=(DPB address)
+	ADD	A,L
+	LD	L,A
+	LD	A,(HL)
+	INC	HL
+	LD	H,(HL)
+	ADD	A,1Dh
+	LD	L,A
+	LD	A,0
+	ADC	A,H		;HL=DPB+1Dh
+	BIT	7,(HL)		;Z=1 FAT16  Z=0 FAT12
+	EX	DE,HL
+	POP	DE
+	JR	Z,CALUC		;FAT16
+	POP	AF
+	POP	BC
+	JP	J266A
+	
+CALUC:
+	POP	AF
+	PUSH	DE
+	INC	DE
+	INC	DE
+	INC	DE
+	LD	A,(DE)
+	LD	BC,(BIT16)
+	SBC	A,C
+	POP	DE
+	POP	BC
+	INC	A
+	JP	NZ,J2683
+	LD	A,L
+	ADD	A,B
+	JR	NC,CALU_1
+	LD	A,0
+	ADC	A,H
+CALU_1:	JP	J2670
+
+;-------------------------------------
+;1CC4h
+GETSUB:
+	CALL	C2DD4			;セクタ換算
+	LD	A,(BIT16)
+	LD	(SDIR_1),A
+	RET
+
+;1CA5h
+SUB_16:
+	INC	DE			;[ver0.11]
+	LD	A,D
+	OR	E
+	JR	NZ,SUB_
+	LD	A,(SDIR_1)
+	INC	A
+	LD	(SDIR_1),A
+SUB_:	LD	A,(0BBE1h)
+	RET
+	
+;-------------------------------------
+;SECTER READ/WRITE
+;2588
+ABSSEC:
+	XOR	A
+	LD	(BIT16),A
+	JP	C25B7
+
+
+;-----------------------------------------------------------
+;FAT WRITE 
+FATWRT:
+	CALL	CHKDRV
+	JR	Z,FATWR2		;16bit FAT
+	LD	A,B
+	CP	10h
+	JP	J2DF8			;12bit FAT
+
+FATWR2:	
+	CALL	FATADR			;Get address
+	JR	Z,FATWR3		;Right routine
+	LD	A,0FFh
+	LD	(0BBEAh),A
+FATWR4:	LD	A,0F2h
+	LD	DE,0FFFFh
+	CALL	C36AC
+	JR	Z,FATWR4
+	JP	J2E53			;Error
+
+FATWR3:	PUSH	HL
+	LD	A,C
+	LD	(DE),A			;FAT write
+	INC	DE
+	LD	A,B
+	LD	(DE),A
+	JP	J2E2D			;Return
+	
+
+	
+;----------------------------------------------------------
+;Set sector number at #BBB4
+NUM_1:
+	LD	(0BBB4h),HL
+	RET	NC
+SECINC:	LD	A,(BIT16)
+	INC	A
+	LD	(BIT16),A
+	RET
+	
+NUM_2:	
+	INC	(IY+35h)
+	RET	NZ
+	JR	SECINC
+	
+;-----------------------------------------------
+;2B7Eh
+BUF_1:	XOR	A
+	LD	(DSKEX),A		;FAT
+	JP	C2B88
+
+BUF_5:	XOR	A			;#2FD2
+	LD	(BIT16),A
+	LD	B,L
+	DEC	B
+	DEC	DE
+	RET
+
+BUF_4:	LD	BC,(0BBE8h)		;SUB DIR? ROOT?
+	INC	BC
+	LD	A,B
+	OR	C
+	LD	B,01h
+	JR	Z,BUF_3			;(BBE8)=FFFF
+	LD	A,(SDIR_1)
+	JR	BUF_
+
+BUF_2:	LD	A,(BIT16)
+	JR	BUF_
+	
+BUF_3:	XOR	A
+BUF_:	LD	(DSKEX),A	;FAT
+	JP	C2B96		
+
+;--------------------------------------------------------------
+;Read a sector for Random block access
+
+RAMRED:
+	PUSH	AF
+	LD	A,(BIT16)
+	LD	(RW_16),A	;write bit16-23 of sector number 
+	LD	DE,(0BBB4h)
+	POP	AF
+	RET
+
+
+;------------------------------------------------------------
+;Read/write a sector for buffer
+REDBUF:
+	PUSH	AF
+	LD	A,(DSKEX)
+	JR	REDB_1
+WRTBUF:
+	PUSH	AF
+	LD	A,(IX+0FDh)		;bit16-23
+REDB_1:	LD	(RW_16),A		;use bit16-23 of sector number
+	POP	AF
+	JP	C326D
+
+;---------------------------------
+;34F0h  JP DSKROM
+DSKROM:
+	CP	06h
+	JP	NC,J3543
+	CP	02h
+	JR	NC,DSKR_1
+	PUSH	AF
+	XOR	A
+	LD	(RW_16),A
+	POP	AF
+DSKR_1:	JP	J34FE
+
+	
+
+CLST_1:	
+	LD	D,(HL)			;#1534
+	JR	CHK_C			;Check data 'FFFFh'
+	
+CLST_2:	DB	0FDh,0CBh,20h,0DEh	;SET  3,(IY+20h)	;#158B
+	JR	CHK_C
+	
+	
+CLST_4:	LD	DE,(0BBE8h)		;#1C53
+	JR	CHK_C
+	
+CLST_8:	POP	AF			;#1B87
+	POP	DE
+	JR	CHK_D
+	
+CLST_5:	POP	AF			;#2F83
+	PUSH	BC
+CHK_D:	PUSH	AF
+	JR	CHK_C
+	
+CLST_6:	LD	DE,(0BBA3h)		;#2FAF
+CHK_C:	
+	LD	A,D			;DE=FFFFh Z=0
+	AND	E
+	JR	CHK_A
+
+CLST_7:	JR	NZ,CHK_C		;#3021
+	INC	SP
+	INC	SP
+	RET
+
+
+
+CLST_9:	LD	DE,(0BBE8h)		;#1CB1
+	CALL	CHK_C
+	LD	DE,(0BBE4h)
+	RET	NZ			;カレントはROOT
+	JR	CHK_C
+
+CLST_3:	LD	DE,(0BBE6h)		;#1C0D
+
+CHECK:	LD	A,D
+CHK_A:	INC	A
+	JR	Z,CHK_B
+	XOR	A
+	RET			;z=1 
+CHK_B:	DEC	A
+	RET			;z=0 
+	
+CLST_A:	LD	A,(HL)
+	JR	CHK_A
+	
+	
+;---------------------------------
+	
+CLUST:	
+	LD	HL,(0B9FAh)		;FCB+20h DPB address
+	CALL	CHKDRV
+	RET	Z			;FAT16
+	LD	A,(IX+2Ah)
+	JP	J39F4
+	
+CLUST2:	
+	LD	HL,(0B9FAh)
+	CALL	CHKDRV
+	RET	Z			;FAT16
+	LD	A,(IX+1Dh)
+	JP	J3CFD
+	
+;-------------------------------------------------------------------
+RAMDSK:
+	
+
+;Get FAT address
+FATRED:
+	PUSH	AF
+	CALL	CHKDRV
+	JR	Z,Z0018		;use FAT16
+	POP	AF
+	CALL	C2DA4		;FAT12 routine
+	BIT	7,D
+	RET
+
+;Read 16bitFAT
+
+Z0018:	
+	POP	AF
+	CALL	FATADR		;get address & sector set
+	JR	Z,Z0019		;no error
+Z0020:	XOR	A
+	LD	(0BBEAh),A
+	LD	A,0F2h	
+	LD	DE,0FFFFh
+	CALL	C36AC
+	JR	Z,Z0020
+	JR	Z0021		;error
+	
+Z0019:	PUSH	HL
+	LD	A,(DE)		;DE=FAT address
+	LD	L,A
+	INC	DE
+	LD	A,(DE)
+	LD	H,A
+	EX	DE,HL		;DE=next cluster number
+	LD	HL,0FFF7h	;HL=wrong cluster number
+	OR	A
+	SBC	HL,DE
+	POP	HL
+	JR	NC,Z1021	;not end of cluster
+Z0021:	LD	DE,0FFFFh	;End of cluster
+	OR	D		;Z=0
+	SCF			;Cy=1
+	RET
+Z1021:	XOR	A		;Cy=0 Z=1
+	RET
+	
+	
+;-----------------------------------------------------------
+;Get sector number of FAT & read FAT sector in disk buffer
+;Get address of FAT
+	
+FATADR:
+	PUSH	IX		;IX=#B9DA
+	PUSH	BC	
+	PUSH	HL		;HL=DPB address 
+	PUSH	HL
+	POP	IX
+	DB	0FDh,0CBh,29h,86h	;RES	0,(IY+29h)
+	LD	L,(IX+16h)
+	LD	H,(IX+17h)
+	XOR	A
+	SBC	HL,DE
+	JR	C,FATAD_	;ERROR
+	LD	H,D		;DE=cluster number
+	LD	L,E
+	ADD	HL,HL		;cluster number * 2(16bit)
+	PUSH	HL
+	LD	E,D		;cluster * 2 / 200hbytes = sector
+	LD	D,0
+	LD	L,(IX+0Ch)	;sector number of FAT top
+	LD	H,(IX+0Dh)	;
+	ADD	HL,DE		;get sector number of FAT
+	EX	DE,HL
+	CALL	BUF_1		;get address of disk buffer
+	LD	BC,0Bh
+	ADD	HL,BC		;start address of FAT in disk buffer
+	POP	BC
+	LD	A,B
+	AND	01h		;get leave from FATaddress/200h
+	LD	B,A
+	ADD	HL,BC		;get address
+	EX	DE,HL
+	CP	A		;Z=1 right
+FATAD_:	POP	HL
+	POP	BC
+	POP	IX
+	RET
+	
+;-------------------------------
+;Z=1  FAT16 drive   Z=0  FAT12 drive
+CHKDRV:
+	PUSH	HL
+	PUSH	DE
+	LD	DE,001Dh
+	ADD	HL,DE
+	BIT	7,(HL)
+	POP	DE
+	POP	HL
+	RET
+
+
+
+STOR_1:	PUSH	AF
+	LD	A,(SDIR_1)		;BBE2h-3h
+	LD	(SDIR_2),A		;BBD6h-7h
+	POP	AF
+	LD	DE,0BBD2h
+	RET
+	
+STOR_2:	PUSH	AF
+	LD	A,(SDIR_2)
+	LD	(SDIR_1),A
+	POP	AF
+	LD	HL,0BBD2h
+	RET
+	
+STOR_3:	LD	(IX+23h),B		;bit7-15 of sector
+	LD	A,(SDIR_1)
+	LD	(IX+32h),A		;File handle
+	RET
+	
+STOR_4:	OR	A
+	SBC	HL,DE
+	RET	NZ
+	LD	A,(SDIR_1)
+	SUB	(IX+32h)
+	RET
+	
+STOR_5:	PUSH	AF
+	LD	A,(SDIR_1)
+	LD	(SDIR_3),A
+	POP	AF
+	LD	HL,0BBDEh
+	RET
+	
+STOR_6:	PUSH	AF
+	LD	A,(SDIR_3)
+	LD	(SDIR_1),A
+	POP	AF
+	LD	HL,0BBC6h
+	RET
+
+STOR_7:	PUSH	AF
+	LD	A,(SDIR_1)
+	ld	(ix+38h),a			;[ver0.12]
+	POP	AF
+	EX	DE,HL
+	LDIR
+	RET
+	
+STOR_8:	PUSH	AF
+	ld	a,(ix+38h)			;[ver0.12]
+	LD	(SDIR_1),A
+	POP	AF
+	LD	C,(IX+19h)
+	RET
+
+ALLSEC:
+	EX	DE,HL
+	DEC	HL
+	DEC	HL
+	OR	A
+	RET	Z		;FAT12
+	LD	(HL),0
+	DEC	HL
+	LD	(HL),0
+	LD	BC,0011h
+	ADD	HL,BC
+	LD	(HL),A
+	DEC	HL
+	RET
+
 
 	.DEPHASE
 

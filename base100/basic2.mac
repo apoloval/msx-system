@@ -1640,7 +1640,7 @@ J4336:	DEC	HL
 	LD	A,(HL)
 	CP	"_"			; short for CALL ?
 	JP	Z,J43A3			; yep,
-	LD	DE,I3D26		; ??
+	LD	DE,I3D26		; ??, useless instruction
 	CALL	C4EA9			; get char uppercase
 	CALL	C64A8			; is upcase letter character ?
 	JP	C,J441D			; nope, not a keyword

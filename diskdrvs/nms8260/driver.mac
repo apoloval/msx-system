@@ -66,7 +66,7 @@ J$7442:	RET
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J$7443:	LD	B,1
+J$7443:	LD	B,1			; disk unchanged
 	AND	A
 MTOFF:	RET	
 
@@ -108,7 +108,7 @@ J$7458:	CALL	C.7947
 	CALL	C.7981			; port 07EH
 	IN	A,(C)
 	BIT	1,A			; second drive connected ?
-	JR	NZ,J.7487		; nope,
+	JR	NZ,J.7487		; nope, quit
 
 J$7479:	LD	D,20H
 	CALL	C.79FE
@@ -130,7 +130,7 @@ J$7492:	CALL	C.7BD4			; print number
 	CALL	C.7BEF			; beep
 	CALL	C.7BFB			; wait for Y or N key
 	JR	C,J$7458		; Y, retry
-	JR	J.7487
+	JR	J.7487			; N, quit
 
 J.74A5:	BIT	6,A
 	JR	Z,J$74AC
@@ -143,7 +143,7 @@ J$74AC:	CALL	C.7BD4			; print number
 	CALL	C.7BEF			; beep
 	CALL	C.7BFB			; wait for Y or N key
 	JR	C,J$7479		; Y, retry
-	JR	J.7487
+	JR	J.7487			; N, quit
 
 ;	  Subroutine DSKIO
 ;	     Inputs  ________________________
@@ -163,10 +163,10 @@ C.74C5:	PUSH	HL
 	RRC	A
 	RRC	A
 	RRC	A
-	LD	(IX+0),A
+	LD	(IX+0),A		; drivenumber in b5 ?
 	LD	A,0F0H
-	CP	C
-	JR	NZ,J$74F1
+	CP	C			; correct mediadescriptor ?
+	JR	NZ,J$74F1		; nope, quit with error
 	CALL	C.74F6
 	POP	AF
 	POP	HL
@@ -190,7 +190,7 @@ C.74F6:	PUSH	DE
 	CALL	DIV16
 	LD	A,L			; cylinder
 	OR	(IX+0)
-	LD	(IX+0),A
+	LD	(IX+0),A		; combine with drive
 	LD	(IX+2),C		; sector (b0-b7)
 	LD	A,B
 	RLCA	
@@ -200,11 +200,19 @@ C.74F6:	PUSH	DE
 	RLCA	
 	RLCA				; sector (b8,b9)
 	OR	(IX+1)
-	LD	(IX+1),A
+	LD	(IX+1),A		; combine with track
 	RET	
+
+;	  Subroutine Read sectors
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 J$751F:	LD	(IX+4),08H		; operation read sector
 	JR	J.7538
+
+;	  Subroutine Write sectors
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 J$7525:	CALL	C.7981			; port 07EH
 	IN	A,(C)
@@ -226,7 +234,7 @@ J.7538:	PUSH	HL
 	LD	H,(IX+1)		; track + sector (H)
 	LD	L,(IX+2)		; sector (L)
 	CALL	C.7A4A
-	JR	C,J.758C
+	JR	C,J.758C		; error,
 	LD	BC,L767D
 	LD	HL,I$767D
 	LD	DE,($SECBUF)
@@ -258,10 +266,10 @@ J$756D:	CALL	C.797E			; port 07DH
 J.758C:	POP	HL
 	JR	J.75E5
 
-J$758F:	LD	B,01H	; 1 
+J$758F:	LD	B,1			; read
 	JR	J$7595
 
-J$7593:	LD	B,00H
+J$7593:	LD	B,0			; write
 J$7595:	CALL	C.797B			; port 07CH
 	POP	HL
 	LD	A,L
@@ -294,7 +302,7 @@ J$75BF:	LD	B,0
 	OTIR	
 	OTIR	
 J.75C5:	DEC	(IX+5)			; more sectors ?
-	JR	Z,J$75CD
+	JR	Z,J$75CD		; nope,
 	JR	J$7566			; yep, next
 
 J$75CC:	POP	HL
@@ -316,7 +324,8 @@ J.75E5:	CALL	C.7947
 J.75E8:	LD	A,0CH			; OTHER error
 J.75EA:	LD	B,(IX+5)
 	SCF	
-J.75EE:	RET	
+J.75EE:	RET
+	
 J$75EF:	CP	18H
 	JR	Z,J$7621
 J$75F3:	CP	04H
@@ -403,12 +412,12 @@ I$767D:	PUSH	IX
 	POP	HL
 	BIT	0,B
 	JR	Z,J$7698
-	LD	B,00H
+	LD	B,0
 	INIR	
 	INIR	
 	JR	J$769E
 
-J$7698:	LD	B,00H
+J$7698:	LD	B,0
 	OTIR	
 	OTIR	
 J$769E:	POP	IX
@@ -579,7 +588,7 @@ C$784D:	LD	(IX+14),00H
 	LD	(IX+7),00H
 	LD	(IX+8),22H	; """
 	LD	(IX+9),00H
-	CALL	C$78DD
+	CALL	C$78DD			; print formating
 J$7868:	LD	A,(IX+0)
 	AND	20H
 	LD	(IX+0),A		; only drive
@@ -630,7 +639,7 @@ J.78C7:	CALL	C.7947
 C$78CF:	PUSH	IX
 	LD	(IX+9),00H
 	LD	A,83H
-	CALL	C.7B19
+	CALL	C.7B19			; print char
 	POP	IX
 	RET
 	
@@ -642,7 +651,8 @@ C$78DD:	PUSH	IX
 	LD	HL,I$78E8
 	CALL	C.7B28
 	POP	IX
-	RET	
+	RET
+	
 I$78E8:	DEFB	10,13
 	DEFB	"Formatting "
 	DEFB	10,13
@@ -698,11 +708,11 @@ C.7947:	CALL	C.797E			; port 07DH
 J$794E:	LD	B,0FFH
 J$7950:	DJNZ	J$7950
 	DEC	D
-	JR	NZ,J$794E		; wait
+	JR	NZ,J$794E		; wait xx ms
 	LD	E,10H
 J$7957:	LD	D,0FFH
 J$7959:	LD	B,0FFH
-J$795B:	INC	C
+J$795B:	INC	C			; port 07EH
 	OUT	(C),A
 	DEC	C
 	IN	A,(C)
@@ -753,7 +763,7 @@ C.7984:	LD	C,7FH
 J$7987:	CALL	C.7984			; port 07FH
 	XOR	A
 	OUT	(C),A
-	LD	C,0CH	; 12 
+	LD	C,0CH
 	LD	D,00H
 	LD	H,00H
 	LD	L,00H

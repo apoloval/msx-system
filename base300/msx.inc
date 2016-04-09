@@ -28,6 +28,13 @@ OPTM	EQU	0
 
 CNTRY	EQU	0
 
+;	F4INV	F4 (reset) register
+;		0 = not inverted
+;		1 = inverted
+
+F4INV	EQU	0
+
+
 
 ;	symbols used to procedure alternate code
 

@@ -1,0 +1,75 @@
+
+MYSIZE	EQU	0
+SECLEN	EQU	0
+
+;	  Subroutine DSKIO
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+DSKIO:	RET
+DEFDPB	EQU	DSKIO-1
+
+;	  Subroutine INIHRD
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+INIHRD:	LD	A,(EXPTBL+0)
+	AND	03H			; init call with MA-20 activated ?
+	RET	NZ			; yep, all ok
+	POP	HL
+	RET				; quit diskrom
+
+;	  Subroutine DSKSTP
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+DSKSTP:	RET
+
+;	  Subroutine DRIVES
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+DRIVES:	LD	L,0
+	RET
+
+;	  Subroutine INIENV
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+INIENV:	RET
+
+;	  Subroutine DSKCHG
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+DSKCHG:	INC	B
+	RET
+
+;	  Subroutine GETDPB
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+GETDPB:	RET
+
+;	  Subroutine CHOICE
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+CHOICE:	LD	HL,I741D
+	RET
+
+I741D:	DEFB	0
+
+;	  Subroutine DSKFMT
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+DSKFMT:	RET
+
+;	  Subroutine OEMSTA
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+OEMSTA:	SCF
+	RET
+

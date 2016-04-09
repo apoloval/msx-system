@@ -51,9 +51,9 @@ DSKIO:	DI
 	PUSH	AF
 	PUSH	AF
 	PUSH	AF
-	PUSH	AF
-	PUSH	AF
-	PUSH	HL
+	PUSH	AF			; reserve 4 words on stack (dskio leave, save dma/wait, save refresh, return af)
+	PUSH	AF			; save AF
+	PUSH	HL			; save HL
 	POP	AF
 	POP	AF
 	POP	AF
@@ -143,7 +143,7 @@ J750E:	POP	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7511:	CALL	C76F4			; initialise for disk i/o
+C7511:	CALL	C76F4			; initialize for disk i/o
 	RET	C
 	CALL	DISINT
 	DI
@@ -151,18 +151,18 @@ J7519:	LD	A,L
 	ADD	A,LOW (512-1)
 	LD	A,H
 	ADC	A,HIGH (512-1)
-	CP	40H
-	JP	C,J7544
+	CP	40H			; page 0 transfer ?
+	JP	C,J7544			; yep, transfer can be direct
 	LD	A,H
-	AND	A
-	JP	M,J7544
+	AND	A			; page 2 or 3 transfer ?
+	JP	M,J7544			; yep, transfer can be direct
 	PUSH	HL
 	PUSH	DE
 	PUSH	BC
 	LD	DE,($SECBUF)
 I7530:	PUSH	DE
 	LD	BC,512
-	CALL	XFER
+	CALL	XFER			; transfer first to SECBUF
 	POP	HL
 	POP	BC
 	POP	DE
@@ -212,8 +212,8 @@ I7579:	POP	BC
 	PUSH	AF
 	CALL	C793F
 	POP	AF
-	BIT	6,A
-	JR	NZ,J75A2
+	BIT	6,A			; write protect bit set ?
+	JR	NZ,J75A2		; yep, test if disk is realy write protected
 	PUSH	AF
 	CALL	C7881
 	POP	AF
@@ -222,38 +222,39 @@ I7579:	POP	BC
 	SCF
 	LD	E,A
 	BIT	4,E
-	LD	A,08H	; 8 
+	LD	A,8
 	RET	NZ
 	BIT	3,E
-	LD	A,04H	; 4 
+	LD	A,4
 	RET	NZ
-	LD	A,0CH	; 12 
+	LD	A,12
 	RET
 
 J75A2:	LD	A,80H
 	LD	(D7FF8),A		; READ SECTOR
 	CALL	C795D			; wait ??
 	LD	HL,D7FFC
-	LD	DE,0
+	LD	DE,0			; timeout counter
 J75B0:	LD	A,(HL)
 	ADD	A,A
 	JP	C,J75C5			; INT, yep,
 	JP	M,J75C5			; DRQ,
 	DEC	DE
 	LD	A,E
-	OR	D
-	JP	NZ,J75B0
-	CALL	C7949
-J75C1:	LD	A,02H	; 2 
+	OR	D			; waited long enough ?
+	JP	NZ,J75B0		; nope,
+	CALL	C7949			; terminate FDC command and wait for FDC ready
+J75C1:	LD	A,2
 	SCF
-	RET
+	RET				; quit with NOT READY error
+
 J75C5:	LD	A,(D7FF8)
-	CALL	C7949
-	BIT	4,A
-	JR	NZ,J75C1
+	CALL	C7949			; terminate FDC command and wait for FDC ready
+	BIT	4,A			; record not found bit set ?
+	JR	NZ,J75C1		; yep, quit with not ready error
 	XOR	A
 	SCF
-	RET
+	RET				; quit with WRITE PROTECT error
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -314,12 +315,13 @@ I762E:	POP	BC
 	POP	DE
 	POP	HL
 	LD	A,(D7FF8)
-	AND	1CH
-	RET	Z
-	CALL	C7949
-	LD	A,0AH	; 10 
+	AND	1CH			; ignore not ready, write protect, record type, data request and busy bits
+	RET	Z			; no error bits set, quit with OK
+	CALL	C7949			; terminate FDC command and wait for FDC ready
+	LD	A,10
 	SCF
-	RET
+	RET				; quit with WRITE FAULT error
+
 J763E:	CALL	C7644
 	JP	J74CC
 
@@ -327,7 +329,7 @@ J763E:	CALL	C7644
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7644:	CALL	C76F4			; initialise for disk i/o
+C7644:	CALL	C76F4			; initialize for disk i/o
 	RET	C
 	CALL	DISINT
 	DI
@@ -335,14 +337,14 @@ J764C:	LD	A,L
 	ADD	A,LOW (512-1)
 	LD	A,H
 	ADC	A,HIGH (512-1)
-	CP	40H
-	JP	C,J7678
+	CP	40H			; page 0 transfer ?
+	JP	C,J7678			; yep, transfer can be direct
 	LD	A,H
-	AND	A
-	JP	M,J7678
+	AND	A			; page 2 or 3 transfer ?
+	JP	M,J7678			; yep, transfer can be direct
 	PUSH	HL
 	LD	HL,($SECBUF)
-	CALL	C7685
+	CALL	C7685			; read sector in SECBUF
 	POP	HL
 	RET	C
 	PUSH	HL
@@ -351,7 +353,7 @@ J764C:	LD	A,L
 	EX	DE,HL
 	LD	HL,($SECBUF)
 	LD	BC,512
-	CALL	XFER
+	CALL	XFER			; transfer from SECBUF
 	POP	BC
 	POP	DE
 	POP	HL
@@ -423,20 +425,21 @@ I76CA:	POP	BC
 	JR	NZ,C7685
 	SCF
 	LD	E,A
-	BIT	4,E
-	LD	A,08H	; 8 
-	RET	NZ
-	BIT	3,E
-	LD	A,04H	; 4 
-	RET	NZ
-	LD	A,0CH	; 12 
-	RET
-J76ED:	CALL	C7949
-	LD	A,02H	; 2 
-	SCF
-	RET
+	BIT	4,E			; record not found bit set ?
+	LD	A,8
+	RET	NZ			; yep, quit with RECORD NOT FOUND error
+	BIT	3,E			; crc error bit set ?
+	LD	A,4
+	RET	NZ			; yep, quit with DATA (CRC) error
+	LD	A,12
+	RET				; quit with OTHER error
 
-;	  Subroutine initialise for disk i/o
+J76ED:	CALL	C7949			; terminate FDC command and wait for FDC ready
+	LD	A,2
+	SCF
+	RET				; quit with NOT READY error
+
+;	  Subroutine initialize for disk i/o
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -798,7 +801,7 @@ J793D:	POP	BC
 ;	     Outputs ________________________
 
 C793F:	LD	A,(D7FFA)
-	CALL	C7949
+	CALL	C7949			; terminate FDC command and wait for FDC ready
 	LD	(D7FFA),A
 	RET
 
@@ -1164,7 +1167,7 @@ J7B8F:	LD	(IY+10),A
 	LD	C,(IY+10)
 	LD	B,00H
 	LD	(IY+7),B
-	CALL	C76F4			; initialise for disk i/o
+	CALL	C76F4			; initialize for disk i/o
 	LD	A,10H
 	JP	C,J7BCD
 	CALL	C78AD

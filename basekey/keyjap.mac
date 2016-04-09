@@ -283,7 +283,7 @@ C0F1F:
 	LD	A,(HL)
 	CPL	
 	LD	(HL),A			; toggle KANA mode
-	LD	A,15
+J0F29:	LD	A,15
 	OUT	(0A0H),A
 	IN	A,(0A2H)
 	AND	7FH

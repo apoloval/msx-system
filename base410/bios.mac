@@ -2021,7 +2021,7 @@ J090D:	CP	A
 	SCF
 J090F:	POP	HL
 	RET
-;	-----------------
+
 J0911:	POP	AF
 	CP	01H	; 1 
 	JR	NZ,J090D
@@ -2406,11 +2406,11 @@ C0ABE:	CALL	C0BE2			; get max linenumber
 
 C0AC6:	LD	(CSRY),HL
 	RET
-;	-----------------
+
 J0ACA:	DEC	L
 	XOR	A
 	JR	C0AC6			; update cursorpos
-;	-----------------
+
 C0ACE:	LD	A,20H	; " "
 	CALL	C093C
 	LD	A,(CSRX)
@@ -2418,7 +2418,7 @@ C0ACE:	LD	A,20H	; " "
 	AND	07H	; 7 
 	JR	NZ,C0ACE
 	RET
-;	-----------------
+
 C0ADC:	LD	L,01H	; 1 
 
 ;	Subroutine	screencode CR
@@ -2428,7 +2428,7 @@ C0ADC:	LD	L,01H	; 1
 
 C0ADE:	LD	H,1
 	JR	C0AC6			; update cursorpos
-;	-----------------
+
 C0AE2:	CALL	C0ADE
 
 ;	Subroutine	__________________________
@@ -2438,7 +2438,7 @@ C0AE2:	CALL	C0ADE
 C0AE5:	PUSH	IX
 	LD	IX,S.DELLNO
 	JP	J0295			; SUBROM
-;	-----------------
+
 C0AEE:	CALL	C0ADE
 
 ;	Subroutine	__________________________
@@ -2453,7 +2453,7 @@ J0AFA:	CALL	C0AA9			; cursor left with warp
 	RET	Z
 	LD	C," "
 	JP	C0B8D			; write char at screenlocation
-;	-----------------
+
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -2522,7 +2522,7 @@ C0B3F:	CALL	H.DSPF
 	PUSH	IX
 	LD	IX,S.DSPFNK
 	JP	J0295			; SUBROM
-;	-----------------
+
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -2844,7 +2844,7 @@ J0C4A:	CALL	H.KEYI
 	JP	J1A0B			; expansion code
 
 ; Reason: expansion of interrupt routine to handle pause key
-;	-----------------
+
 J0C50:	JP	P,J0D02
 	CALL	H.TIMI
 	EI
@@ -3265,7 +3265,7 @@ J115C:	DEC	C
 	CALL	C1102			; WRTPSG
 	DEC	C
 	JR	J115C
-;	-----------------
+
 J1177:	LD	H,A
 	AND	80H
 	JR	Z,J118B
@@ -3292,7 +3292,7 @@ J118B:	LD	A,H
 	DEC	C
 	DEC	C
 	JR	J115C
-;	-----------------
+
 J11A6:	LD	A,B
 	ADD	A,08H	; 8 
 	LD	E,00H
@@ -3327,7 +3327,7 @@ J11BA:	LD	A,(MUSICF)
 	LD	A,07H	; 7 
 	LD	(MUSICF),A
 	RET
-;	-----------------
+
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3445,9 +3445,9 @@ J1269:	XOR	A
 
 ; GTPDL not supported with Turbo-R, remaining space (126BH-12A1) used otherwise
 
-;	-----------------
+
 ;	extra init routine for Z80/R800, used before original init routine
-;	-----------------
+
 
 J126B:	NOP
 	IN	A,(0F4H)
@@ -3717,7 +3717,7 @@ J13B3:	LD	A,(DE)
 	POP	BC
 	DJNZ	J13B1
 	RET
-;	-----------------
+
 I13C3:	DEFM	'color ',0
 	DEFM	'auto ',0
 	DEFM	'goto ',0
@@ -3847,7 +3847,13 @@ J1440:	LD	(HL),A			; update RGSAV
 
 
 J146A:	IN	A,(0F4H)
+
+	IF	F4INV EQ 1
+	CPL
+	ELSE
 	NOP
+	ENDIF
+
 	RET
 
 ;	Subroutine	WRBTST
@@ -3855,10 +3861,16 @@ J146A:	IN	A,(0F4H)
 ;	Outputs		________________________
 
 
-J146E:	NOP
+J146E:
+	IF	F4INV EQ 1
+	CPL
+	ELSE
+	NOP
+	ENDIF
+
 	OUT	(0F4H),A
 	RET
-;	-----------------
+
 J1472:	NOP
 	NOP
 	NOP
@@ -3897,7 +3909,7 @@ J1490:	CALL	C14F8
 	POP	HL
 	LD	(HL),C
 	RET
-;	-----------------
+
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3933,14 +3945,14 @@ C14AB:	CALL	C14F8
 	INC	A
 	LD	A,00H
 	RET
-;	-----------------
+
 J14CF:	LD	C,A
 	LD	B,00H
 	LD	HL,QUEBAK-1
 	ADD	HL,BC
 	LD	A,(HL)
 	RET
-;	-----------------
+
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3979,7 +3991,7 @@ J14E9:	CALL	C14F8
 	LD	L,A
 	LD	H,00H
 	RET
-;	-----------------
+
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -3993,7 +4005,7 @@ C14F8:	CALL	C1502			; get controlblok queue
 	LD	A,(HL)			; putback flag
 	OR	A
 	RET
-;	-----------------
+
 
 ;	Subroutine	__________________________
 ;	Inputs		________________________
@@ -4196,7 +4208,7 @@ C1604:	LD	A,(SCRMOD)
 	LD	(CLOC),HL
 	POP	BC
 	RET
-;	-----------------
+
 I1636:	DEFB	080H,040H,020H,010H,008H,004H,002H,001H
 
 J163E:	LD	H,B
@@ -4205,7 +4217,7 @@ J163E:	LD	H,B
 	LD	A,E
 	LD	(CMASK),A
 	RET
-;	-----------------
+
 J1648:	PUSH	IX
 	LD	IX,S.MAPXYC
 	JP	J0295			; SUBROM
@@ -5117,44 +5129,34 @@ J1BB7:	LD	A," "
 
 J1BBB:	POP	AF
 	JP	J0919			; CHPUT
-;	-----------------
+
 ;	Characterset goes here
 ;	BEGIN
-;	-----------------
+
 
 
 D1BBF:
 
-	IF	CHRGEN EQ 0
-
 	IF	CNTRY EQ 9
 	INCLUDE	CHRKOR
-	ELSE
+	ENDIF
+	IF	CNTRY EQ 0
 	INCLUDE CHRJAPV2
 	ENDIF
-
-	ENDIF
-
-	IF	CHRGEN EQ 1
-
 	IF	CNTRY EQ 10
 	INCLUDE	CHRRUS
 	ENDIF
 	IF	CNTRY EQ 5
 	INCLUDE CHRGER
 	ENDIF
-
-	IF	(CNTRY NE 10) AND (CNTRY NE 5)
+	IF	(CNTRY NE 9) AND (CNTRY NE 0) AND (CNTRY NE 10) AND (CNTRY NE 5)
 	INCLUDE CHRINT
 	ENDIF
 
-	ENDIF
 
-
-;	-----------------
 ;	Characterset goes here
 ;	END
-;	-----------------
+
 
 ;	Subroutine	PINLIN
 ;	Inputs		________________________

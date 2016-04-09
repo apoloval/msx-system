@@ -1,0 +1,126 @@
+J0000:	DI
+	JP	J7FE7			; initalize new stuff first
+
+
+J016F:	CALL	C01AD			; Subslot of slot 0 and page 0 ?
+	JR	NZ,J01C6		; Nope, handle normally
+	PUSH	HL
+	CALL	C0199			; Save slotregisters and page mainrom in on page 1
+	EX	(SP),HL
+	CALL	C7FBE			; Helper routine RDSLT expanded slot 0 in page 1 mainrom
+	JR	J018D			; Restore slotregisters
+
+J017E:	CALL	C01AD			; Subslot of slot 0 and page 0 ?
+	JP	NZ,J01E1		; Nope, handle normally
+	POP	DE
+	PUSH	HL
+	CALL	C0199			; Save slotregisters and page mainrom in on page 1
+	EX	(SP),HL
+	CALL	C7FC4			; Helper routine WRSLT expanded slot 0 in page 1 mainrom
+J018D:	EX	(SP),HL
+	PUSH	AF
+	LD	A,L
+	OUT	(0A8H),A		; Restore primary slotregister
+	LD	A,H
+	LD	(D.FFFF),A		; Restore secundairy slotregister
+	POP	AF
+	POP	HL
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C0199:	PUSH	AF
+	LD	A,(D.FFFF)
+	CPL	
+	LD	H,A			; Save secundary slotregister
+	AND	0F3H
+	LD	(D.FFFF),A		; Secundairy slot 0 on page 1
+	IN	A,(0A8H)
+	LD	L,A			; Save primary slotregister
+	AND	0F3H
+	OUT	(0A8H),A		; Primary slot 0 on page 2
+	POP	AF
+	RET	
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C01AD:	INC	D
+	DEC	D			; Subslot of slot 0 ?
+	RET	NZ			; Nope, quit
+	LD	B,A
+	LD	A,E
+	CP	03H
+	LD	A,B			; Page 0 ?
+	RET	
+
+
+X01B9:	JP	M,J016F			; if slot 0 is expanded, handle carefull
+
+
+X01D5:	JP	M,J017E			; if slot 0 is expanded, handle carefull
+
+
+X0C96:	LD	(HL),1			; SCNCNT = 1 (MSX1 had SCNCNT = 3)
+
+
+X0CF0:	LD	(HL),3			; REPCNT = 3 (MSX1 had REPCNT = 1)
+
+
+X0D49:	LD	A,39			; REPCNT = 39 (MSX1 had REPCNT = 13)
+
+
+;	  Subroutine helper routine RDSLT expanded slot 0
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7FBE:	CALL	C7FCB			; Save secundairy slotregister and page secundairy slot in on page 0
+	LD	E,(HL)
+	JR	J7FC8			; Restore secundairy slotregister
+
+;	  Subroutine helper routine WRSLT expanded slot 0
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7FC4:	CALL	C7FCB			; Save secundairy slotregister and page secundairy slot in on page 0
+	LD	(HL),E
+J7FC8:	LD	A,B
+	JR	J7FD9			; Restore secundairy slotregister
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C7FCB:	RRCA	
+	RRCA	
+	AND	03H
+	LD	D,A
+	LD	A,(D.FFFF)
+	CPL	
+	LD	B,A
+	AND	0FCH
+	OR	D
+	LD	D,A
+J7FD9:	LD	(D.FFFF),A
+	LD	A,E
+	RET	
+
+?.7FDE:	DEFB	0,0,0,0,0,0,0,0,0		; unused space
+
+J7FE7:	XOR	A
+	OUT	(0A8H),A			; primairy slot 0 for every page
+	OUT	(0FFH),A
+	INC	A
+	OUT	(0FEH),A
+	INC	A
+	OUT	(0FDH),A
+	INC	A
+	OUT	(0FCH),A			; initialize memory mapper
+	LD	A,02H
+	OUT	(99H),A				; dot count 192, no interlace, PAL, DLCLK output
+	LD	A,89H
+	OUT	(99H),A				; setup VDP register 9
+	JP	J02D7				; orginal MSX1 init
