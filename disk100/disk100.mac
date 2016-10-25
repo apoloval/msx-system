@@ -547,24 +547,24 @@ A40AB:	push	iy
 C40B7:	LD	A,0DH
 	OUT	(0B4H),A
 	LD	A,0AH
-	OUT	(0B5H),A
+	OUT	(0B5H),A		; alarm off, clock running, bank 2
 	XOR	A
-	OUT	(0B4H),A
+	OUT	(0B4H),A		; pos 0
 	LD	B,0FH
-J40C4:	IN	A,(0B5H)
+J40C4:	IN	A,(0B5H)		; read data
 	AND	0FH
 	XOR	B
-	OUT	(0B5H),A
+	OUT	(0B5H),A		; change it and write back
 	LD	C,A
 	EX	(SP),HL
-	EX	(SP),HL
+	EX	(SP),HL                 ; wait
 	IN	A,(0B5H)
 	AND	0FH
-	CP	C
-	RET	NZ
+	CP	C			; correctly readback ?
+	RET	NZ			; nope, no clockchip!
 	XOR	B
-	OUT	(0B5H),A
-	DJNZ	J40C4
+	OUT	(0B5H),A		; restore orginal data
+	DJNZ	J40C4			; try all values
 	ld	a,0FFH
 	ld	(YF338),a		; flag use clockchip
 	ld	a,13
@@ -989,7 +989,7 @@ A4331:	srl	c
 	cp	c			; same as dirsector currently in buffer ?
 	jr	nz,A4342		; nope, go get it
 	ld	a,(YF246)
-	cp	(ix+0)		; same driveid as dirsector buffer owner ?
+	cp	(ix+0)  		; same driveid as dirsector buffer owner ?
 	ret	z			; yep, do nothing
 A4342:	push	hl
 	call	A46A4			; read dirsector

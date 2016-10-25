@@ -562,7 +562,7 @@ A40C5:	in	a,(0B5H)		; read data
 	xor	b
 	out	(0B5H),a		; change it and write back
 	ld	c,a
-	nop				; wait or patched code ??
+	nop				; wait (orginal had 2x EX (SP),HL but by saving one byte all routine after this routine stay alligned)
 	in	a,(0B5H)
 	and	00FH
 	cp	c			; correctly readback ?
@@ -994,7 +994,7 @@ A4331:	srl	c
 	cp	c			; same as dirsector currently in buffer ?
 	jr	nz,A4342		; nope, go get it
 	ld	a,(YF246)
-	cp	(ix+0)		; same driveid as dirsector buffer owner ?
+	cp	(ix+0)  		; same driveid as dirsector buffer owner ?
 	ret	z			; yep, do nothing
 A4342:	push	hl
 	call	A46A4			; read dirsector
