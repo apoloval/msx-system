@@ -13,654 +13,654 @@
 
 
 
-	INCLUDE	MSX.INC
-
-	.Z80
-	ASEG
-	ORG	OPTENT
-
-CHGCPU	EQU	0180H
-BUF	EQU	0F55EH
-
-?.7900:	CALL	C790E			; R800 ROM
-	DI
-	CALL	C7A7D
-	CALL	C7917
-	CALL	C7912			; Z80
-	RET
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C790E:	LD	A,1
-	JR	J7913
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C7912:	XOR	A
-J7913:	CALL	CHGCPU
-	RET
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C7917:	LD	HL,00FFH
-	LD	(BUF),HL
-	LD	HL,BUF
-	LD	DE,BUF+2
-	LD	BC,00A8H
-	LDIR
-	LD	HL,00FFH
-	CALL	C7A54
-	LD	E,H
-	LD	D,26
-	CALL	C7B4C			; vdp(26)
-	LD	E,L
-	LD	D,27
-	CALL	C7B4C			; vdp(27)
-	CALL	C7A38
-	LD	DE,0163H
-	CALL	C7B4C			; vdp(1)
-	LD	B,15H
-J7945:	PUSH	BC
-	CALL	C79F8
-	LD	IX,BUF
-	LD	IY,I79A2
-	LD	B,2BH	; "+"
-	LD	D,00H
-J7955:	LD	L,(IX)
-	LD	H,(IX+1)
-	LD	E,(IY)
-	OR	A
-	SBC	HL,DE
-	JR	NC,J7966
-	LD	HL,0
-J7966:	LD	(IX),L
-	LD	(IX+1),H
-	INC	IX
-	INC	IX
-	INC	IY
-	LD	L,(IX)
-	LD	H,(IX+1)
-	LD	E,(IY)
-	ADD	HL,DE
-	LD	A,H
-	CP	02H	; 2 
-	JR	C,J7984
-	LD	HL,0200H
-J7984:	LD	(IX),L
-	LD	(IX+1),H
-	INC	IX
-	INC	IX
-	INC	IY
-	DJNZ	J7955
-	POP	BC
-	DJNZ	J7945
-	LD	DE,1900H
-	CALL	C7B4C			; vdp (19)
-	LD	DE,021FH
-	CALL	C7B4C			; vdp (2)
-	RET
-
-I79A2:	DEFB	13H,0DH,15H,12H,14H,0EH,10H,17H
-	DEFB	13H,11H,15H,11H,0EH,0DH,11H,15H
-	DEFB	0CH,11H,13H,11H,15H,15H,12H,0CH
-	DEFB	0FH,10H,0EH,0EH,15H,0DH,0FH,11H
-	DEFB	11H,11H,17H,14H,0DH,0DH,0CH,0CH
-	DEFB	0DH,10H,15H,12H,17H,10H,0EH,17H
-	DEFB	11H,0CH,12H,13H,17H,0EH,16H,14H
-	DEFB	14H,0EH,14H,15H,0EH,0EH,13H,0FH
-	DEFB	11H,13H,13H,0FH,17H,15H,0DH,15H
-	DEFB	0FH,17H,0CH,0DH,16H,0CH,11H,0EH
-	DEFB	12H,14H,0DH,11H,17H,0DH
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C79F8:	LD	HL,BUF
-	LD	BC,559BH
-J79FE:	LD	E,(HL)
-	INC	HL
-	LD	D,(HL)
-	INC	HL
-	DEC	DE
-	LD	A,E
-	SRL	D
-	RRA
-	RRCA
-	RRCA
-	INC	A
-	AND	3FH	; "?"
-	LD	D,A
-	INC	E
-	LD	A,E
-	NEG
-	AND	07H	; 7 
-	LD	E,A
-	LD	A,1AH
-	OUT	(99H),A
-	LD	A,91H
-	OUT	(99H),A
-	IN	A,(99H)
-J7A1E:	IN	A,(99H)
-	AND	20H	; " "
-	JP	Z,J7A1E
-	OUT	(C),D
-	OUT	(C),E
-	DJNZ	J79FE
-	LD	DE,1A00H
-	CALL	C7B4C			; vdp (26)
-	LD	DE,1B00H
-	CALL	C7B4C			; vdp (27)
-	RET
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C7A38:	LD	A,02H	; 2 
-	OUT	(99H),A
-	LD	A,8FH
-	OUT	(99H),A
-J7A40:	IN	A,(99H)
-	AND	40H	; "@"
-	JR	Z,J7A40
-J7A46:	IN	A,(99H)
-	AND	40H	; "@"
-	JR	NZ,J7A46
-	XOR	A
-	OUT	(99H),A
-	LD	A,8FH
-	OUT	(99H),A
-	RET
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7A54:	RET
-;	-----------------
-I7A55:	DEFB	1CH,0E8H,00H,00H,1CH,0E8H,00H,00H
-	DEFB	3CH,0E8H,00H,00H,3CH,0E8H,00H,00H
-	DEFB	5CH,0E8H,00H,00H,5CH,0E8H,00H,00H
-	DEFB	1CH,00H,04H,00H,3CH,00H,04H,00H
-	DEFB	5CH,00H,04H,00H,0D8H,00H,00H,00H
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7A7D:	CALL	C7A38
-	LD	DE,0123H
-	CALL	C7B4C			; vdp(1)
-	CALL	C7C28
-	LD	A,55H	; "U"
-	LD	HL,0
-	LD	C,L
-	LD	B,L
-	CALL	C7B75
-	CALL	C7BE1
-	LD	DE,0705H
-	CALL	C7B4C			; vdp(7)
-	LD	HL,7800H
-	LD	BC,0030H
-	LD	A,0FFH
-	CALL	C7B75
-	LD	HL,7830H
-	LD	BC,0010H
-	LD	A,0F0H
-	CALL	C7B75
-	LD	HL,7400H
-	LD	A,05H	; 5 
-	LD	BC,0200H
-	CALL	C7B75
-	LD	HL,I7A55
-	LD	DE,7600H
-	LD	BC,0028H
-	CALL	C7B88
-	LD	DE,1903H
-	CALL	C7B4C			; vdp(25)
-	LD	DE,023FH
-	CALL	C7B4C			; vdp(2)
-	LD	DE,2D00H
-	CALL	C7B4C			; vdp(45)
-	LD	D,2AH	; "*"
-	CALL	C7B4C			; vdp(42)
-	INC	D
-	CALL	C7B4C			; vdp(43)
-	LD	D,27H	; "'"
-	CALL	C7B4C			; vdp(39)
-	LD	E,20H	; " "
-	LD	HL,I7CDE
-	EXX
-	LD	HL,I7C57
-	EXX
-J7AF3:	LD	A,03H	; 3 
-	PUSH	AF
-	LD	BC,002DH
-	LD	D,26H	; "&"
-	CALL	C7B4C			; vdp(38)=
-	EXX
-	LD	B,08H	; 8 
-	LD	C,(HL)
-	INC	HL
-	EXX
-J7B04:	CALL	C7BBB				; VDP(36)=C, VDP(37)=B
-	LD	A,(HL)
-	INC	HL
-	CP	0FEH
-	JR	Z,J7B44
-	PUSH	HL
-	PUSH	BC
-	LD	BC,01A6H
-	JR	NC,J7B17
-	LD	B,00H
-	LD	C,A
-J7B17:	CALL	C7BB7				; VDP(40)=C, VDP(41)=B
-	POP	HL
-	ADD	HL,BC
-	LD	C,L
-	LD	B,H
-	POP	HL
-	POP	AF
-	XOR	03H	; 3 
-	CALL	C7BC6				; VDP(44)=A
-	PUSH	AF
-	CALL	C7BCF				; execute ??
-	EXX
-	SLA	C
-	DJNZ	J7B32
-	LD	B,08H	; 8 
-	LD	C,(HL)
-	INC	HL
-J7B32:	EXX
-	JR	NC,J7B04
-	DEC	BC
-	CALL	C7BBB			; VDP(36)=C, VDP(37)=B
-	INC	BC
-	LD	A,02H	; 2 
-	CALL	C7BC6			; VDP(44)=A
-	CALL	C7BDC			; execute ??
-	JR	J7B04
-;	-----------------
-J7B44:	INC	E
-	POP	AF
-	LD	A,(HL)
-	CP	0FEH
-	JR	NZ,J7AF3
-	RET
-
-;	Subroutine	write vdp register
-;	Inputs		D = reg, E = data
-;	Outputs		________________________
-
-
-C7B4C:	PUSH	AF
-	LD	A,E
-	OUT	(99H),A
-	LD	A,D
-	OR	80H
-	OUT	(99H),A
-	POP	AF
-	RET
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C7B57:	LD	A,2
-	CALL	C7B61
-	RRCA
-	JR	C,C7B57
-	RLCA
-	RET
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C7B61:	OUT	(99H),A
-	LD	A,8FH
-	OUT	(99H),A
-	PUSH	HL
-	POP	HL
-	IN	A,(99H)
-	PUSH	AF
-	XOR	A
-	OUT	(99H),A
-	LD	A,8FH
-	OUT	(99H),A
-	POP	AF
-	RET
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7B75:	PUSH	AF
-	CALL	C7B9D
-	LD	A,C
-	OR	A
-	JR	Z,J7B7E
-	INC	B
-J7B7E:	POP	AF
-J7B7F:	OUT	(98H),A
-	DEC	C
-	JP	NZ,J7B7F
-	DJNZ	J7B7F
-	RET
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7B88:	EX	DE,HL
-	CALL	C7B9D
-	EX	DE,HL
-	LD	A,C
-	OR	A
-	LD	A,B
-	LD	B,C
-	LD	C,98H
-	JR	Z,J7B96
-	INC	A
-J7B96:	OTIR
-	DEC	A
-	JR	NZ,J7B96
-	EX	DE,HL
-	RET
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7B9D:	LD	A,H
-	AND	3FH	; "?"
-	OR	40H	; "@"
-	EX	AF,AF'
-	LD	A,H
-	AND	0C0H
-	RLCA
-	RLCA
-	OUT	(99H),A
-	LD	A,8EH
-	OUT	(99H),A
-	LD	A,L
-	OUT	(99H),A
-	EX	AF,AF'
-	OUT	(99H),A
-	EX	(SP),HL
-	EX	(SP),HL
-	RET
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7BB7:	LD	D,28H			; vdp(40)
-	JR	J7BBD
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C7BBB:	LD	D,24H			; vdp(36)
-J7BBD:	PUSH	DE
-	LD	E,C
-	CALL	C7B4C
-	LD	E,B
-	INC	D
-	JR	J7BCA
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7BC6:	PUSH	DE
-	LD	E,A
-	LD	D,2CH			; vdp (44)
-J7BCA:	CALL	C7B4C
-	POP	DE
-	RET
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7BCF:	PUSH	DE
-	LD	E,70H	; "p"
-J7BD2:	LD	D,2EH	; "."
-	CALL	C7B4C			; vdp(46)
-	CALL	C7B57
-	POP	DE
-	RET
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7BDC:	PUSH	DE
-	LD	E,50H	; "P"
-	JR	J7BD2
-;	-----------------
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7BE1:	LD	A,0DH	; 13 
-	OUT	(0B4H),A
-	IN	A,(0B5H)
-	AND	0CH	; 12 
-	OR	02H	; 2 
-	OUT	(0B5H),A
-	LD	A,0BH	; 11 
-	OUT	(0B4H),A
-	IN	A,(0B5H)
-	RLCA
-	RLCA
-	AND	0CH	; 12 
-	LD	C,A
-	LD	B,00H
-	LD	HL,J7C47
-	ADD	HL,BC
-	LD	C,(HL)
-	INC	HL
-	LD	B,(HL)
-	PUSH	BC
-	INC	HL
-	LD	E,(HL)
-	INC	HL
-	LD	D,(HL)
-	EX	DE,HL
-	LD	DE,1000H
-	CALL	C7B4C			; vdp(16)
-	CALL	C7C1D
-	POP	HL
-	CALL	C7C1D
-	LD	HL,0444H
-	CALL	C7C1D
-	LD	HL,0777H
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-C7C1D:	PUSH	BC
-	LD	C,9AH
-	OUT	(C),L
-	EX	(SP),HL
-	EX	(SP),HL
-	OUT	(C),H
-	POP	BC
-	RET
-
-
-;	Subroutine	__________________________
-;	Inputs		________________________
-;	Outputs		________________________
-
-
-C7C28:	LD	B,8
-	LD	HL,I7C37
-J7C2D:	LD	D,(HL)
-	INC	HL
-	LD	E,(HL)
-	INC	HL
-	CALL	C7B4C			; write vdp reg
-	DJNZ	J7C2D
-	RET
-;	-----------------
-I7C37:	DEFB	00H,08H
-	DEFB	01H,23H
-	DEFB	08H,28H
-	DEFB	09H,00H
-	DEFB	02H,1FH
-	DEFB	05H,0EFH
-	DEFB	0BH,00H
-	DEFB	06H,0FH
-
-J7C47:	DEFB	07H,00H,00H,00H,20H,04H,27H,02H
-	DEFB	72H,02H,56H,00H,70H,05H,70H,00H
-
-I7C57:	DEFB	00H,00H,00H,00H,00H,00H,00H,00H
-	DEFB	00H,6EH,00H,9FH,00H,6FH,00H,9FH
-	DEFB	00H,6FH,00H,9FH,00H,6FH,00H,9FH
-	DEFB	00H,6FH,00H,9FH,00H,6FH,00H,9FH
-	DEFB	00H,6FH,00H,0FFH,00H,07H,00H,0FCH
-	DEFB	07H,00H,0F7H,00H,07H,00H,0F3H,00H
-	DEFB	07H,00H,0F7H,00H,07H,00H,0FFH,00H
-	DEFB	07H,00H,0FFH,00H,0FH,00H,0FCH,3CH
-	DEFB	0FCH,3CH,0FCH,3CH,87H,0C0H,7BH,0C0H
-	DEFB	87H,0C0H,7BH,0C0H,86H,0C0H,7BH,0C0H
-	DEFB	86H,0C0H,7AH,0C0H,86H,0C0H,78H,0C0H
-	DEFB	86H,90H,7AH,0F0H,86H,0F0H,7FH,0C0H
-	DEFB	83H,0C0H,7FH,0C0H,0D7H,0C0H,2FH,0C0H
-	DEFB	0D7H,0C0H,2FH,0C0H,0D7H,0C0H,2FH,0C0H
-	DEFB	0D7H,0C0H,2FH,0C0H,0D7H,0C0H,2FH,0C0H
-	DEFB	0D7H,0C0H,2FH,0C0H,0D5H,80H,00H,00H
-	DEFB	00H,00H,00H,00H,00H,00H,00H
-
-I7CDE:	DEFB	0FFH
-	DEFB	0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
-	DEFB	0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
-	DEFB	0FEH,44H,1DH,1DH,1CH,30H,67H,2BH
-	DEFB	28H,22H,0FEH,44H,1DH,1CH,1EH,2AH
-	DEFB	6DH,29H,29H,22H,0FEH,43H,1FH,1BH
-	DEFB	1EH,26H,73H,25H,29H,24H,0FEH,43H
-	DEFB	1FH,1AH,20H,22H,77H,23H,29H,25H
-	DEFB	0FEH,42H,21H,19H,20H,1FH,7CH,1FH
-	DEFB	29H,27H,0FEH,42H,21H,18H,22H,1BH
-	DEFB	80H,1DH,29H,28H,0FEH,41H,23H,17H
-	DEFB	22H,19H,84H,1AH,28H,2AH,0FEH,41H
-	DEFB	23H,16H,24H,17H,86H,17H,29H,2BH
-	DEFB	0FEH,40H,25H,15H,24H,15H,8AH,14H
-	DEFB	28H,2DH,0FEH,40H,25H,14H,26H,13H
-	DEFB	8CH,11H,29H,2EH,0FEH,3FH,27H,13H
-	DEFB	26H,12H,8FH,0EH,29H,2FH,0FEH,3FH
-	DEFB	27H,12H,28H,10H,91H,0CH,28H,31H
-	DEFB	0FEH,3EH,29H,11H,28H,0FH,94H,08H
-	DEFB	29H,32H,0FEH,3EH,2AH,0FH,2AH,0DH
-	DEFB	96H,06H,28H,34H,0FEH,3DH,2BH,0EH
-	DEFB	2BH,0CH,99H,02H,29H,35H,0FEH,3DH
-	DEFB	2CH,0DH,2CH,0BH,0C2H,37H,0FEH,3CH
-	DEFB	2DH,0CH,2DH,0AH,26H,4CH,50H,38H
-	DEFB	0FEH,3CH,2EH,0BH,2EH,09H,23H,51H
-	DEFB	4CH,3AH,0FEH,3BH,2FH,0AH,2FH,09H
-	DEFB	21H,54H,4AH,3BH,0FEH,3BH,30H,09H
-	DEFB	30H,08H,20H,57H,46H,3DH,0FEH,3AH
-	DEFB	31H,08H,31H,08H,21H,57H,44H,3EH
-	DEFB	0FEH,3AH,32H,07H,32H,07H,23H,57H
-	DEFB	41H,3FH,0FEH,39H,33H,06H,33H,07H
-	DEFB	26H,55H,3EH,41H,0FEH,39H,34H,05H
-	DEFB	34H,07H,46H,36H,3BH,42H,0FEH,38H
-	DEFB	35H,04H,35H,07H,4BH,32H,38H,44H
-	DEFB	0FEH,38H,36H,03H,36H,07H,4EH,30H
-	DEFB	35H,45H,0FEH,37H,37H,02H,37H,08H
-	DEFB	50H,2EH,32H,47H,0FEH,37H,71H,08H
-	DEFB	52H,2DH,2FH,48H,0FEH,36H,72H,09H
-	DEFB	54H,2BH,2CH,4AH,0FEH,36H,73H,09H
-	DEFB	55H,2BH,29H,4BH,0FEH,35H,74H,0AH
-	DEFB	55H,29H,2AH,4BH,0FEH,35H,75H,0BH
-	DEFB	55H,25H,2DH,4AH,0FEH,34H,76H,0CH
-	DEFB	55H,23H,30H,48H,0FEH,34H,1FH,01H
-	DEFB	37H,01H,1FH,0DH,54H,20H,33H,47H
-	DEFB	0FEH,33H,20H,02H,36H,02H,1EH,10H
-	DEFB	52H,1EH,36H,45H,0FEH,33H,1FH,03H
-	DEFB	35H,03H,1FH,12H,50H,1BH,39H,44H
-	DEFB	0FEH,32H,20H,04H,34H,04H,1EH,15H
-	DEFB	4EH,19H,3CH,42H,0FEH,32H,1FH,05H
-	DEFB	33H,05H,1FH,18H,4AH,18H,3EH,41H
-	DEFB	0FEH,31H,20H,06H,32H,06H,1EH,1DH
-	DEFB	46H,15H,42H,3FH,0FEH,31H,1FH,07H
-	DEFB	31H,07H,1FH,3CH,26H,14H,44H,3EH
-	DEFB	0FEH,30H,20H,08H,30H,08H,1EH,40H
-	DEFB	22H,12H,48H,3CH,0FEH,30H,1FH,09H
-	DEFB	2FH,09H,1FH,41H,20H,11H,4AH,3BH
-	DEFB	0FEH,2FH,20H,0AH,2EH,0AH,1EH,41H
-	DEFB	20H,0FH,4EH,39H,0FEH,2FH,1FH,0BH
-	DEFB	2DH,0BH,1FH,40H,20H,0EH,28H,01H
-	DEFB	27H,38H,0FEH,2EH,20H,0CH,2CH,0CH
-	DEFB	1EH,3EH,22H,0CH,29H,04H,27H,36H
-	DEFB	0FEH,2EH,1FH,0DH,2BH,0DH,1FH,39H
-	DEFB	26H,0BH,29H,06H,27H,35H,0FEH,2DH
-	DEFB	20H,0EH,2AH,0EH,7DH,0AH,28H,0AH
-	DEFB	27H,33H,0FEH,2DH,1FH,0FH,29H,0FH
-	DEFB	7CH,09H,29H,0CH,27H,32H,0FEH,2CH
-	DEFB	20H,10H,28H,10H,7BH,08H,28H,10H
-	DEFB	27H,30H,0FEH,2CH,1FH,11H,27H,11H
-	DEFB	7AH,07H,29H,12H,27H,2FH,0FEH,2BH
-	DEFB	1FH,13H,25H,13H,78H,07H,28H,16H
-	DEFB	27H,2DH,0FEH,2BH,1FH,13H,25H,13H
-	DEFB	77H,06H,29H,18H,27H,2CH,0FEH,2AH
-	DEFB	1FH,15H,23H,15H,75H,06H,28H,1CH
-	DEFB	27H,2AH,0FEH,2AH,1FH,15H,23H,15H
-	DEFB	74H,06H,27H,1FH,27H,29H,0FEH,29H
-	DEFB	1FH,17H,21H,17H,71H,06H,28H,22H
-	DEFB	27H,27H,0FEH,29H,1FH,17H,21H,17H
-	DEFB	70H,06H,27H,25H,27H,26H,0FEH,28H
-	DEFB	1FH,19H,1FH,19H,6DH,06H,28H,28H
-	DEFB	27H,24H,0FEH,28H,1FH,19H,1FH,19H
-	DEFB	6AH,08H,27H,2BH,27H,23H,0FEH,27H
-	DEFB	1FH,1BH,1DH,1BH,66H,09H,28H,2EH
-	DEFB	27H,21H,0FEH,27H,1FH,1BH,1DH,1BH
-	DEFB	63H,0BH,27H,31H,27H,20H,0FEH,26H
-	DEFB	1FH,1DH,1BH,1DH,5FH,0CH,28H,34H
-	DEFB	27H,1EH,0FEH,26H,1FH,1DH,1BH,1DH
-	DEFB	5AH,0FH,28H,37H,27H,1DH,0FEH,0FFH
-	DEFB	0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
-	DEFB	0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
-	DEFB	0FEH,0FEH
-
-	DEFS	08000H-$,0
-
-	END
+        INCLUDE MSX.INC
+
+        .Z80
+        ASEG
+        ORG     OPTENT
+
+CHGCPU  EQU     0180H
+BUF     EQU     0F55EH
+
+?.7900: CALL    C790E                   ; R800 ROM
+        DI
+        CALL    C7A7D
+        CALL    C7917
+        CALL    C7912                   ; Z80
+        RET
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C790E:  LD      A,1
+        JR      J7913
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C7912:  XOR     A
+J7913:  CALL    CHGCPU
+        RET
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C7917:  LD      HL,00FFH
+        LD      (BUF),HL
+        LD      HL,BUF
+        LD      DE,BUF+2
+        LD      BC,00A8H
+        LDIR
+        LD      HL,00FFH
+        CALL    C7A54
+        LD      E,H
+        LD      D,26
+        CALL    C7B4C                   ; vdp(26)
+        LD      E,L
+        LD      D,27
+        CALL    C7B4C                   ; vdp(27)
+        CALL    C7A38
+        LD      DE,0163H
+        CALL    C7B4C                   ; vdp(1)
+        LD      B,15H
+J7945:  PUSH    BC
+        CALL    C79F8
+        LD      IX,BUF
+        LD      IY,I79A2
+        LD      B,2BH   ; "+"
+        LD      D,00H
+J7955:  LD      L,(IX)
+        LD      H,(IX+1)
+        LD      E,(IY)
+        OR      A
+        SBC     HL,DE
+        JR      NC,J7966
+        LD      HL,0
+J7966:  LD      (IX),L
+        LD      (IX+1),H
+        INC     IX
+        INC     IX
+        INC     IY
+        LD      L,(IX)
+        LD      H,(IX+1)
+        LD      E,(IY)
+        ADD     HL,DE
+        LD      A,H
+        CP      02H     ; 2 
+        JR      C,J7984
+        LD      HL,0200H
+J7984:  LD      (IX),L
+        LD      (IX+1),H
+        INC     IX
+        INC     IX
+        INC     IY
+        DJNZ    J7955
+        POP     BC
+        DJNZ    J7945
+        LD      DE,1900H
+        CALL    C7B4C                   ; vdp (19)
+        LD      DE,021FH
+        CALL    C7B4C                   ; vdp (2)
+        RET
+
+I79A2:  DEFB    13H,0DH,15H,12H,14H,0EH,10H,17H
+        DEFB    13H,11H,15H,11H,0EH,0DH,11H,15H
+        DEFB    0CH,11H,13H,11H,15H,15H,12H,0CH
+        DEFB    0FH,10H,0EH,0EH,15H,0DH,0FH,11H
+        DEFB    11H,11H,17H,14H,0DH,0DH,0CH,0CH
+        DEFB    0DH,10H,15H,12H,17H,10H,0EH,17H
+        DEFB    11H,0CH,12H,13H,17H,0EH,16H,14H
+        DEFB    14H,0EH,14H,15H,0EH,0EH,13H,0FH
+        DEFB    11H,13H,13H,0FH,17H,15H,0DH,15H
+        DEFB    0FH,17H,0CH,0DH,16H,0CH,11H,0EH
+        DEFB    12H,14H,0DH,11H,17H,0DH
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C79F8:  LD      HL,BUF
+        LD      BC,559BH
+J79FE:  LD      E,(HL)
+        INC     HL
+        LD      D,(HL)
+        INC     HL
+        DEC     DE
+        LD      A,E
+        SRL     D
+        RRA
+        RRCA
+        RRCA
+        INC     A
+        AND     3FH     ; "?"
+        LD      D,A
+        INC     E
+        LD      A,E
+        NEG
+        AND     07H     ; 7 
+        LD      E,A
+        LD      A,1AH
+        OUT     (99H),A
+        LD      A,91H
+        OUT     (99H),A
+        IN      A,(99H)
+J7A1E:  IN      A,(99H)
+        AND     20H     ; " "
+        JP      Z,J7A1E
+        OUT     (C),D
+        OUT     (C),E
+        DJNZ    J79FE
+        LD      DE,1A00H
+        CALL    C7B4C                   ; vdp (26)
+        LD      DE,1B00H
+        CALL    C7B4C                   ; vdp (27)
+        RET
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C7A38:  LD      A,02H   ; 2 
+        OUT     (99H),A
+        LD      A,8FH
+        OUT     (99H),A
+J7A40:  IN      A,(99H)
+        AND     40H     ; "@"
+        JR      Z,J7A40
+J7A46:  IN      A,(99H)
+        AND     40H     ; "@"
+        JR      NZ,J7A46
+        XOR     A
+        OUT     (99H),A
+        LD      A,8FH
+        OUT     (99H),A
+        RET
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7A54:  RET
+;       -----------------
+I7A55:  DEFB    1CH,0E8H,00H,00H,1CH,0E8H,00H,00H
+        DEFB    3CH,0E8H,00H,00H,3CH,0E8H,00H,00H
+        DEFB    5CH,0E8H,00H,00H,5CH,0E8H,00H,00H
+        DEFB    1CH,00H,04H,00H,3CH,00H,04H,00H
+        DEFB    5CH,00H,04H,00H,0D8H,00H,00H,00H
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7A7D:  CALL    C7A38
+        LD      DE,0123H
+        CALL    C7B4C                   ; vdp(1)
+        CALL    C7C28
+        LD      A,55H   ; "U"
+        LD      HL,0
+        LD      C,L
+        LD      B,L
+        CALL    C7B75
+        CALL    C7BE1
+        LD      DE,0705H
+        CALL    C7B4C                   ; vdp(7)
+        LD      HL,7800H
+        LD      BC,0030H
+        LD      A,0FFH
+        CALL    C7B75
+        LD      HL,7830H
+        LD      BC,0010H
+        LD      A,0F0H
+        CALL    C7B75
+        LD      HL,7400H
+        LD      A,05H   ; 5 
+        LD      BC,0200H
+        CALL    C7B75
+        LD      HL,I7A55
+        LD      DE,7600H
+        LD      BC,0028H
+        CALL    C7B88
+        LD      DE,1903H
+        CALL    C7B4C                   ; vdp(25)
+        LD      DE,023FH
+        CALL    C7B4C                   ; vdp(2)
+        LD      DE,2D00H
+        CALL    C7B4C                   ; vdp(45)
+        LD      D,2AH   ; "*"
+        CALL    C7B4C                   ; vdp(42)
+        INC     D
+        CALL    C7B4C                   ; vdp(43)
+        LD      D,27H   ; "'"
+        CALL    C7B4C                   ; vdp(39)
+        LD      E,20H   ; " "
+        LD      HL,I7CDE
+        EXX
+        LD      HL,I7C57
+        EXX
+J7AF3:  LD      A,03H   ; 3 
+        PUSH    AF
+        LD      BC,002DH
+        LD      D,26H   ; "&"
+        CALL    C7B4C                   ; vdp(38)=
+        EXX
+        LD      B,08H   ; 8 
+        LD      C,(HL)
+        INC     HL
+        EXX
+J7B04:  CALL    C7BBB                           ; VDP(36)=C, VDP(37)=B
+        LD      A,(HL)
+        INC     HL
+        CP      0FEH
+        JR      Z,J7B44
+        PUSH    HL
+        PUSH    BC
+        LD      BC,01A6H
+        JR      NC,J7B17
+        LD      B,00H
+        LD      C,A
+J7B17:  CALL    C7BB7                           ; VDP(40)=C, VDP(41)=B
+        POP     HL
+        ADD     HL,BC
+        LD      C,L
+        LD      B,H
+        POP     HL
+        POP     AF
+        XOR     03H     ; 3 
+        CALL    C7BC6                           ; VDP(44)=A
+        PUSH    AF
+        CALL    C7BCF                           ; execute ??
+        EXX
+        SLA     C
+        DJNZ    J7B32
+        LD      B,08H   ; 8 
+        LD      C,(HL)
+        INC     HL
+J7B32:  EXX
+        JR      NC,J7B04
+        DEC     BC
+        CALL    C7BBB                   ; VDP(36)=C, VDP(37)=B
+        INC     BC
+        LD      A,02H   ; 2 
+        CALL    C7BC6                   ; VDP(44)=A
+        CALL    C7BDC                   ; execute ??
+        JR      J7B04
+;       -----------------
+J7B44:  INC     E
+        POP     AF
+        LD      A,(HL)
+        CP      0FEH
+        JR      NZ,J7AF3
+        RET
+
+;       Subroutine      write vdp register
+;       Inputs          D = reg, E = data
+;       Outputs         ________________________
+
+
+C7B4C:  PUSH    AF
+        LD      A,E
+        OUT     (99H),A
+        LD      A,D
+        OR      80H
+        OUT     (99H),A
+        POP     AF
+        RET
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C7B57:  LD      A,2
+        CALL    C7B61
+        RRCA
+        JR      C,C7B57
+        RLCA
+        RET
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C7B61:  OUT     (99H),A
+        LD      A,8FH
+        OUT     (99H),A
+        PUSH    HL
+        POP     HL
+        IN      A,(99H)
+        PUSH    AF
+        XOR     A
+        OUT     (99H),A
+        LD      A,8FH
+        OUT     (99H),A
+        POP     AF
+        RET
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7B75:  PUSH    AF
+        CALL    C7B9D
+        LD      A,C
+        OR      A
+        JR      Z,J7B7E
+        INC     B
+J7B7E:  POP     AF
+J7B7F:  OUT     (98H),A
+        DEC     C
+        JP      NZ,J7B7F
+        DJNZ    J7B7F
+        RET
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7B88:  EX      DE,HL
+        CALL    C7B9D
+        EX      DE,HL
+        LD      A,C
+        OR      A
+        LD      A,B
+        LD      B,C
+        LD      C,98H
+        JR      Z,J7B96
+        INC     A
+J7B96:  OTIR
+        DEC     A
+        JR      NZ,J7B96
+        EX      DE,HL
+        RET
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7B9D:  LD      A,H
+        AND     3FH     ; "?"
+        OR      40H     ; "@"
+        EX      AF,AF'
+        LD      A,H
+        AND     0C0H
+        RLCA
+        RLCA
+        OUT     (99H),A
+        LD      A,8EH
+        OUT     (99H),A
+        LD      A,L
+        OUT     (99H),A
+        EX      AF,AF'
+        OUT     (99H),A
+        EX      (SP),HL
+        EX      (SP),HL
+        RET
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7BB7:  LD      D,28H                   ; vdp(40)
+        JR      J7BBD
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C7BBB:  LD      D,24H                   ; vdp(36)
+J7BBD:  PUSH    DE
+        LD      E,C
+        CALL    C7B4C
+        LD      E,B
+        INC     D
+        JR      J7BCA
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7BC6:  PUSH    DE
+        LD      E,A
+        LD      D,2CH                   ; vdp (44)
+J7BCA:  CALL    C7B4C
+        POP     DE
+        RET
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7BCF:  PUSH    DE
+        LD      E,70H   ; "p"
+J7BD2:  LD      D,2EH   ; "."
+        CALL    C7B4C                   ; vdp(46)
+        CALL    C7B57
+        POP     DE
+        RET
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7BDC:  PUSH    DE
+        LD      E,50H   ; "P"
+        JR      J7BD2
+;       -----------------
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7BE1:  LD      A,0DH   ; 13 
+        OUT     (0B4H),A
+        IN      A,(0B5H)
+        AND     0CH     ; 12 
+        OR      02H     ; 2 
+        OUT     (0B5H),A
+        LD      A,0BH   ; 11 
+        OUT     (0B4H),A
+        IN      A,(0B5H)
+        RLCA
+        RLCA
+        AND     0CH     ; 12 
+        LD      C,A
+        LD      B,00H
+        LD      HL,J7C47
+        ADD     HL,BC
+        LD      C,(HL)
+        INC     HL
+        LD      B,(HL)
+        PUSH    BC
+        INC     HL
+        LD      E,(HL)
+        INC     HL
+        LD      D,(HL)
+        EX      DE,HL
+        LD      DE,1000H
+        CALL    C7B4C                   ; vdp(16)
+        CALL    C7C1D
+        POP     HL
+        CALL    C7C1D
+        LD      HL,0444H
+        CALL    C7C1D
+        LD      HL,0777H
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C7C1D:  PUSH    BC
+        LD      C,9AH
+        OUT     (C),L
+        EX      (SP),HL
+        EX      (SP),HL
+        OUT     (C),H
+        POP     BC
+        RET
+
+
+;       Subroutine      __________________________
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+
+C7C28:  LD      B,8
+        LD      HL,I7C37
+J7C2D:  LD      D,(HL)
+        INC     HL
+        LD      E,(HL)
+        INC     HL
+        CALL    C7B4C                   ; write vdp reg
+        DJNZ    J7C2D
+        RET
+;       -----------------
+I7C37:  DEFB    00H,08H
+        DEFB    01H,23H
+        DEFB    08H,28H
+        DEFB    09H,00H
+        DEFB    02H,1FH
+        DEFB    05H,0EFH
+        DEFB    0BH,00H
+        DEFB    06H,0FH
+
+J7C47:  DEFB    07H,00H,00H,00H,20H,04H,27H,02H
+        DEFB    72H,02H,56H,00H,70H,05H,70H,00H
+
+I7C57:  DEFB    00H,00H,00H,00H,00H,00H,00H,00H
+        DEFB    00H,6EH,00H,9FH,00H,6FH,00H,9FH
+        DEFB    00H,6FH,00H,9FH,00H,6FH,00H,9FH
+        DEFB    00H,6FH,00H,9FH,00H,6FH,00H,9FH
+        DEFB    00H,6FH,00H,0FFH,00H,07H,00H,0FCH
+        DEFB    07H,00H,0F7H,00H,07H,00H,0F3H,00H
+        DEFB    07H,00H,0F7H,00H,07H,00H,0FFH,00H
+        DEFB    07H,00H,0FFH,00H,0FH,00H,0FCH,3CH
+        DEFB    0FCH,3CH,0FCH,3CH,87H,0C0H,7BH,0C0H
+        DEFB    87H,0C0H,7BH,0C0H,86H,0C0H,7BH,0C0H
+        DEFB    86H,0C0H,7AH,0C0H,86H,0C0H,78H,0C0H
+        DEFB    86H,90H,7AH,0F0H,86H,0F0H,7FH,0C0H
+        DEFB    83H,0C0H,7FH,0C0H,0D7H,0C0H,2FH,0C0H
+        DEFB    0D7H,0C0H,2FH,0C0H,0D7H,0C0H,2FH,0C0H
+        DEFB    0D7H,0C0H,2FH,0C0H,0D7H,0C0H,2FH,0C0H
+        DEFB    0D7H,0C0H,2FH,0C0H,0D5H,80H,00H,00H
+        DEFB    00H,00H,00H,00H,00H,00H,00H
+
+I7CDE:  DEFB    0FFH
+        DEFB    0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
+        DEFB    0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
+        DEFB    0FEH,44H,1DH,1DH,1CH,30H,67H,2BH
+        DEFB    28H,22H,0FEH,44H,1DH,1CH,1EH,2AH
+        DEFB    6DH,29H,29H,22H,0FEH,43H,1FH,1BH
+        DEFB    1EH,26H,73H,25H,29H,24H,0FEH,43H
+        DEFB    1FH,1AH,20H,22H,77H,23H,29H,25H
+        DEFB    0FEH,42H,21H,19H,20H,1FH,7CH,1FH
+        DEFB    29H,27H,0FEH,42H,21H,18H,22H,1BH
+        DEFB    80H,1DH,29H,28H,0FEH,41H,23H,17H
+        DEFB    22H,19H,84H,1AH,28H,2AH,0FEH,41H
+        DEFB    23H,16H,24H,17H,86H,17H,29H,2BH
+        DEFB    0FEH,40H,25H,15H,24H,15H,8AH,14H
+        DEFB    28H,2DH,0FEH,40H,25H,14H,26H,13H
+        DEFB    8CH,11H,29H,2EH,0FEH,3FH,27H,13H
+        DEFB    26H,12H,8FH,0EH,29H,2FH,0FEH,3FH
+        DEFB    27H,12H,28H,10H,91H,0CH,28H,31H
+        DEFB    0FEH,3EH,29H,11H,28H,0FH,94H,08H
+        DEFB    29H,32H,0FEH,3EH,2AH,0FH,2AH,0DH
+        DEFB    96H,06H,28H,34H,0FEH,3DH,2BH,0EH
+        DEFB    2BH,0CH,99H,02H,29H,35H,0FEH,3DH
+        DEFB    2CH,0DH,2CH,0BH,0C2H,37H,0FEH,3CH
+        DEFB    2DH,0CH,2DH,0AH,26H,4CH,50H,38H
+        DEFB    0FEH,3CH,2EH,0BH,2EH,09H,23H,51H
+        DEFB    4CH,3AH,0FEH,3BH,2FH,0AH,2FH,09H
+        DEFB    21H,54H,4AH,3BH,0FEH,3BH,30H,09H
+        DEFB    30H,08H,20H,57H,46H,3DH,0FEH,3AH
+        DEFB    31H,08H,31H,08H,21H,57H,44H,3EH
+        DEFB    0FEH,3AH,32H,07H,32H,07H,23H,57H
+        DEFB    41H,3FH,0FEH,39H,33H,06H,33H,07H
+        DEFB    26H,55H,3EH,41H,0FEH,39H,34H,05H
+        DEFB    34H,07H,46H,36H,3BH,42H,0FEH,38H
+        DEFB    35H,04H,35H,07H,4BH,32H,38H,44H
+        DEFB    0FEH,38H,36H,03H,36H,07H,4EH,30H
+        DEFB    35H,45H,0FEH,37H,37H,02H,37H,08H
+        DEFB    50H,2EH,32H,47H,0FEH,37H,71H,08H
+        DEFB    52H,2DH,2FH,48H,0FEH,36H,72H,09H
+        DEFB    54H,2BH,2CH,4AH,0FEH,36H,73H,09H
+        DEFB    55H,2BH,29H,4BH,0FEH,35H,74H,0AH
+        DEFB    55H,29H,2AH,4BH,0FEH,35H,75H,0BH
+        DEFB    55H,25H,2DH,4AH,0FEH,34H,76H,0CH
+        DEFB    55H,23H,30H,48H,0FEH,34H,1FH,01H
+        DEFB    37H,01H,1FH,0DH,54H,20H,33H,47H
+        DEFB    0FEH,33H,20H,02H,36H,02H,1EH,10H
+        DEFB    52H,1EH,36H,45H,0FEH,33H,1FH,03H
+        DEFB    35H,03H,1FH,12H,50H,1BH,39H,44H
+        DEFB    0FEH,32H,20H,04H,34H,04H,1EH,15H
+        DEFB    4EH,19H,3CH,42H,0FEH,32H,1FH,05H
+        DEFB    33H,05H,1FH,18H,4AH,18H,3EH,41H
+        DEFB    0FEH,31H,20H,06H,32H,06H,1EH,1DH
+        DEFB    46H,15H,42H,3FH,0FEH,31H,1FH,07H
+        DEFB    31H,07H,1FH,3CH,26H,14H,44H,3EH
+        DEFB    0FEH,30H,20H,08H,30H,08H,1EH,40H
+        DEFB    22H,12H,48H,3CH,0FEH,30H,1FH,09H
+        DEFB    2FH,09H,1FH,41H,20H,11H,4AH,3BH
+        DEFB    0FEH,2FH,20H,0AH,2EH,0AH,1EH,41H
+        DEFB    20H,0FH,4EH,39H,0FEH,2FH,1FH,0BH
+        DEFB    2DH,0BH,1FH,40H,20H,0EH,28H,01H
+        DEFB    27H,38H,0FEH,2EH,20H,0CH,2CH,0CH
+        DEFB    1EH,3EH,22H,0CH,29H,04H,27H,36H
+        DEFB    0FEH,2EH,1FH,0DH,2BH,0DH,1FH,39H
+        DEFB    26H,0BH,29H,06H,27H,35H,0FEH,2DH
+        DEFB    20H,0EH,2AH,0EH,7DH,0AH,28H,0AH
+        DEFB    27H,33H,0FEH,2DH,1FH,0FH,29H,0FH
+        DEFB    7CH,09H,29H,0CH,27H,32H,0FEH,2CH
+        DEFB    20H,10H,28H,10H,7BH,08H,28H,10H
+        DEFB    27H,30H,0FEH,2CH,1FH,11H,27H,11H
+        DEFB    7AH,07H,29H,12H,27H,2FH,0FEH,2BH
+        DEFB    1FH,13H,25H,13H,78H,07H,28H,16H
+        DEFB    27H,2DH,0FEH,2BH,1FH,13H,25H,13H
+        DEFB    77H,06H,29H,18H,27H,2CH,0FEH,2AH
+        DEFB    1FH,15H,23H,15H,75H,06H,28H,1CH
+        DEFB    27H,2AH,0FEH,2AH,1FH,15H,23H,15H
+        DEFB    74H,06H,27H,1FH,27H,29H,0FEH,29H
+        DEFB    1FH,17H,21H,17H,71H,06H,28H,22H
+        DEFB    27H,27H,0FEH,29H,1FH,17H,21H,17H
+        DEFB    70H,06H,27H,25H,27H,26H,0FEH,28H
+        DEFB    1FH,19H,1FH,19H,6DH,06H,28H,28H
+        DEFB    27H,24H,0FEH,28H,1FH,19H,1FH,19H
+        DEFB    6AH,08H,27H,2BH,27H,23H,0FEH,27H
+        DEFB    1FH,1BH,1DH,1BH,66H,09H,28H,2EH
+        DEFB    27H,21H,0FEH,27H,1FH,1BH,1DH,1BH
+        DEFB    63H,0BH,27H,31H,27H,20H,0FEH,26H
+        DEFB    1FH,1DH,1BH,1DH,5FH,0CH,28H,34H
+        DEFB    27H,1EH,0FEH,26H,1FH,1DH,1BH,1DH
+        DEFB    5AH,0FH,28H,37H,27H,1DH,0FEH,0FFH
+        DEFB    0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
+        DEFB    0FEH,0FFH,0FEH,0FFH,0FEH,0FFH,0FEH,0FFH
+        DEFB    0FEH,0FEH
+
+        DEFS    08000H-$,0
+
+        END
