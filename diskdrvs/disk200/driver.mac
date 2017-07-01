@@ -9,7 +9,7 @@
 ; Last revision:	Tuesday 07-03-1995
 ; Version:		1.00
 
-		.Z80
+        .Z80
 
 
 ; Used externals from system kernel (permited)
@@ -63,7 +63,7 @@ SECLEN		equ	512		; Size of biggest sector
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
 INIHRD:
-		ret
+        ret
 
 ; DRIVES
 ;
@@ -74,8 +74,8 @@ INIHRD:
 ; Changed:	F,HL,IX,IY may be affected
 
 DRIVES:
-		ld	l,0
-		ret
+        ld	l,0
+        ret
 
 ; INIENV
 ;
@@ -85,7 +85,7 @@ DRIVES:
 ;
 
 INIENV:
-		ret
+        ret
 
 ;
 ; DSKIO
@@ -104,9 +104,9 @@ INIENV:
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
 DSKIO:
-		ld	a,0Ch
-		scf
-		ret
+        ld	a,0Ch
+        scf
+        ret
 
 ; DSKCHG
 ;
@@ -125,9 +125,9 @@ DSKIO:
 
 
 DSKCHG:
-		ld	a,0Ch
-		scf
-		ret
+        ld	a,0Ch
+        scf
+        ret
 
 ; GETDPB
 ;
@@ -141,8 +141,8 @@ DSKCHG:
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
 GETDPB:
-		scf
-		ret
+        scf
+        ret
 
 ; CHOICE
 ;
@@ -151,8 +151,8 @@ GETDPB:
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
 CHOICE:
-		ld	hl,0
-		ret
+        ld	hl,0
+        ret
 
 ; DSKFMT
 ;
@@ -167,9 +167,9 @@ CHOICE:
 ;
 
 DSKFMT:
-		ld	a,010h
-		scf
-		ret
+        ld	a,010h
+        scf
+        ret
 
 ; OEMSTATEMENT
 ;
@@ -181,8 +181,8 @@ DSKFMT:
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
 OEMSTA:
-		scf
-		ret
+        scf
+        ret
 
 ; MTOFF
 ;
@@ -191,7 +191,7 @@ OEMSTA:
 ; Changed:	AF,BC,DE,HL,IX,IY may be affected
 
 MTOFF:
-		ret
+        ret
 
 ; DEFDPB
 ;

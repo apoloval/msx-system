@@ -9,7 +9,7 @@ mainrom differences (NEOS compared to HB-F900 japanese)
 0258		CALL 1453	slot
 0267		JP 145D		slot
 028C		CALL 1448	slot
-		RET NZ
+                RET NZ
 02E0		CALL 017A	slot
 02F0-02F9
 0333		CALL 017A	slot
@@ -62,14 +62,14 @@ diskrom differences
 5AE7		CALL 7586
 5E58		CALL 744A
 5FA1		CALL 757F
-		OR C
-		POP BC
+                OR C
+                POP BC
 5FB3		CALL 7578
-		OR C
+                OR C
 607D		EXX
-		LD HL,636E
-		PUSH HL
-		JP 69B1
+                LD HL,636E
+                PUSH HL
+                JP 69B1
 63E8-63F3
 63F4-6575
 66C2-66FB
