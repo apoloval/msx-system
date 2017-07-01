@@ -3796,7 +3796,7 @@ A1A6F:  ld      d,c
         jr      nc,A1A82
         cpl
         inc     a
-A1A82:  cp      4                       ; difer less then 35 æsec ?
+A1A82:  cp      4                       ; difer less then 35 ï¿½sec ?
         jr      nc,A1A6C                ; nop, start again
         dec     hl
         ld      a,h

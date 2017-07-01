@@ -10,20 +10,20 @@
 ; HSH version has the KANJI ROM in bank 3 only, so the support the KANJI ROM adjustment had to be made!
 ; KANJI to uses H.TIMI and H.EXTBIO. KANJI also uses CALL statement handler
 
-	.Z80
-	ORG	403CH
+        .Z80
+        ORG	403CH
 
 ; CALL handler
 
 ?.403C:	CALL	C$40E4			; KANJI call statement handler
-	RET	NC			; KANJI call statement, quit
-	JP	J$575C			; MSXDOS2 kernel call statement handler
+        RET	NC			; KANJI call statement, quit
+        JP	J$575C			; MSXDOS2 kernel call statement handler
 
 ; H.EXTBIO handler
 
 ?.4043:	LD	IX,I$40B4
-	CALL	C$4051			; call 
-	JP	J$F2D5
+        CALL	C$4051			; call 
+        JP	J$F2D5
 
 ; H.TIMI handler
 
@@ -34,21 +34,21 @@
 ;	     Outputs ________________________
 ;
 C$4051:	EX	AF,AF'
-	LD	A,(D$40FF)
-	PUSH	AF			; save current bank
-	CALL	C$406E			; select bank 0
-	EX	AF,AF'
-	POP	AF
-	CALL	C.4092			; restore bank
-	EX	AF,AF'
-	RET	
+        LD	A,(D$40FF)
+        PUSH	AF			; save current bank
+        CALL	C$406E			; select bank 0
+        EX	AF,AF'
+        POP	AF
+        CALL	C.4092			; restore bank
+        EX	AF,AF'
+        RET	
 
 J$4060:	CALL	C$406F
-	EX	AF,AF'
-	XOR	A
-	CALL	C.4092			; select bank 0
-	EX	AF,AF'
-	RET	
+        EX	AF,AF'
+        XOR	A
+        CALL	C.4092			; select bank 0
+        EX	AF,AF'
+        RET	
 
 ; Cartridige Init routine
 
@@ -65,28 +65,28 @@ C$406E:	XOR	A
 ;	     Outputs ________________________
 
 C$406F:	CALL	C.4092			; select bank
-	EX	AF,AF'
-	JP	(IX)
+        EX	AF,AF'
+        JP	(IX)
 
-	DEFS	04078H-$,0
+        DEFS	04078H-$,0
 
 ; 04078H
 ; DOS1 kernel compatible: CP/M BIOS CONIN entry
 ; This entry is supported, to use MSXDOS.SYS
 
-	JP	J$417C
+        JP	J$417C
 
-	DEFS	04080H-$,0
+        DEFS	04080H-$,0
 
 ; DOS2: RAMDISK driver jumpentries
 
-	JP	J$6D49
+        JP	J$6D49
 ?.4083:	JP	J$6D39
 ?.4086:	JP	J$6EF1
 ?.4089:	JP	J$6EF2
 ?.408C:	JP	J$6EF6
 
-	DEFS	0408FH-$,0
+        DEFS	0408FH-$,0
 
 ; 0408F
 ; DOS1 kernel compatible: CP/M BIOS CONOUT entry
@@ -99,16 +99,16 @@ C$406F:	CALL	C.4092			; select bank
 ;	     Outputs ________________________
 
 C.4092:	LD	(D$6000),A
-	RET
-	DEFS	040B4H-$,0
+        RET
+        DEFS	040B4H-$,0
 
 ; H.EXTBIO
 
 I$40B4:	CALL	C$40E7			; H.EXTBIO KANJI
-	JP	J$410C			; H.EXTBIO DOS2
+        JP	J$410C			; H.EXTBIO DOS2
 
 I$40BA:	CALL	C$40EA			; H.TIMI KANJI
-	JP	J$4CF3			; H.TIMI DOS2
+        JP	J$4CF3			; H.TIMI DOS2
 
 ;	  Subroutine call 4100 in bank 3 (KANJI)
 ;	     Inputs  ________________________
@@ -120,67 +120,67 @@ I$40BA:	CALL	C$40EA			; H.TIMI KANJI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 4106 in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 4109 in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 410C in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 410F in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 4112 in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 4115 in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 4118 in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 411B in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 411E in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 4121 in bank 3 (KANJI)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-	CALL	C.40ED
+        CALL	C.40ED
 
 ;	  Subroutine call 4124 in bank 3 (KANJI)
 ;	     Inputs  ________________________
@@ -205,15 +205,15 @@ C$40EA:	CALL	C.40ED
 ;	     Outputs ________________________
 
 C.40ED:	POP	IX
-	PUSH	BC
-	LD	BC,003DH
-	EX	AF,AF'
-	LD	A,3
-	ADD	IX,BC
-	POP	BC
-	JP	J$4060
+        PUSH	BC
+        LD	BC,003DH
+        EX	AF,AF'
+        LD	A,3
+        ADD	IX,BC
+        POP	BC
+        JP	J$4060
 
-	DEFS	040FFH-$,0
+        DEFS	040FFH-$,0
 
 D$40FF:	DEFB	0
 
