@@ -2146,9 +2146,17 @@ C094F:  LD      HL,0101H
         LD      (CSRY),HL
         RET
 
-; unused code ??
+
+        IF      OPTM EQ 0
+
+;       Subroutine      MSX1 compatible WRTVRM
+;       Inputs          ________________________
+;       Outputs         ________________________
+;       Remark          UNUSED CODE
 
 ?0956:  CALL    C096A                   ; VRAM address in 16 Kb range
+
+        ENDIF
 
 ;       Subroutine      S.WRTVRM
 ;       Inputs          HL=VRAM base address
@@ -2160,7 +2168,7 @@ C0959:  PUSH    AF
         OUT     (98H),A
         RET
 
-;       Subroutine      __________________________
+;       Subroutine      MSX1 compatible RDVRM
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
@@ -2422,14 +2430,12 @@ C0A32:  LD      A,(BAKCLR)
         ENDIF
 
 
-
+        IF      OPTM EQ 0
 
 ;       Subroutine      CLS statement
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 ;       Remark          UNUSED CODE
-
-        IF      OPTM EQ 0
 
 ?0A45:  RET     NZ                      ; not end of statement, quit. Basic interpreter generates syntax error
         PUSH    HL
@@ -5967,11 +5973,19 @@ J1D07:  LD      A,(HL)                  ; A= lowbyte constant
         LD      H,(HL)                  ; H= highbyte constant
         JR      J1CF8
 
-; unused code
+
+        IF      OPTM EQ 0
+
+;       Subroutine      get numeric constant (in DAC)
+;       Inputs          ________________________
+;       Outputs         ________________________
+;       Remark          UNUSED CODE
+;                       Was accidently copied with CHRGTR code from mainrom
 
 ?1D11:  CALL    C1D3C                   ; UNUSED
 
-; end of unused code
+        ENDIF
+
 
 ; code 010H
 
@@ -6002,12 +6016,14 @@ J1D36:  CP      "0"
         DEC     A                       ; Zx reset
         RET
 
-;       Subroutine      __________________________
-;       Inputs          ________________________
-;       Outputs         ________________________
-;       Remark          NOT USED ANYWHERE
 
-; unused code
+        IF      OPTM EQ 0
+
+;	Subroutine	get numeric constant (in DAC)
+;	Inputs		________________________
+;	Outputs		________________________
+;       Remark          NOT USED ANYWHERE
+;                       Was accidently copied with CHRGTR code from mainrom
 
 C1D3C:  LD      A,(CONSAV)
         CP      0FH
@@ -6039,7 +6055,7 @@ J1D66:  LD      HL,CONLO
         INC     DE
         INC     DE
 
-; end of unused code
+        ENDIF
 
 ;       Subroutine      copy
 ;       Inputs          HL=source,DE=destination,A=size
@@ -7101,6 +7117,9 @@ C2380:  PUSH    AF
         LD      A,E
         RET
 
+        
+        IF      OPTM EQ 0
+
 ;       Subroutine      GETYPR
 ;       Inputs          ________________________
 ;       Outputs         ________________________
@@ -7128,6 +7147,8 @@ J2399:  SUB     3
         RET     M                       ; already integer, quit
         JP      Z,J2756                 ; string, type mismatch
         JP      J2806                   ; convert floating point to integer
+
+        ENDIF
 
 ;       Subroutine      S.SCOPY
 ;       Inputs          ________________________
@@ -7543,9 +7564,14 @@ J2625:  CALL    C28B9                   ; negate
         CALL    C25CA
 J2642:  JP      J2693
 
+
+        IF      OPTM EQ 0
+
 ; unused data ??
 
 ?2645:  DEFB    0,0,0,0,0,0,0,0,0,0
+
+        ENDIF
 
 ;       Subroutine      S.PAINT
 ;       Inputs          ________________________
@@ -10429,6 +10455,7 @@ C357D:  IN      A,(0E6H)
         JP      C,C357D
         RET
 
+        IF      OPTM EQ 0
 
 ;       Subroutine      wait util 0.027 ms passed
 ;       Inputs          D = ticks
@@ -10441,7 +10468,7 @@ J3586:  IN      A,(0E6H)
         JP      C,J3586
         RET
 
-
+        ENDIF
 
 ; ******************************************
 ; End Section Mouse/Trackball
