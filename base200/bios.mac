@@ -58,13 +58,8 @@ M409B	EQU	409BH	; Warm start msx basic
 M4666	EQU	4666H	; CHRGTR routine in basicrom
 M558C	EQU	558CH	; SYNCHR routine in basicrom
 M5597	EQU	5597H	; GETYPR routine in basicrom
-M60F6	EQU	60F6H	; headloop PRINT USING
-M61F9	EQU	61F9H	; end of formatstring PRINT USING
-M6246	EQU	6246H	; plussign if needed PRINT USING
 M63E6	EQU	63E6H	; STOP statement in basicrom
 M6C48	EQU	6C48H	; file i/o output
-M7042	EQU	7042H	; PCMREC routine in basicrom
-M71DB	EQU	71DBH	; PCMPLY routine in basicrom
 M73B2	EQU	73B2H	; Device I/O error
 M7B61	EQU	7B61H	; init code hardware part2
 M7C76	EQU	7C76H	; init code msx basic

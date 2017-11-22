@@ -613,98 +613,98 @@ A02BB:  add     a,01010101b
         ret
 ;
 A02D7:  ld      a,082H
-        out     (0ABH),a
+        out     (0ABH),a                ; initialize PPI (active, group A mode 0, group A output, upper port C output, group B mode 0, group B input, lower port C output)
         xor     a
-        out     (0A8H),a
+        out     (0A8H),a                ; select primairy slot 0 on all pages
         ld      a,050H
-        out     (0AAH),a
-        ld      de,0FFFFH
-        xor     a
-        ld      c,a
-A02E7:  out     (0A8H),a
-        sla     c
-        ld      b,000H
+        out     (0AAH),a                ; CAPS off, motor off, keyboard row 0
+        ld      de,0FFFFH               ; initialize lowest RAM address found (page 2)
+        xor     a                       ; start with primairy slot 0
+        ld      c,a                     ; initialize expanded slot flags
+A02E7:  out     (0A8H),a                ; select primairy slot on page 2 and 3
+        sla     c                       ; shift expanded slot flags
+        ld      b,0                     ; assume not expanded slot
         ld      hl,0FFFFH
         ld      (hl),0F0H
         ld      a,(hl)
-        sub     00FH
-        jr      nz,A0302
+        sub     00FH                    ; is slot expanded (writen value readback inverted) ?
+        jr      nz,A0302                ; nope,
         ld      (hl),a
         ld      a,(hl)
-        inc     a
-        jr      nz,A0302
+        inc     a                       ; is slot expanded (writen value readback inverted) ?
+        jr      nz,A0302                ; nope,
         inc     b
-        set     0,c
+        set     0,c                     ; flag slot expanded
 A02FF:  ld      (D.FFFF),a
-A0302:  ld      hl,0C000H-256
+A0302:  ld      hl,0C000H-256           ; page 2
 A0305:  ld      a,(hl)
         cpl
         ld      (hl),a
-        cp      (hl)
+        cp      (hl)                    ; RAM found (write inverted correctly read back) ?
         cpl
-        ld      (hl),a
-        jr      nz,A0314
+        ld      (hl),a                  ; restore orginal value
+        jr      nz,A0314                ; no RAM
         inc     l
         jr      nz,A0305
         dec     h
         jp      m,A0305
 A0314:  ld      l,000H
-        inc     h
+        inc     h                       ; round up 256 bytes boundary
         ld      a,l
         sub     e
         ld      a,h
-        sbc     a,d
-        jr      nc,A0327
-        ex      de,hl
+        sbc     a,d                     ; page 2 with more RAM ?
+        jr      nc,A0327                ; nope,
+        ex      de,hl                   ; new lowest RAM address found
         ld      a,(D.FFFF)
         cpl
         ld      l,a
         in      a,(0A8H)
         ld      h,a
-        ld      sp,hl
+        ld      sp,hl                   ; save primairy and secundairy slotregister of lowest RAM address found (page 2)
 A0327:  ld      a,b
-        and     a
-        jr      z,A0335
+        and     a                       ; slot expanded ?
+        jr      z,A0335                 ; nope, next primary slot
         ld      a,(D.FFFF)
         cpl
-        add     a,010H
-        cp      040H
-        jr      c,A02FF
+        add     a,010H                  ; next secundairy slot page 2
+        cp      040H                    ; all secundairy slots done ?
+        jr      c,A02FF                 ; nope, next
 A0335:  in      a,(0A8H)
-        add     a,050H
-        jr      nc,A02E7
+        add     a,050H                  ; next primary slot page 2 and 3
+        jr      nc,A02E7                ; all primary slots done ? nope, next
         ld      hl,0
         add     hl,sp
         ld      a,h
         out     (0A8H),a
         ld      a,l
-        ld      (D.FFFF),a
+        ld      (D.FFFF),a              ; select slot with lowest RAM address found (page 2)
         ld      a,c
         rlca
         rlca
         rlca
         rlca
-        ld      c,a
-        ld      de,0FFFFH
+        ld      c,a                     ; expanded slot flags in b7-b4
+        ld      de,0FFFFH               ; initialize lowest RAM address found (page 3)
         in      a,(0A8H)
-        and     03FH
-A0353:  out     (0A8H),a
-        ld      b,000H
-        rlc     c
-        jr      nc,A0365
-        inc     b
+        and     03FH                    ; primairy slot 0 in page 3
+A0353:  out     (0A8H),a                ; select new primairy slot in page 3
+        ld      b,0
+        rlc     c                       ; slot expanded ?
+        jr      nc,A0365                ; nope,
+        inc     b                       ; flag slot expanded
         ld      a,(D.FFFF)
         cpl
-        and     03FH
-A0362:  ld      (D.FFFF),a
-A0365:  ld      hl,0FF00H-256
+        and     03FH                    ; secundairy slot 0 in page 3
+A0362:  ld      (D.FFFF),a              ; select new secundairy slot in page 3
+A0365:  ld      hl,0FF00H-256           ; page 3 (leave upper 256 bytes out for secundairy slot register)
 A0368:  ld      a,(hl)
         cpl
         ld      (hl),a
-        cp      (hl)
+        cp      (hl)                    ; RAM found (write inverted correctly read back) ?
         cpl
-        ld      (hl),a
-        jr      nz,A0379
+        ld      (hl),a                  ; restore orginal value
+        jr      nz,A0379                ; no RAM
         inc     l
         jr      nz,A0368
         dec     h
@@ -712,79 +712,79 @@ A0368:  ld      a,(hl)
         cp      0C0H
         jr      nc,A0368
 A0379:  ld      l,000H
-        inc     h
+        inc     h                       ; round up 256 bytes boundary
         ld      a,l
         sub     e
         ld      a,h
-        sbc     a,d
-        jr      nc,A038C
-        ex      de,hl
+        sbc     a,d                     ; page 3 with more RAM ?
+        jr      nc,A038C                ; nope,
+        ex      de,hl                   ; new lowest RAM address found
         ld      a,(D.FFFF)
         cpl
         ld      l,a
         in      a,(0A8H)
         ld      h,a
-        ld      sp,hl
+        ld      sp,hl                   ; save primairy and secundairy slotregister of lowest RAM address found (page 3)
 A038C:  ld      a,b
-        and     a
-        jr      z,A0398
+        and     a                       ; slot expanded ?
+        jr      z,A0398                 ; nope,
         ld      a,(D.FFFF)
         cpl
-        add     a,040H
-        jr      nc,A0362
+        add     a,040H                  ; next secundairy slot page 3
+        jr      nc,A0362                ; all secundairy slots done ? nope, next
 A0398:  in      a,(0A8H)
-        add     a,040H
-        jr      nc,A0353
+        add     a,040H                  ; next primairy slot page 3
+        jr      nc,A0353                ; all primary slots done ? nope, next
         ld      hl,0
         add     hl,sp
         ld      a,h
         out     (0A8H),a
         ld      a,l
-        ld      (D.FFFF),a
+        ld      (D.FFFF),a              ; select slot with lowest RAM address found (page 3)
         ld      a,c
         ld      bc,0C49H
         ld      de,VARWRK+1
         ld      hl,VARWRK
         ld      (hl),000H
-        ldir
+        ldir                            ; clear system variable area
         ld      c,a
-        ld      b,004H
+        ld      b,4
         ld      hl,EXPTBL+3
 A03BD:  rr      c
         sbc     a,a
         and     080H
-        ld      (hl),a
+        ld      (hl),a                  ; initialize slot expanded flag
         dec     hl
         djnz    A03BD
         in      a,(0A8H)
-        ld      c,a
+        ld      c,a                     ; save current primairy slot register
         xor     a
-        out     (0A8H),a
+        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2,3
         ld      a,(D.FFFF)
         cpl
-        ld      l,a
+        ld      l,a                     ; save current secundairy slot register slot 0
         ld      a,040H
-        out     (0A8H),a
+        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2 slot 1 in page 3
         ld      a,(D.FFFF)
         cpl
-        ld      h,a
+        ld      h,a                     ; save current secundairy slot register slot 1
         ld      a,080H
-        out     (0A8H),a
+        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2 slot 2 in page 3
         ld      a,(D.FFFF)
         cpl
-        ld      e,a
+        ld      e,a                     ; save current secundairy slot register slot 2
         ld      a,0C0H
-        out     (0A8H),a
+        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2 slot 3 in page 3
         ld      a,(D.FFFF)
         cpl
-        ld      d,a
+        ld      d,a                     ; save current secundairy slot register slot 3
         ld      a,c
-        out     (0A8H),a
+        out     (0A8H),a                ; restore primairy slot register
         ld      (SLTTBL+0),hl
         ex      de,hl
-        ld      (SLTTBL+2),hl
-        im      1
-        jp      A2680
+        ld      (SLTTBL+2),hl           ; current secundairy slot registers saved in SLTTBL
+        im      1                       ; Z80 interrupt mode 1 (RST 38H on INT)
+        jp      A2680                   ; part 2 of init
 ;
 A03FB:  ld      a,(BASROM)
         and     a                       ; executing basicrom ?
