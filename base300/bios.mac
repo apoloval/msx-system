@@ -929,119 +929,119 @@ J040A:	ADD	HL,DE
 ; orginal init MSX2 and above
 
 J0416:	XOR	A
-        OUT	(0FFH),A
+        OUT	(0FFH),A                ; initalize memory mapper page 3 register (mapper page 0)
         INC	A
-        OUT	(0FEH),A
+        OUT	(0FEH),A                ; initalize memory mapper page 2 register (mapper page 1)
         INC	A
-        OUT	(0FDH),A
+        OUT	(0FDH),A                ; initalize memory mapper page 1 register (mapper page 2)
         INC	A
-        OUT	(0FCH),A		; initialize memorymapper
+        OUT	(0FCH),A                ; initalize memory mapper page 0 register (mapper page 3)
         LD	A,08H
-        OUT	(0BBH),A		; initialize lightpen ??
+        OUT	(0BBH),A                ; initialize lightpen (enable interrupt)
         LD	A,82H
-        OUT	(0ABH),A		; initialize i8255 port modeselect
+        OUT	(0ABH),A                ; initialize PPI (active, group A mode 0, group A output, upper port C output, group B mode 0, group B input, lower port C output)
         XOR	A
-        OUT	(0A8H),A		; initialize primary slotregister (all pages slot 0)
+        OUT	(0A8H),A                ; select primairy slot 0 on all pages
 
 ;	IF	INTHZ EQ 60
 
         LD	A,50H
-        OUT	(0AAH),A		; CAPS led off, cassette motor off
+        OUT	(0AAH),A                ; CAPS off, motor off, keyboard row 0
 
 ;	ELSE
 
-;	JP	PTCPAL			; patch routine to setup VDP for PAL
+;	JP	PTCPAL                  ; patch routine to setup VDP for PAL
 ;	NOP
 
 ;	ENDIF
 
-J0431:	LD	DE,D.FFFF
-        XOR	A
-        LD	C,A
-J0436:	OUT	(0A8H),A
-        SLA	C
-        LD	B,00H
+J0431:	LD	DE,0FFFFH               ; initialize lowest RAM address found (page 2)
+        XOR	A                       ; start with primairy slot 0
+        LD	C,A                     ; initialize expanded slot flags
+J0436:	OUT	(0A8H),A                ; select primairy slot on page 2 and 3
+        SLA	C                       ; shift expanded slot flags
+        LD	B,0                     ; assume not expanded slot
         LD	HL,D.FFFF
         LD	(HL),0F0H
         LD	A,(HL)
-        SUB	0FH
-        JR	NZ,J0451
+        SUB	0FH                     ; is slot expanded (writen value readback inverted) ?
+        JR	NZ,J0451                ; nope,
         LD	(HL),A
         LD	A,(HL)
-        INC	A
-        JR	NZ,J0451
+        INC	A                       ; is slot expanded (writen value readback inverted) ?
+        JR	NZ,J0451                ; nope,
         INC	B
-        SET	0,C
+        SET	0,C                     ; flag slot expanded
 J044E:	LD	(D.FFFF),A
-J0451:	LD	HL,0BF00H
+J0451:	LD	HL,0BFFFH-255           ; page 2
 J0454:	LD	A,(HL)
         CPL
         LD	(HL),A
-I0457:	CP	(HL)
+	CP	(HL)                    ; RAM found (write inverted correctly read back) ?
         CPL
-        LD	(HL),A
-        JR	NZ,J0463
+        LD	(HL),A                  ; restore orginal value
+        JR	NZ,J0463                ; no RAM
         INC	L
         JR	NZ,J0454
         DEC	H
         JP	M,J0454
 J0463:	LD	L,00H
-        INC	H
+        INC	H                       ; round up 256 bytes boundary
         LD	A,L
         SUB	E
         LD	A,H
-        SBC	A,D
-        JR	NC,J0476
-        EX	DE,HL
+        SBC	A,D                     ; page 2 with more RAM ?
+        JR	NC,J0476                ; nope,
+        EX	DE,HL                   ; new lowest RAM address found
         LD	A,(D.FFFF)
         CPL
         LD	L,A
         IN	A,(0A8H)
         LD	H,A
-        LD	SP,HL
+        LD	SP,HL                   ; save primairy and secundairy slotregister of lowest RAM address found (page 2)
 J0476:	LD	A,B
-        AND	A
-        JR	Z,J0484
+        AND	A                       ; slot expanded ?
+        JR	Z,J0484                 ; nope, next primary slot
         LD	A,(D.FFFF)
         CPL
-        ADD	A,10H
-        CP	40H
-        JR	C,J044E
+        ADD	A,10H                   ; next secundairy slot page 2
+        CP	40H                     ; all secundairy slots done ?
+        JR	C,J044E                 ; nope, next
 J0484:	IN	A,(0A8H)
-        ADD	A,50H
-        JR	NC,J0436
+        ADD	A,50H                   ; next primary slot page 2 and 3
+        JR	NC,J0436                ; all primary slots done ? nope, next
         LD	HL,0
         ADD	HL,SP
         LD	A,H
         OUT	(0A8H),A
         LD	A,L
-        LD	(D.FFFF),A
+        LD	(D.FFFF),A              ; select slot with lowest RAM address found (page 2)
         LD	A,C
         RLCA
         RLCA
         RLCA
         RLCA
-        LD	C,A
-        LD	DE,D.FFFF
+        LD	C,A                     ; expanded slot flags in b7-b4
+        LD	DE,0FFFFH               ; initialize lowest RAM address found (page 3)
         IN	A,(0A8H)
-        AND	3FH
-J04A2:	OUT	(0A8H),A
-        LD	B,00H
-        RLC	C
-        JR	NC,J04B4
-        INC	B
+        AND	3FH                     ; primairy slot 0 in page 3
+J04A2:	OUT	(0A8H),A                ; select new primairy slot in page 3
+        LD	B,0
+        RLC	C                       ; slot expanded ?
+        JR	NC,J04B4                ; nope,
+        INC	B                       ; flag slot expanded
         LD	A,(D.FFFF)
         CPL
-        AND	3FH
-J04B1:	LD	(D.FFFF),A
-J04B4:	LD	HL,0FE00H
+        AND	3FH                     ; secundairy slot 0 in page 3
+J04B1:	LD	(D.FFFF),A              ; select new secundairy slot in page 3
+J04B4:	LD	HL,0FEFFH-255           ; page 3 (leave upper 256 bytes out for secundairy slot register)
 J04B7:	LD	A,(HL)
         CPL
         LD	(HL),A
-        CP	(HL)
+        CP	(HL)                    ; RAM found (write inverted correctly read back) ?
         CPL
-        LD	(HL),A
-        JR	NZ,J04C8
+        LD	(HL),A                  ; restore orginal value
+        JR	NZ,J04C8                ; no RAM
         INC	L
         JR	NZ,J04B7
         DEC	H
@@ -1049,30 +1049,30 @@ J04B7:	LD	A,(HL)
         CP	0C0H
         JR	NC,J04B7
 J04C8:	LD	L,00H
-        INC	H
+        INC	H                       ; round up 256 bytes boundary
         LD	A,L
         SUB	E
         LD	A,H
-        SBC	A,D
-        JR	NC,J04DB
-        EX	DE,HL
+        SBC	A,D                     ; page 3 with more RAM ?
+        JR	NC,J04DB                ; nope,
+        EX	DE,HL                   ; new lowest RAM address found
         LD	A,(D.FFFF)
         CPL
         LD	L,A
         IN	A,(0A8H)
         LD	H,A
-        LD	SP,HL
+        LD	SP,HL                   ; save primairy and secundairy slotregister of lowest RAM address found (page 3)
 J04DB:	LD	A,B
-        AND	A
-        JR	Z,J04E7
+        AND	A                       ; slot expanded ?
+        JR	Z,J04E7                 ; nope,
         LD	A,(D.FFFF)
         CPL
-        ADD	A,40H
-        JR	NC,J04B1
+        ADD	A,40H                   ; next secundairy slot page 3
+        JR	NC,J04B1                ; all secundairy slots done ? nope, next
 J04E7:	IN	A,(0A8H)
-        ADD	A,40H
-        JR	NC,J04A2
-        JP	M7B61
+        ADD	A,40H                   ; next primairy slot page 3
+        JR	NC,J04A2                ; all primary slots done ? nope, next
+        JP	M7B61                   ; continue rest init code (moved elsewhere)
 
 
 ;	Subroutine	ISCNTC
@@ -4961,7 +4961,7 @@ J1A63:	LD	A,08H	; 8
         DI
         LD	A,0EH	; 14 
         OUT	(0A0H),A
-J1A6C:	LD	HL,I0457
+J1A6C:	LD	HL,0457H
 J1A6F:	LD	D,C
         CALL	C1B34
         RET	C

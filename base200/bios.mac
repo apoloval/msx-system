@@ -936,7 +936,7 @@ J0416:  XOR     A
 
         ENDIF
 
-        LD      DE,D.FFFF               ; initialize lowest RAM address found (page 2)
+        LD      DE,0FFFFH               ; initialize lowest RAM address found (page 2)
         XOR     A                       ; start with primairy slot 0
         LD      C,A                     ; initialize expanded slot flags
 J0436:  OUT     (0A8H),A                ; select primairy slot on page 2 and 3
@@ -1003,7 +1003,7 @@ J0484:  IN      A,(0A8H)
         RLCA
         RLCA
         LD      C,A                     ; expanded slot flags in b7-b4
-        LD      DE,D.FFFF               ; initialize lowest RAM address found (page 3)
+        LD      DE,0FFFFH               ; initialize lowest RAM address found (page 3)
         IN      A,(0A8H)
         AND     3FH                     ; primairy slot 0 in page 3
 J04A2:  OUT     (0A8H),A                ; select new primairy slot in page 3
@@ -1053,7 +1053,7 @@ J04DB:  LD      A,B
 J04E7:  IN      A,(0A8H)
         ADD     A,40H                   ; next primairy slot page 3
         JR      NC,J04A2                ; all primary slots done ? nope, next
-        JP      M7B61                   ; continue elsewhere
+        JP      M7B61                   ; continue rest init code (moved elsewhere)
 
         
 ;       Subroutine      ISCNTC

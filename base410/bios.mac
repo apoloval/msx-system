@@ -484,7 +484,7 @@ C01F5:  CALL    C0353                   ; calculate masks
 
 
 J0205:  CALL    C028C                   ; prm. slot 0, page 0 ?
-        JR      NZ,J021A                ; nop, use ´old´ method
+        JR      NZ,J021A                ; nop, use ï¿½oldï¿½ method
         PUSH    HL
         CALL    C0255                   ; basicrom on page 1
         EX      (SP),HL
@@ -534,7 +534,7 @@ C0225:  PUSH    DE
 
 
 J0235:  CALL    C028C                   ; prm. slot 0, page 0 ?
-        JP      NZ,J026E                ; nope, use ´old´ method
+        JP      NZ,J026E                ; nope, use ï¿½oldï¿½ method
         POP     DE
         PUSH    HL
         CALL    C0255                   ; basicrom on page 1
@@ -916,24 +916,24 @@ J03AC:  DI
 ; orginal init MSX2 and above
 
 J0416:  XOR     A
-        OUT     (0FFH),A
+        OUT     (0FFH),A                ; initalize memory mapper page 3 register (mapper page 0)
         INC     A
-        OUT     (0FEH),A
+        OUT     (0FEH),A                ; initalize memory mapper page 2 register (mapper page 1)
         INC     A
-        OUT     (0FDH),A
+        OUT     (0FDH),A                ; initalize memory mapper page 1 register (mapper page 2)
         INC     A
-        OUT     (0FCH),A                ; initialize memorymapper
+        OUT     (0FCH),A                ; initalize memory mapper page 0 register (mapper page 3)
         LD      A,08H
-        OUT     (0BBH),A                ; initialize lightpen ??
+        OUT     (0BBH),A                ; initialize lightpen (enable interrupt)
         LD      A,82H
-        OUT     (0ABH),A                ; initialize i8255 port modeselect
+        OUT     (0ABH),A                ; initialize PPI (active, group A mode 0, group A output, upper port C output, group B mode 0, group B input, lower port C output)
         XOR     A
-        OUT     (0A8H),A                ; initialize primary slotregister (all pages slot 0)
+        OUT     (0A8H),A                ; select primairy slot 0 on all pages
 
         IF      INTHZ EQ 60
 
         LD      A,50H
-        OUT     (0AAH),A                ; CAPS led off, cassette motor off
+        OUT     (0AAH),A                ; CAPS off, motor off, keyboard row 0
 
         ELSE
 
@@ -942,26 +942,30 @@ J0416:  XOR     A
 
         ENDIF
 
+                                        ; MSX1 - MSX2+ had RAM search routine here
+                                        ; because MSX Turbo-R has RAM at a fixed slot, RAM not not searched
+
+
 J0431:  XOR     A
-        LD      C,A                     ; flag primary slots are not expanded
+        LD      C,A                     ; initialize expanded slot flags
         IN      A,(0A8H)
         AND     3FH                     ; primary slot 0
         LD      HL,D.FFFF
-J043A:  SLA     C                       ; shift left
+J043A:  SLA     C                       ; shift expanded slot flags
         LD      B,A
-        OUT     (0A8H),A
-        LD      (HL),0F0H               ; secundairy slot 3 on page 3 and 2, slot 0 on page 1 and 0 (to avoid crash when doing slot 0)
+        OUT     (0A8H),A                ; select primairy slot on page 2 and 3
+        LD      (HL),0F0H
         LD      A,(HL)
-        SUB     0FH                     ; secundairy slot logic (inverted) ?
-        JR      NZ,J044D                ; nope, slot not expanded
-        LD      (HL),A                  ; secundairy slot 0 on page 3,2,1 and 0
+        SUB     0FH                     ; is slot expanded (writen value readback inverted) ?
+        JR      NZ,J044D                ; nope,
+        LD      (HL),A
         LD      A,(HL)
-        INC     A
-        JR      NZ,J044D                ; not correctly inverted, slot not expanded
+        INC     A                       ; is slot expanded (writen value readback inverted) ?
+        JR      NZ,J044D                ; nope,
         SET     0,C                     ; flag slot expanded
 J044D:  LD      A,B
-        ADD     A,40H
-        JR      NC,J043A                ; do all primary slots
+        ADD     A,40H                   ; next primairy slot page 3
+        JR      NC,J043A                ; all primary slots done ? nope, next
         LD      A,00H+((RAMSID) AND 3)*80
         OUT     (0A8H),A                ; select primary slot of RAM on page 3 and 2, slot 0 on page 1 and 0
         LD      A,00H+((RAMSID) AND 12)*20
@@ -972,7 +976,7 @@ J044D:  LD      A,B
         LD      H,A
         LD      L,00H+((RAMSID) AND 12)*20
         LD      SP,HL                   ; primary and secundairy slot register value for systemstart
-        JP      M7B61
+        JP      M7B61                   ; continue rest init code (moved elsewhere)
 
 
 
@@ -3451,7 +3455,7 @@ J1269:  XOR     A
 
 J126B:  NOP
         IN      A,(0F4H)
-        BIT     7,A                     ; ´cold´ boot ?
+        BIT     7,A                     ; ï¿½coldï¿½ boot ?
         JR      Z,J127A                 ; yep,
         LD      A,80H
         CALL    C046A                   ; CHGCPU: Z80 mode, led changed
