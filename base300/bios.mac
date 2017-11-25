@@ -942,20 +942,9 @@ J0416:	XOR	A
         OUT	(0ABH),A                ; initialize PPI (active, group A mode 0, group A output, upper port C output, group B mode 0, group B input, lower port C output)
         XOR	A
         OUT	(0A8H),A                ; select primairy slot 0 on all pages
-
-;	IF	INTHZ EQ 60
-
         LD	A,50H
         OUT	(0AAH),A                ; CAPS off, motor off, keyboard row 0
-
-;	ELSE
-
-;	JP	PTCPAL                  ; patch routine to setup VDP for PAL
-;	NOP
-
-;	ENDIF
-
-J0431:	LD	DE,0FFFFH               ; initialize lowest RAM address found (page 2)
+	LD	DE,0FFFFH               ; initialize lowest RAM address found (page 2)
         XOR	A                       ; start with primairy slot 0
         LD	C,A                     ; initialize expanded slot flags
 J0436:	OUT	(0A8H),A                ; select primairy slot on page 2 and 3

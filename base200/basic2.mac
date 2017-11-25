@@ -121,6 +121,8 @@ S.SETSCR	EQU	0189H
 S.SCOPY		EQU	018DH
 S.GETPUT	EQU	01B1H
 
+M.0431          EQU     0431H
+
 JF37D		EQU	0F37DH	; BDOS routine for diskbasic
 VARWRK		EQU	0F380H
 .LOW		EQU	0F406h
@@ -12468,6 +12470,23 @@ J7BCB:
 
 ; #####################
 ;	because of the above code, 7BD2-7BE1 is free for other use
+
+;       Subroutine      patchroutine for PAL setup of VDP
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+PTCPAL: LD      A,50H
+        OUT     (0AAH),A
+        LD      A,2
+        OUT     (99H),A
+        LD      A,89H
+        OUT     (99H),A
+        LD      HL,0A0F9H
+PTCPA1: DEC     HL
+        LD      A,H
+        OR      L
+        JR      NZ,PTCPA1               ; wait
+        JP      M.0431                  ; resume orginal routine
 
 
         DEFS	07BE2H-$,0			; remaining space
