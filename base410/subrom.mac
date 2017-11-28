@@ -879,7 +879,7 @@ I02A6:  DI
         EXX
         RET
 
-;       Subroutine      ´S.ENASLT´
+;       Subroutine      ï¿½S.ENASLTï¿½
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 ;       Remark          crashes when address is in page 0
@@ -3812,7 +3812,7 @@ C11E0:  LD      HL,(GRPACY)
         JR      Z,J1206                 ; screenmode 6 and 7 have 512 width, so use 16 bit add
         LD      A,(GRPACX)
         ADD     A,8
-        JR      C,J1216                 ; over the right, next ´line´
+        JR      C,J1216                 ; over the right, next ï¿½lineï¿½
         LD      (GRPACX),A              ; graphic x coord + 8
         RET
 
@@ -3821,7 +3821,7 @@ J1206:  LD      HL,(GRPACX)
         ADD     HL,BC
         LD      A,H
         AND     0FEH
-        JR      NZ,J1216                ; over the right, next ´line´
+        JR      NZ,J1216                ; over the right, next ï¿½lineï¿½
         LD      (GRPACX),HL             ; graphic x coord + 8
         RET
 
@@ -5539,7 +5539,7 @@ J1B0D:  LD      A,21H
         CALL    C1B4F                   ; write nibble to clockchip, special password signature (010203)
         LD      A,C
         PUSH    AF
-        CALL    C2E01                   ; calculate ´crc´ of password
+        CALL    C2E01                   ; calculate ï¿½crcï¿½ of password
         LD      B,4                     ; pos 4
         LD      A,E
         CALL    C1B46                   ; write byte to clockchip
@@ -5559,7 +5559,7 @@ J1B0D:  LD      A,21H
         INC     A                       ; code 2
 J1B38:  CALL    C1B4F                   ; write nibble to clockchip (pos 8)
         PUSH    BC
-        CALL    C2DF3                   ; calculate ´crc´ of keycard code
+        CALL    C2DF3                   ; calculate ï¿½crcï¿½ of keycard code
         POP     BC
         LD      A,E
         CALL    C1B46                   ; write byte to clockchip (pos 9)
@@ -7596,7 +7596,7 @@ J2662:  LD      A,E
         POP     DE
         POP     BC
 
-; strange nop´s here
+; strange nopï¿½s here
 
         IF      MSXMID EQ 0
 
@@ -8827,22 +8827,48 @@ J2C55:  EI
         POP     AF
         RET
 
-I2C5A:  DEFB    000H,020H,000H,000H,000H,000H,000H,000H
-        DEFB    008H
+; Initial VDP register values
 
-        IF      INTHZ EQ 60
+I2C5A:	DEFB	000H                    ; R#0: DG=0 (Digitize off), IE1=0 (VR int off), M5=0, M4=0, M3=0 (screen 1)
+        DEFB    020H                    ; R#1: BLK=0 Enable display IE0=1 (HR int on), M1=0, M2=0 (screen 1), SZ=0 (8x8 sprites), MAG=0 (sprites not magnified)
+        DEFB    000H                    ; R#2: A16=0, A15=0, A14=0, A13=0, A12=0, A11=0, A10=0
+        DEFB    000H                    ; R#3: B13=0, B12=0, B11=0, B10=0, B9=0,  B8=0,  B7=0, B6=0
+        DEFB    000H                    ; R#4: C16=0, C15=0, C14=0, C13=0, C12=0, C11=0
+        DEFB    000H                    ; R#5: D14=0, D13=0, D12=0, D11=0, D10=0, D9=0,  D8=0, D7=0
+        DEFB    000H                    ; R#6: E16=0, E15=0, E14=0, E13=0, E12=0, E11=0
+        DEFB    000H                    ; R#7: TC3=0, TC2=0, TC1=0, TC0=0 (text color 0), BDC3=0,BDC2=0,BDC1=0,BDC0=0 (border color 0)
 
-        DEFB    000H
+        DEFB	008H                    ; R#8: TP=0 (color 0 is transparent), CBD=0 (colorbus not input), VRS1=0, VRS0=0 (64 KB RAM chip), SPD=0 (sprites enabled), B/W=0 (blank/white off)
+
+        IF	INTHZ EQ 60
+
+        DEFB	000H                    ; R#9: LN=0, SYM1=0, SYM0=0 (internal synchronisation), IL=0 (no interlace), EO=0 (no odd even display), NTSC=0 (NTSC), DCD=0 (dot clock direction output)
 
         ELSE
 
-        DEFB    002H
+        DEFB	002H                    ; R#9: LN=0, SYM1=0, SYM0=0 (internal synchronisation), IL=0 (no interlace), EO=0 (no odd even display), NTSC=1 (PAL), DCD=0 (dot clock direction output)
 
         ENDIF
 
-        DEFB    000H,000H,000H,000H,000H,000H
-        DEFB    000H,000H,000H,000H,000H,03BH,005H,000H
-        DEFB    000H,000H,000H,000H
+        DEFB	000H                    ; R#10: B16=0, B15=0, B14=0
+        DEFB    000H                    ; R#11: D16=0, D15=0
+        DEFB    000H                    ; R#12: C3=0, C2=0, C1=0, C0=0 (color 0), BC3=0, BC2=0, BC1=0, BC0=0 (back color 0)
+        DEFB    000H                    ; R#13: ON3=0, ON2=0, ON1=0, ON0=0 (blink on ?), OF3=0, OF2=0, OF1=0, OF0=0 (blink off ?)
+        DEFB    000H                    ; R#14: F16=0, F15=0, F14=0 (VRAM base access is lower 16 KB, TMS9918 compatibel)
+        DEFB    000H                    ; R#15: RS3=0, RS2=0, RS1=0, RS0=0 (select status register 0, TMS9918 compatibel)
+        DEFB	000H                    ; R#16: C3=0, C2=0, C1=0, C0=0 (color code 0)
+        DEFB    000H                    ; R#17: AII=0 (autoincrement register), RC5=0, RC4=0, RC3=0, RC2=0, RC1=0, RC0=0 (control register 0)
+        DEFB    000H                    ; R#18: dV3=0, dV2=0, dV1=0, dV0=0 (no vertical adjust), dH3=0, dH2=0, dH1=0, dH0=0 (no horizontal adjust)
+        DEFB    000H                    ; R#19: IL7=0, IL6=0, IL5=0, IL4=0, IL3=0, IL2=0, IL1=0, IL0=0 (interrupt on line 0)
+        DEBF    000H                    ; R#20: CBX5=0, CBX4=0, CBX3=0, CBX2=0, CBX1=0, CBX0=0 (Color burst value of phase 0)
+        DEFB    03BH                    ; R#21: CBX5=1, CBX4=1, CBX3=1, CBX2=0, CBX1=1, CBX0=1 (Color burst value of phase 1/3)
+        DEFB    005H                    ; R#22: CBX5=0, CBX4=0, CBX3=0, CBX2=1, CBX1=0, CBX0=1 (Color burst value of phase 2/3)
+        DEFB    000H                    ; R#23: DO7=0, DO6=0, DO5=0, DO4=0, DO3=0, DO2=0, DO1=0, DO0=0 (display offset)
+
+        DEFB    000H                    ; R#24: not used on V9958
+        DEFB	000H                    ; R#25: CMD=0 (command mode not in screen 0-4, V9938 compatibel), VDS=0, YAE=0, YJK=0, WTE=0 (no wait to CPU), MSK=0, SP2=0
+        DEFB    000H                    ; R#26: H8=0, H7=0, H6=0, H5=0, H4=0, H3=0
+        DEFB    000H                    ; R#27: H0=0, H1=0, H2=0
 
 ;       Subroutine      __________________________
 ;       Inputs          ________________________
@@ -8896,7 +8922,7 @@ J2CC4:  PUSH    HL
         ADD     HL,HL
         ADD     HL,HL
         ADD     HL,HL
-        ADD     HL,HL                   ; *16 to have in Kb´s
+        ADD     HL,HL                   ; *16 to have in Kbï¿½s
         CALL    C2DAF                   ; convert number to text
         CALL    C2D8B                   ; print text
         LD      HL,I2DA8
@@ -10767,7 +10793,7 @@ J36F3:  PUSH    HL
         PUSH    DE
         LD      A,(SLTWRK+0)
         AND     A                       ; ram memini searched ?
-        JR      Z,J3701                 ; nope, ´search´ ram
+        JR      Z,J3701                 ; nope, ï¿½searchï¿½ ram
         BIT     5,A                     ; ramdisk disabled ?
         JR      NZ,J3708                ; yep, illegal function call
         JR      J370B
@@ -11070,7 +11096,7 @@ C38D7:  CALL    C38A2                   ; check for valid ramdisk and parse ramd
         CALL    C38A7                   ; parse ramdiskfilespec
         RST     S.SYNCHR
         DEFB    ")"                     ; check for )
-        CALL    C3A9E                   ; search for ´new´ filename
+        CALL    C3A9E                   ; search for ï¿½newï¿½ filename
         LD      E,65
         JP      Z,J3B96                 ; found, file already exists error
         POP     IX
@@ -12172,7 +12198,7 @@ J3E8C:  DEC     A
 
 
 
-;       Subroutine      copies kanji and subrom to ´shadow´ ram
+;       Subroutine      copies kanji and subrom to ï¿½shadowï¿½ ram
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
