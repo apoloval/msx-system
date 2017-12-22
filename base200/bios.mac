@@ -852,14 +852,14 @@ J03B5:  LD      A,(DE)
         PUSH    DE
 J03B9:  PUSH    HL
         LD      HL,0
-        CALL    M7E1A
+        CALL    M7E1A                   ; read word from extension ROM (address 0000H, indentifier)
         PUSH    HL
         LD      HL,4443H
-        RST     20H
+        RST     20H                     ; SUBROM identifier ?
         POP     HL
         LD      B,00H
-        JR      NZ,J03EF
-        CALL    M7E1A
+        JR      NZ,J03EF                ; nope,
+        CALL    M7E1A                   ; read word from extension ROM (address 0002H, initialize)
         PUSH    HL
         PUSH    BC
         PUSH    DE
@@ -867,13 +867,13 @@ J03B9:  PUSH    HL
         LD      A,C
         PUSH    AF
         POP     IY
-        CALL    NZ,C0217
+        CALL    NZ,C0217                ; if SUBROM has initialize routine, call it
         POP     BC
         POP     HL
-        CALL    M7E1A
+        CALL    M7E1A                   ; read word from extension ROM (address 0004H, call statement handler)
         ADD     A,0FFH
         RR      B
-        CALL    M7E1A
+        CALL    M7E1A                   ; read word from extension ROM (address 0006H, device handler)
         ADD     A,0FFH
         RR      B
         SRL     B
@@ -888,14 +888,14 @@ J03EF:  EX      (SP),HL
         INC     HL
         INC     HL
         LD      A,C
-        AND     A
+        AND     A                       ; slot expanded ?
         LD      DE,12
-        JP      P,J040A
-        ADD     A,04H   ; 4 
+        JP      P,J040A                 ; nope, next primairy slot
+        ADD     A,04H
         LD      C,A
         CP      90H
         JR      C,J03B9
-        AND     03H     ; 3 
+        AND     03H
         LD      C,A
         DEFB    03EH
 J040A:  ADD     HL,DE
@@ -903,7 +903,7 @@ J040A:  ADD     HL,DE
         INC     DE
         INC     C
         LD      A,C
-        CP      04H     ; 4 
+        CP      04H
         JR      C,J03B5
         JP      M7D75
 
