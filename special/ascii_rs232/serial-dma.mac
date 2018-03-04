@@ -67,18 +67,18 @@ D6006	EQU	6006H
 D6007	EQU	6007H
 D6009	EQU	6009H
 I6016	EQU	6016H
-D660E	EQU	660EH
-D660F	EQU	660FH
-D6611	EQU	6611H
-J6612	EQU	6612H
-J6617	EQU	6617H
-X661C	EQU	661CH
-D6621	EQU	6621H
+D660E	EQU	660EH                   ; timeout counter
+D660F	EQU	660FH                   ; pointer to current FCB
+D6611	EQU	6611H                   ; bufferlength current FCB
+J6612	EQU	6612H                   ; old EXTBIO handler
+J6617	EQU	6617H                   ; old H.NEWS handler
+X661C	EQU	661CH                   ; old H.TIMI handler
+D6621	EQU	6621H                   ; trapnumber (b7-b4), devicenumber (b3-b0)
 D6622	EQU	6622H
 D6623	EQU	6623H
 D6625	EQU	6625H
-D6626	EQU	6626H
-D6627	EQU	6627H
+D6626	EQU	6626H                   ; b7 = SO status (receive), b3 = channel open, b1 = XOFF status, b0 = SO status (send)
+D6627	EQU	6627H                   ; b4 = use SI/SO control, b3 = Auto LF receive, b2 = Auto LF send, b1 = use RTS/CTS handshake, b0 = use XON/XOFF protocol
 D6628	EQU	6628H
 D6629	EQU	6629H
 D662A	EQU	662AH
@@ -174,19 +174,19 @@ J4046:	EI
         ADD	IY,SP
         LD	SP,IY
         PUSH	IY
-        POP	DE
-        LD	C,13
+        POP	DE                      ; allocate space for parameterblock on stack
+        LD	C,13                    ; parameterblock is 13 bytes
 J4057:	CALL	C$4547
         LD	(DE),A
         INC	DE
         DEC	C
-        JR	NZ,J4057
+        JR	NZ,J4057                ; copy parameterblock (RDSLT)
         CALL	C4C51                   ; initialize RS232 port
         PUSH	AF
         LD	IY,15
         ADD	IY,SP
         POP	AF
-        LD	SP,IY
+        LD	SP,IY                   ; remove space for parameterblock from stack
         POP	HL
         POP	DE
         POP	BC
@@ -290,13 +290,13 @@ C40E1:	LD	HL,D6000
         CALL	C4C51                   ; initialize RS232 port
         XOR	A
         LD	(X661C),A		; no H.TIMI handler already installed
-        CALL	C407B
+        CALL	C407B                   ; initialize i8237
         CALL	C419C
         DI
         LD	DE,J6617
         LD	HL,H.NEWS
         LD	BC,5
-        LDIR
+        LDIR                            ; save current H.NEWS
         CALL	C4DA5			; get current slotid page 1
         LD	(H.NEWS+1),A
         LD	A,0F7H
@@ -304,11 +304,11 @@ C40E1:	LD	HL,D6000
         LD	HL,I4B55
         LD	(H.NEWS+2),HL
         LD	A,0C9H
-        LD	(H.NEWS+4),A
+        LD	(H.NEWS+4),A            ; install H.NEWS handler (RS232 basic interrupts)
         EI
         LD	HL,HOKVLD
-        BIT	0,(HL)
-        JR	NZ,J413D
+        BIT	0,(HL)                  ; EXTBIO initialized ?
+        JR	NZ,J413D                ; yep, skip EXTBIO initialization
         SET	0,(HL)
         LD	HL,EXTBIO
         LD	B,5
@@ -319,7 +319,7 @@ J413D:	XOR	A
         LD	DE,00801H
         CALL	EXTBIO                  ; count RS232's sofar
         LD	HL,D6621
-        LD	(HL),A                  ; this interface devicenumber
+        LD	(HL),A                  ; RS232 devicenumber of this device
         XOR	A
         LD	DE,00001H
         CALL	EXTBIO                  ; get my TRAP number
@@ -341,11 +341,11 @@ J413D:	XOR	A
         LD	HL,I4450
         LD	(EXTBIO+2),HL
         LD	A,0C9H
-        LD	(EXTBIO+4),A
+        LD	(EXTBIO+4),A            ; install EXTBIO handler
         LD	BC,24
         LD	HL,I4184
         LD	DE,DISINT+0
-        LDIR
+        LDIR                            ; install DISINT and ENAINT handlers
         EI
         RET
 
@@ -529,7 +529,7 @@ J4279:	SUB	"0"
         PUSH	BC
         PUSH	AF
         LD	A,(D6621)
-        AND	0FH	; 15 
+        AND	0FH                     ; RS232 devicenumber of this device
         LD	B,A
         POP	AF
         CP	B
@@ -559,13 +559,13 @@ J429E:	LD	A,(HL)
 
 I42A5:	DEFW    C42B9			; OPEN (BASIC)
         DEFW    C430C			; CLOSE (BASIC)
-        DEFW    C4500			; Random access (BASIC)
+        DEFW    C4500			; Random access (BASIC), sequential I/O only error
         DEFW    C432E			; Sequential output (BASIC)
         DEFW    C433A			; Sequential input (BASIC)
         DEFW    C4385			; LOC (BASIC)
         DEFW    C43B8			; LOF (BASIC)
         DEFW    C43D2			; EOF (BASIC)
-        DEFW    J451E			; FPOS (BASIC)
+        DEFW    J451E			; FPOS (BASIC), illegal function call error
         DEFW    C43FB			; BACKUP (BASIC)
 
 ;	  Subroutine OPEN (BASIC)
@@ -578,7 +578,7 @@ C42B9:	LD	C,7FH
         LD	(PTRFIL),HL
         RET
 J42C4:	DEC	A
-        JP	Z,J44F4
+        JP	Z,J44F4                 ; bad file name error
         JP	J4506
 
 ;	  Subroutine RS232.OPEN
@@ -587,24 +587,24 @@ J42C4:	DEC	A
 
 C42CB:	OR	A
         LD	A,(D6626)
-        BIT	3,A
-        LD	A,02H	; 2 
+        BIT	3,A                     ; RS232 channel already open ?
+        LD	A,2
         SCF
-        RET	NZ
+        RET	NZ                      ; yep, quit with error
         CALL	C500E			; install H.TIMI handler if not already done
-        CALL	C407B
+        CALL	C407B                   ; initialize i8237
         LD	A,E
-        CP	08H	; 8 
-        LD	A,01H	; 1 
+        CP	08H                     ; random mode ?
+        LD	A,01H
         SCF
-        RET	Z
+        RET	Z                       ; yep, quit with error
         PUSH	BC
         PUSH	DE
         PUSH	HL
-        LD	(D660F),HL
+        LD	(D660F),HL              ; FCB
         LD	A,C
-        LD	(D6611),A
-        LD	(HL),E
+        LD	(D6611),A               ; buffer length
+        LD	(HL),E                  ; mode
         XOR	A
         INC	HL
         INC	HL
@@ -617,10 +617,10 @@ C42CB:	OR	A
         LD	(HL),A
         CALL	C419C
         LD	HL,D6626
-        SET	3,(HL)
+        SET	3,(HL)                  ; RS232 channel open
         DI
-        CALL	C4DCC
-        CALL	C5271
+        CALL	C4DCC                   ; enable 8237 DMA requests
+        CALL	C5271                   ; enable RTS signal
         EI
         OR	A
         POP	HL
@@ -644,10 +644,10 @@ C430C:	PUSH	HL
 J431C:	DI
         CALL	C52D9			; wait for transmitter ready
         CALL	C5283
-        CALL	C4DC4
+        CALL	C4DC4                   ; disable 8237 DMA requests
         EI
         LD	HL,D6626
-        RES	3,(HL)
+        RES	3,(HL)                  ; RS232 channel closed
         POP	HL
         RET
 
@@ -658,8 +658,8 @@ J431C:	DI
 C432E:	LD	A,C
         CALL	C50A6			; RS232.SNDCHR
         EI
-        JP	C,J452A
-        JP	Z,J452A
+        JP	C,J452A                 ; device I/O error
+        JP	Z,J452A                 ; device I/O error
         RET
 
 ;	  Subroutine Sequential input (BASIC)
@@ -667,7 +667,7 @@ C432E:	LD	A,C
 ;	     Outputs ________________________
 
 C433A:	CALL	C4341			; RS232.GETCHR
-        JP	M,J452A
+        JP	M,J452A                 ; device I/O error
         RET
 
 ;	  Subroutine RS232.GETCHR
@@ -700,11 +700,11 @@ J4367:	PUSH	HL
         LD	HL,(D660F)
         LD	A,(HL)
         POP	HL
-        CP	04H	; 4 
-        JR	Z,J437F
+        CP	04H		        ; Raw mode ?
+        JR	Z,J437F                 ; yep,
         LD	A,C
-        CP	1AH
-        JR	NZ,J437F
+        CP	1AH		        ; EOF ?
+        JR	NZ,J437F                ; nope,
         LD	(HL),A
         AND	A
         SCF
@@ -738,8 +738,8 @@ C4393:	PUSH	AF
         EI
         LD	HL,(D660F)
         LD	A,(HL)
-        CP	01H	; 1 
-        JR	NZ,J43B0
+        CP	01H                     ; input mode ?
+        JR	NZ,J43B0                ; nope,
         CALL	C440B
         JR	Z,J43A8
         SUB	1AH
@@ -775,7 +775,7 @@ C43BE:	PUSH	AF
         EX	DE,HL
         LD	A,(D6611)
         LD	L,A
-        LD	H,00H
+        LD	H,00H                   ; buffer length
         AND	A
         SBC	HL,DE
         INC	HL
@@ -789,7 +789,7 @@ C43BE:	PUSH	AF
 
 C43D2:	PUSH	HL
         CALL	C43DB
-        JP	M,J452A
+        JP	M,J452A                 ; device I/O error
         JR	J43BC
 
 ;	  Subroutine __________________________
@@ -889,7 +889,7 @@ C$4433:	PUSH	DE
         JR	C,J4441
 J4440:	SUB	(HL)
 J4441:	LD	HL,(D660F)
-        LD	E,09H	; 9 
+        LD	E,09H
         LD	D,00H
         ADD	HL,DE
         LD	E,A
@@ -924,8 +924,8 @@ J4478:	POP	AF
         INC	A
         PUSH	AF
         JP	J44DF
-J447E:	CALL	C4B96
-        JR	Z,J448C
+J447E:	CALL	C4B96                   ; Check if RS232 channel is open
+        JR	Z,J448C                 ; nope,
         PUSH	BC
         CALL	C5071
         EI
@@ -934,11 +934,11 @@ J447E:	CALL	C4B96
         DI
         EI
 J448C:	JP	J44DF
-J448F:	CALL	C4B96
-        JR	Z,J44A1
+J448F:	CALL	C4B96                   ; Check if RS232 channel is open
+        JR	Z,J44A1                 ; nope,
         DI
-        CALL	C4DCC
-        CALL	C5271
+        CALL	C4DCC                   ; enable 8237 DMA requests
+        CALL	C5271                   ; enable RTS signal
         PUSH	BC
         CALL	C5057
         POP	BC
@@ -974,7 +974,7 @@ J44DC:	POP	AF
         INC	A
         PUSH	AF
 J44DF:	POP	AF
-        JP	J6612
+        JP	J6612                   ; EXTBIO chain
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1046,7 +1046,7 @@ C$4547:	PUSH	BC
         POP	BC
         RET
 
-;	  Subroutine __________________________
+;	  Subroutine check if CTRL-STOP pressed
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -1108,7 +1108,7 @@ J459F:	POP	AF
 C45A1:	LD	A,(HL)
         EX	(SP),HL
         CP	(HL)
-        JP	NZ,J4518
+        JP	NZ,J4518                ; syntax error
         INC	HL
         EX	(SP),HL
 
@@ -1211,9 +1211,9 @@ C4608:	PUSH	IY
 ;	     Outputs ________________________
 
 C4614:	CALL	C4B9C
-        CALL	C4B96
+        CALL	C4B96                   ; Check if RS232 channel is open
         DI
-        CALL	C4DC4
+        CALL	C4DC4                   ; disable 8237 DMA requests
         EI
         LD	A,(D6629)		; last i8251 command
         LD	(D6002),A
@@ -1301,12 +1301,12 @@ J46AA:	CALL	C45A1
 J46BD:	CALL	C45A9
 J46C0:	EI
         CALL	C4C51                   ; initialize RS232 port
-        JP	C,J451E
-        CALL	C4B96
-        CALL	NZ,C4DCC
+        JP	C,J451E                 ; illegal function call error
+        CALL	C4B96                   ; Check if RS232 channel is open
+        CALL	NZ,C4DCC                ; yep, enable 8237 DMA requests
         LD	A,(D6002)
         BIT	5,A
-        CALL	NZ,C5271
+        CALL	NZ,C5271                ; enable RTS signal
         AND	A
         RET
 
@@ -1318,8 +1318,8 @@ C46D7:	CALL	C4B9C
         CALL	C4C05
         CALL	C45A1
         DEFB	","
-        CALL	C4B96
-        JP	Z,J450C
+        CALL	C4B96                   ; Check if RS232 channel is open
+        JP	Z,J450C                 ; nope, file not open error
         CALL	C45C7
         CALL	C45A1
         DEFB	")"
@@ -1337,8 +1337,8 @@ C46F5:	CALL	C4B9C
         CALL	C4C05
         CALL	C45A1
         DEFB	","
-        CALL	C4B96
-        JP	Z,J450C
+        CALL	C4B96                   ; Check if RS232 channel is open
+        JP	Z,J450C                 ; nope, file not open error
         CALL	C$45DF
         PUSH	HL
         CALL	C52B1			; RS232.STAT
@@ -1356,8 +1356,8 @@ C46F5:	CALL	C4B9C
 
 C4719:	CALL	C4B9C
         CALL	C4C05
-        CALL	C4B96
-        JP	Z,J450C
+        CALL	C4B96                   ; Check if RS232 channel is open
+        JP	Z,J450C                 ; nope, file not open error
         LD	A,D
         CP	","
         JR	Z,J473A
@@ -1377,14 +1377,14 @@ J4744:	PUSH	HL
         LD	HL,2
         AND	A
         SBC	HL,DE
-        JP	NC,J451E
+        JP	NC,J451E                ; illegal function call error
         POP	HL
         CALL	C5231			; RS232.SNDBRK
         EI
         LD	A,00H
         INC	A
         CALL	C5177
-        JP	C,J452A
+        JP	C,J452A                 ; device I/O error
         AND	A
         RET
 
@@ -1402,8 +1402,8 @@ C475E:	CALL	C4B9C
         CALL	C45A1
         DEFB	")"
 J4770:	LD	(D6007),HL
-        CALL	C4B96
-        JP	NZ,J4506
+        CALL	C4B96                   ; Check if RS232 channel is open
+        JP	NZ,J4506                ; yep, file already open error
         XOR	A
         LD	(D6000),A
         LD	(D6005),A
@@ -1455,8 +1455,8 @@ J47CC:	EI
         CALL	C4566
 J47DC:	CALL	C$48AA
         CALL	NZ,C$4865
-        CALL	C455A
-        JR	C,J4808
+        CALL	C455A                   ; check if CTRL-STOP pressed
+        JR	C,J4808                 ; yep,
         CALL	CHSNS
         EI
         JR	Z,J47CC
@@ -1683,7 +1683,7 @@ I490E:	DEFB    "Initialize statement options",13,10
 C4AAC:	CALL	C4B9C
         CALL	C4C05
         CALL	C4B89
-        JP	C,J451E
+        JP	C,J451E                 ; illegal function call error
 J4AB8:	CALL	C45A1
         DEFB	","
 J4ABC:	CALL	C45A1
@@ -1696,7 +1696,7 @@ J4AC0:	LD	IX,M4769
         JR	Z,J4AD8
         LD	IX,M4295
         CALL	C4603
-J4AD3:	JP	NC,J4512
+J4AD3:	JP	NC,J4512                ; undefined line error
         LD	E,C
         LD	D,B
 J4AD8:	CALL	C4B76
@@ -1724,7 +1724,7 @@ C4AE6:	CALL	C4B9C
         CALL	C45A1
         DEFB	")"
 J4AF8:	CALL	C4B89
-        JP	C,J451E
+        JP	C,J451E                 ; illegal function call error
         LD	IX,M632B
         JR	J4B4B
 
@@ -1742,7 +1742,7 @@ C4B04:	CALL	C4B9C
         CALL	C45A1
         DEFB	")"
 J4B16:	CALL	C4B89
-        JP	C,J451E
+        JP	C,J451E                 ; illegal function call error
         LD	IX,M631B
         JR	J4B3E
 
@@ -1760,7 +1760,7 @@ C4B22:	CALL	C4B9C
         CALL	C45A1
         DEFB	")"
 J4B34:	CALL	C4B89
-        JP	C,J451E
+        JP	C,J451E                 ; illegal function call error
         LD	IX,M6331
 J4B3E:	PUSH	HL
         PUSH	AF
@@ -1812,7 +1812,7 @@ C4B61:	CALL	C4B76
 ;	     Outputs ________________________
 
 C4B76:	CALL	C4B89
-        JP	C,J451E
+        JP	C,J451E                 ; illegal function call error
         PUSH	BC
         LD	C,A
         ADD	A,A
@@ -1833,12 +1833,12 @@ C4B89:	LD	A,(D6621)
         RRCA
         RRCA
         RRCA
-        RRCA
-        CP	06H	; 6 
+        RRCA                            ; trapnumber of this device
+        CP	06H
         CCF
         RET
 
-;	  Subroutine __________________________
+;	  Subroutine Check if RS232 channel is open
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -1899,7 +1899,7 @@ J4BDA:	DEC	HL
         DEC	B
 J4BE8:	LD	E,A
         LD	A,(D6621)
-        AND	0FH	; 15 
+        AND	0FH                     ; RS232 devicenumber of this device
         PUSH	HL
         EXX
         POP	HL
@@ -1931,7 +1931,7 @@ C4C05:	LD	A,B
         AND	C
         INC	A
         RET	Z
-        JP	J451E
+        JP	J451E                   ; illegal function call error
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1945,7 +1945,7 @@ C$4C0F:	PUSH	HL
         CP	04H	; 4 
         JR	Z,J4C2D
         CP	08H	; 8 
-        JP	NZ,J4524
+        JP	NZ,J4524                ; type mismatch error
         LD	(HL),02H	; 2 
         PUSH	DE
         LD	A,08H	; 8 
@@ -2081,7 +2081,7 @@ J4CEC:	LD	A,C
         LD	C,1			; channel 1
         CALL	C5357			; set baudrate channel
         LD	A,(IY+12)
-        LD	(D660E),A
+        LD	(D660E),A               ; timeout counter
         CALL	C529C			; enable DTR
         OR	A
         RET
@@ -2189,7 +2189,7 @@ J4DB5:	AND	80H
         POP	BC
         RET
 
-;	  Subroutine __________________________
+;	  Subroutine disable 8237 DMA requests
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -2199,7 +2199,7 @@ C4DC4:	PUSH	AF
         POP	AF
         RET
 
-;	  Subroutine __________________________
+;	  Subroutine enable 8237 DMA requests
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -2247,12 +2247,12 @@ C4DEE:	PUSH	HL
         PUSH	BC
         LD	HL,D6622
 J4DF4:	EI
-        CALL	C455A
-        JR	C,J4E39
+        CALL	C455A                   ; check if CTRL-STOP pressed
+        JR	C,J4E39                 ; yep,
         LD	A,(HL)
         AND	A
         JR	NZ,J4E0A
-        CALL	C5271
+        CALL	C5271                   ; enable RTS signal
         CALL	C5057
         JR	C,J4E39
         JR	Z,J4E39
@@ -2263,7 +2263,7 @@ J4E0A:	PUSH	HL
         RES	3,(HL)
         POP	HL
         JR	Z,J4E20
-        CALL	C5271
+        CALL	C5271                   ; enable RTS signal
         CALL	C5057
         EI
         JR	C,J4E39
@@ -2440,9 +2440,9 @@ J4F0D:	LD	A,B
         JR	NC,J4F1B
         LD	HL,I6800+2048-1
 J4F1B:	LD	A,(HL)
-        CP	11H	; 17 
+        CP	11H                     ; XON ?
         JR	Z,J4F27
-        CP	13H	; 19 
+        CP	13H                     ; XOFF ?
         JR	Z,J4F27
         DEC	BC
         JR	J4F0D
@@ -2451,13 +2451,13 @@ J4F27:	POP	DE
         POP	HL
         RET
 
-;	  Subroutine __________________________
+;	  Subroutine RS232 interrupt handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C$4F2B:	LD	HL,D6626
-        BIT	3,(HL)
-        RET	Z
+        BIT	3,(HL)                  ; RS232 channel open ?
+        RET	Z                       ; nope, quit
         CALL	C$4EA2
         LD	HL,I7803
         JR	NC,J4F3B
@@ -2502,28 +2502,28 @@ J4F6E:	LD	HL,(D7804)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$4F81:	CALL	C$4E6A
-        AND	38H	; "8"
+C$4F81:	CALL	C$4E6A                  ; get received status
+        AND	38H
         LD	B,A
-        CALL	C$4E41
+        CALL	C$4E41                  ; get received char
         LD	HL,D6628
-        AND	(HL)
+        AND	(HL)                    ; mask off unused bits
         LD	C,A
         LD	A,B
-        AND	A
-        JR	NZ,J4FA6
+        AND	A                       ; any errors ?
+        JR	NZ,J4FA6                ; yep,
         LD	A,(D6627)
         BIT	0,A			; XON/XOFF protcol enabled ?
         JR	Z,J4FB4			; nope,
         LD	HL,D6626
         LD	A,C
-        CP	11H			; XON ?
+        CP	11H			; XON received ?
         RET	Z
-        CP	13H			; XOFF ?
+        CP	13H			; XOFF received ?
         RET	Z
         JR	J4FB4
-J4FA6:	AND	20H	; " "
-        JR	Z,J4FCC
+J4FA6:	AND	20H                     ; FE (Framing Error) ?
+        JR	Z,J4FCC                 ; nope,
         LD	A,C
         AND	A
         JR	NZ,J4FCC
@@ -2531,17 +2531,17 @@ J4FA6:	AND	20H	; " "
         SET	4,(HL)
         RET
 J4FB4:	LD	A,(D6627)
-        BIT	4,A			; SI/SO control ?
+        BIT	4,A			; SI/SO control enabled ?
         JR	Z,J4FCC			; nope,
         LD	HL,D6626
         LD	A,C
-        SUB	0FH
+        SUB	0FH                     ; SI received ?
         JR	NZ,J4FC6
-        RES	7,(HL)
+        RES	7,(HL)                  ; yep, reset flag
         RET
-J4FC6:	INC	A
-        JR	NZ,J4FCC
-        SET	7,(HL)
+J4FC6:	INC	A                       ; SO received ?
+        JR	NZ,J4FCC                ; nope,
+        SET	7,(HL)                  ; yep, set flag
         RET
 J4FCC:	LD	HL,D6622
         INC	(HL)
@@ -2550,16 +2550,16 @@ J4FCC:	LD	HL,D6622
         CALL	C503C
         POP	BC
         LD	A,(D6627)
-        BIT	4,A			; SI/SO control ?
+        BIT	4,A			; SI/SO control enabled ?
         LD	A,C
         JR	Z,J4FEC			; nope,
         CP	20H
         JR	C,J4FEC
         LD	A,(D6626)
-        BIT	7,A
+        BIT	7,A                     ; in SO mode ?
         LD	A,C
         JR	Z,J4FEC
-        OR	80H
+        OR	80H                     ; yep, set b7
 J4FEC:	LD	(HL),A
         PUSH	HL
         LD	HL,I7803
@@ -2575,7 +2575,7 @@ J4FF9:	POP	HL
         AND	A
         RET	NZ
         LD	A,(D6627)
-        BIT	3,A			; auto LF receive ?
+        BIT	3,A			; auto LF receive enabled ?
         RET	Z			; nope,
         LD	A,(HL)
         CP	0DH
@@ -2641,12 +2641,12 @@ J5049:	LD	(HL),A
 
 C5057:	DI
         LD	A,(D6626)
-        BIT	1,A
-        JR	NZ,J5062
+        BIT	1,A                     ; in XOFF mode ?
+        JR	NZ,J5062                ; yep, leave XOFF mode
         XOR	A
         INC	A
         RET
-J5062:	LD	C,11H	; 17 
+J5062:	LD	C,11H                   ; XON
         CALL	C508D
         RET	C
         RET	Z
@@ -2664,16 +2664,16 @@ C5071:	DI
         XOR	A
         INC	A
         LD	A,(D6626)
-        BIT	1,A
-        RET	NZ
-        LD	C,13H	; 19 
+        BIT	1,A                     ; in XOFF mode ?
+        RET	NZ                      ; yep, quit
+        LD	C,13H                   ; XOFF
         CALL	C508D
         CALL	C52D9			; wait for transmitter ready
         PUSH	HL
         LD	HL,D6626
-        SET	1,(HL)
+        SET	1,(HL)                  ; XOFF mode
         POP	HL
-        CALL	C5279
+        CALL	C5279                   ; disable RTS signal
         RET
 
 ;	  Subroutine __________________________
@@ -2716,14 +2716,14 @@ C50AE:	EI
         PUSH	BC
         LD	C,A
         LD	A,(D6627)
-        BIT	4,A
-        JR	Z,J50F0
+        BIT	4,A			; SI/SO control enabled ?
+        JR	Z,J50F0                 ; nope,
         LD	A,C
         CP	20H
         JR	C,J50F0
         LD	A,(D6626)
-        BIT	0,A
-        JR	NZ,J50DA
+        BIT	0,A                     ; in SO mode ?
+        JR	NZ,J50DA                ; yep,
         BIT	7,C
         JR	Z,J50F0
         LD	A,0EH
@@ -2732,7 +2732,7 @@ C50AE:	EI
         JR	Z,J513E
         PUSH	HL
         LD	HL,D6626
-        SET	0,(HL)
+        SET	0,(HL)                  ; SO mode
         POP	HL
         JR	J50EE
 J50DA:	BIT	7,C
@@ -2743,7 +2743,7 @@ J50DA:	BIT	7,C
         JR	Z,J513E
         PUSH	HL
         LD	HL,D6626
-        RES	0,(HL)
+        RES	0,(HL)                  ; SI mode
         POP	HL
 J50EE:	RES	7,C
 J50F0:	LD	A,C
@@ -2762,7 +2762,7 @@ C50F2:	PUSH	HL
         JR	NZ,J5111
         LD	A,(D6626)
         BIT	5,A
-        LD	A,0AH	; 10 
+        LD	A,0AH
         JR	Z,J5111
         PUSH	HL
         LD	HL,D6626
@@ -2787,7 +2787,7 @@ J5111:	PUSH	BC
         EI
         PUSH	HL
         LD	HL,D6626
-        CP	0DH	; 13 
+        CP	0DH
         JR	NZ,J5139
         SET	5,(HL)
         JR	J513B
@@ -2808,19 +2808,19 @@ C5144:	LD	A,(D6627)
         BIT	0,A			; XON/XOFF protocol enabled ?
         JR	Z,J5174			; nope,
         LD	A,(D660E)
-        LD	D,A
+        LD	D,A                     ; timeout counter
 J514F:	LD	E,100
 J5151:	CALL	C5343			; setup channel 2 i8253 for 10 ms
 J5154:	EI
-        CALL	C455A
+        CALL	C455A                   ; check if CTRL-STOP pressed
         DI
-        RET	C
+        RET	C                       ; yep, quit
         LD	A,(D6626)
         BIT	2,A
         JR	Z,J5174
         LD	A,(D660E)
-        AND	A
-        JR	Z,J5154
+        AND	A                       ; timeout counter 0 ?
+        JR	Z,J5154                 ; yep, no timeout
         CALL	C5351			; channel 2 i8253 finished ?
         JR	NC,J5154		; nope,
         AND	A
@@ -2951,8 +2951,8 @@ C5231:	PUSH	BC
         LD	A,(D6629)		; last i8251 command
         OR	08H			; send break character flag set
         LD	B,A
-J5239:	CALL	C455A
-        JR	C,J524E
+J5239:	CALL	C455A                   ; check if CTRL-STOP pressed
+        JR	C,J524E                 ; yep,
         CALL	C52D9			; wait for transmitter ready
         XOR	A
         LD	(D7FF8),A
@@ -2988,7 +2988,7 @@ C525C:	LD	A,(D7FF9)		; read i8251 status
         POP	AF
         RET
 
-;	  Subroutine __________________________
+;	  Subroutine enable RTS signal
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -2997,13 +2997,13 @@ C5271:	PUSH	AF
         SET	5,A			; RTS set
         JR	J5289
 
-;	  Subroutine __________________________
+;	  Subroutine disable RTS signal
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C5279:	PUSH	AF
         LD	A,(D6627)
-        BIT	1,A			; RTS/CTS handshake ?
+        BIT	1,A			; RTS/CTS handshake enabled ?
         JR	NZ,J5284		; yep,
         POP	AF
         RET
@@ -3099,15 +3099,15 @@ J52DA:	EI
 ;	     Outputs ________________________
 
 C52E9:	LD	A,(D6627)
-        BIT	1,A			; RTS/CTS handshake ?
+        BIT	1,A			; RTS/CTS handshake enabled ?
         JR	Z,J5318			; nope,
         LD	A,(D660E)
         LD	D,A
 J52F4:	LD	E,100
 J52F6:	CALL	C5343			; setup channel 2 i8253 for 10 ms
-J52F9:	CALL	C455A
+J52F9:	CALL	C455A                   ; check if CTRL-STOP pressed
         EI
-        RET	C
+        RET	C                       ; yep, quit
         LD	A,(D7FFA)
         BIT	7,A			; CTS set ?
         JR	Z,J5318			; yep,
