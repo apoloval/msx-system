@@ -1,0 +1,808 @@
+;  
+;   SVI707CP -> Source re-created by Z80DIS 2.2
+;      Z80DIS was written by Kenneth Gielow
+;                            Palo Alto, CA
+
+        .Z80
+        ORG     4000H
+
+INITXT  EQU     006CH   ; -C---
+INIT32  EQU     006FH   ; -C---
+CHPUT   EQU     00A2H   ; -C---
+C$0A36  EQU     0A36H   ; -C---
+D.3FF1  EQU     3FF1H   ; --SL-
+D.3FF2  EQU     3FF2H   ; --SL-
+D.3FF3  EQU     3FF3H   ; --SL-
+D.3FF4  EQU     3FF4H   ; --SL-
+
+D.7FB8  EQU     7FB8H   ; --SL-
+D$7FB9  EQU     7FB9H   ; ---L-
+D$7FBA  EQU     7FBAH   ; --S--
+D.7FBB  EQU     7FBBH   ; --S-I
+D.7FBC  EQU     7FBCH   ; --S-I
+D$7FBF  EQU     7FBFH   ; ---L-
+
+I$B800  EQU     0B800H  ; ----I
+I.B80A  EQU     0B80AH  ; ----I
+I.BB20  EQU     0BB20H  ; ----I
+
+CNSDFG  EQU     0F3DEH  ; --S--
+FNKSTR  EQU     0F87FH  ; ----I
+H.KEYI  EQU     0FD9AH  ; ----I
+
+D.FFD0  EQU     0FFD0H  ; transfer address
+D.FFD2  EQU     0FFD2H  ; flag
+D.FFD3  EQU     0FFD3H  ; retry counter
+I$FFEE  EQU     0FFEEH  ; temporary stack
+D.FFEF  EQU     0FFEFH  ; flag ?
+D.FFF0  EQU     0FFF0H  ; --S--
+D.FFF1  EQU     0FFF1H  ; track
+D.FFF2  EQU     0FFF2H  ; record
+D.FFF5  EQU     0FFF5H  ; --SLI
+D.FFFA  EQU     0FFFAH  ; diskdrive slot
+D.FFFB  EQU     0FFFBH  ; motor on/off
+D.FFFC  EQU     0FFFCH  ; motor timer
+D.FFFD  EQU     0FFFDH  ; ram slot
+D.FFFE  EQU     0FFFEH  ; 80 column slot
+
+I$4000: DEFB    "AB"
+        DEFW    I4013                   ; INIT
+        DEFW    0                       ; STATEMENT
+        DEFW    0                       ; DEVICE
+        DEFW    0                       ; BASIC
+        DEFS    6,0
+
+?.4010: JP      J$45B2
+
+I4013:  DI
+        LD      HL,0C000H
+        LD      (D.FFD0),HL
+        IN      A,(0A8H)
+        LD      (D.FFF5),A              ; save current primary slot register
+        LD      (D.FFFA),A              ; diskdrive slot
+        AND     0FCH
+        LD      (D.FFFD),A              ; start with primary slot 0 on page 0
+J$4027: LD      HL,0                    ; page 0
+        OUT     (0A8H),A
+        CALL    C.4275                  ; test RAM
+        JR      C,J$4045                ; found RAM,
+        LD      A,(D.FFFD)
+        AND     03H
+        CP      03H                     ; all primary slots done ?
+        JP      Z,J.42AF                ; yep, boot DiskBasic/MSX-DOS
+        LD      A,(D.FFFD)
+        ADD     A,01H
+        LD      (D.FFFD),A
+        JR      J$4027                  ; next primary slot
+
+J$4045: LD      A,(D.FFFD)
+        AND     0CFH
+        LD      (D.FFFD),A              ; start with primary slot 0 on page 2
+J$404D: LD      HL,08000H               ; page 2
+        OUT     (0A8H),A
+        CALL    C.4275                  ; test RAM
+        JR      C,J$406B                ; found RAM,
+        LD      A,(D.FFFD)
+        AND     30H
+        CP      30H                     ; all primary slots done ?
+        JP      Z,J.42AF                ; yep, boot DiskBasic/MSX-DOS
+        LD      A,(D.FFFD)
+        ADD     A,10H
+        LD      (D.FFFD),A
+        JR      J$404D                  ; next primary slot
+
+J$406B: LD      A,(D.FFF5)
+        AND     0FCH
+        LD      (D.FFF5),A
+        LD      A,(D.FFFD)
+        AND     03H                     ; primary slot with RAM on page 0
+        LD      HL,D.FFF5
+        OR      (HL)
+        LD      (D.FFF5),A
+        OUT     (0A8H),A
+        LD      SP,03FF0H               ; stack on page 0
+        LD      A,(D.FFF5)
+        LD      (D.3FF1),A
+        LD      A,(D.FFFD)
+        LD      (D.3FF2),A
+        LD      A,(D.3FF2)
+        AND     3FH
+        LD      (D.3FF2),A
+J$4098: LD      HL,0                    ; page 0
+        OUT     (0A8H),A
+        CALL    C.4275                  ; test RAM
+        JR      C,J.40B6                ; found RAM,
+        LD      A,(D.3FF2)
+        AND     0C0H
+        CP      0C0H                    ; all primary slots done ?
+        JP      Z,J.42AF                ; yep, boot DiskBasic/MSX-DOS
+        LD      A,(D.3FF2)
+        ADD     A,40H
+        LD      (D.3FF2),A
+        JR      J$4098                  ; next primary slot
+
+J.40B6: LD      A,(D.3FF2)
+        LD      (D.3FF1),A
+        LD      HL,I$4230
+        LD      DE,0
+        LD      BC,000FAH
+        LDIR
+        CALL    0                       ; search RAM page 1
+        JP      NC,J.42AF               ; not found, boot DiskBasic/MSX-DOS
+        LD      A,(D.3FF1)
+        LD      (D.FFF5),A
+        LD      A,(D.3FF2)
+        LD      (D.FFFD),A
+        XOR     A
+        LD      (D.FFEF),A
+        LD      SP,I$FFEE
+
+        LD      A,0EH
+        OUT     (78H),A
+        LD      A,25H
+        OUT     (79H),A
+        LD      A,0FH
+        OUT     (78H),A
+        LD      A,0A2H
+        OUT     (79H),A
+        LD      A,0EH
+        OUT     (78H),A
+        IN      A,(79H)
+        AND     3FH
+        CP      25H                     ; Test if 6845 (SVI727)
+        JP      NZ,J.457A               ; nope, no SVI727
+        LD      A,0FH
+        OUT     (78H),A
+        IN      A,(79H)
+        CP      0A2H                    ; Test if 6845 (SVI727)
+        JP      NZ,J.457A               ; nope, no SVI727
+        IN      A,(0A8H)
+        LD      (D.FFF5),A
+        AND     0CFH
+        LD      (D.FFFE),A              ; 80 column slot
+J$4112: LD      A,(D.FFFE)
+        OUT     (0A8H),A
+        LD      HL,08000H               ; page 2
+        CALL    C.4275                  ; test RAM
+        JR      C,J$4124                ; found RAM,
+        CALL    C$4290
+        JR      C,J$4133
+J$4124: LD      A,(D.FFFE)
+        ADD     A,10H
+        LD      (D.FFFE),A
+        AND     30H
+        JR      NZ,J$4112
+        JP      J.457A                  ; no SVI727
+
+;       -----------------
+J$4133: LD      A,(D.FFFE)
+        AND     30H
+        LD      (D.FFFE),A
+        CALL    C.42F8
+        LD      D," "
+        LD      HL,I$B800
+        LD      BC,007D0H
+J$4146: LD      (HL),D
+        INC     HL
+        DEC     BC
+        LD      A,B
+        OR      C
+        JR      NZ,J$4146
+        CALL    C.430D
+        LD      A,(D.FFEF)
+        AND     A
+        LD      HL,I$4455               ; no 64KB
+        JR      NZ,J$415C
+        LD      HL,I$4339               ; loading
+J$415C: LD      DE,I.BB20
+        LD      A,(HL)
+        LD      C,A
+        LD      B,00H
+        INC     HL
+        CALL    C.42F8
+        LDIR
+        CALL    C.430D
+        LD      HL,I$4315
+        LD      B,10H   ; 16 
+J$4171: LD      A,(HL)
+        OUT     (78H),A
+        INC     HL
+        LD      A,(HL)
+        OUT     (79H),A
+        INC     HL
+        DJNZ    J$4171
+        LD      A,(D.FFEF)
+        AND     A                       ;
+        RET     NZ
+        CALL    C.45A6                  ; CP/M functionkey definition
+        XOR     A
+        LD      (CNSDFG),A              ; functionkey display off
+        LD      A,83H
+        LD      (D.FFF0),A              ; flag ??
+        IN      A,(0A8H)
+        LD      (D.FFF5),A
+        AND     0FCH
+        OUT     (0A8H),A
+        CALL    C$0A36
+        CALL    INIT32
+        LD      HL,I$4487-1             ; CP/M message
+J$419E: INC     HL
+        LD      A,(HL)
+        CP      0FFH
+        JR      Z,J.41A9
+        CALL    CHPUT
+        JR      J$419E
+
+J.41A9: DI
+        CALL    C.46CD                  ; select diskdrive slot in page 1
+        CALL    C.4666                  ; select drive 0, motor on
+        LD      B,03H
+        CALL    C.467E                  ; ?? delay
+        CALL    C.465A                  ; select track 0
+        LD      A,0
+        LD      (D.3FF4),A
+        LD      (D.FFF1),A              ; track 0
+        LD      (D.FFF2),A              ; record 0
+        CALL    C.45B9                  ; read record from disk
+        LD      HL,(D.FFD0)             ; transfer address
+        LD      BC,00039H
+        ADD     HL,BC
+        LD      A,(HL)
+        LD      (D.3FF3),A              ; number of records
+        INC     HL
+        LD      E,(HL)
+        INC     HL
+        LD      D,(HL)
+        LD      A,0C3H
+        LD      (0),A
+        PUSH    DE
+        POP     HL
+        LD      (1),HL                  ; start of CP/M
+        XOR     A
+        LD      B,A                     ; track 0
+        LD      A,0
+        LD      C,A                     ; record 0
+J$41E4: PUSH    BC
+        LD      A,B
+        LD      (D.FFF1),A              ; track
+        LD      A,C
+        LD      (D.FFF2),A              ; record
+        PUSH    DE
+        CALL    C.45B9                  ; read record from disk
+        POP     DE
+        LD      HL,(D.FFD0)             ; transfer address
+        LD      BC,256
+        LDIR
+        POP     BC
+        INC     C                       ; next record
+        LD      A,C
+        CP      17
+        JR      NZ,J$4204
+        LD      C,0                     ; record 0
+        INC     B                       ; next track
+J$4204: LD      A,(D.3FF3)
+        DEC     A
+        LD      (D.3FF3),A
+        JR      NZ,J$41E4
+        LD      HL,H.KEYI
+        LD      DE,H.KEYI+1
+        LD      (HL),0C9H
+        LD      BC,00230H
+        LDIR                            ; clear HOOKS
+        LD      HL,I$4228
+        LD      DE,0C000H
+        LD      BC,9
+        LDIR
+        JP      0C000H
+
+I$4228: LD      A,(D.FFFD)
+        OUT     (0A8H),A                ; RAM on all pages
+        JP      0                       ; start CP/M
+
+I$4230: LD      A,(D.3FF2)
+        AND     0F3H
+        LD      (D.3FF2),A
+J$4238: LD      HL,04000H
+        PUSH    HL
+        OUT     (0A8H),A
+        LD      B,40H
+        LD      C,A
+J$4241: LD      (HL),A
+        INC     A
+        INC     H
+        DEC     B
+        JR      NZ,J$4241
+        POP     HL
+        LD      A,C
+        LD      B,40H
+J$424B: CP      (HL)
+        JR      NZ,J$425A
+        INC     A
+        INC     H
+        DEC     B
+        JR      NZ,J$424B
+        LD      A,(D.3FF1)
+        OUT     (0A8H),A
+        SCF
+        RET
+
+J$425A: LD      A,(D.3FF2)
+        AND     0CH
+        CP      0CH
+        JR      Z,J$426D
+        LD      A,(D.3FF2)
+        ADD     A,04H
+        LD      (D.3FF2),A
+        JR      J$4238
+
+J$426D: LD      A,(D.3FF1)
+        OUT     (0A8H),A
+        SCF
+        CCF
+        RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.4275: PUSH    HL
+        LD      B,32H   ; "2"
+        LD      C,A
+J$4279: LD      (HL),A
+        INC     A
+        INC     H
+        DEC     B
+        JR      NZ,J$4279
+        POP     HL
+        LD      A,C
+        LD      B,32H   ; "2"
+J$4283: CP      (HL)
+        JR      NZ,J$428D
+        INC     A
+        INC     H
+        DEC     B
+        JR      NZ,J$4283
+        SCF
+        RET
+
+J$428D: SCF
+        CCF
+        RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C$4290: LD      HL,I.B80A
+        LD      B,40H
+        LD      C,A
+J$4296: LD      (HL),A
+        INC     A
+        INC     HL
+        DEC     B
+        JR      NZ,J$4296
+        LD      HL,I.B80A
+        LD      B,40H
+        LD      A,C
+J$42A2: CP      (HL)
+        JR      NZ,J$42AC
+        INC     A
+        INC     HL
+        DEC     B
+        JR      NZ,J$42A2
+        SCF
+        RET
+
+J$42AC: SCF
+        CCF
+        RET
+
+J.42AF: LD      HL,I$42BD
+        LD      DE,0E000H
+        LD      BC,00064H
+        LDIR
+        JP      0E000H
+
+I$42BD: LD      A,(D$7FBF)              ; select MSX Disk Kernel ROM
+        IN      A,(0A8H)
+        AND     30H
+        OUT     (0A8H),A
+        NOP
+        NOP
+        NOP
+        JP      0                       ; reset MSX
+
+?.42CC: LD      HL,J.4384
+        LD      DE,I.BB20
+        LD      A,(HL)
+        LD      B,00H
+        LD      C,A
+        INC     HL
+        CALL    C.42F8
+        LDIR
+        CALL    C.430D
+        IN      A,(0A8H)
+        AND     0FCH
+        LD      A,0CH   ; 12 
+        CALL    CHPUT
+        LD      HL,J.4354-1
+J$42EB: INC     HL
+        LD      A,(HL)
+        CP      0FFH
+        JR      Z,J.42F6
+        CALL    CHPUT
+        JR      J$42EB
+
+J.42F6: JR      J.42F6
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.42F8: PUSH    AF
+        PUSH    HL
+        LD      A,(D.FFFE)
+        AND     30H
+        LD      H,A
+        IN      A,(0A8H)
+        LD      (D.FFF5),A
+        AND     0CFH
+        OR      H
+        OUT     (0A8H),A
+        POP     HL
+        POP     AF
+        RET
+
+;       -----------------
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.430D: PUSH    AF
+        LD      A,(D.FFF5)
+        OUT     (0A8H),A
+        POP     AF
+        RET
+
+;       -----------------
+I$4315: DEFB    000H,070H
+        DEFB    001H,050H
+        DEFB    002H,05BH
+        DEFB    003H,009H
+        DEFB    004H,01EH
+        DEFB    005H,000H
+        DEFB    006H,018H
+        DEFB    007H,01AH
+        DEFB    008H,000H
+        DEFB    009H,008H
+        DEFB    00AH,068H
+        DEFB    00BH,008H
+        DEFB    00CH,000H
+        DEFB    00DH,000H
+        DEFB    00EH,007H
+        DEFB    00FH,081H
+
+I4335:  DEFB    01BH,059H
+        DEFB    02CH,020H
+I$4339: DEFB    019H
+        DEFB    "loading CP/M system . . ."
+        DEFB    0FFH
+
+J4354:  DEFB    01BH,"Y",02BH,020H
+        DEFB    "DISK ERROR  ! ! !"
+        DEFB    10,10,13
+        DEFB    "reboot with SV-707 disk"
+        DEFB    0FFH
+
+J.4384: DEFB    0C8H
+        DEFB    "DISK ERROR  ! ! !                                                                                                                                               reboot with SV-707 disk                         "
+
+I$4455: DEFB    032H
+        DEFB    "can't find 64K continuous RAM--back to MSX system"
+
+I$4487: DEFB    01BH,"Y",029H,029H
+        DEFB    "SPECTRAVIDEO"
+        DEFB    01BH,"Y",02BH,024H
+        DEFB    "CP/M-80  Revision 2.22"
+        DEFB    01BH,"Y",02FH,029H
+        DEFB    "Copyright (C)"
+        DEFB    01BH,"Y",030H,026H
+        DEFB    "by Digital Research"
+        DEFB    0FFH
+
+I$44DA: DEFB    "DIR",13
+        DEFS    16-4,0
+        DEFB    "USER "
+        DEFS    16-5,0
+        DEFB    "TYPE "
+        DEFS    16-5,0
+        DEFB    "SAVE "
+        DEFS    16-5,0
+        DEFB    "STAT",13
+        DEFS    16-5,0
+        DEFB    "REN "
+        DEFS    16-4,0
+        DEFB    "ERA "
+        DEFS    16-4,0
+        DEFB    "PIP "
+        DEFS    16-4,0
+        DEFB    "SUBMIT "
+        DEFS    16-7,0
+        DEFB    "STAT *.*",13
+        DEFS    16-9,0
+
+J.457A: LD      A,(D.FFEF)
+        AND     A
+        RET     NZ
+        CALL    C.45A6                  ; CP/M functionkey definition
+        XOR     A
+        LD      (CNSDFG),A              ; functionkey display off
+        LD      A,81H
+        LD      (D.FFF0),A              ; flag ??
+        IN      A,(0A8H)
+        LD      (D.FFF5),A
+        AND     0FCH
+        OUT     (0A8H),A
+        CALL    INITXT
+        LD      HL,I4335-1              ; loading message
+J.459A: INC     HL
+        LD      A,(HL)
+        CP      0FFH
+        JP      Z,J.41A9
+        CALL    CHPUT
+        JR      J.459A
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.45A6: LD      HL,I$44DA
+        LD      DE,FNKSTR
+        LD      BC,10*16
+        LDIR
+        RET
+
+;       -----------------
+J$45B2: DEC     A
+        LD      (D.FFEF),A
+        JP      J.40B6
+
+;       -----------------
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.45B9: CALL    C.46CD                  ; select diskdrive slot in page 1
+        LD      A,(D.FFFC)
+        OR      A                       ; motor still spinning ?
+        LD      A,01H
+        LD      (D.FFFB),A
+        JR      NZ,J$45D6               ; yep, no spin-up delay
+        CALL    C.4666                  ; select drive 0, motor on
+        LD      A,01H
+        LD      (D.FFFB),A
+        LD      B,14H
+        CALL    C.467E                  ; ?? delay (motor spin-up delay)
+        JR      J$45DE
+
+J$45D6: CALL    C.4666                  ; select drive 0, motor on
+        LD      A,01H   ; 1 
+        LD      (D.FFFB),A
+J$45DE: LD      A,10
+        LD      (D.FFD3),A              ; max 10 retries
+        DI
+        LD      A,(D.FFF1)
+        CALL    C.4695                  ; select track
+        LD      HL,0C000H
+        LD      (D.FFD0),HL             ; transfer address
+J$45F0: LD      A,(D.FFF2)
+        INC     A
+        LD      (D$7FBA),A              ; set record
+        LD      A,80H                   ; read sector data
+        LD      (D7FB8),A
+        LD      BC,D.7FBC
+        LD      HL,(D.FFD0)             ; transfer address
+        LD      DE,0
+J.4605: LD      A,(BC)
+        ADD     A,A
+        JP      P,J$4618
+        DEC     E
+        JP      NZ,J.4605
+        DEC     D
+        JP      NZ,J.4605
+        CALL    C$4672                  ; select no drive, motor off
+        JP      J$463F
+
+;       -----------------
+J$4618: LD      DE,D.7FBB
+        JP      J$4625
+
+J.461E: LD      A,(BC)
+        ADD     A,A
+        JR      C,J.462B
+        JP      M,J.461E
+J$4625: LD      A,(DE)
+        LD      (HL),A
+        INC     HL
+        JP      J.461E
+
+J.462B: LD      A,(D7FB8)
+        BIT     0,A
+        JR      NZ,J.462B               ; wait for FDC
+        AND     1CH                     ; errors ?
+        JR      Z,J$4647                ; nope,
+        LD      A,(D.FFD3)
+        DEC     A
+        LD      (D.FFD3),A
+        JR      NZ,J$45F0
+J$463F: LD      A,1
+        LD      (D.FFD2),A
+        JP      J.42AF                  ; boot DiskBasic/MSX-DOS
+
+J$4647: LD      A,0
+        LD      (D.FFD2),A
+        LD      A,0FAH
+        LD      (D.FFFC),A
+        LD      A,00H
+        LD      (D.FFFB),A
+        LD      A,(D.FFD2)
+        RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.465A: LD      A,02H                   ; select track 0
+        LD      (D.7FB8),A
+        CALL    C.46BB                  ; wait
+        CALL    C.46C2                  ; wait for FDC
+        RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.4666: LD      A,(D.3FF4)
+        OR      09H
+        LD      (D.7FBC),A
+        LD      (D.3FF4),A
+        RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C$4672: LD      A,(D.3FF4)
+        AND     0F4H
+        LD      (D.7FBC),A
+        LD      (D.3FF4),A
+        RET
+
+;       -----------------
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.467E: PUSH    AF
+        PUSH    HL
+        PUSH    BC
+J$4681: LD      HL,001FFH
+J$4684: DEC     HL
+        LD      A,L
+        OR      H
+        JR      NZ,J$4684
+        DEC     B
+        JR      NZ,J$4681
+        POP     BC
+        POP     HL
+        POP     AF
+        RET
+
+?.4690: CALL    C.465A                  ; select track 0
+        JR      J$469B
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.4695: LD      B,A
+        LD      A,(D$7FB9)
+        CP      B                       ; already on track ?
+        RET     Z
+J$469B: LD      A,B
+        LD      (D.7FBB),A              ; set track
+        LD      A,12H                   ; select track
+        LD      (D.7FB8),A
+        CALL    C.46BB                  ; wait
+        CALL    C.46C2                  ; wait for FDC
+J$46AA: LD      A,(D.7FB8)
+        BIT     0,A
+        JR      NZ,J$46AA
+        BIT     4,A
+        JR      NZ,C.4695
+        LD      B,0AH
+        CALL    C.467E                  ; ?? delay
+        RET
+
+C.46BB: NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        RET
+
+;       -----------------
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.46C2: CALL    C.46BB                  ; wait
+J$46C5: LD      A,(D.7FB8)
+        BIT     0,A
+        JR      NZ,J$46C5
+        RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C.46CD: LD      A,(D.FFFA)
+        AND     0CH
+        LD      B,A
+        LD      A,(D.FFFD)
+        AND     0F3H
+        OR      B
+        OUT     (0A8H),A
+        RET
+
+;       -----------------
+?.46DC: LD      A,(D.FFFD)
+        OUT     (0A8H),A
+        RET
+
+;       -----------------
+?.46E2: NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        END
+
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP
+        RST     38H
+        NOP     

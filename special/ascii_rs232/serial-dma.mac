@@ -77,7 +77,7 @@ D6621	EQU	6621H                   ; trapnumber (b7-b4), devicenumber (b3-b0)
 D6622	EQU	6622H
 D6623	EQU	6623H
 D6625	EQU	6625H
-D6626	EQU	6626H                   ; b7 = SO status (receive), b3 = channel open, b1 = XOFF status, b0 = SO status (send)
+D6626	EQU	6626H                   ; b7 = SO status (receive), b5 = CR transmitted (auto lf), b4 = break detected, b3 = channel open, b2 = XOFF received, b1 = XOFF status, b0 = SO status (send)
 D6627	EQU	6627H                   ; b4 = use SI/SO control, b3 = Auto LF receive, b2 = Auto LF send, b1 = use RTS/CTS handshake, b0 = use XON/XOFF protocol
 D6628	EQU	6628H
 D6629	EQU	6629H
@@ -2482,11 +2482,11 @@ J4F5A:	CALL	C$4EDD
         LD	HL,D6626
         CP	11H			; XON ?
         JR	NZ,J4F68
-        RES	2,(HL)
+        RES	2,(HL)                  ; partner not in XOFF mode
         JR	J4F6E
 J4F68:	CP	13H			; XOFF ?
         JR	NZ,J4F6E
-        SET	2,(HL)
+        SET	2,(HL)                  ; partner in XOFF mode
 J4F6E:	LD	HL,(D7804)
         LD	A,H
         OR	L
@@ -2528,7 +2528,7 @@ J4FA6:	AND	20H                     ; FE (Framing Error) ?
         AND	A
         JR	NZ,J4FCC
         LD	HL,D6626
-        SET	4,(HL)
+        SET	4,(HL)                  ; break detected
         RET
 J4FB4:	LD	A,(D6627)
         BIT	4,A			; SI/SO control enabled ?
@@ -2761,12 +2761,12 @@ C50F2:	PUSH	HL
         CP	0AH
         JR	NZ,J5111
         LD	A,(D6626)
-        BIT	5,A
+        BIT	5,A                     ; CR transmitted before this ?
         LD	A,0AH
-        JR	Z,J5111
+        JR	Z,J5111                 ; nope,
         PUSH	HL
         LD	HL,D6626
-        RES	5,(HL)
+        RES	5,(HL)                  ; reset CR transmitted flag
         POP	HL
         AND	A
         RET
@@ -2789,9 +2789,9 @@ J5111:	PUSH	BC
         LD	HL,D6626
         CP	0DH
         JR	NZ,J5139
-        SET	5,(HL)
+        SET	5,(HL)                  ; set CR transmitted flag
         JR	J513B
-J5139:	RES	5,(HL)
+J5139:	RES	5,(HL)                  ; reset CR transmitted flag
 J513B:	POP	HL
         XOR	A
         INC	A
@@ -2816,8 +2816,8 @@ J5154:	EI
         DI
         RET	C                       ; yep, quit
         LD	A,(D6626)
-        BIT	2,A
-        JR	Z,J5174
+        BIT	2,A                     ; partner in XOFF mode ?
+        JR	Z,J5174                 ; nope,
         LD	A,(D660E)
         AND	A                       ; timeout counter 0 ?
         JR	Z,J5154                 ; yep, no timeout
@@ -3064,14 +3064,14 @@ C52B1:	PUSH	AF
         LD	A,(D7FF9)		; read i8251 status
         AND	80H			; only DSR bit
         JR	Z,J52C3
-        SET	3,L
+        SET	3,L                     ; DSR
 J52C3:	DI
         LD	A,(D6626)
-        BIT	4,A
-        JR	Z,J52D2
-        SET	2,L
+        BIT	4,A                     ; break detected flag ?
+        JR	Z,J52D2                 ; nope,
+        SET	2,L                     ; break detected
         RES	4,A
-        LD	(D6626),A
+        LD	(D6626),A               ; reset break detected flag
 J52D2:	EI
         LD	A,(D6625)
         LD	H,A
