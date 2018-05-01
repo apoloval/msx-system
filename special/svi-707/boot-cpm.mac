@@ -6,6 +6,8 @@
         .Z80
         ORG     4000H
 
+BUGFIX  EQU     1
+
 INITXT  EQU     006CH
 INIT32  EQU     006FH
 CHPUT   EQU     00A2H
@@ -35,7 +37,7 @@ DFFD2   EQU     0FFD2H  ; 00 = CP/M loaded from disk succesfull, 01 = CP/M loade
 DFFD3   EQU     0FFD3H  ; retry counter
 IFFEE   EQU     0FFEEH  ; temporary stack
 DFFEF   EQU     0FFEFH  ; flag ?
-DFFF0   EQU     0FFF0H  ; feature flag
+DFFF0   EQU     0FFF0H  ; IOBY feature flag
 DFFF1   EQU     0FFF1H  ; track
 DFFF2   EQU     0FFF2H  ; record
 DFFF5   EQU     0FFF5H  ; CP/M primairy slot configuration
@@ -218,13 +220,13 @@ J4171:  LD      A,(HL)
         CALL    C45A6                   ; CP/M functionkey definition
         XOR     A
         LD      (CNSDFG),A              ; functionkey display off
-        LD      A,83H
-        LD      (DFFF0),A               ; feature flag
+        LD      A,83H                   ; LIST = LPT:, PUNCH = TTY:, READER = TTY:, CONSOLE = UC1:
+        LD      (DFFF0),A               ; IOBY
         IN      A,(0A8H)
         LD      (DFFF5),A
         AND     0FCH
         OUT     (0A8H),A
-        CALL    C0A36                   ; illegal call to non-documented routine, cursor off
+        CALL    C0A36                   ; illegal call to non-documented routine: cursor off
         CALL    INIT32                  ; screen mode 1
         LD      HL,I4487-1              ; CP/M message
 J419E:  INC     HL
@@ -408,8 +410,12 @@ J42AF:  LD      HL,I42BD
 
 I42BD:  LD      A,(D7FBF)               ; select MSX Disk Kernel ROM
         IN      A,(0A8H)
+        IFDEF   BUGFIX
+        AND     0F0H
+        ELSE
         AND     30H                     ; BUG: should be AND F0H !!!
-        OUT     (0A8H),A                ; select slot 0 for page 3,1,0. leave page 2
+        ENDIF
+        OUT     (0A8H),A                ; select slot 0 for page 1,0. leave page 3,2
         NOP
         NOP
         NOP
@@ -540,8 +546,8 @@ J457A:  LD      A,(DFFEF)
         CALL    C45A6                   ; CP/M functionkey definition
         XOR     A
         LD      (CNSDFG),A              ; functionkey display off
-        LD      A,81H
-        LD      (DFFF0),A               ; feature flag
+        LD      A,81H                   ; LIST = LPT:, PUNCH = TTY:, READER = TTY:, CONSOLE = CRT:
+        LD      (DFFF0),A               ; IOBY
         IN      A,(0A8H)
         LD      (DFFF5),A
         AND     0FCH
