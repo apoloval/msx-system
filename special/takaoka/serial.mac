@@ -111,28 +111,28 @@ I.FFFF	EQU	0FFFFH	; ----I
         DEFW	0
         DEFS	6,0
 
-?.4010:	DEFB	010H
-        DEFB	0
-        DEFB	0
-        JP	J$4040
-?.4016:	JP	C.4260
-?.4019:	JP	C.51BE			; RS232.STAT
-?.401C:	JP	C.42D0
-?.401F:	JP	C.5003
-?.4022:	JP	C.429B
-?.4025:	JP	J$406A
-?.4028:	JP	C.4322
-?.402B:	JP	C.434D
-?.402E:	JP	C.438A
-?.4031:	JP	C.5143			; RS232.SNDBRK
-?.4034:	JP	C.51A6
-?.4037:	RET
+?.4010:	DEFB	010H		        ; +00 MSX serial features (no TxReady INT, No Sync detect, No Timer INT, Have CD, No RI)
+        DEFB	0		        ; +01 MSX serial version (version 1.0)
+        DEFB	0		        ; +02 reserved
+        JP	J$4040  		; +03 RS232.INIT
+?.4016:	JP	C.4260  		; +06 RS232.OPEN
+?.4019:	JP	C.51BE  		; +09 RS232.STAT
+?.401C:	JP	C.42D0  		; +0C RS232.GETCHR
+?.401F:	JP	C.5003  		; +0F RS232.SNDCHR
+?.4022:	JP	C.429B  		; +12 RS232.CLOSE
+?.4025:	JP	J$406A  		; +15 RS232.EOF
+?.4028:	JP	C.4322	        	; +18 RS232.LOC
+?.402B:	JP	C.434D		        ; +1B RS232.LOF
+?.402E:	JP	C.438A          	; +1E RS232.BACKUP
+?.4031:	JP	C.5143  		; +21 RS232.SNDBRK
+?.4034:	JP	C.51A6  		; +24 RS232.DTR
+?.4037:	RET     		        ; +27 Future entry
         RET
         RET
-?.403A:	RET	
+?.403A:	RET     		        ; +2A Future entry
         RET	
         RET	
-?.403D:	RET	
+?.403D:	RET          		        ; +2D Future entry
         RET	
         RET	
 
