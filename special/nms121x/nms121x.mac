@@ -18,23 +18,7 @@
 
         ORG     04000H
 
-D.0000  EQU     0000H   ; --S-I
-I.0001  EQU     0001H   ; ----I
-I.0002  EQU     0002H   ; ----I
-I.0003  EQU     0003H   ; ----I
-I$0004  EQU     0004H   ; ----I
-I.0007  EQU     0007H   ; ----I
-I$0009  EQU     0009H   ; ----I
-I.000A  EQU     000AH   ; ----I
-I$000B  EQU     000BH   ; ----I
 RDSLT   EQU     000CH   ; ----I
-I$000D  EQU     000DH   ; ----I
-I$000E  EQU     000EH   ; ----I
-I.000F  EQU     000FH   ; ----I
-I.0010  EQU     0010H   ; ----I
-I.0011  EQU     0011H   ; ----I
-I.0012  EQU     0012H   ; ----I
-I$0013  EQU     0013H   ; ----I
 WRSLT   EQU     0014H   ; ----I
 CASLT   EQU     001CH   ; -C---
 CHSNS   EQU     009CH   ; -C---
@@ -42,25 +26,29 @@ CHGET   EQU     009FH   ; -C---
 CHPUT   EQU     00A2H   ; -C---
 LPTOUT  EQU     00A5H   ; -C---
 BREAKX  EQU     00B7H   ; ----I
-I$00BE  EQU     00BEH   ; ----I
-I.00D6  EQU     00D6H   ; ----I
-I$00DB  EQU     00DBH   ; ----I
-I.00FE  EQU     00FEH   ; ----I
-I$0211  EQU     0211H   ; ----I
-I$0801  EQU     0801H   ; ----I
-D.0A0D  EQU     0A0DH   ; --SL-
-I.1A4A  EQU     1A4AH   ; ----I
-I$2109  EQU     2109H   ; ----I
-I$3030  EQU     3030H   ; ----I
-I.3032  EQU     3032H   ; ----I
-I$322C  EQU     322CH   ; ----I
-J$3842  EQU     3842H   ; J----
-I$3E7D  EQU     3E7DH   ; ----I
-J5C16   EQU     5C16H   ; J----
-J5C20   EQU     5C20H   ; J----
-J5C2B   EQU     5C2BH   ; J----
-J5C2F   EQU     5C2FH   ; J----
-I5EA4   EQU     5EA4H   ; ----I
+
+CHRGTR	equ	04666H
+FRMEVL	equ	04C64H
+FRMQNT	equ	0542FH
+GETBYT	equ	0521CH
+FRESTR	equ	067D0H
+PTRGET	equ	05EA4H
+DOCNVF  EQU     0517AH
+SNERR   EQU     04055H
+FCERR   EQU     0475AH
+USERR   EQU     0481CH
+TMERR   EQU     0406DH
+DIOERR  EQU     073B2H
+DERFAO  EQU     06E6EH
+DERFNO  EQU     06E77H
+DERIER  EQU     06E80H
+DERSOO  EQU     06E86H
+DERBFN  EQU     06E6BH
+M4769   EQU     04769H
+M4295   EQU     04295H
+M6331   EQU     06331H
+M631B   EQU     0631BH
+M632B   EQU     0632BH
 
 J.6000  EQU     6000H   ; saved H.KEYI
 D.6005  EQU     6005H   ; saved DISINT/ENAINT
@@ -91,37 +79,14 @@ D.603F  EQU     603FH   ; Z8530 channel A command register, I/O port 2AH/3AH
 D$6041  EQU     6041H   ; i8253 timer 0 register, I/O port 2CH/3CH
 D$6042  EQU     6042H   ; i8253 timer 1 register, I/O port 2DH/3DH
 D$6044  EQU     6044H   ; i8253 mode register, I/O port 2FH/3FH
-I.6045  EQU     6045H   ;
-I.6046  EQU     6046H   ; ----I
-I.6047  EQU     6047H   ; ----I
-I$6050  EQU     6050H   ; ----I
-I.6059  EQU     6059H   ; ----I
-I.605A  EQU     605AH   ; ----I
-I$605B  EQU     605BH   ; ----I
-I.606D  EQU     606DH   ; ----I
-I.6269  EQU     6269H   ; ----I
-I$631B  EQU     631BH   ; ----I
-I$632B  EQU     632BH   ; ----I
-I$6331  EQU     6331H   ; ----I
-I$67D0  EQU     67D0H   ; ----I
-I$6E00  EQU     6E00H   ; ----I
-I$6E6B  EQU     6E6BH   ; ----I
-I$6E6E  EQU     6E6EH   ; ----I
-I$6E77  EQU     6E77H   ; ----I
-I$6E80  EQU     6E80H   ; ----I
-I$6E86  EQU     6E86H   ; ----I
-I$73B2  EQU     73B2H   ; ----I
-D.7831  EQU     7831H   ; --S--
-I$8009  EQU     8009H   ; ----I
-I.A000  EQU     0A000H  ; ----I
-J$BB10  EQU     0BB10H  ; J----
-C$BB65  EQU     0BB65H  ; -C---
-C.BB81  EQU     0BB81H  ; -C---
-C.BB86  EQU     0BB86H  ; -C---
-I$BB90  EQU     0BB90H  ; ----I
-I$BBAD  EQU     0BBADH  ; ----I
-I$CB00  EQU     0CB00H  ; ----I
-I$F300  EQU     0F300H  ; ----I
+I.6045  EQU     6045H   ; channel 0 settings
+I.6046  EQU     6046H   ; channel 0 ? settings
+I.6047  EQU     6047H   ; channel A register values
+I.6059  EQU     6059H   ; channel 1 settings
+I.605A  EQU     605AH   ; channel 1 ? settings
+I$605B  EQU     605BH   ; channel B register values
+I.606D  EQU     606DH   ; buffer channel 0
+I.6269  EQU     6269H   ; buffer channel 1
 
 BUF     EQU     0F55EH  ; --SLI
 VALTYP  EQU     0F663H  ; ----I
@@ -131,12 +96,12 @@ PTRFIL  EQU     0F864H  ; --S--
 FNKSTR  EQU     0F87FH  ; ----I
 MEXBIH  EQU     0FB07H  ; --SL-
 OLDSTT  EQU     0FB0CH  ; --SL-
-J.FB14  EQU     0FB14H  ; J---I
-D.FB19  EQU     0FB19H  ; ---LI
-D.FB1A  EQU     0FB1AH  ; --SLI
-D.FB1B  EQU     0FB1BH  ; --SL-
-D.FB1C  EQU     0FB1CH  ; --SLI
-D.FB1D  EQU     0FB1DH  ; --SL-
+J.FB14  EQU     0FB14H  ; old H.NEWST hook
+D.FB19  EQU     0FB19H  ; b7-b4 trapnumber, b3-b0 rs232 channel number
+D.FB1A  EQU     0FB1AH  ; ? flag channel 0
+D.FB1B  EQU     0FB1BH  ; ? flag channel 1
+D.FB1C  EQU     0FB1CH  ; ? flag channel 0
+D.FB1D  EQU     0FB1DH  ; ? flag channel 1
 D.FB1E  EQU     0FB1EH  ; mode flag channel 0
 D.FB1F  EQU     0FB1FH  ; mode flag channel 1
 HOKVLD  EQU     0FB20H  ; ----I
@@ -152,7 +117,7 @@ EXTBIO  EQU     0FFCAH  ; -CS-I
 DISINT  EQU     0FFCFH  ; ----I
 
 D.4000: DEFB    "AB"
-D$4002: DEFW    J409F           ; INIT
+        DEFW    J409F           ; INIT
         DEFW    J4161           ; STATEMENT
         DEFW    J424E           ; DEVICE
         DEFW    0               ; BASIC
@@ -251,7 +216,7 @@ J405D:  PUSH    BC
 
 J406B:  PUSH    BC
         PUSH    DE
-I406D:  PUSH    HL
+        PUSH    HL
         LD      IY,-13
         ADD     IY,SP
         LD      SP,IY
@@ -278,7 +243,7 @@ J407B:  CALL    C4565
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-J4094:  LD      HL,D.0000
+J4094:  LD      HL,0
         CALL    C4EDB
         RET     Z
         CALL    C441F
@@ -351,7 +316,7 @@ J40CB:  XOR     A
 I412C:  PUSH    DE
         LD      E,02H
         JR      J4134
-?4131:  PUSH    DE
+        PUSH    DE
         LD      E,03H
 J4134:  LD      D,00H
         PUSH    IX
@@ -507,7 +472,7 @@ J421C:  CALL    C5754
         LDIR
         LD      HL,I4213
         LD      DE,BUF
-        LD      BC,I$0009
+        LD      BC,9
         LDIR
         LD      HL,BUF
         EI
@@ -545,7 +510,7 @@ J4270:  SUB     "0"
         PUSH    BC
         PUSH    AF
         LD      A,(D.FB19)
-        AND     0FH
+        AND     0FH                     ; RS232 channel number
         LD      B,A
         POP     AF
         CP      B
@@ -566,12 +531,12 @@ J4292:  POP     BC
         RET
 J4295:  PUSH    HL
         PUSH    AF
-        OR      A
-        JR      Z,J42AF
+        OR      A                       ; device open ?
+        JR      Z,J42AF                 ; yep, skip channel check
         PUSH    AF
         PUSH    DE
         EX      DE,HL
-        CALL    C508A
+        CALL    C508A                   ; get FCB pointer of current channel
         OR      A
         SBC     HL,DE
         JR      Z,J42AD
@@ -624,32 +589,32 @@ J42DD:  DEC     A
 C42E4:  CALL    C50EA
         OR      A
         BIT     3,A
-        LD      A,02H   ; 2 
+        LD      A,2
         SCF
-        RET     NZ
+        RET     NZ                      ; yep, quit with error
         LD      A,E
-        CP      08H     ; 8 
-        LD      A,01H   ; 1 
+        CP      08H                     ; open mode random ?
+        LD      A,1
         SCF
-        RET     Z
+        RET     Z                       ; yep, quit with error
         PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      A,(D.6031)
         OR      A                       ; current channel 0 ?
         JR      Z,J4303                 ; yep,
-        LD      (OLDSTT+0),HL
+        LD      (OLDSTT+0),HL           ; FCB channel 1
         JR      J4306
-J4303:  LD      (MEXBIH+3),HL
+J4303:  LD      (MEXBIH+3),HL           ; FCB channel 0
 J4306:  LD      A,C
         LD      (OLDSTT+2),A
-        LD      (HL),E
+        LD      (HL),E                  ; open mode
         XOR     A
         INC     HL
         INC     HL
         LD      (HL),A
         INC     HL
-        LD      (HL),A
+        LD      (HL),A                  ; no backup character
         INC     HL
         INC     HL
         INC     HL
@@ -665,7 +630,7 @@ J4306:  LD      A,C
         JR      J432C
 J432A:  SET     0,(HL)
 J432C:  DI
-        CALL    C4F9A
+        CALL    C4F9A                   ; enable receiver interrupts of current channel
         CALL    C4F1E
         OR      A
         POP     HL
@@ -680,14 +645,13 @@ J432C:  DI
 C4338:  PUSH    BC
         PUSH    DE
         PUSH    HL
-        CALL    C508A
+        CALL    C508A                   ; get FCB pointer of current channel
         LD      A,(HL)
-        CP      02H     ; 2 
+        CP      02H                     ; open mode sequential output ?
         SCF
         CCF
-        JR      NZ,J434A
+        JR      NZ,J434A                ; nope, skip
         LD      A,1AH
-D$4346  EQU     $-1
         CALL    C4FF1                   ; RS232.SNDCHR
 J434A:  DI
 
@@ -696,7 +660,6 @@ J434A:  DI
 ;           Outputs ________________________
 
 C434B:  CALL    C4F2C
-D$434C  EQU     $-2
         LD      A,(D.6031)              ; current channel
         CALL    C5768
         EI
@@ -733,9 +696,9 @@ C436B:  CALL    C4372                   ; RS232.GETCHR
 
 C4372:  PUSH    HL
         PUSH    BC
-        CALL    C4457
-        LD      C,(HL)
-        LD      (HL),00H
+        CALL    C4457                   ; get FCB backup entry pointer of current channel
+        LD      C,(HL)                  ; backup character
+        LD      (HL),00H                ; clear backup character
         DEC     HL
         LD      A,(HL)
         CALL    C50D8
@@ -757,11 +720,11 @@ C4372:  PUSH    HL
         JR      C,J43AF
         JR      Z,J43AF
 J439B:  PUSH    HL
-        CALL    C508A
+        CALL    C508A                   ; get FCB pointer of current channel
         LD      A,(HL)
         POP     HL
-        CP      04H     ; 4 
-        JR      Z,J43B3
+        CP      04H                     ; open mode raw ?
+        JR      Z,J43B3                 ; yep,
         LD      A,C
         CP      1AH
         JR      NZ,J43B3
@@ -799,12 +762,12 @@ J43C2:  LD      (DAC+2),HL
 
 C43CC:  PUSH    AF
         EI
-        CALL    C508A
+        CALL    C508A                   ; get FCB pointer of current channel
         LD      A,(HL)
-        CP      01H     ; 1 
-        JR      NZ,J43E9
-        CALL    C444F
-        JR      Z,J43E1
+        CP      01H                     ; open mode sequental input ?
+        JR      NZ,J43E9                ; nope,
+        CALL    C444F                   ; get backup character of current channel
+        JR      Z,J43E1                 ; no backup character,
         SUB     1AH
         JR      Z,J43EC
         LD      A,01H   ; 1 
@@ -839,9 +802,9 @@ J43FC:  PUSH    AF
         EI
         LD      A,(D.6031)              ; current channel
         CALL    C546F
-        CALL    C444F
+        CALL    C444F                   ; get backup character of current channel
         JR      NZ,J440B
-        INC     HL
+        INC     HL                      ; no backup character,
 J440B:  POP     DE
         POP     AF
         RET
@@ -852,7 +815,7 @@ J440B:  POP     DE
 
 C440E:  PUSH    HL
         CALL    C4EDB
-        LD      HL,D.0000
+        LD      HL,0
         JR      Z,J43FA
         CALL    C441F
         JP      M,J4548
@@ -889,33 +852,33 @@ J443C:  LD      A,B
 ;           Outputs ________________________
 
 C443F:  PUSH    HL
-        CALL    C4457
-        LD      (HL),C
+        CALL    C4457                   ; get FCB backup entry pointer of current channel
+        LD      (HL),C                  ; save backup character
         PUSH    AF
         DEC     HL
         CALL    C5106
-        AND     70H     ; "p"
+        AND     70H
         LD      (HL),A
         POP     AF
         POP     HL
         RET
 
-;        Subroutine __________________________
+;        Subroutine get backup character of current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C444F:  PUSH    HL
-        CALL    C4457
-        LD      A,(HL)
+        CALL    C4457                   ; get FCB backup entry pointer of current channel
+        LD      A,(HL)                  ; backup character
         POP     HL
         AND     A
         RET
 
-;        Subroutine __________________________
+;        Subroutine get FCB backup entry pointer of current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C4457:  CALL    C508A
+C4457:  CALL    C508A                   ; get FCB pointer of current channel
         INC     HL
         INC     HL
         INC     HL
@@ -1041,26 +1004,35 @@ C4501:  CALL    C571F                   ; get slotid at address
         CALL    C454F                   ; write interslot byte
         RET
 
-J4512:  LD      IX,I$6E6B
+J4512:  LD      IX,DERBFN
         JR      J454C
-?4518:  LD      IX,I$6E80
+
+?4518:  LD      IX,DERIER
         JR      J454C
-?451E:  LD      IX,I$6E86
+
+?451E:  LD      IX,DERSOO
         JR      J454C
-J4524:  LD      IX,I$6E6E
+
+J4524:  LD      IX,DERFAO
         JR      J454C
-J452A:  LD      IX,I$6E77
+
+J452A:  LD      IX,DERFNO
         JR      J454C
-J4530:  LD      IX,I481C
+
+J4530:  LD      IX,USERR
         JR      J454C
-J4536:  LD      IX,J4055
+
+J4536:  LD      IX,SNERR
         JR      J454C
-J453C:  LD      IX,I475A
+
+J453C:  LD      IX,FCERR
         JR      J454C
-J4542:  LD      IX,I406D
+
+J4542:  LD      IX,TMERR
         JR      J454C
-J4548:  LD      IX,I$73B2
-J454C:  JP      C4621
+
+J4548:  LD      IX,DIOERR
+J454C:  JP      C4621                   ; interslot call BIOS/BASIC routine
 
 ;        Subroutine write interslot byte
 ;           Inputs  ________________________
@@ -1170,11 +1142,11 @@ C45BF:  LD      A,(HL)
 ;           Outputs ________________________
 
 C45C7:  PUSH    IX
-        LD      IX,I4666
+        LD      IX,CHRGTR
         EXX
         PUSH    HL
         EXX
-        CALL    C4621
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         EXX
         POP     HL
         EXX
@@ -1186,8 +1158,8 @@ C45C7:  PUSH    IX
 ;           Outputs ________________________
 
 C45D9:  PUSH    IX
-        LD      IX,I4C64
-        CALL    C4621
+        LD      IX,FRMEVL
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         POP     IX
         RET
 
@@ -1196,8 +1168,8 @@ C45D9:  PUSH    IX
 ;           Outputs ________________________
 
 C45E5:  PUSH    IX
-        LD      IX,I542F
-        CALL    C4621
+        LD      IX,FRMQNT
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         POP     IX
         RET
 
@@ -1206,8 +1178,8 @@ C45E5:  PUSH    IX
 ;           Outputs ________________________
 
 C45F1:  PUSH    IX
-        LD      IX,I521C
-        CALL    C4621
+        LD      IX,GETBYT
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         POP     IX
         RET
 
@@ -1216,8 +1188,8 @@ C45F1:  PUSH    IX
 ;           Outputs ________________________
 
 C45FD:  PUSH    IX
-        LD      IX,I5EA4
-        CALL    C4621
+        LD      IX,PTRGET
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         POP     IX
         RET
 
@@ -1226,8 +1198,8 @@ C45FD:  PUSH    IX
 ;           Outputs ________________________
 
 C4609:  PUSH    IX
-        LD      IX,I$67D0
-        CALL    C4621
+        LD      IX,FRESTR
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         POP     IX
         RET
 
@@ -1236,12 +1208,12 @@ C4609:  PUSH    IX
 ;           Outputs ________________________
 
 C4615:  PUSH    IX
-        LD      IX,I517A
-        CALL    C4621
+        LD      IX,DOCNVF
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         POP     IX
         RET
 
-;        Subroutine __________________________
+;        Subroutine interslot call BIOS/BASIC routine
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -1264,12 +1236,12 @@ C4626:  PUSH    IY
 J4632:  CALL    C4CBD
         CALL    C4CB7
         JP      NZ,J4524
-        CALL    C4FA8
+        CALL    C4FA8                   ; disable receiver interrupts of current channel
         LD      IY,BUF+9
         PUSH    BC
         PUSH    DE
         PUSH    HL
-        LD      BC,I$000D
+        LD      BC,13
         PUSH    IY
         POP     DE
         LD      HL,I4154
@@ -1288,7 +1260,6 @@ J4632:  CALL    C4CBD
         JP      Z,J46D9
         CP      29H     ; ")"
         JP      Z,J46D6
-I4666   EQU     $-1
         CALL    C45BF
         INC     L
         JR      J4693
@@ -1351,7 +1322,7 @@ J46D6:  CALL    C45C7
 J46D9:  CALL    C4D7C                   ; initialize RS232 port
         JP      C,J453C
         CALL    C4CB7
-        CALL    NZ,C4F9A
+        CALL    NZ,C4F9A                ; yep, enable receiver interrupts of current channel
         AND     A
         RET
 
@@ -1405,17 +1376,17 @@ J4728:  CALL    C4CBD
         JR      Z,J4744
         CALL    C45BF
         ADD     HL,HL
-J4744:  LD      DE,I.000A
+J4744:  LD      DE,10
         JR      J4753
 J4749:  CALL    C45C7
         CALL    C45E5
         CALL    C45BF
         ADD     HL,HL
 J4753:  PUSH    HL
-        LD      HL,I.0002
+        LD      HL,2
         AND     A
         SBC     HL,DE
-I475A:  JP      NC,J453C
+        JP      NC,J453C
         POP     HL
         CALL    C4FB9                   ; RS232.SNDBRK
         LD      A,00H
@@ -1513,7 +1484,7 @@ J4808:  CALL    C49BB
         EI
         JR      Z,J47D6
         CALL    CHGET
-I481C:  EI
+        EI
         CP      0A0H
         JP      Z,J4964
         CALL    C4997
@@ -1855,22 +1826,17 @@ J4BC4:  CALL    C4CBD
         CALL    C4CB2
         JP      C,J453C
 J4BD0:  CALL    C45BF
-J4BD2   EQU     $-1
         INC     L
 J4BD4:  CALL    C45BF
         ADC     A,L
-J4BD8:  LD      IX,I4769
-J4BDB   EQU     $-1
-        CALL    C4621
-J4BDD   EQU     $-2
+J4BD8:  LD      IX,M4769                ; collect linenumber
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         PUSH    HL
         LD      A,E
         OR      D
         JR      Z,J4BF0
-        LD      IX,J4295
-J4BE6   EQU     $-2
-        CALL    C4621
-J4BEA   EQU     $-1
+        LD      IX,M4295                ; search linenumber
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
 J4BEB:  JP      NC,J4530
         LD      E,C
 J4BEF:  LD      D,B
@@ -1898,7 +1864,7 @@ J4BFE:  CALL    C4CBD
         ADD     HL,HL
 J4C10:  CALL    C4CB2
         JP      C,J453C
-        LD      IX,I$632B
+        LD      IX,M632B                ; disable trap
         JR      J4C63
 
 ; COMON
@@ -1914,7 +1880,7 @@ J4C1C:  CALL    C4CBD
         ADD     HL,HL
 J4C2E:  CALL    C4CB2
         JP      C,J453C
-        LD      IX,I$631B
+        LD      IX,M631B                ; enable trap
         JR      J4C56
 
 ; COMSTOP
@@ -1930,7 +1896,7 @@ J4C3A:  CALL    C4CBD
         ADD     HL,HL
 J4C4C:  CALL    C4CB2
         JP      C,J453C
-        LD      IX,I$6331
+        LD      IX,M6331                ; pause trap
 J4C56:  PUSH    HL
         PUSH    AF
         CALL    C4C9F
@@ -1940,8 +1906,8 @@ J4C56:  PUSH    HL
         POP     AF
         POP     HL
 J4C63:  PUSH    HL
-I4C64:  CALL    C4C9F
-        CALL    C4621
+        CALL    C4C9F
+        CALL    C4621                   ; interslot call BIOS/BASIC routine
         POP     HL
         AND     A
         RET
@@ -2072,7 +2038,7 @@ J4CFB:  DEC     HL
         DEC     B
 J4D09:  LD      E,A
         LD      A,(D.FB19)
-        AND     0FH     ; 15 
+        AND     0FH                     ; RS232 channel number
         PUSH    HL
         EXX
         POP     HL
@@ -2234,7 +2200,7 @@ J4E03:  LD      A,(IY+7)
 J4E17:  CP      "N"
         JP      NZ,J4DA8
 J4E1C:  LD      A,C
-        CALL    C50C6
+        CALL    C50C6                   ; set mode flags of channel
         LD      E,(IY+8)
         LD      D,(IY+9)                ; receive baudrate
         CALL    C4E71
@@ -2332,9 +2298,9 @@ I4E91:  DEFW    50,0
 C4EDB:  CALL    C4EEA
         PUSH    BC
         LD      B,A
-        CALL    C444F
-        JR      Z,J4EE7
-        LD      A,01H   ; 1 
+        CALL    C444F                   ; get backup character of current channel
+        JR      Z,J4EE7                 ; no backup character,
+        LD      A,1
 J4EE7:  ADD     A,B
         POP     BC
         RET
@@ -2423,17 +2389,22 @@ C4F3A:  PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      A,(D.6031)              ; current channel
-        CALL    C58EC
+        CALL    C58EC                   ; DTR on
         POP     HL
         POP     DE
         POP     BC
         EI
         RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
 ?4F48:  PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      A,(D.6031)              ; current channel
-        CALL    C58F1
+        CALL    C58F1                   ; DTR off
         POP     HL
         POP     DE
         POP     BC
@@ -2488,7 +2459,7 @@ C4F9A:  PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      A,(D.6031)              ; current channel
-        CALL    C5914
+        CALL    C5914                   ; enable Z8530 interrupts
         POP     HL
         POP     DE
         POP     BC
@@ -2503,7 +2474,7 @@ C4FA8:  PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      A,(D.6031)              ; current channel
-        CALL    C5928
+        CALL    C5928                   ; disable Z8530 interrupts
         POP     HL
         POP     DE
         POP     BC
@@ -2528,7 +2499,7 @@ C4FB9:  PUSH    BC
         JR      Z,J4FD0
 J4FC0:  LD      A,(D.6031)              ; current channel
         PUSH    DE
-        CALL    C58F6
+        CALL    C58F6                   ; send break for ?? ms
         EI
         POP     DE
         DEC     DE
@@ -2537,18 +2508,28 @@ J4FC0:  LD      A,(D.6031)              ; current channel
         JR      NZ,J4FC0
         JR      J4FD6
 J4FD0:  LD      A,(D.6031)              ; current channel
-        CALL    C590F
+        CALL    C590F                   ; send break on
 J4FD6:  POP     HL
         POP     DE
         POP     BC
         EI
         RET
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
 ?4FDB:  PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      A,(D.6031)              ; current channel
         CALL    C5286
         JR      J5038
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
 ?4FE6:  PUSH    BC
         PUSH    DE
         PUSH    HL
@@ -2607,6 +2588,7 @@ J5041:  LD      A,C
         POP     BC
         EI
         RET
+
 ?5047:  XOR     A
         INC     A
         RET
@@ -2650,10 +2632,10 @@ C506F:  PUSH    AF
         OR      A
         JR      Z,J507E
         LD      A,(D.6031)              ; current channel
-        CALL    C58EC
+        CALL    C58EC                   ; DTR on
         JR      J5084
 J507E:  LD      A,(D.6031)              ; current channel
-        CALL    C58F1
+        CALL    C58F1                   ; DTR off
 J5084:  POP     HL
         POP     DE
         POP     BC
@@ -2661,7 +2643,7 @@ J5084:  POP     HL
         POP     AF
         RET
 
-;        Subroutine __________________________
+;        Subroutine get FCB pointer of current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2669,10 +2651,10 @@ C508A:  PUSH    AF
         LD      A,(D.6031)
         OR      A                       ; current channel 0 ?
         JR      Z,J5096                 ; yep,
-        LD      HL,(OLDSTT+0)
+        LD      HL,(OLDSTT+0)           ; FCB channel 1
         POP     AF
         RET
-J5096:  LD      HL,(MEXBIH+3)
+J5096:  LD      HL,(MEXBIH+3)           ; FCB channel 0
         POP     AF
         RET
 
@@ -2716,7 +2698,7 @@ C50B4:  PUSH    BC
 J50C2:  LD      (D.FB1C),A
         RET
 
-;        Subroutine __________________________
+;        Subroutine set mode flags of channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2748,7 +2730,7 @@ C50D8:  PUSH    BC
 J50E6:  LD      (D.FB1A),A
         RET
 
-;        Subroutine __________________________
+;        Subroutine 
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2794,25 +2776,25 @@ J5110:  LD      A,(D.FB1A)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C5114:  LD      D,02H   ; 2 
+C5114:  LD      D,02H                   ; RTS enabled
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C5116:  LD      HL,I.0007
-        LD      B,05H   ; 5 
+C5116:  LD      HL,5+2
+        LD      B,5                     ; Z8530 register 5
 
 ;        Subroutine __________________________
-;           Inputs  ________________________
+;           Inputs  B = Z8530 register, HL = offset
 ;           Outputs ________________________
 
 C511B:  DI
         PUSH    AF
         CALL    C5211
-        CALL    C5221
+        CALL    C5221                   ; get Z8530 channel command register
         LD      A,D
-        CALL    C513E
+        CALL    C513E                   ; OR, write register
         POP     AF
         RET
 
@@ -2820,20 +2802,20 @@ C511B:  DI
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C5129:  LD      D,0FDH
-J512B:  LD      HL,I.0007
-        LD      B,05H   ; 5 
+C5129:  LD      D,0FDH                  ; RTS disabled
+J512B:  LD      HL,5+2
+        LD      B,5                     ; Z8530 register 5
 
 ;        Subroutine __________________________
-;           Inputs  ________________________
+;           Inputs  B = Z8530 register, HL = offset
 ;           Outputs ________________________
 
 C5130:  DI
         PUSH    AF
         CALL    C5211
-        CALL    C5221
+        CALL    C5221                   ; get Z8530 channel command register
         LD      A,D
-        CALL    C5141
+        CALL    C5141                   ; AND, write register
         POP     AF
         RET
 
@@ -2893,7 +2875,6 @@ C5171:  LD      B,A
         CALL    C520E
         BIT     0,(HL)
         JR      Z,C518A
-I517A   EQU     $-1
         LD      A,B
         CP      13H     ; 19 
         JR      NZ,J5184
@@ -2908,8 +2889,8 @@ J5184:  CP      11H     ; 17
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C518A:  CALL    C5221
-        OR      A
+C518A:  CALL    C5221                   ; get Z8530 channel command register
+        OR      A                       ; channel 0 ?
         JR      Z,J5195
         LD      A,(MEXBIH+2)
         JR      J5198
@@ -2938,12 +2919,12 @@ J51B9:  LD      A,D
         JR      NZ,J519F
         DEC     D
         JR      NZ,J519D
-J51C3:  LD      HL,I$0004
+J51C3:  LD      HL,4
 J51C6:  RET
 
 J51C7:  INC     C
         OUT     (C),B
-        LD      HL,D.0000
+        LD      HL,0
         RET
 J51CE:  LD      E,21H
 J51D0:  CALL    C4578
@@ -3012,19 +2993,19 @@ J521B:  LD      DE,I.6059
         POP     DE
         RET
 
-;        Subroutine __________________________
-;           Inputs  ________________________
+;        Subroutine get Z8530 channel command register
+;           Inputs  A = channel number
 ;           Outputs ________________________
 
 C5221:  PUSH    AF
         OR      A
         JR      NZ,J522B
-        LD      A,(D.603F)
+        LD      A,(D.603F)              ; Z8530 channel A command register
         LD      C,A
         POP     AF
         RET
 J522B:  LD      A,(D.603D)
-        LD      C,A
+        LD      C,A                     ; Z8530 channel B command register
         POP     AF
         RET
 
@@ -3077,7 +3058,7 @@ J5263:  LD      A,H
         BIT     3,(HL)
         JR      NZ,J527C
         PUSH    AF
-        CALL    C5221
+        CALL    C5221                   ; get Z8530 channel command register
 J526E:  DI
         LD      A,1
         OUT     (C),A
@@ -3123,7 +3104,7 @@ J52A3:  RES     2,(HL)
         JR      Z,J52AF
         LD      B,11H   ; 17 
         JP      C518A
-J52AF:  LD      HL,D.0000
+J52AF:  LD      HL,0
         RET
 
 J52B3:  PUSH    AF
@@ -3212,7 +3193,7 @@ J533D:  POP     AF
         CALL    C50F8
         BIT     3,A
         JR      Z,J5357
-        LD      BC,I.000A
+        LD      BC,10
 J5351:  POP     AF
         CALL    C5367
         JR      J5358
@@ -3239,7 +3220,7 @@ C5367:  OR      A
         PUSH    HL
         LD      HL,(D.6024)
         LD      (HL),C
-        LD      DE,I.00FE
+        LD      DE,00FEH
         ADD     HL,DE
         PUSH    HL
         LD      HL,(D.6026)
@@ -3287,7 +3268,7 @@ J5397:  PUSH    DE
 
 I53BE:  DI
         LD      A,(D.603F)
-        LD      C,A
+        LD      C,A                     ; Z8530 channel A command register
         LD      A,3
         OUT     (C),A
         IN      A,(C)                   ; read register 3
@@ -3314,12 +3295,12 @@ J53F0:  AND     28H
 J53F4:  CALL    C5417
 J53F7:  CALL    C5422
         LD      A,(D.603F)
-        LD      C,A
+        LD      C,A                     ; Z8530 channel A command register
         IN      A,(C)
         BIT     0,A
         JR      NZ,J53F4
         LD      A,(D.603D)
-        LD      C,A
+        LD      C,A                     ; Z8530 channel B command register
         IN      A,(C)
         BIT     0,A
         JR      NZ,J53F7
@@ -3332,7 +3313,7 @@ J5414:  JP      J.6000                  ; cascade to H.KEYI
 ;           Outputs ________________________
 
 C5417:  LD      A,(D.603F)
-        LD      E,A
+        LD      E,A                     ; Z8530 channel A command register
         LD      HL,I.6045
         XOR     A
         JP      J52B3
@@ -3342,7 +3323,7 @@ C5417:  LD      A,(D.603F)
 ;           Outputs ________________________
 
 C5422:  LD      A,(D.603D)
-        LD      E,A
+        LD      E,A                     ; Z8530 channel B command register
         LD      HL,I.6059
         LD      A,01H   ; 1 
         JP      J52B3
@@ -3351,7 +3332,7 @@ C5422:  LD      A,(D.603D)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C542E:  LD      HL,I.00D6
+C542E:  LD      HL,00D6H
         LD      DE,(D.6026)
         XOR     A
         SBC     HL,DE
@@ -3363,7 +3344,7 @@ J543C:  PUSH    HL
         CALL    C523D
         POP     AF
         POP     HL
-        CALL    C5221
+        CALL    C5221                   ; get Z8530 channel command register
         LD      A,38H
         OUT     (C),A                   ; reset higest ius
         RES     3,(HL)
@@ -3373,7 +3354,7 @@ J543C:  PUSH    HL
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C544F:  LD      HL,I.00D6
+C544F:  LD      HL,00D6H
         LD      DE,(D.602C)
         XOR     A
         INC     A
@@ -3415,7 +3396,7 @@ C546F:  OR      A
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C5478:  LD      HL,I.00FE
+C5478:  LD      HL,00FEH
         LD      DE,(D.601E)
         OR      A
         SBC     HL,DE
@@ -3430,7 +3411,7 @@ C5483:  INC     HL
         PUSH    HL
         PUSH    HL
         LD      HL,I.606D
-        LD      DE,I.00FE
+        LD      DE,00FEH
         ADD     HL,DE
         POP     DE
         OR      A
@@ -3450,7 +3431,7 @@ C5499:  INC     HL
         PUSH    HL
         PUSH    HL
         LD      HL,I.6269
-        LD      DE,I.00FE
+        LD      DE,00FEH
         ADD     HL,DE
         POP     DE
         OR      A
@@ -3470,7 +3451,7 @@ C54AF:  INC     HL
         PUSH    HL
         PUSH    HL
         LD      HL,(D.6022)
-        LD      DE,I.00FE
+        LD      DE,00FEH
         ADD     HL,DE
         POP     DE
         OR      A
@@ -3495,11 +3476,8 @@ C54C5:  LD      A,(D.601B)
 J54D2:  SCF
         RET
 
-?54D4:  LD      D,D
-        LD      D,E
-        JR      C,J550F
-        LD      SP,I$3030
-        DEFB    031H,000H
+?54D4:  DEFB    "RS871001"
+        DEFB    0
 
 C54DD:  DI
         LD      HL,C5114
@@ -3514,7 +3492,7 @@ C54DD:  DI
         RET     NZ
         CALL    C5796
         CALL    C5549                   ; initalize i8253
-        CALL    C57A5
+        CALL    C57A5                   ; force hardware reset Z8530
         LD      HL,I.6045
         LD      BC,40
         CALL    C579C
@@ -3547,7 +3525,7 @@ J552C:  LD      HL,D.603C
         DEC     C
         DEC     C
         DEC     C
-        LD      B,09H   ; 9 
+        LD      B,9
 J5534:  LD      (HL),C
         INC     HL
         INC     C
@@ -3573,7 +3551,7 @@ C553D:  LD      B,2
 
 C5549:  LD      HL,I5555
         LD      A,(D$6044)
-        LD      C,A
+        LD      C,A                     ; i8253 mode register
         LD      B,3
         OTIR
         RET
@@ -3606,7 +3584,7 @@ J5574:  POP     BC
         POP     HL
         POP     DE
         LD      A,(D.6030)              ; current channel for operation
-        LD      HL,I.0012
+        LD      HL,18
         CALL    C5211
         LD      (HL),E
         LD      L,E
@@ -3614,7 +3592,7 @@ J5574:  POP     BC
         CALL    C5801
         POP     DE
         LD      A,(D.6030)              ; current channel for operation
-        LD      HL,I$0013
+        LD      HL,19
         CALL    C5211
         LD      (HL),E
         LD      D,00H
@@ -3622,39 +3600,39 @@ J5574:  POP     BC
         CALL    C5839
         POP     DE
         LD      A,E
-        AND     0FH     ; 15 
+        AND     0FH
         LD      E,A
-        LD      HL,6
+        LD      HL,4+2
         LD      A,(D.6030)              ; current channel for operation
         CALL    C5211
-        LD      D,04H   ; 4 
+        LD      D,04H                   ; 1 stop bit
         DEC     E
         JR      Z,J55B2
-        LD      D,08H   ; 8 
+        LD      D,08H                   ; 1.5 stop bits
         DEC     E
         JR      Z,J55B2
-        LD      D,0CH   ; 12 
+        LD      D,0CH                   ; 2 stop bits
 J55B2:  LD      A,0F3H
         AND     (HL)
         OR      D
-        LD      (HL),A
+        LD      (HL),A                  ; stop bits setting
         POP     DE
-        LD      HL,6
+        LD      HL,4+2
         LD      A,(D.6030)              ; current channel for operation
         CALL    C5211
-        LD      D,00H
+        LD      D,00H                   ; parity disabled
         LD      A,E
-        CP      4EH     ; "N"
+        CP      "N"
         JR      Z,J55D1
-        CP      4FH     ; "O"
+        CP      "O"
         JR      Z,J55D0
-        LD      D,03H   ; 3 
+        LD      D,03H                   ; parity enabled, even
         JR      J55D1
-J55D0:  INC     D
+J55D0:  INC     D                       ; parity enabled, odd
 J55D1:  LD      A,0FCH
         AND     (HL)
         OR      D
-        LD      (HL),A
+        LD      (HL),A                  ; parity setting
         POP     DE
         LD      A,E
         AND     0FH     ; 15 
@@ -3666,7 +3644,7 @@ J55DD:  SCF
         DJNZ    J55DD
         LD      B,A
         LD      A,(D.6030)              ; current channel for operation
-        LD      HL,D.0000
+        LD      HL,0
         CALL    C5211
         LD      (HL),B
         LD      A,E
@@ -3680,7 +3658,7 @@ J55F7:  RRCA
         LD      E,A
         RRCA
         LD      D,A
-        LD      HL,I.0007
+        LD      HL,5+2
         LD      A,(D.6030)              ; current channel for operation
         CALL    C5211
         LD      A,9FH
@@ -3697,14 +3675,14 @@ J55F7:  RRCA
         LD      A,(D.6030)              ; current channel for operation
         CALL    C520E
         LD      A,E
-        CP      58H     ; "X"
+        CP      "X"
         JR      Z,J5621
         RES     0,(HL)
         JR      J5623
 J5621:  SET     0,(HL)
 J5623:  POP     DE
         LD      A,E
-        CP      48H     ; "H"
+        CP      "H"
         JR      Z,J562D
         RES     5,(HL)
         JR      J562F
@@ -3712,11 +3690,11 @@ J562D:  SET     5,(HL)
 J562F:  LD      A,(D.6030)              ; current channel for operation
         CALL    C5662
         LD      A,(D.6030)              ; current channel for operation
-        CALL    C58CE
-        CALL    C58E2
-        LD      HL,I.0010
-        LD      D,01H   ; 1 
-        LD      B,0EH   ; 14 
+        CALL    C58CE                   ; enable receiver
+        CALL    C58E2                   ; enable transmitter
+        LD      HL,14+2
+        LD      D,01H                   ; BR generator enabled
+        LD      B,14
         CALL    C511B
         CALL    C528D
         LD      HL,-16
@@ -3735,10 +3713,10 @@ C5653:  LD      DE,I567D
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C5656:  LD      HL,I.0002
+C5656:  LD      HL,0+2
         CALL    C5211
-        CALL    C5221
-        JP      J5888
+        CALL    C5221                   ; get Z8530 channel command register
+        JP      J5888                   ; write Z8530 registers
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
@@ -3747,7 +3725,7 @@ C5656:  LD      HL,I.0002
 C5662:  LD      DE,I566E
         CALL    C5656
         LD      DE,I5676
-        JP      J5888
+        JP      J5888                   ; write Z8530 registers
 
 I566E:  DEFB    7
         DEFB    9,4,2,3,5,6,7
@@ -3813,7 +3791,7 @@ C56C7:  OR      A
         LD      HL,(D.602C)
         JR      J56D2
 J56CF:  LD      HL,(D.6026)
-J56D2:  LD      DE,I.000F
+J56D2:  LD      DE,15
         SBC     HL,DE
         RET
 
@@ -3921,7 +3899,7 @@ J574C:  RLCA
 ;           Outputs ________________________
 
 C5754:  DI
-        CALL    C57A5
+        CALL    C57A5                   ; force hardware reset Z8530
         LD      HL,J.6000
         LD      DE,H.KEYI
         LD      BC,5
@@ -3934,7 +3912,7 @@ C5754:  DI
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C5768:  CALL    C5928
+C5768:  CALL    C5928                   ; disable Z8530 interrupts
         LD      HL,D.601B
         INC     A
         CPL
@@ -3956,7 +3934,7 @@ C5773:  OR      A
 C5776:  LD      HL,I.606D
         LD      (D.6024),HL
         LD      (D.6028),HL
-        LD      HL,D.0000
+        LD      HL,0
         LD      (D.6026),HL
         RET
 
@@ -3967,7 +3945,7 @@ C5776:  LD      HL,I.606D
 C5786:  LD      HL,I.6269
         LD      (D.602A),HL
         LD      (D.602E),HL
-        LD      HL,D.0000
+        LD      HL,0
         LD      (D.602C),HL
         RET
 
@@ -3990,62 +3968,64 @@ C579C:  LD      (HL),00H
         JR      NZ,C579C
         RET
 
-;        Subroutine __________________________
+;        Subroutine force hardware reset Z8530
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C57A5:  LD      HL,I$6050
-        LD      (HL),0C0H
+C57A5:  LD      HL,I.6047+9
+        LD      (HL),0C0H               ; Master Interrupt Control: Force Hardware Reset
         LD      A,(D.603F)
-        LD      C,A
-        LD      DE,I57B7
+        LD      C,A                     ; Z8530 channel A command register
+        LD      DE,I57B7                ; Master Interrupt Control register
         LD      HL,I.6047
-        JP      J5888
+        JP      J5888                   ; write Z8530 registers
 
-I57B7:  DEFB    2,9,9
+I57B7:  DEFB    2
+        DEFB    9,9
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C57BA:  LD      HL,I.6047
-        LD      IX,I57EA
-        CALL    C586C
-        LD      IX,I57CB
-        JP      C586C
+C57BA:  LD      HL,I.6047               ; channel A registers
+        LD      IX,I57EA                ; reset channel A
+        CALL    C586C                   ; update channel register values
+        LD      IX,I57CB                ; channel register default values
+        JP      C586C                   ; update channel register values
 
 I57CB:  DEFB    15
-        DEFB    0,000H
-        DEFB    1,011H
-        DEFB    2,000H
-        DEFB    3,000H
-        DEFB    4,048H
-        DEFB    5,000H
-        DEFB    6,000H
-        DEFB    7,000H
-        DEFB    9,000H
-        DEFB    10,000H
-        DEFB    11,016H
-        DEFB    12,000H
-        DEFB    13,000H
-        DEFB    14,002H
-        DEFB    15,000H
+        DEFB    0,000H                  ; Command Register: Null Command
+        DEFB    1,011H                  ; Transmit/Receive Interrupt and Data Transfer Mode
+Definition: Int On All Rx Characters or Special Condition, Ext Int Enable
+        DEFB    2,000H                  ; Interrupt Vector: 0
+        DEFB    3,000H                  ; Receive Parameters and Control:
+        DEFB    4,048H                  ; Transmit/Receive Miscellaneous Parameters and Modes:
+        DEFB    5,000H                  ; Transmit Parameters and Controls:
+        DEFB    6,000H                  ; Sync Characters or SDLC Address Field:
+        DEFB    7,000H                  ; Sync Character or SDLC Flag:
+        DEFB    9,000H                  ; Master Interrupt Control:
+        DEFB    10,000H                 ; Miscellaneous Transmitter/Receiver Control Bits:
+        DEFB    11,016H                 ; Clock Mode Control: /RTxC Pin
+        DEFB    12,000H                 ; Lower Byte of Baud Rate Generator Time Constant: 0
+        DEFB    13,000H                 ; Upper Byte of Baud Rate Generator Time Constant: 0
+        DEFB    14,002H                 ; Miscellaneous Control Bits: 
+        DEFB    15,000H                 ; External/Status Interrupt Control:
 
 I57EA:  DEFB    1
-        DEFB    9,080H
+        DEFB    9,080H                  ; Master Interrupt Control: reset channel A
 
 I57ED:  DEFB    1
-        DEFB    9,040H
+        DEFB    9,040H                  ; Master Interrupt Control: reset channel B
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C57F0:  LD      HL,I$605B
-        LD      IX,I57ED
-        CALL    C586C
-        LD      IX,I57CB
-        JP      C586C
+C57F0:  LD      HL,I$605B               ; channel B registers
+        LD      IX,I57ED                ; reset channel B
+        CALL    C586C                   ; update channel register values
+        LD      IX,I57CB                ; channel register default values
+        JP      C586C                   ; update channel register values
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
@@ -4055,7 +4035,7 @@ C5801:  SLA     L
         LD      DE,I5815
         ADD     HL,DE
         EX      DE,HL
-        LD      HL,I$000E
+        LD      HL,12+2
         CALL    C5211
         LD      A,(DE)
         LD      (HL),A
@@ -4112,21 +4092,21 @@ I5848:  DEFW    1200H
         DEFW    000CH
         DEFW    0006H
 
-;        Subroutine __________________________
+;        Subroutine update channel register values
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C586C:  PUSH    AF
         PUSH    BC
         PUSH    DE
-        LD      B,(IX+0)
+        LD      B,(IX+0)                ; length
         LD      D,00H
 J5874:  INC     IX
         PUSH    HL
-        LD      E,(IX+0)
+        LD      E,(IX+0)                ; register
         ADD     HL,DE
-        LD      A,(IX+1)
-        LD      (HL),A
+        LD      A,(IX+1)                ; register value
+        LD      (HL),A                  ; store register value
         POP     HL
         INC     IX
         DJNZ    J5874
@@ -4135,13 +4115,17 @@ J5874:  INC     IX
         POP     AF
         RET
 
+;        Subroutine write Z8530 registers
+;           Inputs  DE = pointer to registers to write table, HL = pointer to register value table
+;           Outputs ________________________
+
 J5888:  DI
         PUSH    AF
-        LD      A,(DE)
+        LD      A,(DE)                  ; length
         INC     DE
         LD      B,A
 J588D:  LD      A,(DE)
-        OUT     (C),A
+        OUT     (C),A                   ; select Z8530 register
         PUSH    HL
         PUSH    BC
         INC     DE
@@ -4150,7 +4134,7 @@ J588D:  LD      A,(DE)
         ADD     HL,BC
         LD      A,(HL)
         POP     BC
-        OUT     (C),A
+        OUT     (C),A                   ; write Z8530 register value
         POP     HL
         DJNZ    J588D
         POP     AF
@@ -4161,24 +4145,24 @@ J588D:  LD      A,(DE)
 ;           Outputs ________________________
 
 C58A0:  LD      B,A
-        CALL    C5221
-        IN      A,(C)                   ; 
+        CALL    C5221                   ; get Z8530 channel command register
+        IN      A,(C)                   ; read register 0
         AND     0A8H                    ; 10101000 (Break, CTS, CD)
         LD      L,A
         LD      A,(D.603C)
-        LD      C,A
+        LD      C,A                     ; status register
         LD      A,B
         OR      A
         JR      Z,J58BD
-        IN      A,(C)
+        IN      A,(C)                   ; read status register
         AND     0CH
         RRCA
         RRCA                            ; RI / DSR channel B
         OR      L
         LD      HL,I.605A
         JR      J58C5
-J58BD:  IN      A,(C)
-        AND     03H                     ; RI / DSR channel B
+J58BD:  IN      A,(C)                   ; read status register
+        AND     03H                     ; RI / DSR channel A
         OR      L
         LD      HL,I.6046
 J58C5:  LD      B,A
@@ -4193,46 +4177,56 @@ J58C5:  LD      B,A
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C58CE:  LD      D,01H   ; 1 
-        LD      HL,5
-        LD      B,03H   ; 3 
+C58CE:  LD      D,01H                   ; Rx Enable
+        LD      HL,3+2
+        LD      B,3
         JP      C511B
-?58D8:  LD      D,0FEH
-        LD      HL,5
-        LD      B,03H   ; 3 
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+?58D8:  LD      D,0FEH                  ; Rx Disable
+        LD      HL,3+2
+        LD      B,3
         JP      C5130
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C58E2:  LD      D,08H   ; 8 
-        JP      C5116
-?58E7:  LD      D,0F7H
-        JP      J512B
-
-;        Subroutine __________________________
-;           Inputs  ________________________
-;           Outputs ________________________
-
-C58EC:  LD      D,80H
+C58E2:  LD      D,08H                   ; Tx Enable
         JP      C5116
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C58F1:  LD      D,7FH
+?58E7:  LD      D,0F7H                  ; Tx Disabled
         JP      J512B
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C58F6:  LD      D,10H   ; 16 
+C58EC:  LD      D,80H                   ; DTR enabled
+        JP      C5116
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C58F1:  LD      D,7FH                   ; DTR disabled
+        JP      J512B
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
+C58F6:  LD      D,10H                   ; Send Break enabled
         CALL    C5116
         PUSH    AF
-        LD      HL,I.0012
+        LD      HL,18
         CALL    C51F9
 J5902:  EX      (SP),HL
         EX      (SP),HL
@@ -4241,27 +4235,27 @@ J5902:  EX      (SP),HL
         OR      L
         JR      NZ,J5902
         POP     AF
-        LD      D,0EFH
+        LD      D,0EFH                  ; Send Break disabled
         JP      J512B
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C590F:  LD      D,10H   ; 16 
+C590F:  LD      D,10H                   ; Send Break enabled
         JP      C5116
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C5914:  LD      D,08H   ; 8 
-        LD      HL,I$000B
-        LD      B,09H   ; 9 
+C5914:  LD      D,08H                   ; Master Interrupt Enable
+        LD      HL,9+2
+        LD      B,9
         CALL    C511B
-        LD      D,10H   ; 16 
-        LD      HL,I.0003
-        LD      B,01H   ; 1 
+        LD      D,10H                   ; Int On All Rx Characters or Special Condition
+        LD      HL,1+2
+        LD      B,1
         JP      C511B
 
 ;        Subroutine __________________________
@@ -4270,23 +4264,25 @@ C5914:  LD      D,08H   ; 8
 
 C5928:  PUSH    BC
         PUSH    HL
-        LD      D,0E7H
-        LD      HL,I.0003
-        LD      B,01H   ; 1 
+        LD      D,0E7H                  ; Rx Int Disable
+        LD      HL,1+2
+        LD      B,1
         CALL    C5130
         POP     HL
         POP     BC
         RET
+
 ?5937:  CALL    C54C5
         JR      NC,J5941
-        CALL    C594C
+        CALL    C594C                   ; enable DCD interrupt
         EI
         RET
+
 J5941:  POP     IY
         POP     BC
         PUSH    BC
         LD      A,C
-        CALL    C594C
+        CALL    C594C                   ; enable DCD interrupt
         EI
         JP      (IY)
 
@@ -4294,20 +4290,26 @@ J5941:  POP     IY
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C594C:  LD      D,08H   ; 8 
-J594E:  LD      HL,I.0011
-        LD      B,0FH   ; 15 
+C594C:  LD      D,08H                   ; DCD IE
+J594E:  LD      HL,15+2
+        LD      B,15
         JP      C511B
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
 ?5956:  CALL    C54C5
         JR      NC,J5960
-        CALL    C596B
+        CALL    C596B                   ; disable DCD interrupt
         EI
         RET
+
 J5960:  POP     IY
         POP     BC
         PUSH    BC
         LD      A,C
-        CALL    C596B
+        CALL    C596B                   ; disable DCD interrupt
         EI
         JP      (IY)
 
@@ -4315,20 +4317,26 @@ J5960:  POP     IY
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C596B:  LD      D,0F7H
-J596D:  LD      HL,I.0011
-        LD      B,0FH   ; 15 
+C596B:  LD      D,0F7H                  ; DCD IE disabled
+J596D:  LD      HL,15+2
+        LD      B,15
         JP      C5130
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
 ?5975:  CALL    C54C5
         JR      NC,J597F
-        CALL    C598A
+        CALL    C598A                   ; enable Break/Abort interrupts
         EI
         RET
+
 J597F:  POP     IY
         POP     BC
         PUSH    BC
         LD      A,C
-        CALL    C598A
+        CALL    C598A                   ; enable Break/Abort interrupts
         EI
         JP      (IY)
 
@@ -4336,18 +4344,23 @@ J597F:  POP     IY
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C598A:  LD      D,80H
+C598A:  LD      D,80H                   ; Break/Abort IE
         JR      J594E
+
+;        Subroutine __________________________
+;           Inputs  ________________________
+;           Outputs ________________________
+
 ?598E:  CALL    C54C5
         JR      NC,J5998
-        CALL    C59A3
+        CALL    C59A3                   ; disable Break/Abort interrupts
         EI
         RET
 J5998:  POP     IY
         POP     BC
         PUSH    BC
         LD      A,C
-        CALL    C59A3
+        CALL    C59A3                   ; disable Break/Abort interrupts
         EI
         JP      (IY)
 
@@ -4355,7 +4368,7 @@ J5998:  POP     IY
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C59A3:  LD      D,7FH
+C59A3:  LD      D,7FH                   ; Break/Abort IE disabled
         JR      J596D
 
 ;        Subroutine get timer i/o port
@@ -4364,9 +4377,9 @@ C59A3:  LD      D,7FH
 
 C59A7:  OR      A
         JR      Z,J59AF
-        LD      A,(D$6042)
+        LD      A,(D$6042)              ; i8253 timer 1 register
         JR      J59B2
-J59AF:  LD      A,(D$6041)
+J59AF:  LD      A,(D$6041)              ; i8253 timer 0 register
 J59B2:  LD      C,A
         RET
 
@@ -4423,7 +4436,7 @@ J59F9:  LD      (D.6022),HL
         JR      Z,J5A1E
         PUSH    BC
         LD      HL,(D.601E)
-        LD      DE,I.000F
+        LD      DE,15
         OR      A
         SBC     HL,DE
         CALL    C,C528D
@@ -4441,7 +4454,7 @@ C5A21:  CALL    C5469
         PUSH    DE
         LD      HL,(D.6020)
         LD      A,(HL)
-        LD      DE,I.00FE
+        LD      DE,00FEH
         ADD     HL,DE
         LD      E,(HL)
         LD      HL,(D.6020)
@@ -4450,11 +4463,11 @@ C5A21:  CALL    C5469
         LD      HL,(D.601E)
         DEC     HL
         LD      (D.601E),HL
-        LD      H,00H
+        LD      H,0
         LD      L,E
         POP     DE
         RET
-J5A46:  LD      HL,I.0001
+J5A46:  LD      HL,1
         RET
 
 I5A4A:  DEFB    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
