@@ -6071,12 +6071,12 @@ T63BA:	DEFW	C63F4-C63F4
         DEFW	0FFFFH
 
 
-;	Subroutine	__________________________
+;	Subroutine	RDSLT MSXDOS
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C63F4:	CALL	C64C2
-R0003:	JP	M,J6404
+C63F4:	CALL	C64C2                   ; calculate masks
+R0003:	JP	M,J6404                 ; expanded slot, handle
         IN	A,(0A8H)
         LD	D,A
         AND	C
@@ -6085,22 +6085,22 @@ R0003:	JP	M,J6404
         LD	A,E
         RET
 
-J6404:	CALL	C6511
-R0013:	JP	Z,J651E
+J6404:	CALL	C6511                   ; check if helper routines are hit by secundair slot change
+R0013:	JP	Z,J651E                 ; yep, handle it differently
         PUSH	HL
-R0017:	CALL	C64E7
+R0017:	CALL	C64E7                   ; change secundairy slot register with helper routine
         EX	(SP),HL
         PUSH	BC
-R001C:	CALL	C63F4
+R001C:	CALL	C63F4                   ; RDSLT on primairy slot
         JR	J6436
 
-;	Subroutine	__________________________
+;	Subroutine	WRSLT MSXDOS
 ;	Inputs		________________________
 ;	Outputs		________________________
 
 C6415:	PUSH	DE
-R0022:	CALL	C64C2
-R0025:	JP	M,J6425
+R0022:	CALL	C64C2                   ; calculate masks
+R0025:	JP	M,J6425                 ; expanded slot, handle
         POP	DE
         IN	A,(0A8H)
         LD	D,A
@@ -6108,15 +6108,15 @@ R0025:	JP	M,J6425
         OR	B
         JP	WRPRIM
 
-J6425:	CALL	C6511
-R0034:	JP	Z,J6524
+J6425:	CALL	C6511                   ; check if helper routines are hit by secundair slot change
+R0034:	JP	Z,J6524                 ; yep, handle it differently
         EX	(SP),HL
         PUSH	HL
-R0039:	CALL	C64E7
+R0039:	CALL	C64E7                   ; change secundairy slot register with helper routine
         POP	DE
         EX	(SP),HL
         PUSH	BC
-R003F:	CALL	C6415
+R003F:	CALL	C6415                   ; WRSLT on primairy slot
 J6436:	POP	BC
         EX	(SP),HL
         PUSH	AF
@@ -6127,6 +6127,10 @@ J6436:	POP	BC
         POP	AF
         POP	HL
         RET
+
+;	Subroutine	CALLF MSXDOS
+;	Inputs		________________________
+;	Outputs		________________________
 
 C6443:	EX	(SP),HL
         PUSH	AF
@@ -6145,7 +6149,7 @@ C6443:	EX	(SP),HL
         POP	AF
         EX	(SP),HL
 
-;	Subroutine	__________________________
+;	Subroutine	CALSLT MSXDOS
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -6155,8 +6159,8 @@ C6455:	EXX
         POP	AF
         PUSH	IX
         POP	HL
-R0069:	CALL	C64C2
-R006C:	JP	M,J646C
+R0069:	CALL	C64C2                   ; calculate masks
+R006C:	JP	M,J646C                 ; expanded slot, handle
         IN	A,(0A8H)
         PUSH	AF
         AND	C
@@ -6164,9 +6168,9 @@ R006C:	JP	M,J646C
         EXX
         JP	CLPRIM
 
-J646C:	CALL	C6511
-R007B:	JP	Z,J652C
-R007E:	CALL	C64E7
+J646C:	CALL	C6511                   ; check if helper routines are hit by secundair slot change
+R007B:	JP	Z,J652C                 ; yep, handle it differently
+R007E:	CALL	C64E7                   ; change secundairy slot register with helper routine
         PUSH	AF
         POP	IY
         PUSH	HL
@@ -6182,7 +6186,7 @@ R007E:	CALL	C64E7
         PUSH	HL
         EX	AF,AF'
         EXX
-R0094:	CALL	C6455
+R0094:	CALL	C6455   	        ; CALSLT on primairy slot
         EXX
         EX	AF,AF'
         POP	HL
@@ -6198,18 +6202,22 @@ R0094:	CALL	C6455
         EXX
         RET
 
-J649C:	CALL	C64C2
-R00AB:	JP	M,J64A9
+;	Subroutine	ENASLT MSXDOS
+;	Inputs		________________________
+;	Outputs		________________________
+
+J649C:	CALL	C64C2                   ; calculate masks
+R00AB:	JP	M,J64A9                 ; expanded slot, handle
 C64A2:	IN	A,(0A8H)
         AND	C
         OR	B
         OUT	(0A8H),A
         RET
 
-J64A9:	CALL	C6511
-R00B8:	JP	Z,C6541
+J64A9:	CALL	C6511                   ; check if helper routines are hit by secundair slot change
+R00B8:	JP	Z,C6541                 ; yep, handle it differently
 C64AF:	PUSH	HL
-R00BC:	CALL	C64E7
+R00BC:	CALL	C64E7                   ; change secundairy slot register with helper routine
         LD	C,A
         LD	B,00H
         LD	A,L
@@ -6220,9 +6228,9 @@ R00BC:	CALL	C64E7
         LD	(HL),A
         POP	HL
         LD	A,C
-        JR	J649C
+        JR	J649C                   ; ENASLT on primairy slot
 
-;	Subroutine	__________________________
+;	Subroutine	calculate masks
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -6257,7 +6265,7 @@ J64DD:	ADD	A,55H
         AND	A
         RET
 
-;	Subroutine	__________________________
+;	Subroutine	change secundairy slot register with helper routine
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -6289,12 +6297,12 @@ J64FF:	ADD	A,55H
         CPL
         LD	H,A
         POP	AF
-R0116:	CALL	C655C		; save and change secundair slotregister
+R0116:	CALL	C655C		        ; save and change secundair slotregister
         POP	AF
         AND	03H
         RET
 
-;	Subroutine	__________________________
+;	Subroutine	check if helper routines are hit by secundair slot change
 ;	Inputs		________________________
 ;	Outputs		________________________
 
@@ -6302,19 +6310,19 @@ C6511:	LD	C,A
         LD	A,E
         CP	03H
         LD	A,C
-        RET	NZ		; not page 0, quit
+        RET	NZ		        ; not page 0, quit
         LD	A,(RAMAD0)
-        AND	E		; primary slot of the helper routines
-        CP	B		; same as requested ?
+        AND	E		        ; primary slot of the helper routines
+        CP	B		        ; same as requested ?
         LD	A,C
         RET
 
-J651E:	CALL	C6549
+J651E:	CALL	C6549                   ; Change secundairy slot register
         LD	E,(HL)
         JR	C6529
 
 J6524:	POP	DE
-R0131:	CALL	C6549
+R0131:	CALL	C6549                   ; Change secundairy slot register
         LD	(HL),E
 
 ;	Subroutine	__________________________
@@ -6322,9 +6330,9 @@ R0131:	CALL	C6549
 ;	Outputs		________________________
 
 C6529:	LD	A,B
-        JR	J6557
+        JR	J6557                   ; Restore secundairy slot register
 
-J652C:	CALL	C6541
+J652C:	CALL	C6541                   ; Change secundairy slot register and update SLTTBL
         PUSH	HL
         PUSH	BC
         EX	AF,AF'
@@ -6333,7 +6341,7 @@ J652C:	CALL	C6541
         EXX
         EX	AF,AF'
         POP	BC
-R0145:	CALL	C6529
+R0145:	CALL	C6529                   ; restore secundairy slot register
         POP	HL
         LD	(HL),B
         EX	AF,AF'
@@ -6344,14 +6352,14 @@ R0145:	CALL	C6529
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C6541:	CALL	C6549
+C6541:	CALL	C6549                   ; Change secundairy slot register
         LD	HL,SLTTBL
         LD	(HL),D
         RET
 
-;	Subroutine	__________________________
+;	Subroutine	Change secundairy slot register
 ;	Inputs		________________________
-;	Outputs		________________________
+;	Outputs		B = old secundairy slot register value
 
 C6549:	RRCA
         RRCA

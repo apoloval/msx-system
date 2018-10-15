@@ -57,7 +57,7 @@ I600F   EQU     600FH   ; unknown use, looks like 2 hooks
 D601B   EQU     601BH   ; channel open flag (b1 = channel 1, b0 = channel 0)
 D601E   EQU     601EH   ; number of characters in current receive buffer
 D6020   EQU     6020H   ; current receive buffer get pointer
-D6022   EQU     6022H   ; --SL-
+D6022   EQU     6022H   ; start of current receive buffer
 D6024   EQU     6024H   ; receive buffer channel 0 put pointer
 D6026   EQU     6026H   ; number of characters in receive buffer channel 0
 D6028   EQU     6028H   ; receive buffer channel 0 get pointer
@@ -66,13 +66,13 @@ D602C   EQU     602CH   ; number of characters in receive buffer channel 1
 D602E   EQU     602EH   ; receive buffer channel 1 get pointer
 D6030   EQU     6030H   ; current channel for operation
 D6031   EQU     6031H   ; current channel
-D6032   EQU     6032H   ; CTS handshake (H/N)
-D6033   EQU     6033H   ; XON/XOFF handshake (X/N)
-D6034   EQU     6034H   ; character length in bits
-D6035   EQU     6035H   ; parity style (E/O/N/I)
-D6036   EQU     6036H   ; number of stopbits
-D6037   EQU     6037H   ; receive baudrate identifier
-D6038   EQU     6038H   ; send baudrate identifier
+D6032   EQU     6032H   ; temporary stored CTS handshake (H/N)
+D6033   EQU     6033H   ; temporary stored XON/XOFF handshake (X/N)
+D6034   EQU     6034H   ; temporary stored character length in bits
+D6035   EQU     6035H   ; temporary stored parity style (E/O/N/I)
+D6036   EQU     6036H   ; temporary stored number of stopbits
+D6037   EQU     6037H   ; temporary stored receive baudrate identifier
+D6038   EQU     6038H   ; temporary stored send baudrate identifier
         IFDEF   ROMVER
         ELSE
 D603A   EQU     603AH   ; SLTATR entry
@@ -83,11 +83,11 @@ D603F   EQU     603FH   ; Z8530 channel A command register, I/O port 2AH/3AH
 D6041   EQU     6041H   ; i8253 timer 0 register, I/O port 2CH/3CH
 D6042   EQU     6042H   ; i8253 timer 1 register, I/O port 2DH/3DH
 D6044   EQU     6044H   ; i8253 mode register, I/O port 2FH/3FH
-I6045   EQU     6045H   ; channel 0 settings
-I6046   EQU     6046H   ; channel 0 ? settings (b5 = RTS/CTS, b2 = high water mark notified, b1 = XOFF in stream, b0 = XON/XOFF)
+I6045   EQU     6045H   ; channel 0 character mask
+I6046   EQU     6046H   ; channel 0 other flags (b5 = RTS/CTS, b4 = XOFF received, b3 = ?, b2 = high water mark notified, b1 = XOFF in stream, b0 = XON/XOFF)
 I6047   EQU     6047H   ; channel A register values
-I6059   EQU     6059H   ; channel 1 settings
-I605A   EQU     605AH   ; channel 1 ? settings
+I6059   EQU     6059H   ; channel 1 character mask
+I605A   EQU     605AH   ; channel 1 other flags (b5 = RTS/CTS, b4 = XOFF received, b3 = ?, b2 = high water mark notified, b1 = XOFF in stream, b0 = XON/XOFF)
 I605B   EQU     605BH   ; channel B register values
 I606D   EQU     606DH   ; receive buffer channel 0
 I6269   EQU     6269H   ; receive buffer channel 1
@@ -98,16 +98,25 @@ DAC     EQU     0F7F6H  ;
 NULBUF  EQU     0F862H  ;
 PTRFIL  EQU     0F864H  ;
 FNKSTR  EQU     0F87FH  ;
-MEXBIH  EQU     0FB07H  ;
-OLDSTT  EQU     0FB0CH  ;
-J.FB14  EQU     0FB14H  ; old H.NEWST hook
-D.FB19  EQU     0FB19H  ; b7-b4 trapnumber, b3-b0 rs232 channel number
-D.FB1A  EQU     0FB1AH  ; ? flag channel 0, b7 = buffer overflow, b6 = timeout, b5 = framing, b4 = overrun, b3 = parity, b2 = control break
-D.FB1B  EQU     0FB1BH  ; ? flag channel 1
-D.FB1C  EQU     0FB1CH  ; ? flag channel 0, b4 = break detected, b3 = channel open,
-D.FB1D  EQU     0FB1DH  ; ? flag channel 1, b3 = channel open,
-D.FB1E  EQU     0FB1EH  ; mode flag channel 0
-D.FB1F  EQU     0FB1FH  ; mode flag channel 1
+
+MEXBIH  EQU     0FB07H
+OLDSTT  EQU     0FB0CH
+
+DFB08   EQU     0FB08H  ; timeout count channel 0
+DFB09   EQU     0FB09H  ; timeout count channel 1
+DFB0A   EQU     0FB0AH  ; FCB channel 0
+DFB0C   EQU     0FB0CH  ; FCB channel 1
+DFB0E   EQU     0FB0EH  ; buffer size
+DFB0F   EQU     0FB0FH  ; old EXTBIO
+JFB14   EQU     0FB14H  ; old H.NEWST hook
+DFB19   EQU     0FB19H  ; b7-b4 trapnumber, b3-b0 rs232 channel number
+DFB1A   EQU     0FB1AH  ; error flags channel 0, b7 = buffer overflow, b6 = timeout, b5 = framing, b4 = overrun, b3 = parity, b2 = control break
+DFB1B   EQU     0FB1BH  ; error flags channel 1, b7 = buffer overflow, b6 = timeout, b5 = framing, b4 = overrun, b3 = parity, b2 = control break
+DFB1C   EQU     0FB1CH  ; status flags channel 0, b7 = in SO mode (receive) b4 = break detected, b3 = channel open, b0 = in SO mode (send)
+DFB1D   EQU     0FB1DH  ; status flags channel 1, b7 = in SO mode (receive) b4 = break detected, b3 = channel open, b0 = in SO mode (send)
+DFB1E   EQU     0FB1EH  ; mode flags channel 0, b4 = SI/SO protocol, b3 = auto LF (receive), b2 = auto LF (send)
+DFB1F   EQU     0FB1FH  ; mode flags channel 1, b4 = SI/SO protocol, b3 = auto LF (receive), b2 = auto LF (send)
+
 HOKVLD  EQU     0FB20H
 ONGSBF  EQU     0FBD8H
 TRPTBL  EQU     0FC4CH
@@ -120,7 +129,7 @@ H.NEWS  EQU     0FF3EH
 EXTBIO  EQU     0FFCAH
 DISINT  EQU     0FFCFH
 
-D.4000: DEFB    "AB"
+D4000:  DEFB    "AB"
         DEFW    J409F           ; INIT
         DEFW    J4161           ; STATEMENT
         DEFW    J424E           ; DEVICE
@@ -248,17 +257,17 @@ J407B:  CALL    C4565
 ;           Outputs ________________________
 
 J4094:  LD      HL,0
-        CALL    C4EDB
-        RET     Z
-        CALL    C441F
+        CALL    C4EDB                   ; get number of characters in receive buffer (with backup character) current channel
+        RET     Z                       ; empty buffer, quit
+        CALL    C441F                   ; check if EOF
         RET
 
-;
-; CARTRIDGE INIT
-;
+;        Subroutine CARTRIDGE INIT
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J409F:  CALL    C5518                   ; test at which port
-        CALL    C54DD
+        CALL    C54DD                   ; initialize hardware
         LD      IY,I4154
         CALL    C4D7C                   ; initialize RS232 port
         LD      A,1
@@ -270,14 +279,14 @@ J409F:  CALL    C5518                   ; test at which port
         JR      NZ,J40CB                ; yep,
         SET     0,(HL)
         LD      HL,EXTBIO
-        LD      B,05H
+        LD      B,5
 J40C6:  LD      (HL),0C9H
         INC     HL
         DJNZ    J40C6                   ; initialize EXTBIO
 J40CB:  XOR     A
         LD      DE,0801H
         CALL    EXTBIO                  ; get rs232 channelnumber for my first channel
-        LD      HL,D.FB19
+        LD      HL,DFB19
         LD      (HL),A
         XOR     A
         LD      DE,0001H
@@ -288,12 +297,12 @@ J40CB:  XOR     A
         ADD     A,A
         OR      (HL)
         LD      (HL),A
-        LD      DE,OLDSTT+3
+        LD      DE,DFB0F
         DI
         LD      HL,EXTBIO
         LD      BC,5
         LDIR
-        LD      DE,J.FB14
+        LD      DE,JFB14
         LD      HL,H.NEWS
         LD      BC,5
         LDIR
@@ -317,12 +326,16 @@ J40CB:  XOR     A
         EI
         RET
 
+;        Subroutine DISINT/ENAINT
+;           Inputs  ________________________
+;           Outputs ________________________
+
 I412C:  PUSH    DE
-        LD      E,02H
+        LD      E,2
         JR      J4134
         PUSH    DE
-        LD      E,03H
-J4134:  LD      D,00H
+        LD      E,3
+J4134:  LD      D,0
         PUSH    IX
         PUSH    IY
         CALL    EXTBIO
@@ -332,12 +345,12 @@ J4134:  LD      D,00H
         POP     DE
         RET
 
-;        Subroutine __________________________
+;        Subroutine clear status flags and clear receive buffer
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C4144:  XOR     A
-        CALL    C50B4                   ; set FB1C current channel
+        CALL    C50B4                   ; set status flags current channel
 ;
 
 ;        Subroutine clear receive buffer channel 0
@@ -355,25 +368,27 @@ C4148:  PUSH    BC
         EI
         RET
 
-I4154: DEFB    "8N1XHNNN"
+;        Data Default com settings
+
+I4154:  DEFB    "8N1XHNNN"
         DEFW    1200
         DEFW    1200
         DEFB    0
 
-;
-; STATEMENT
-;
+;        Subroutine STATEMENT
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J4161:  EI
         PUSH    HL
         POP     IX
         LD      DE,I41B0
-        CALL    C416E
+        CALL    C416E                   ; search statement
         RET     C
         PUSH    DE
         RET
 
-;        Subroutine __________________________
+;        Subroutine search statement
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -383,7 +398,7 @@ J4170:  LD      HL,PROCNM
         LD      A,(DE)
         INC     A
         JR      Z,J4189
-        CALL    C418D
+        CALL    C418D                   ; compare string
         JR      Z,J4181
         INC     DE
         INC     DE
@@ -401,7 +416,7 @@ J418A:  POP     HL
         POP     BC
         RET
 
-;        Subroutine __________________________
+;        Subroutine compare string
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -430,6 +445,8 @@ J41A6:  LD      A,(HL)
 J41AD:  LD      A,L
         OR      H
         RET
+
+;        Data statements + routine
 
 I41B0:  DEFB    "COMINI",0
         DEFW    J4632
@@ -464,19 +481,23 @@ I41B0:  DEFB    "COMINI",0
         IFDEF   ROMVER
         ELSE
 
+;        Data return to DOS
+
 I4213:  DEFB    ":"
         DEFB    "_SYSTEM"
         DEFB    0
 
-; DOS
+;        Subroutine DOS statement handler
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J421C:  CALL    C5754
         DI
         LD      HL,0
-        LD      (D.4000),HL             ; no ROM anymore
+        LD      (D4000),HL              ; no ROM anymore
         LD      HL,(D603A)              ; SLTATR
         LD      (HL),0                  ; no STATEMENT/DEVICE anymore
-        LD      HL,OLDSTT+3
+        LD      HL,DFB0F
         LD      DE,EXTBIO
         LD      BC,5
         LDIR                            ; restore EXTBIO
@@ -492,9 +513,10 @@ J421C:  CALL    C5754
         RET
 
         ENDIF
-;
-; DEVICE
-;
+
+;        Subroutine DEVICE
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J424E:  EI
         CP      0FFH			; device inquiry ?
@@ -523,7 +545,7 @@ J4270:  SUB     "0"
         JR      NC,J4292
         PUSH    BC
         PUSH    AF
-        LD      A,(D.FB19)
+        LD      A,(DFB19)
         AND     0FH                     ; RS232 channel number
         LD      B,A
         POP     AF
@@ -572,6 +594,8 @@ J42B7:  LD      A,(HL)
         EX      (SP),HL
         RET
 
+;        Data function table BASIC device
+
 I42BE:  DEFW    C42D2                   ; BASIC device open
         DEFW    C4338                   ; BASIC device close
         DEFW    C451E                   ; BASIC device random I/O
@@ -580,27 +604,27 @@ I42BE:  DEFW    C42D2                   ; BASIC device open
         DEFW    C43B9                   ; BASIC device loc function
         DEFW    C43F1                   ; BASIC device lof function
         DEFW    C440E                   ; BASIC device eof function
-        DEFW    C453C                   ; BASIC device fpos function
+        DEFW    C453C                   ; BASIC device fpos function, Illegal function call error (BASIC)
         DEFW    C443F                   ; BASIC device backup a character
 
 ;        Subroutine BASIC device open
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C42D2:  LD      C,7FH
+C42D2:  LD      C,127
         CALL    C42E4                   ; RS232.OPEN
-        JR      C,J42DD
+        JR      C,J42DD                 ; error,
         LD      (PTRFIL),HL
         RET
 J42DD:  DEC     A
-        JP      Z,J4512
-        JP      J4524
+        JP      Z,J4512                 ; illegal open mode, Bad filename error (BASIC)
+        JP      J4524                   ; File already open error (BASIC)
 
 ;        Subroutine RS232.OPEN
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C42E4:  CALL    C50EA                   ; get FB1C current channel
+C42E4:  CALL    C50EA                   ; get status flags current channel
         OR      A
         BIT     3,A                     ; channel already open ?
         LD      A,2
@@ -617,24 +641,24 @@ C42E4:  CALL    C50EA                   ; get FB1C current channel
         LD      A,(D6031)
         OR      A                       ; current channel 0 ?
         JR      Z,J4303                 ; yep,
-        LD      (OLDSTT+0),HL           ; FCB channel 1
+        LD      (DFB0C),HL              ; FCB channel 1
         JR      J4306
-J4303:  LD      (MEXBIH+3),HL           ; FCB channel 0
+J4303:  LD      (DFB0A),HL              ; FCB channel 0
 J4306:  LD      A,C
-        LD      (OLDSTT+2),A
+        LD      (DFB0E),A               ; buffer size
         LD      (HL),E                  ; open mode
         XOR     A
         INC     HL
         INC     HL
-        LD      (HL),A
+        LD      (HL),A                  ; clear error flags backup character
         INC     HL
         LD      (HL),A                  ; no backup character
         INC     HL
         INC     HL
         INC     HL
         LD      (HL),A
-        CALL    C4144
-        CALL    C509B                   ; get FB1C pointer current channel
+        CALL    C4144                   ; clear status flags and clear receive buffer
+        CALL    C509B                   ; get status flags pointer current channel
         SET     3,(HL)                  ; flag channel open
         LD      HL,D601B
         LD      A,(D6031)
@@ -668,16 +692,11 @@ C4338:  PUSH    BC
         LD      A,1AH
         CALL    C4FF1                   ; RS232.SNDCHR
 J434A:  DI
-
-;        Subroutine __________________________
-;           Inputs  ________________________
-;           Outputs ________________________
-
-C434B:  CALL    C4F2C                   ; disable RTS current channel
+        CALL    C4F2C                   ; disable RTS current channel
         LD      A,(D6031)               ; current channel
-        CALL    C5768                   ; clear channel open flag
+        CALL    C5768                   ; disable interrupts and clear channel open flag
         EI
-        CALL    C509B                   ; get FB1C pointer current channel
+        CALL    C509B                   ; get status flags pointer current channel
         RES     3,(HL)                  ; flag channel closed
         POP     HL
         POP     DE
@@ -692,8 +711,8 @@ C434B:  CALL    C4F2C                   ; disable RTS current channel
 C435F:  LD      A,C
         CALL    C4FF1                   ; RS232.SNDCHR
         EI
-        JP      C,J4548
-        JP      Z,J4548
+        JP      C,J4548                 ; other error, Device I/O error (BASIC)
+        JP      Z,J4548                 ; timeout error, Device I/O error (BASIC)
         RET
 
 ;        Subroutine BASIC device sequential input
@@ -701,7 +720,7 @@ C435F:  LD      A,C
 ;           Outputs ________________________
 
 C436B:  CALL    C4372                   ; RS232.GETCHR
-        JP      M,J4548
+        JP      M,J4548                 ; Device I/O error (BASIC)
         RET
 
 ;        Subroutine RS232.GETCHR
@@ -714,15 +733,15 @@ C4372:  PUSH    HL
         LD      C,(HL)                  ; backup character
         LD      (HL),00H                ; clear backup character
         DEC     HL
-        LD      A,(HL)
-        CALL    C50D8                   ; set FB1A current channel
+        LD      A,(HL)                  ; errorstatus of backup character
+        CALL    C50D8                   ; set error flags current channel
         LD      (HL),00H
         INC     HL
-        AND     A
-        JR      NZ,J43AF
+        AND     A                       ; any error ?
+        JR      NZ,J43AF                ; yep,
         LD      A,C
-        AND     A
-        JR      NZ,J439B
+        AND     A                       ; backup character ?
+        JR      NZ,J439B                ; yep,
         PUSH    HL
         CALL    C4EF8
         LD      C,A
@@ -748,6 +767,7 @@ J439B:  PUSH    HL
         JR      J43B6
 J43AF:  OR      80H
         JR      J43B5
+
 J43B3:  XOR     A
         INC     A
 J43B5:  LD      A,C
@@ -762,11 +782,11 @@ J43B6:  POP     BC
 C43B9:  PUSH    HL
         PUSH    AF
         LD      A,(D6031)               ; current channel
-        CALL    C5460
+        CALL    C5460                   ; get number of characters in receive buffer
         POP     AF
 J43C2:  LD      (DAC+2),HL
         LD      HL,VALTYP
-        LD      (HL),02H        ; 2 
+        LD      (HL),2
         POP     HL
         RET
 
@@ -782,17 +802,17 @@ C43CC:  PUSH    AF
         JR      NZ,J43E9                ; nope,
         CALL    C444F                   ; get backup character of current channel
         JR      Z,J43E1                 ; no backup character,
-        SUB     1AH
-        JR      Z,J43EC
-        LD      A,01H   ; 1 
+        SUB     1AH                     ; backup character EOF ?
+        JR      Z,J43EC                 ; yep, return 0
+        LD      A,1                     ; extra character
 J43E1:  PUSH    BC
-        CALL    C445E
+        CALL    C445E                   ; get number of characters in receive buffer current channel (until EOF)
         ADD     A,B
         POP     BC
         JR      J43EC
-J43E9:  CALL    C4EDB
+J43E9:  CALL    C4EDB                   ; get number of characters in receive buffer (with backup character) current channel
 J43EC:  LD      L,A
-        LD      H,00H
+        LD      H,0
         POP     AF
         RET
 
@@ -803,9 +823,9 @@ J43EC:  LD      L,A
 C43F1:  PUSH    HL
         PUSH    AF
         LD      A,(D6031)               ; current channel
-        CALL    C546F
+        CALL    C546F                   ; get free space in receive buffer
         POP     AF
-J43FA:  JR      J43C2
+J43FA:  JR      J43C2                   ; return value
 
 ;        Subroutine RS232.LOF
 ;           Inputs  ________________________
@@ -815,7 +835,7 @@ J43FC:  PUSH    AF
         PUSH    DE
         EI
         LD      A,(D6031)               ; current channel
-        CALL    C546F
+        CALL    C546F                   ; get free space in receive buffer
         CALL    C444F                   ; get backup character of current channel
         JR      NZ,J440B
         INC     HL                      ; no backup character,
@@ -828,14 +848,14 @@ J440B:  POP     DE
 ;           Outputs ________________________
 
 C440E:  PUSH    HL
-        CALL    C4EDB
+        CALL    C4EDB                   ; get number of characters in receive buffer (with backup character) current channel
         LD      HL,0
-        JR      Z,J43FA
-        CALL    C441F
-        JP      M,J4548
-        JR      J43FA
+        JR      Z,J43FA                 ; empty buffer, return not eof
+        CALL    C441F                   ; check if EOF
+        JP      M,J4548                 ; error, Device I/O error (BASIC)
+        JR      J43FA                   ; return eof
 
-;        Subroutine __________________________
+;        Subroutine check if EOF
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -843,18 +863,18 @@ C441F:  PUSH    BC
         LD      B,A
         EI
         CALL    C4372                   ; RS232.GETCHR
-        JP      M,J443C
+        JP      M,J443C                 ; error, quit
         PUSH    BC
         LD      C,A
         CALL    C443F                   ; RS232.BACKUP
         POP     BC
-        CP      1AH
-        JR      Z,J4438
+        CP      1AH                     ; backup character EOF ?
+        JR      Z,J4438                 ; yep, return EOF
         XOR     A
         LD      L,A
         LD      H,A
         INC     A
-        JR      J443C
+        JR      J443C                   ; return not EOF
 J4438:  LD      HL,0FFFFH
         SCF
 J443C:  LD      A,B
@@ -870,9 +890,9 @@ C443F:  PUSH    HL
         LD      (HL),C                  ; save backup character
         PUSH    AF
         DEC     HL
-        CALL    C5106                   ; get FB1A current channel
+        CALL    C5106                   ; get errorflags current channel
         AND     70H                     ; clear buffer overflow, parity, control break error
-        LD      (HL),A
+        LD      (HL),A                  ; save error status backup character
         POP     AF
         POP     HL
         RET
@@ -898,16 +918,16 @@ C4457:  CALL    C508A                   ; get FCB pointer of current channel
         INC     HL
         RET
 
-;        Subroutine __________________________
+;        Subroutine get number of characters in receive buffer current channel (until EOF)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C445E:  PUSH    AF
         PUSH    DE
         PUSH    HL
-        LD      B,00H
-        CALL    C4EEA
-        JR      Z,J448F
+        LD      B,0
+        CALL    C4EEA                   ; get number of characters in receive buffer current channel
+        JR      Z,J448F                 ; receive buffer empty, quit
         LD      C,A
         LD      A,(D6031)
         OR      A                       ; current channel 0 ?
@@ -918,11 +938,11 @@ C445E:  PUSH    AF
 J4477:  LD      DE,I606D
         LD      HL,(D6028)              ; receive buffer channel 0 get pointer
 J447D:  LD      A,(HL)
-        CP      1AH
-        JR      Z,J448F
+        CP      1AH                     ; EOF character ?
+        JR      Z,J448F                 ; yep, quit
         DI
-        LD      (D6022),DE
-        CALL    C54AF
+        LD      (D6022),DE              ; start of current receive buffer
+        CALL    C54AF                   ; pointer current receive buffer to next (ringbuffer)
         EI
         INC     B
         DEC     C
@@ -932,9 +952,9 @@ J448F:  POP     HL
         POP     AF
         RET
 
-;
-; EXTBIO handler
-;
+;        Subroutine EXTBIO handler
+;           Inputs  ________________________
+;           Outputs ________________________
 
 I4493:  EI
         PUSH    AF
@@ -968,10 +988,10 @@ J44BB:  POP     AF
         PUSH    AF
         JP      J44FD                   ; pass control to other EXTBIO
 
-J44C2:  CALL    C5700
+J44C2:  CALL    C5700                   ; notify interrupts are being disabled
         JP      J44FD                   ; pass control to other EXTBIO
 
-J44C8:  CALL    C56D8
+J44C8:  CALL    C56D8                   ; notify interrupts are being enabled
         JP      J44FD                   ; pass control to other EXTBIO
 
 ; EXTBIO system exclusive
@@ -979,7 +999,7 @@ J44C8:  CALL    C56D8
 J44CE:  LD      A,E
         AND     A                       ; Build slot address table ?
         JR      NZ,J44DF                ; no, unknown to me, let other EXTBIO handle it
-        CALL    C4501                   ; my bios table
+        CALL    C4501                   ; write slotid + bios address
         LD      A,0DH                   ; makerid = PHILIPS
         CALL    C454F                   ; write interslot byte
         LD      A,00H                   ; reserved byte
@@ -988,6 +1008,9 @@ J44DF:  JR      J44FD                   ; pass control to other EXTBIO
 
 J44E1:  CP      08H                     ; RS232 ?
         JR      NZ,J44FD                ; no, unknown to me, let other EXTBIO handle it
+
+; EXTBIO system RS232
+
         LD      A,E
         AND     A                       ; Build slot address table ?
         JR      Z,J44EF                 ; yep, handle it
@@ -995,7 +1018,7 @@ J44E1:  CP      08H                     ; RS232 ?
         JR      Z,J44F9                 ; yep, handle it
         JR      J44FD                   ; unknown to me, let other EXTBIO handle it
 
-J44EF:  CALL    C4501                   ; my bios table
+J44EF:  CALL    C4501                   ; write slotid + bios address
         LD      A,00H                   ; reserved byte
         CALL    C454F                   ; write interslot byte
         JR      J44FD                   ; pass control to other EXTBIO
@@ -1004,9 +1027,9 @@ J44F9:  POP     AF
         ADD     A,2                     ; I have two channels
         PUSH    AF
 J44FD:  POP     AF
-        JP      OLDSTT+3
+        JP      DFB0F
 
-;        Subroutine __________________________
+;        Subroutine write slotid + bios address
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -1017,6 +1040,10 @@ C4501:  CALL    C571F                   ; get slotid at address
         LD      A,HIGH I4010
         CALL    C454F                   ; write interslot byte
         RET
+
+;        Subroutine Bad filename error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J4512:  LD      IX,DERBFN
         JR      J454C
@@ -1035,23 +1062,51 @@ J4512:  LD      IX,DERBFN
 ?451E:  LD      IX,DERSOO
         JR      J454C
 
+;        Subroutine File already open error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
+
 J4524:  LD      IX,DERFAO
         JR      J454C
+
+;        Subroutine File not open error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J452A:  LD      IX,DERFNO
         JR      J454C
 
+;        Subroutine Undefined line number error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
+
 J4530:  LD      IX,USERR
         JR      J454C
+
+;        Subroutine Syntax error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J4536:  LD      IX,SNERR
         JR      J454C
 
+;        Subroutine Illegal function call error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
+
 J453C:  LD      IX,FCERR
         JR      J454C
 
+;        Subroutine Type mismatch error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
+
 J4542:  LD      IX,TMERR
         JR      J454C
+
+;        Subroutine Device I/O error (BASIC)
+;           Inputs  ________________________
+;           Outputs ________________________
 
 J4548:  LD      IX,DIOERR
 J454C:  JP      C4621                   ; interslot call BIOS/BASIC routine
@@ -1155,7 +1210,7 @@ J45BD:  POP     AF
 C45BF:  LD      A,(HL)
         EX      (SP),HL
         CP      (HL)
-        JP      NZ,J4536
+        JP      NZ,J4536                ; Syntax error (BASIC)
         INC     HL
         EX      (SP),HL
 
@@ -1257,7 +1312,7 @@ C4626:  PUSH    IY
 
 J4632:  CALL    C4CBD
         CALL    C4CB7                   ; channel open ?
-        JP      NZ,J4524                ; yep, error
+        JP      NZ,J4524                ; yep, File already open error (BASIC)
         CALL    C4FA8                   ; disable receiver interrupts of current channel
         LD      IY,BUF+9
         PUSH    BC
@@ -1342,7 +1397,7 @@ J46C3:  CALL    C45BF
         DEC     HL
 J46D6:  CALL    C45C7
 J46D9:  CALL    C4D7C                   ; initialize RS232 port
-        JP      C,J453C
+        JP      C,J453C                 ; error, Illegal function call error (BASIC)
         CALL    C4CB7                   ; channel open ?
         CALL    NZ,C4F9A                ; yep, enable receiver interrupts of current channel
         AND     A
@@ -1355,7 +1410,7 @@ J46E7:  CALL    C4CBD
         CALL    C45BF
         DEFB    ","
         CALL    C4CB7                   ; channel open ?
-        JP      Z,J452A                 ; nope, error
+        JP      Z,J452A                 ; nope, File not open error (BASIC)
         CALL    C45E5
         CALL    C45BF
         DEFB    ")"
@@ -1371,7 +1426,7 @@ J4704:  CALL    C4CBD
         CALL    C45BF
         DEFB    ","
         CALL    C4CB7                   ; channel open ?
-        JP      Z,J452A                 ; nope, error
+        JP      Z,J452A                 ; nope, File not open error (BASIC)
         CALL    C45FD
         PUSH    HL
         CALL    C4F56                   ; RS232.STAT
@@ -1388,13 +1443,13 @@ J4704:  CALL    C4CBD
 J4728:  CALL    C4CBD
         CALL    C4D30
         CALL    C4CB7                   ; channel open ?
-        JP      Z,J452A                 ; nope, error
+        JP      Z,J452A                 ; nope, File not open error (BASIC)
         LD      A,D
-        CP      2CH     ; ","
+        CP      ","
         JR      Z,J4749
         AND     A
         JR      Z,J4744
-        CP      3AH     ; ":"
+        CP      ":"
         JR      Z,J4744
         CALL    C45BF
         DEFB    ")"
@@ -1408,13 +1463,13 @@ J4753:  PUSH    HL
         LD      HL,2
         AND     A
         SBC     HL,DE
-        JP      NC,J453C
+        JP      NC,J453C                ; Illegal function call error (BASIC)
         POP     HL
         CALL    C4FB9                   ; RS232.SNDBRK
         LD      A,00H
         INC     A
         CALL    C504A
-        JP      C,J4548
+        JP      C,J4548                 ; Device I/O error (BASIC)
         AND     A
         RET
 
@@ -1431,7 +1486,7 @@ J476C:  CALL    C4CBD
         DEFB    ")"
 J477E:  LD      (BUF+7),HL
         CALL    C4CB7                   ; channel open ?
-        JP      NZ,J4524                ; yep, error
+        JP      NZ,J4524                ; yep, File already open error (BASIC)
         XOR     A
         LD      (BUF+0),A
         LD      (BUF+5),A
@@ -1846,7 +1901,7 @@ I4A1F:
 J4BC4:  CALL    C4CBD
         CALL    C4D30
         CALL    C4CB2
-        JP      C,J453C
+        JP      C,J453C                 ; Illegal function call error (BASIC)
 J4BD0:  CALL    C45BF
         DEFB    ","
 J4BD4:  CALL    C45BF
@@ -1859,7 +1914,7 @@ J4BD8:  LD      IX,M4769                ; collect linenumber
         JR      Z,J4BF0
         LD      IX,M4295                ; search linenumber
         CALL    C4621                   ; interslot call BIOS/BASIC routine
-J4BEB:  JP      NC,J4530
+J4BEB:  JP      NC,J4530                ; not found, Undefined line number error (BASIC)
         LD      E,C
 J4BEF:  LD      D,B
 J4BF0:  CALL    C4C9F
@@ -1885,7 +1940,7 @@ J4BFE:  CALL    C4CBD
         CALL    C45BF
         DEFB    ")"
 J4C10:  CALL    C4CB2
-        JP      C,J453C
+        JP      C,J453C                 ; Illegal function call error (BASIC)
         LD      IX,M632B                ; disable trap
         JR      J4C63
 
@@ -1901,7 +1956,7 @@ J4C1C:  CALL    C4CBD
         CALL    C45BF
         DEFB    ")"
 J4C2E:  CALL    C4CB2
-        JP      C,J453C
+        JP      C,J453C                 ; Illegal function call error (BASIC)
         LD      IX,M631B                ; enable trap
         JR      J4C56
 
@@ -1917,7 +1972,7 @@ J4C3A:  CALL    C4CBD
         CALL    C45BF
         DEFB    ")"
 J4C4C:  CALL    C4CB2
-        JP      C,J453C
+        JP      C,J453C                 ; Illegal function call error (BASIC)
         LD      IX,M6331                ; pause trap
 J4C56:  PUSH    HL
         PUSH    AF
@@ -1940,18 +1995,18 @@ J4C63:  PUSH    HL
 
 I4C6D:  EI
         XOR     A
-        LD      (D6031),A              ; select channel 0
-        CALL    C4EDB
+        LD      (D6031),A               ; select channel 0
+        CALL    C4EDB                   ; get number of characters in receive buffer (with backup character) current channel
         PUSH    HL
-        CALL    NZ,C4C8A
+        CALL    NZ,C4C8A                ; buffer not empty,
         POP     HL
         LD      A,1
-        LD      (D6031),A              ; select channel 1
-        CALL    C4EDB
+        LD      (D6031),A               ; select channel 1
+        CALL    C4EDB                   ; get number of characters in receive buffer (with backup character) current channel
         PUSH    HL
-        CALL    NZ,C4C8A
+        CALL    NZ,C4C8A                ; buffer not empty,
         POP     HL
-        JP      J.FB14                  ; cascade to H.NEWST
+        JP      JFB14                   ; cascade to H.NEWST
 
 
 ;        Subroutine __________________________
@@ -1979,7 +2034,7 @@ C4C8A:  CALL    C4C9F
 ;           Outputs ________________________
 
 C4C9F:  CALL    C4CB2
-        JP      C,J453C
+        JP      C,J453C                 ; Illegal function call error (BASIC)
         PUSH    BC
         LD      C,A
         ADD     A,A
@@ -2003,7 +2058,7 @@ C4CB2:  LD      A,(D6031)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C4CB7:  CALL    C50EA                   ; get FB1C current channel
+C4CB7:  CALL    C50EA                   ; get status flags current channel
         BIT     3,A                     ; channel open ?
         RET
 
@@ -2059,7 +2114,7 @@ J4CFB:  DEC     HL
         DEC     B
         DEC     B
 J4D09:  LD      E,A
-        LD      A,(D.FB19)
+        LD      A,(DFB19)
         AND     0FH                     ; RS232 channel number
         PUSH    HL
         EXX
@@ -2098,7 +2153,7 @@ C4D30:  LD      A,B
         AND     C
         INC     A
         RET     Z
-        JP      J453C
+        JP      J453C                   ; Illegal function call error (BASIC)
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
@@ -2107,29 +2162,29 @@ C4D30:  LD      A,B
 C4D3A:  PUSH    HL
         LD      HL,VALTYP
         LD      A,(HL)
-        CP      02H     ; 2 
+        CP      2
         JR      Z,J4D68
-        CP      04H     ; 4 
+        CP      4
         JR      Z,J4D58
-        CP      08H     ; 8 
-        JP      NZ,J4542
-        LD      (HL),02H        ; 2 
+        CP      8
+        JP      NZ,J4542                ; Type mismatch error (BASIC)
+        LD      (HL),2
         PUSH    DE
-        LD      A,08H   ; 8 
+        LD      A,8
         CALL    C4615
-        LD      C,08H   ; 8 
+        LD      C,8
         JR      J4D62
-J4D58:  LD      (HL),02H        ; 2 
+J4D58:  LD      (HL),2
         PUSH    DE
-        LD      A,04H   ; 4 
+        LD      A,4
         CALL    C4615
-        LD      C,04H   ; 4 
+        LD      C,4
 J4D62:  POP     DE
         LD      HL,DAC
         JR      J4D6D
 J4D68:  LD      HL,DAC+2
-        LD      C,02H   ; 2 
-J4D6D:  LD      B,00H
+        LD      C,2
+J4D6D:  LD      B,0
         LDIR
         POP     HL
         RET
@@ -2152,7 +2207,7 @@ C4D73:  CP      61H
 
 C4D7C:  LD      A,(IY+0)
         SUB     "0"
-        LD      (D6034),A              ; character length in bits
+        LD      (D6034),A               ; character length in bits
         LD      D,A
         CP      05H
         JR      C,J4DA8
@@ -2161,7 +2216,7 @@ C4D7C:  LD      A,(IY+0)
         LD      A,(IY+1)
         CALL    C4D73                   ; to uppercase
         LD      C,0
-        LD      (D6035),A              ; parity style
+        LD      (D6035),A               ; parity style
         CP      "E"
         JR      Z,J4DAC
         CP      "O"
@@ -2175,21 +2230,21 @@ J4DA8:  SCF
 J4DAA:  SET     6,C
 J4DAC:  LD      A,(IY+2)
         SUB     "0"
-        LD      (D6036),A              ; number of stopbits
+        LD      (D6036),A               ; number of stopbits
         OR      A
         JR      Z,J4DA8
         CP      04H     ; 4 
         JR      NC,J4DA8
         LD      A,(IY+3)
         CALL    C4D73                   ; to uppercase
-        LD      (D6033),A              ; XON/XOFF handshake
+        LD      (D6033),A               ; XON/XOFF handshake
         CP      "X"
         JR      Z,J4DCC
         CP      "N"
         JR      NZ,J4DA8
 J4DCC:  LD      A,(IY+4)
         CALL    C4D73                   ; to uppercase
-        LD      (D6032),A              ; CTS handshake
+        LD      (D6032),A               ; CTS handshake
         CP      "H"
         JR      Z,J4DDD
         CP      "N"
@@ -2222,7 +2277,7 @@ J4E03:  LD      A,(IY+7)
 J4E17:  CP      "N"
         JP      NZ,J4DA8
 J4E1C:  LD      A,C
-        CALL    C50C6                   ; set FB1E current channel
+        CALL    C50C6                   ; set mode flags current channel
         LD      E,(IY+8)
         LD      D,(IY+9)                ; receive baudrate
         CALL    C4E71
@@ -2239,12 +2294,12 @@ J4E1C:  LD      A,C
         OR      A                       ; current channel 0 ?
         LD      A,(IY+12)               ; timeout count
         JR      Z,J4E4E                 ; yep,
-        LD      (MEXBIH+2),A
+        LD      (DFB09),A
         JR      J4E51
-J4E4E:  LD      (MEXBIH+1),A
+J4E4E:  LD      (DFB08),A
 J4E51:  PUSH    HL
         LD      HL,D6032
-        LD      D,00H
+        LD      D,0
         LD      B,7
 J4E59:  LD      E,(HL)
         INC     HL
@@ -2253,7 +2308,7 @@ J4E59:  LD      E,(HL)
         LD      A,(D6031)
         LD      E,A                     ; current channel
         PUSH    DE
-        CALL    C5558
+        CALL    C5558                   ; initialize channel
         LD      HL,16
         ADD     HL,SP
         LD      SP,HL
@@ -2313,29 +2368,29 @@ I4E91:  DEFW    50,0
         DEFW    38400,17
         DEFW    0
 
-;        Subroutine __________________________
+;        Subroutine get number of characters in receive buffer (with backup character) current channel
 ;           Inputs  ________________________
-;           Outputs ________________________
+;           Outputs A = number of characters, Zx set if empty buffer
 
-C4EDB:  CALL    C4EEA
+C4EDB:  CALL    C4EEA                   ; get number of characters in receive buffer current channel
         PUSH    BC
         LD      B,A
         CALL    C444F                   ; get backup character of current channel
-        JR      Z,J4EE7                 ; no backup character,
-        LD      A,1
+        JR      Z,J4EE7
+        LD      A,1                     ; backup character, add 1 extra
 J4EE7:  ADD     A,B
         POP     BC
         RET
 
-;        Subroutine __________________________
+;        Subroutine get number of characters in receive buffer current channel
 ;           Inputs  ________________________
-;           Outputs ________________________
+;           Outputs A = number of characters, Zx set if empty buffer
 
 C4EEA:  PUSH    BC
         PUSH    DE
         PUSH    HL
-        LD      A,(D6031)              ; current channel
-        CALL    C5460
+        LD      A,(D6031)               ; current channel
+        CALL    C5460                   ; get number of characters in receive buffer
         POP     HL
         POP     DE
         POP     BC
@@ -2425,7 +2480,7 @@ C4F3A:  PUSH    BC
 ?4F48:  PUSH    BC
         PUSH    DE
         PUSH    HL
-        LD      A,(D6031)              ; current channel
+        LD      A,(D6031)               ; current channel
         CALL    C58F1                   ; DTR off
         POP     HL
         POP     DE
@@ -2440,7 +2495,7 @@ C4F3A:  PUSH    BC
 C4F56:  PUSH    AF
         PUSH    BC
         LD      A,(D6031)               ; current channel
-        CALL    C58A0                   ; get status current channel
+        CALL    C58A0                   ; read Z8530 status + RI/DSR hardware status
         XOR     A
         BIT     0,L
         JR      Z,J4F65
@@ -2454,26 +2509,27 @@ J4F6B:  BIT     3,L
 J4F71:  BIT     5,L
         JR      Z,J4F77
         SET     7,A                     ; CTS
-J4F77:  BIT     2,L
+J4F77:  BIT     2,L                     ; receive temporary on hold ?
         JR      Z,J4F7D
-        SET     5,A                     ; reserved bit
-J4F7D:  BIT     4,L
-        JR      Z,J4F83                 ; timer-2 output
+        SET     5,A                     ; yep, set reserved bit 5
+J4F7D:  BIT     4,L                     ; send temorary on hold ?
+        JR      Z,J4F83
+                                        ; yep, nothing
 J4F83:  LD      L,A
-        CALL    C50EA                   ; get FB1C current channel
-        BIT     4,A
+        CALL    C50EA                   ; get status flags current channel
+        BIT     4,A                     ; flag set ?
         JR      Z,J4F92
         SET     2,L                     ; break detect
         RES     4,A
-        CALL    C50B4                   ; set FB1C current channel
+        CALL    C50B4                   ; set status flags current channel
 J4F92:  EI
-        CALL    C5106                   ; get FB1A current channel
+        CALL    C5106                   ; get error flags current channel
         LD      H,A
         POP     BC
         POP     AF
         RET
 
-;        Subroutine __________________________
+;        Subroutine enable receiver interrupts of current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2488,7 +2544,7 @@ C4F9A:  PUSH    BC
         EI
         RET
 
-;        Subroutine __________________________
+;        Subroutine disable receiver interrupts of current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2517,19 +2573,19 @@ C4FB9:  PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      A,D
-        OR      E
-        JR      Z,J4FD0
-J4FC0:  LD      A,(D6031)              ; current channel
+        OR      E                       ; number of break characters = 0 ?
+        JR      Z,J4FD0                 ; send break forever
+J4FC0:  LD      A,(D6031)               ; current channel
         PUSH    DE
         CALL    C58F6                   ; send break for ?? ms
         EI
         POP     DE
-        DEC     DE
+        DEC     DE                      ; all break characters done ?
         LD      A,D
         OR      E
-        JR      NZ,J4FC0
+        JR      NZ,J4FC0                ; nope, next break character
         JR      J4FD6
-J4FD0:  LD      A,(D6031)              ; current channel
+J4FD0:  LD      A,(D6031)               ; current channel
         CALL    C590F                   ; send break on
 J4FD6:  POP     HL
         POP     DE
@@ -2567,43 +2623,43 @@ C4FF1:  PUSH    BC
         PUSH    DE
         PUSH    HL
         LD      C,A
-        CALL    C50F8                   ; get FB1E current channel
-        BIT     4,A
-        JR      Z,J5030
+        CALL    C50F8                   ; get mode flags current channel
+        BIT     4,A                     ; SI/SO protocol enabled ?
+        JR      Z,J5030                 ; nope, handle normally
         LD      A,C
-        CP      20H     ; " "
-        JR      C,J5030
-        CALL    C50EA                   ; get FB1C current channel
-        BIT     0,A
-        JR      NZ,J501C
-        BIT     7,C
-        JR      Z,J5030
+        CP      20H                     ; control character ?
+        JR      C,J5030                 ; yep, transmit normally
+        CALL    C50EA                   ; get status flags current channel
+        BIT     0,A                     ; In SO mode ?
+        JR      NZ,J501C                ; yep,
+        BIT     7,C                     ; character code in ASCII range (0-127) ?
+        JR      Z,J5030                 ; yep, handle normally
         LD      A,(D6031)
         LD      L,A                     ; current channel
-        LD      A,0EH   ; 14 
-        CALL    C5148
-        CALL    C509B                   ; get FB1C pointer current channel
-        SET     0,(HL)
-        JR      J502E
-J501C:  BIT     7,C
-        JR      NZ,J502E
+        LD      A,0EH                   ; SO (shift out)
+        CALL    C5148                   ; transmit character (with XON/XOFF support and auto LF support)
+        CALL    C509B                   ; get status flags pointer current channel
+        SET     0,(HL)                  ; set SO mode flag
+        JR      J502E                   ; reset b7 character and transmit character
+J501C:  BIT     7,C                     ; character code in ASCII range (0-127) ?
+        JR      NZ,J502E                ; nope, stay in SO mode and reset b7 character and transmit character
         LD      A,(D6031)
         LD      L,A                     ; current channel
-        LD      A,0FH   ; 15 
-        CALL    C5148
-        CALL    C509B                   ; get FB1C pointer current channel
-        RES     0,(HL)
+        LD      A,0FH                   ; SI (shift in)
+        CALL    C5148                   ; transmit character (with XON/XOFF support and auto LF support)
+        CALL    C509B                   ; get status flags pointer current channel
+        RES     0,(HL)                  ; reset SO mode flag
 J502E:  RES     7,C
 J5030:  LD      A,(D6031)
         LD      L,A                     ; current channel
         LD      A,C
-        CALL    C5148
+        CALL    C5148                   ; transmit character (with XON/XOFF support and auto LF support)
 J5038:  LD      A,L
-        OR      A
-        JR      Z,J5040
-        CP      04H     ; 4 
+        OR      A                       ; error ?
+        JR      Z,J5040                 ; nope,
+        CP      04H
         JR      J5041
-J5040:  INC     A
+J5040:  INC     A                       ; Zx reset
 J5041:  LD      A,C
         POP     HL
         POP     DE
@@ -2624,8 +2680,8 @@ J5041:  LD      A,C
 ;           Outputs ________________________
 
 C504A:  PUSH    HL
-        CALL    C50A8                   ; get FB1A pointer current channel
-        LD      (HL),00H                ; clear errors
+        CALL    C50A8                   ; get error flags pointer current channel
+        LD      (HL),0                  ; clear errors
         JR      C,J5058
         JR      NZ,J505A
         SET     6,(HL)
@@ -2640,7 +2696,7 @@ J505A:  POP     HL
         BIT     2,L
         JR      Z,J5067
         SET     7,A                     ; buffer overflow
-J5067:  CALL    C50A8                   ; get FB1A pointer current channel
+J5067:  CALL    C50A8                   ; get error flags pointer current channel
         OR      (HL)
         LD      (HL),A
         POP     HL
@@ -2677,38 +2733,38 @@ C508A:  PUSH    AF
         LD      A,(D6031)
         OR      A                       ; current channel 0 ?
         JR      Z,J5096                 ; yep,
-        LD      HL,(OLDSTT+0)           ; FCB channel 1
+        LD      HL,(DFB0C)              ; FCB channel 1
         POP     AF
         RET
-J5096:  LD      HL,(MEXBIH+3)           ; FCB channel 0
+J5096:  LD      HL,(DFB0A)              ; FCB channel 0
         POP     AF
         RET
 
-;        Subroutine get FB1C pointer current channel
+;        Subroutine get status flags pointer current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C509B:  PUSH    AF
         LD      A,(D6031)
         OR      A                       ; current channel 0 ?
-        LD      HL,D.FB1C
+        LD      HL,DFB1C
         JR      Z,J50A6                 ; yep,
 J50A5:  INC     HL
 J50A6:  POP     AF
         RET
 
-;        Subroutine get FB1A pointer current channel
+;        Subroutine get error flags pointer current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C50A8:  PUSH    AF
         LD      A,(D6031)
         OR      A                       ; current channel 0 ?
-        LD      HL,D.FB1A
+        LD      HL,DFB1A
         JR      Z,J50A6
         JR      J50A5
 
-;        Subroutine set FB1C current channel
+;        Subroutine set status flags current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2719,12 +2775,12 @@ C50B4:  PUSH    BC
         LD      A,C
         POP     BC
         JR      Z,J50C2
-        LD      (D.FB1D),A
+        LD      (DFB1D),A
         RET
-J50C2:  LD      (D.FB1C),A
+J50C2:  LD      (DFB1C),A
         RET
 
-;        Subroutine set FB1E current channel
+;        Subroutine set mode flags current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2735,12 +2791,12 @@ C50C6:  PUSH    BC
         LD      A,C
         POP     BC
         JR      Z,J50D4
-        LD      (D.FB1F),A
+        LD      (DFB1F),A
         RET
-J50D4:  LD      (D.FB1E),A
+J50D4:  LD      (DFB1E),A
         RET
 
-;        Subroutine set FB1A current channel
+;        Subroutine set error flags current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2751,51 +2807,45 @@ C50D8:  PUSH    BC
         LD      A,C
         POP     BC
         JR      Z,J50E6
-        LD      (D.FB1B),A
+        LD      (DFB1B),A
         RET
-J50E6:  LD      (D.FB1A),A
+J50E6:  LD      (DFB1A),A
         RET
 
-;        Subroutine get FB1C current channel
+;        Subroutine get status flags current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C50EA:  LD      A,(D6031)
         OR      A                       ; current channel 0 ?
         JR      Z,J50F4
-        LD      A,(D.FB1D)
+        LD      A,(DFB1D)
         RET
-J50F4:  LD      A,(D.FB1C)
+J50F4:  LD      A,(DFB1C)
         RET
 
-;        Subroutine get FB1E current channel
+;        Subroutine get mode flags current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C50F8:  LD      A,(D6031)
         OR      A                       ; current channel 0 ?
         JR      Z,J5102
-;
-
-;        Subroutine __________________________
-;           Inputs  ________________________
-;           Outputs ________________________
-
-C50FE:  LD      A,(D.FB1F)
+C50FE:  LD      A,(DFB1F)
         RET
-J5102:  LD      A,(D.FB1E)
+J5102:  LD      A,(DFB1E)
         RET
 
-;        Subroutine get FB1A current channel
+;        Subroutine get errorflags current channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C5106:  LD      A,(D6031)
         OR      A                       ; current channel 0 ?
         JR      Z,J5110
-        LD      A,(D.FB1B)
+        LD      A,(DFB1B)
         RET
-J5110:  LD      A,(D.FB1A)
+J5110:  LD      A,(DFB1A)
         RET
 
 ;        Subroutine enable RTS
@@ -2862,7 +2912,7 @@ J5142:  LD      (HL),A
         OUT     (C),A
         RET
 
-;        Subroutine __________________________
+;        Subroutine transmit character (with XON/XOFF support and auto LF support)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2872,26 +2922,26 @@ C5148:  PUSH    BC
         LD      (D6030),A               ; current channel for operation
         LD      A,C
         PUSH    BC
-        CALL    C5171
+        CALL    C5171                   ; transmit character (with XON/XOFF support)
         POP     BC
         JR      C,J516F
         LD      A,L
         OR      A
         JR      NZ,J516F
         LD      A,C
-        CP      0DH     ; 13 
+        CP      0DH
         JR      NZ,J516F
-        CALL    C50F8                   ; get FB1E current channel
-        BIT     2,A
-        JR      Z,J516F
+        CALL    C50F8                   ; get mode flags current channel
+        BIT     2,A                     ; auto LF (send) enabled ?
+        JR      Z,J516F                 ; nope, quit
         LD      A,(D6030)               ; current channel for operation
         LD      L,A
-        LD      A,0AH   ; 10 
-        CALL    C5171
+        LD      A,0AH
+        CALL    C5171                   ; transmit character (with XON/XOFF support)
 J516F:  POP     BC
         RET
 
-;        Subroutine __________________________
+;        Subroutine transmit character (with XON/XOFF support)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -2917,9 +2967,9 @@ J5184:  CP      11H                     ; XON ?
 C518A:  CALL    C5221                   ; get Z8530 channel command register
         OR      A                       ; channel 0 ?
         JR      Z,J5195
-        LD      A,(MEXBIH+2)
+        LD      A,(DFB09)
         JR      J5198
-J5195:  LD      A,(MEXBIH+1)
+J5195:  LD      A,(DFB08)
 J5198:  LD      D,A                     ; timeout count
         BIT     0,(HL)
         JR      NZ,J51CE
@@ -2982,7 +3032,7 @@ J51ED:  LD      A,D
 ;           Outputs ________________________
 
 C51F9:  CALL    C5211                   ; get channel settings pointer with offset
-        LD      E,(HL)
+        LD      E,(HL)                  ; send baudrate identifier
         SLA     E
         LD      D,0
         LD      HL,I5848
@@ -3043,7 +3093,7 @@ C5231:  CALL    C520E                   ; get channel settings pointer with offs
         SET     1,(HL)                  ; XOFF in stream
         JR      J5241
 
-;        Subroutine notify buffer above high water mark
+;        Subroutine notify buffer above high water mark (force)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3133,12 +3183,16 @@ J52A3:  RES     2,(HL)
 J52AF:  LD      HL,0
         RET
 
+;        Subroutine get received character (if any)
+;           Inputs  HL = channel pointer + 0
+;           Outputs ________________________
+
 J52B3:  PUSH    AF
         LD      C,E
-        IN      A,(C)                   ; read register ?
+        IN      A,(C)                   ; read register 0
         BIT     0,A                     ; Rx Character Available ?
         JP      Z,J5364                 ; nope, quit
-        LD      B,00H
+        LD      B,0
         LD      D,A
         LD      A,15
         OUT     (C),A
@@ -3148,80 +3202,81 @@ J52B3:  PUSH    AF
         LD      A,D
         AND     08H
         XOR     08H
-        LD      B,A
+        LD      B,A                     ; inverted DCD status, b3 1 = DCD lost
 J52CF:  LD      A,C
         AND     80H                     ; Break/Abort IE set ?
         JR      Z,J52D9                 ; nope,
         LD      A,D
-        AND     80H
+        AND     80H                     ; Break/Abort status
         OR      B
-        LD      B,A
+        LD      B,A                     ; b7 1 = Break detected
 J52D9:  LD      C,E
         LD      A,1
         OUT     (C),A
         IN      A,(C)                   ; read register 1
         AND     70H                     ; parity, Rx overrun, CRC error
         OR      B
-        LD      B,A
+        LD      B,A                     ; b6,b5,b4
         POP     AF
         PUSH    AF
-        CALL    C50FE
-        BIT     6,A
-        JR      Z,J52EF
-        RES     4,B
+        CALL    C50FE                   ; get mode flags channel 1 (??). BUG: should be CALL C50F8
+        BIT     6,A                     ; ? flag
+        JR      Z,J52EF                 ; nope,
+        RES     4,B                     ; clear CRC error
 J52EF:  INC     C
         IN      A,(C)                   ; received character
         AND     (HL)
-        LD      C,A
+        LD      C,A                     ; apply character mask
         INC     HL
-        BIT     0,(HL)
-        JP      Z,J530F
+        BIT     0,(HL)                  ; XON/XOFF protocol enabled ?
+        JP      Z,J530F                 ; nope, handle normally
         LD      A,C
         CP      13H                     ; XOFF ?
         JP      NZ,J5305
-        SET     4,(HL)
+        SET     4,(HL)                  ; set flag stop sending (XOFF received)
         JP      J5357
 J5305:  CP      11H                     ; XON ?
         JP      NZ,J530F
-        RES     4,(HL)
+        RES     4,(HL)                  ; reset flag stop sending (XON received)
         JP      J5357
-J530F:  CALL    C50F8                   ; get FB1E current channel
-        BIT     4,A
-        JR      Z,J533D
+
+J530F:  CALL    C50F8                   ; get mode flags current channel
+        BIT     4,A                     ; SI/SO protocol enabled ?
+        JR      Z,J533D                 ; nope,
         PUSH    HL
         CALL    C509B                   ; get FB1C pointer current channel
         LD      A,C
-        SUB     0FH
-        JR      NZ,J5324
-        RES     7,(HL)
+        SUB     0FH                     ; SI (shift in) ?
+        JR      NZ,J5324                ; nope,
+        RES     7,(HL)                  ; reset SO mode
         POP     HL
         JR      J5357
-J5324:  INC     A
+J5324:  INC     A                       ; SO (shift out) ?
         JR      NZ,J532C
-        SET     7,(HL)
+        SET     7,(HL)                  ; set SO mode
         POP     HL
         JR      J5357
 J532C:  POP     HL
         LD      A,C
-        CP      20H
-        JR      C,J533D
-        CALL    C50EA                   ; get FB1C current channel
-        BIT     7,A
-        JR      Z,J5351
-        SET     7,C
+        CP      20H                     ; control character ?
+        JR      C,J533D                 ; yep,
+        CALL    C50EA                   ; get status flags current channel
+        BIT     7,A                     ; in SO mode ?
+        JR      Z,J5351                 ; nope,
+        SET     7,C                     ; set b7 character
         JR      J5351
 J533D:  POP     AF
         PUSH    AF
-        CALL    C5367
+        CALL    C5367                   ; put in receive buffer
         LD      A,C
         CP      0DH
         JR      NZ,J5357
-        CALL    C50F8                   ; get FB1E current channel
-        BIT     3,A
+        CALL    C50F8                   ; get mode flags current channel
+        BIT     3,A                     ; auto LF (receive) enabled ?
         JR      Z,J5357
         LD      BC,10
 J5351:  POP     AF
-        CALL    C5367
+        CALL    C5367                   ; put in receive buffer
         JR      J5358
 J5357:  POP     AF
 J5358:  LD      A,B
@@ -3236,16 +3291,16 @@ J5364:  POP     AF
         OR      A
         RET
 
-;        Subroutine __________________________
-;           Inputs  ________________________
+;        Subroutine put in receive buffer
+;           Inputs  A = channel, B = receive status character, C = character
 ;           Outputs ________________________
 
-C5367:  OR      A
-        JR      NZ,J5397
+C5367:  OR      A                       ; channel 0 ?
+        JR      NZ,J5397                ; nope, channel 1
         PUSH    DE
         PUSH    HL
         LD      HL,(D6024)              ; receive buffer channel 0 put pointer
-        LD      (HL),C
+        LD      (HL),C                  ; character
         LD      DE,254
         ADD     HL,DE
         PUSH    HL
@@ -3254,18 +3309,18 @@ C5367:  OR      A
         SBC     HL,DE
         POP     HL
         JR      NC,J5392
-        LD      (HL),B
+        LD      (HL),B                  ; receive status character
         LD      HL,(D6024)              ; receive buffer channel 0 put pointer
-        CALL    C5483
+        CALL    C5483                   ; put pointer channel 0 to next (ringbuffer)
         LD      (D6024),HL
         LD      HL,(D6026)
         INC     HL
-        LD      (D6026),HL              ; ; number of characters in receive buffer channel 0 + 1
+        LD      (D6026),HL              ; number of characters in receive buffer channel 0 + 1
 J538F:  POP     HL
         POP     DE
         RET
 J5392:  SET     2,B
-        LD      (HL),B
+        LD      (HL),B                  ; receive status character with buffer overrun flag set
         JR      J538F
 J5397:  PUSH    DE
         PUSH    HL
@@ -3281,7 +3336,7 @@ J5397:  PUSH    DE
         JR      NC,J5392
         LD      (HL),B
         LD      HL,(D602A)              ; receive buffer channel 1 put pointer
-        CALL    C5499
+        CALL    C5499                   ; put pointer channel 1 to next (ringbuffer)
         LD      (D602A),HL
         LD      HL,(D602C)
         INC     HL
@@ -3337,7 +3392,7 @@ J53F7:  CALL    C5422                   ; get received character channel B
         CALL    C544F                   ; high water mark actions channel B if needed
 J5414:  JP      J6000                   ; cascade to H.KEYI
 
-;        Subroutine get received character channel A
+;        Subroutine get received character channel A (if any)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3345,9 +3400,9 @@ C5417:  LD      A,(D603F)
         LD      E,A                     ; Z8530 channel A command register
         LD      HL,I6045
         XOR     A                       ; channel 0
-        JP      J52B3
+        JP      J52B3                   ; get received character (if any)
 
-;        Subroutine get received character channel B
+;        Subroutine get received character channel B (if any)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3355,7 +3410,7 @@ C5422:  LD      A,(D603D)
         LD      E,A                     ; Z8530 channel B command register
         LD      HL,I6059
         LD      A,1                     ; channel 1
-        JP      J52B3
+        JP      J52B3                   ; get received character (if any)
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
@@ -3366,7 +3421,7 @@ C542E:  LD      HL,214                  ; high water mark
         XOR     A
         SBC     HL,DE
         RET     NC
-        LD      HL,I6046
+        LD      HL,I6046                ; other flags channel 0
 J543C:  PUSH    HL
         PUSH    AF
         SET     3,(HL)
@@ -3389,20 +3444,20 @@ C544F:  LD      HL,214                  ; high water mark
         INC     A
         SBC     HL,DE
         RET     NC
-        LD      HL,I605A
+        LD      HL,I605A                ; other flags channel 1
         JR      J543C
 
-;        Subroutine __________________________
-;           Inputs  ________________________
+;        Subroutine get number of characters in receive buffer
+;           Inputs  A = channel
 ;           Outputs ________________________
 
 C5460:  OR      A
         CALL    C59B4                   ; set current counter and receive get pointer
-        CALL    C5469
+        CALL    C5469                   ; get number of characters in current receive buffer
         EI
         RET
 
-;        Subroutine __________________________
+;        Subroutine get number of characters in current receive buffer
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3411,27 +3466,27 @@ C5469:  LD      HL,(D601E)
         OR      L
         RET
 
-;        Subroutine __________________________
-;           Inputs  ________________________
+;        Subroutine get free space in receive buffer
+;           Inputs  A = channel
 ;           Outputs ________________________
 
 C546F:  OR      A
         CALL    C59B4                   ; set current counter and receive get pointer
-        CALL    C5478
+        CALL    C5478                   ; get free space in current receive buffer
         EI
         RET
 
-;        Subroutine __________________________
+;        Subroutine get free space in current receive buffer
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C5478:  LD      HL,254
-        LD      DE,(D601E)
+        LD      DE,(D601E)              ; get number of characters in current receive buffer
         OR      A
         SBC     HL,DE
         RET
 
-;        Subroutine __________________________
+;        Subroutine put pointer channel 0 to next (ringbuffer)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3451,7 +3506,7 @@ C5483:  INC     HL
         LD      HL,I606D
         RET
 
-;        Subroutine __________________________
+;        Subroutine put pointer channel 1 to next (ringbuffer)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3471,7 +3526,7 @@ C5499:  INC     HL
         LD      HL,I6269
         RET
 
-;        Subroutine __________________________
+;        Subroutine pointer current channel to next (ringbuffer)
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3479,7 +3534,7 @@ C54AF:  INC     HL
         PUSH    DE
         PUSH    HL
         PUSH    HL
-        LD      HL,(D6022)
+        LD      HL,(D6022)              ; start of current receive buffer
         LD      DE,254
         ADD     HL,DE
         POP     DE
@@ -3488,7 +3543,7 @@ C54AF:  INC     HL
         POP     HL
         POP     DE
         RET     NZ
-        LD      HL,(D6022)
+        LD      HL,(D6022)              ; start of current receive buffer
         RET
 
 ;        Subroutine both channels open ?
@@ -3509,8 +3564,12 @@ J54D2:  SCF
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-4D4:  DEFB    "RS871001"
+?54D4:  DEFB    "RS871001"
         DEFB    0
+
+;        Subroutine initialize hardware
+;           Inputs  ________________________
+;           Outputs ________________________
 
 C54DD:  DI
         LD      HL,C5114
@@ -3535,7 +3594,7 @@ C54DD:  DI
         CALL    C57F0
         LD      A,1                     ; channel 1
         CALL    C5653                   ; write Z8530 interrupt registers
-        CALL    C5681
+        CALL    C5681                   ; initialize H.KEYI, DISINT, ENAINT
         LD      HL,0                    ; ok
         RET
 
@@ -3593,21 +3652,21 @@ I5555:  DEFB    036H                    ; counter 0, LSB/MSB, mode 3, binary
         DEFB    076H                    ; counter 1, LSB/MSB, mode 3, binary
         DEFB    0B4H                    ; counter 2, LSB/MSB, mode 2, binary
 
-;        Subroutine __________________________
+;        Subroutine initialize channel
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
 C5558:  DI
-        POP     IY
-        POP     BC
+        POP     IY                      ; return address
+        POP     BC                      ; channel
         LD      A,C
         LD      (D6030),A               ; current channel for operation
         LD      HL,D601B
         PUSH    HL
         LD      B,1
-        OR      A
-        JR      Z,J5570
-        INC     B
+        OR      A                       ; channel 0 ?
+        JR      Z,J5570                 ; yep, channel mask = 00000001B
+        INC     B                       ; channel 1, channel mask = 00000010B
         PUSH    BC
         CALL    C5786                   ; clear receive buffer channel 1
         JR      J5574
@@ -3615,23 +3674,23 @@ J5570:  PUSH    BC
         CALL    C5776                   ; clear receive buffer channel 0
 J5574:  POP     BC
         POP     HL
-        POP     DE
+        POP     DE                      ; send baudrate identifier
         LD      A,(D6030)               ; current channel for operation
         LD      HL,18
         CALL    C5211                   ; get channel settings pointer with offset
-        LD      (HL),E
+        LD      (HL),E                  ; store send baudrate identifier
         LD      L,E
         LD      H,00H
         CALL    C5801
-        POP     DE
+        POP     DE                      ; receive baudrate identifier
         LD      A,(D6030)               ; current channel for operation
         LD      HL,19
         CALL    C5211                   ; get channel settings pointer with offset
-        LD      (HL),E
+        LD      (HL),E                  ; store receive baudrate identifier
         LD      D,00H
         EX      DE,HL
         CALL    C5839
-        POP     DE
+        POP     DE                      ; number of stopbits
         LD      A,E
         AND     0FH
         LD      E,A
@@ -3649,7 +3708,7 @@ J55B2:  LD      A,0F3H
         AND     (HL)
         OR      D
         LD      (HL),A                  ; stop bits setting
-        POP     DE
+        POP     DE                      ; parity style
         LD      HL,4+2
         LD      A,(D6030)               ; current channel for operation
         CALL    C5211                   ; get channel settings pointer with offset
@@ -3666,7 +3725,7 @@ J55D1:  LD      A,0FCH
         AND     (HL)
         OR      D
         LD      (HL),A                  ; parity setting
-        POP     DE
+        POP     DE                      ; character length
         LD      A,E
         AND     0FH
         LD      E,A
@@ -3675,17 +3734,17 @@ J55D1:  LD      A,0FCH
 J55DD:  SCF
         RLA
         DJNZ    J55DD
-        LD      B,A
+        LD      B,A                     ; character mask
         LD      A,(D6030)               ; current channel for operation
         LD      HL,0
         CALL    C5211                   ; get channel settings pointer with offset 0
-        LD      (HL),B
+        LD      (HL),B                  ; save character mask
         LD      A,E
-        SUB     05H     ; 5 
+        SUB     05H
         JR      Z,J55F7
-        CP      03H     ; 3 
+        CP      03H
         JR      NC,J55F7
-        XOR     03H     ; 3 
+        XOR     03H
 J55F7:  RRCA
         RRCA
         LD      E,A
@@ -3734,7 +3793,7 @@ J562F:  LD      A,(D6030)               ; current channel for operation
         ADD     HL,SP
         LD      SP,HL
         EI
-        JP      (IY)
+        JP      (IY)                    ; return
 
 ;        Subroutine write Z8530 interrupt registers
 ;           Inputs  ________________________
@@ -3769,6 +3828,10 @@ I5676:  DEFB    6
 I567D:  DEFB    3
         DEFB    15,1,9
 
+;        Subroutine initialize H.KEYI, DISINT, ENAINT
+;           Inputs  ________________________
+;           Outputs ________________________
+
 C5681:  LD      HL,H.KEYI
         LD      DE,J6000
         LD      BC,5
@@ -3799,7 +3862,7 @@ J5699:  LD      (HL),0C9H
 C56B5:  CALL    C56BB                   ; enable XON/XOFF protocol
         JP      C528D                   ; notify buffer below low water mark
 
-;        Subroutine __________________________
+;        Subroutine enable XON/XOFF protocol
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3807,7 +3870,7 @@ C56BB:  CALL    C520E                   ; get channel settings pointer with offs
         SET     0,(HL)                  ; XON/XOFF protocol enabled
         RET
 
-;        Subroutine __________________________
+;        Subroutine disable XON/XOFF protocol
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3828,7 +3891,7 @@ J56D2:  LD      DE,15                   ; low water mark
         SBC     HL,DE
         RET
 
-;        Subroutine __________________________
+;        Subroutine notify interrupts are being enabled
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3856,7 +3919,7 @@ J56FA:  EI
         POP     AF
         RET
 
-;        Subroutine __________________________
+;        Subroutine notify interrupts are being disabled
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -3867,13 +3930,13 @@ C5700:  DI
         PUSH    HL
         CALL    C54C5                   ; both channels open ?
         JR      NC,J570F                ; yep,
-        CALL    C5238                   ; notify buffer above high water mark
+        CALL    C5238                   ; notify buffer above high water mark (force)
         JR      J5719
 J570F:  XOR     A                       ; channel 0
-        CALL    C5238                   ; notify buffer above high water mark
+        CALL    C5238                   ; notify buffer above high water mark (force)
         EI
         LD      A,1                     ; channel 1
-        CALL    C5238                   ; notify buffer above high water mark
+        CALL    C5238                   ; notify buffer above high water mark (force)
 J5719:  EI
         POP     HL
         POP     DE
@@ -3946,7 +4009,7 @@ C5754:  DI
 
         ENDIF
 
-;        Subroutine __________________________
+;        Subroutine disable interrupts and clear channel open flag
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
@@ -4177,15 +4240,15 @@ J588D:  LD      A,(DE)
         POP     AF
         RET
 
-;        Subroutine __________________________
+;        Subroutine read Z8530 status + RI/DSR hardware status
 ;           Inputs  ________________________
-;           Outputs ________________________
+;           Outputs HL = status
 
 C58A0:  LD      B,A
         CALL    C5221                   ; get Z8530 channel command register
         IN      A,(C)                   ; read register 0
         AND     0A8H                    ; 10101000 (Break, CTS, CD)
-        LD      L,A
+        LD      L,A                     ; in b7, b5, b3
         LD      A,(D603C)
         LD      C,A                     ; status register
         LD      A,B
@@ -4195,17 +4258,17 @@ C58A0:  LD      B,A
         AND     0CH
         RRCA
         RRCA                            ; RI / DSR channel B
-        OR      L
-        LD      HL,I605A
+        OR      L                       ; in b1, b0
+        LD      HL,I605A                ; other flags channel 1
         JR      J58C5
 J58BD:  IN      A,(C)                   ; read status register
         AND     03H                     ; RI / DSR channel A
-        OR      L
-        LD      HL,I6046
+        OR      L                       ; in b1, b0
+        LD      HL,I6046                ; other flags channel 0
 J58C5:  LD      B,A
         LD      A,(HL)
-        AND     14H                     ; 00010100 (b2 and b4)
-        OR      B
+        AND     14H                     ; 00010100 (send temporary on hold, receive temporary on hold)
+        OR      B                       ; in b4, b2
         LD      L,A
         LD      H,00H
         RET
@@ -4434,16 +4497,16 @@ C59B4:  JR      Z,J59BF                 ; channel 0,
         JR      J59C6
 J59BF:  LD      HL,(D6026)              ; number of characters in receive buffer channel 0
         LD      DE,(D6028)              ; receive buffer channel 0 get pointer
-J59C6:  LD      (D601E),HL
-        LD      (D6020),DE
+J59C6:  LD      (D601E),HL              ; number of characters in current receive buffer
+        LD      (D6020),DE              ; receive buffer get pointer
         RET
 
 ;        Subroutine update counter and receive get pointer from current
 ;           Inputs  ________________________
 ;           Outputs ________________________
 
-C59CE:  LD      HL,(D601E)
-        LD      DE,(D6020)
+C59CE:  LD      HL,(D601E)              ; number of characters in current receive buffer
+        LD      DE,(D6020)              ; receive buffer get pointer
         JR      Z,J59DF                 ; channel 0,
         LD      (D602C),HL              ; number of characters in receive buffer channel 1
         LD      (D602E),DE              ; receive buffer channel 1 get pointer
@@ -4464,7 +4527,7 @@ C59E7:  LD      (D6030),A               ; current channel for operation
         LD      HL,I6269
         JR      J59F9
 J59F6:  LD      HL,I606D
-J59F9:  LD      (D6022),HL
+J59F9:  LD      (D6022),HL              ; start of current receive buffer
         CALL    C5A21
         PUSH    HL
         LD      B,A
@@ -4476,7 +4539,7 @@ J59F9:  LD      (D6022),HL
         EI
         JR      Z,J5A1E                 ; nope, quit
         PUSH    BC
-        LD      HL,(D601E)
+        LD      HL,(D601E)              ; number of characters in current receive buffer
         LD      DE,15
         OR      A
         SBC     HL,DE
@@ -4488,22 +4551,22 @@ J5A1E:  POP     HL
 
 ;        Subroutine __________________________
 ;           Inputs  ________________________
-;           Outputs ________________________
+;           Outputs A = character, L = character receive status
 
-C5A21:  CALL    C5469
-        JP      Z,J5A46
+C5A21:  CALL    C5469                   ; get number of characters in current receive buffer
+        JP      Z,J5A46                 ; nothing in receive buffer, quit with error
         PUSH    DE
-        LD      HL,(D6020)
-        LD      A,(HL)
+        LD      HL,(D6020)              ; current receive buffer get pointer
+        LD      A,(HL)                  ; character
         LD      DE,254
         ADD     HL,DE
-        LD      E,(HL)
+        LD      E,(HL)                  ; character receive status
         LD      HL,(D6020)
-        CALL    C54AF
+        CALL    C54AF                   ; pointer current receive buffer to next (ringbuffer)
         LD      (D6020),HL
         LD      HL,(D601E)
         DEC     HL
-        LD      (D601E),HL
+        LD      (D601E),HL              ; number of characters in current receive buffer -1
         LD      H,0
         LD      L,E
         POP     DE
