@@ -416,8 +416,7 @@ J42AB:	LD	E,(HL)
         LD	(BC),A
         INC	BC
         JR	J42AB
-;
-;	-----------------
+
 J42C4:	POP	DE
         LD	HL,I48C8
 J42C8:	LD	C,(HL)
@@ -440,83 +439,82 @@ J42C8:	LD	C,(HL)
         LD	(HL),A
         POP	HL
         JR	J42C8
-;
-;	-----------------
+
 J42DE:	LD	A,(DF2D0)
         LD	HL,R.0216+1
         ADD	HL,DE
         LD	(HL),A
         LD	A,(DF344)
-        AND	03H	; 3 
+        AND	03H
         LD	HL,R.0295+1
         ADD	HL,DE
-        LD	(HL),A
+        LD	(HL),A                  ; primary slot on page 0
         LD	C,A
         LD	B,0
         RLCA	
         RLCA	
         RLCA	
         RLCA	
-        OR	C
+        OR	C                       ; primary slot on page 2 and 0
         LD	HL,R.0144+1
         ADD	HL,DE
         LD	(HL),A
         LD	A,(DF344)
-        BIT	7,A
-        JR	Z,J4356
+        BIT	7,A                     ; DOS mapper in expanded slot ?
+        JR	Z,J4356                 ; nope,
         LD	HL,R.027E
         ADD	HL,DE
         LD	(HL),B
         INC	HL
-        LD	(HL),B
+        LD	(HL),B                  ; enable secundairy slot register code
         LD	HL,R.0109
         ADD	HL,DE
         LD	(HL),B
         INC	HL
-        LD	(HL),B
+        LD	(HL),B                  ; enable secundairy slot register code
         LD	HL,R.012A
         ADD	HL,DE
         LD	(HL),B
         INC	HL
-        LD	(HL),B
+        LD	(HL),B                  ; enable secundairy slot register code
         LD	HL,R.029D
         ADD	HL,DE
-        LD	(HL),32H	; "2"
+        LD	(HL),32H                ; enable secundairy slot register code
         RRCA	
         RRCA	
-        AND	03H	; 3 
+        AND	03H                     ; secundairy slot
         LD	HL,R.0289+1
         ADD	HL,DE
-        LD	(HL),A
+        LD	(HL),A                  ; secundairy slot in page 0
         LD	L,A
         RLCA	
         RLCA	
         RLCA	
         RLCA	
-        OR	L
+        OR	L                       ; secundairy slot in page 2 and 0
         LD	HL,R.0135+1
         ADD	HL,DE
         LD	(HL),A
         PUSH	DE
         LD	HL,SLTTBL
         ADD	HL,BC
-        EX	DE,HL
+        EX	DE,HL                   ; SLTTBL entry
         LD	BC,R.028B+1
         ADD	HL,BC
         LD	(HL),E
         INC	HL
         LD	(HL),D
-        LD	BC,17
+        LD	BC,R.029D-R.028B-1
         ADD	HL,BC
         LD	(HL),E
         INC	HL
         LD	(HL),D
-        LD	BC,-400
+        LD	BC,R.010E-R.029D-1
         ADD	HL,BC
         LD	(HL),E
         INC	HL
         LD	(HL),D
-        LD	BC,40
+        LD	BC,R.0137-R.010E-1
         ADD	HL,BC
         LD	(HL),E
         INC	HL
@@ -537,7 +535,6 @@ J4356:	LD	A,(EXPTBL+0)
         LD	A,(EXPTBL+0)
         BIT	7,A
         JR	Z,J43D1
-;
         LD	HL,R.025F
         ADD	HL,DE
         LD	(HL),B
@@ -553,7 +550,6 @@ J4356:	LD	A,(EXPTBL+0)
         XOR	C
         AND	03H	; 3 
         JR	NZ,J4397
-;
         LD	HL,R.026E
         ADD	HL,DE
         LD	(HL),32H	; "2"
@@ -871,7 +867,7 @@ C.0107:	DI
         PUSH	AF
 R.0109:	JR	J$0114
         LD	A,(DF2EB)
-        LD	(0),A
+R.010E: LD	(0),A
         LD	(DFFFF),A
 J$0114:	LD	A,(DF2EA)
         OUT	(0A8H),A
@@ -895,7 +891,7 @@ R.012A:	JR	J$013D
         LD	(DF2EB),A
         AND	0CCH
 R.0135:	OR	0
-        LD	(0),A
+R.0137: LD	(0),A
         LD	(DFFFF),A
 J$013D:	IN	A,(0A8H)
         LD	(DF2EA),A
@@ -1102,9 +1098,8 @@ R.0295:	OR	0
         LD	A,(DF2E0)
         RET	
 
-R.029D:	RET	
-
-?.029E:	DEFB	0,0
+R.029D:	RET
+	DEFB	0,0
         LD	(DFFFF),A
         RET	
 
@@ -1291,22 +1286,22 @@ J$035D:	DI
         LD	C,A
         LD	B,D
         CALL	C.043C
-        BIT	7,C
-        JR	Z,C.038A
-        CALL	C.0408
+        BIT	7,C                     ; slot expanded ?
+        JR	Z,C.038A                ; nope,
+        CALL	C.0408                  ; change secundairy slot register
         PUSH	DE
         PUSH	BC
         PUSH	AF
-        CALL	C.038A
+        CALL	C.038A                  ; RDSLT/WRSLT on primairy slot
         LD	C,A
-        POP	AF
+        POP	AF                      ; same slot as slot in page 3 ?
         POP	DE
         LD	B,D
         EX	(SP),HL
         JR	NZ,J$0382
         LD	A,E
-        LD	(DFFFF),A
-J$0382:	CALL	NZ,C004B		; change secundairy slotregister
+        LD	(DFFFF),A               ; yep, change secundairy slot register directly
+J$0382:	CALL	NZ,C004B		; nope, change secundairy slot register with helper routine
         LD	(HL),E
         POP	HL
         LD	A,C
@@ -1358,13 +1353,13 @@ R.03B1:	EXX
         POP	AF
 J$03B9:	LD	C,A
         CALL	C.043C
-        BIT	7,C
-        JR	Z,C.03E8
-        CALL	C.0408
+        BIT	7,C                     ; slot expanded ?
+        JR	Z,C.03E8                ; nope,
+        CALL	C.0408                  ; change secundairy slot register
         PUSH	BC
         PUSH	DE
         PUSH	AF
-        CALL	C.03E8
+        CALL	C.03E8                  ; CALSLT on primairy slot
         EXX	
         EX	AF,AF'
         POP	BC
@@ -1374,12 +1369,12 @@ J$03B9:	LD	C,A
         POP	DE
         PUSH	AF
         LD	A,B
-        CP	D
+        CP	D                       ; same slot as slot in page 3 ?
         LD	B,D
         JR	NZ,J$03DC
         LD	A,E
-        LD	(DFFFF),A
-J$03DC:	CALL	NZ,C004B		; change secundairy slotregister
+        LD	(DFFFF),A               ; yes, change secundairy slot register directly
+J$03DC:	CALL	NZ,C004B		; nope, change secundairy slot register with helper routine
         LD	(HL),E
         POP	AF
         JP	PO,J$03E5
@@ -1405,8 +1400,8 @@ R.03F3:	PUSH	HL
         LD	C,A
         LD	B,H
         CALL	C.043C
-        BIT	7,C
-        CALL	NZ,C.0408
+        BIT	7,C                     ; slot expanded ?
+        CALL	NZ,C.0408               ; yep, change secundairy slot register
         IN	A,(0A8H)
         AND	(HL)
         INC	HL
@@ -1418,7 +1413,7 @@ C$0402:	OR	(HL)
         RET	
 
 C.0408:	PUSH	HL
-        AND	03H	; 3 
+        AND	03H
         LD	E,A
         LD	HL,SLTTBL
         ADD	HL,DE
@@ -1435,19 +1430,19 @@ C.0408:	PUSH	HL
         AND	(HL)
         INC	HL
         OR	(HL)
-        LD	(DE),A
+        LD	(DE),A                  ; update SLTTBL
         LD	L,A
         IN	A,(0A8H)
         LD	B,A
         XOR	C
-        AND	3FH	; "?"
+        AND	3FH
         XOR	C
         LD	H,A
-        CP	B
+        CP	B                       ; same slot as slot in page 3 ?
         JR	NZ,J$0432
         LD	A,L
-        LD	(DFFFF),A
-J$0432:	CALL	NZ,C0046		; change secundairy slotregister
+        LD	(DFFFF),A               ; yep, change secundairy slot register directly
+J$0432:	CALL	NZ,C0046		; nope, change secundairy slotregister with helper routine
         LD	A,(DF2E0)
         LD	C,A
         LD	A,H

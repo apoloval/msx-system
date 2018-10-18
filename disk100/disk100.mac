@@ -6043,12 +6043,12 @@ I63BE:	DEFW	C63F8-C63F8
         DEFW	C6541-C63F8
         DEFW	0FFFFH
 
-;	  Subroutine __________________________
+;	  Subroutine RDSLT MSXDOS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C63F8:	CALL	C64C6
-R0003:	JP	M,J6408
+C63F8:	CALL	C64C6                   ; calculate masks
+R0003:	JP	M,J6408                 ; expanded slot, handle
         IN	A,(0A8H)
         LD	D,A
         AND	C
@@ -6057,8 +6057,8 @@ R0003:	JP	M,J6408
         LD	A,E
         RET
 
-J6408:	CALL	C6515
-R0013:	JP	Z,J651E
+J6408:	CALL	C6515                   ; check if primairy slot 0, page 0
+R0013:	JP	Z,J651E                 ; yep, handle RDSLT without helper routines
         PUSH	HL
 R0017:	CALL	C64EB
         EX	(SP),HL
@@ -6067,13 +6067,13 @@ R001C:	CALL	C63F8
         JR	J643A
 
 
-;	  Subroutine __________________________
+;	  Subroutine WRSLT MSXDOS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C6419:	PUSH	DE
-R0022:	CALL	C64C6
-R0025:	JP	M,J6429
+R0022:	CALL	C64C6                   ; calculate masks
+R0025:	JP	M,J6429                 ; expanded slot, handle
         POP	DE
         IN	A,(0A8H)
         LD	D,A
@@ -6081,8 +6081,8 @@ R0025:	JP	M,J6429
         OR	B
         JP	WRPRIM
 
-J6429:	CALL	C6515
-R0034:	JP	Z,J6524
+J6429:	CALL	C6515                   ; check if primairy slot 0, page 0
+R0034:	JP	Z,J6524                 ; yep, handle WRSLT without helper routines
         EX	(SP),HL
         PUSH	HL
 R0039:	CALL	C64EB
@@ -6101,6 +6101,10 @@ J643A:	POP	BC
         POP	HL
         RET
 
+;	  Subroutine CALLF MSXDOS
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 C6447:	EX	(SP),HL
         PUSH	AF
         PUSH	DE
@@ -6118,7 +6122,7 @@ C6447:	EX	(SP),HL
         POP	AF
         EX	(SP),HL
 
-;	  Subroutine __________________________
+;	  Subroutine CALSLT MSXDOS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -6128,8 +6132,8 @@ C6459:	EXX
         POP	AF
         PUSH	IX
         POP	HL
-R0069:	CALL	C64C6
-R006C:	JP	M,J6470
+R0069:	CALL	C64C6                   ; calculate masks
+R006C:	JP	M,J6470                 ; expanded slot, handle
         IN	A,(0A8H)
         PUSH	AF
         AND	C
@@ -6137,8 +6141,8 @@ R006C:	JP	M,J6470
         EXX
         JP	CLPRIM
 
-J6470:	CALL	C6515
-R007B:	JP	Z,J652C
+J6470:	CALL	C6515                   ; check if primairy slot 0, page 0
+R007B:	JP	Z,J652C                 ; yep, handle CALSLT without helper routines
 R007E:	CALL	C64EB
         PUSH	AF
         POP	IY
@@ -6172,20 +6176,20 @@ R0094:	CALL	C6459
         RET
 
 
-;	  Subroutine __________________________
+;	  Subroutine ENASLT MSXDOS
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C64A0:	CALL	C64C6
-R00AB:	JP	M,J64AD
+C64A0:	CALL	C64C6                   ; calculate masks
+R00AB:	JP	M,J64AD                 ; expanded slot, handle
         IN	A,(0A8H)
         AND	C
         OR	B
         OUT	(0A8H),A
         RET
 
-J64AD:	CALL	C6515
-R00B8:	JP	Z,C6541
+J64AD:	CALL	C6515                   ; check if primairy slot 0, page 0
+R00B8:	JP	Z,C6541                 ; yep, handle ENASLT without helper routines
         PUSH	HL
 R00BC:	CALL	C64EB
         LD	C,A
@@ -6201,7 +6205,7 @@ R00BC:	CALL	C64EB
         JR	C64A0
 
 
-;	  Subroutine __________________________
+;	  Subroutine caculate masks
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -6210,28 +6214,28 @@ C64C6:	DI
         LD	A,H
         RLCA
         RLCA
-        AND	03H	; 3 
-        LD	E,A
+        AND	03H
+        LD	E,A                     ; page
         INC	E
         LD	A,0C0H
 J64D1:	RLCA
         RLCA
         DEC	E
         JR	NZ,J64D1
-        LD	E,A
+        LD	E,A                     ; page select mask
         CPL
-        LD	C,A
+        LD	C,A                     ; page clear mask
         POP	AF
         PUSH	AF
-        AND	03H	; 3 
-        LD	B,A
+        AND	03H
+        LD	B,A                     ; primairy slot
         INC	B
         LD	A,0ABH
 J64E1:	ADD	A,55H	; "U"
         DJNZ	J64E1
-        LD	D,A
+        LD	D,A                     ; slot set mask (all pages)
         AND	E
-        LD	B,A
+        LD	B,A                     ; slot set mask (page)
         POP	AF
         AND	A
         RET
@@ -6280,20 +6284,20 @@ R0116:	CALL	C655C
 ;	     Outputs ________________________
 
 C6515:	INC	D
-        DEC	D
+        DEC	D                       ; primairy slot 0 ?
         RET	NZ
         LD	B,A
         LD	A,E
-        CP	03H
+        CP	03H                     ; page 0 ?
         LD	A,B
         RET
 
-J651E:	CALL	C6549
+J651E:	CALL	C6549                   ; change secundairy slot register
         LD	E,(HL)
-        JR	C6529
+        JR	C6529                   ; restore secundairy slot register
 
 J6524:	POP	DE
-R0131:	CALL	C6549
+R0131:	CALL	C6549                   ; change secundairy slot register
         LD	(HL),E
 
 ;	Subroutine	__________________________
@@ -6303,7 +6307,7 @@ R0131:	CALL	C6549
 C6529:	LD	A,B
         JR	J6557
 
-J652C:	CALL	C6541
+J652C:	CALL	C6541                   ; change secundairy slot register and update SLTTBL
         PUSH	HL
         PUSH	BC
         EX	AF,AF'
@@ -6312,9 +6316,9 @@ J652C:	CALL	C6541
         EXX
         EX	AF,AF'
         POP	BC
-R0145:	CALL	C6529
+R0145:	CALL	C6529                   ; restore secundairy slot register
         POP	HL
-        LD	(HL),B
+        LD	(HL),B                  ; restore SLTTBL
         EX	AF,AF'
         EXX
         RET
@@ -6323,7 +6327,7 @@ R0145:	CALL	C6529
 ;	Inputs		________________________
 ;	Outputs		________________________
 
-C6541:	CALL	C6549
+C6541:	CALL	C6549                   ; change secundairy slot register
         LD	HL,SLTTBL
         LD	(HL),D
         RET

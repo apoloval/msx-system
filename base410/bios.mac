@@ -3082,33 +3082,53 @@ J0D97:  RRA
 
 
         IF      KEYTYP EQ 0
-        INCLUDE KEYJAP
+
+        INCLUDE KEYJAP.MAC
+
         ENDIF
 
 
         IF      KEYTYP EQ 1
-        INCLUDE KEYINT
+
+        INCLUDE KEYINT.MAC
+
         ENDIF
+
 
         IF      KEYTYP EQ 2
-        INCLUDE KEYFR
+
+        INCLUDE KEYFR.MAC
+
         ENDIF
+
 
         IF      KEYTYP EQ 3
-        INCLUDE KEYUK
+
+        INCLUDE KEYUK.MAC
+
         ENDIF
+
 
         IF      KEYTYP EQ 4
-        INCLUDE KEYGER
+
+        INCLUDE KEYGER.MAC
+
         ENDIF
+
 
         IF      KEYTYP EQ 5
-        INCLUDE KEYRUS
+
+        INCLUDE KEYRUS.MAC
+
         ENDIF
 
+
         IF      KEYTYP EQ 6
-        INCLUDE KEYSPA
+
+        INCLUDE KEYSPA.MAC
+
         ENDIF
+
 
         ORG     010C2H
 
@@ -5142,19 +5162,37 @@ J1BBB:  POP     AF
 D1BBF:
 
         IF      CNTRY EQ 9
-        INCLUDE CHRKOR
+ 
+        INCLUDE CHRKOR.MAC
+ 
         ENDIF
+
+
         IF      CNTRY EQ 0
-        INCLUDE CHRJAPV2
+
+        INCLUDE CHRJAPV2.MAC
+
         ENDIF
+
+
         IF      CNTRY EQ 10
-        INCLUDE CHRRUS
+
+        INCLUDE CHRRUS.MAC
+
         ENDIF
+
+
         IF      CNTRY EQ 5
-        INCLUDE CHRGER
+
+        INCLUDE CHRGER.MAC
+
         ENDIF
+
+
         IF      (CNTRY NE 9) AND (CNTRY NE 0) AND (CNTRY NE 10) AND (CNTRY NE 5)
-        INCLUDE CHRINT
+
+        INCLUDE CHRINT.MAC
+
         ENDIF
 
 
