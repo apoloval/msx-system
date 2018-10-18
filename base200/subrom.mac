@@ -8016,7 +8016,7 @@ I29F6:	DEFB	000H                    ; R#0: DG=0 (Digitize off), IE2=0 (lightpen 
         DEFB    000H                    ; R#17: AII=0 (autoincrement register), RC5=0, RC4=0, RC3=0, RC2=0, RC1=0, RC0=0 (control register 0)
         DEFB    000H                    ; R#18: dV3=0, dV2=0, dV1=0, dV0=0 (no vertical adjust), dH3=0, dH2=0, dH1=0, dH0=0 (no horizontal adjust)
         DEFB    000H                    ; R#19: IL7=0, IL6=0, IL5=0, IL4=0, IL3=0, IL2=0, IL1=0, IL0=0 (interrupt on line 0)
-        DEBF    000H                    ; R#20: CBX5=0, CBX4=0, CBX3=0, CBX2=0, CBX1=0, CBX0=0 (Color burst value of phase 0)
+        DEFB    000H                    ; R#20: CBX5=0, CBX4=0, CBX3=0, CBX2=0, CBX1=0, CBX0=0 (Color burst value of phase 0)
         DEFB    03BH                    ; R#21: CBX5=1, CBX4=1, CBX3=1, CBX2=0, CBX1=1, CBX0=1 (Color burst value of phase 1/3)
         DEFB    005H                    ; R#22: CBX5=0, CBX4=0, CBX3=0, CBX2=1, CBX1=0, CBX0=1 (Color burst value of phase 2/3)
         DEFB    000H                    ; R#23: DO7=0, DO6=0, DO5=0, DO4=0, DO3=0, DO2=0, DO1=0, DO0=0 (display offset)
