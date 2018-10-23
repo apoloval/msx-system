@@ -11538,6 +11538,29 @@ J3E4E:	DJNZ	J3E41
 
         .DEPHASE
 
+
+        DEFS	07FD0H-$,0
+
+L7FD0:
+	BNKCHG
+        RET
+
+
+; diskdriver interrupt handler
+
+L7FD4:	EX	AF,AF'
+        LD	A,(L40FF)
+        PUSH	AF		; Save DOS2 mapper block
+        XOR	A
+        CALL	L7FD0		; Set block 0
+        EX	AF,AF'
+        CALL	0		; interrupt handler
+        EX	AF,AF'
+        POP	AF
+        CALL	L7FD0		; Set old block
+        EX	AF,AF'
+        RET
+
         DEFS	08000H-$,0
 
         END

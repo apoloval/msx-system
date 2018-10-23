@@ -130,7 +130,7 @@ L73DB:	DB	0F9h
         DB	2
         DB	112
         DW	10
-        DW	318
+        DW	316
         DB	1
         DW	3
 
@@ -645,6 +645,52 @@ L7799:	POP	AF
 ;
 ; Checks if disk was changed
 
+	IFNDEF	DOS2
+DSKCHG:	EI
+	PUSH	HL
+	PUSH	BC
+	PUSH	AF
+	CALL	GETWRK
+	POP	AF
+	POP	BC
+	POP	HL
+	AND	A
+	LD	B,(IX+2)
+	JR	NZ,J$77DE
+	LD	B,(IX+1)
+J$77DE:	INC	B
+	DEC	B
+	LD	B,01H
+	RET	NZ
+	PUSH	BC
+	PUSH	HL
+	LD	DE,1
+	LD	HL,($SECBUF)
+	AND	A
+	CALL	DSKIO
+	JR	C,J7808
+	LD	HL,($SECBUF)
+	LD	B,(HL)
+	POP	HL
+	PUSH	BC
+	CALL	GETDPB
+	LD	A,0CH
+	JR	C,J7808
+	POP	AF
+	POP	BC
+	CP	C
+	SCF
+	CCF
+	LD	B,0FFH
+	RET	NZ
+	INC	B
+	RET
+J7808:	POP	DE
+	POP	DE
+	RET
+
+	ELSE
+
 DSKCHG:	EI
         PUSH	HL
         PUSH	BC
@@ -695,6 +741,7 @@ L77F3:	PUSH	AF
         POP	AF
         RET
 
+	ENDIF
 
 ; GETDPB
 ;
@@ -1860,14 +1907,14 @@ LC0C4:	defb	0
 
 L_BOOT	EQU	$-L7F2D
 
+        IFNDEF	DOS2
 
-        defs	07FE8H-$,0
-
-; diskdrive interrupt handler
-;
-; this is kept hard on adres 07FE8 for dos1/dos2 combined diskroms
+        DEFS	07FD4H-$,0
 
 L7FD4:	JP	L7789
+
+        ENDIF
+
 
 
 ; S1990 FDD registers

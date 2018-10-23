@@ -15,6 +15,9 @@
 MYSIZE	EQU	26
 SECLEN	EQU	512
 
+ENAKRN	EQU	0F368H
+BDOS	EQU	0F37DH
+DSKBAS	EQU	04022H
 
 ;
 I7405:
@@ -1337,7 +1340,7 @@ J7B87:	PUSH	HL
         LD	A,(RAMAD2)
         LD	H,80H
         CALL	ENASLT			; restore RAM in page 2
-        CALL	XF368			; restore kernel ROM in page 1
+        CALL	ENAKRN			; restore kernel ROM in page 1
 R3060:	LD	A,0
         LD	H,40H
         CALL	ENASLT			; restore driver ROM in page 1
@@ -1453,7 +1456,7 @@ J7C41:	PUSH	HL
         LD	A,(RAMAD2)
         LD	H,80H
         CALL	ENASLT
-        CALL	XF368
+        CALL	ENAKRN
 R10AE:	LD	A,0
         LD	H,40H
         CALL	ENASLT
@@ -1907,18 +1910,18 @@ I7F12:
 J7F1F:	LD	SP,KBUF+256
         LD	DE,IC09F
         LD	C,0FH
-        CALL	XF37D
+        CALL	BDOS
         INC	A
         JP	Z,JC063
         LD	DE,00100H
         LD	C,1AH
-        CALL	XF37D
+        CALL	BDOS
         LD	HL,1
         LD	(IC09F+14),HL
         LD	HL,04000H-00100H
         LD	DE,IC09F
         LD	C,27H
-        CALL	XF37D
+        CALL	BDOS
         JP	00100H
 
 CC056:	DEFW	CC058
@@ -1930,12 +1933,12 @@ CC058:	CALL	0
         JP	NZ,JC06A
 JC063:	LD	A,(DC0C4)
         AND	A
-        JP	Z,A4022
+        JP	Z,DSKBAS
 JC06A:	LD	DE,IC079
         LD	C,09H
-        CALL	XF37D
+        CALL	BDOS
         LD	C,07H
-        CALL	XF37D
+        CALL	BDOS
         JR	J7F1F
 
 IC079:	DEFB	"Boot error",13,10

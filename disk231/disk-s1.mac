@@ -17,18 +17,40 @@
         ASEG
         ORG	4000H
 
-DOSSTR	MACRO	X,Y
+DOSST1	MACRO	X,Y
+        LOCAL   _D1
         DEFB	X
-G	ASET	0
-Q	ASET	0
-        IRPC	D,<Y>
-Q	ASET	Q+1
+	DEFB	_D1-$
+	DEFB	Y
+_D1:    DEFB    0
         ENDM
-        DEFB	Q+1
-        IRPC	D,<Y>
-        DEFB	"&D"
+
+DOSST2	MACRO	X,Y
+	LOCAL	_D2
+        DEFB	X
+	DEFB	_D2-$
+Z1 	ASET 	0
+        IRPC	Z,<Y>
+        IF      Z1 EQ 0
+Z1	ASET	1
+	IF	('&Z' GE '0') AND ('&Z' LE '9')
+Z2	ASET	('&Z'-'0')*16
+	ENDIF
+	IF	('&Z' GE 'A') AND ('&Z' LE 'F')
+Z2	ASET	('&Z'-'A'+10)*16
+	ENDIF
+	ELSE
+	IF	('&Z' GE '0') AND ('&Z' LE '9')
+Z2	ASET	Z2+('&Z'-'0')
+	ENDIF
+	IF	('&Z' GE 'A') AND ('&Z' LE 'F')
+Z2	ASET	Z2+('&Z'-'A'+10)
+	ENDIF
+	DEFB	Z2
+Z1	ASET	0
+        ENDIF
         ENDM
-        DEFB	0
+_D2:  	DEFB	0
         ENDM
 
 ;
@@ -1602,7 +1624,7 @@ C495C:	LD	(DF343),A		; disksystem page 2 ram = current page 2 slotid
         EX	DE,HL
 J4976:	LD	A,(HL)
         OR	A
-        JR	Z,J498A		; no more memorymappers, continue
+        JR	Z,J498A		        ; no more memorymappers, continue
         INC	HL
         LDI				; slotid
         LD	(DE),A			; number of segments
@@ -1631,7 +1653,7 @@ J498A:	LD	(DE),A			; endmarker
 
         IF	TURBOR EQ 1
         BIT	2,A			; are 4 pages missing of what should be expected ?
-        JR	Z,J49A8		; no, reserve 4 segements for R800 RAM mode
+        JR	Z,J49A8		        ; no, reserve 4 segements for R800 RAM mode
         ADD	A,4
         LD	(HL),A			; 4 extra segments (that were invisable because of R800 RAM mode)
 J49A8:	SUB	4
@@ -1701,7 +1723,7 @@ J49F6:	DEC	(HL)
         ADD	HL,BC			; to the next memorymappertable entry
 J49FF:	LD	A,(HL)
         OR	A
-        JR	Z,J4A0F		; end of table, quit
+        JR	Z,J4A0F		        ; end of table, quit
         INC	HL
         PUSH	HL
         CALL	C4B26			; setup memorymapper pointer table and segment allocationtable
@@ -1735,7 +1757,7 @@ J4A26:	PUSH	HL
         CALL	ENASLT
         CALL	C4A8A			; check if memorymapper and count the segments
         OR	A
-        JR	Z,J4A63		; no memorymapper,
+        JR	Z,J4A63		        ; no memorymapper,
         POP	BC
         POP	HL
         EX	(SP),HL
@@ -1745,7 +1767,7 @@ J4A26:	PUSH	HL
         IF	TURBOR EQ 1
         LD	A,(HL)
         OR	A			; already found a memorymapper ?
-        JR	Z,J4A5B		; nope,
+        JR	Z,J4A5B		        ; nope,
         LD	A,B
         DEC	A
         AND	02H
@@ -1761,10 +1783,10 @@ J4A26:	PUSH	HL
         PUSH	BC
         LD	C,A
         LD	A,(HL)
-        JR	C,J4A5B		; last external, now internal, internal as last
+        JR	C,J4A5B		        ; last external, now internal, internal as last
         JR	NZ,J4A54		; last internal, now external, keep the internal last
         CP	C			; last is same type as now, which has more segments ?
-        JR	C,J4A5B		; now is bigger, now as last
+        JR	C,J4A5B		        ; now is bigger, now as last
 J4A54:	LD	(HL),C
         LD	C,A
         INC	HL
@@ -2212,145 +2234,129 @@ J4C9A:	POP	DE
 
 
         DEFW	L0000
-L4CA0:	DOSSTR	1,<Not enough memory>
-        DOSSTR	2,<Drive name? (>
-        DOSSTR	3,<) >
-        DOSSTR	4,<Strike a key when ready >
-        DOSSTR	5,<Aborted>
-        DOSSTR	6,<Format complete>
-        DOSSTR	7,<Insert disk for drive >
-        DOSSTR	8,<:>
-        DOSSTR	9,<and strike a key when ready >
-        DOSSTR	10,<*** >
-        DOSSTR	11,<System error >
-        DOSSTR	12,<User error >
+L4CA0:	DOSST1	1,<"Not enough memory">
+        DOSST1	2,<"Drive name? (">
+        DOSST1	3,<") ">
+        DOSST1	4,<"Strike a key when ready ">
+        DOSST1	5,<"Aborted">
+        DOSST1	6,<"Format complete">
+        DOSST1	7,<"Insert disk for drive ">
+        DOSST1	8,<":">
+        DOSST1	9,<"and strike a key when ready ">
+        DOSST1	10,<"*** ">
+        DOSST1	11,<"System error ">
+        DOSST1	12,<"User error ">
         DEFB	0
 
 ; ERRORS
 
         DEFW	L0001
-L4D64:	DOSSTR	0FFH,<Incompatible disk>
-        DOSSTR	0FEH,<Write error>
-        DOSSTR	0FDH,<Disk error>
-        DOSSTR	0FCH,<Not ready>
-        DOSSTR	0FBH,<Verify error>
-        DOSSTR	0FAH,<Data error>
-        DOSSTR	0F9H,<Sector not found>
-        DOSSTR	0F8H,<Write protected disk>
-        DOSSTR	0F7H,<Unformatted disk>
-        DOSSTR	0F6H,<Not a DOS disk>
-        DOSSTR	0F5H,<Wrong disk>
-        DOSSTR	0F4H,<Wrong disk for file>
-        DOSSTR	0F3H,<Seek error>
-        DOSSTR	0F2H,<Bad file allocation table>
-        DOSSTR	0F0H,<Cannot format this drive>
-        DOSSTR	0DFH,<Internal error>
-        DOSSTR	0DEH,<Not enough memory>
-        DOSSTR	0DCH,<Invalid MSX-DOS call>
-        DOSSTR	0DBH,<Invalid drive>
-        DOSSTR	0DAH,<Invalid filename>
-        DOSSTR	0D9H,<Invalid pathname>
-        DOSSTR	0D8H,<Pathname too long>
-        DOSSTR	0D7H,<File not found>
-        DOSSTR	0D6H,<Directory not found>
-        DOSSTR	0D5H,<Root directory full>
-        DOSSTR	0D4H,<Disk full>
-        DOSSTR	0D3H,<Duplicate filename>
-        DOSSTR	0D2H,<Invalid directory move>
-        DOSSTR	0D1H,<Read only file>
-        DOSSTR	0D0H,<Directory not empty>
-        DOSSTR	0CFH,<Invalid attributes>
-        DOSSTR	0CEH,<Invalid . or .. operation>
-        DOSSTR	0CDH,<System file exists>
-        DOSSTR	0CCH,<Directory exists>
-        DOSSTR	0CBH,<File exists>
-        DOSSTR	0CAH,<File is already in use>
-        DOSSTR	0C9H,<Cannot transfer above 64k>
-        DOSSTR	0C8H,<File allocation error>
-        DOSSTR	0C7H,<End of file>
-        DOSSTR	0C6H,<File access violation>
-        DOSSTR	0C5H,<Invalid process id>
-        DOSSTR	0C4H,<No spare file handles>
-        DOSSTR	0C3H,<Invalid file handle>
-        DOSSTR	0C2H,<File handle not open>
-        DOSSTR	0C1H,<Invalid device operation>
-        DOSSTR	0C0H,<Invalid environment string>
-        DOSSTR	0BFH,<Environment string too long>
-        DOSSTR	0BEH,<Invalid date>
-        DOSSTR	0BDH,<Invalid time>
-        DOSSTR	0BCH,<RAM disk (drive H:) already exists>
-        DOSSTR	0BBH,<RAM disk does not exist>
-        DOSSTR	0BAH,<File handle has been deleted>
-        DOSSTR	0B8H,<Invalid sub-function number>
-        DOSSTR	0B7H,<Invalid File Control Block>
-        DOSSTR	09FH,<Ctrl-STOP pressed>
-        DOSSTR	09EH,<Ctrl-C pressed>
-        DOSSTR	09DH,<Disk operation aborted>
-        DOSSTR	09CH,<Error on standard output>
-        DOSSTR	09BH,<Error on standard input>
-        DOSSTR	08FH,<Wrong version of command>
-        DOSSTR	08EH,<Unrecognized command>
-        DOSSTR	08DH,<Command too long>
-        DOSSTR	08BH,<Invalid parameter>
-        DOSSTR	08AH,<Too many parameters>
-        DOSSTR	089H,<Missing parameter>
-        DOSSTR	088H,<Invalid option>
-        DOSSTR	087H,<Invalid number>
-        DOSSTR	086H,<File for HELP not found>
-        DOSSTR	085H,<Wrong version of MSX-DOS>
-        DOSSTR	084H,<Cannot concatenate destination file>
-        DOSSTR	083H,<Cannot create destination file>
-        DOSSTR	082H,<File cannot be copied onto itself>
-        DOSSTR	081H,<Cannot overwrite previous destination file>
-        DOSSTR	07FH,<Insert MSX-DOS2 disk in drive >
-        DOSSTR	07EH,<Press any key to continue... >
+L4D64:	DOSST1	0FFH,<"Incompatible disk">
+        DOSST1	0FEH,<"Write error">
+        DOSST1	0FDH,<"Disk error">
+        DOSST1	0FCH,<"Not ready">
+        DOSST1	0FBH,<"Verify error">
+        DOSST1	0FAH,<"Data error">
+        DOSST1	0F9H,<"Sector not found">
+        DOSST1	0F8H,<"Write protected disk">
+        DOSST1	0F7H,<"Unformatted disk">
+        DOSST1	0F6H,<"Not a DOS disk">
+        DOSST1	0F5H,<"Wrong disk">
+        DOSST1	0F4H,<"Wrong disk for file">
+        DOSST1	0F3H,<"Seek error">
+        DOSST1	0F2H,<"Bad file allocation table">
+        DOSST1	0F0H,<"Cannot format this drive">
+        DOSST1	0DFH,<"Internal error">
+        DOSST1	0DEH,<"Not enough memory">
+        DOSST1	0DCH,<"Invalid MSX-DOS call">
+        DOSST1	0DBH,<"Invalid drive">
+        DOSST1	0DAH,<"Invalid filename">
+        DOSST1	0D9H,<"Invalid pathname">
+        DOSST1	0D8H,<"Pathname too long">
+        DOSST1	0D7H,<"File not found">
+        DOSST1	0D6H,<"Directory not found">
+        DOSST1	0D5H,<"Root directory full">
+        DOSST1	0D4H,<"Disk full">
+        DOSST1	0D3H,<"Duplicate filename">
+        DOSST1	0D2H,<"Invalid directory move">
+        DOSST1	0D1H,<"Read only file">
+        DOSST1	0D0H,<"Directory not empty">
+        DOSST1	0CFH,<"Invalid attributes">
+        DOSST1	0CEH,<"Invalid . or .. operation">
+        DOSST1	0CDH,<"System file exists">
+        DOSST1	0CCH,<"Directory exists">
+        DOSST1	0CBH,<"File exists">
+        DOSST1	0CAH,<"File is already in use">
+        DOSST1	0C9H,<"Cannot transfer above 64k">
+        DOSST1	0C8H,<"File allocation error">
+        DOSST1	0C7H,<"End of file">
+        DOSST1	0C6H,<"File access violation">
+        DOSST1	0C5H,<"Invalid process id">
+        DOSST1	0C4H,<"No spare file handles">
+        DOSST1	0C3H,<"Invalid file handle">
+        DOSST1	0C2H,<"File handle not open">
+        DOSST1	0C1H,<"Invalid device operation">
+        DOSST1	0C0H,<"Invalid environment string">
+        DOSST1	0BFH,<"Environment string too long">
+        DOSST1	0BEH,<"Invalid date">
+        DOSST1	0BDH,<"Invalid time">
+        DOSST1	0BCH,<"RAM disk (drive H:) already exists">
+        DOSST1	0BBH,<"RAM disk does not exist">
+        DOSST1	0BAH,<"File handle has been deleted">
+        DOSST1	0B8H,<"Invalid sub-function number">
+        DOSST1	0B7H,<"Invalid File Control Block">
+        DOSST1	09FH,<"Ctrl-STOP pressed">
+        DOSST1	09EH,<"Ctrl-C pressed">
+        DOSST1	09DH,<"Disk operation aborted">
+        DOSST1	09CH,<"Error on standard output">
+        DOSST1	09BH,<"Error on standard input">
+        DOSST1	08FH,<"Wrong version of command">
+        DOSST1	08EH,<"Unrecognized command">
+        DOSST1	08DH,<"Command too long">
+        DOSST1	08BH,<"Invalid parameter">
+        DOSST1	08AH,<"Too many parameters">
+        DOSST1	089H,<"Missing parameter">
+        DOSST1	088H,<"Invalid option">
+        DOSST1	087H,<"Invalid number">
+        DOSST1	086H,<"File for HELP not found">
+        DOSST1	085H,<"Wrong version of MSX-DOS">
+        DOSST1	084H,<"Cannot concatenate destination file">
+        DOSST1	083H,<"Cannot create destination file">
+        DOSST1	082H,<"File cannot be copied onto itself">
+        DOSST1	081H,<"Cannot overwrite previous destination file">
+        DOSST1	07FH,<"Insert MSX-DOS2 disk in drive ",007H,":">
+        DOSST1	07EH,<"Press any key to continue... ">
         DEFB	0
 
-L0000:	DOSSTR	1,<83H,81H,83H,82H,83H,8AH,82H,0AAH,91H,0ABH,82H,0E8H,82H,0DCH,82H,0B9H,82H,0F1H>
-        DOSSTR	2,<83H,68H,83H,89H,83H,43H,83H,75H,96H,0BCH,82H,0CDH,3FH,20H,28H>
-        DOSSTR	3,<29H,20H>
-        DOSSTR	4,<89H,0BDH,82H,0A9H,83H,4CH,81H,5BH,82H,0F0H,89H,9FH,82H,0B5H,82H,0C4H,89H,0BAH,82H,0B3H,82H,0A2H,20H>
-        DOSSTR	5,<91H,0C5H,82H,0BFH,90H,0D8H,82H,0E7H,82H,0EAH,82H,0DCH,82H,0B5H,82H,0BDH>
-        DOSSTR	6,<83H,74H,83H,48H,81H,5BH,83H,7DH,83H,62H,83H,67H,82H,0AAH,8AH,0AEH,97H,0B9H,82H,0B5H,82H,0DCH,82H,0B5H,82H,0BDH>
-        DOSSTR	7,<83H,68H,83H,89H,83H,43H,83H,75H>
-        DOSSTR	8,<3AH,97H,70H,82H,0CCH,83H,66H,83H,42H,83H,58H,83H,4EH,82H,0F0H,93H,0FCH,82H,0EAH,82H,0C4H>
-        DOSSTR	9,<89H,0BDH,82H,0A9H,83H,4CH,81H,5BH,82H,0F0H,89H,9FH,82H,0B5H,82H,0C4H,89H,0BAH,82H,0B3H,82H,0A2H>
-        DOSSTR	10,<2AH,2AH,2AH,20H>
-        DOSSTR	11,<83H,56H,83H,58H,83H,65H,83H,80H,83H,47H,83H,89H,81H,5BH,20H>
-        DOSSTR	12,<83H,86H,81H,5BH,83H,55H,81H,5BH,83H,47H,83H,89H,81H,5BH,20H>
+L0000:	DOSST2	1,<83818382838A82AA91AB82E882DC82B982F1>
+        DOSST2	2,<836883898343837596BC82CD3F2028>
+        DOSST1	3,<") ">
+        DOSST2	4,<89BD82A9834C815B82F0899F82B582C489BA82B382A220>
+        DOSST2	5,<91C582BF90D882E782EA82DC82B582BD>
+        DOSST2	6,<83748348815B837D8362836782AA8AAE97B982B582DC82B582BD>
+        DOSST2	7,<8368838983438375>
+        DOSST2	8,<3A977082CC836683428358834E82F093FC82EA82C4>
+        DOSST2	9,<89BD82A9834C815B82F0899F82B582C489BA82B382A2>
+        DOSST1	10,<"*** ">
+        DOSST2	11,<835683588365838083478389815B20>
+        DOSST2	12,<8386815B8355815B83478389815B20>
         DEFB	0
 
 L0001:
 
-        DEFB	0FFH,1DH
-        DEFB	82H,0B1H,82H,0CCH,83H,66H,83H,42H
-        DEFB	83H,58H,83H,4EH,82H,0CDH,8EH,67H
-        DEFB	97H,70H,82H,0C5H,82H,0ABH,82H,0DCH
-        DEFB	82H,0B9H,82H,0F1H,00H,0FEH,11H,8FH
-        DEFB	91H,82H,0ABH,8DH,9EH,82H,0DDH,88H
-        DEFB	0D9H,8FH,0EDH,82H,0C5H,82H,0B7H,00H
-        DEFB	0FDH,13H,83H,66H,83H,42H,83H,58H
-        DEFB	83H,4EH,82H,0AAH,88H,0D9H,8FH,0EDH
-        DEFB	82H,0C5H,82H,0B7H,00H,0FCH,19H,83H
-        DEFB	66H,83H,42H,83H,58H,83H,4EH,82H
-        DEFB	0AAH,93H,0FCH,82H,0C1H,82H,0C4H,82H
-        DEFB	0A2H,82H,0DCH,82H,0B9H,82H,0F1H,00H
-        DEFB	0FBH,1DH,90H,0B3H,82H,0B5H,82H,0ADH
-        DEFB	8FH,91H,82H,0ABH,8DH,9EH,82H,0DCH
-        DEFB	82H,0EAH,82H,0DCH,82H,0B9H,82H,0F1H
-        DEFB	82H,0C5H,82H,0B5H,82H,0BDH,00H,0FAH
-        DEFB	1BH,83H,66H,83H,42H,83H,58H,83H
-        DEFB	4EH,82H,0CCH,83H,66H,81H,5BH,83H
-        DEFB	5EH,82H,0AAH,88H,0D9H,8FH,0EDH,82H
-        DEFB	0C5H,82H,0B7H,00H,0F9H,19H,83H,5AH
-        DEFB	83H,4EH,83H,5EH,81H,5BH,82H,0AAH
-        DEFB	8CH,0A9H,82H,0C2H,82H,0A9H,82H,0E8H
-        DEFB	82H,0DCH,82H,0B9H,82H,0F1H,00H,0F8H
-        DEFB	23H,83H,66H,83H,42H,83H,58H,83H
-        DEFB	4EH,82H,0AAH,8FH,91H,82H,0ABH,8DH
-        DEFB	9EH,82H,0DDH,95H,0DBH,8CH,0ECH,82H
-        DEFB	0B3H,82H,0EAH,82H,0C4H,82H,0A2H,82H
-        DEFB	0DCH,82H,0B7H,00H,0F7H,25H,83H,66H
+        DOSST2	0FFH,<82B182CC836683428358834E82CD8E67977082C582AB82DC82B982F1>
+        DOSST2  0FEH,<8F9182AB8D9E82DD88D98FED82C582B7>
+        DOSST2	0FDH,<836683428358834E82AA88D98FED82C582B7>
+        DOSST2  0FCH,<836683428358834E82AA93FC82C182C482A282DC82B982F1>
+        DOSST2	0FBH,<90B382B582AD8F9182AB8D9E82DC82EA82DC82B982F182C582B582BD>
+        DOSST2  0FAH,<836683428358834E82CC8366815B835E82AA88D98FED82C582B7>
+        DOSST2  0F9H,<835A834E835E815B82AA8CA982C282A982E882DC82B982F1>
+        DEFB    0F8H
+        DEFB    23H,83H,66H,83H,42H,83H,58H,83H,4EH,82H,0AAH,8FH
+        DEFB    91H,82H,0ABH,8DH,9EH,82H,0DDH,95H,0DBH,8CH,0ECH,82H
+        DEFB    0B3H,82H,0EAH,82H,0C4H,82H,0A2H,82H,0DCH,82H,0B7H
+        DEFB    0
+        DEFB    0F7H,25H,83H,66H
         DEFB	83H,42H,83H,58H,83H,4EH,82H,0AAH
         DEFB	83H,74H,83H,48H,81H,5BH,83H,7DH
         DEFB	83H,62H,83H,67H,82H,0B3H,82H,0EAH
@@ -2582,6 +2588,29 @@ L0001:
         DEFB	82H,0A9H,83H,4CH,81H,5BH,82H,0F0H
         DEFB	89H,9FH,82H,0B5H,82H,0C4H,89H,0BAH
         DEFB	82H,0B3H,82H,0A2H,20H,00H
+
+
+        DEFS	07FD0H-$,0
+
+L7FD0:
+	BNKCHG
+        RET
+
+
+; diskdriver interrupt handler
+
+L7FD4:	EX	AF,AF'
+        LD	A,(L40FF)
+        PUSH	AF		; Save DOS2 mapper block
+        XOR	A
+        CALL	L7FD0		; Set block 0
+        EX	AF,AF'
+        CALL	0		; interrupt handler
+        EX	AF,AF'
+        POP	AF
+        CALL	L7FD0		; Set old block
+        EX	AF,AF'
+        RET
 
         DEFS	08000H-$,0
 

@@ -12,8 +12,7 @@
 ; Recreation NOT permitted without authorisation of the copyrightholders
 ;
 
-
-
+DOS2	EQU	1		; DOS2 flag for diskdriver
 
         .Z80
         ASEG
@@ -5624,6 +5623,30 @@ R_DSKFMT:
 ; DRIVER section starts here
 
         INCLUDE	DRIVER.MAC
+
+
+
+        DEFS	07FD0H-$,0
+
+L7FD0:
+	BNKCHG
+        RET
+
+
+; diskdriver interrupt handler
+
+L7FD4:	EX	AF,AF'
+        LD	A,(L40FF)
+        PUSH	AF		; Save DOS2 mapper block
+        XOR	A
+        CALL	L7FD0		; Set block 0
+        EX	AF,AF'
+        CALL	L7789		; interrupt handler
+        EX	AF,AF'
+        POP	AF
+        CALL	L7FD0		; Set old block
+        EX	AF,AF'
+        RET
 
         DEFS	08000H-$,0
 

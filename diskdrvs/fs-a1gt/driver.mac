@@ -2505,30 +2505,8 @@ LC0C4:	defb	0
 
 L_BOOT	EQU	$-L7F2D
 
-        IFDEF	DOS2
 
-        DEFS	07FD0H-$,0
-
-L7FD0:	LD	(L7FF0),A
-        RET
-
-
-; diskdriver interrupt handler
-
-L7FD4:	EX	AF,AF'
-        LD	A,(L40FF)
-        PUSH	AF		; Save DOS2 mapper block
-        XOR	A
-        CALL	L7FD0		; Set block 0
-        EX	AF,AF'
-        CALL	L7789		; interrupt handler
-        EX	AF,AF'
-        POP	AF
-        CALL	L7FD0		; Set old block
-        EX	AF,AF'
-        RET
-
-        ELSE
+        IFNDEF	DOS2
 
         DEFS	07FD4H-$,0
 
