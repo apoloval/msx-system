@@ -21,8 +21,6 @@ DSKBAS	EQU	04022H
 
 ;
 I7405:
-DEFDPB	EQU	I7405+18-1
-
         DB	0F8h
         DW	512
         DB	00Fh
@@ -36,6 +34,8 @@ DEFDPB	EQU	I7405+18-1
         DW	355
         DB	2
         DW	5
+
+DEFDPB	EQU	$-1		; default DPB is 720 Kb 3.5"
 
         DB	0F9h
         DW	512

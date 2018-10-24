@@ -36,7 +36,9 @@ L73C9:	DB	0F8h
         DB	2
         DW	5
 
-L73DB:	DB	0F9h
+DEFDPB	EQU	$-1		; default DPB is 720 Kb 3.5"
+
+	DB	0F9h
         DW	512
         DB	00Fh
         DB	004h
@@ -133,8 +135,6 @@ L73DB:	DB	0F9h
         DW	316
         DB	1
         DW	3
-
-DEFDPB	EQU	L73DB-1		; default DPB is 720 Kb 3.5"
 
 
 
@@ -602,8 +602,8 @@ L7764:	INC	L
 ; Initializes workarea
 
 ; +0	not used
-; +1	diskchange down counter drive 0 (not used)
-; +2	diskchange down counter drive 1 (not used)
+; +1	diskchange down counter drive 0 (used in DOS1)
+; +2	diskchange down counter drive 1 (used in DOS1)
 ; +3	logical drive last diskoperation
 ; +4	not used
 ; +5	b0 write operation, b1 verify operation, b2-b7 not used

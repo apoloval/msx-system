@@ -5,6 +5,7 @@
 
 
 TURBOR	EQU	1		; create special MSX Turbo-R version
+BNKADR	EQU 06000H	; Bank switch address (non Turbo-R version)
 
 USESBF	EQU	0		; use buffer for screen output
 
@@ -17,6 +18,7 @@ BNKCHG	MACRO
 		ELSE
 
 BNKCHG	MACRO
-		LD	(06000H),A
+		LD	(BNKADR),A
 		ENDM
+
 		ENDIF
