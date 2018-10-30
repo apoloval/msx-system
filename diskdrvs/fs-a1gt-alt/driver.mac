@@ -1,4 +1,4 @@
-; Diskdriver Panasonic FS-A1GT
+; Diskdriver Panasonic FS-A1GT/FS-A1ST
 ; Alternate version without SROM/SRAM drive support
 ;
 ; FDC	TC8566AF
@@ -13,6 +13,7 @@
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
+A1GT    EQU     1               ; FS-A1GT version
 
 MYSIZE	EQU	26		; size of environment
 SECLEN	EQU	512		; size of biggest supported sector
@@ -473,6 +474,9 @@ L7681:	LD	A,C
         SCF
         RET			; quit with write protect error
 
+
+        IF A1GT EQ 1
+
 L76AA:	INC	C
         DEC	C
         JR	NZ,L76B8	; not track 0
@@ -484,6 +488,23 @@ L76AA:	INC	C
 L76B8:	CALL	L7900		; Select Track
         POP	HL
         RET
+
+        ELSE
+
+L76AA:	PUSH	BC
+	INC	C
+	LD	A,80-1
+	CP	C
+	JR	NC,J76E7
+	DEC	C
+	DEC	C
+J76E7:	CALL	L7900
+	POP	BC
+	CALL	L7900
+	POP	HL
+	RET
+
+        ENDIF
 
 L76BD:	POP	HL
         LD	A,2
@@ -1447,11 +1468,21 @@ DSKFMT:	PUSH	HL
         CP	(IX+3)
         JR	Z,L7C94		; same logical drive,
         LD	(IX+3),A
+
+        IF A1GT EQ 1
+
         PUSH	DE
         PUSH	IY
         CALL	PROMPT		; PROMPT
         POP	IY
         POP	DE
+
+        ELSE
+
+        CALL	PROMPT		; PROMPT
+
+        ENDIF
+
 L7C94:	LD	D,0
 L7C96:	POP	HL
         LD	(IY+7),D	; physical driveid
@@ -1499,6 +1530,9 @@ L7CD3:	XOR	A
         ADD	HL,DE
         PUSH	HL
         POP	IX
+
+        IF A1GT EQ 1
+
         LD	A,(IY+7)	; physical drive
         LD	(IX+11),A
         LD	C,6
@@ -1508,6 +1542,14 @@ L7CD3:	XOR	A
         JP	C,L7D4B		; seek error
         CALL	DISINT
         DI			; disable interrupts
+
+        ELSE
+
+	CALL	DISINT
+	DI
+
+        ENDIF
+
 L7D00:	LD	C,(IY+10)
         LD	A,(IY+7)	; physical drive
         LD	(IX+11),A
