@@ -1514,8 +1514,32 @@ J7DB8:	LD	A,(D7FFF)
         DJNZ	J7DB8
         POP	HL
 
-        IF	DRVVER EQ 205
 I7DC7:	LD	A,(D7FF8)
+
+
+        IF	DRVVER EQ 206
+
+        BIT	1,A
+        JP	Z,J7DD6
+        LD	B,A
+        LD	A,4EH
+        LD	(D7FFB),A
+        LD	A,B
+J7DD6:
+        ENDIF
+
+        IF	DRVVER EQ 207
+
+        BIT	1,A
+        JP	Z,J7DD6
+        LD	B,A
+        LD	A,4EH
+        LD	(D7FFB),A
+        LD	A,B
+J7DD6:
+        ENDIF
+
+
         AND	0C4H
         RET	Z
         SCF	
@@ -1527,49 +1551,7 @@ I7DC7:	LD	A,(D7FF8)
         JP	NZ,J7C07
         LD	A,10H
         JP	J7C07
-        ENDIF
 
-        IF	DRVVER EQ 206
-I7DC7:	LD	A,(D7FF8)
-        BIT	1,A
-        JP	Z,J7DD6
-        LD	B,A
-        LD	A,4EH
-        LD	(D7FFB),A
-        LD	A,B
-J7DD6:	AND	0C4H
-        RET	Z
-        SCF	
-        LD	E,A
-        LD	A,02H
-        JP	M,J7C07
-        BIT	6,E
-        LD	A,00H
-        JP	NZ,J7C07
-        LD	A,10H
-        JP	J7C07
-        ENDIF
-
-        IF	DRVVER EQ 207
-I7DC7:	LD	A,(D$7FF8)
-        BIT	1,A
-        JP	Z,J7DD6
-        LD	B,A
-        LD	A,4EH
-        LD	(D7FFB),A
-        LD	A,B
-J7DD6:	AND	0C4H
-        RET	Z
-        SCF	
-        LD	E,A
-        LD	A,02H
-        JP	M,J7C07
-        BIT	6,E
-        LD	A,00H
-        JP	NZ,J7C07
-        LD	A,10H
-        JP	J7C07
-        ENDIF
 
 OEMSTA:
         SCF	

@@ -180,9 +180,9 @@ J752D:	JP	NC,C762C			; read DSKIO
         CALL	C755D				; do write DSKIO
 
 C7533:	PUSH	AF
-        LD	C,120				; 2 seconds (NTSC)/2.4 seconds (PAL) unchanged
+        LD	C,120				; 2 seconds (NTSC)/2.4 seconds (PAL) disk unchanged
         JR	NC,J753A
-        LD	C,0				; error, 0 seconds unchanged
+        LD	C,0				; error, 0 seconds disk unchanged
 J753A:	LD	A,0D0H
         LD	(D7FF8),A			; execute terminate without interrupt command
         EX	(SP),HL
@@ -515,8 +515,8 @@ J7723:	CALL	DIV16
         LD	H,A
         LD	A,(IX+8)
         DEC	A				; 1 physical drive ?
-        JR	Z,J7736			; yep,
-        LD	A,H
+        JR	Z,J7736			        ; yep, select drive 0
+        LD	A,H                             ; select physical drive
 J7736:	OR	0C4H				; motor on, in use on, keep disk change
         CALL	DISINT
         DI
@@ -825,7 +825,7 @@ J78F4:	PUSH	HL
 J7909:	LD	B,(IX+1)		; unchanged timer drive 0
 J790C:	AND	A
         INC	B
-        DEC	B			; timer reset ?
+        DEC	B			; timer finished ?
         LD	B,1
         RET	NZ			; nope, disk is UNCHANGED
         PUSH	BC

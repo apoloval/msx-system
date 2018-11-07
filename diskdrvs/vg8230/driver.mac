@@ -4,6 +4,9 @@
 ;                            Palo Alto, CA
         .Z80
         ORG	7405H
+
+MYSIZE  EQU     8
+
 C.0000	EQU	0000H	; -C--I
 I.0001	EQU	0001H	; ----I
 I$0008	EQU	0008H	; ----I
@@ -45,13 +48,8 @@ I$364E	EQU	364EH	; ----I
 I$3F00	EQU	3F00H	; ----I
 J$4022	EQU	4022H	; J----
 C$408F	EQU	408FH	; -C---
-C$492F	EQU	492FH	; -C---
 C$4E01	EQU	4E01H	; -C---
-C.5FC2	EQU	5FC2H	; -C---
-J$5FF6	EQU	5FF6H	; J----
-J$6027	EQU	6027H	; J----
 I$61FF	EQU	61FFH	; ----I
-C$625A	EQU	625AH	; -C---
 J$800F	EQU	800FH	; J----
 I$91FF	EQU	91FFH	; ----I
 I$99E1	EQU	99E1H	; ----I
@@ -64,71 +62,69 @@ I.C0AB	EQU	0C0ABH	; ----I
 D$C0B9	EQU	0C0B9H	; --S--
 D.C0D0	EQU	0C0D0H	; --SL-
 I$E2B4	EQU	0E2B4H	; ----I
-D.F30D	EQU	0F30DH	; ---L-
-D.F34D	EQU	0F34DH	; --SL-
-C.F36E	EQU	0F36EH	; -C---
-C.F37D	EQU	0F37DH	; -C---
 I$F51F	EQU	0F51FH	; ----I
 I.FF00	EQU	0FF00H	; ----I
-C.FFCF	EQU	0FFCFH	; -C---
-C.FFD4	EQU	0FFD4H	; -C---
 I$FFDE	EQU	0FFDEH	; ----I
 I$FFDF	EQU	0FFDFH	; ----I
-I$7405:	RET	M
-        NOP
-        LD	(BC),A
-        RRCA
-        INC	B
-        LD	BC,I.0102
-        NOP
-        LD	(BC),A
-        LD	(HL),B
-        INC	C
-        NOP
-        LD	H,E
-        LD	BC,I$0502
-        NOP
-        LD	SP,HL
-        NOP
-        LD	(BC),A
-        RRCA
-        INC	B
-        LD	BC,I.0102
-        NOP
-        LD	(BC),A
-        LD	(HL),B
-        LD	C,00H
-        JP	Z,J$0302
-        RLCA
-        NOP
-        JP	M,J.0200
-        RRCA
-        INC	B
-        LD	BC,I.0102
-        NOP
-        LD	(BC),A
-        LD	(HL),B
-        LD	A,(BC)
-        NOP
-        INC	A
-        LD	BC,I$0301
-        NOP
-        EI
-        NOP
-        LD	(BC),A
-        RRCA
-        INC	B
-        LD	BC,I.0102
-        NOP
-        LD	(BC),A
-        LD	(HL),B
-        INC	C
-        NOP
-        LD	A,E
-        LD	(BC),A
-        LD	(BC),A
-        DEC	B
-        NOP
+
+I$7405:
+        DEFB	0F8h		; Media F8
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 9 sectors
+        DEFB	04h		; 1 side
+        DEFB	01h		; 3.5" 360 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	12
+        DEFW	355
+        DEFB	2
+        DEFW	5
+
+DEFDPB  EQU     $-1
+
+	DEFB	0F9h		; Media F9
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 9 sectors
+        DEFB	04h		; 2 sides
+        DEFB	01h		; 3.5" 720 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	14
+        DEFW	714
+        DEFB	3
+        DEFW	7
+
+        DEFB	0FAh		; Media FA
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 8 sectors
+        DEFB	04h		; 1 side
+        DEFB	01h		; 3.5" 320 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	10
+        DEFW	316
+        DEFB	1
+        DEFW	3
+
+        DEFB	0FBh		; Media FB
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 8 sectors
+        DEFB	04h		; 2 sides
+        DEFB	01h		; 3.5" 640 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	12
+        DEFW	635
+        DEFB	2
+        DEFW	5
 
 ;	  Subroutine DSKIO
 ;	     Inputs  ________________________
@@ -137,7 +133,7 @@ I$7405:	RET	M
 C.744D:	JP	NC,C.75A3
         CALL	C$7481
 J.7453:	EI
-        CALL	C.FFD4
+        CALL	ENAINT
         PUSH	AF
         LD	C,60
         JR	NC,J$745E
@@ -171,7 +167,7 @@ C$7481:	CALL	C$7D0F
         RET	C
         CALL	C.766A
         RET	C
-        CALL	C.FFCF
+        CALL	DISINT
         DI
 J$748D:	LD	A,L
         ADD	A,0FFH
@@ -185,10 +181,10 @@ J$748D:	LD	A,L
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,(D.F34D)
+        LD	DE,($SECBUF)
         PUSH	DE
         LD	BC,512
-        CALL	C.F36E
+        CALL	XFER
         POP	HL
         POP	BC
         POP	DE
@@ -365,7 +361,7 @@ C$75A9:	CALL	C.766A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$75AD:	CALL	C.FFCF
+C$75AD:	CALL	DISINT
         DI
 J$75B1:	LD	A,L
         ADD	A,0FFH
@@ -377,7 +373,7 @@ J$75B1:	LD	A,L
         AND	A
         JP	M,J.75DE
         PUSH	HL
-        LD	HL,(D.F34D)
+        LD	HL,($SECBUF)
         CALL	C.75EA		; read sector
         POP	HL
         RET	C
@@ -385,9 +381,9 @@ J$75B1:	LD	A,L
         PUSH	DE
         PUSH	BC
         EX	DE,HL
-        LD	HL,(D.F34D)
-        LD	BC,J.0200
-        CALL	C.F36E
+        LD	HL,($SECBUF)
+        LD	BC,512
+        CALL	XFER
         POP	BC
         POP	DE
         POP	HL
@@ -494,7 +490,7 @@ C.766A:	PUSH	AF
         PUSH	BC
         PUSH	DE
         PUSH	HL
-        CALL	C.5FC2
+        CALL	GETWRK
         POP	HL
         POP	DE
         POP	BC
@@ -529,7 +525,7 @@ J$768A:	EX	(SP),HL
         LD	DE,8
         JR	NZ,J$769A
         INC	DE
-J$769A:	CALL	C$492F
+J$769A:	CALL	DIV16
         LD	A,L
         INC	A
         LD	(D.7FFA),A
@@ -553,14 +549,14 @@ J.76B0:	LD	(D.7FFC),A
         NOP
         NOP
 J$76BF:	OR	0C4H
-        CALL	C.FFCF
+        CALL	DISINT
         DI
         LD	(D.7FFD),A
         LD	A,(IX)
         AND	A		; motor still turning ?
         LD	(IX),0FFH	; disable motor off
         EI
-        CALL	C.FFD4
+        CALL	ENAINT
         JR	NZ,J$76E2	; yep, skip motor startup
         CALL	C.77BC
         CALL	C.77BC
@@ -607,7 +603,7 @@ J$7715:	LD	A,(IX+6)
         PUSH	DE
         PUSH	BC
         PUSH	AF
-        CALL	C$625A
+        CALL	PROMPT
         POP	AF
         POP	BC
         POP	DE
@@ -751,7 +747,8 @@ J.77D8:	DEC	HL
         XOR	A
         RET
 
-?.77E0:	LD	A,0D0H
+INIHRD:
+	LD	A,0D0H
         LD	(D.7FF8),A
         EX	(SP),HL
         EX	(SP),HL
@@ -759,6 +756,8 @@ J.77D8:	DEC	HL
         CALL	C.77F7
         LD	A,0C1H
         CALL	C.77F7
+
+MTOFF:
         LD	A,03H	; 3 
         LD	(D.7FFD),A
         RET
@@ -795,9 +794,10 @@ J$7812:	LD	A,05H	; 5
         CALL	C.77A4
         RET
 
-?.782D:	PUSH	BC
+DRIVES:
+	PUSH	BC
         PUSH	AF
-        CALL	C.5FC2
+        CALL	GETWRK
         LD	A,0C1H
         LD	(D.7FFD),A
         CALL	C.77A4
@@ -814,28 +814,29 @@ J$7844:	LD	A,(D.7FF8)
         OR	H
         JR	NZ,J$7844
         INC	L
-        JP	Z,J$022E
-J$7851	EQU	$-2
+        DEFB    0CAH
+J$7851:	LD      L,2
         LD	(IX+7),L
         LD	A,03H	; 3 
         LD	(D.7FFD),A
         POP	AF
         JR	Z,J$7860
-        LD	L,02H	; 2 
+        LD	L,2
 J$7860:	POP	BC
         RET
 
-?.7862:	CALL	C.5FC2
+INIENV:
+	CALL	GETWRK
         XOR	A
         LD	B,07H	; 7 
 J$7868:	LD	(HL),A
         INC	HL
         DJNZ	J$7868
         LD	HL,I$7872
-        JP	J$5FF6
+        JP	SETINT
 
 I$7872:	PUSH	AF
-        CALL	C.5FC2
+        CALL	GETWRK
         LD	A,(HL)
         AND	A
         JR	Z,J.7887
@@ -857,13 +858,14 @@ J$788D:	INC	HL
         JR	Z,J$7893
         DEC	(HL)
 J$7893:	POP	AF
-        JP	J$6027
+        JP	PRVINT
 
-?.7897:	EI
+DSKCHG:
+	EI
         PUSH	HL
         PUSH	BC
         PUSH	AF
-        CALL	C.5FC2
+        CALL	GETWRK
         POP	AF
         POP	BC
         POP	HL
@@ -885,10 +887,10 @@ J.78BD:	PUSH	BC
         PUSH	HL
         LD	B,1
         LD	DE,1
-        LD	HL,(D.F34D)
+        LD	HL,($SECBUF)
         CALL	C.75A3		; DSKIO read
         JR	C,J.78E3
-        LD	HL,(D.F34D)
+        LD	HL,($SECBUF)
         LD	B,(HL)
         POP	HL
         PUSH	BC
@@ -917,6 +919,7 @@ J.78E3:	PUSH	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+GETDPB:
 C$78EB:	EX	DE,HL
         INC	DE
         LD	A,B
@@ -942,11 +945,12 @@ C$78EB:	EX	DE,HL
 J$7909:	SCF
         RET
 
-?.790B:	DEC	A
-        JR	Z,J$7954
+CHOICE:
+	DEC	A                       ; drive 1 ?
+        JR	Z,J$7954                ; yep, offer format choices
         LD	HL,I$7918
-        CALL	C.7C97
-        LD	HL,C.0000
+        CALL	C.7C97                  ; print message
+        LD	HL,0                    ; no format choices
         RET
 
 I$7918:	DEFB	13,10
@@ -955,13 +959,13 @@ I$7918:	DEFB	13,10
         DEFB	0
 
 J$7954:	LD	HL,I$7958
-J$7956	EQU	$-1
         RET
 
 I$7958:	DEFB	"1 - Single Side ...",13,10
         DEFB	"2 - Double Side ...",13,10
         DEFB	0
 
+DSKFMT:
         EI
         LD	(HL),D
         PUSH	BC
@@ -989,7 +993,7 @@ J.799F:	PUSH	AF
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        CALL	C.5FC2
+        CALL	GETWRK
         POP	BC
 J$79A7:	POP	DE
         POP	HL
@@ -1132,7 +1136,7 @@ C$7A72:	PUSH	BC
 ;	     Outputs ________________________
 
 C$7A7B:	RET	C
-        LD	A,(D.F30D)
+        LD	A,(RAWFLG)
         OR	A
         RET	Z
         PUSH	BC
@@ -1166,7 +1170,7 @@ J$7A9F:	CALL	C.77A4
         PUSH	BC
         LD	DE,I$7AE6
         PUSH	DE
-        CALL	C.FFCF
+        CALL	DISINT
         DI
         EX	(SP),IY
         EX	(SP),IY
@@ -1206,7 +1210,7 @@ I$7AE6:	POP	BC
         POP	DE
         POP	HL
         EI
-        CALL	C.FFD4
+        CALL	ENAINT
         LD	A,(D.7FF8)
         AND	0FCH
         RET	Z
@@ -1265,7 +1269,7 @@ J$7B39:	LD	A,(HL)
 ;	     Outputs ________________________
 
 C.7B4B:	RET	C
-        LD	A,(D.F30D)
+        LD	A,(RAWFLG)
         OR	A
         RET	Z
         PUSH	HL
@@ -1349,7 +1353,7 @@ J$7BC3:	SLA	B
         ADD	A,B
         LD	B,A
         PUSH	BC
-J$7BCA:	LD	DE,J.0200
+J$7BCA:	LD	DE,512
 J$7BCD:	LD	(HL),00H
         INC	HL
         DEC	DE
@@ -1558,7 +1562,7 @@ J$7CE2:	LD	B,01H	; 1
         ADD	HL,BC
         LD	BC,I$0101
 J$7CF5:	PUSH	BC
-J$7CF6:	LD	DE,J.0200
+J$7CF6:	LD	DE,512
 J$7CF9:	LD	(HL),00H
         INC	HL
         DEC	DE
@@ -1575,7 +1579,8 @@ J$7CF9:	LD	(HL),00H
         POP	BC
         RET
 
-?.7D0D:	SCF
+OEMSTA:
+	SCF
         RET
 
 
@@ -1587,7 +1592,7 @@ C$7D0F:	PUSH	HL
         PUSH	DE
         PUSH	BC
         PUSH	AF
-        CALL	C.5FC2
+        CALL	GETWRK
         POP	AF
         POP	BC
         PUSH	BC
@@ -1596,7 +1601,7 @@ C$7D0F:	PUSH	HL
         JR	Z,J.7D67	; yep, skip check
         LD	B,1
         LD	DE,10
-        LD	HL,(D.F34D)
+        LD	HL,($SECBUF)
         OR	A		; drive 0 ?
         JR	NZ,J$7D46	; no, drive 1
         BIT	6,(IX+6)
@@ -1665,18 +1670,18 @@ J$7D96:	INC	HL
 J$7D99:	LD	SP,I$F51F
         LD	DE,I.C0AB
         LD	C,0FH	; 15 
-        CALL	C.F37D
+        CALL	BDOS
         INC	A
         JP	Z,J$C063
         LD	DE,J.0100
         LD	C,1AH
-        CALL	C.F37D
+        CALL	BDOS
         LD	HL,I.0001
         LD	(D$C0B9),HL
         LD	HL,I$3F00
         LD	DE,I.C0AB
         LD	C,27H	; "'"
-        CALL	C.F37D
+        CALL	BDOS
         JP	J.0100
 
 ?.7DC4:	LD	E,B
@@ -1692,7 +1697,7 @@ J$7D99:	LD	SP,I$F51F
         LD	DE,I$C085
         CALL	C$C077
         LD	C,07H	; 7 
-        CALL	C.F37D
+        CALL	BDOS
         JR	J$7D99
 
 J$7DE5:	LD	A,(DE)
@@ -1702,7 +1707,7 @@ J$7DE5:	LD	A,(DE)
         PUSH	DE
         LD	E,A
         LD	C,06H	; 6 
-        CALL	C.F37D
+        CALL	BDOS
         POP	DE
         JR	J$7DE5
 

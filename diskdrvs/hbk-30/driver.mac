@@ -286,7 +286,7 @@ I75D3:	POP	BC
         PUSH	AF
         LD	A,(IX+3)
         OR	0C4H
-        LD	(D7FFD),A
+        LD	(D7FFD),A               ; motor on, in use led on, leave diskchange, select drive
         CALL	C782F			; reseek every 2nd try
         POP	AF
         DEC	E
@@ -436,7 +436,7 @@ I76C5:	POP	BC
         PUSH	AF
         LD	A,(IX+3)
         OR	0C4H
-        LD	(D7FFD),A
+        LD	(D7FFD),A               ; motor on, in use led on, leave diskchange, select drive
         CALL	C782F			; reseek every 2nd try
         POP	AF
         DEC	E
@@ -722,9 +722,9 @@ J7875:	LD	A,0D0H
         LD	(D7FF8),A		; execute FORCE INTERRUPT (IMMEDIATE) command
         EX	(SP),HL
         EX	(SP),HL
-        LD	A,00H			; motor off, in use off,
+        LD	A,00H			; motor off, in use off, reset diskchange, drive 0
         CALL	C788C
-        LD	A,01H			; motor off, in use off,
+        LD	A,01H			; motor off, in use off, reset diskchange, drive 1
         CALL	C788C
         LD	A,03H
         LD	(D7FFD),A		; motor off, in use off, unselect drive
@@ -763,7 +763,7 @@ J78B4:	PUSH	BC
         PUSH	AF
         CALL	GETWRK
         LD	A,01H
-        LD	(D7FFD),A		; motor off, in use off, select drive 1
+        LD	(D7FFD),A		; motor off, in use off, reset disk change, select drive 1
         CALL	C7849			; wait for command ready
         LD	A,01H 
         LD	(D7FF8),A		; execute RESTORE command
@@ -782,7 +782,7 @@ J78CB:	LD	A,(D7FF8)
 J78D8:	LD	L,2
         LD	(IX+8),L
         LD	A,03H
-        LD	(D7FFD),A
+        LD	(D7FFD),A               ; motor off, in use off, leave disk change, unselect drive
         POP	AF
         JR	Z,J78E7
         LD	L,2
@@ -840,9 +840,9 @@ J790D:	PUSH	HL
         LD	B,A
         PUSH	BC
         AND	0FCH
-        LD	(D7FFD),A
+        LD	(D7FFD),A               ; leave motor, leave use led, reset diskchange, drive 0
         LD	A,(D7FFD)
-        BIT	2,A
+        BIT	2,A                     ; disk change status drive 0
         POP	BC
         LD	A,B
         LD	(D7FFD),A
@@ -852,16 +852,16 @@ J7932:	LD	A,(D7FFD)
         LD	B,A
         PUSH	BC
         AND	0FCH
-        OR	01H	; 1 
-        LD	(D7FFD),A
+        OR	01H
+        LD	(D7FFD),A               ; leave motor, leave use led, reset diskchange, drive 1
         LD	A,(D7FFD)
-        BIT	2,A
+        BIT	2,A                     ; disk change status drive 1
         POP	BC
         LD	A,B
         LD	(D7FFD),A
 J7948:	POP	DE
         LD	A,D
-        LD	B,01H	; 1 
+        LD	B,1
         PUSH	BC
         PUSH	HL
         PUSH	AF
@@ -885,7 +885,7 @@ J7948:	POP	DE
         PUSH	BC
         CALL	GETDPB
         PUSH	DE
-        LD	A,0CH	; 12 
+        LD	A,12
         JR	C,J7988
         POP	DE
         POP	AF
@@ -901,7 +901,7 @@ J7948:	POP	DE
 J7981:	POP	DE
         POP	DE
         POP	DE
-        LD	A,0AH
+        LD	A,10
         SCF	
         RET
 
@@ -1225,7 +1225,7 @@ C7BDC:	LD	A,D
         JP	NZ,J7BF4
         LD	A,(D7FFD)
         PUSH	AF
-        AND	0FCH
+        AND	0FCH                    ; leave motor, leave in use led, reset disk change, select drive 0
         LD	(D7FFD),A
         CALL	C7850			; select track 0
         POP	AF
@@ -1236,7 +1236,7 @@ C7BDC:	LD	A,D
 J7BF4:	LD	A,(D7FFD)
         PUSH	AF
         AND	0FCH
-        OR	01H
+        OR	01H                     ; leave motor, leave in use led, reset disk change, select drive 1
         LD	(D7FFD),A
         CALL	C7850			; select track 0
         POP	AF
@@ -1609,9 +1609,9 @@ J7E53:	SCF
         RET
 
 J7E55:	LD	A,3CH
-        LD	(D7FFD),A		; motor off, not in use, leave disk change, select drive 0
+        LD	(D7FFD),A		; motor off, not in use, reset disk change, select drive 0
         LD	A,3DH
-        LD	(D7FFD),A		; motor off, not in use, leave disk change, select drive 1
+        LD	(D7FFD),A		; motor off, not in use, reset disk change, select drive 1
         LD	A,03H
         LD	(D7FFD),A		; motor off, not in use, unselect drive
         RET
