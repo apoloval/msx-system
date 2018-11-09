@@ -2,6 +2,7 @@
 
 ; DOS 1.02 kernel (most common used)
 ; version number is not offical, it is created by me
+; Assume this is version Sep  2, 1985 (fixed disk damage and template problem)
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA

@@ -2,6 +2,7 @@
 
 ; DOS 1.03 kernel (latest version known, SONY HB-F1XV)
 ; version number is not offical, it is created by me
+; Assume this is version Aug 23, 1985 (fixed control-C problem)
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA

@@ -2,6 +2,7 @@
 
 ; DOS 1.01 kernel (as used in the SVI-738 diskinterface)
 ; version number is not offical, it is created by me
+; Assume this is version May 28, 1985 (added motor off function, fixed MKI bug, fixed interslot routines)
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA

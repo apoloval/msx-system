@@ -2,6 +2,7 @@
 
 ; DOS 1.01 pre kernel (as used in the AVT DPF-550 diskinterface)
 ; version number is not offical, it is created by me
+; Assume this is version Jan 29, 1985 (fixed write protect problem)
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
