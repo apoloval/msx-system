@@ -422,7 +422,10 @@ T401F:	nop				; MTOFF entrypoint
 A4022:	jp	A5B3A			; start DiskBasic entrypoint
 A4025:	scf				; format disk entrypoint (workarea must be supplied)
         jp	A60B1
-A4029:	jp	A620D			; stop all disks entry point
+A4029:	RET				; stop all disks entry point is not implemented
+        NOP
+        NOP
+        NOP
 
 ; Unused code ??
 
