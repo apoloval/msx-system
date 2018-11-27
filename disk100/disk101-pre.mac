@@ -4468,7 +4468,7 @@ A589C:	ld	(hl),0C9H
         cp	(hl)
         ld	(hl),a			; clear diskinterface count
         ret	p			; already cleared, return control
-A58A8:	call	A622D			; hook H.LOPD when H.CLEA is hooked (for register system bottom)
+A58A8:	call	A6234			; hook H.LOPD when H.CLEA is hooked (for register system bottom)
         ld	(YF348),a		; disksystem diskrom slotid
         ld	hl,A7397
         ld	de,XF1C9
@@ -4999,7 +4999,8 @@ I5C91:	DEFW	H.DSKO,C6B92
         DEFW	XF331 ,C56D3
         DEFW	0
 
-I5D1F:	DEFB	1,048H,"-",1,041H,"-",1,047H,"):",0
+I5D1F:	DEFB	"Y-M-D):",0
+        DEFB    0,0,0
 I5D2A:	defb	"M-D-Y):",0
 I5D32:	defb	"D-M-Y):",0
 
@@ -5767,7 +5768,18 @@ I61C2:	DEFB	"Disk error",0
 I61CD:	DEFB	"Bad parameter",0
 I61DB:	DEFB	"Format complete",0
 
-        DEFS	100,0
+        defs	06234H-$,0
+
+A6234:  ld	a,(H.CLEA+0)
+        cp	0C9H
+	jr	z,A624C
+	ld	hl,T72F2
+        ld	de,H.LOPD
+        ld	bc,5
+        ldir
+        call	A402D
+        ld	(H.LOPD+1),a
+A624C:	jp	A402D
 
 I624F:	DEFW	I61A8
         DEFW	I61B8

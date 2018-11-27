@@ -11,6 +11,18 @@ BEEP	EQU	00C0H	; ----I
 SNSMAT	EQU	0141H	; ----I
 J$4022	EQU	4022H	; J----
 
+; +00   drive + cylinder
+; +01   track + sector (H)
+; +02   sector (L)
+; +03   number of sectors
+; +04   operation
+; +05   number of sectors left
+; +06   slotid interface
+; +07   sector number
+; +09
+; +10   start of workspace
+; +12   drive (format)
+; +13   track (format)
 
 
 MYSIZE	EQU	49
@@ -125,8 +137,8 @@ J.7489:	BIT	6,A
         CALL	C.7947
         POP	AF
 J$7492:	CALL	C.7BD4			; print number
-        LD	HL,I$7B8D
-        CALL	C.7B28			; HDD system error
+        LD	HL,I$7B8D               ; HDD system error
+        CALL	C.7B28			; print string
         CALL	C.7BEF			; beep
         CALL	C.7BFB			; wait for Y or N key
         JR	C,J$7458		; Y, retry
@@ -136,10 +148,10 @@ J.74A5:	BIT	6,A
         JR	Z,J$74AC
         CALL	C.7947
 J$74AC:	CALL	C.7BD4			; print number
-        LD	HL,I$7BB4
-        CALL	C.7B28			; 2nd HD error
-        LD	HL,I$7BA3
-        CALL	C.7B28			; retry
+        LD	HL,I$7BB4               ; 2nd HD error
+        CALL	C.7B28			; print string
+        LD	HL,I$7BA3               ; retry
+        CALL	C.7B28			; print string
         CALL	C.7BEF			; beep
         CALL	C.7BFB			; wait for Y or N key
         JR	C,J$7479		; Y, retry
@@ -512,7 +524,7 @@ J$77C0:	LD	(IX+11),H
         LD	E,(IX+10)
         LD	BC,512
         LDIR	
-        LD	A,(IX+12)
+        LD	A,(IX+12)               ; drive
         LD	B,1
         LD	C,0F0H
         LD	DE,0
@@ -588,7 +600,7 @@ C$784D:	LD	(IX+14),00H
         LD	(IX+7),00H
         LD	(IX+8),22H	; """
         LD	(IX+9),00H
-        CALL	C$78DD			; print formating
+        CALL	C$78DD			; print formating text
 J$7868:	LD	A,(IX+0)
         AND	20H
         LD	(IX+0),A		; only drive
@@ -649,7 +661,7 @@ C$78CF:	PUSH	IX
 
 C$78DD:	PUSH	IX
         LD	HL,I$78E8
-        CALL	C.7B28
+        CALL	C.7B28                  ; print string
         POP	IX
         RET
         
@@ -732,28 +744,28 @@ J.7977:	LD	A,41H
         SCF	
         RET	
 
-;	  Subroutine __________________________
+;	  Subroutine Port 07CH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.797B:	LD	C,7CH
         RET	
 
-;	  Subroutine __________________________
+;	  Subroutine Port 07DH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.797E:	LD	C,7DH
         RET	
 
-;	  Subroutine __________________________
+;	  Subroutine Port 07EH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.7981:	LD	C,7EH
         RET	
 
-;	  Subroutine __________________________
+;	  Subroutine Port 07FH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -1138,11 +1150,11 @@ J$7C1F:	SCF
 J$7C23:	AND	A
         PUSH	AF
 J$7C25:	LD	HL,I$7C2D
-        CALL	C.7B28
+        CALL	C.7B28                          ; print string
         POP	AF
         RET	
 
-I$7C2D:	DEFB	27,"A",27,"M",27,"M"
+I$7C2D:	DEFB	27,"A",27,"M",27,"M"            ; cursor up, cursor down, cursor down
         DEFB	0
 
 I$7C34:

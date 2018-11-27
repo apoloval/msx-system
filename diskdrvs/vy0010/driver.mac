@@ -34,7 +34,7 @@ D7FFF	EQU	07FFFH
 
 I7405:
 
-DEFDPB	EQU	I7405-1
+DEFDPB	EQU	$-1
 
         DEFB	0F8h		; Media F8
         DEFW	512		; 80 Tracks
@@ -156,18 +156,18 @@ DSKIO:	JP	NC,C7613
         CALL	C74C5
 
 J749B:	PUSH	AF
-        LD	C,0
+        LD	C,0             ; disk unchanged for 0 seconds
         JR	NC,J74A2
-        LD	C,0
+        LD	C,0             ; disk unchanged for 0 seconds
 J74A2:	LD	A,0D0H
         LD	(D7FF8),A	; abort command
         EX	(SP),HL
         EX	(SP),HL
         EX	(SP),HL
         EX	(SP),HL
-        LD	A,(D7FFB)
-        LD	A,(D7FF8)
-        LD	(IX+0),120
+        LD	A,(D7FFB)       ; clear DRQ
+        LD	A,(D7FF8)       ; clear INTRQ
+        LD	(IX+0),120      ; motor stop timer 120 ticks (should be 100 for european machines)
         LD	A,(IX+3)
         AND	A		; used drive 0 ?
         JR	NZ,J74C0	; nope, set disk change timer drive 1
@@ -186,15 +186,16 @@ J74C0:	LD	(IX+2),C
 
 C74C5:	CALL	C76E0		; setup for disk i/o
         RET	C
+
 J74C9:	LD	A,L
         ADD	A,LOW (512-1)
         LD	A,H
         ADC	A,HIGH (512-1)
-        CP	40H
-        JP	C,J74F4
+        CP	40H             ; writes from page 0 ?
+        JP	C,J74F4         ; yep, direct I/O
         LD	A,H
-        AND	A
-        JP	M,J74F4
+        AND	A               ; writes from page 2 or 3 ?
+        JP	M,J74F4         ; yep, direct I/O
         PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -204,14 +205,14 @@ J74C9:	LD	A,L
         CALL	XFER
         POP	HL
         POP	BC
-        POP	DE
+        POP	DE              ; transfer to temporary sector buffer
         CALL	C7503		; write sector
-        CALL	C75A1		; verify sector
+        CALL	C75A1		; verify sector (when enabled)
         POP	HL
-        JP	J74FA
+        JP	J74FA           ; next sector
 
 J74F4:	CALL	C7503		; write sector
-        CALL	C75A1		; verify sector
+        CALL	C75A1		; verify sector (when enabled)
 J74FA:	RET	C
         DEC	B
         RET	Z
@@ -223,15 +224,15 @@ J74FA:	RET	C
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7503:	LD	E,15H
+C7503:	LD	E,21
 J7505:	CALL	C7834		; wait for FDC
         LD	A,0A0H		; write sector data command
         BIT	6,D
         JR	Z,J7516
-        OR	02H	; 2 
+        OR	02H
         BIT	0,D
         JR	Z,J7516
-        OR	08H	; 8 
+        OR	08H
 J7516:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -239,17 +240,17 @@ J7516:	PUSH	HL
         PUSH	DE
         CALL	DISINT
         DI			; disable interrupts
-        LD	(D7FF8),A
+        LD	(D7FF8),A       ; execute command
         EX	(SP),IY
-        EX	(SP),IY
+        EX	(SP),IY         ; wait
         LD	BC,D7FFF
         LD	DE,D7FFB
 J752E:	LD	A,(BC)
-        ADD	A,A
-        RET	P
-        JP	C,J752E
+        ADD	A,A             ; read DRQ/INTRQ status
+        RET	P               ; INTRQ (end of command), quit
+        JP	C,J752E         ; wait for DRQ
         LD	A,(HL)
-        LD	(DE),A
+        LD	(DE),A          ; write data
         INC	HL
         JP	J752E
 
@@ -262,7 +263,7 @@ I753A:	POP	BC
         AND	0FCH		; any error ?
         RET	Z		; nope, quit
         BIT	6,A		; write protect error ?
-        JR	NZ,J7574	; yep, check if real
+        JR	NZ,J7574	; yep, check if real write protect error
         PUSH	AF
         LD	A,(IX+3)	; used drive
         OR	0C4H		; set b7,b6 and b2
@@ -273,46 +274,46 @@ I753A:	POP	BC
         JR	NZ,J7505	; next retry
         SCF
         LD	E,A
-        BIT	7,E		; not ready error ?
+        BIT	7,E		; NOT READY error ?
         LD	A,2
-        RET	NZ
-        BIT	5,E		;
+        RET	NZ              ; yep, return NOT READY error
+        BIT	5,E		; WRITE FAULT error ?
         LD	A,10
-        RET	NZ
-        BIT	4,E		; record not found error ?
+        RET	NZ              ; yep, return WRITE FAULT error
+        BIT	4,E		; RECORD NOT FOUND error ?
         LD	A,8
-        RET	NZ
-        BIT	3,E		; crc error ?
+        RET	NZ              ; yep, return RECORD NOT FOUND error
+        BIT	3,E		; CRC error ?
         LD	A,4
-        RET	NZ
-        LD	A,12
+        RET	NZ              ; yep, return DATA (CRC) error
+        LD	A,12            ; return OTHER error
         RET
 
 J7574:	LD	A,0D0H
         LD	(D7FF8),A	; abort command
         EX	(SP),IY
-        EX	(SP),IY
+        EX	(SP),IY         ; wait
         LD	A,80H
-        LD	(D7FF8),A	; read sector data
+        LD	(D7FF8),A	; execute read sector data command
         EX	(SP),IY
-        EX	(SP),IY
+        EX	(SP),IY         ; wait
         LD	HL,D7FFF
         LD	DE,0
 J758C:	LD	A,(HL)
-        ADD	A,A
-        JP	P,J759E		; INTRQ,
-        JP	NC,J759E	; DRQ,
+        ADD	A,A             ; read DRQ/INTRQ status
+        JP	P,J759E         ; INTRQ (end of command), real write protect error
+        JP	NC,J759E	; DRQ, real write protect error
         DEC	DE
         LD	A,E
         OR	D
         JP	NZ,J758C
-        LD	A,2		; Not Ready errorcode
+        LD	A,2
         SCF
-        RET
+        RET		        ; return NOT READY error
 
-J759E:	XOR	A		; Write Protect errorcode
+J759E:	XOR	A
         SCF
-        RET
+        RET		        ; return WRITE PROTECT errorcode
 
 
 ;	  Subroutine verify sector
