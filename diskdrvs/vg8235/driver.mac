@@ -92,6 +92,8 @@ I$FFDE	EQU	0FFDEH	; ----I
 I$FFDF	EQU	0FFDFH	; ----I
 
 I$7405:
+; Only supports 3.5 media
+
         DEFB	0F8h		; Media F8
         DEFW	512		; 80 Tracks
         DEFB	0Fh		; 9 sectors

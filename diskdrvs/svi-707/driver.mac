@@ -29,20 +29,66 @@ ENAINT  EQU     0FFD4H
 
 I$7405:
 
+; Only supports 5.25 single sided media
+; DEFDPB should point to the largest media, which should be 0FDH instead of 0FCH
+
 DEFDPB  EQU     I$7405-1
 
-        DEFB    0FCH,00H,02H,0FH,04H,00H,01H,01H
-        DEFB    00H,02H,40H,09H,00H,60H,01H,02H
-        DEFB    05H,00H
-        DEFB    0FDH,00H,02H,0FH,04H,01H
-        DEFB    02H,01H,00H,02H,70H,0CH,00H,63H
-        DEFB    01H,02H,05H,00H
-        DEFB    0FEH,00H,02H,0FH
-        DEFB    04H,00H,01H,01H,00H,02H,40H,07H
-        DEFB    00H,3AH,01H,01H,03H,00H
-        DEFB    0FFH,00H
-        DEFB    02H,0FH,04H,01H,02H,01H,00H,02H
-        DEFB    70H,0AH,00H,3CH,01H,01H,03H
+         DB	0FCh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	000h
+        DB	001h
+        DW	1
+        DB	2
+        DB	64
+        DW	9
+        DW	352
+        DB	2
+        DW	5
+
+        DB	0FDh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	001h
+        DB	002h
+        DW	1
+        DB	2
+        DB	112
+        DW	12
+        DW	355
+        DB	2
+        DW	5
+
+        DB	0FEh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	000h
+        DB	001h
+        DW	1
+        DB	2
+        DB	64
+        DW	7
+        DW	314
+        DB	1
+        DW	3
+
+        DB	0FFh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	001h
+        DB	002h
+        DW	1
+        DB	2
+        DB	112
+        DW	10
+        DW	316
+        DB	1
+        DW	3
 
 
 ?.744C: NOP

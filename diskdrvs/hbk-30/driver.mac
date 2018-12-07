@@ -101,7 +101,11 @@ DC0C4:	DEFB	0
 
 L7405	EQU	$-I7405
 
-I74CA:	DEFB	0F8H
+I74CA:
+
+; Only supports 3.5 media
+
+	DEFB	0F8H
         DEFW	512
         DEFB	0FH
         DEFB	04H

@@ -104,6 +104,10 @@ DC0C4:	DEFB	0
 L7405	EQU	$-I7405
 
 I74CA:
+
+; Only supports 3.5 single sided media
+; DEFDPB should point to the largest media, which should be 0F9H instead of 0F8H
+
 DEFDPB	EQU	$-1
 
         DEFB	0F8H

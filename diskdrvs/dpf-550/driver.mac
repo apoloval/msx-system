@@ -56,20 +56,69 @@ D$C0AD	EQU	0C0ADH	; --S--
 D.C0C4	EQU	0C0C4H	; --SL-
 
 
-I$7405:	DEFB	0FCH,00H,02H,0FH,04H,00H,01H,01H
-        DEFB	00H,02H,40H,09H,00H,60H,01H,02H
-        DEFB	05H,00H
-        DEFB	0FDH,00H,02H,0FH,04H,01H
-        DEFB	02H,01H,00H,02H,70H,0CH,00H,63H
-        DEFB	01H,02H,05H,00H
-        DEFB	0FEH,00H,02H,0FH
-        DEFB	04H,00H,01H,01H,00H,02H,40H,07H
-        DEFB	00H,3AH,01H,01H,03H,00H
-        DEFB	0FFH,00H
-        DEFB	02H,0FH,04H,01H,02H,01H,00H,02H
-        DEFB	70H,0AH,00H,3CH,01H,01H,03H,00H
+I$7405:
 
-GETDPB	EQU	I$7405-1
+; Only supports 5.25 single sided media
+; DEFDPB should point to the largest media, which should be 0FDH instead of 0FCH
+
+DEFDPB	EQU	$-1
+
+        DB	0FCh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	000h
+        DB	001h
+        DW	1
+        DB	2
+        DB	64
+        DW	9
+        DW	352
+        DB	2
+        DW	5
+
+        DB	0FDh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	001h
+        DB	002h
+        DW	1
+        DB	2
+        DB	112
+        DW	12
+        DW	355
+        DB	2
+        DW	5
+
+        DB	0FEh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	000h
+        DB	001h
+        DW	1
+        DB	2
+        DB	64
+        DW	7
+        DW	314
+        DB	1
+        DW	3
+
+        DB	0FFh
+        DW	512
+        DB	00Fh
+        DB	004h
+        DB	001h
+        DB	002h
+        DW	1
+        DB	2
+        DB	112
+        DW	10
+        DW	316
+        DB	1
+        DW	3
+
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -84,13 +133,13 @@ J7454:	PUSH	AF
         JR	NC,J745B
         LD	C,0
 J745B:	LD	A,0D0H
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         EX	(SP),HL
         EX	(SP),HL
-        IN	A,(0D3H)
-        IN	A,(0D0H)
+        IN	A,(WDPD3)
+        IN	A,(WDPD0)
         LD	(IX+0),240
         LD	A,(IX+3)
         AND	A
@@ -155,13 +204,13 @@ J74B9:	CALL	C76CB
         PUSH	DE
         CALL	DISINT
         DI	
-        OUT	(0D0H),A
-J74CB:	IN	A,(0D4H)
+        OUT	(WDPD0),A
+J74CB:	IN	A,(WDPD4)
         ADD	A,A			; IRQ ?
         RET	C			; yep,
         JP	M,J74CB			; no DRQ, wait
         LD	A,(HL)
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         INC	HL
         JP	J74CB
 
@@ -170,7 +219,7 @@ I$74D9:	POP	BC
         POP	HL
         EI	
         CALL	ENAINT
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	5CH	; "\"
         RET	Z
         JP	M,J7520
@@ -193,15 +242,15 @@ I$74D9:	POP	BC
         RET	
 
 J7503:	LD	A,0D0H
-        OUT	(0D0H),A
+        OUT	(WDPD0,A
         EX	(SP),HL
         EX	(SP),HL
         LD	A,88H
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	DE,0
-J7512:	IN	A,(0D4H)
+J7512:	IN	A,(WDPD4)
         ADD	A,A			; IRQ ?
         JR	C,J7524			; yep,
         JP	P,J7524			; DRQ,
@@ -278,10 +327,10 @@ J7570:	CALL	C76CB
         PUSH	DE
         CALL	DISINT
         DI	
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         LD	B,03H	; 3 
         LD	DE,0
-J7587:	IN	A,(0D4H)
+J7587:	IN	A,(WDPD4)
         ADD	A,A			; DRQ ?
         JP	P,J75A0			; yep,
         RET	C
@@ -299,11 +348,11 @@ J7587:	IN	A,(0D4H)
 
 J75A0:	JP	J75AA
 
-J75A3:	IN	A,(0D4H)
+J75A3:	IN	A,(WDPD4)
         ADD	A,A			; IRQ ?
         RET	C			; yep,
         JP	M,J75A3			; no DRQ,
-J75AA:	IN	A,(0D3H)
+J75AA:	IN	A,(WDPD3)
         LD	(HL),A
         INC	HL
         JP	J75A3
@@ -313,7 +362,7 @@ I$75B1:	POP	BC
         POP	HL
         EI	
         CALL	ENAINT
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	1CH
         RET	Z
         JP	M,J75D7
@@ -373,7 +422,7 @@ J75F5:	EX	(SP),HL
 J7605:	CALL	DIV16
         LD	A,L
         INC	A
-        OUT	(0D2H),A
+        OUT	(WDPD2),A
         LD	L,C
         POP	BC
         POP	AF
@@ -397,7 +446,7 @@ J7623:	LD	D,A
         LD	D,A
         CALL	DISINT
         DI	
-        OUT	(0D5H),A		; select drive and side (motor on)
+        OUT	(WDPD5),A		; select drive and side (motor on)
         LD	A,(IX+0)
         AND	A
         LD	(IX+0),0FFH
@@ -412,7 +461,7 @@ J7623:	LD	D,A
         JR	Z,J767B			; yep, skip setting the track register
         XOR	01H
         LD	(IX+3),A
-        IN	A,(0D1H)
+        IN	A,(WDPD1)
         JR	Z,J765B
         LD	(IX+4),A
         LD	A,(IX+5)
@@ -420,7 +469,7 @@ J7623:	LD	D,A
 
 J765B:	LD	(IX+5),A
         LD	A,(IX+4)
-J7661:	OUT	(0D1H),A
+J7661:	OUT	(WDPD1),A
         EX	(SP),HL
         EX	(SP),HL
         JR	J767D
@@ -436,7 +485,7 @@ J7667:	LD	A,H
         POP	BC
         POP	DE
         POP	IX
-J767B:	IN	A,(0D1H)
+J767B:	IN	A,(WDPD1)
 J767D:	CP	C			; head on the right track ?
         CALL	NZ,C76C0		; nope, seek to track
         POP	HL
@@ -448,9 +497,9 @@ J767D:	CP	C			; head on the right track ?
 C7683:	CALL	C76CB
         INC	H
         INC	H
-        IN	A,(0D2H)
+        IN	A,(WDPD2)
         INC	A
-        OUT	(0D2H),A
+        OUT	(WDPD2),A
         BIT	7,D
         JR	NZ,J7694
         CP	0AH	; 10 
@@ -458,23 +507,23 @@ C7683:	CALL	C76CB
 J7694:	CP	09H	; 9 
         RET	C
         LD	A,01H	; 1 
-        OUT	(0D2H),A
+        OUT	(WDPD2),A
         BIT	6,D
         JR	Z,J76A9
         BIT	2,D
         JR	NZ,J76A9
         SET	2,D
         LD	A,D
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         RET	
 
 J76A9:	RES	2,D
         LD	A,D
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         INC	C
         CALL	C76CB
         LD	A,59H	; "Y"
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         JR	C76CB
@@ -490,17 +539,17 @@ C76BA:	BIT	0,E
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 C76C0:	LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         EX	(SP),HL
         EX	(SP),HL
         LD	A,19H
-J76C7:	OUT	(0D0H),A
+J76C7:	OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-C76CB:	IN	A,(0D0H)
+C76CB:	IN	A,(WDPD0)
         RRA	
         JR	C,C76CB
         RET	
@@ -514,7 +563,7 @@ C76D1:	CALL	C76CB
 
 INIHRD:
 C76D8:	LD	A,0D0H
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	A,01H	; 1 
@@ -522,20 +571,20 @@ C76D8:	LD	A,0D0H
         LD	A,02H	; 2 
         CALL	C76EC
         XOR	A
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         RET	
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-C76EC:	OUT	(0D5H),A
+C76EC:	OUT	(WDPD5),A
         CALL	C76CB
         LD	A,09H	; 9 
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	HL,0
-J76FA:	IN	A,(0D0H)
+J76FA:	IN	A,(WDPD0)
         RRA	
         RET	NC
         DEC	HL
@@ -549,14 +598,14 @@ C7704:	PUSH	BC
         PUSH	AF
         CALL	GETWRK
         LD	A,02H	; 2 
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         CALL	C76CB
         LD	A,09H	; 9 
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	HL,0
-J7719:	IN	A,(0D0H)
+J7719:	IN	A,(WDPD0)
         RRA	
         JR	NC,J7725
         DEC	HL
@@ -568,7 +617,7 @@ J7719:	IN	A,(0D0H)
 J7725	EQU	$-2
         LD	(IX+7),L
         XOR	A
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         POP	AF
         JR	Z,J7732
         LD	L,02H	; 2 
@@ -595,7 +644,7 @@ I$7744:	PUSH	AF
         DEC	A
         LD	(HL),A
         JR	NZ,J7756
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
 J7756:	INC	HL
         LD	A,(HL)
         AND	A
@@ -715,7 +764,7 @@ C77E0:	PUSH	DE
         CALL	DISINT
         DI	
         CALL	C76D1
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	04H	; 4 
         JP	Z,J7840
         CALL	GETWRK
@@ -731,7 +780,7 @@ J7808:	PUSH	AF
 J7811:	LD	B,03H	; 3 
         PUSH	BC
 J7814:	CALL	C7959
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	5CH	; "\"
         POP	BC
         JP	Z,J7851
@@ -788,7 +837,7 @@ J7854:	DEC	HL
         LD	(IX+8),A
         CALL	C76CB
         LD	A,59H	; "Y"
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         CALL	C76CB
@@ -799,9 +848,9 @@ J7875:	POP	DE
 
 ?.7879:	LD	A,D
         OR	04H	; 4 
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         CALL	C76D1
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	04H	; 4 
         JP	Z,J7841
         XOR	A
@@ -810,7 +859,7 @@ J7875:	POP	DE
 J788E:	LD	B,03H	; 3 
         PUSH	BC
 J7891:	CALL	C7959
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	5CH	; "\"
         POP	BC
         JP	Z,J78A5
@@ -832,14 +881,14 @@ J78A8:	DEC	HL
         LD	(IX+8),A
         CALL	C76CB
         LD	A,59H	; "Y"
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         CALL	C76CB
         JP	J788E
 
 J78C9:	CALL	C76D1
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	04H	; 4 
         JP	Z,J7841
         LD	HL,I$7AC5
@@ -926,212 +975,212 @@ C7959:	CALL	DISINT
         CALL	C7ABD
         LD	A,0FCH
         LD	D,01H	; 1 
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	C,4EH	; "N"
         LD	B,60H	; "`"
-J796C:	IN	A,(0D4H)
+J796C:	IN	A,(WDPD4)
         ADD	A,A			; IRQ ?
         RET	C			; yep,
         JP	M,J796C
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J796C
         LD	C,00H
         LD	B,0CH	; 12 
-J797C:	IN	A,(0D4H)
+J797C:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J797C
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J797C
         LD	C,0F6H
         LD	B,03H	; 3 
-J798C:	IN	A,(0D4H)
+J798C:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J798C
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J798C
         LD	C,0FCH
         LD	B,01H	; 1 
-J799C:	IN	A,(0D4H)
+J799C:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J799C
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J799C
         LD	C,4EH	; "N"
         LD	B,32H	; "2"
-J79AC:	IN	A,(0D4H)
+J79AC:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J79AC
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J79AC
 J79B8:	LD	C,00H
         LD	B,0CH	; 12 
-J79BC:	IN	A,(0D4H)
+J79BC:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J79BC
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J79BC
         LD	C,0F5H
         LD	B,03H	; 3 
-J79CC:	IN	A,(0D4H)
+J79CC:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J79CC
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J79CC
         LD	C,0FEH
         INC	B
-J79DB:	IN	A,(0D4H)
+J79DB:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J79DB
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J79DB
         LD	A,(IX+8)
         LD	C,A
         INC	B
-J79EC:	IN	A,(0D4H)
+J79EC:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J79EC
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J79EC
         LD	C,E
         INC	B
-J79FA:	IN	A,(0D4H)
+J79FA:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J79FA
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J79FA
         LD	C,D
         INC	B
-J7A08:	IN	A,(0D4H)
+J7A08:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A08
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A08
         LD	C,02H	; 2 
         INC	B
-J7A17:	IN	A,(0D4H)
+J7A17:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A17
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A17
         LD	C,0F7H
         INC	B
-J7A26:	IN	A,(0D4H)
+J7A26:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A26
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A26
         LD	C,4EH	; "N"
         LD	B,16H
-J7A36:	IN	A,(0D4H)
+J7A36:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A36
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A36
         LD	C,00H
         LD	B,0CH	; 12 
-J7A46:	IN	A,(0D4H)
+J7A46:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A46
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A46
         LD	C,0F5H
         LD	B,03H	; 3 
-J7A56:	IN	A,(0D4H)
+J7A56:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A56
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A56
         LD	C,0FBH
         INC	B
-J7A65:	IN	A,(0D4H)
+J7A65:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A65
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A65
         LD	C,0E5H
-J7A73:	IN	A,(0D4H)
+J7A73:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A73
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A73
-J7A7F:	IN	A,(0D4H)
+J7A7F:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A7F
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A7F
         LD	C,0F7H
         INC	B
-J7A8E:	IN	A,(0D4H)
+J7A8E:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A8E
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A8E
         LD	C,4EH	; "N"
         LD	B,40H	; "@"
-J7A9E:	IN	A,(0D4H)
+J7A9E:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7A9E
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         DJNZ	J7A9E
         INC	D
         LD	A,D
         CP	0AH	; 10 
         JP	NZ,J79B8
-J7AB1:	IN	A,(0D4H)
+J7AB1:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J7AB1
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         JR	J7AB1
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-C7ABD:	IN	A,(0D0H)
+C7ABD:	IN	A,(WDPD0)
         AND	01H	; 1 
         JP	NZ,C7ABD
         RET	
@@ -1401,10 +1450,10 @@ J7C42:	CALL	C.00FB
         PUSH	DE
         CALL	DISINT
         DI	
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         LD	DE,0
         LD	B,03H	; 3 
-J7C59:	IN	A,(0D4H)
+J7C59:	IN	A,(WDPD4)
         ADD	A,A
         JP	P,J$0054
         RET	C
@@ -1422,11 +1471,11 @@ J7C59:	IN	A,(0D4H)
 
 ?.7C71:	JP	J$005E
 
-?.7C74:	IN	A,(0D4H)
+?.7C74:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J.0057
-        IN	A,(0D3H)
+        IN	A,(WDPD3)
         LD	(HL),A
         INC	HL
         JP	J.0057
@@ -1436,7 +1485,7 @@ J7C59:	IN	A,(0D4H)
         POP	HL
         EI	
         CALL	ENAINT
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	1CH
         JR	NZ,J7C97
         DEC	B
@@ -1483,9 +1532,9 @@ J7CB6:	PUSH	HL
 ?.7CD0:	CALL	C.00FB
         INC	H
         INC	H
-        IN	A,(0D2H)
+        IN	A,(WDPD2)
         INC	A
-        OUT	(0D2H),A
+        OUT	(WDPD2),A
         BIT	7,D
         JR	NZ,J7CE1
         CP	0AH	; 10 
@@ -1493,23 +1542,23 @@ J7CB6:	PUSH	HL
 J7CE1:	CP	09H	; 9 
         RET	C
         LD	A,01H	; 1 
-        OUT	(0D2H),A
+        OUT	(WDPD2),A
         BIT	6,D
         JR	Z,J7CF6
         BIT	2,D
         JR	NZ,J7CF6
         SET	2,D
         LD	A,D
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         RET	
 
 J7CF6:	RES	2,D
         LD	A,D
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         INC	C
         CALL	C.00FB
         LD	A,59H	; "Y"
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         JR	J7D18
@@ -1518,14 +1567,14 @@ J7CF6:	RES	2,D
         RET	NZ
         CALL	C$0101
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         EX	(SP),HL
         EX	(SP),HL
         LD	A,19H
-J7D14:	OUT	(0D0H),A
+J7D14:	OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
-J7D18:	IN	A,(0D0H)
+J7D18:	IN	A,(WDPD0)
         RRA	
         JR	C,J7D18
         RET	
@@ -1564,13 +1613,13 @@ J7D4A:	CALL	C.00FF
         PUSH	DE
         CALL	DISINT
         DI	
-        OUT	(0D0H),A
-        IN	A,(0D4H)
+        OUT	(WDPD0),A
+        IN	A,(WDPD4)
         ADD	A,A
         RET	C
         JP	M,J.0037
         LD	A,(HL)
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         INC	HL
         JP	J.0037
 
@@ -1579,7 +1628,7 @@ J7D4A:	CALL	C.00FF
         POP	HL
         EI	
         CALL	ENAINT
-        IN	A,(0D0H)
+        IN	A,(WDPD0)
         AND	5CH	; "\"
         JR	NZ,J7D7F
         DEC	B
@@ -1606,15 +1655,15 @@ J7D7F:	JP	M,J$0097
         JR	J7DC1
 
 J7D9F:	LD	A,0D0H
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	A,88H
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	DE,0
-        IN	A,(0D4H)
+        IN	A,(WDPD4)
         ADD	A,A
         JR	C,J7DC0
         JP	P,J$009B
@@ -1648,9 +1697,9 @@ J7DC2:	PUSH	HL
 ?.7DDC:	CALL	C.00FF
         INC	H
         INC	H
-        IN	A,(0D2H)
+        IN	A,(WDPD2)
         INC	A
-        OUT	(0D2H),A
+        OUT	(WDPD2),A
         BIT	7,D
         JR	NZ,J7DED
         CP	0AH	; 10 
@@ -1658,23 +1707,23 @@ J7DC2:	PUSH	HL
 J7DED:	CP	09H	; 9 
         RET	C
         LD	A,01H	; 1 
-        OUT	(0D2H),A
+        OUT	(WDPD2),A
         BIT	6,D
         JR	Z,J7E02
         BIT	2,D
         JR	NZ,J7E02
         SET	2,D
         LD	A,D
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         RET	
 
 J7E02:	RES	2,D
         LD	A,D
-        OUT	(0D5H),A
+        OUT	(WDPD5),A
         INC	C
         CALL	C.00FF
         LD	A,59H	; "Y"
-        OUT	(0D0H),A
+        OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         JR	J7E24
@@ -1683,14 +1732,14 @@ J7E02:	RES	2,D
         RET	NZ
         CALL	C$0105
         LD	A,C
-        OUT	(0D3H),A
+        OUT	(WDPD3),A
         EX	(SP),HL
         EX	(SP),HL
         LD	A,19H
-J7E20:	OUT	(0D0H),A
+J7E20:	OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
-J7E24:	IN	A,(0D0H)
+J7E24:	IN	A,(WDPD0)
         RRA	
         JR	C,J7E24
         RET	

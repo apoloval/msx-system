@@ -128,6 +128,9 @@ StartFlag:	db	0
                 .DEPHASE
 
 I74D6:
+
+; Only supports 3.5 media
+
                 db	0F8h		; Media F8
                 dw	512		; 80 Tracks
                 db	0Fh		; 9 sectors
@@ -142,7 +145,9 @@ I74D6:
                 db	2
                 dw	5
 
-DPB720:		db	0F9h		; Media F9
+DEFDPB	EQU	$-1
+
+		db	0F9h		; Media F9
                 dw	512		; 80 Tracks
                 db	0Fh		; 9 sectors
                 db	04h		; 2 sides
@@ -184,7 +189,6 @@ DPB720:		db	0F9h		; Media F9
                 db	2
                 dw	5
 
-DEFDPB	EQU	DPB720-1
 
 ;	  Subroutine DSKIO
 ;	     Inputs  ________________________
