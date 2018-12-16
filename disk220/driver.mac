@@ -217,8 +217,8 @@ C717D:	CALL	C.0138
         RRCA	
         RRCA	
         OR	88H
-        LD	E,A			; slotid KANJI ROM (secundairy slot 2)
-        CALL	CC000			; caculate checksum of KANJI ROM
+        LD	E,A			; slotid MSX-JE ROM (secundairy slot 2)
+        CALL	CC000			; caculate checksum of MSX-JE ROM
         LD	A,5
         CALL	C7139			; print checksum
         DI	

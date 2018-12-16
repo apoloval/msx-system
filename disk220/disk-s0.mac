@@ -1,9 +1,23 @@
-;  
-;   DOS2 -> Source re-created by Z80DIS 2.2
-;      Z80DIS was written by Kenneth Gielow
-;                            Palo Alto, CA
+; DISK-S0.MAC
+;
+; DOS 2.20 kernel bank 0 (ASCII version)
+;
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+;
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+;
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
+DOS2	EQU	1		; DOS2 flag for diskdriver
+
         .Z80
-        ORG	4000H
+        ASEG
+        ORG	04000H
+
 D.0000	EQU	0000H	; --SLI
 I.0001	EQU	0001H	; ----I
 I$0004	EQU	0004H	; ----I
@@ -307,10 +321,21 @@ D.FFFF	EQU	0FFFFH	; ---LI
 
 
 I.4000:	DEFB	"AB"
-        DEFW	C403C
-        DEFW	C575C
-        DEFW	0
-        DEFW	0
+
+        IF MSXJE EQ 0
+
+        DEFW	C403C                   ; EXTENSION ROM INIT handler
+        DEFW	C575C                   ; EXTENSION ROM CALL statement handler
+
+        ELSE
+
+        DEFW	C406A                   ; EXTENSION ROM INIT handler
+        DEFW	C403C                   ; EXTENSION ROM CALL statement handler
+
+        ENDIF
+
+        DEFW	0                       ; EXTENSION ROM device handler (no device)
+        DEFW	0                       ; EXTENSION ROM basic program (no basic program)
         DEFS	6,0
 
 L4010:	JP	DSKIO			; DRIVER: DSKIO
@@ -319,12 +344,12 @@ L4016:	JP	GETDPB			; DRIVER: GETDPB
 L4019:	JP	CHOICE			; DRIVER: CHOICE
 L401C:	JP	DSKFMT			; DRIVER: DSKFMT
 L401F:	JP	MTOFF			; DRIVER: MTOFF
-?.4022:	JP	J.4B1B			; SYSTEM: Start DiskBASIC
-?.4025:	SCF				; SYSTEM: Format disk
+L4022:	JP	J.4B1B			; SYSTEM: Start DiskBASIC
+L4025:	SCF				; SYSTEM: Format disk
         JP	J$4E67
-?.4029:	JP	J$4CD3			; SYSTEM: Stop drives
+L4029:	JP	J$4CD3			; SYSTEM: Stop drives
 
-?.402C:	NOP	
+	NOP	
 
 ;	  Subroutine GETSLT
 ;	     Inputs  ________________________
@@ -332,41 +357,67 @@ L401F:	JP	MTOFF			; DRIVER: MTOFF
 
 GETSLT:
 C.402D:	JP	C.4E05			; SYSTEM: Get own slotid
-?.4030:	LD	HL,(D.F34B)		; SYSTEM: Get system boundary
+L4030:	LD	HL,(D.F34B)		; SYSTEM: Get system boundary
         RET	
 
-?.4034:	JP	J$4177
+; 04034H
+; DOS1 kernel compatible: CP/M BIOS CONST entry
+; This entry is supported, to use MSXDOS.SYS
 
-?.4037:	DEFB	000H
-        DEFB	01EH
-        DEFB	041H
-        DEFB	000H
-        DEFB	000H
+C4034:	JP	J$4177
+
+        DEFS	04038H-$,0
+
+; 04038H
+; DOS2: pointer to kernel version ASCIIZ string
+
+        DEFW    I411E
+
+        DEFS	0403CH-$,0
+
+
+        IF      MSXJE EQ 0
+
+;	  Subroutine EXTENSION ROM INIT handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 C403C:	XOR	A
-        CALL	C.4092			; select bank 0
+        CALL	C.4092			; select DOS2 ROM bank 0
         JP	J$47D6
+
+;	  Subroutine EXTBIO handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 I$4043:	CALL	C$410C
         JP	J.F2D5
 
+;	  Subroutine H.TIMI handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
 I$4049:	PUSH	AF
         LD	A,(D$40FF)
-        PUSH	AF			; save current bank
+        PUSH	AF			; save current DOS2 ROM bank
         XOR	A
-        CALL	C.4092			; select bank 0
+        CALL	C.4092			; select DOS2 ROM bank 0
         CALL	C$4CF3			; H.TIMI handler
         POP	AF
-        CALL	C.4092			; restore bank
+        CALL	C.4092			; restore DOS2 ROM bank
         POP	AF
         RET	
 
-J$405B:	CALL	C.4092			; select bank
+;	  Subroutine inter DOS2 ROM bank call
+;	     Inputs  AF' = 
+;	     Outputs ________________________
+
+J$405B:	CALL	C.4092			; select DOS2 ROM bank
         EX	AF,AF'
         CALL	C$4069			; call routine (in IX)
         EX	AF,AF'
         XOR	A
-        CALL	C.4092			; select bank 0
+        CALL	C.4092			; select DOS2 ROM bank 0
         EX	AF,AF'
         RET	
 
@@ -377,6 +428,82 @@ J$405B:	CALL	C.4092			; select bank
 C$4069:	JP	(IX)
 
         DEFS	04078H-$,0FFH
+
+
+        ELSE
+
+;	  Subroutine EXTENSION ROM CALL statement handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C403C:	CALL	C$40E4			; MSX-JE call statement handler
+        RET	NC			; statement handled, quit
+        JP	C575C			; MSXDOS2 kernel call statement handler
+
+;	  Subroutine EXTBIO handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$4043:	LD	IX,I$40B4
+        CALL	C$4051			; inter DOS2 ROM bank 0 call
+        JP	J$F2D5
+
+;	  Subroutine H.TIMI handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$404D:	LD	IX,I$40BA		; jmp 
+
+;	  Subroutine inter DOS2 ROM bank 0 call
+;	     Inputs  AF' = 
+;	     Outputs ________________________
+
+C$4051:	EX	AF,AF'
+        LD	A,(D$40FF)
+        PUSH	AF			; save current DOS2 ROM bank
+        CALL	C$406E			; select DOS2 ROM bank 0 and execute routine
+        EX	AF,AF'
+        POP	AF
+        CALL	C.4092			; restore DOS2 ROM bank
+        EX	AF,AF'
+        RET	
+
+;	  Subroutine inter DOS2 ROM bank call
+;	     Inputs  AF' = 
+;	     Outputs ________________________
+
+J$4060:	CALL	C$406F                  ; select DOS2 ROM bank and execute routine
+        EX	AF,AF'
+        XOR	A
+        CALL	C.4092			; select DOS2 ROM bank 0
+        EX	AF,AF'
+        RET	
+
+;	  Subroutine EXTENSION ROM INIT handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C406A:	LD	IX,J$47D6		; DOS2 kernel INIT routine
+
+;	  Subroutine select DOS2 ROM bank 0 and execute routine
+;	     Inputs  AF' = 
+;	     Outputs ________________________
+
+C$406E:	XOR	A
+
+;	  Subroutine select DOS2 ROM bank and execute routine
+;	     Inputs  AF' = , A = bank
+;	     Outputs ________________________
+
+C$406F:	CALL	C.4092			; select DOS2 ROM bank
+        EX	AF,AF'
+        JP	(IX)
+
+        DEFS	04078H-$,0
+
+        ENDIF
+
+
 
 ; 04078H
 ; DOS1 kernel compatible: CP/M BIOS CONIN entry
@@ -402,12 +529,133 @@ L408C:	JP	J$6EF6			; RAMDISK: DSKFMT routine
 
 ?.408F:	JP	J$4181
 
-;	  Subroutine __________________________
+
+
+;	  Subroutine Select DOS2 ROM bank
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.4092:	BNKCHG
         RET	
+
+
+        IF MSXJE EQ 1
+
+        DEFS	040B4H-$,0
+
+; H.EXTBIO
+
+I$40B4:	CALL	C$40E7			; H.EXTBIO MSX-JE
+        JP	J$410C			; H.EXTBIO DOS2
+
+I$40BA:	CALL	C$40EA			; H.TIMI MSX-JE
+        JP	J$4CF3			; H.TIMI DOS2
+
+;	  Subroutine call 4100 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+?.40C0:	CALL	C.40ED
+
+;	  Subroutine call 4103 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 4106 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 4109 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 410C in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 410F in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 4112 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 4115 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 4118 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 411B in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 411E in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 4121 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+        CALL	C.40ED
+
+;	  Subroutine call 4124 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$40E4:	CALL	C.40ED
+
+;	  Subroutine call 4127 in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$40E7:	CALL	C.40ED
+
+;	  Subroutine call 412A in bank 3 (MSX-JE)
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$40EA:	CALL	C.40ED
+
+;	  Subroutine execute MSX-JE routine
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.40ED:	POP	IX
+        PUSH	BC
+        LD	BC,003DH
+        EX	AF,AF'
+        LD	A,3                     ; bank 3
+        ADD	IX,BC
+        POP	BC
+        JP	J$4060                  ; inter DOS2 ROM bank call
+
+
+        ENDIF
 
         DEFS	040FFH-$,0
 
@@ -430,9 +678,9 @@ C.410F:	POP	IX
         LD	A,1			; bank 1
         ADD	IX,BC
         POP	BC
-        JP	J$405B			; call routine in bank
+        JP	J$405B			; inter DOS2 ROM bank call
 
-I$411E:	DEFB	"MSX-DOS kernel version 2.20",0
+I411E:	DEFB	"MSX-DOS kernel version 2.20",0
         DEFB	"Disk BASIC version 2.01",0
         DEFB	"Copyright (C) 1989 ASCII Corporation",0
 
@@ -441,7 +689,6 @@ J$4177:	LD	HL,I$0086
 
 J$417C:	LD	HL,DBUF
         JR	J.4185
-J$4180	EQU	$-1
 
 J$4181:	LD	C,A
 J$4182:	LD	HL,I$0083
@@ -914,7 +1161,17 @@ J$4A24:	INC	C
         LD	BC,5
         LDIR	
         POP	HL
+
+        IF MSXJE EQ 0
+
         LD	DE,I$4049
+
+        ELSE
+
+        LD	DE,I$404D
+
+        ENDIF
+
         CALL	C.4C73
         LD	HL,I.FFCA
         LD	DE,J.F2D5
@@ -922,7 +1179,17 @@ J$4A24:	INC	C
         PUSH	HL
         LDIR	
         POP	HL
+
+        IF MSXJE EQ 0
+
         LD	DE,I$4043
+
+        ELSE
+
+        LD	DE,I$4043
+
+        ENDIF
+
         CALL	C.4C73
         CALL	C$56A5
         LD	HL,I$7D30
@@ -2223,6 +2490,10 @@ I$5755:	DEFB	0,0
 I$5757:	INC	SP
         INC	SP
         JP	J$6F1D
+
+;	  Subroutine EXTENSION ROM CALL statement handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
 
 C575C:	EI	
         LD	A,(D$FFA7)
@@ -4586,7 +4857,9 @@ J.6642	EQU	$-2
 J.6645	EQU	$-2
         XOR	A
         LD	(D.FCAE),A
+
         LD	IX,I$406F
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
