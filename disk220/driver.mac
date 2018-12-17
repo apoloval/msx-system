@@ -46,10 +46,10 @@ INIENV:
 C6F01:	RET	
 
 CHOICE:
-J6F02:	LD	HL,I$6F06
+J6F02:	LD	HL,I6F06
         RET	
 
-I$6F06:	DEFB	0
+I6F06:	DEFB	0
 
 DSKFMT:
 J6F07:	LD	A,10H	; 16 
@@ -76,7 +76,10 @@ J6F1B:	AND	A
         DEFB	12
         DEFB	"**********************************",13,10
         DEFB	"*                                *",13,10
-        DEFB	"* MSX-DOS2 Cartrige Self Checker *",13,10
+; ASCII DOS2 has bad spelling
+;        DEFB	"* MSX-DOS2 Cartrige Self Checker *",13,10
+; HSH DOS2 had good spelling
+        DEFB	"* MSXDOS2 Cartridge Self Checker *",13,10
         DEFB	"*                                *",13,10
         DEFB	"*       W A R N I N G ! !        *",13,10
         DEFB	"*                                *",13,10
@@ -88,13 +91,13 @@ J6F1B:	AND	A
         DEFB	" Proceed? (Y/N) "
         DEFB	0
 
-J709D:	CALL	C.009F
-        CALL	C7294
+J709D:	CALL	CHGET
+        CALL	C7294   	        ; CR/LF to screen
         AND	0DFH
         CP	"N"
         POP	HL
         RET	Z
-        CALL	C7294
+        CALL	C7294   	        ; CR/LF to screen
         LD	HL,I7101
         LD	DE,0C000H
         LD	BC,L7101
@@ -114,12 +117,12 @@ J70C1:	CALL	CC016			; calculate checksum
         CALL	C7139			; print checksum
         INC	A
         CP	3+1			; next bank ?
-        JR	C,J70C1		; yep,
+        JR	C,J70C1		        ; yep,
         POP	HL
         CALL	C7139			; print checksum
         LD	A,(C.4092+2)
-        CP	7FH
-        CALL	Z,C717D
+        CP	7FH                     ; bank switch address 07FxxH (ASCII DOS2 mapper) ?
+        CALL	Z,C717D                 ; yep, check MSX-JE and memory mapper
         CALL	C728E
 
         DEFB	13
@@ -136,12 +139,12 @@ CC000:	CALL	C.402D			; GETSLT
         PUSH	AF			; save current slot page 1
         LD	A,E
         LD	H,40H
-        CALL	C.0024			; select slot on page 1
+        CALL	ENASLT			; select slot on page 1
         CALL	CC028			; calculate checksum
         POP	AF
         PUSH	HL
         LD	H,40H
-        CALL	C.0024			; restore slot page 1
+        CALL	ENASLT			; restore slot page 1
         POP	HL
         RET	
 
@@ -190,14 +193,14 @@ J714E:	CP	3+1
         LD	HL,I7177
 J715A:	CALL	C7297
         POP	HL
-        CALL	C,C72BA		; if bank, print bank nummer
+        CALL	C,C72BA		        ; if bank, output nibble in HEX to screen
         CALL	C728E
 
         DEFB	"="
         DEFB	0
 
-        CALL	C72A6
-        JP	C7294
+        CALL	C72A6                   ; output word in HEX to screen
+        JP	C7294   	        ; CR/LF to screen
 
 I716C:	DEFB	"BANK"
         DEFB	0
@@ -212,7 +215,7 @@ I7177:	DEFB	"KANJI"
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C717D:	CALL	C.0138
+C717D:	CALL	RSLREG
         AND	0CH
         RRCA	
         RRCA	
@@ -222,45 +225,45 @@ C717D:	CALL	C.0138
         LD	A,5
         CALL	C7139			; print checksum
         DI	
-        CALL	C.0138
+        CALL	RSLREG
         AND	0CH
         RRCA	
         RRCA	
         OR	84H			; slotid memory mapper (secundairy slot 1)
         LD	H,80H
-        CALL	C.0024			; select memory mapper in page 2
+        CALL	ENASLT			; select memory mapper in page 2
         XOR	A
         OUT	(0FEH),A		; select segment 0 in page 2
         LD	HL,0C000H
         LD	DE,08000H
         LD	BC,04000H
         LDIR				; copy current page 3
-        CALL	C.0138
+        CALL	RSLREG
         AND	0CH
         RRCA	
         RRCA	
         OR	84H			; slotid memory mapper (secundairy slot 1)
         LD	HL,0C000H
-        CALL	C.0024			; select memory mapper in page 3
-        CALL	C71E3
+        CALL	ENASLT			; select memory mapper in page 3
+        CALL	C71E3                   ; determine number of segments in memory mapper
         LD	C,A
         LD	B,C
 J71C0:	LD	A,B
-        CALL	C7209
+        CALL	C7209                   ; write segment
         DJNZ	J71C0
         LD	B,C
 J71C7:	LD	A,B
-        CALL	C7232
+        CALL	C7232                   ; read segment
         DJNZ	J71C7
         LD	HL,0C000H
         LD	DE,08000H
         LD	BC,04000H
         LDIR	
         OUT	(0FFH),A
+        XOR	A                       ; segment 0
+        CALL	C7209                   ; write segment
         XOR	A
-        CALL	C7209
-        XOR	A
-        CALL	C7232
+        CALL	C7232                   ; read segment
         RET	
 
 ;	  Subroutine __________________________
@@ -307,7 +310,7 @@ C7209:	OUT	(0FEH),A
         DEFB	"Writing segment "
         DEFB	0
 
-        CALL	C72B1
+        CALL	C72B1                   ; output byte in HEX to screen
         LD	HL,08000H
 J7226:	LD	(HL),A
         INC	HL
@@ -323,7 +326,7 @@ J722D:	BIT	6,H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7232:	LD	D,01H	; 1 
+C7232:	LD	D,1
         OUT	(0FEH),A
         CALL	C728E
 
@@ -331,7 +334,7 @@ C7232:	LD	D,01H	; 1
         DEFB	"Reading segment "
         DEFB	0
 
-        CALL	C72B1
+        CALL	C72B1                   ; output byte in HEX to screen
         LD	HL,08000H
 J7251:	LD	E,(HL)
         CP	E
@@ -344,7 +347,7 @@ J7251:	LD	E,(HL)
 J725C:	BIT	6,H
         JR	Z,J7251
         DEC	D
-        CALL	NZ,C7294
+        CALL	NZ,C7294                ; nope, CR/LF to screen
         RET	
 
 ;	  Subroutine __________________________
@@ -359,23 +362,23 @@ C7265:	PUSH	AF
         DEFB	0
 
 J726D:	RES	7,H
-        CALL	C72A6
+        CALL	C72A6                   ; output word in HEX to screen
         SET	7,H
         CALL	C728E
 
         DEFB	"  W:"
         DEFB	0
 
-        CALL	C72B1
+        CALL	C72B1                   ; output byte in HEX to screen
         CALL	C728E
 
         DEFB	" R:"
         DEFB	0
         
         LD	A,E
-        CALL	C72B1
+        CALL	C72B1                   ; output byte in HEX to screen
         POP	AF
-J728B:	LD	D,02H	; 2 
+J728B:	LD	D,2
         RET	
 
 ;	  Subroutine __________________________
@@ -387,11 +390,12 @@ C728E:	EX	(SP),HL
         EX	(SP),HL
         RET	
 
-;	  Subroutine __________________________
+;	  Subroutine CR/LF to screen
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C7294:	LD	HL,I72D2
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -402,26 +406,26 @@ J7299:	AND	A
         JR	Z,J72A4
         INC	HL
         PUSH	HL
-        CALL	C.00A2
+        CALL	CHPUT
         POP	HL
         JR	J7298
 
 J72A4:	POP	AF
         RET	
 
-;	  Subroutine __________________________
+;	  Subroutine output word in HEX to screen
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C72A6:	PUSH	AF
         LD	A,H
-        CALL	C72B1
+        CALL	C72B1                   ; output byte in HEX to screen
         LD	A,L
-        CALL	C72B1
+        CALL	C72B1                   ; output byte in HEX to screen
         POP	AF
         RET	
 
-;	  Subroutine __________________________
+;	  Subroutine output byte in HEX to screen
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -430,9 +434,10 @@ C72B1:	PUSH	AF
         RRCA	
         RRCA	
         RRCA	
-J72B6:	CALL	C72BA
+J72B6:	CALL	C72BA                   ; output nibble in HEX to screen
         POP	AF
-;	  Subroutine __________________________
+
+;	  Subroutine output nibble in HEX to screen
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
@@ -441,7 +446,7 @@ C72BA:	PUSH	AF
         CP	0AH
         SBC	A,69H
         DAA	
-        CALL	C.00A2
+        CALL	CHPUT
         POP	AF
         RET	
 
@@ -450,3 +455,39 @@ I72C7:	DEFB	"DOS2MEMCHK"
 
 I72D2:	DEFB	13,10
         DEFB	0
+
+        IF HSH EQ 1
+
+INIHRD:
+        LD      A,7
+        CALL    SNSMAT
+        BIT     6,A                     ; SELECT key pressed ?
+        JR      Z,LQDOS2                ; yep, quit DOS2
+        LD      A,6
+        CALL    SNSMAT
+        BIT     4,A                     ; CODE key pressed ?
+        RET     NZ                      ; nope,
+        BIT     2,A                     ; with GRAPH key pressed ?
+        RET     NZ                      ; nope,
+LQDOS2: INC     SP
+        INC     SP
+        RET
+
+        ENDIF
+
+        IF HSH2 EQ 1
+
+INIHRD:
+        LD      A,8
+        CALL    SNSMAT
+        BIT     2,A                     ; INS key pressed ?
+        JR      Z,LQDOS2                ; yep, quit DOS2
+        RET
+        DEFB    0D2H,000H,000H,000H,000H,000H,0FFH,0FFH,0FFH,0FFH
+LQDOS2: INC     SP
+        INC     SP
+        RET
+        DEFB    06EH
+
+        ENDIF
+

@@ -1,4 +1,4 @@
-; DOS22.MAC
+; DISK-S2.MAC
 ;
 ; DOS 2.31 kernel bank 2
 ;
@@ -10,13 +10,11 @@
 ;
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
-;
 
 
         .Z80
         ASEG
         ORG	4000H
-;
 CHSNS	equ	0009CH
 CHGET	equ	0009FH
 CHPUT	equ	000A2H
@@ -268,7 +266,6 @@ INTFLG	EQU	0FC9BH	; used to detect CTRL-STOP
 ESCCNT	EQU	0FCA7H	; used to detect a ESC sequence
 EXPTBL	EQU	0FCC1H	; slot expansion table
 DFFFF	EQU	0FFFFH	; --SLI
-;
 
 ; FCB structure
 
@@ -281,8 +278,8 @@ DFFFF	EQU	0FFFFH	; --SLI
 ; +15	RC	record count in extent	record count in extent / recordsize high byte (block)
 ; +16,4	AL	allocation		Filesize
 ; +20,4	AL	allocation		volume-id
-; +24	AL	allocation		
-; +25	AL	allocation		
+; +24	AL	allocation	
+; +25	AL	allocation	
 ; +26,2	AL	allocation		start cluster
 ; +28,2	AL	allocation		current cluster
 ; +30,2	AL	allocation		current relative cluster
@@ -353,7 +350,6 @@ DFFFF	EQU	0FFFFH	; --SLI
 
 
 ; directoryentry
-;
 ; +0,8		Filename (main)
 ; +8,3		Filename (extension)
 ; +11		Entryattribute
@@ -470,7 +466,7 @@ C0038:	JP	JF1E5			; KEYINT
 
 ?003B:	OUT	(0A8H),A
         LD	A,(DFFFF)
-        CPL	
+        CPL
         LD	L,A
         AND	H
         OR	D
@@ -485,7 +481,7 @@ C0038:	JP	JF1E5			; KEYINT
 J004E:	LD	(DFFFF),A
         LD	A,B
         OUT	(0A8H),A
-        RET	
+        RET
 
         DEFS	0005CH-$,0
 
@@ -662,10 +658,10 @@ J01AE:	ADD	HL,HL
         LD	(IX+31),0FFH
         DJNZ	J017F			; next drive of driver
         XOR	A
-        RET	
+        RET
 
 J01C9:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine allocate BDOS data block
 ;	     Inputs  HL=size
@@ -743,7 +739,7 @@ J021E:	LD	(HL),00H
 J0227:	POP	BC
         POP	DE
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine free BDOS data block
 ;	     Inputs  HL=adres of block
@@ -801,17 +797,17 @@ J0265:	RES	0,E
 
 J026A:	POP	BC
         POP	DE
-        RET	
+        RET
 
 ;	  Subroutine BDOS handler
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J026D:	EI	
+J026D:	EI
         CALL	CF252
         CALL	C0278
         LD	(DBBFD),A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -839,7 +835,7 @@ J0289:	EX	AF,AF'
         LD	IY,DBB80
         POP	BC
         EX	(SP),HL
-        RET	
+        RET
 
 ;	  Subroutine illegal BDOS function
 ;	     Inputs  ________________________
@@ -847,7 +843,7 @@ J0289:	EX	AF,AF'
 
 A029C:	LD	A,.IBDOS
 J029E:	LD	HL,0
-        RET	
+        RET
 
 I02A2:	defw	A0CFB,A03A8,A03B6,A042E,A043D,A0441,A03D4,A03FE
         defw	A03BE,A029C,A0456,A03CD,A0B90,A0B95,A0BAB,A3771
@@ -888,7 +884,7 @@ J0395:	LD	(HL),0DH
 C03A0:	XOR	A
         LD	(DBB8D),A
 J03A4:	LD	(DBB8A),A
-        RET	
+        RET
 
 ;	  Subroutine _CONIN
 ;	     Inputs  ________________________
@@ -901,7 +897,7 @@ A03A8:	CALL	A03BE
         CALL	NC,C0871
         POP	HL
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _CONOUT
 ;	     Inputs  ________________________
@@ -912,7 +908,7 @@ A03B6:	LD	A,E
         XOR	A
         LD	H,A
         LD	L,A
-        RET	
+        RET
 
 ;	  Subroutine _INNOE
 ;	     Inputs  ________________________
@@ -925,7 +921,7 @@ J03C6:	CALL	C08B2
         LD	L,A
         XOR	A
         LD	H,A
-        RET	
+        RET
 
 ;	  Subroutine _CONST
 ;	     Inputs  ________________________
@@ -935,7 +931,7 @@ A03CD:	CALL	C0897
         LD	L,A
         XOR	A
         LD	H,A
-        RET	
+        RET
 
 ;	  Subroutine _DIRIO
 ;	     Inputs  ________________________
@@ -952,7 +948,7 @@ J03D5:	INC	A			; do input or output ?
         XOR	A
         LD	H,A
         LD	L,A
-        RET	
+        RET
 
 J03E8:	BIT	0,(IY+DBB89-DBB80)	; console input redirected ?
         LD	C,0			; do not check for CTRL-C
@@ -964,7 +960,7 @@ J03E8:	BIT	0,(IY+DBB89-DBB80)	; console input redirected ?
         JR	NZ,J0406
         LD	L,A
         LD	H,A
-        RET	
+        RET
 
 ;	  Subroutine _DIRIN
 ;	     Inputs  ________________________
@@ -980,7 +976,7 @@ J0406:	LD	A,(DBB8D)
         XOR	A
         LD	H,A
         LD	(DBB8D),A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1005,7 +1001,7 @@ C0421:	LD	A,B
 J0426:	LD	L,B
         XOR	A
         LD	H,A
-        RET	
+        RET
 
 J042A:	LD	B,1			; filehandle con output
         JR	J0446
@@ -1082,7 +1078,6 @@ J0469:	PUSH	HL
         LD	A,B
         CP	C
         JR	Z,J048E
-;
         INC	C
         INC	HL
         LD	(HL),E
@@ -1090,31 +1085,25 @@ J0469:	PUSH	HL
         PUSH	HL
         PUSH	BC
         CALL	C086C
-;
         JR	J0495
-;
-;	-----------------
+
 J048E:	PUSH	HL
         PUSH	BC
         LD	A,07H	; 7 
         CALL	C0A6C
-;
 J0495:	POP	BC
         POP	HL
         JR	J0469
-;
-;	-----------------
+
 J0499:	POP	HL
         LD	(HL),C
         CALL	C086C
-;
 J049E:	POP	HL
         PUSH	HL
         LD	A,(HL)
         INC	HL
         CP	(HL)
         JR	Z,J04AC
-;
         LD	E,(HL)
         LD	D,00H
         ADD	HL,DE
@@ -1124,14 +1113,12 @@ J04AC:	POP	DE
         XOR	A
         LD	L,A
         LD	H,A
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C04B1:	LD	(DBB7A),A
         INC	DE
         XOR	A
@@ -1140,25 +1127,20 @@ C04B1:	LD	(DBB7A),A
         LD	(DBB7C),A
 J04BB:	PUSH	DE
         CALL	C058B
-;
         POP	DE
         DEC	A
         JR	Z,J050C
-;
         DEC	A
         JR	Z,J052A
-;
         INC	DE
         LD	A,(DE)
         OR	A
         RET	Z
-;
         LD	B,A
         LD	(DBB7F),A
         LD	A,(DBB7C)
         OR	A
         JR	Z,J04EA
-;
         PUSH	DE
         PUSH	BC
         LD	HL,(DBB82)
@@ -1173,7 +1155,6 @@ J04D9:	INC	DE
 J04E6:	POP	BC
         POP	DE
         JR	Z,J04FE
-;
 J04EA:	LD	HL,(DBB80)
 J04ED:	INC	DE
         LD	A,(DE)
@@ -1195,7 +1176,6 @@ J0501:	CP	0DH
 J050C:	LD	A,(DBB7F)
         OR	A
         JR	Z,J04BB
-;
         LD	HL,(DBB82)
 J0515:	CALL	C0579			; previous position in buffered input linebuffer
         LD	A,(HL)
@@ -1203,11 +1183,11 @@ J0515:	CALL	C0579			; previous position in buffered input linebuffer
         JR	Z,J0515
 J051D:	CALL	C0579			; previous position in buffered input linebuffer
         LD	A,(HL)
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0521:	CP	0DH	; 13 
         JR	NZ,J051D
         CALL	C0567			; next position in buffered input linebuffer
@@ -1216,21 +1196,16 @@ C0521:	CP	0DH	; 13
 J052A:	LD	A,(DBB7F)
         OR	A
         JR	Z,J04BB
-;
         LD	HL,(DBB82)
 J0533:	LD	A,(HL)
         CP	0DH	; 13 
         CALL	C0567			; next position in buffered input linebuffer
-;
         JR	NZ,J0533
-;
-        SCF	
+        SCF
 J053C:	CALL	NC,C0567		; next position in buffered input linebuffer
-;
         LD	A,(HL)
         CP	0DH	; 13 
         JR	Z,J053C
-;
 J0544:	LD	(DBB82),HL
         PUSH	DE
         LD	A,(DE)
@@ -1242,13 +1217,10 @@ J054E:	LD	A,(HL)
         LD	(DE),A
         INC	C
         CALL	C0567			; next position in buffered input linebuffer
-;
         CP	0DH	; 13 
         INC	DE
         JR	Z,J055C
-;
         DJNZ	J054E
-;
         INC	C
 J055C:	POP	DE
         INC	DE
@@ -1273,7 +1245,7 @@ C0567:	PUSH	AF
         LD	HL,IB0D0
 J0576:	POP	DE
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine previous position in buffered input linebuffer
 ;	     Inputs  ________________________
@@ -1290,12 +1262,12 @@ C0579:	PUSH	AF
         LD	HL,IB0D0+255
 J0588:	POP	DE
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C058B:	LD	HL,(DBB8B)
         LD	(DBB87),HL
         LD	(DBB7D),HL
@@ -1307,16 +1279,13 @@ J0595:	LD	C,(HL)
         OR	A
         LD	B,A
         JR	Z,J05A5
-;
         INC	HL
         CALL	C0811
-;
         DEC	HL
         LD	A,B
 J05A5:	LD	(DBB86),A
         XOR	A
         CALL	C06BC
-;
 I05AC:	LD	DE,I05AC
         PUSH	DE
         PUSH	HL
@@ -1324,142 +1293,102 @@ I05AC:	LD	DE,I05AC
         LD	A,(HL)
         CP	B
         JR	NC,J05B9
-;
         LD	(HL),B
 J05B9:	POP	HL
         CALL	C08B2
-;
         OR	A
         RET	Z
-;
         CP	0AH	; 10 
         RET	Z
-;
         CP	0DH	; 13 
         JP	Z,J07A8
-;
         CP	1DH
         JP	Z,J06F9
-;
         CP	1CH
         JP	Z,J06DB
-;
         CP	7FH
         JP	Z,J0748
-;
         CP	08H	; 8 
         JP	Z,J0741
-;
         CP	12H	; 18 
         JP	Z,J06B8
-;
         CP	1BH
         JR	Z,J05EA
-;
         CP	18H
         JR	Z,J05EA
-;
         CP	15H
 J05EA:	JP	Z,J07A1
-;
         CP	1EH
         JP	Z,J07BF
-;
         CP	1FH
         JP	Z,J07C6
-;
         CP	0BH	; 11 
         JP	Z,J06F2
-;
         LD	E,A
         LD	A,(DBB7B)
         OR	A
         JP	NZ,J0653
-;
         LD	A,(DBB86)
         CP	B
         JR	Z,J063F
-;
         INC	HL
         LD	A,E
         CALL	C17E0			; check for double byte header char if enabled
-;
         JR	NC,J062E
-;
         LD	A,(DBB86)
         DEC	A
         CP	B
         JR	NZ,J0623
-;
         INC	A
         CP	C
         DEC	HL
         JP	NC,J06AB
-;
         INC	HL
         INC	A
         LD	(DBB86),A
 J0623:	LD	A,(HL)
         CALL	C17E0			; check for double byte header char if enabled
-;
         INC	HL
         CALL	NC,C07CD
-;
         DEC	HL
         JR	J0678
-;
-;	-----------------
+
 J062E:	CALL	C07CD
-;
         JR	C,J06A3
-;
         LD	A,(HL)
         CP	20H	; " "
         JR	C,J06A3
-;
         LD	A,E
         CP	20H	; " "
         JR	C,J06A3
-;
         JR	J0649
-;
-;	-----------------
+
 J063F:	CP	C
         JR	NC,J06AE
-;
         LD	A,E
         CALL	C17E0			; check for double byte header char if enabled
-;
         JR	C,J0659
-;
         INC	HL
 J0649:	LD	(HL),E
         LD	A,E
         INC	B
         CALL	C0836
-;
         CALL	C0821
-;
-        RET	
-;
-;	-----------------
+        RET
+
 J0653:	LD	A,E
         CALL	C17E0			; check for double byte header char if enabled
-;
         JR	NC,J0687
-;
 J0659:	LD	A,(DBB86)
         INC	A
         CP	C
         JR	NC,J06AB
-;
         INC	A
         LD	(DBB86),A
         DEC	A
         DEC	A
         SUB	B
         JR	Z,J0677
-;
         PUSH	DE
         PUSH	BC
         LD	C,A
@@ -1469,33 +1398,28 @@ J0659:	LD	A,(DBB86)
         LD	E,L
         INC	DE
         INC	DE
-        LDDR	
+        LDDR
         POP	BC
         POP	DE
 J0677:	INC	HL
 J0678:	LD	(HL),E
         INC	HL
         CALL	C08B2
-;
         LD	(HL),A
         DEC	HL
         CALL	C07DC
-;
         INC	B
         INC	B
         JP	C06FD
-;
-;	-----------------
+
 J0687:	LD	A,(DBB86)
         CP	C
         JR	NC,J06AE
-;
         INC	A
         LD	(DBB86),A
         DEC	A
         SUB	B
         JR	Z,J06A2
-;
         PUSH	DE
         PUSH	BC
         LD	C,A
@@ -1504,41 +1428,35 @@ J0687:	LD	A,(DBB86)
         LD	D,H
         LD	E,L
         INC	DE
-        LDDR	
+        LDDR
         POP	BC
         POP	DE
 J06A2:	INC	HL
 J06A3:	LD	(HL),E
         CALL	C07DC
-;
         INC	B
         JP	C06FD
-;
-;	-----------------
+
 J06AB:	CALL	C08B2
-;
 J06AE:	LD	A,07H	; 7 
         PUSH	BC
         PUSH	HL
         CALL	C0A6C
-;
         POP	HL
         POP	BC
-        RET	
-;
-;	-----------------
+        RET
+
 J06B8:	LD	A,(DBB7B)
-        CPL	
-;
+        CPL
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C06BC:	LD	(DBB7B),A
         OR	A
         LD	A,79H	; "y"
         JR	NZ,J06C5
-;
         DEC	A
 J06C5:	PUSH	BC
         PUSH	HL
@@ -1546,147 +1464,109 @@ J06C5:	PUSH	BC
         PUSH	AF
         LD	A,1BH
         CALL	C0A6C
-;
         POP	AF
         CALL	C0A6C
-;
         LD	A,"4"
         CALL	C0A6C
-;
         POP	DE
         POP	HL
         POP	BC
-        RET	
-;
-;	-----------------
+        RET
+
 J06DB:	LD	A,(DBB86)
         CP	B
         RET	Z
-;
         INC	HL
         INC	B
         LD	A,(HL)
         CALL	C17E0			; check for double byte header char if enabled
-;
         JP	NC,C0836
-;
         CALL	C0836
-;
         INC	HL
         INC	B
         LD	A,(HL)
         JP	C0836
-;
-;	-----------------
 J06F2:	LD	A,B
         OR	A
         RET	Z
-;
         LD	B,00H
         JR	C06FD
-;
-;	-----------------
 J06F9:	LD	A,B
         OR	A
         RET	Z
-;
         DEC	B
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C06FD:	LD	HL,(DBB84)
         LD	DE,(DBB87)
         PUSH	BC
         INC	B
         JR	J0729
-;
-;	-----------------
 J0708:	INC	HL
         LD	A,(HL)
         CALL	C17E0			; check for double byte header char if enabled
-;
         JR	NC,J0719
-;
         INC	HL
         DJNZ	J0727
-;
         DEC	HL
         DEC	HL
         POP	BC
         DEC	B
         PUSH	BC
         JR	J072B
-;
-;	-----------------
 J0719:	CP	09H	; 9 
         JR	NZ,J0723
-;
         LD	A,E
         OR	07H	; 7 
         LD	E,A
         JR	J0728
-;
-;	-----------------
 J0723:	CP	20H	; " "
         JR	NC,J0728
-;
 J0727:	INC	DE
 J0728:	INC	DE
 J0729:	DJNZ	J0708
-;
 J072B:	PUSH	HL
         LD	HL,(DBB8B)
         OR	A
         SBC	HL,DE
         JR	Z,J073E
-;
 J0734:	LD	A,08H	; 8 
         CALL	C0836
-;
         DEC	HL
         LD	A,H
         OR	L
         JR	NZ,J0734
-;
 J073E:	POP	HL
         POP	BC
-        RET	
-;
-;	-----------------
+        RET
 J0741:	LD	A,B
         OR	A
         RET	Z
-;
         DEC	B
         CALL	C06FD
-;
 J0748:	LD	A,(DBB86)
         CP	B
         RET	Z
-;
         DEC	A
         LD	(DBB86),A
         SUB	B
         JR	Z,J0784
-;
         LD	E,A
         INC	HL
         LD	A,(HL)
         DEC	HL
         CALL	C17E0			; check for double byte header char if enabled
-;
         LD	A,E
         JR	NC,J0777
-;
         PUSH	HL
         LD	HL,DBB86
         DEC	(HL)
         POP	HL
         DEC	A
         JR	Z,J0784
-;
         PUSH	BC
         PUSH	HL
         LD	C,A
@@ -1696,12 +1576,10 @@ J0748:	LD	A,(DBB86)
         LD	E,L
         INC	HL
         INC	HL
-        LDIR	
+        LDIR
         POP	HL
         POP	BC
         JR	J0784
-;
-;	-----------------
 J0777:	PUSH	BC
         PUSH	HL
         LD	C,A
@@ -1710,106 +1588,78 @@ J0777:	PUSH	BC
         LD	D,H
         LD	E,L
         INC	HL
-        LDIR	
+        LDIR
         POP	HL
         POP	BC
 J0784:	INC	HL
         CALL	C07DC
-;
         DEC	HL
         JP	C06FD
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C078C:	XOR	A
         CP	B
         LD	B,A
         CALL	NZ,C06FD
-;
         CALL	C07D7
-;
         LD	B,00H
         CALL	C06FD
-;
         LD	HL,(DBB84)
         LD	(HL),00H
         DEC	HL
-        RET	
-;
-;	-----------------
+        RET
 J07A1:	CALL	C078C
-;
         POP	DE
         JP	J0595
-;
-;	-----------------
 J07A8:	INC	HL
         CALL	C07DC
-;
         LD	HL,(DBB84)
         LD	A,(DBB86)
         LD	(HL),A
         XOR	A
         CALL	C06BC
-;
         LD	A,0DH	; 13 
         CALL	C0836
-;
         POP	HL
         XOR	A
-        RET	
-;
-;	-----------------
+        RET
 J07BF:	POP	HL
         CALL	C078C
-;
         LD	A,01H	; 1 
-        RET	
-;
-;	-----------------
+        RET
 J07C6:	POP	HL
         CALL	C078C
-;
         LD	A,02H	; 2 
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C07CD:	LD	A,(HL)
         CALL	C17E0			; check for double byte header char if enabled
-;
         RET	NC
-;
         INC	HL
         LD	(HL),20H	; " "
         DEC	HL
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C07D7:	PUSH	BC
         PUSH	DE
         PUSH	HL
         JR	J07E7
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C07DC:	PUSH	BC
         PUSH	DE
         PUSH	HL
@@ -1817,63 +1667,47 @@ C07DC:	PUSH	BC
         SUB	B
         LD	B,A
         CALL	C0811
-;
 J07E7:	LD	DE,(DBB8B)
         LD	HL,(DBB7D)
         OR	A
         SBC	HL,DE
         JR	Z,J0803
-;
         JR	C,J0803
-;
 J07F5:	LD	A,20H	; " "
         CALL	C0836
-;
         DEC	HL
         LD	A,H
         OR	L
         JR	NZ,J07F5
-;
         LD	(DBB7D),DE
 J0803:	LD	A,1BH
         CALL	C0A6C
-;
         LD	A,"K"
         CALL	C0A6C
-;
         POP	HL
         POP	DE
         POP	BC
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0811:	PUSH	BC
         INC	B
         JR	J081D
-;
-;	-----------------
 J0815:	LD	A,(HL)
         CALL	C0836
-;
         CALL	C0821
-;
         INC	HL
 J081D:	DJNZ	J0815
-;
         POP	BC
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0821:	PUSH	HL
         PUSH	BC
         LD	HL,(DBB7D)
@@ -1881,109 +1715,84 @@ C0821:	PUSH	HL
         OR	A
         SBC	HL,BC
         JR	NC,J0833
-;
         LD	(DBB7D),BC
 J0833:	POP	BC
         POP	HL
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0836:	PUSH	BC
         PUSH	DE
         PUSH	HL
         CALL	C085A
-;
         JR	NC,J0847
-;
         PUSH	AF
         LD	A,5EH	; "^"
         CALL	C084E
-;
         POP	AF
         ADD	A,40H	; "@"
 J0847:	CALL	C084E
-;
         POP	HL
         POP	DE
         POP	BC
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C084E:	LD	B,A
         LD	A,(DBB7A)
         OR	A
         LD	A,B
         JP	Z,C0871
-;
         JP	C08EE
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C085A:	CP	0DH	; 13 
         RET	Z
-;
         CP	0AH	; 10 
         RET	Z
-;
         CP	09H	; 9 
         RET	Z
-;
         CP	08H	; 8 
         RET	Z
-;
         CP	7FH
         RET	Z
-;
         CP	20H	; " "
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C086C:	PUSH	AF
         CALL	C0897
-;
         POP	AF
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0871:	CP	09H	; 9 
         JR	NZ,C0882
-;
 J0875:	LD	A,20H	; " "
         CALL	C0882
-;
         LD	A,(DBB8B)
         AND	07H	; 7 
         JR	NZ,J0875
-;
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0882:	LD	HL,(DBB8B)
         CALL	C0915
         LD	(DBB8B),HL
@@ -1991,42 +1800,32 @@ C0882:	LD	HL,(DBB8B)
         JP	Z,J0908
         LD	C,0FFH
         JP	J042A
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0897:	CALL	C0A42
-;
         LD	B,A
         LD	A,(DBB8D)
         OR	A
         JR	NZ,J08AF
-;
         LD	A,B
         OR	A
         RET	Z
-;
         CALL	C0A2D
-;
         CALL	C08C5
-;
         OR	A
         RET	Z
-;
         LD	(DBB8D),A
 J08AF:	XOR	A
         DEC	A
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C08B2:	LD	A,(DBB8D)
         LD	(IY+DBB8D-DBB80),00H
         OR	A
@@ -2035,32 +1834,24 @@ J08BB:	CALL	C0A2D
         CALL	C08C5
         OR	A
         JR	Z,J08BB
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C08C5:	CP	10H	; 16 
         JR	Z,J08E5
-;
         CP	0EH	; 14 
         JR	Z,J08E8
-;
         CP	03H	; 3 
         JR	Z,J08DC
-;
         CP	13H	; 19 
         RET	NZ
-;
         CALL	C0A2D
-;
         CP	03H	; 3 
         LD	A,00H
         RET	NZ
-;
 J08DC:	LD	A,.CTRLC
         LD	B,00H
         CALL	C3749			; call program abort routine with DOS segments active
@@ -2071,78 +1862,60 @@ J08E5:	LD	A,0FFH
 J08E8:	XOR	A
         LD	(DBB8A),A
         XOR	A
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C08EE:	CP	09H	; 9 
         JR	NZ,C08FF
-;
 J08F2:	LD	A,20H	; " "
         CALL	C08FF
-;
         LD	A,(DBB8B)
         AND	07H	; 7 
         JR	NZ,J08F2
-;
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C08FF:	LD	HL,(DBB8B)
         CALL	C0915
-;
         LD	(DBB8B),HL
 J0908:	CALL	C0A6C
-;
         LD	HL,DBB8A
         BIT	0,(HL)
         RET	Z
-;
         LD	E,A
         JP	A0441
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0915:	INC	HL
         CP	7FH
         JR	Z,J091D
-;
         CP	20H	; " "
         RET	NC
-;
 J091D:	DEC	HL
         LD	B,A
         LD	A,H
         OR	L
         LD	A,B
         RET	Z
-;
         DEC	HL
         CP	08H	; 8 
         RET	Z
-;
         CP	7FH
         RET	Z
-;
         INC	HL
         CP	0DH	; 13 
         RET	NZ
-;
         LD	HL,0
-        RET	
+        RET
 
 ; con device jumptable
 
@@ -2157,9 +1930,7 @@ J0941:	BIT	5,C
         CALL	C0A2D
         LD	B,A
         XOR	A
-        RET	
-;
-;	-----------------
+        RET
 J094B:	LD	HL,(DBB78)
         LD	A,(HL)
         OR	A
@@ -2193,51 +1964,51 @@ J0979:	INC	HL
         LD	A,.EOL
         RET	Z
         XOR	A
-        RET	
+        RET
 
 J0985:	LD	B,A
         LD	(HL),00H
         LD	(DBB78),HL
         LD	A,.EOF
-        RET	
+        RET
 
 J098E:	BIT	5,C
         JR	NZ,J0997
         CALL	C0A6C
         XOR	A
-        RET	
+        RET
 
 J0997:	PUSH	AF
         CALL	C0897
         POP	AF
         CALL	C08EE
         XOR	A
-        RET	
+        RET
 
 J09A1:	BIT	5,C
         JR	NZ,J09AB
         CALL	C0A42
         LD	E,A
         XOR	A
-        RET	
+        RET
 
 J09AB:	CALL	C0897
         LD	E,A
         XOR	A
-        RET	
+        RET
 
 J09B1:	CALL	C0A20
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C09B6:	LD	HL,IB1D0+2
         LD	(DBB78),HL
         LD	(HL),00H
-        RET	
+        RET
 
 ; aux device jumptable
 
@@ -2255,11 +2026,11 @@ J09CE:	CALL	C0B46			; aux input
         LD	A,.EOL
         RET	Z
         XOR	A
-        RET	
+        RET
 
 J09DD:	CALL	C0B51			; aux output
         XOR	A
-        RET	
+        RET
 
 ; lst/prn device jumptable
 
@@ -2273,12 +2044,12 @@ J09F1:	CALL	C0B25
         JR	NC,J0A1A
         RES	0,(IY+DBB8A-DBB80)
         LD	A,.STOP
-        RET	
+        RET
 
 J09FD:	CALL	C0B37
         LD	E,A
         XOR	A
-        RET	
+        RET
 
 ; nul device jumptable
 
@@ -2290,7 +2061,7 @@ A0A03:	JP	J0A12			; input
 
 J0A12:	LD	B,1AH
 J0A14:	LD	A,.EOF
-        RET	
+        RET
 
 J0A17:	LD	DE,0
 J0A1A:	XOR	A
@@ -2298,7 +2069,7 @@ J0A1A:	XOR	A
 
 J0A1C:	LD	E,0FFH
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2310,7 +2081,7 @@ C0A20:	LD	A,(LINLEN)
         LD	HL,CNSDFG
         ADD	A,(HL)
         LD	D,A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2323,7 +2094,7 @@ C0A2D:	CALL	CF25B
         CALL	C0B78			; main-bios call CHGET
         CALL	C0B5B			; check and handle CTRL-STOP
         POP	IX
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2347,7 +2118,7 @@ C0A42:	CALL	CF261
         LD	A,100+1
         LD	(DF2BD),A		; 100 times no keyboardbuffer check
 J0A69:	XOR	A
-        RET	
+        RET
 
 J0A6B:	LD	A,C
 
@@ -2360,7 +2131,7 @@ C0A6C:	CALL	CF25E
         LD	IX,CHPUT
         CALL	C0B78			; main-bios call CHPUT
         POP	IX
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2397,7 +2168,7 @@ J0A91:	LD	A,2
         JR	Z,C0ACE			; linefeed char, empty screenoutput buffer and quit
         CP	07H
         JR	Z,C0ACE			; bell char, empty screenoutput buffer and quit
-        RET	
+        RET
 
 ;	  Subroutine empty screenoutput buffer (if anything)
 ;	     Inputs  ________________________
@@ -2416,14 +2187,14 @@ C0AB9:	CALL	CF264
         POP	DE
         POP	BC
 J0ACC:	POP	AF
-        RET	
+        RET
 
 ;	  Subroutine empty screenoutput buffer
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C0ACE:	EX	AF,AF'
-        EXX	
+        EXX
         PUSH	AF
         PUSH	BC
         PUSH	DE
@@ -2469,9 +2240,9 @@ J0B1A:	POP	IY
         POP	DE
         POP	BC
         POP	AF
-        EXX	
+        EXX
         EX	AF,AF'
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2483,7 +2254,7 @@ C0B25:	CALL	CF267
         LD	IX,LPTOUT
         CALL	C0B78			; main-bios call LPTOUT
         POP	IX
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2494,7 +2265,7 @@ C0B37:	CALL	CF26A
         LD	IX,LPTSTT
         CALL	C0B78			; main-bios call LPTSTT
         POP	IX
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2503,7 +2274,7 @@ C0B37:	CALL	CF26A
 C0B46:	CALL	C0AB9			; empty screenoutput buffer
         LD	HL,IF371
         CALL	C374C			; call AUX-input with DOS segments active
-        RET	
+        RET
 
 J0B50:	LD	A,C
 
@@ -2514,7 +2285,7 @@ J0B50:	LD	A,C
 C0B51:	CALL	C0AB9			; empty screenoutput buffer
         LD	HL,IF374
         CALL	C374C			; call AUX-output with DOS segments active
-        RET	
+        RET
 
 ;	  Subroutine check and handle CTRL-STOP
 ;	     Inputs  ________________________
@@ -2525,7 +2296,7 @@ C0B5B:	PUSH	AF
         SUB	03H
         JR	Z,J0B65
         POP	AF
-        RET	
+        RET
 
 J0B65:	LD	(INTFLG),A
         LD	IX,KILBUF
@@ -2540,25 +2311,25 @@ J0B76:	JR	J0B76			; loop to infinety
 ;	     Outputs ________________________
 
 C0B78:	EX	AF,AF'
-        EXX	
+        EXX
         PUSH	AF
         PUSH	BC
         PUSH	DE
         PUSH	HL
         PUSH	IY
-        EXX	
+        EXX
         EX	AF,AF'
         CALL	CF1D9
         EX	AF,AF'
-        EXX	
+        EXX
         POP	IY
         POP	HL
         POP	DE
         POP	BC
         POP	AF
-        EXX	
+        EXX
         EX	AF,AF'
-        RET	
+        RET
 
 ;	  Subroutine _CPMVER
 ;	     Inputs  ________________________
@@ -2566,7 +2337,7 @@ C0B78:	EX	AF,AF'
 
 A0B90:	LD	HL,0022H
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _DSKRST
 ;	     Inputs  ________________________
@@ -2582,7 +2353,7 @@ A0B95:	LD	B,0FFH			; all drives
         XOR	A
         LD	H,A
         LD	L,A
-        RET	
+        RET
 
 ;	  Subroutine _SELDSK
 ;	     Inputs  ________________________
@@ -2603,7 +2374,7 @@ A0BAB:	INC	E
 J0BBF:	LD	HL,(DF347)
         LD	H,0
         LD	A,C
-        RET	
+        RET
 
 ;	  Subroutine _LOGIN
 ;	     Inputs  ________________________
@@ -2623,7 +2394,7 @@ J0BCB:	ADD	HL,HL
         INC	HL			; yep, set bit
 J0BD8:	DJNZ	J0BCB
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _CURDRV
 ;	     Inputs  ________________________
@@ -2634,7 +2405,7 @@ A0BDC:	LD	A,(DF23C)
         LD	L,A
         XOR	A
         LD	H,A
-        RET	
+        RET
 
 ;	  Subroutine _SETDTA
 ;	     Inputs  DE = transferadres
@@ -2644,7 +2415,7 @@ A0BE4:	LD	(DF23D),DE
         XOR	A
         LD	H,A
         LD	L,A
-        RET	
+        RET
 
 ;	  Subroutine _ALLOC
 ;	     Inputs  ________________________
@@ -2692,7 +2463,7 @@ J0C12:	POP	DE
         POP	HL
         POP	DE
         DEC	DE
-        NOP	
+        NOP
         LD	C,(IX+2)
         LD	B,(IX+3)
         PUSH	BC			; pointer to DPB
@@ -2700,7 +2471,7 @@ J0C12:	POP	DE
         INC	C
         POP	IX
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _VERIFY
 ;	     Inputs  ________________________
@@ -2711,7 +2482,7 @@ A0C48:	LD	A,E
         XOR	A
         LD	H,A
         LD	L,A
-        RET	
+        RET
 
 ;	  Subroutine _DPARM
 ;	     Inputs  ________________________
@@ -2730,7 +2501,7 @@ A0C50:	LD	IX,IB9DA
         PUSH	DE
         LD	BC,8
         ADD	HL,BC
-        LDI	
+        LDI
         LD	BC,512
         LD	A,C
         LD	(DE),A
@@ -2745,9 +2516,9 @@ A0C50:	LD	IX,IB9DA
         LD	(DE),A
         INC	DE
         INC	HL
-        LDI	
-        LDI	
-        LDI	
+        LDI
+        LDI
+        LDI
         LD	A,(HL)
         INC	HL
         PUSH	HL
@@ -2770,14 +2541,13 @@ A0C50:	LD	IX,IB9DA
         PUSH	DE
         INC	DE
         LD	BC,12
-        LDIR	
+        LDIR
         PUSH	DE
         EX	DE,HL
         LD	BC,-7
         ADD	HL,BC
         INC	(HL)
         JR	NZ,J0CA4
-;
         INC	HL
         INC	(HL)
 J0CA4:	EX	DE,HL
@@ -2787,19 +2557,15 @@ J0CA4:	EX	DE,HL
 J0CA9:	LD	(DE),A
         INC	DE
         DJNZ	J0CA9
-;
         POP	DE
-        LDI	
+        LDI
         LD	L,(IX+22)
         LD	H,(IX+23)
         DEC	HL
         LD	B,(IX+11)
         JR	J0CBD
-;
-;	-----------------
 J0CBC:	ADD	HL,HL
 J0CBD:	DJNZ	J0CBC
-;
         LD	C,(IX+20)
         LD	B,(IX+21)
         ADD	HL,BC
@@ -2811,7 +2577,7 @@ J0CBD:	DJNZ	J0CBC
         LD	(HL),E
         POP	DE
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _GETDTA
 ;	     Inputs  ________________________
@@ -2819,7 +2585,7 @@ J0CBD:	DJNZ	J0CBC
 
 A0CCF:	LD	DE,(DF23D)
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _GETVFY
 ;	     Inputs  ________________________
@@ -2831,7 +2597,7 @@ A0CD5:	LD	A,(DF30D)
         LD	A,0FFH
 J0CDD:	LD	B,A
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _FLUSH
 ;	     Inputs  ________________________
@@ -2853,7 +2619,7 @@ J0CEB:	LD	A,B
         CALL	C2C78			; mark all sectorbuffers of drive unused
         CALL	C3611			; diskchange status of all drives to flushed
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _TERM0
 ;	     Inputs  ________________________
@@ -2876,7 +2642,7 @@ J0D03:	JR	J0D03			; loop to infinety
 
 A0D05:	LD	B,(IY+DBBFD-DBB80)
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _EXPLAIN
 ;	     Inputs  ________________________
@@ -2888,7 +2654,7 @@ A0D0A:	LD	A,B
         LD	IY,(DF348-1)
         LD	IX,(DF2DA)
         CALL	C001C
-        EI	
+        EI
         POP	IY
         LD	B,A
         OR	A
@@ -2897,29 +2663,25 @@ A0D0A:	LD	A,B
         XOR	A
         LD	(HL),A
         POP	DE
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C0D26:	LD	C,0FFH
 J0D28:	INC	C
         SUB	0AH	; 10 
         JR	NC,J0D28
-;
         ADD	A,3AH	; ":"
         PUSH	AF
         LD	A,C
         OR	A
         CALL	NZ,C0D26
-;
         POP	AF
         LD	(HL),A
         INC	HL
-        RET	
+        RET
 
 ;	  Subroutine _FORMAT
 ;	     Inputs  ________________________
@@ -2946,7 +2708,7 @@ A0D39:	EX	AF,AF'
         LD	B,(IX+0)
         EX	DE,HL
         OR	A
-        RET	
+        RET
 
 J0D58:	EX	AF,AF'
         CALL	C2C67			; write dirty sectorbuffers of drivetable
@@ -2984,7 +2746,7 @@ J0D81:	SET	7,D
         LD	BC,9
         ADD	HL,BC
         LD	(HL),00H
-        RET	
+        RET
 
 ;	  Subroutine _RAMD
 ;	     Inputs  ________________________
@@ -3007,13 +2769,13 @@ A0D93:	PUSH	BC
         CALL	C0E35			; clear ramdisk bootsector and ramdisk segmenttable
         LD	DE,IBE02		; ramdisk segmenttable
         LD	HL,DBE00
-J0DB6:	EXX	
+J0DB6:	EXX
         LD	A,1			; non system
         LD	B,30H			; first other mappers, then DOS mapper
         CALL	C11A6			; allocate segment
         JR	C,J0DCA			; failed, stop allocating
         PUSH	BC
-        EXX	
+        EXX
         INC	(HL)			; increase number of ramdisk segments
         LD	(DE),A			; segmentnumber
         INC	DE
@@ -3073,7 +2835,7 @@ J0E2D:	LD	C,0
 J0E2F:	LD	A,(DBE00)
         LD	B,A
         LD	A,C
-        RET	
+        RET
 
 ;	  Subroutine clear ramdisk bootsector and ramdisk segmenttable
 ;	     Inputs  ________________________
@@ -3087,7 +2849,7 @@ J0E3B:	LD	(HL),0
         LD	A,D
         OR	E
         JR	NZ,J0E3B
-        RET	
+        RET
 
 ;	  Subroutine _BUFFER
 ;	     Inputs  ________________________
@@ -3128,7 +2890,7 @@ J0E6E:	LD	HL,512+11
 
 J0E86:	LD	B,(IY+IBBFA-DBB80)	; number of buffers
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _ASSIGN
 ;	     Inputs  ________________________
@@ -3156,7 +2918,7 @@ A0E8B:	LD	HL,IBA1A
 J0EA8:	LD	(HL),C
 J0EA9:	LD	D,(HL)
         XOR	A
-        RET	
+        RET
 
 J0EAC:	LD	(HL),A
         INC	HL
@@ -3165,7 +2927,7 @@ J0EAC:	LD	(HL),A
         JR	NZ,J0EAC
         XOR	A
         LD	D,A
-        RET	
+        RET
 
 ;	  Subroutine _DSKCHK
 ;	     Inputs  ________________________
@@ -3181,7 +2943,7 @@ J0EBF:	LD	(DF2EC),A		; set disk check level
 J0EC2:	LD	A,(DF2EC)
         LD	B,A			; return disk check level
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _DOSVER
 ;	     Inputs  none
@@ -3194,7 +2956,7 @@ A0EC8:	LD	B,02H
         LD	L,A			; ?
         LD	D,A
         LD	E,A			; MSXDOS system file version (set by MSXDOS BDOS handler)
-        RET	
+        RET
 
 ;	  Subroutine _REDIR
 ;	     Inputs  ________________________
@@ -3206,7 +2968,7 @@ A0ED2:	LD	C,(IY+DBB89-DBB80)	; console redirection status
         LD	(IY+DBB89-DBB80),B
 J0EDB:	LD	B,C
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _GENV (get environment)
 ;	     Inputs  HL = pointer to environmentname, DE = pointer to buffer, B = size of buffer
@@ -3236,7 +2998,7 @@ J0EF8:	POP	BC
         POP	HL
         CALL	C0FC8			; copy environmentvalue to buffer
         EX	DE,HL
-        RET	
+        RET
 
 ;	  Subroutine _SENV (set environment)
 ;	     Inputs  HL = pointer to environmentname, DE = pointer to value
@@ -3293,7 +3055,7 @@ J0F4A:	CALL	C0F8B			; search for environment
         LD	HL,DBBEE		; start or environmentchain
         CALL	C,C2192			; found, remove element from chain
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _FENV
 ;	     Inputs  DE = environmentnumber, HL = pointer to buffer, B = size of buffer
@@ -3366,8 +3128,8 @@ C0F8B:	EX	DE,HL
         POP	HL
         POP	DE
         JR	NZ,C0F8B
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine validate environmentstring
 ;	     Inputs  ________________________
@@ -3396,7 +3158,7 @@ J0FC1:	DEC	A			; 255
         XOR	A
 J0FC5:	POP	HL
         OR	A			; Zx set (no error)
-        RET	
+        RET
 
 ;	  Subroutine copy from environment to buffer
 ;	     Inputs  ________________________
@@ -3419,7 +3181,7 @@ J0FCA:	LD	A,B
 J0FDB:	POP	DE
         POP	HL
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine copy from buffer to environment
 ;	     Inputs  ________________________
@@ -3436,7 +3198,7 @@ J0FE3:	CALL	C1003			; read byte (environment)
         OR	A
         JR	NZ,J0FE3
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -3453,7 +3215,7 @@ J0FF3:	CALL	C1003			; read byte (environment)
         RET	NZ
         OR	A
         JR	NZ,J0FF3
-        RET	
+        RET
 
 ;	  Subroutine read byte (environment)
 ;	     Inputs  ________________________
@@ -3465,9 +3227,9 @@ C1003:	PUSH	HL
         CALL	C274F			; get segmentnumber
         EX	DE,HL
         CALL	CF206			; RD_SEG
-        EI	
+        EI
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine write byte (environment)
 ;	     Inputs  ________________________
@@ -3481,10 +3243,10 @@ C1012:	PUSH	HL
         CALL	C274F			; get segmentnumber
         EX	DE,HL
         CALL	CF209			; WR_SEG
-        EI	
+        EI
         POP	DE
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -3502,8 +3264,8 @@ A1024:	CALL	C111B
         LD	A,C
         SBC	A,0FCH
         AND	0FCH
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         ADD	A,C
         PUSH	HL
         LD	HL,I104D-1
@@ -3517,7 +3279,7 @@ J1044:	SUB	07H
         ADD	A,07H
         LD	C,A
         XOR	A
-        RET	
+        RET
 
 I104D:	defb	1,4,4,7,9,12,14,17,20,22,25,27
 
@@ -3528,53 +3290,42 @@ I104D:	defb	1,4,4,7,9,12,14,17,20,22,25,27
 A1059:	LD	BC,0F844H
         ADD	HL,BC
         JR	NC,J1091
-;
         LD	A,H
         OR	A
         JR	NZ,J1091
-;
         LD	A,L
         CP	64H	; "d"
         JR	NC,J1091
-;
         LD	B,A
         LD	A,D
         DEC	A
         CP	0CH	; 12 
         JR	NC,J1091
-;
         LD	HL,I1096
         ADD	A,L
         LD	L,A
         JR	NC,J1077
-;
         INC	H
 J1077:	CP	97H
         JR	NZ,J1083
-;
         LD	A,B
         AND	03H	; 3 
         JR	NZ,J1083
-;
         LD	HL,I10A2
 J1083:	LD	A,E
         DEC	A
         CP	(HL)
         JR	NC,J1091
-;
         LD	L,E
         LD	H,D
         LD	D,B
         CALL	C1167
-;
         XOR	A
         LD	C,A
-        RET	
-;
-;	-----------------
+        RET
 J1091:	LD	C,0FFH
         LD	A,.IDATE
-        RET	
+        RET
 
 I1096:	defb	31,28,31,30,31,30,31,31,30,31,30,31
 I10A2:	defb	29
@@ -3589,7 +3340,7 @@ A10A3:	CALL	C111B
         LD	D,E
         LD	E,00H
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _STIME
 ;	     Inputs  ________________________
@@ -3598,35 +3349,26 @@ A10A3:	CALL	C111B
 A10AD:	LD	A,H
         CP	18H
         JR	NC,J10C5
-;
         LD	A,L
         CP	3CH	; "<"
         JR	NC,J10C5
-;
         LD	A,D
         CP	3CH	; "<"
         JR	NC,J10C5
-;
         LD	B,H
         LD	C,L
         LD	E,D
         CALL	C1155
-;
         XOR	A
         LD	C,A
-        RET	
-;
-;	-----------------
+        RET
 J10C5:	LD	C,0FFH
         LD	A,.ITIME
-        RET	
-;
-;	-----------------
+        RET
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
 C10CA:	LD	A,0DH	; 13 
         OUT	(0B4H),A
         IN	A,(0B5H)
@@ -3661,33 +3403,28 @@ J10FB:	DEC	C
         LD	A,D
         OUT	(0B5H),A
         DJNZ	J10FB
-;
 J1105:	LD	A,0DH	; 13 
         OUT	(0B4H),A
         IN	A,(0B5H)
         OR	08H	; 8 
         OUT	(0B5H),A
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C1110:	LD	A,0DH	; 13 
         OUT	(0B4H),A
         IN	A,(0B5H)
         AND	04H	; 4 
         OUT	(0B5H),A
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C111B:	CALL	C1110
         LD	E,0DH	; 13 
         CALL	C113C
@@ -3704,16 +3441,13 @@ C111B:	CALL	C1110
         CALL	C113C
         LD	E,A
         JP	J1105
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C113C:	PUSH	BC
         CALL	C114C
-;
         LD	B,A
         ADD	A,A
         ADD	A,A
@@ -3721,50 +3455,41 @@ C113C:	PUSH	BC
         ADD	A,A
         LD	B,A
         CALL	C114C
-;
         ADD	A,B
         POP	BC
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C114C:	DEC	E
         LD	A,E
         OUT	(0B4H),A
         IN	A,(0B5H)
         AND	0FH	; 15 
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C1155:	LD	L,E
         LD	H,C
         LD	D,B
         CALL	C1110
-;
         LD	A,0FH	; 15 
         OUT	(0B4H),A
         LD	A,02H	; 2 
         OUT	(0B5H),A
         LD	E,00H
         JR	J117D
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C1167:	CALL	C1110
-;
         OR	01H	; 1 
         OUT	(0B5H),A
         LD	A,0BH	; 11 
@@ -3772,53 +3497,44 @@ C1167:	CALL	C1110
         LD	A,D
         OUT	(0B5H),A
         CALL	C1110
-;
         CALL	C1110
-;
         LD	E,07H	; 7 
 J117D:	LD	A,L
         CALL	C118C
-;
         LD	A,H
         CALL	C118C
-;
         LD	A,D
         CALL	C118C
-;
         JP	J1105
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C118C:	LD	C,A
         XOR	A
         LD	B,08H	; 8 
 J1190:	RLC	C
         ADC	A,A
-        DAA	
+        DAA
         DJNZ	J1190
-;
         CALL	C119D
-;
-        RRCA	
-        RRCA	
-        RRCA	
-        RRCA	
-;
+        RRCA
+        RRCA
+        RRCA
+        RRCA
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C119D:	LD	B,A
         LD	A,E
         OUT	(0B4H),A
         LD	A,B
         OUT	(0B5H),A
         INC	E
-        RET	
+        RET
 
 ;	  Subroutine ALLSEG
 ;	     Inputs  ________________________
@@ -3872,7 +3588,7 @@ J11ED:	INC	HL
         LD	A,B
         AND	70H
         CP	30H			; first others, next specified strategy ?
-        SCF	
+        SCF
         JR	NZ,J11FF		; no, quit with error
         LD	C,B
         CALL	C1206			; allocate segment of the specfied slot
@@ -3881,7 +3597,7 @@ J11FF:	PUSH	AF
         AND	8FH
         LD	B,A
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine allocate segment of the specified slot
 ;	     Inputs  ________________________
@@ -3952,11 +3668,11 @@ J124C:	EX	AF,AF'
         LD	A,B
         POP	BC
         OR	A
-        RET	
+        RET
 
 J1253:	POP	BC
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine FRESEG
 ;	     Inputs  ________________________
@@ -3984,19 +3700,15 @@ J125F:	AND	0FH	; 15
         LD	L,A
         OR	H
         JR	Z,J128E
-;
         LD	A,(DE)
         CP	C
         JR	C,J128E
-;
         JR	Z,J128E
-;
         LD	B,00H
         ADD	HL,BC
         LD	A,(HL)
         OR	A
         JR	Z,J128E
-;
         LD	(HL),B
         EX	DE,HL
         INC	HL
@@ -4004,22 +3716,17 @@ J125F:	AND	0FH	; 15
         INC	HL
         INC	A
         JR	Z,J128B
-;
         INC	HL
 J128B:	DEC	(HL)
         OR	A
-        RET	
-;
-;	-----------------
-J128E:	SCF	
-        RET	
-;
-;	-----------------
-;
+        RET
+J128E:	SCF
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C1290:	LD	C,10H	; 16 
         LD	HL,IBA35
 J1295:	LD	E,(HL)
@@ -4035,20 +3742,16 @@ J1295:	LD	E,(HL)
         LD	A,H
         OR	L
         JR	Z,J12BE
-;
         PUSH	BC
         LD	C,(HL)
 J12A5:	LD	A,(DE)
         INC	A
         JR	Z,J12B9
-;
         DEC	A
         JR	Z,J12B9
-;
         DEC	A
         CP	B
         JR	C,J12B9
-;
         PUSH	HL
         XOR	A
         LD	(DE),A
@@ -4061,12 +3764,11 @@ J12A5:	LD	A,(DE)
 J12B9:	INC	DE
         DEC	C
         JR	NZ,J12A5
-;
         POP	BC
 J12BE:	POP	HL
         DEC	C
         JR	NZ,J1295
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  A = driveid, C b7 
@@ -4173,7 +3875,7 @@ J13A6:	PUSH	AF
         LD	C,A			; char 
         POP	AF
         OR	A
-        RET	
+        RET
 
 I13B1:	defb	"???????????"
 
@@ -4202,7 +3904,7 @@ C13BC:	LD	(IY+DBBA1-DBB80),00H	; reset parse string charflags
 J13E3:	CALL	C179C			; undo get parse string char
 J13E6:	XOR	A
         LD	B,A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4220,7 +3922,7 @@ C13E9:	PUSH	HL
         JR	NZ,J13FD
         SET	3,B
 J13FD:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine parse filename
 ;	     Inputs  ________________________
@@ -4278,7 +3980,7 @@ J145C:	CP	"."
 J1465:	LD	C,3
         CALL	C146C
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4360,7 +4062,7 @@ C14CB:	XOR	A
         RET	Z
 J14EF:	CALL	C15A6
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4387,7 +4089,7 @@ C14F4:	PUSH	BC
         LD	A,(HL)			; deviceflags
 J1517:	POP	HL
         POP	BC
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4463,7 +4165,7 @@ J1597:	POP	HL
         POP	BC
         JR	NZ,C159F
         CALL	C1C4A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4471,7 +4173,7 @@ J1597:	POP	HL
 
 C159F:	CALL	C16BC
         CALL	C1C47
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4500,11 +4202,11 @@ J15C4:	CALL	C1C94			; get next directory entry
         JR	NC,J15B2		; there is, try that one
 J15C9:	POP	DE
         LD	A,.NODIR		; "directory not found" error
-        RET	
+        RET
 
 J15CD:	POP	AF
         CALL	C1C3A
-        RET	
+        RET
 
 ;	  Subroutine does directoiryentry match the search
 ;	     Inputs  DE = pointer to directoryentry, HL = pointer to searchstring, A(b3) = volume
@@ -4580,7 +4282,7 @@ J1628:	LD	(IX+0),A
         DJNZ	J1619			; next char
         EX	(SP),IX
         POP	BC
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4591,7 +4293,7 @@ C1637:	PUSH	AF
         POP	BC
         JR	NC,J1640		; not a special subdir directory entry,
         XOR	A
-        RET	
+        RET
 
 J1640:	PUSH	HL
         PUSH	DE
@@ -4613,7 +4315,7 @@ J1662:	XOR	A			; endmarker is end of string
         CALL	C1669			; validate name
 J1666:	POP	HL
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine validate name
 ;	     Inputs  HL = pointer, A = endmarker, B = maximium length, C = charflags
@@ -4644,11 +4346,11 @@ J168C:	CP	" "
         JR	NZ,J1694		; other invalid char, quit with error
         DJNZ	J168A			; spaces are ignored
 J1692:	XOR	A
-        RET	
+        RET
 
 J1694:	LD	A,.IFNM
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine check if devicename
 ;	     Inputs  DE = pointer to string
@@ -4680,8 +4382,8 @@ J16B5:	POP	DE
         POP	HL
         JR	NZ,J169C		; next device block
         POP	BC
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4696,27 +4398,25 @@ C16BC:	PUSH	HL
         LD	(DBB9A),HL
         POP	HL
         LD	(IY+DBB99-DBB80),00H
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C16D0:	PUSH	HL
         LD	A,02H	; 2 
         LD	HL,(DBB9A)
         CP	(HL)
         JR	Z,J16E3
-;
         LD	(HL),00H
         INC	HL
         CP	(HL)
         JR	Z,J16E1
-;
         LD	(HL),00H
 J16E1:	LD	A,2AH	; "*"
 J16E3:	ADD	A,0D6H
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -4769,10 +4469,9 @@ J172F:	POP	HL
         POP	BC
         BIT	2,(IY+DBBA0-DBB80)
         JR	Z,J1738
-;
         XOR	A
 J1738:	OR	A
-        RET	
+        RET
 
 ;	  Subroutine make ASCIIZ string of name
 ;	     Inputs  A = first char, HL = pointer to buffer
@@ -4802,7 +4501,7 @@ J175A:	CALL	C176A
         DEC	HL
         LD	(HL),00H		; replace the "." with the endmarker
 J1768:	POP	BC
-        RET	
+        RET
 
 ;	  Subroutine copy name without spaces
 ;	     Inputs  DE = pointer to directoryentry+1, HL = buffer, B = maximium length, C = charflags
@@ -4821,7 +4520,7 @@ J177A:	SET	7,C			; flag something copied
         INC	HL
 J177E:	LD	A,(DE)
         DJNZ	C176A			; next
-        RET	
+        RET
 
 ;	  Subroutine get parse string char
 ;	     Inputs  ________________________
@@ -4841,7 +4540,7 @@ J178E:	POP	HL
         LD	(IY+DBBA1-DBB80),C	; save char flags
         POP	BC
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine undo get parse string char
 ;	     Inputs  ________________________
@@ -4854,7 +4553,7 @@ C179C:	PUSH	HL
         RES	1,(IY+DBBA1-DBB80)
         RES	2,(IY+DBBA1-DBB80)	; reset parse string double byte flags
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine check character
 ;	     Inputs  C = charflags (b0 set, suppress upcasing, b1 set 1st double byte char, b2 set 2nd double byte char, b3 set volumename)
@@ -4879,7 +4578,7 @@ C17AE:	RES	4,C			; not a endmarker
 J17D1:	OR	A
         RET	NZ
         SET	4,C			; flag endmarker
-        RET	
+        RET
 
 ;	  Subroutine check for double byte header char
 ;	     Inputs  ________________________
@@ -4912,13 +4611,13 @@ J17EE:	INC	HL
         CP	(HL)
         JR	NC,J17FA
 J17F6:	OR	A
-        SCF	
+        SCF
         POP	HL
-        RET	
+        RET
 
 J17FA:	OR	A
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine make upcase
 ;	     Inputs  ________________________
@@ -4934,7 +4633,7 @@ C17FD:	PUSH	HL
         LD	A,(HL)
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine check for illegal chars
 ;	     Inputs  Zx set = filename, Zx reset = volumename
@@ -4948,14 +4647,12 @@ C180D:	PUSH	HL
         LD	BC,6
 J181A:	CP	20H
         JR	C,J1822
-        CPIR	
+        CPIR
         JR	NZ,J1823
-J1822:	SCF	
+J1822:	SCF
 J1823:	POP	BC
         POP	HL
-        RET	
-;
-;	-----------------
+        RET
 I1826:	defb	07FH,'|<>/',0FFH,' :;.,=+\"[]'
 
 ;	  Subroutine _GETCD
@@ -5009,7 +4706,7 @@ A186D:	LD	C,04H
         LD	C,(IX+25)		; logical drive
         LD	DE,(DBB9E)		; pointer to terminator char
         LD	HL,(DBB9C)		; pointer to last item
-        RET	
+        RET
 
 ;	  Subroutine _PFILE
 ;	     Inputs  ________________________
@@ -5023,7 +4720,7 @@ A1882:	PUSH	HL
         LD	DE,(DBB9E)
         POP	HL
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _CHKCHR
 ;	     Inputs  ________________________
@@ -5035,7 +4732,7 @@ A1894:	LD	A,E
         LD	D,C
         LD	E,A
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _WPATH
 ;	     Inputs  ________________________
@@ -5064,12 +4761,10 @@ J18BA:	LD	(DE),A
         OR	A
         JR	NZ,J18AA
         JR	J18C3
-;
-;	-----------------
 J18C1:	LD	A,.PLONG
 J18C3:	POP	HL
         POP	DE
-        RET	
+        RET
 
 ;	  Subroutine _FFIRST
 ;	     Inputs  ________________________
@@ -5127,7 +4822,7 @@ J18DF:	PUSH	HL
         ADD	HL,BC
         EX	DE,HL
         LD	BC,4
-        LDIR	
+        LDIR
         POP	HL
         POP	BC
         POP	DE
@@ -5171,14 +4866,14 @@ J195F:	LD	DE,IB926
         EX	DE,HL
         PUSH	DE
         LD	BC,11
-        LDIR	
+        LDIR
         POP	DE
         POP	HL
         CALL	C1A53			; get directory entry
         JR	J198D
 
 J1977:	POP	DE
-        RET	
+        RET
 
 ;	  Subroutine _FNEXT
 ;	     Inputs  ________________________
@@ -5200,7 +4895,7 @@ J198D:	PUSH	AF
         CALL	C1A45
         EX	DE,HL
         LDIR				; update FIB with directory entry locator info
-        RET	
+        RET
 
 ;	  Subroutine update FIB with directory entry info
 ;	     Inputs  IX = pointer to FIB, DE = pointer to directory entry
@@ -5227,7 +4922,7 @@ J19A5:	CALL	C173A			; make ASCIIZ string of name
         LD	BC,10
         LDIR				; filetime, filedate, filestartcluster and filesize
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -5276,7 +4971,7 @@ J19F7:	OR	A
         LD	A,(HL)
         POP	HL
         CP	A
-        RET	
+        RET
 
 ;	  Subroutine get directoryentry from FIB info with diskchange check
 ;	     Inputs  ________________________
@@ -5288,8 +4983,8 @@ C1A02:	PUSH	BC
         CALL	C1A25
         POP	BC
         XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 
 J1A10:	CALL	C1A45
         LDIR				; setup directory entry locator with info from FIB
@@ -5301,7 +4996,7 @@ J1A10:	CALL	C1A45
         RET	NZ			; error, quit
         CALL	C1C7A			; get current directory entry
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -5321,10 +5016,10 @@ C1A25:	LD	L,(IX+26)
         LD	BC,15
         ADD	HL,BC
         LD	BC,4
-        LDIR	
+        LDIR
         POP	DE
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine get pointer to directoryentry locators
 ;	     Inputs  IX = pointer to FIB
@@ -5336,7 +5031,7 @@ C1A45:	LD	DE,DBBDE
         LD	BC,43
         ADD	HL,BC
         LD	BC,12
-        RET	
+        RET
 
 ;	  Subroutine get directory entry
 ;	     Inputs  ________________________
@@ -5421,7 +5116,7 @@ J1AF0:	LD	DE,(DBBAD)
         CALL	C2553			; check if special subdir directory entry
         JR	NC,J1AFB		; not a special subdir directory entry,
         OR	A
-        RET	
+        RET
 
 J1AFB:	LD	BC,0
         BIT	4,(IX+31)
@@ -5447,7 +5142,7 @@ J1B26:	PUSH	HL
         POP	HL
 J1B2E:	XOR	A
 J1B2F:	CP	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -5482,7 +5177,7 @@ C1B31:	PUSH	DE
         EX	(SP),IX
         POP	HL
         POP	DE
-        RET	
+        RET
 
 I1B67:	defb	"."
 I1B68:	defb	".          "
@@ -5552,10 +5247,10 @@ J1BB1:	ADD	A,A
         POP	BC
         LD	A,B
         OR	A
-        RRA	
-        RRA	
-        RRA	
-        RRA	
+        RRA
+        RRA
+        RRA
+        RRA
         RL	D
         ADD	A,C
         LD	(HL),A
@@ -5564,7 +5259,7 @@ J1BB1:	ADD	A,A
         POP	DE
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -5590,7 +5285,7 @@ C1BD2:	JR	C,J1BEE			; no more entries, quit
         OR	A
         JR	NZ,C1BCF
 J1BEE:	XOR	A			; Cx reset
-        RET	
+        RET
 
 ;	  Subroutine register directory entry
 ;	     Inputs  ________________________
@@ -5607,7 +5302,7 @@ C1BF0:	PUSH	HL
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine get free or registered directory entry
 ;	     Inputs  ________________________
@@ -5638,7 +5333,7 @@ J1C17:	LD	DE,(DBBE6)
         CALL	C1C94			; get next directory entry
 J1C37:	XOR	A
 J1C38:	POP	BC
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -5673,7 +5368,7 @@ C1C4A:	LD	(DBBE8),DE
         JR	NZ,J1C5B
         SET	1,(IY+DBBAF-DBB80)
 J1C5B:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine get first directory entry
 ;	     Inputs  HL = pointer to drivetable
@@ -5744,7 +5439,7 @@ J1CAE:	POP	HL
         JR	NZ,J1CED		; yep, partly (=last) sector
         LD	DE,(DBBE4)
         BIT	7,D			; end cluster (of subdirectory) ?
-        SCF	
+        SCF
         POP	BC
         RET	NZ			; yep, then is the end of directory, quit
 J1CC4:	PUSH	BC
@@ -5805,7 +5500,7 @@ J1D23:	LD	(DBBE0),A
         POP	BC
 J1D29:	LD	A,(DE)
         OR	A
-        RET	
+        RET
 
 
 ;	  Subroutine write to filehandle
@@ -5837,7 +5532,7 @@ J1D43:	EX	AF,AF'
         LD	BC,1			; recordsize = 1
         LD	A,0FFH			; BDOS segments
         CALL	C2771			; write to file
-        RET	
+        RET
 
 ;	  Subroutine read from filehandle
 ;	     Inputs  ________________________
@@ -5861,7 +5556,7 @@ C1D51:	CALL	C2140			; get fib pointer of filehandle
         CP	.EOF
         RET	NZ
 J1D75:	XOR	A
-        RET	
+        RET
 
 J1D77:	PUSH	BC
         LD	DE,IBBC5
@@ -5880,7 +5575,7 @@ J1D77:	PUSH	BC
         LD	A,.EOF
         RET	Z
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _CREATE
 ;	     Inputs  ________________________
@@ -5923,7 +5618,7 @@ J1DB0:	PUSH	HL
         EX	(SP),IX
         POP	HL
         LD	BC,32
-        LDIR	
+        LDIR
         POP	BC
         POP	DE
         LD	(IX+31),06H
@@ -5937,11 +5632,11 @@ J1DB0:	PUSH	HL
         CALL	C228E			; setup FIB for open
         CALL	C20F2			; update redirect status
 J1DE6:	XOR	A
-        RET	
+        RET
 
 J1DE8:	POP	HL
 J1DE9:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine _CLOSE
 ;	     Inputs  ________________________
@@ -5965,7 +5660,7 @@ J1DFD:	CALL	C2244
         LD	A,(IX+25)
         CALL	C2C5F			; write dirty sectorbuffers of assigned drive
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _DUP
 ;	     Inputs  ________________________
@@ -5983,7 +5678,7 @@ A1E08:	CALL	C2140			; get fib pointer of filehandle
         LD	(HL),D			; pointer to FIB
         CALL	C20F2			; update redirect status
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _READ
 ;	     Inputs  ________________________
@@ -6000,7 +5695,7 @@ A1E1D:	PUSH	DE
         CALL	C2775			; read from file
         PUSH	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine _WRITE
 ;	     Inputs  ________________________
@@ -6017,7 +5712,7 @@ A1E2D:	PUSH	DE
         CALL	C2771			; write to file
         PUSH	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine _SEEK
 ;	     Inputs  ________________________
@@ -6057,7 +5752,7 @@ J1E6D:	ADD	HL,DE
         LD	(IX+47),E
         LD	(IX+48),D
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _IOCTL
 ;	     Inputs  ________________________
@@ -6083,9 +5778,7 @@ A1E81:	EX	AF,AF'
         DEC	A
         JR	Z,J1F05			; find screensize
 J1E9F:	LD	A,.ISBFN
-        RET	
-;
-;	-----------------
+        RET
 J1EA2:	BIT	7,(IX+30)		; device ?
         JR	Z,J1E9F			; nope,
         LD	A,(IX+30)
@@ -6116,7 +5809,7 @@ J1EC2:	LD	A,(IX+48)
 J1ED0:	SET	6,E
 J1ED2:	XOR	A
         LD	D,A
-        RET	
+        RET
 
 J1ED5:	BIT	1,(IX+49)
         JR	NZ,J1EFA		; file mode no read, return not ready
@@ -6126,9 +5819,7 @@ J1ED5:	BIT	1,(IX+49)
         BIT	6,E
         JR	NZ,J1EFA
         LD	E,00H
-        RET	
-;
-;	-----------------
+        RET
 J1EEB:	BIT	0,(IX+49)
         JR	NZ,J1EFA		; file mode no write, return not ready
         INC	HL
@@ -6137,23 +5828,17 @@ J1EEB:	BIT	0,(IX+49)
         BIT	7,(IX+30)		; device ?
         JR	NZ,J1EFD		; yep, continue to device check if output routine
 J1EFA:	LD	E,0FFH
-        RET	
-;
-;	-----------------
+        RET
 J1EFD:	LD	BC,6
         ADD	HL,BC
         LD	C,(IX+30)		; deviceflags
         JP	(HL)
-;
-;	-----------------
 J1F05:	BIT	7,(IX+30)		; device ?
         JR	NZ,J1F0F		; yep, continue to device get screensize
         XOR	A
         LD	E,A
         LD	D,A
-        RET	
-;
-;	-----------------
+        RET
 J1F0F:	LD	BC,12
         ADD	HL,BC
         JP	(HL)
@@ -6166,7 +5851,7 @@ A1F14:	CALL	C19BC
         RET	NZ
         LD	A,0FFH			; delete is recoverable by UNDEL
         CALL	C2350			; mark current directory entry deleted and remove FAT chain
-        RET	
+        RET
 
 ;	  Subroutine _HDELETE
 ;	     Inputs  ________________________
@@ -6184,7 +5869,7 @@ A1F1E:	CALL	C2140			; get fib pointer of filehandle
         CALL	C1C7A			; get current directory entry
         LD	A,0FFH			; delete is recoverable by UNDEL
         CALL	C2350			; mark current directory entry deleted and remove FAT chain
-        RET	
+        RET
 
 ;	  Subroutine _RENAME
 ;	     Inputs  ________________________
@@ -6195,7 +5880,7 @@ A1F3B:	PUSH	HL
         POP	BC
         RET	NZ
         CALL	C23B6			; rename current directory entry
-        RET	
+        RET
 
 ;	  Subroutine _HRENAME
 ;	     Inputs  ________________________
@@ -6217,7 +5902,7 @@ A1F45:	PUSH	HL
         RET	NZ
         CALL	C2288			; update FIB (directory entry changed)
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _MOVE
 ;	     Inputs  ________________________
@@ -6228,7 +5913,7 @@ A1F60:	PUSH	HL
         POP	BC
         RET	NZ
         CALL	C241B			; move current directory entry
-        RET	
+        RET
 
 ;	  Subroutine _HMOVE
 ;	     Inputs  ________________________
@@ -6250,7 +5935,7 @@ A1F6A:	PUSH	HL
         RET	NZ			; error, quit
         CALL	C2288			; update FIB (directory entry changed)
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _ATTR
 ;	     Inputs  ________________________
@@ -6271,7 +5956,7 @@ A1F85:	EX	AF,AF'
         ADD	HL,DE
         LD	L,(HL)
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _HATTR
 ;	     Inputs  ________________________
@@ -6296,7 +5981,7 @@ A1F9D:	EX	AF,AF'
         CALL	C2288			; update FIB (directory entry changed)
 J1FB9:	LD	L,(IX+14)
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _FTIME
 ;	     Inputs  ________________________
@@ -6306,20 +5991,15 @@ A1FBE:	EX	AF,AF'
         PUSH	IX
         PUSH	HL
         CALL	C19BC
-;
         POP	BC
         POP	DE
         RET	NZ
-;
         EX	AF,AF'
         OR	A
         CALL	NZ,C2522
-;
         OR	A
         RET	NZ
-;
         CALL	C1C7A			; get current directory entry
-;
         LD	HL,22
         ADD	HL,DE
         LD	E,(HL)
@@ -6331,7 +6011,7 @@ A1FBE:	EX	AF,AF'
         LD	H,(HL)
         LD	L,A
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _HFTIME
 ;	     Inputs  ________________________
@@ -6363,17 +6043,15 @@ J1FFF:	LD	E,(IX+15)
         LD	L,(IX+17)
         LD	H,(IX+18)
         XOR	A
-        RET	
+        RET
 ;	  Subroutine _HTEST
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 A200D:	PUSH	BC
         CALL	C19BC
-;
         POP	BC
         RET	NZ
-;
         BIT	7,(IX+30)		; device ?
         JR	NZ,J2026		; yep,
         PUSH	HL
@@ -6383,12 +6061,10 @@ A200D:	PUSH	BC
         RET	Z			; filehandle not in use, quit
         LD	B,0FFH
         CALL	C2312
-;
         RET	Z
-;
 J2026:	XOR	A
         LD	B,A
-        RET	
+        RET
 
 ;	  Subroutine _FORK
 ;	     Inputs  ________________________
@@ -6437,7 +6113,7 @@ J2063:	LD	A,(DBBFE)
         LD	(DBBFE),A
         CALL	C20F2			; update redirect status
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine _JOIN
 ;	     Inputs  ________________________
@@ -6523,7 +6199,7 @@ J20D6:	LD	A,0FFH			; all drives
 J20EA:	CALL	C20F2			; update redirect status
         CALL	C09B6
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine update redirect status
 ;	     Inputs  ________________________
@@ -6558,7 +6234,7 @@ J2121:	LD	A,C
         POP	HL
         POP	DE
         POP	BC
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -6576,7 +6252,7 @@ J2130:	INC	B
 J213B:	POP	IX
         POP	DE
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine get fib of filehandle
 ;	     Inputs  B = filehandle
@@ -6605,13 +6281,13 @@ C2140:	LD	A,B
         POP	IX
         LD	A,D
         OR	E
-        SCF	
+        SCF
         LD	A,.NOPEN
-        RET	
+        RET
 
 J2162:	LD	A,.IHAND
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -6622,11 +6298,11 @@ C2166:	LD	A,(IX-1)
         JR	Z,J2171
         LD	(IX-1),A
         XOR	A
-        RET	
+        RET
 
 J2171:	LD	A,.NHAND
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -6649,7 +6325,7 @@ C2175:	LD	A,(IX-1)
         POP	BC
         POP	DE
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine remove element from chain
 ;	     Inputs  HL = start of chain, DE = adres of element
@@ -6677,7 +6353,7 @@ J2199:	LD	E,(HL)
         INC	DE
         LD	A,(HL)
         LD	(DE),A			; link chain past removed element
-        RET	
+        RET
 
 ;	  Subroutine create FIB element
 ;	     Inputs  ________________________
@@ -6696,14 +6372,12 @@ C21AD:	LD	HL,54
         LD	(HL),01H		; use count=1
         INC	HL
         POP	DE
-        RET	
-;
-;	-----------------
+        RET
 ;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C21C5:	LD	B,05H
         LD	HL,I21E5
 J21CA:	PUSH	BC
@@ -6717,20 +6391,15 @@ J21CA:	PUSH	BC
         PUSH	BC
         LD	A,B
         CALL	A1DA6
-;
         POP	BC
         OR	A
         LD	DE,T2200
         LD	A,B
         CALL	NZ,A1DA6
-;
         POP	HL
         POP	BC
         DJNZ	J21CA
-;
-        RET	
-;
-;	-----------------
+        RET
 I21E5:	defw	T21F4
         defb	101b			; con read only
         defw	T21F4
@@ -6746,16 +6415,16 @@ T21F4:	defb	"CON",0
 T21F8:	defb	"AUX",0
 T21FC:	defb	"PRN",0
 T2200:	defb	"NUL",0 
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2204:	BIT	7,(IX+30)		; device ?
         JR	Z,J220F			; nope,
         CALL	C1A25
         XOR	A
-        RET	
+        RET
 
 J220F:	LD	C,(IX+25)
         LD	B,1			; for file
@@ -6780,7 +6449,7 @@ J220F:	LD	C,(IX+25)
         LD	(IY+DBBAF-DBB80),4	; search directory entry
         CALL	C1A53			; get directory entry
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -6864,7 +6533,7 @@ C228E:	PUSH	BC
         LD	(IX+43),A
         LD	(IX+44),A		; current relative cluster of file = 0
         POP	BC
-        RET	
+        RET
 
 ;	  Subroutine free filehandle
 ;	     Inputs  ________________________
@@ -6875,7 +6544,7 @@ C22D7:	CALL	C2175			; decrease filehandle count of FIB and remove FIB if zero co
         LD	(HL),A
         INC	HL
         LD	(HL),A
-        RET	
+        RET
 
 ;	  Subroutine check if file is opened by some other FIB
 ;	     Inputs  ________________________
@@ -6912,7 +6581,7 @@ J230A:	PUSH	BC
         POP	BC
         POP	DE
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -6950,7 +6619,7 @@ C2312:	BIT	7,(IX+30)		; device ?
         CALL	C3311			; compare diskserials
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine mark current directory entry deleted and remove FAT chain
 ;	     Inputs  A = 0 (deleted is not recoverable), <> 0 (delete is recoverable)
@@ -7012,7 +6681,7 @@ J2388:	CALL	C1C7A			; get current directory entry
 J23AE:	CALL	C2541
         CALL	NZ,C34E9
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine rename current directory entry
 ;	     Inputs  ________________________
@@ -7186,7 +6855,7 @@ J24EF:	PUSH	HL
         CALL	C2C56			; mark buffer last read as changed
         XOR	A
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -7213,7 +6882,7 @@ J2515:	XOR	C
         CALL	C2C56			; mark buffer last read as changed
         XOR	A
 J2520:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -7241,11 +6910,11 @@ C2522:	XOR	A
         LD	(HL),B
         POP	DE
         POP	HL
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2541:	PUSH	HL
         LD	HL,11
         ADD	HL,DE
@@ -7255,7 +6924,7 @@ C2541:	PUSH	HL
 J254C:	CALL	C2C56			; mark buffer last read as changed
         POP	HL
         LD	A,00H
-        RET	
+        RET
 
 ;	  Subroutine check if special subdir directory entry
 ;	     Inputs  ________________________
@@ -7318,7 +6987,7 @@ J258E:	LD	A,.OV64K		; check for warparound page3 - page0
         ADD	HL,DE
         LD	(HL),1
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -7347,7 +7016,7 @@ C25B7:	XOR	A
 J25DA:	LD	C,A
         POP	HL
         SUB	B
-        NEG	
+        NEG
         LD	B,A
         PUSH	BC
         LD	B,C
@@ -7388,7 +7057,7 @@ J2604:	EX	AF,AF'
         LD	A,B
         POP	BC
         SUB	B
-        NEG	
+        NEG
         LD	B,A
         EX	AF,AF'
         PUSH	DE
@@ -7406,8 +7075,6 @@ J2604:	EX	AF,AF'
         ADD	A,C
         LD	(IY+DBBC3-DBB80),A
         JP	C25B7
-;
-;	-----------------
 J263A:	POP	HL
         DEC	B
         PUSH	BC
@@ -7420,17 +7087,14 @@ J263A:	POP	HL
         JR	NZ,J264E
         INC	(IY+DBBB4-DBB80+1)
 J264E:	JP	C25B7
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2651:	CALL	C2C8D
-;
 J2654:	PUSH	BC
-        EXX	
+        EXX
         CALL	C2CBD			; find marked sectorbuffer
         JR	Z,J26A3			; no more,
         LD	BC,4
@@ -7458,15 +7122,15 @@ J2654:	PUSH	BC
         DEC	HL
         DEC	HL
         CALL	C2CD5			; make buffer the first buffer
-J2683:	EXX	
+J2683:	EXX
         JR	J2654
 
 J2686:	BIT	7,(HL)
         JR	Z,J2683
         LD	A,C
-        EXX	
+        EXX
         PUSH	DE
-        EXX	
+        EXX
         LD	BC,8
         ADD	HL,BC
         EX	(SP),HL
@@ -7480,18 +7144,14 @@ J2686:	BIT	7,(HL)
         LD	BC,512
         CALL	CF1D6			; transfer with page 0
         JR	J2683
-;
-;	-----------------
-J26A3:	EXX	
+J26A3:	EXX
         POP	BC
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C26A6:	PUSH	HL
         EX	(SP),IX
         PUSH	DE
@@ -7518,7 +7178,6 @@ C26A6:	PUSH	HL
 
 J26D3:	ADD	HL,BC
         JR	NC,J26D9
-;
 J26D6:	LD	B,3			; real read, ignore not problem
         defb	021H			; LD HL,xxxx
 J26D9:	LD	B,2			; no real read, ignore not problem
@@ -7548,7 +7207,7 @@ J26D9:	LD	B,2			; no real read, ignore not problem
         CALL	NZ,C2CD2
         EX	(SP),IX
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  DE = adres, BC = size, A (b0=to/from),(b2=dos/bdos segements)
@@ -7597,7 +7256,7 @@ J2736:	POP	BC
         JR	C2711			; do the leftover
 
 J274D:	POP	DE
-        RET	
+        RET
 
 ;	  Subroutine get segmentnumber
 ;	     Inputs  DE = adres, A=0 for DOS segments, A<>0 for current segments
@@ -7611,8 +7270,8 @@ C274F:	PUSH	DE
         LD	HL,IF2C7		; current segment
 J275A:	LD	A,D
         AND	0C0H
-        RLCA	
-        RLCA	
+        RLCA
+        RLCA
         LD	E,A
         LD	D,0
         ADD	HL,DE
@@ -7621,7 +7280,7 @@ J275A:	LD	A,D
         POP	DE
         RES	6,D
         RES	7,D
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -7683,7 +7342,7 @@ J27B8:	OR	A
         LD	A,.EOF
         JR	Z,J27B8
 J27C6:	XOR	A
-        RET	
+        RET
 
 J27C8:	LD	H,A
         AND	04H	; 4 
@@ -7704,36 +7363,30 @@ J27DF:	PUSH	DE
         CALL	C274F			; get segmentnumber
         EX	DE,HL
         CALL	CF206			; RD_SEG
-        EI	
+        EI
         EX	DE,HL
         POP	DE
         BIT	5,(IX+30)		; binary filemode ?
         JR	Z,J27F7			; yep,
         CP	1AH
         JR	Z,J280F
-;
 J27F7:	PUSH	IX
         PUSH	BC
         PUSH	DE
         PUSH	HL
         CALL	C287D
-;
         POP	HL
         POP	DE
         POP	BC
         POP	IX
         OR	A
         JR	NZ,J2812
-;
         INC	DE
         DEC	BC
         LD	A,B
         OR	C
         JR	NZ,J27DF
-;
         JR	J2812
-;
-;	-----------------
 J280F:	XOR	A
         INC	DE
         DEC	BC
@@ -7743,8 +7396,6 @@ J2812:	POP	HL
         LD	B,H
         LD	C,L
 J2818:	JR	J27A1
-;
-;	-----------------
 J281A:	LD	L,(IX+28)
         LD	H,(IX+29)
         PUSH	BC
@@ -7764,10 +7415,8 @@ J2825:	PUSH	BC
         JR	Z,J2845
         CP	.EOL
         JR	NZ,J286E
-;
         BIT	2,(IX+30)
         JR	NZ,J284E
-;
         INC	C
 J2845:	INC	C
         BIT	5,(IX+30)		; ascii filemode ?
@@ -7780,7 +7429,7 @@ J284E:	PUSH	DE
         EX	DE,HL
         LD	E,B
         CALL	CF209			; WR_SEG
-        EI	
+        EI
         POP	HL
         POP	DE
         LD	A,C
@@ -7918,7 +7567,7 @@ J2938:	LD	BC,0
         LD	DE,(DBBBC)
         LD	(IX+43),E
         LD	(IX+44),D
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -7946,7 +7595,7 @@ J2966:	LD	A,D
         SET	3,(IY+DBBC4-DBB80)
         CALL	C29C2
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -7974,28 +7623,24 @@ C297D:	XOR	A
         XOR	A
 J29AC:	LD	(DBBBB),A
         XOR	A
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C29B1:	PUSH	DE
         LD	A,(DBBBB)		; sectoroffset
         LD	DE,(DBBB6)
         CALL	C2DD4			; convert clusternumber to sectornumber
         LD	(DBBB4),DE		; sectornumber
         POP	DE
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C29C2:	PUSH	HL
         LD	HL,(DBBBE)
         ADD	HL,BC
@@ -8004,14 +7649,12 @@ C29C2:	PUSH	HL
         SBC	HL,BC
         LD	(DBBC0),HL
         POP	HL
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C29D4:	PUSH	HL
         LD	C,(IX+45)
         LD	B,(IX+46)
@@ -8020,9 +7663,7 @@ C29D4:	PUSH	HL
         PUSH	DE
         PUSH	BC
         CALL	C2B23
-;
         JR	NZ,J2A37
-;
         LD	(DBBBC),DE
         LD	(DBBBB),A
         LD	(DBBB9),BC
@@ -8057,29 +7698,26 @@ J2A09:	ADC	HL,DE
         OR	C
         DEC	BC
         JR	NZ,J2A2D
-;
         OR	D
         OR	E
         DEC	DE
 J2A2D:	PUSH	DE
         PUSH	BC
         CALL	NZ,C2B23
-;
-        EXX	
+        EXX
         POP	HL
         POP	DE
-        EXX	
+        EXX
         POP	BC
 J2A37:	JR	NZ,J2AB0
-;
-        EXX	
+        EXX
         POP	BC
         XOR	A
         SBC	HL,BC
         EX	(SP),HL
         EX	DE,HL
         SBC	HL,DE
-        EXX	
+        EXX
         BIT	7,D
         EX	AF,AF'
         BIT	0,(IY+DBBC4-DBB80)
@@ -8110,12 +7748,10 @@ J2A37:	JR	NZ,J2AB0
         CALL	C2DF1			; reset deleted files status disk and set FAT entry
         LD	C,(IX+39)
         LD	B,(IX+40)
-        SCF	
+        SCF
         EX	AF,AF'
         JR	J2AB4
-;
-;	-----------------
-J2A80:	EXX	
+J2A80:	EXX
         EX	AF,AF'
         POP	HL
         LD	E,(IX+39)
@@ -8126,8 +7762,6 @@ J2A80:	EXX
         PUSH	DE
         LD	BC,0
         JR	J2AB4
-;
-;	-----------------
 J2A94:	POP	HL
         LD	A,(IY+DBBC4-DBB80)
         AND	02H			; directory cluster clear ?
@@ -8146,9 +7780,7 @@ J2A94:	POP	HL
 J2AB0:	POP	DE
 J2AB1:	POP	DE
 J2AB2:	POP	DE
-        RET	
-;
-;	-----------------
+        RET
 J2AB4:	LD	(IX+39),C
         LD	(IX+40),B
         XOR	A
@@ -8157,17 +7789,14 @@ J2AB4:	LD	(IX+39),C
         LD	(IX+43),A
         LD	(IX+44),A
 J2AC7:	SET	7,(IX+49)
-        EXX	
+        EXX
         EX	AF,AF'
         JR	NZ,J2AD1
-;
         JR	NC,J2AE3
-;
 J2AD1:	INC	BC
         LD	A,B
         OR	C
         JR	NZ,J2AD7
-;
         INC	DE
 J2AD7:	LD	(IX+21),C
         LD	(IX+22),B
@@ -8179,67 +7808,53 @@ J2AE3:	POP	BC
         OR	C
         DEC	BC
         JR	NZ,J2AEB
-;
         DEC	HL
 J2AEB:	BIT	7,H
         JR	Z,J2AFF
-;
         LD	A,H
         AND	L
         INC	A
         LD	HL,0FFFFH
         JR	NZ,J2B02
-;
         INC	HL
         SBC	HL,BC
         JR	NZ,J2B02
-;
         DEC	HL
         JR	J2B02
-;
-;	-----------------
 J2AFF:	LD	HL,0
 J2B02:	LD	(DBBB2),HL
-        EXX	
+        EXX
         XOR	A
-        RET	
-;
-;	-----------------
+        RET
 J2B08:	EX	AF,AF'
         POP	DE
         EX	(SP),HL
         JR	NZ,J2B19
-;
         JR	NC,J2B20
-;
-        EXX	
+        EXX
         LD	A,H
         AND	L
         INC	A
-        EXX	
+        EXX
         JR	NZ,J2B19
-;
         ADD	HL,DE
         JR	C,J2B1C
-;
 J2B19:	LD	HL,0FFFFH
 J2B1C:	INC	HL
         LD	(DBBC0),HL
 J2B20:	XOR	A
         POP	HL
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2B23:	PUSH	HL
         LD	A,B
         SRL	D
         RR	E
-        RRA	
+        RRA
         LD	B,00H
         RL	B
         PUSH	BC
@@ -8255,20 +7870,15 @@ C2B23:	PUSH	HL
         INC	HL
         LD	B,(HL)
         JR	J2B45
-;
-;	-----------------
 J2B40:	SRL	D
         RR	E
-        RRA	
+        RRA
 J2B45:	DJNZ	J2B40
-;
         INC	D
         DEC	D
         JR	NZ,J2B53
-;
         BIT	7,E
         JR	NZ,J2B53
-;
         LD	D,E
         LD	E,A
         LD	A,C
@@ -8276,7 +7886,7 @@ J2B45:	DJNZ	J2B40
 J2B53:	LD	A,.FILE
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -8309,7 +7919,7 @@ J2B77:	LD	A,B
 J2B83:	POP	HL
         LD	A,.FILE
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine get FAT sector
 ;	     Inputs  ________________________
@@ -8437,7 +8047,7 @@ J2C37:	POP	BC
         LD	(DBBF6),HL		; last buffer read
         CALL	C2CF5			; make buffer the last buffer
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -8458,7 +8068,7 @@ C2C44:	PUSH	HL
         LD	A,(HL)
         SUB	D
 J2C54:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine mark buffer last read as changed
 ;	     Inputs  ________________________
@@ -8469,7 +8079,7 @@ C2C56:	LD	HL,(DBBF6)		; last FAT buffer read
         INC	HL
         INC	HL
         SET	7,(HL)			; buffer changed flag
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -8514,20 +8124,17 @@ J2C7D:	CALL	C2CBD			; find marked sectorbuffer
         INC	HL
         LD	(HL),00H		; sectorbuffer unused
         JR	J2C7D
-;
-;	-----------------
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2C8B:	JR	C,J2C96
-;
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2C8D:	PUSH	HL
         PUSH	BC
         LD	BC,8
@@ -8551,7 +8158,7 @@ J2C9D:	LD	E,(HL)
         JR	Z,J2CB4
         CP	B
         JR	Z,J2CB2
-        RLCA	
+        RLCA
         JR	C,J2CB4
         LD	A,B
         INC	A
@@ -8564,14 +8171,12 @@ J2CB4:	LD	A,D
         POP	BC
         POP	DE
 J2CBB:	POP	HL
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2CBD:	LD	HL,(DBBF8)		; start of bufferchain
 J2CC0:	PUSH	HL
         INC	HL
@@ -8587,14 +8192,12 @@ J2CC0:	PUSH	HL
         LD	L,A
         OR	H			; end of bufferchain ?
         JR	NZ,J2CC0		; nope, continue
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2CD2:	CALL	C2D2D			; write buffer if dirty
 
 ;	  Subroutine make buffer the first buffer
@@ -8662,7 +8265,7 @@ J2D16:	EX	DE,HL
         POP	HL
         POP	BC
 J2D1C:	POP	DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -8680,7 +8283,7 @@ C2D1E:	LD	E,(HL)
         ADD	HL,BC
         JR	NZ,C2D1E
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -8765,7 +8368,7 @@ J2D9B:	POP	HL
         POP	BC
         POP	DE
 J2DA2:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine get FAT entry content
 ;	     Inputs  ________________________
@@ -8798,7 +8401,7 @@ J2DC5:	AND	0FH
         POP	HL
         RET	NC			; nope, quit
 J2DD0:	LD	DE,0FFFFH		; yep,
-        RET	
+        RET
 
 ;	  Subroutine convert clusternumber to sectornumber
 ;	     Inputs  HL=drivetable, DE=clusternumber, A=sectoroffset in cluster
@@ -8828,7 +8431,7 @@ J2DDF:	ADD	HL,HL
         EX	DE,HL
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine reset deleted files status disk and set FAT entry
 ;	     Inputs  ________________________
@@ -8896,7 +8499,7 @@ J2E2D:	CALL	C2C56			; mark buffer last read as changed
         EX	(SP),IX
 J2E52:	POP	HL
 J2E53:	POP	DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -8953,28 +8556,26 @@ J2EAC:	EX	DE,HL
         POP	AF
         SBC	A,A
         CP	A
-        RRCA	
+        RRCA
 J2EB1:	POP	HL
         POP	BC
         POP	IX
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C2EB6:	XOR	A
         ADD	HL,HL
-        RLA	
+        RLA
         ADD	HL,HL
-        RLA	
+        RLA
         ADD	HL,HL
-        RLA	
+        RLA
         ADD	HL,HL
-        RLA	
-        RET	
+        RLA
+        RET
 
 ;	  Subroutine reset deleted files status disk
 ;	     Inputs  ________________________
@@ -9073,7 +8674,7 @@ J2F48:	INC	DE
         SBC	HL,DE			; done all clusters ?
         POP	HL
         JR	NZ,J2F48		; nope, next
-        RET	
+        RET
 
 ;	  Subroutine allocate clusters
 ;	     Inputs  HL = drivetable, BC = number of clusters, DE = previous cluster in chain (0FFFF if none), A <>0 clears directory
@@ -9130,7 +8731,7 @@ J2F96:	CALL	Z,C2DF4			; set FAT entry
         LD	BC,(DBBA3)		; first cluster of allocated chain
         POP	DE
         XOR	A
-        RET	
+        RET
 
 J2FB7:	POP	DE
         POP	DE
@@ -9140,7 +8741,7 @@ J2FB7:	POP	DE
         POP	DE
         LD	A,.DKFUL
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -9206,7 +8807,7 @@ J3006:	LD	(HL),A
         POP	DE
         EX	(SP),IX
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -9226,7 +8827,7 @@ C301A:	PUSH	DE
         RET	Z
         BIT	7,D
         JR	Z,C301A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -9250,7 +8851,7 @@ C3031:	LD	A,4			; CHOICE
         LD	A,.IFORM
         RET	Z
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -9333,11 +8934,11 @@ J30D7:	LD	HL,(DF2BA+0)
         LD	B,A
         XOR	A
         SRL	L
-        RLA	
+        RLA
         SRL	H
-        RLA	
+        RLA
         SRL	B
-        RLA	
+        RLA
         LD	C,A
         LD	(IB6D4+00027H+0),HL
         LD	(IB6D4+00027H+2),BC	; serial number disk
@@ -9350,10 +8951,10 @@ J30F5:	LD	DE,0
         LD	C,A			; BDOS datasegment
         LD	A,1			; DSKIO write
         CALL	C34FA			; call diskdriver
-        RET	
+        RET
 
 J3104:	LD	A,.NDOS
-        RET	
+        RET
 
 I3107:	defb	0EBH,0FEH,090H
         defb	"MSXDOS23"
@@ -9389,7 +8990,6 @@ RC03D:	ld	sp,KBUF+256
         ld	c,027H
         call	B.BDOS
         jp	00100H
-;
 RC067:	defw	RC069
 
 RC069:	call	0
@@ -9404,7 +9004,6 @@ RC071:	or	000H
         ld	c,007H
         call	B.BDOS
         jr	RC03D
-;
 RC085:	defb	"Boot error",13,10
         defb	"Press any key for retry",13,10
         defb	"$"
@@ -9534,7 +9133,7 @@ J3258:	POP	DE
 J3268:	POP	HL
         POP	IX
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine diskdriver
 ;	     Inputs  A=function
@@ -9554,7 +9153,7 @@ C3273:	PUSH	HL
         EX	(SP),IX
         POP	HL
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -9586,7 +9185,7 @@ J32AC:	POP	IX
 J32AE:	POP	BC
 J32AF:	POP	DE
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine get disk change status
 ;	     Inputs  ________________________
@@ -9610,7 +9209,7 @@ J32C5:	DEC	B
         SCF				; if disk check level strong, return changed status
 J32D0:	POP	DE
         POP	BC
-        RET	
+        RET
 
 ;	  Subroutine compare diskserial bootsector and drivetable
 ;	     Inputs  IX = pointer to bootsector, HL = pointer to drivetable
@@ -9628,7 +9227,7 @@ C32D3:	PUSH	HL
         LD	A,(HL)
         CP	(IX+21)
 J32E7:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine get pointer to diskserial
 ;	     Inputs  IX = pointer to bootsector
@@ -9648,12 +9247,12 @@ J32F5:	LD	A,(DE)
         DJNZ	J32F5
         INC	HL
         XOR	A
-        RET	
+        RET
 
 J3300:	LD	HL,I330D
         XOR	A
         DEC	A
-        RET	
+        RET
 
 I3306:	defb	"VOL_ID",0
 
@@ -9670,7 +9269,7 @@ J3313:	LD	A,(DE)
         INC	DE
         INC	HL
         DJNZ	J3313
-        RET	
+        RET
 
 ;	  Subroutine read bootsector and make valid
 ;	     Inputs  ________________________
@@ -9707,7 +9306,7 @@ J3321:	LD	DE,0
         LD	(IX+32),00H
 J335F:	POP	DE
         POP	BC
-        RET	
+        RET
 
 J3362:	LD	A,.NDOS
 J3364:	LD	DE,0FFFFH
@@ -9755,11 +9354,11 @@ C336C:	PUSH	IX
         LD	B,(IX+21)		; mediadescriptor
         LD	A,3			; GETDPB
         CALL	Z,C34FA			; highbyte zero (ok), call diskdriver
-        RET	
+        RET
 
 J33A5:	POP	HL
         OR	H
-        RET	
+        RET
 
 ;	  Subroutine create bootsector BPB
 ;	     Inputs  ________________________
@@ -9845,7 +9444,7 @@ J340D:	ADD	HL,HL
         LD	(HL),A
         POP	IX
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine update drivetable with bootsector BPB info
 ;	     Inputs  HL = pointer to drivetable, IX = pointer to bootsector
@@ -9860,7 +9459,7 @@ C3427:	PUSH	HL
         INC	HL
         LD	C,00H
 J3434:	INC	C
-        RRCA	
+        RRCA
         JR	C,J3434
         LD	(HL),C
         INC	HL
@@ -9939,7 +9538,7 @@ J3496:	INC	HL
         POP	DE
         DEC	HL
         LD	BC,5
-        LDIR	
+        LDIR
         EX	DE,HL
         LD	A,(IX+21)
         LD	(HL),A
@@ -9966,7 +9565,7 @@ J3496:	INC	HL
         LD	BC,7
         ADD	HL,BC
         LD	BC,5
-        LDIR	
+        LDIR
         LD	C,(HL)
         INC	HL
         LD	A,(HL)
@@ -9983,10 +9582,10 @@ J3496:	INC	HL
         INC	HL
         INC	HL
         LD	BC,4
-        LDIR	
+        LDIR
         POP	HL
         LD	BC,3
-        LDIR	
+        LDIR
         POP	HL
 
 ;	  Subroutine __________________________
@@ -10005,7 +9604,7 @@ C34E9:	PUSH	HL
         DEC	HL
         LD	(HL),A
 J34F8:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine call diskdriver
 ;	     Inputs  A=function, HL=drivetable, BC=, DE=, IX=diskdriver HL
@@ -10019,7 +9618,7 @@ C34FA:	CP	6
         EX	(SP),IX
         POP	HL
         PUSH	HL
-        EXX	
+        EXX
         PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -10050,19 +9649,19 @@ J351F:	LD	(DBBEA),A		; disk operation
         EX	AF,AF'
         POP	AF
         EX	AF,AF'
-        EXX	
+        EXX
         POP	BC
         POP	DE
         POP	HL
-        EXX	
+        EXX
         POP	IX
         POP	HL
         POP	IY
         OR	A
-        RET	
+        RET
 J3543:	LD	A,.INTER
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -10080,11 +9679,11 @@ I3548:	defw	A3554
 A3554:	OR	A
         JR	J3558
 
-A3557:	SCF	
+A3557:	SCF
 
 J3558:	EX	AF,AF'
         LD	HL,04000H		; DSKIO
-        EXX	
+        EXX
         LD	A,C
         LD	C,(IX+29)
         PUSH	BC
@@ -10092,7 +9691,7 @@ J3558:	EX	AF,AF'
         JR	C,J356A
         POP	BC
         XOR	A
-        RET	
+        RET
 J356A:	EX	AF,AF'
         POP	AF
         SUB	B
@@ -10102,7 +9701,7 @@ J356A:	EX	AF,AF'
 
 A3571:	EX	AF,AF'
         LD	HL,04003H		; DSKCHG
-        EXX	
+        EXX
         LD	B,00H
         LD	C,(IX+29)
         LD	L,(IX+2)
@@ -10110,13 +9709,13 @@ A3571:	EX	AF,AF'
         CALL	C35EC
         JR	C,J3588
         XOR	A
-        RET	
+        RET
 J3588:	LD	B,00H
         JR	J35C3
 
 A358C:	EX	AF,AF'
         LD	HL,04006H		; GETDPB
-        EXX	
+        EXX
         LD	C,(IX+29)
         LD	L,(IX+2)
         LD	H,(IX+3)		; pointer to DPB
@@ -10124,18 +9723,18 @@ A358C:	EX	AF,AF'
         LD	A,0FFH
         RET	C
         XOR	A
-        RET	
+        RET
 
 A35A2:	EX	AF,AF'
         LD	HL,04009H		; CHOICE
-        EXX	
+        EXX
         CALL	C35EC
         EX	DE,HL
         XOR	A
-        RET	
+        RET
 
 A35AD:	LD	HL,0400CH		; DSKFMT
-        EXX	
+        EXX
         PUSH	DE
         LD	D,A
         LD	A,B
@@ -10145,12 +9744,12 @@ A35AD:	LD	HL,0400CH		; DSKFMT
         CALL	C35EC
         JR	C,J35BE
         XOR	A
-        RET	
+        RET
 J35BE:	LD	HL,I35E2
         JR	J35C6
 
 J35C3:	LD	HL,I35D4
-J35C6:	RRCA	
+J35C6:	RRCA
         CP	(HL)
         JR	NC,J35D1
         INC	HL
@@ -10158,10 +9757,10 @@ J35C6:	RRCA
         LD	D,00H
         ADD	HL,DE
         LD	A,(HL)
-        RET	
+        RET
 
 J35D1:	LD	A,.DISK
-        RET	
+        RET
 
 I35D4:	defb	13+1
         defb	.WPROT,.NRDY ,.DATA ,.SEEK
@@ -10173,13 +9772,13 @@ I35E2:	defb	9+1
         defb	.WPROT,.NRDY ,.DATA ,.SEEK
         defb	.RNF  ,.WRERR,08BH  ,.NORAM
         defb	.DISK
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C35EC:	CALL	C0AB9			; empty screenoutput buffer
-        EXX	
+        EXX
         LD	E,(IX+1)
         LD	D,0
         ADD	HL,DE
@@ -10189,15 +9788,15 @@ C35EC:	CALL	C0AB9			; empty screenoutput buffer
         POP	IY
         PUSH	HL
         POP	IX
-        EXX	
+        EXX
         EX	AF,AF'
         CALL	CF1DF			; interslot call with prompt handler
-        EI	
+        EI
         EX	AF,AF'
         LD	A,(DF2CF)		; BDOS datasegement
         CALL	CF224			; PUT_P2
         EX	AF,AF'
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -10220,7 +9819,7 @@ J3613:	LD	A,B
         LD	(HL),1			; special value 1 (ERROR)
 J3628:	DJNZ	J3613
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -10246,7 +9845,7 @@ J363A:	LD	HL,IBA1A
         ADD	HL,DE
         POP	DE
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine update counter of all drives
 ;	     Inputs  ________________________
@@ -10278,9 +9877,9 @@ C364D:	PUSH	AF
         JR	Z,J3673			; special value 0 (INIT), leave this unchanged
         LD	(HL),1			; special value 1 (ERROR)
 J3673:	LD	HL,IF2BF
-        DI	
+        DI
         LD	A,(HL)			; counter already reset ?
-        EI	
+        EI
         LD	(HL),0			; reset counter
         OR	A
         JR	Z,J36A9			; was already reset, quit
@@ -10313,7 +9912,7 @@ J36A3:	DJNZ	J3688
         POP	BC
 J36A9:	POP	HL
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine handle error (ignore no problem)
 ;	     Inputs  ________________________
@@ -10326,7 +9925,7 @@ C36AC:	OR	A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C36AF:	SCF	
+C36AF:	SCF
 
 ;	  Subroutine handle error
 ;	     Inputs  HL = pointer to drivetable
@@ -10335,11 +9934,11 @@ C36AF:	SCF
 C36B0:	PUSH	BC
         PUSH	DE
         PUSH	HL
-        EXX	
+        EXX
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        EXX	
+        EXX
         EX	AF,AF'
         PUSH	AF
         EX	AF,AF'
@@ -10417,18 +10016,18 @@ J3730:	POP	IX
         EX	AF,AF'
         POP	AF
         EX	AF,AF'
-        EXX	
+        EXX
         POP	BC
         POP	DE
         POP	HL
-        EXX	
+        EXX
         POP	HL
         OR	A
         JR	Z,J3742			; call system error routine (abort program)
         POP	DE
         POP	BC
         DEC	A			; result
-        RET	
+        RET
 
 J3742:	LD	A,.ABORT
 J3744:	PUSH	AF
@@ -10502,10 +10101,10 @@ J3792:	CALL	C3D28			; copy filename back to FCB
 J37AD:	XOR	A
         LD	L,A
         LD	H,A			; quit with ok
-        RET	
+        RET
 
 J37B1:	LD	HL,00FFH
-        RET	
+        RET
 
 ;	  Subroutine _FCLOSE
 ;	     Inputs  ________________________
@@ -10621,7 +10220,7 @@ J3886:	CALL	C3C56			; increase recordnumber FCB
         JP	J37AD			; quit with ok
 
 J388F:	LD	HL,1
-        RET	
+        RET
 
 ;	  Subroutine _WRSEQ (BDOS 15H)
 ;	     Inputs  ________________________
@@ -10732,7 +10331,7 @@ J3946:	LD	B,A
         OR	A			; done something ?
         RET	Z			; yep, quit without error
         LD	A,B			; errorcode
-        RET	
+        RET
 
 ;	  Subroutine _RDRND
 ;	     Inputs  ________________________
@@ -10742,7 +10341,7 @@ A3953:	LD	A,1			; read operation
         CALL	C3B35			; do random record operation
         JR	NZ,J397D
         LD	A,C
-        NEG	
+        NEG
         AND	7FH
         LD	C,A
         LD	A,0			; DOS segments
@@ -10769,7 +10368,7 @@ J3970:	LD	IX,(DBB96)		; saved pointer to FCB
         JP	J37AD			; quit with ok
 
 J397D:	LD	HL,1
-        RET	
+        RET
 
 ;	  Subroutine _FSIZE
 ;	     Inputs  ________________________
@@ -10791,7 +10390,6 @@ A3981:	LD	(IY+DBBAF-DBB80),4	; search directory entry
         LD	L,A
         ADD	HL,BC
         JR	NC,J39A5
-;
         INC	DE
 J39A5:	ADD	HL,HL
         LD	A,H
@@ -10833,7 +10431,7 @@ C39C3:	EX	DE,HL
         LDIR				; FIB serialnumber disk
         LD	DE,IB9DA+37
         LD	BC,8
-        LDIR	
+        LDIR
         LD	A,(IX+42)
         LD	B,0
         BIT	6,A
@@ -10868,7 +10466,7 @@ J3A18:	LD	(IX+49),B
         SBC	HL,DE
         RET	Z
         LD	A,0B7H
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -10880,7 +10478,7 @@ C3A3B:	LD	IX,IB9DA		; FIB
         LD	A,(DE)			; filename FCB
         LD	(IX+31),02H
         CALL	C173A			; make ASCIIZ string of name
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -10890,7 +10488,7 @@ C3A4C:	LD	DE,(DF23D)		; transfer adres
         LD	BC,128
         LD	A,1			; dos segments, transfer to
         CALL	C2711			; transfer
-        RET	
+        RET
 
 ;	  Subroutine get directory entry and setup FIB
 ;	     Inputs  ________________________
@@ -10928,7 +10526,7 @@ J3A7F:	LD	C,08H
         LD	DE,IB9DA+32
         LD	BC,11
         PUSH	DE
-        LDIR	
+        LDIR
         POP	DE
         POP	HL
         CALL	C1A53			; get directory entry
@@ -10944,7 +10542,7 @@ J3A9D:	OR	A
         POP	DE
         POP	BC
         XOR	A			; ok
-        RET	
+        RET
 
 J3AB0:	POP	BC
         BIT	0,C
@@ -10954,7 +10552,7 @@ J3AB0:	POP	BC
         LD	(DBB98),A		; flag APPEND not used
         POP	AF
         OR	A
-        RET	
+        RET
 
 J3ABD:	LD	(IB2D4+300),A
         PUSH	BC
@@ -11004,7 +10602,7 @@ J3AFF:	LD	A,(DE)
 
 J3B11:	LD	A,(IB2D4+300)
         OR	A
-        RET	
+        RET
 
 I3B16:	defb	"APPEND",0
 
@@ -11055,7 +10653,7 @@ C3B35:	EX	AF,AF'
         LD	IX,IB9DA
         LD	DE,(DF23D)		; transfer adres
         CALL	C2779			; write/read to file
-        RET	
+        RET
 
 ;	  Subroutine get pointer to record if it is in the sequential read buffer
 ;	     Inputs  ________________________
@@ -11080,12 +10678,12 @@ C3B74:	CALL	C3BAB			; check sequential read buffer has drive and startcluster of
         RET	C
         XOR	A
         SRL	B
-        RRA	
+        RRA
         LD	C,A
         LD	HL,IB2D4
         ADD	HL,BC
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine if random record is in sequential read buffer then invalidate sequential read buffer
 ;	     Inputs  ________________________
@@ -11095,7 +10693,7 @@ C3BA1:	CALL	C3BAB			; check sequential read buffer has drive and startcluster of
         RET	NZ
         LD	A,0FFH
         LD	(DBB90),A		; invalidate sequential read buffer
-        RET	
+        RET
 
 ;	  Subroutine check sequential read buffer has drive and startcluster of file
 ;	     Inputs  ________________________
@@ -11110,7 +10708,7 @@ C3BAB:	LD	A,(IX+0)
         LD	H,(IX+27)		; start cluster of file in FCB
         LD	DE,(DBB8E)
         SBC	HL,DE
-        RET	
+        RET
 
 ;	  Subroutine fill sequential read buffer
 ;	     Inputs  ________________________
@@ -11166,12 +10764,12 @@ J3BEC:	LD	A,B
         LD	A,(IX+0)
         LD	(DBB90),A		; save driveid FCB
         XOR	A
-        RET	
+        RET
 
 J3C27:	XOR	A
         LD	B,A
         INC	A
-        RET	
+        RET
 
 ;	  Subroutine clear space
 ;	     Inputs  A = segment type (b2 set BDOS, b2 reset DOS), DE = adres, BC = size
@@ -11261,7 +10859,7 @@ J3C85:	LD	A,(IB9DA+45+1)
         LD	B,H
 J3CA6:	LD	A,B
         LD	(IX+15),A
-        RET	
+        RET
 
 ;	  Subroutine setup random record from current extent FCB
 ;	     Inputs  ________________________
@@ -11282,7 +10880,7 @@ C3CAE:	PUSH	AF
         ADD	A,A
         SRL	B
         RR	C
-        RRA	
+        RRA
         LD	(IX+33),A
         LD	(IX+34),C
         LD	(IX+35),B
@@ -11295,7 +10893,7 @@ C3CC7:	LD	HL,IB9DA+45
         LD	(HL),0
         SRL	B
         RR	C
-        RRA	
+        RRA
         RR	(HL)
         INC	HL
         LD	(HL),A
@@ -11303,7 +10901,7 @@ C3CC7:	LD	HL,IB9DA+45
         LD	(HL),C
         INC	HL
         LD	(HL),B
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -11322,7 +10920,7 @@ C3CDA:	PUSH	IX
         LDIR				; volume-id
         LD	HL,IB9DA+37
         LD	BC,8
-        LDIR	
+        LDIR
         LD	A,(IX+29)
         AND	0FH
         LD	B,A
@@ -11343,7 +10941,7 @@ J3D1B:	LD	A,(IB9DA+49)
         JR	Z,J3D24
         SET	7,B
 J3D24:	LD	(IX+29),B
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -11359,9 +10957,9 @@ J3D30:	LD	(HL),A
         INC	DE
         LD	BC,10
         EX	DE,HL
-        LDIR	
+        LDIR
         EX	DE,HL
-        RET	
+        RET
 
 ;	  Subroutine _RDBLK
 ;	     Inputs  HL = number of records
@@ -11490,7 +11088,7 @@ J3E1B:	LD	L,A
         OR	A
         RET	Z
         LD	A,(DB976)
-        RET	
+        RET
 
 ;	  Subroutine divide
 ;	     Inputs  ________________________
@@ -11500,7 +11098,7 @@ C3E24:	XOR	A
         LD	H,A
         LD	L,A
         LD	A,10H
-J3E29:	CCF	
+J3E29:	CCF
 J3E2A:	RL	C
         RL	B
         DEC	A
@@ -11522,7 +11120,7 @@ C3E3A:	PUSH	BC
         LD	B,10H
 J3E41:	ADD	HL,HL
         RL	C
-        RLA	
+        RLA
         JR	NC,J3E4E
         ADD	HL,DE
         JR	NC,J3E4E
@@ -11534,7 +11132,7 @@ J3E4E:	DJNZ	J3E41
         LD	L,C
         LD	H,A
         POP	BC
-        RET	
+        RET
 
         .DEPHASE
 

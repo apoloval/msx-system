@@ -1,4 +1,4 @@
-; DOS21.MAC
+; DISK-S1.MAC
 ;
 ; DOS 2.31 kernel bank 1
 ;
@@ -213,7 +213,7 @@ J4106:	JP	C4C74			; copy message to buffer
 J4109:	JP	J4C5F			; copy errorstring to buffer
 J410C:	JP	J4B4D			; EXTBIO handler memorymapper
 
-J410F:	DI	
+J410F:	DI
         CALL	C495C			; initialize memorymapper variables
         RET	C			; error, quit
         CALL	C427F
@@ -221,7 +221,7 @@ J410F:	DI
         LD	A,01H
         LD	(DF23C),A
         LD	A,(IDBYT0)
-        RLCA	
+        RLCA
         SBC	A,A
         ADD	A,6			; number of interrupts per 100 ms
         LD	(DF2B8),A
@@ -229,7 +229,7 @@ J410F:	DI
         LD	HL,IF314
         LD	DE,DF2CB
         LD	BC,4
-        LDIR	
+        LDIR
         LD	A,(DF2CF)
         CALL	CF224
         CALL	C418C
@@ -254,13 +254,12 @@ J410F:	DI
         LD	BC,03EF0H		; setup LDIR registers
         LD	A,2
         JP	L40A3			; set dos2 mappersegment to 2
-;
-;	-----------------
+
 I416E:	POP	HL
         POP	HL			; remove routine from stack
         CALL	0			; initialize BDOS code
         EX	AF,AF'
-        DI	
+        DI
         LD	A,(EXPTBL+0)
         LD	H,00H
         CALL	ENASLT			; rom-bios on page 0
@@ -268,16 +267,14 @@ I416E:	POP	HL
         CALL	CF224
         LD	A,(DF2CB)
         CALL	CF218
-        EI	
+        EI
         EX	AF,AF'
-        RET	
-;
-;	-----------------
-;
+        RET
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C418C:	LD	A,(IDBYT0)
         AND	0FH			; character generator
         LD	(KBUF+0),A
@@ -291,7 +288,7 @@ J4199:	PUSH	AF
         INC	A
         INC	HL
         DJNZ	J4199			; build upcase table
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -334,15 +331,13 @@ J41C2:	INC	HL
         ADD	HL,BC
         LD	A,(HL)			; get upcase version of char
         JR	J41D9
-;
-;	-----------------
+
 J41D7:	INC	HL
         ADD	A,(HL)
 J41D9:	POP	BC
         POP	HL
-        RET	
-;
-;	-----------------
+        RET
+
 I41DC:	DEFW	I41E4
         DEFW	I41EA
         DEFW	I41F0
@@ -391,11 +386,11 @@ I423F:	DEFB	080H,09AH,045H,041H,08EH,041H,08FH,080H
         DEFB	0A8H,0A9H,0AAH,0ABH,0ACH,0ADH,0AEH,0AFH
         DEFB	0B0H,0B0H,0B2H,0B2H,0B4H,0B4H,0B6H,0B6H
         DEFB	0B8H,0B8H,0BAH,0BBH,0BCH,0BDH,0BEH,0BFH
-;
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C427F:	LD	HL,1636
         CALL	C4BBE			; allocate memory (adjust BASIC areapointers)
         RET	C			; error, quit
@@ -413,7 +408,7 @@ C427F:	LD	HL,1636
         LD	HL,I4418
         PUSH	DE
         LD	BC,0470H
-        LDIR	
+        LDIR
         LD	BC,IF1D3		; jump entry table
         LD	HL,I4888
 J42AB:	LD	E,(HL)
@@ -473,10 +468,10 @@ J42DE:	LD	A,(DF2D0)
         LD	(HL),A                  ; primary slot on page 0
         LD	C,A
         LD	B,0
-        RLCA	
-        RLCA	
-        RLCA	
-        RLCA	
+        RLCA
+        RLCA
+        RLCA
+        RLCA
         OR	C                       ; primary slot on page 2 and 0
         LD	HL,R.0144+1
         ADD	HL,DE
@@ -502,17 +497,17 @@ J42DE:	LD	A,(DF2D0)
         LD	HL,R.029D
         ADD	HL,DE
         LD	(HL),32H                ; enable secundairy slot register code
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         AND	03H                     ; secundairy slot
         LD	HL,R.0289+1
         ADD	HL,DE
         LD	(HL),A                  ; secundairy slot in page 0
         LD	L,A
-        RLCA	
-        RLCA	
-        RLCA	
-        RLCA	
+        RLCA
+        RLCA
+        RLCA
+        RLCA
         OR	L                       ; secundairy slot in page 2 and 0
         LD	HL,R.0135+1
         ADD	HL,DE
@@ -549,8 +544,8 @@ J4356:	LD	A,(EXPTBL+0)
         LD	(HL),A
         LD	C,A
         LD	B,00H
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         LD	HL,R.0256+1
         ADD	HL,DE
         LD	(HL),A
@@ -562,8 +557,8 @@ J4356:	LD	A,(EXPTBL+0)
         LD	(HL),B
         INC	HL
         LD	(HL),B
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         AND	03H	; 3 
         LD	HL,R.0269+1
         ADD	HL,DE
@@ -580,8 +575,7 @@ J4356:	LD	A,(EXPTBL+0)
         INC	HL
         LD	(HL),0FFH
         JR	J43BC
-;
-;	-----------------
+
 J4397:	LD	A,0F5H
         LD	HL,R.017E
         ADD	HL,DE
@@ -650,7 +644,7 @@ J43EC:	LD	A,L
         JR	J43D4
 
 J43F4:	OR	A
-        RET	
+        RET
 
 
 I43F6:	DEFW	DF368
@@ -703,9 +697,9 @@ J$0010:	PUSH	HL
         POP	HL
         POP	AF
         JP	PE,J$0020
-        EI	
+        EI
 J$0020:	POP	AF
-        RET	
+        RET
 
 ;
 ; transfer to/from dos ram
@@ -724,7 +718,7 @@ R.0022:	PUSH	AF
         POP	BC
         POP	DE
         POP	HL
-        LDIR	
+        LDIR
         PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -734,7 +728,7 @@ R.0022:	PUSH	AF
         POP	DE
         POP	HL
         POP	AF
-        RET	
+        RET
 
 ;
 ; Transfer to/from slot (F1D3)
@@ -745,7 +739,7 @@ R.0045:	PUSH	DE
         LD	A,B
         LD	H,40H
         CALL	ENASLT
-        EI	
+        EI
         POP	DE
         POP	BC
         LD	HL,(DF2E1)
@@ -753,12 +747,12 @@ R.0045:	PUSH	DE
         JR	C,J$0057
         EX	DE,HL
 J$0057:	EX	AF,AF'
-        LDIR	
+        LDIR
         LD	A,(DF348)
         LD	H,40H
         CALL	ENASLT
-        EI	
-        RET	
+        EI
+        RET
 
 ;
 ; BDOS entry diskbasic
@@ -773,7 +767,7 @@ R.0064:	LD	(DF2E6),IX
 ; jump to adres on pointer
 ;
 
-R.0073:	EI	
+R.0073:	EI
         PUSH	DE
         LD	E,(HL)
         INC	HL
@@ -823,7 +817,7 @@ C$00A7:	EX	AF,AF'
         LD	A,(DF36B)
         CALL	C$00DF
         EX	AF,AF'
-        RET	
+        RET
 
 J$00B0:	POP	AF
         CALL	C$00A7
@@ -849,7 +843,7 @@ J$00B0:	POP	AF
 C$00DD:	LD	A,0C9H
 
 C$00DF:	LD	(DF368),A
-        EXX	
+        EXX
         LD	HL,IF24F
         LD	DE,I$00F6
         LD	B,3
@@ -861,8 +855,8 @@ J$00EB:	LD	C,(HL)
         INC	HL
         INC	DE
         DJNZ	J$00EB
-        EXX	
-        RET	
+        EXX
+        RET
 
 I$00F6:	JP	J$00B0
 
@@ -885,7 +879,7 @@ R.0101:	CALL	C.0128
 ; restore DOS TPA segments (F1FA)
 ;
 
-C.0107:	DI	
+C.0107:	DI
         PUSH	AF
 R.0109:	JR	J$0114
         LD	A,(DF2EB)
@@ -898,18 +892,18 @@ J$0114:	LD	A,(DF2EA)
         LD	A,(DF2CD)
         CALL	C.0349
         POP	AF
-        EI	
-        RET	
+        EI
+        RET
 
 ;
 ; Activate BDOS segments (F1F7)
 ;
 
-C.0128:	DI	
+C.0128:	DI
         PUSH	AF
 R.012A:	JR	J$013D
         LD	A,(DFFFF)
-        CPL	
+        CPL
         LD	(DF2EB),A
         AND	0CCH
 R.0135:	OR	0
@@ -931,22 +925,22 @@ R.0144:	OR	00H
         LD	A,(DF2CF)
         CALL	C.0349
         POP	AF
-        EI	
-        RET	
+        EI
+        RET
 
 ;
 ; transfer to/from segment (F1D6)
 ;
 
 R.0169:	PUSH	AF
-        DI	
+        DI
         CALL	C.0335
-        LDIR	
+        LDIR
         LD	A,(DF2D0)
         CALL	C.0335
-        EI	
+        EI
         POP	AF
-        RET	
+        RET
 
 ;
 ; interslot call to main-bios (F1D9)
@@ -955,7 +949,7 @@ R.0169:	PUSH	AF
 R.0179:	EX	AF,AF'
         PUSH	AF
         CALL	C.025E
-R.017E:	NOP	
+R.017E:	NOP
         CALL	C.034F
         PUSH	AF
         CALL	C.033B
@@ -964,7 +958,7 @@ R.017E:	NOP
         CALL	C.0335
         LD	A,(DF2CD)
         CALL	C.0349
-        EI	
+        EI
         EX	AF,AF'
         CALL	CLPRM1
         EX	AF,AF'
@@ -978,15 +972,15 @@ R.01A4:	JR	J$01AA
         CALL	C.024E
 J$01AA:	POP	AF
         EX	AF,AF'
-        EI	
-        RET	
+        EI
+        RET
 
 ;
 ; print string via CHPUT (F1DC)
 ;
 
 R.01AE:	CALL	C.025E
-R.01B1:	NOP	
+R.01B1:	NOP
         LD	A,(DF2CB)
         CALL	C.0335
 J$01B8:	PUSH	HL
@@ -995,9 +989,9 @@ J$01B8:	PUSH	HL
         LD	A,(DF2CD)
         CALL	C.0349
         LD	A,B
-        EI	
+        EI
         CALL	CHPUT
-        DI	
+        DI
         LD	A,(DF2CF)
         CALL	C.0349
         POP	BC
@@ -1010,14 +1004,14 @@ J$01B8:	PUSH	HL
 R.01DB:	JR	J$01E1
         POP	AF
         CALL	C.024E
-J$01E1:	EI	
-        RET	
+J$01E1:	EI
+        RET
 
 ;
 ; KEYINT
 ;
 
-R.01E3:	DI	
+R.01E3:	DI
         PUSH	AF
         PUSH	HL
         PUSH	BC
@@ -1039,11 +1033,11 @@ J$0207:	CALL	C.020F
 J$020A:	POP	BC
         POP	HL
         POP	AF
-        EI	
-        RET	
+        EI
+        RET
 
 C.020F:	CALL	C.025E
-R.0212:	NOP	
+R.0212:	NOP
         CALL	C.033B
 R.0216:	CP	00H
         JR	NZ,J$0247
@@ -1059,7 +1053,7 @@ R.0216:	CP	00H
         LD	A,(DF2CB)
         CALL	C.0335
         CALL	KEYINT
-        DI	
+        DI
         POP	AF
         CALL	C.0349
         POP	AF
@@ -1082,9 +1076,9 @@ R.0256:	OR	0
         CALL	C004B			; change secundairy slotregister
         POP	DE
         POP	BC
-        RET	
+        RET
 
-C.025E:	DI	
+C.025E:	DI
 R.025F:	JR	J$0271
 R.0261:	LD	A,(0)
         LD	(DF2E0),A
@@ -1097,17 +1091,17 @@ J$0271:	IN	A,(0A8H)
 R.0275:	OR	00H
         OUT	(0A8H),A
         LD	A,(DF2E0)
-        RET	
+        RET
 
 ;
 ; DOS mapper slot on page 0 (F1FD)
 ;
 
-C.027D:	DI	
+C.027D:	DI
 R.027E:	JR	J$0291
 
 ?.0280:	LD	A,(DFFFF)
-        CPL	
+        CPL
         LD	(DF2E0),A
         AND	0FCH
 R.0289:	OR	0
@@ -1118,12 +1112,12 @@ J$0291:	IN	A,(0A8H)
 R.0295:	OR	0
         OUT	(0A8H),A
         LD	A,(DF2E0)
-        RET	
+        RET
 
 R.029D:	RET
 	DEFB	0,0
         LD	(DFFFF),A
-        RET	
+        RET
 
 ;
 ; allocate segment (F200)
@@ -1142,14 +1136,14 @@ J$02AE:	PUSH	DE
         CALL	CF377
         POP	DE
         POP	HL
-        RET	
+        RET
 
 ;
 ; RDSEG (F206)
 ;
 
 
-R.02B5:	DI	
+R.02B5:	DI
         PUSH	HL
         PUSH	BC
         LD	B,A
@@ -1165,13 +1159,13 @@ R.02B5:	DI
         LD	A,B
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;
 ; WRSEG (F209)
 ;
 
-R.02CE:	DI	
+R.02CE:	DI
         PUSH	HL
         PUSH	BC
         LD	B,A
@@ -1186,13 +1180,13 @@ R.02CE:	DI
         CALL	C.0349
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;
 ; CALLF segment (F20F)
 ;
 
-R.02E6:	EXX	
+R.02E6:	EXX
         EX	(SP),HL
         LD	D,(HL)
         INC	HL
@@ -1205,13 +1199,13 @@ R.02E6:	EXX
         PUSH	DE
         POP	IX
         EX	(SP),HL
-        EXX	
+        EXX
 
 ;
 ; CALSEG (F20C)
 ;
 
-R.02F6:	EXX	
+R.02F6:	EXX
         EX	AF,AF'
         PUSH	IX
         POP	HL
@@ -1222,16 +1216,16 @@ R.02F6:	EXX
         POP	AF
         CALL	C.0315
         EX	AF,AF'
-        EXX	
+        EXX
         CALL	CLPRM1
-        EXX	
+        EXX
         EX	AF,AF'
         POP	HL
         POP	AF
         CALL	C.0315
         EX	AF,AF'
-        EXX	
-        RET	
+        EXX
+        RET
 
 ;
 ; ENASEG (F212)
@@ -1267,27 +1261,27 @@ J$032F:	BIT	6,H
 
 C.0335:	LD	(DF2C7),A
         OUT	(0FCH),A
-        RET	
+        RET
 
 C.033B:	LD	A,(DF2C7)
-        RET	
+        RET
 
 C.033F:	LD	(DF2C8),A
         OUT	(0FDH),A
-        RET	
+        RET
 
 C.0345:	LD	A,(DF2C8)
-        RET	
+        RET
 
 C.0349:	LD	(DF2C9),A
         OUT	(0FEH),A
-        RET	
+        RET
 
 C.034F:	LD	A,(DF2C9)
-        RET	
+        RET
 
 C.0353:	LD	A,(DF2CA)
-C.0356:	RET	
+C.0356:	RET
 
 ;
 ; RDSLT (F1E8)
@@ -1301,7 +1295,7 @@ R.0357:	RES	6,D
 ;
 
 R.035B:	SET	6,D
-J$035D:	DI	
+J$035D:	DI
         LD	(R.0391+1),HL
         EX	DE,HL
         LD	(R.0394+1),HL
@@ -1328,14 +1322,14 @@ J$0382:	CALL	NZ,C004B		; nope, change secundairy slot register with helper routi
         POP	HL
         LD	A,C
         LD	E,C
-        RET	
+        RET
 
 C.038A:	IN	A,(0A8H)
         LD	B,A
         AND	(HL)
         INC	HL
         OR	(HL)
-        DI	
+        DI
 R.0391:	LD	HL,0
 R.0394:	LD	DE,0
         BIT	6,D
@@ -1343,13 +1337,13 @@ R.0394:	LD	DE,0
         JP	NZ,WRPRIM
         CALL	RDPRIM
         LD	A,E
-        RET	
+        RET
 
 ;
 ; CALLF (F1F4)
 ;
 
-R.03A2:	EXX	
+R.03A2:	EXX
         EX	AF,AF'
         POP	HL
         LD	A,(HL)
@@ -1367,7 +1361,7 @@ R.03A2:	EXX
 ; CALSLT (F1EE)
 ;
 
-R.03B1:	EXX	
+R.03B1:	EXX
         EX	AF,AF'
         PUSH	IX
         POP	BC
@@ -1382,12 +1376,12 @@ J$03B9:	LD	C,A
         PUSH	DE
         PUSH	AF
         CALL	C.03E8                  ; CALSLT on primairy slot
-        EXX	
+        EXX
         EX	AF,AF'
         POP	BC
         POP	HL
         LD	A,I
-        DI	
+        DI
         POP	DE
         PUSH	AF
         LD	A,B
@@ -1400,18 +1394,18 @@ J$03DC:	CALL	NZ,C004B		; nope, change secundairy slot register with helper routi
         LD	(HL),E
         POP	AF
         JP	PO,J$03E5
-        EI	
+        EI
 J$03E5:	EX	AF,AF'
-        EXX	
-        RET	
+        EXX
+        RET
 
 C.03E8:	IN	A,(0A8H)
         PUSH	AF
         AND	(HL)
         INC	HL
         OR	(HL)
-        EXX	
-        DI	
+        EXX
+        DI
         JP	CLPRIM
 
 ;
@@ -1429,10 +1423,10 @@ R.03F3:	PUSH	HL
         INC	HL
 
 C$0402:	OR	(HL)
-        DI	
+        DI
         OUT	(0A8H),A
         POP	HL
-        RET	
+        RET
 
 C.0408:	PUSH	HL
         AND	03H
@@ -1441,11 +1435,11 @@ C.0408:	PUSH	HL
         ADD	HL,DE
         PUSH	HL
         LD	A,C
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         LD	C,A
         CALL	C.043C
-        DI	
+        DI
         POP	DE
         LD	A,(DE)
         LD	(DF2E0),A
@@ -1469,15 +1463,15 @@ J$0432:	CALL	NZ,C0046		; nope, change secundairy slotregister with helper routin
         LD	C,A
         LD	A,H
         POP	HL
-        RET	
+        RET
 
 C.043C:	AND	03H	; 3 
         LD	D,A
         LD	A,B
-        RRCA	
-        RRCA	
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
+        RRCA
+        RRCA
         AND	0CH	; 12 
         OR	D
         LD	E,A
@@ -1485,7 +1479,7 @@ C.043C:	AND	03H	; 3
         LD	HL,I$0450
         ADD	HL,DE
         ADD	HL,DE
-        RET	
+        RET
 
 I$0450:	DEFB	0FCH,000H,0FCH,001H,0FCH,002H,0FCH,003H
         DEFB	0F3H,000H,0F3H,004H,0F3H,008H,0F3H,00CH
@@ -1602,11 +1596,10 @@ I48C8:	DEFW	001DH
         DEFW	044BH
         DEFW	0
 
-;
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;
+
 C495C:	LD	(DF343),A		; disksystem page 2 ram = current page 2 slotid
         CALL	C4A15			; check and invoke memorymapper with at least 6 pages
         RET	C
@@ -1735,13 +1728,13 @@ J49FF:	LD	A,(HL)
 J4A0F:	LD	A,1
         OUT	(0FEH),A		; restore segment 1 on page 2
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C4A15:	DI	
+C4A15:	DI
         PUSH	AF
         LD	HL,KBUF+32
         XOR	A
@@ -1829,7 +1822,7 @@ J4A6F:	INC	HL
         CALL	C4ADD			; enable preffered memorymapper on page 2 and 3
         POP	HL
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1889,7 +1882,7 @@ J4ACD:	LD	A,C
 J4AD7:	LD	A,1
         OUT	(0FEH),A
         LD	A,B
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1936,9 +1929,9 @@ C4ADD:	LD	A,(HL)
         LD	HL,SLTTBL
         ADD	HL,BC
         LD	A,(DFFFF)
-        CPL	
+        CPL
         LD	(HL),A			; adjust SLTTBL entry, because thats changed after the copy!
-J4B25:	RET	
+J4B25:	RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1972,7 +1965,7 @@ C4B26:	EX	DE,HL
         LD	H,D
         LD	L,E
         ADD	HL,BC
-        RET	
+        RET
 
 ;	  Subroutine EXTBIO handler
 ;	     Inputs  ________________________
@@ -1983,7 +1976,7 @@ J4B4D:	PUSH	DE
         CALL	C4B55
         POP	AF
         POP	DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2006,7 +1999,7 @@ J4B61:	LD	A,D
         JR	Z,J4B99
         DEC	A			; function 2 ?
         JR	Z,J4BA2
-        RET	
+        RET
 
 J4B70:	PUSH	HL
         LD	HL,(DF2C5)
@@ -2036,7 +2029,7 @@ J4B99:	POP	DE
         LD	A,(HL)
         PUSH	AF
         PUSH	DE
-        RET	
+        RET
 
 J4BA2:	POP	DE
         POP	AF
@@ -2049,7 +2042,7 @@ J4BA2:	POP	DE
         LD	HL,IF200
         PUSH	AF
         PUSH	DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2064,7 +2057,7 @@ C4BB2:	PUSH	BC
         POP	BC
         INC	HL
         XOR	A
-        RET	
+        RET
 
 ;	Subroutine	allocate memory (adjust BASIC areapointers)
 ;	Inputs		HL = number of bytes to allocate
@@ -2079,7 +2072,7 @@ C4BBE:	LD	A,L
         LD	C,L
         LD	B,H
         ADD	HL,SP
-        CCF	
+        CCF
         RET	C
         LD	A,H
         CP	0C2H
@@ -2106,7 +2099,7 @@ C4BBE:	LD	A,L
         POP	HL
         LD	SP,HL
         EX	DE,HL
-        LDIR	
+        LDIR
         POP	BC
         LD	HL,(HIMEM)
         ADD	HL,BC
@@ -2175,7 +2168,7 @@ J4C4B:	EX	DE,HL
         ADD	HL,BC
         DEC	A
         JR	NZ,J4C4B
-        RET	
+        RET
 
 J4C5F:	LD	HL,L4D64		; errorstring table
         CALL	C4C77			; copy errorstring to buffer
@@ -2187,7 +2180,7 @@ J4C5F:	LD	HL,L4D64		; errorstring table
         LD	A,12			; user error message for error 0-63
 J4C6F:	CALL	C4C74			; copy message to buffer
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine copy message to buffer
 ;	     Inputs  A=messageid, DE=buffer
@@ -2225,12 +2218,12 @@ J4C85:	LD	A,(HL)
 
 J4C95:	POP	DE
         PUSH	DE
-        LDIR	
+        LDIR
         EX	DE,HL
 J4C9A:	POP	DE
         POP	BC
         OR	A
-        RET	
+        RET
 
 
         DEFW	L0000
