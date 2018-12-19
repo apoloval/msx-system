@@ -1088,6 +1088,7 @@ L4B70:	XOR	A
         LDIR
         LD	(DE),A		; Copy filename to RUN"....
         JR	L4B7F		; Run it
+
 L4B7B:	XOR	A
         LD	(BUF+10+5),A	; Zero behind RUN (only RUN executed)
 L4B7F:	LD	SP,0C200H
