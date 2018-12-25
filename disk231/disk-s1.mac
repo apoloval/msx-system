@@ -1787,6 +1787,20 @@ J4A54:	LD	(HL),C
         LD	(HL),B
         LD	B,A
         DEC	HL
+
+        ELSE
+
+        LD      A,(HL)
+        CP      C                       ; this memory mapper bigger then sofar ?
+        JR      C,J4A05                 ; yep, put this memory mapper last on the list
+        LD      (HL),C
+        LD      C,A
+        INC     HL
+        LD      A,(HL)
+        LD      (HL),B
+        LD      B,A
+        DEC     HL                      ; put this memory mapper on the list and keep bigest last on the list
+
         ENDIF
 
 J4A5B:	DEC	HL

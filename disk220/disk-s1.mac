@@ -1617,7 +1617,7 @@ C49D7:  DI
         PUSH    AF
         LD      HL,KBUF+32
         XOR     A
-        LD      (HL),A
+        LD      (HL),A                  ; empty memory mapper list
         PUSH    HL
         LD      HL,EXPTBL+0
 J49E2:  BIT     7,(HL)
@@ -1626,25 +1626,25 @@ J49E2:  BIT     7,(HL)
 J49E8:  PUSH    HL
         PUSH    AF
         LD      H,80H
-        CALL    ENASLT
-        CALL    C4A34
+        CALL    ENASLT                  ; enable slot on page 2
+        CALL    C4A34                   ; test memory mapper
         OR      A
-        JR      Z,J4A0D
+        JR      Z,J4A0D                 ; no memory mapper, next
         POP     BC
         POP     HL
         EX      (SP),HL
         PUSH    BC
         LD      C,A
         LD      A,(HL)
-        CP      C
-        JR      C,J4A05
+        CP      C                       ; this memory mapper bigger then sofar ?
+        JR      C,J4A05                 ; yep, put this memory mapper last on the list
         LD      (HL),C
         LD      C,A
         INC     HL
         LD      A,(HL)
         LD      (HL),B
         LD      B,A
-        DEC     HL
+        DEC     HL                      ; put this memory mapper on the list and keep bigest last on the list
 J4A05:  DEC     HL
         LD      (HL),B
         DEC     HL
@@ -1657,21 +1657,21 @@ J4A0D:  POP     AF
         POP     HL
         BIT     7,A
         JR      Z,J4A19
-        ADD     A,04H   ; 4 
+        ADD     A,4
         BIT     4,A
         JR      Z,J49E8
 J4A19:  INC     HL
         INC     A
-        AND     03H     ; 3 
+        AND     03H
         JR      NZ,J49E2
         POP     HL
         POP     AF
         PUSH    HL
         LD      H,80H
-        CALL    ENASLT
+        CALL    ENASLT                  ; restore slot on page 2
         POP     HL
         LD      A,(HL)
-        CP      06H     ; 6 
+        CP      6
         RET     C
         PUSH    HL
         INC     HL
