@@ -50,6 +50,7 @@ Z1      ASET    0
 _D2:    DEFB    0
         ENDM
 
+        INCLUDE DISK.INC
 
         .Z80
         ASEG
@@ -62,11 +63,13 @@ IDBYT0  EQU     002BH
 KEYINT  EQU     0038H
 C0046   EQU     0046H
 C004B   EQU     004BH
-C005C   EQU     005CH                   ; ALL_SEG in BDOS segment
-C005F   EQU     005FH                   ; FRE_SEG in BDOS segment
+C005C   EQU     005CH                   ; ALL_SEG in BDOS code segment
+C005F   EQU     005FH                   ; FRE_SEG in BDOS code segment
 C402D   EQU     402DH
 J4092   EQU     4092H
 D40FF   EQU     40FFH
+
+BDOS    EQU     0005H
 
 I$B062  EQU     0B062H
 D.B064  EQU     0B064H
@@ -114,6 +117,8 @@ DF2EB   EQU     0F2EBH
 DF2FE   EQU     0F2FEH                  ; pointer to temporary stack (BDOS)
 DF30F   EQU     0F30FH                  ; double byte header table
 DF314   EQU     0F314H                  ; TPA segment table
+CF327   EQU     0F327H
+CF32C   EQU     0F32CH
 RAMAD0  EQU     0F341H
 RAMAD1  EQU     0F342H
 RAMAD2  EQU     0F343H
@@ -121,7 +126,12 @@ RAMAD3  EQU     0F344H
 MASTER  EQU     0F348H
 $DOSON  EQU     0F368H
 $DOSOF  EQU     0F36BH
-BLDCHK  EQU     0F377H
+CF36E   EQU     0F36EH
+CF371   EQU     0F371H
+CF374   EQU     0F374H
+CF377   EQU     0F377H
+CF37A   EQU     0F37AH
+B.BDOS  EQU     0F37DH
 
 RDPRIM  EQU     0F380H
 WRPRIM  EQU     0F385H
@@ -390,12 +400,12 @@ J42C8:  LD      C,(HL)
         POP     HL
         JR      J42C8
 J42DE:  LD      A,(DF2D0)               ; BDOS code segment
-        LD      HL,I$01EE
+        LD      HL,01EEH
         ADD     HL,DE
         LD      (HL),A
         LD      A,(RAMAD3)
         AND     03H     ; 3 
-        LD      HL,I$026D
+        LD      HL,026DH
         ADD     HL,DE
         LD      (HL),A
         LD      C,A
@@ -405,34 +415,34 @@ J42DE:  LD      A,(DF2D0)               ; BDOS code segment
         RLCA
         RLCA
         OR      C
-        LD      HL,I$0120
+        LD      HL,0120H
         ADD     HL,DE
         LD      (HL),A
         LD      A,(RAMAD3)
         BIT     7,A
         JR      Z,J4356
-        LD      HL,I$0255
+        LD      HL,0255H
         ADD     HL,DE
         LD      (HL),B
         INC     HL
         LD      (HL),B
-        LD      HL,I$00E4
+        LD      HL,00E4H
         ADD     HL,DE
         LD      (HL),B
         INC     HL
         LD      (HL),B
-        LD      HL,I$0105
+        LD      HL,0105H
         ADD     HL,DE
         LD      (HL),B
         INC     HL
         LD      (HL),B
-        LD      HL,I$0274
+        LD      HL,0274H
         ADD     HL,DE
-        LD      (HL),32H        ; "2"
+        LD      (HL),32H
         RRCA
         RRCA
         AND     03H     ; 3 
-        LD      HL,I$0261
+        LD      HL,0261H
         ADD     HL,DE
         LD      (HL),A
         LD      L,A
@@ -441,14 +451,14 @@ J42DE:  LD      A,(DF2D0)               ; BDOS code segment
         RLCA
         RLCA
         OR      L
-        LD      HL,I$0111
+        LD      HL,0111H
         ADD     HL,DE
         LD      (HL),A
         PUSH    DE
         LD      HL,SLTTBL
         ADD     HL,BC
         EX      DE,HL
-        LD      BC,I$0263
+        LD      BC,0263H
         ADD     HL,BC
         LD      (HL),E
         INC     HL
@@ -471,20 +481,20 @@ J42DE:  LD      A,(DF2D0)               ; BDOS code segment
         POP     DE
 J4356:  LD      A,(EXPTBL+0)
         AND     03H     ; 3 
-        LD      HL,I$024D
+        LD      HL,024DH
         ADD     HL,DE
         LD      (HL),A
         LD      C,A
         LD      B,00H
         RRCA
         RRCA
-        LD      HL,I$022E
+        LD      HL,022EH
         ADD     HL,DE
         LD      (HL),A
         LD      A,(EXPTBL+0)
         BIT     7,A
         JR      Z,J43D1
-        LD      HL,I$0236
+        LD      HL,0236H
         ADD     HL,DE
         LD      (HL),B
         INC     HL
@@ -492,14 +502,14 @@ J4356:  LD      A,(EXPTBL+0)
         RRCA
         RRCA
         AND     03H     ; 3 
-        LD      HL,I$0241
+        LD      HL,0241H
         ADD     HL,DE
         LD      (HL),A
         LD      A,(RAMAD3)
         XOR     C
         AND     03H     ; 3 
         JR      NZ,J4397
-        LD      HL,I$0245
+        LD      HL,0245H
         ADD     HL,DE
         LD      (HL),32H        ; "2"
         INC     HL
@@ -508,24 +518,24 @@ J4356:  LD      A,(EXPTBL+0)
         LD      (HL),0FFH
         JR      J43BC
 J4397:  LD      A,0F5H
-        LD      HL,I$0159
+        LD      HL,0159H
         ADD     HL,DE
         LD      (HL),A
-        LD      HL,I$0188
+        LD      HL,0188H
         ADD     HL,DE
         LD      (HL),A
-        LD      HL,I$01E9
+        LD      HL,01E9H
         ADD     HL,DE
         LD      (HL),A
-        LD      HL,I$0221
+        LD      HL,0221H
         ADD     HL,DE
         LD      (HL),0CDH
-        LD      HL,I$017B
+        LD      HL,017BH
         ADD     HL,DE
         LD      (HL),B
         INC     HL
         LD      (HL),B
-        LD      HL,I$01B2
+        LD      HL,01B2H
         ADD     HL,DE
         LD      (HL),B
         INC     HL
@@ -534,7 +544,7 @@ J43BC:  PUSH    DE
         LD      HL,SLTTBL
         ADD     HL,BC
         EX      DE,HL
-        LD      BC,I$0239
+        LD      BC,0239H
         ADD     HL,BC
         LD      (HL),E
         INC     HL
@@ -580,17 +590,17 @@ I43F6:  DEFW    $DOSON
         DEFW    R0000
         DEFW    $DOSOF
         DEFW    R0009
-        DEFW    DF36E
+        DEFW    CF36E
         DEFW    R0022
         DEFW    CF371
         DEFW    CF327
         DEFW    CF374
         DEFW    CF32C
-        DEFW    BLDCHK
+        DEFW    CF377
         DEFW    R00D4
         DEFW    CF37A
         DEFW    R00DC
-        DEFW    CF37D
+        DEFW    B.BDOS
         DEFW    R0064
         DEFW    0
 
@@ -625,7 +635,7 @@ R0022:  PUSH    AF
         PUSH    HL
         PUSH    DE
         PUSH    BC
-        CALL    C.402D
+        CALL    C402D
         PUSH    AF
         LD      A,(RAMAD1)
         LD      H,40H
@@ -674,7 +684,7 @@ J0057:  EX      AF,AF'
 R0064:  LD      (DF2E6),IX
         LD      IY,(MASTER-1)
         LD      IX,(DF2DE)
-        JP      C.001C
+        JP      CALSLT
 
 R0073:  EI
         PUSH    DE
@@ -738,7 +748,7 @@ C00BA:  LD      A,0C9H
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C00BF:  LD      HL,I$F24F
+C00BF:  LD      HL,H.PROM
         LD      DE,I00D1
         LD      B,3
 J00C7:  LD      C,(HL)
@@ -862,7 +872,7 @@ J018F:  PUSH    HL
         CALL    R0320                   ; PUT_P2
         LD      A,B
         EI
-        CALL    C$00A2
+        CALL    C00A2
         DI
         LD      A,(DF2CF)
         CALL    R0320                   ; PUT_P2
@@ -1243,8 +1253,8 @@ D$0369  EQU     $-2
 D$036C  EQU     $-2
         BIT     6,D
         LD      D,B
-        JP      NZ,J$F385
-        CALL    C$F380
+        JP      NZ,WRPRIM
+        CALL    RDPRIM
         LD      A,E
         RET
 
@@ -1311,7 +1321,7 @@ C03BF:  IN      A,(0A8H)
         OR      (HL)
         EXX
         DI
-        JP      J$F38C
+        JP      CLPRIM
 
 R03CA:  PUSH    HL
         LD      C,A
@@ -1335,7 +1345,7 @@ R03CA:  PUSH    HL
 C03DF:  PUSH    HL
         AND     03H     ; 3 
         LD      E,A
-        LD      HL,I$FCC5
+        LD      HL,SLTTBL
         ADD     HL,DE
         PUSH    HL
         LD      A,C
@@ -2004,7 +2014,7 @@ J4BF5:  EX      DE,HL
         LD      (HL),B
         ADD     HL,BC
         LD      (HL),B
-        LD      BC,I$0102
+        LD      BC,0102H
         ADD     HL,BC
         DEC     A
         JR      NZ,J4BF5
@@ -2419,7 +2429,7 @@ L0001:
         DEFB    82H,0A9H,83H,4CH,81H,5BH,82H,0F0H
         DEFB    89H,9FH,82H,0B5H,82H,0C4H,89H,0BAH
         DEFB    82H,0B3H,82H,0A2H,20H,00H
-
+        DEFB    0
 
 
         DEFS    08000H-$,0FFH

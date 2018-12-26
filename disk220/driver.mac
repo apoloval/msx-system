@@ -9,6 +9,7 @@
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
+RSLREG  EQU     0138H
 
 DEFDPB	EQU	$-1
 MYSIZE	EQU	0
@@ -120,7 +121,7 @@ J70C1:	CALL	CC016			; calculate checksum
         JR	C,J70C1		        ; yep,
         POP	HL
         CALL	C7139			; print checksum
-        LD	A,(C.4092+2)
+        LD	A,(C4092+2)
         CP	7FH                     ; bank switch address 07FxxH (ASCII DOS2 mapper) ?
         CALL	Z,C717D                 ; yep, check MSX-JE and memory mapper
         CALL	C728E
@@ -135,7 +136,7 @@ J70FE:	DI
 I7101:
         .PHASE	0C000H
 
-CC000:	CALL	C.402D			; GETSLT
+CC000:	CALL	C402D			; GETSLT
         PUSH	AF			; save current slot page 1
         LD	A,E
         LD	H,40H
@@ -157,7 +158,7 @@ CC016:	DI
         POP	AF
         RET	
 
-CC024:	LD	(D.0000),A
+CC024:	LD	(0),A
         RET	
 
 CC028:	LD	HL,0

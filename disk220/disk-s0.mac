@@ -21,6 +21,9 @@ DOS2    EQU     1               ; DOS2 flag for diskdriver
 D.0000  EQU     0000H   ; --SLI
 I.0001  EQU     0001H   ; ----I
 I$0004  EQU     0004H   ; ----I
+RDSLT   EQU     000CH
+CALSLT  EQU     001CH
+ENASLT  EQU     0024H
 IDBYT0  EQU     002BH   ; ---L-
 IDBYT2  EQU     002DH   ; ---L-
 L0034   EQU     0034H   ; ----I
@@ -85,11 +88,15 @@ I$3E1E  EQU     3E1EH   ; ----I
 I$3F00  EQU     3F00H   ; ----I
 I$3F1E  EQU     3F1EH   ; ----I
 I$3FD6  EQU     3FD6H   ; ----I
+
+M406F   EQU     406FH
 M409B   EQU     409BH
+M4173   EQU     4173H
 M4253   EQU     4253H
 M4601   EQU     4601H
 M4666   EQU     4666H
 M46FF   EQU     46FFH
+M4756   EQU     4756H
 M4AFF   EQU     4AFFH
 M4C5F   EQU     4C5FH
 M4C64   EQU     4C64H
@@ -113,6 +120,7 @@ M6AFA   EQU     6AFAH
 M6B24   EQU     6B24H
 M6C1C   EQU     6C1CH
 M6F0B   EQU     6F0BH
+M6F1D   EQU     6F1DH
 M7323   EQU     7323H   ; ----I
 M7328   EQU     7328H   ; ----I
 M739A   EQU     739AH   ; ----I
@@ -148,6 +156,12 @@ D$ECFE  EQU     0ECFEH  ; ---L-
 LF1C9	EQU	0F1C9H			; BDOS _STROUT
 LF1D3	EQU	0F1D3H			; transfer to/from page 1
 LF1E2	EQU	0F1E2H			; start DOS1 style handler
+LF1E5   equ     0F1E5H
+LF1E8   equ     0F1E8H
+LF1EB   equ     0F1EBH
+LF1EE   equ     0F1EEH
+LF1F1   equ     0F1F1H
+LF1F4   equ     0F1F4H
 LF1FD	EQU	0F1FDH			; enable DOS RAM on page 0
 LF206	EQU	0F206H			; RD_SEG handler
 LF218	EQU	0F218H			; PUT_P0 handler
@@ -191,7 +205,7 @@ D$F306  EQU     0F306H  ; --S--
 D$F30E  EQU     0F30EH  ; --S--
 I$F30F  EQU     0F30FH  ; ----I
 D.F313  EQU     0F313H  ; --SL-
-D$F314  EQU     0F314H  ; ---L-
+D.F314  EQU     0F314H  ; ---L-
 D.F315  EQU     0F315H  ; ---L-
 D.F316  EQU     0F316H  ; ---L-
 D.F323  EQU     0F323H  ; --SLI
@@ -221,7 +235,7 @@ XF36B	EQU	0F36BH			; enable TPA RAM on page 2
 XFER	EQU	0F36EH			; transfer to/fram TPA RAM on page 2
 J$F377  EQU     0F377H  ; J----
 J$F37A  EQU     0F37AH  ; J----
-C.F37D  EQU     0F37DH  ; -C---
+B.BDOS  EQU     0F37DH  ; -C---
 
 VARWRK	EQU	0F380H
 LF38B	EQU	0F38BH			; on this adres is a simple RET instruction
@@ -268,12 +282,48 @@ SLTTBL	EQU	0FCC5H
 SLTWRK	EQU	0FD09H
 PROCNM	EQU	0FD89H
 DEVICE	EQU	0FD99H			; used temp for diskdriver count
+
+H.TIMI  EQU     0FD9FH
+H.DSKO	EQU	0FDEFH
+H.NAME	EQU	0FDF9H
+H.KILL	EQU	0FDFEH
+H.COPY	EQU	0FE08H
+H.DSKF	EQU	0FE12H
+H.DSKI	EQU	0FE17H
+H.LSET	EQU	0FE21H
+H.RSET	EQU	0FE26H
+H.FIEL	EQU	0FE2BH
+H.MKI$	EQU	0FE30H
+H.MKS$	EQU	0FE35H
+H.MKD$	EQU	0FE3AH
+H.CVI	EQU	0FE3FH
+H.CVS	EQU	0FE44H
+H.CVD	EQU	0FE49H
+H.GETP	EQU	0FE4EH
+H.NOFO	EQU	0FE58H
+H.NULO	EQU	0FE5DH
+H.NTFL	EQU	0FE62H
+H.BINS	EQU	0FE71H
+H.BINL	EQU	0FE76H
+H.FILE	EQU	0FE7BH
+H.DGET	EQU	0FE80H
+H.FILO	EQU	0FE85H
+H.INDS	EQU	0FE8AH
+H.LOC	EQU	0FE99H
+H.LOF	EQU	0FE9EH
+H.EOF	EQU	0FEA3H
+H.BAKU	EQU	0FEADH
+H.PARD	EQU	0FEB2H
+H.NODE	EQU	0FEB7H
 H.POSD	EQU	0FEBCH
 H.RUNC	EQU	0FECBH
 H.CLEA	EQU	0FED0H
 H.LOPD	EQU	0FED5H
 H.STKE	EQU	0FEDAH
+H.ERRP	EQU	0FEFDH
 H.PHYD	EQU	0FFA7H
+H.FORM	EQU	0FFACH
+
 EXTBIO  EQU     0FFCAH
 DISINT	equ	0FFCFH
 ENAINT	equ	0FFD4H
@@ -300,16 +350,16 @@ I4000:  DEFB    "AB"
         DEFW    0                       ; EXTENSION ROM basic program (no basic program)
         DEFS    6,0
 
-L4010:  JP      DSKIO                   ; DRIVER:  DSKIO
-L4013:  JP      DSKCHG                  ; DRIVER:  DSKCHG
-L4016:  JP      GETDPB                  ; DRIVER:  GETDPB
-L4019:  JP      CHOICE                  ; DRIVER:  CHOICE
-L401C:  JP      DSKFMT                  ; DRIVER:  DSKFMT
-L401F:  JP      MTOFF                   ; DRIVER:  MTOFF
-L4022:  JP      J4B1B                  ; SYSTEM:  Start DiskBASIC
-L4025:  SCF                             ; SYSTEM:  Format disk
+C4010:  JP      DSKIO                   ; DRIVER:  DSKIO
+C4013:  JP      DSKCHG                  ; DRIVER:  DSKCHG
+C4016:  JP      GETDPB                  ; DRIVER:  GETDPB
+C4019:  JP      CHOICE                  ; DRIVER:  CHOICE
+C401C:  JP      DSKFMT                  ; DRIVER:  DSKFMT
+C401F:  JP      MTOFF                   ; DRIVER:  MTOFF
+C4022:  JP      J4B1B                   ; SYSTEM:  Start DiskBASIC
+C4025:  SCF                             ; SYSTEM:  Format disk
         JP      J4E67
-L4029:  JP      J4CD3                  ; SYSTEM:  Stop drives
+C4029:  JP      J4CD3                  ; SYSTEM:  Stop drives
 
         NOP     
 
@@ -371,7 +421,7 @@ I4049:  PUSH    AF
         RET     
 
 ;         Subroutine inter DOS2 ROM bank call
-;            Inputs  AF' = 
+;            Inputs  A = DOS2 ROM bank, AF' = 
 ;            Outputs ________________________
 
 J405B:  CALL    C4092                  ; select DOS2 ROM bank
@@ -398,7 +448,7 @@ C4069:  JP      (IX)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C403C:  CALL    C40E4                  ; MSX-JE call statement handler
+C403C:  CALL    C40E4                   ; MSX-JE call statement handler
         RET     NC                      ; statement handled, quit
         JP      C575C                   ; MSXDOS2 kernel call statement handler
 
@@ -407,14 +457,14 @@ C403C:  CALL    C40E4                  ; MSX-JE call statement handler
 ;            Outputs ________________________
 
 I4043:  LD      IX,I40B4
-        CALL    C4051                  ; inter DOS2 ROM bank 0 call
+        CALL    C4051                   ; inter DOS2 ROM bank 0 call
         JP      J$F2D5
 
 ;         Subroutine H.TIMI handler
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-I404D:  LD      IX,I40BA               ; jmp 
+I404D:  LD      IX,I40BA                ; jmp 
 
 ;         Subroutine inter DOS2 ROM bank 0 call
 ;            Inputs  AF' = 
@@ -423,10 +473,10 @@ I404D:  LD      IX,I40BA               ; jmp
 C4051:  EX      AF,AF'
         LD      A,(D40FF)
         PUSH    AF                      ; save current DOS2 ROM bank
-        CALL    C406E                  ; select DOS2 ROM bank 0 and execute routine
+        CALL    C406E                   ; select DOS2 ROM bank 0 and execute routine
         EX      AF,AF'
         POP     AF
-        CALL    C4092                  ; restore DOS2 ROM bank
+        CALL    C4092                   ; restore DOS2 ROM bank
         EX      AF,AF'
         RET     
 
@@ -434,10 +484,10 @@ C4051:  EX      AF,AF'
 ;            Inputs  AF' = 
 ;            Outputs ________________________
 
-J4060:  CALL    C406F                  ; select DOS2 ROM bank and execute routine
+J4060:  CALL    C406F                   ; select DOS2 ROM bank and execute routine
         EX      AF,AF'
         XOR     A
-        CALL    C4092                  ; select DOS2 ROM bank 0
+        CALL    C4092                   ; select DOS2 ROM bank 0
         EX      AF,AF'
         RET     
 
@@ -445,7 +495,7 @@ J4060:  CALL    C406F                  ; select DOS2 ROM bank and execute routin
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C406A:  LD      IX,J47D6               ; DOS2 kernel INIT routine
+C406A:  LD      IX,J47D6                ; DOS2 kernel INIT routine
 
 ;         Subroutine select DOS2 ROM bank 0 and execute routine
 ;            Inputs  AF' = 
@@ -457,7 +507,7 @@ C406E:  XOR     A
 ;            Inputs  AF' = , A = bank
 ;            Outputs ________________________
 
-C406F:  CALL    C4092                  ; select DOS2 ROM bank
+C406F:  CALL    C4092                   ; select DOS2 ROM bank
         EX      AF,AF'
         JP      (IX)
 
@@ -477,11 +527,11 @@ C406F:  CALL    C4092                  ; select DOS2 ROM bank
 
 ; DOS2:  RAMDISK driver jumpentries
 
-L4080:  JP      J6D49                  ; RAMDISK:  DSKIO routine
-L4083:  JP      J6D39                  ; RAMDISK:  DSKCHG routine
-L4086:  JP      J6EF1                  ; RAMDISK:  GETDPB routine
-L4089:  JP      J6EF2                  ; RAMDISK:  CHOICE routine
-L408C:  JP      J6EF6                  ; RAMDISK:  DSKFMT routine
+L4080:  JP      J6D49                   ; RAMDISK:  DSKIO routine
+L4083:  JP      J6D39                   ; RAMDISK:  DSKCHG routine
+L4086:  JP      J6EF1                   ; RAMDISK:  GETDPB routine
+L4089:  JP      J6EF2                   ; RAMDISK:  CHOICE routine
+L408C:  JP      J6EF6                   ; RAMDISK:  DSKFMT routine
 
         DEFS    0408FH-$,0
 
@@ -509,15 +559,15 @@ C4092:  BNKCHG
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-I40B4:  CALL    C40E7                  ; H.EXTBIO MSX-JE
-        JP      J410C                  ; H.EXTBIO DOS2
+I40B4:  CALL    C40E7                   ; H.EXTBIO MSX-JE
+        JP      J410C                   ; H.EXTBIO DOS2
 
 ;         Subroutine H.TIMI handler
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-I40BA:  CALL    C40EA                  ; H.TIMI MSX-JE
-        JP      J4CF3                  ; H.TIMI DOS2
+I40BA:  CALL    C40EA                   ; H.TIMI MSX-JE
+        JP      J4CF3                   ; H.TIMI DOS2
 
 ;         Subroutine call 4100 in bank 3 (MSX-JE)
 ;            Inputs  ________________________
@@ -629,13 +679,13 @@ C40ED:  POP     IX
 
 D40FF:  DEFB    0
 
-C4100:  CALL    C410F                  ; Check and invoke memorymapper of 6 or more segments
-C4103:  CALL    C410F                  ; install disksystem routines
-C4106:  CALL    C410F                  ; copy message to buffer
-I4109:  CALL    C410F                  ; copy errorstring to buffer
-C410C:  CALL    C410F                  ; EXTBIO handler memorymapper
+C4100:  CALL    C410F                   ; Check and invoke memorymapper of 6 or more segments
+C4103:  CALL    C410F                   ; install disksystem routines
+C4106:  CALL    C410F                   ; copy message to buffer
+I4109:  CALL    C410F                   ; copy errorstring to buffer
+C410C:  CALL    C410F                   ; EXTBIO handler memorymapper
 
-;         Subroutine __________________________
+;         Subroutine inter DOS2 ROM bank 1 call
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
@@ -643,13 +693,13 @@ C410F:  POP     IX
         PUSH    BC
         LD      BC,-3
         EX      AF,AF'
-        LD      A,1                     ; bank 1
+        LD      A,1                     ; DOS2 ROM bank 1
         ADD     IX,BC
         POP     BC
-        JP      J405B                  ; inter DOS2 ROM bank call
+        JP      J405B                   ; inter DOS2 ROM bank call
 
 I411E:  DEFB    "MSX-DOS kernel version 2.20",0
-        DEFB    "Disk BASIC version 2.01",0
+I413A:  DEFB    "Disk BASIC version 2.01",0
         DEFB    "Copyright (C) 1989 ASCII Corporation",0
 
 J4177:  LD      HL,C0086
@@ -853,7 +903,7 @@ J4865:  LD      A,(D.F313)
         RET     C
 J4870:  LD      A,22H                   ; version 2.2
         LD      (D.F313),A
-        CALL    C402D                  ; GETSLT
+        CALL    C402D                   ; GETSLT
         LD      HL,H.RUNC
         LD      (HL),0F7H
         INC     HL
@@ -897,7 +947,7 @@ J48C2:  SUB     C
         JR      Z,J48FE
         LD      (DE),A
         INC     DE
-        CALL    C402D                  ; GETSLT
+        CALL    C402D                   ; GETSLT
         LD      (DE),A
         LD      B,00H
         LD      HL,I$F355
@@ -1029,7 +1079,7 @@ J4960:  LD      (HL),0C9H
         LD      HL,DRVINT+3
         LD      BC,4*3
         LDIR    
-J4986:  CALL    C402D                  ; GETSLT
+J4986:  CALL    C402D                   ; GETSLT
         LD      (LF348),A
         LD      HL,L0034
         LD      DE,I$F30F
@@ -1056,7 +1106,7 @@ J49AE:  LD      (HL),0C9H
         LD      (LF1C9+0),A
         LD      (LF1C9+1),HL
         LD      A,0C3H
-        LD      HL,I53AC
+        LD      HL,C53AC
         LD      (LF1C9+3),A
         LD      (LF1C9+4),HL
         LD      HL,I4109
@@ -1248,10 +1298,10 @@ I4B1E:  CALL    C4C16
         LD      DE,BUF+16
         LD      A,01H   ; 1 
         LD      C,43H   ; "C"
-        CALL    C.F37D
+        CALL    B.BDOS
         JR      NZ,J4B7B
         LD      C,45H   ; "E"
-        CALL    C.F37D
+        CALL    B.BDOS
         JR      J4B7F
 
 J4B50:  LD      A,(D.0000)
@@ -1273,9 +1323,9 @@ J4B5F:  INC     HL
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C4B6A:  CP      09H     ; 9 
+C4B6A:  CP      09H
         RET     Z
-        CP      20H     ; " "
+        CP      20H
         RET     
 
 J4B70:  XOR     A
@@ -1297,7 +1347,7 @@ J4B7F:  LD      SP,I.C200
         CALL    ENASLT
         CALL    C4BE8
 J4B95:  LD      BC,0061H
-        CALL    C.F37D
+        CALL    B.BDOS
         JR      NZ,J4B95
         LD      HL,(BOTTOM)
         XOR     A
@@ -1317,10 +1367,10 @@ J4B95:  LD      BC,0061H
         LD      IX,M7D31
         CALL    CALBAS
         CALL    C4D61
-        LD      DE,J413A
+        LD      DE,I413A
         CALL    C4D7D
         CALL    C4D61
-        LD      HL,I4173
+        LD      HL,M4173
         PUSH    HL
         LD      HL,BUF+11
         PUSH    HL
@@ -1330,7 +1380,7 @@ J4B95:  LD      BC,0061H
         INC     HL
         LD      (HL),0C9H
         LD      A,(EXPTBL+0)
-        LD      H,40H   ; "@"
+        LD      H,40H
         JP      ENASLT
 
 ;         Subroutine __________________________
@@ -1465,7 +1515,7 @@ C4C9D:  EI
         CALL    C4CB9
         JR      C,J4CAB
         SCF     
-        LD      A,0CH   ; 12 
+        LD      A,0CH
         POP     HL
         POP     HL
         RET     
@@ -1475,7 +1525,7 @@ J4CAB:  LD      L,A
         LD      A,L
         POP     HL
         PUSH    HL
-        LD      IX,I4010
+        LD      IX,C4010
         CALL    CALSLT
         POP     HL
         RET     
@@ -1513,7 +1563,7 @@ J4CD8:  INC     HL
         INC     HL
         PUSH    HL
         PUSH    BC
-        LD      HL,I401F
+        LD      HL,C401F
         PUSH    HL
         POP     IX
         OR      A
@@ -1584,7 +1634,7 @@ C4D2D:  JP      NZ,CALSLT
 
 PROMPT:
 I4D32:  LD      A,(D.F33F)
-        ADD     A,41H   ; "A"
+        ADD     A,"A"
         CALL    C.F24F
         PUSH    AF
         CALL    C4D61
@@ -1693,7 +1743,7 @@ GETWRK:
 ;            Outputs ________________________
 
 C4DBB:  IN      A,(0A8H)
-        AND     0CH     ; 12 
+        AND     0CH
         RRCA    
         RRCA    
         LD      HL,EXPTBL
@@ -1870,7 +1920,7 @@ J4E83:  ADD     HL,HL
         PUSH    HL
         PUSH    BC
         XOR     A
-        CALL    C.F37D
+        CALL    B.BDOS
         POP     BC
         POP     HL
         JR      NZ,J4E8F
@@ -1927,7 +1977,7 @@ J4EDE:  INC     B
         LD      C,67H   ; "g"
         PUSH    BC
         XOR     A
-        CALL    C.F37D
+        CALL    B.BDOS
         LD      A,L
         OR      H
         JR      Z,J4F1C
@@ -1966,12 +2016,12 @@ J4F1C:  INC     A
         POP     BC
         POP     DE
         POP     HL
-        CALL    C.F37D
+        CALL    B.BDOS
         JR      Z,J4F41
         LD      B,A
         LD      DE,($SECBUF)
         LD      C,66H   ; "f"
-        CALL    C.F37D
+        CALL    B.BDOS
         JP      C4D7D
 
 J4F41:  LD      A,06H   ; 6 
@@ -2097,12 +2147,12 @@ L535D:  EXX
         CALL    L5183           ; CR/LF to console
         LD      A,10            ; message 10 (Abort)
         LD      DE,($SECBUF)
-        CALL    L4106           ; copy message to buffer
+        CALL    C4106           ; copy message to buffer
         CALL    L5379           ; print prompt
         POP     BC
         LD      DE,($SECBUF)
         LD      C,066H
-        CALL    LF37D           ; EXPLAIN error
+        CALL    B.BDOS          ; EXPLAIN error
                                 ; print errorstring
 L5379:  LD      A,(DE)
         OR      A
@@ -2120,6 +2170,27 @@ L5379:  LD      A,(DE)
 ;
 L53A7:  LD      C,2
         JP      J4F54
+
+C53AC:	LD	HL,0C91AH	; LD A,(DE)  RET
+        PUSH	HL 		; on stack (routine)
+        CALL	C53C0		; Get char out of memory
+        POP	HL
+        CP	"$"		; check "$" encountered
+        RET	Z		; yes, quit
+        PUSH	DE
+        LD	E,A
+        CALL	L53A7		; Print char (BDOS #02)
+        POP	DE
+        INC	DE
+        JR	C53AC		; next char
+
+C53C0:	LD	HL,XF368
+        PUSH	HL 		; Routine Switch SystemDiskROM on page 1 on stack
+        LD	HL,4
+        ADD	HL,SP
+        PUSH	HL 		; Call "routine" on stack
+        JP	XF36B		; Switch RAM on page 1
+
         DEFS    0543CH-$,0C9H
 ;
 ; BDOS 00BH ENTRY
@@ -2380,12 +2451,12 @@ I56CD:  DEFW	H.DSKO,C5EDC
         DEFW	H.NODE,C674F
         DEFW	H.ERRP,C6753
         DEFW	H.PHYD,C4C9D
-        DEFW	H.FORM,L4E66
-L5755:	DEFW	0
+        DEFW	H.FORM,C4E66
+I5755:	DEFW	0
 
 I5757:  INC     SP
         INC     SP
-        JP      J6F1D
+        JP      M6F1D
 
 ;         Subroutine EXTENSION ROM CALL statement handler
 ;            Inputs  ________________________
@@ -2523,7 +2594,7 @@ C5821:  CALL    C634C
         DEC     A
         LD      E,A
         LD      C,0EH   ; 14 
-        CALL    C.F37D
+        CALL    B.BDOS
         POP     HL
         RET     
 
@@ -2533,7 +2604,7 @@ C5821:  CALL    C634C
 
 C5846:  PUSH    AF
         LD      C,18H
-        CALL    C.F37D
+        CALL    B.BDOS
         POP     AF
         PUSH    AF
 J584E:  SRL     H
@@ -2801,7 +2872,7 @@ C59D8:  LD      IX,BUF+10
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C59DE:  CALL    C.F37D
+C59DE:  CALL    B.BDOS
         RET     Z
         CP      0D7H
         SCF     
@@ -3042,7 +3113,7 @@ J5B3A:  PUSH    BC
         LD      (HL),A
         POP     HL
         LD      C,4AH   ; "J"
-        CALL    C.F37D
+        CALL    B.BDOS
         POP     AF
         POP     HL
         RET     
@@ -3084,7 +3155,7 @@ C5B60:  PUSH    HL
         LD      B,(HL)
         LD      HL,256
         LD      C,48H   ; "H"
-        CALL    C.F37D
+        CALL    B.BDOS
         JR      Z,J5B92
         CP      0C7H
         JP      NZ,J65C3
@@ -3480,7 +3551,7 @@ J5E2B:  PUSH    HL
         LD      D,B
         CALL    C5EAF
         LD      C,48H   ; "H"
-        CALL    C.F37D
+        CALL    B.BDOS
         POP     AF
         POP     HL
         POP     BC
@@ -3623,7 +3694,7 @@ J5EE9:  PUSH    HL
         CALL    C655D
         LD      DE,(D.F351)
         LD      C,1AH
-        CALL    C.F37D
+        CALL    B.BDOS
         POP     HL
         DEC     L
         LD      H,01H   ; 1 
@@ -3701,7 +3772,7 @@ J5F51:  EX      DE,HL
         LD      B,A
         XOR     A
         LD      C,4AH   ; "J"
-        CALL    C.F37D
+        CALL    B.BDOS
         POP     HL
         EX      (SP),HL
 J5F7D:  EX      (SP),HL
@@ -3768,7 +3839,7 @@ J5FDA:  EX      DE,HL
         CALL    C6654
         DEFB    "A"
         CALL    C6654
-        LD      "S"
+        DEFB    "S"
         LD      IX,M5EA4
         CALL    C664F
         LD      IX,M5597
@@ -4135,7 +4206,7 @@ J6267:  LD      IX,M7328
         CALL    C664F
 J626E:  LD      IX,BUF+10
         LD      C,41H   ; "A"
-        CALL    C.F37D
+        CALL    B.BDOS
         JR      Z,J6240
         POP     AF
 J627A:  POP     HL
@@ -4404,7 +4475,7 @@ C640D:  CALL    C6888
         CALL    NZ,C5846
         LD      E,A
         LD      C,1BH
-        CALL    C.F37D
+        CALL    B.BDOS
         JP      C.2F99
 
 C6424:  CALL    C6888
@@ -4454,7 +4525,7 @@ J6477:  LD      A,L
         LD      A,(BUF+138)
         LD      B,A
         LD      C,48H   ; "H"
-        CALL    C.F37D
+        CALL    B.BDOS
         JR      Z,J648A
         CP      0C7H
 J648A:  JP      NZ,J6538
@@ -4557,7 +4628,7 @@ I6532:  LD      L,D
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C6534:  CALL    C.F37D
+C6534:  CALL    B.BDOS
         RET     Z
 J6538:  PUSH    AF
         LD      HL,I6568
@@ -4565,12 +4636,12 @@ J6538:  PUSH    AF
         LD      A,(BUF+138)
         LD      B,A
         LD      C,45H   ; "E"
-I6545:  CALL    C.F37D
+I6545:  CALL    B.BDOS
         LD      A,(BUF+139)
         LD      B,A
         INC     A
         LD      C,45H   ; "E"
-        CALL    NZ,C.F37D
+        CALL    NZ,B.BDOS
         POP     AF
         JR      J65C3
 
@@ -4584,7 +4655,7 @@ C6559:  LD      DE,(D.F33B)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C655D:  CALL    C.F37D
+C655D:  CALL    B.BDOS
         RET     Z
         JR      J65C3
 J6562   EQU     $-1
@@ -4765,7 +4836,7 @@ J6642:  LD      E,038H
 J6645:  LD      E,03BH
         XOR     A
         LD      (FLBMEM),A
-        LD      IX,I406F
+        LD      IX,M406F
 
 ;         Subroutine execute BASIC routine
 ;            Inputs  ________________________
@@ -5053,7 +5124,7 @@ C68B3:  LD      B,A
 J68BB   EQU     $-2
         LD      (D.F34B),HL
         DI      
-        LD      A,(D$F314)
+        LD      A,(D.F314)
         CALL    LF218                   ; PUT_P0
         LD      A,(D.F315)
         CALL    LF21E                   ; PUT_P1
@@ -5165,7 +5236,7 @@ J6980:  LD      A,(DE)
 J698A:  LD      A,C
         LD      (LF23C),A
         LD      HL,($SECBUF)
-        LD      DE,C.C000
+        LD      DE,0C000H
         LD      BC,256
         LDIR    
         OR      A
@@ -5217,7 +5288,7 @@ I69E8:  DEFB	"\MSXDOS2.SYS"
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C69F5:  CALL    C.F37D
+C69F5:  CALL    B.BDOS
         CP      9DH
         JR      NZ,J69FD
         LD      A,B
@@ -5228,7 +5299,7 @@ I69FF:  LD      C,02H   ; 2
 I6A01:  RET     
 
 I6A02:  DEFW	I69FF
-I6A04:  DEFW	L6A01
+I6A04:  DEFW	I6A01
 
 C6A06:  LD      A,(D.F314)
         CALL    LF218                   ; PUT_P0
@@ -5415,7 +5486,7 @@ C6BE6:  CALL    C6C98
 
 C6BEE:  LD      A,21H
         DEFB    021H
-        LD      A,24H
+C6BF1:  LD      A,24H
         PUSH    DE
         EXX     
         POP     HL
@@ -5483,7 +5554,7 @@ C6C32:  PUSH    DE
 C6C44:  CALL    C6CFD
         CALL    C,C6D20
         RET     NZ
-        PUSH    IX
+C6C4B:  PUSH    IX
         POP     HL
         PUSH    HL
         LD      DE,(D.F2F7)
@@ -5500,7 +5571,7 @@ C6C44:  CALL    C6CFD
 
 C6C67:  CALL    C6D20
         LD      HL,(D.F2F9)
-        EX      AF,AF'
+C6C6D:  EX      AF,AF'
         PUSH    DE
         CALL    C6CFD
         PUSH    AF
@@ -5542,7 +5613,7 @@ C6C98:  JP      J$F37A
 C6C9B:  PUSH    DE
         CALL    C6D01
         POP     DE
-        EX      DE,HL
+C6CA0:  EX      DE,HL
         PUSH    HL
         LD      DE,(D.F2F5)
         OR      A
@@ -5983,5 +6054,10 @@ J6EF6:  LD      A,0CH
         SCF     
         RET     
 
+; DRIVER section starts here
+
+        INCLUDE	DRIVER.MAC
+
+        DEFS	08000H-$,0
 
         END
