@@ -154,7 +154,7 @@ I4100:  JP      C49D7
 ?4103:  JP      J410F
 ?4106:  JP      C4C1E
 ?4109:  JP      J4C09
-?410C:  JP      J4AF7
+?410C:  JP      J4AF7                   ; EXTBIO handler
 
 J410F:  DI
         CALL    C492F
@@ -1832,6 +1832,7 @@ C4AD0:  EX      DE,HL
         LD      L,E
         ADD     HL,BC
         RET
+
 J4AF7:  PUSH    DE
         PUSH    AF
         CALL    C4AFF
@@ -1844,43 +1845,49 @@ J4AF7:  PUSH    DE
 ;            Outputs ________________________
 
 C4AFF:  LD      A,D
-        OR      E
-        JR      NZ,J4B0B
-        LD      A,04H   ; 4 
-        CALL    C4B5C
-        JP      C4B5C
+        OR      E                       ; broadcast + function: build device name table ?
+        JR      NZ,J4B0B                ; nope,
+        LD      A,4
+        CALL    C4B5C                   ; memory mapper device id
+        JP      C4B5C                   ; reserved byte
 J4B0B:  LD      A,D
-        CP      04H     ; 4 
-        RET     NZ
+        CP      4                       ; memory mapper device ?
+        RET     NZ                      ; nope, quit
         LD      A,E
-        OR      A
-        JR      Z,J4B1A
-        DEC     A
-        JR      Z,J4B43
-        DEC     A
-        JR      Z,J4B4C
+        OR      A                       ; function 0 ?
+        JR      Z,J4B1A                 ; yep,
+        DEC     A                       ; function 1 ?
+        JR      Z,J4B43                 ; yep,
+        DEC     A                       ; function 2 ?
+        JR      Z,J4B4C                 ; yep,
         RET
+
+; Function 0: Build 
+
 J4B1A:  PUSH    HL
         LD      HL,(DF2C5)
         LD      C,(HL)                  ; slotid primairy memory mapper
         INC     HL
-        LD      D,(HL)
+        LD      D,(HL)                  ; number of segments in primairy memory mapper
         INC     HL
-        LD      E,(HL)
+        LD      E,(HL)                  ; number of free segments in primairy memory mapper
         POP     HL
         LD      A,C
+        CALL    C4B5C                   ; slotid
+        LD      A,LOW IF200
         CALL    C4B5C
-        LD      A,00H
-        CALL    C4B5C
-        LD      A,0F2H
-        CALL    C4B5C
+        LD      A,HIGH IF200
+        CALL    C4B5C                   ; memory mapper jump table
         LD      A,E
-        CALL    C4B5C
+        CALL    C4B5C                   ; number of free segments in primairy memory mapper
         LD      A,D
-        CALL    C4B5C
-        CALL    C4B5C
-        CALL    C4B5C
-        JP      C4B5C
+        CALL    C4B5C                   ; number of segments in primairy memory mapper
+        CALL    C4B5C                   ; reserved byte
+        CALL    C4B5C                   ; reserved byte
+        JP      C4B5C                   ; reserved byte
+
+; Function 1: Get mapper variable table
+
 J4B43:  POP     DE
         POP     AF
         LD      HL,(DF2C5)
@@ -1888,14 +1895,17 @@ J4B43:  POP     DE
         PUSH    AF
         PUSH    DE
         RET
+
+; Function 2: Get mapper support routine address
+
 J4B4C:  POP     DE
         POP     AF
         LD      HL,(DF2C5)
         LD      B,(HL)                  ; slotid primairy memory mapper
         INC     HL
-        LD      A,(HL)
+        LD      A,(HL)                  ; number of segments in primairy memory mapper
         INC     HL
-        LD      C,(HL)
+        LD      C,(HL)                  ; number of free segments in primairy memory mapper
         LD      HL,IF200                ; memory mapper jump table
         PUSH    AF
         PUSH    DE

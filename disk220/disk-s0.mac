@@ -569,91 +569,91 @@ I40B4:  CALL    C40E7                   ; H.EXTBIO MSX-JE
 I40BA:  CALL    C40EA                   ; H.TIMI MSX-JE
         JP      J4CF3                   ; H.TIMI DOS2
 
-;         Subroutine call 4100 in bank 3 (MSX-JE)
+;         Subroutine call 4100 in bank 3 (MSX-JE TOTEXT handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
 L40C0:  CALL    C40ED
 
-;         Subroutine call 4103 in bank 3 (MSX-JE)
+;         Subroutine call 4103 in bank 3 (MSX-JE CHPUT handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 4106 in bank 3 (MSX-JE)
+;         Subroutine call 4106 in bank 3 (MSX-JE display cursor handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 4109 in bank 3 (MSX-JE)
+;         Subroutine call 4109 in bank 3 (MSX-JE erase cursor handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 410C in bank 3 (MSX-JE)
+;         Subroutine call 410C in bank 3 (MSX-JE erase function keys handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 410F in bank 3 (MSX-JE)
+;         Subroutine call 410F in bank 3 (MSX-JE display function keys handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 4112 in bank 3 (MSX-JE)
+;         Subroutine call 4112 in bank 3 (MSX-JE PINLIN handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 4115 in bank 3 (MSX-JE)
+;         Subroutine call 4115 in bank 3 (MSX-JE INLIN handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 4118 in bank 3 (MSX-JE)
+;         Subroutine call 4118 in bank 3 (MSX-JE LPTOUT handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 411B in bank 3 (MSX-JE)
+;         Subroutine call 411B in bank 3 (MSX-JE CHGET handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 411E in bank 3 (MSX-JE)
+;         Subroutine call 411E in bank 3 (MSX-JE WIDTH handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 4121 in bank 3 (MSX-JE)
+;         Subroutine call 4121 in bank 3 (MSX-JE SCREEN handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
         CALL    C40ED
 
-;         Subroutine call 4124 in bank 3 (MSX-JE)
+;         Subroutine call 4124 in bank 3 (MSX-JE statement handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
 C40E4:  CALL    C40ED
 
-;         Subroutine call 4127 in bank 3 (MSX-JE)
+;         Subroutine call 4127 in bank 3 (MSX-JE extended bios handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
 C40E7:  CALL    C40ED
 
-;         Subroutine call 412A in bank 3 (MSX-JE)
+;         Subroutine call 412A in bank 3 (MSX-JE timer interrupt handler)
 ;            Inputs  ________________________
 ;            Outputs ________________________
 

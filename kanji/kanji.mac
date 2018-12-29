@@ -7094,7 +7094,7 @@ C67A5:	LD	A,(HOKVLD)
         RRA
 J67D3:	OR	C
         LD	B,A			; slotid of page 3 (so B:HL is intraslotadres)
-        LD	DE,01000H		; MSX-JE, get capability
+        LD	DE,01000H		; MSX-JE function 0: get capability
         POP	HL			; workspace
         PUSH	HL
         CALL	EXTBIO
@@ -7138,7 +7138,7 @@ J67FD:	PUSH	AF
         LD	A,1
         CALL	CALSLT			; MSX-JE, inquiry
         PUSH	BC			; size of workspace needed by MSX-JE
-        LD	HL,0161H
+        LD	HL,353
         ADD	HL,BC			; plus an extra 0161H
         EX	DE,HL
         LD	HL,(HIMEM)

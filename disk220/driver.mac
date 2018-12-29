@@ -18,7 +18,12 @@ MYSIZE	EQU	0
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
+        IF HSH EQ 0
+
 INIHRD:
+
+        ENDIF
+
 C6EFA:	RET	
 
 ;	  Subroutine __________________________
@@ -476,7 +481,7 @@ LQDOS2: INC     SP
 
         ENDIF
 
-        IF HSH2 EQ 1
+        IF HSH EQ 2
 
 INIHRD:
         LD      A,8
