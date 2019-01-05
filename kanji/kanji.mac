@@ -43,7 +43,21 @@ SNSMAT	EQU	0141H
 KILBUF	EQU	0156H
 CALBAS	EQU	0159H
 EXTROM	EQU	015FH
-M4601	EQU	4601H
+
+M406F	EQU     406FH                   ; BASIC error
+M409B   EQU     409BH                   ; warm start BASIC
+M4601   EQU     4601H                   ; execution loop
+M4666   EQU     4666H                   ; get next BASIC character
+M4C64   EQU     4C64H                   ; evaluate expression
+M517A   EQU     517AH                   ; convert DAC to new type
+M521C   EQU     521CH                   ; evaluate byte operand
+M5284   EQU     5284H                   ; decode BASIC line
+M5EA4   EQU     5EA4H                   ; locate variable
+M6627   EQU     6627H                   ; allocate temporary string
+M67D0   EQU     67D0H                   ; free temporary string with type check
+M6C1C   EQU     6C1CH                   ; close all i/o channels
+
+
 CBFF0	EQU	0BFF0H
 
 S.PUTCHR	EQU	0139H
@@ -254,7 +268,7 @@ I4067:	DEFW	H.TOTE
 
 C4099:	PUSH	HL
         PUSH	BC
-I409B:	PUSH	AF
+	PUSH	AF
         IN	A,(0A8H)
         RRCA
         RRCA
@@ -380,7 +394,7 @@ J414E:	POP	AF
 ;	     Outputs ________________________
 
 C4150:	DEC	A
-        JP	M,J43FE			; mode 0, select ANK mode
+        JP	M,A43FE			; mode 0, select ANK mode
         RRCA
         RRCA
         JP	J426A
@@ -627,7 +641,7 @@ J4336:	CALL	C43AD			; calculate and set kanji screenwidth
         JR	NZ,C4398		; reset CHPUT variables and quit
         LD	(SWPTMP),HL		; save BASIC pointer
         CALL	C40CB			; hook EXTBIO
-        LD	IX,I6C1C
+        LD	IX,M6C1C
         CALL	CALBAS			; close all i/o channels
         CALL	C67A5			; initialize MSX-JE if available
         CALL	C,C7951			; not available, own 'MSX-JE'
@@ -747,7 +761,7 @@ I43F6:	DEFB	000H
         DEFB	002H
         DEFB	001H
 
-J43FE:	CALL	C4099			; get my SLTWRK entry
+A43FE:	CALL	C4099			; get my SLTWRK entry
         BIT	5,(IX+1)
         RET	Z			; kanji driver already deactived, quit
         RES	5,(IX+1)		; kanji driver inactive
@@ -1129,7 +1143,7 @@ J4655:	LD	B,A
 J4661:	INC	HL
         LD	A,(HL)
         LD	(CRTCNT),A		; srceenlength
-I4666:	LD	A,(IDBYT2)
+	LD	A,(IDBYT2)
         AND	A			; msx 1 ?
         JR	Z,J46AE			; yep, skip interlace
         LD	A,(SCRMOD)
@@ -1418,7 +1432,7 @@ C482D:  LD	A,0FFH
 J4833:	JP	P,J4841
         LD	(HL),00H
         LD	A,C
-        LD	HL,I47F7-2
+        LD	HL,T47F7-2
         LD	C,0FH
         JP	C47BD
 
@@ -2229,15 +2243,15 @@ C4BF6:	PUSH	BC
         SUB	02H	; 2 
         JR	Z,J4C50
         DEC	A
-        LD	BC,I6A00
+        LD	BC,06A00H
         JR	Z,J4C31
         CP	03H	; 3 
-        LD	BC,I$D400
+        LD	BC,0D400H
         JR	Z,J4C31
         ADD	HL,HL
         DEC	A
         JR	NZ,J4C31
-        LD	BC,I6A00
+        LD	BC,06A00H
 J4C31:	ADD	HL,DE
         ADD	HL,BC
         LD	A,(RG23SA)
@@ -2430,7 +2444,7 @@ J4D09:	LD	(FSTPOS),HL
         XOR	A
         LD	(INTFLG),A
 J4D10:	CALL	C4D28
-        LD	HL,I4E0E-2
+        LD	HL,T4E0E-2
         LD	C,0EH	; 14 
         CALL	C47BD
         PUSH	AF
@@ -3230,7 +3244,7 @@ J5214:	CALL	C4C61
         JR	NZ,J5222
         PUSH	HL
         LD	L,01H	; 1 
-I521C:	CALL	C4978
+	CALL	C4978
         POP	HL
         JR	J5214
 
@@ -3297,7 +3311,7 @@ J527F:	LD	A,(HL)
         INC	HL
         OR	(HL)
         JR	Z,J5296
-I5284:	INC	HL
+	INC	HL
         LD	A,(HL)
         SUB	E
         INC	HL
@@ -3355,10 +3369,10 @@ C52C6:	LD	E,(HL)
         CALL	C5334
         POP	HL
         PUSH	IX
-        LD	IX,I5284
+        LD	IX,M5284
         CALL	CALBAS			; decode BASIC line
         POP	IX
-        LD	HL,FUNACT-1
+        LD      HL,SWPTMP-1
         LD	C,0FEH
         XOR	A
 J52E1:	INC	HL
@@ -3602,7 +3616,7 @@ J5435:	LD	A,C
         LD	A,(NEWKEY+6)
         CP	0E8H
         JR	NZ,J5453
-        LD	IX,I409B
+        LD	IX,M409B
         JP	CALBAS			; warm start MSX BASIC
 
 J5453:	LD	DE,OLDKEY+11
@@ -3720,6 +3734,7 @@ I5502:  DEFB    "=",01EH,01CH,0,01BH,"+*",01DH,"<>?",01FH
 I550E:  DEFB	0,0,0,0,0,0,0,0
         DEFB	0,0,01BH,009H,0,008H,018H,00DH
         DEFB	" ",00CH,012H,07FH,01DH,01EH,01FH,01CH
+        DEFB    "+/*0123456789-,."
 
 C5536:  LD      A,C
         CP	0FFH
@@ -4575,7 +4590,7 @@ J5ACC:	CALL	C61C2
         LD	BC,002AH
         CPDR
         JR	NZ,J5AE7
-        LD	HL,I73F3
+        LD	HL,T73F3
         ADD	HL,BC
         LD	A,(HL)
         JR	J5AF3
@@ -5206,7 +5221,7 @@ C5E9E:	PUSH	HL
         PUSH	AF
         CALL	C5EA7
         POP	AF
-I5EA4:	POP	HL
+	POP	HL
         SET	0,H
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -7704,7 +7719,7 @@ C6C6D:	LD	IX,LPTOUT
 
 C6C71:	JP	C44E2
 
-?6C74:	CALL	C70CD
+A6C74:	CALL	C70CD
         PUSH	DE
         CALL	C711C			; evaluate string expression and get size and address
         PUSH	DE
@@ -7860,7 +7875,7 @@ J6D43:	PUSH	BC
         LD	H,21H	; "!"
         RET
 
-?6D5B:	CALL	C70CD
+A6D5B:	CALL	C70CD
         PUSH	DE
         CALL	C711C			; evaluate string expression and get size and address
         PUSH	DE
@@ -7962,7 +7977,7 @@ J6DE7:	POP	HL
         DEFB	")"
         RET
 
-?6DF3:	CALL	C70CD
+A6DF3:	CALL	C70CD
         PUSH	DE
         CALL	C711C			; evaluate string expression and get size and address
         PUSH	DE
@@ -7975,7 +7990,7 @@ J6DE7:	POP	HL
         SCF
         JR	J6E27
 
-?6E0A:	CALL	C70CD
+A6E0A:	CALL	C70CD
         PUSH	DE
         CALL	C711C			; evaluate string expression and get size and address
         PUSH	DE
@@ -8011,7 +8026,7 @@ J6E37:	CALL	C7155
         DEFB	")"
         RET
 
-?6E49:	CALL	C70CD
+A6E49:	CALL	C70CD
         PUSH	DE
         CALL	C711C			; evaluate string expression and get size and address
         PUSH	BC
@@ -8065,7 +8080,7 @@ J6E96:	POP	HL
         DEFB	")"
         RET
 
-?6EA2:	CALL	C70CD
+A6EA2:	CALL	C70CD
         PUSH	DE
         CALL	C711C			; evaluate string expression and get size and address
         PUSH	HL
@@ -8133,7 +8148,7 @@ J6F06:	POP	HL
         DEFB	")"
         RET
 
-?6F12:	CALL	C70CD
+A6F12:	CALL	C70CD
         PUSH	DE
         CALL	C711C			; evaluate string expression and get size and address
         PUSH	DE
@@ -8166,7 +8181,7 @@ J6F06:	POP	HL
         DEFB	")"
         RET
 
-?6F49:	CALL	C70C7
+A6F49:	CALL	C70C7
         PUSH	DE
         PUSH	AF
         CALL	C710D			; evaluate expression
@@ -8280,7 +8295,7 @@ J6FE5:	POP	AF
         POP	AF
         JR	J7064
 
-?6FEB:	CALL	C70C7
+A6FEB:	CALL	C70C7
         PUSH	DE
         PUSH	AF
         CALL	C711C			; evaluate string expression and get size and address
@@ -8322,7 +8337,7 @@ J7021:	DEC	D
         SUB	E
         JR	J7064
 
-?702D:	CALL	C70C7
+A702D:	CALL	C70C7
         PUSH	DE
         PUSH	AF
         CALL	C711C			; evaluate string expression and get size and address
@@ -8451,7 +8466,7 @@ J70D4:	LD	E,15
 J70D7:	LD	E,5
         DEFB	1
 J70DA:	LD	E,2
-        LD	IX,I406F
+        LD	IX,M406F
         JP	CALBAS			; BASIC error
 
 ;	  Subroutine __________________________
@@ -8460,7 +8475,7 @@ J70DA:	LD	E,2
 
 C70E3:	CALL	C70FA
         DEFB	"("
-        LD	IX,I5EA4
+        LD	IX,M5EA4
         CALL	CALBAS			; locate variable
         EI
         NOP
@@ -8485,28 +8500,28 @@ C70FA:	LD	A,(HL)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7101:	LD	IX,I4666
+C7101:	LD	IX,M4666
         JR	J7117
 
 ;	  Subroutine convert to DAC to new type
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7107:	LD	IX,I517A
+C7107:	LD	IX,M517A
         JR	J7117
 
 ;	  Subroutine evaluate expression
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C710D:	LD	IX,I4C64
+C710D:	LD	IX,M4C64
         JR	J7117
 
 ;	  Subroutine evaluate byte operand
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7113:	LD	IX,I521C
+C7113:	LD	IX,M521C
 J7117:	CALL	CALBAS
         EI
         RET
@@ -8522,7 +8537,7 @@ C711C:	CALL	C710D			; evaluate expression
 ;	     Outputs ________________________
 
 C711F:	PUSH	HL
-        LD	IX,067D0H
+        LD	IX,M67D0
         CALL	CALBAS			; free temporary string
         EI
         LD	B,(HL)
@@ -8540,7 +8555,7 @@ C711F:	PUSH	HL
 
 C7130:	PUSH	HL
         PUSH	AF
-        LD	IX,I6627
+        LD	IX,M6627
         CALL	CALBAS			; allocate temporary string
         EI
         NOP
@@ -8617,7 +8632,7 @@ C7177:	SUB	30H	; "0"
         RET	C
         JR	J71DA
 
-?7192:	LD	A,(IDBYT2)
+A7192:	LD	A,(IDBYT2)
         AND	A			; msx 1 ?
         JR	Z,J71DA			; yep
         DEC	HL
@@ -8737,7 +8752,7 @@ I72DB:  DEFB    0F8H,0FCH
 	DEFB	0E0H,0E4H,0E8H,0ECH,0E8H,0ECH,0E8H,0ECH
 	DEFB	0F0H,0F4H,0F8H,0FCH,0F8H,0FCH
 I731B:  DEFB    0F8H,0FCH
-I731D:	DEFB	0A7H,00H,0B1H,00H,0A8H,00H,0B2H,00H
+T731D:	DEFB	0A7H,00H,0B1H,00H,0A8H,00H,0B2H,00H
 	DEFB	0A9H,00H,0B3H,00H,0AAH,00H,0B4H,00H
 	DEFB	0ABH,00H,0B5H,00H,0B6H,00H,0B6H,0DEH
 	DEFB	0B7H,00H,0B7H,0DEH,0B8H,00H,0B8H,0DEH
@@ -8761,7 +8776,7 @@ I731D:	DEFB	0A7H,00H,0B1H,00H,0A8H,00H,0B2H,00H
 	DEFB	0B6H,00H,0B9H
         DEFB    00H
 
-I73C9:  DEFB    21H,2AH,49H,74H
+T73C9:  DEFB    21H,2AH,49H,74H
 	DEFB	70H,73H,75H,47H,4AH,4BH,76H,5CH
 	DEFB	24H,3DH,25H,3FH,27H,28H,63H,61H
 	DEFB	64H,29H,77H,4EH,6FH,4FH,30H,32H
@@ -8769,7 +8784,7 @@ I73C9:  DEFB    21H,2AH,49H,74H
 	DEFB	22H,26H,3CH,5DH,2BH
         DEFB    2CH
 
-I73F3:  DEFB    20H,21H
+T73F3:  DEFB    20H,21H
 	DEFB	22H,23H,24H,25H,26H,27H,28H,29H
 	DEFB	2AH,2BH,2CH,2DH,2EH,2FH,3AH,3BH
 	DEFB	3CH,3DH,3EH,3FH,40H,5BH,5CH,5DH
