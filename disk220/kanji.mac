@@ -47,7 +47,6 @@ EXTROM  EQU     015FH
 M0D0C   EQU     0D0CH                   ; BIOS routine pop af,bc,de,hl ret
 M0D0D   EQU     0D0DH                   ; BIOS routine pop bc,de,hl ret
 M0DE3   EQU     0DE3H                   ;
-CF38B   EQU     0F38BH                  ; RET
 
 C4092   EQU     4092H                   ; DOS2 bankswitch
 
@@ -72,6 +71,7 @@ DF30F   EQU     0F30FH                  ; double byte character headers
 MASTER  EQU     0F348H                  ; slotid disksystem master ROM
 DF349   EQU     0F349H                  ; disksystem bottom (lowest address used by the disksystem)
 DF36B   EQU     0F36BH                  ; enable DOS RAM on page 1
+WRPRIM  EQU     0F385H
 LINL40  EQU     0F3AEH
 LINL32  EQU     0F3AFH
 LINLEN  EQU     0F3B0H
@@ -162,10 +162,10 @@ H.PHYD  EQU     0FFA7H
 H.LPTO  EQU     0FFB6H
 H.SCRE  EQU     0FFC0H
 EXTBIO  EQU     0FFCAH
-RG08SAV EQU     0FFE7H
-RG09SAV EQU     0FFE8H
-RG23SAV EQU     0FFF6H
-RG25SAV EQU     0FFFAH
+RG8SAV  EQU     0FFE7H
+RG9SAV  EQU     0FFE8H
+RG23SA  EQU     0FFF6H
+RG25SA  EQU     0FFFAH
 
 
 C4100:  JP      J45CC			; TOTEXT handler
@@ -886,11 +886,11 @@ J453C:  RET     Z                       ; SCREEN without parameters, quit
 
 
 C4540:  PUSH    AF
-        LD      A,(RG09SAV)
+        LD      A,(RG9SAV)
         AND     0F3H                    ; interlaced off, even/odd off
         LD      C,9
         CALL    C4557
-        LD      A,(RG08SAV)
+        LD      A,(RG8SAV)
         AND     0FDH                    ; sprites on
         LD      C,8
         CALL    C4557
@@ -958,9 +958,9 @@ C4583:  PUSH    HL
         JR      NC,J4590
         LD      L,14+8
 J4590:  ADD     HL,SP
-        LD      (HL),LOW CF38B
+        LD      (HL),LOW (WRPRIM+6)
         INC     HL
-        LD      (HL),HIGH CF38B
+        LD      (HL),HIGH (WRPRIM+6)
         POP     AF
         POP     HL
         RET
@@ -1114,7 +1114,7 @@ J4672:  PUSH    BC
         LD      (SCRMOD),A
         LD      A,(IDBYT2)
         AND     A                       ; MSX1 ?
-        LD      A,(RG08SAV)
+        LD      A,(RG8SAV)
         SET     1,A                     ; sprites off
         JR      J469F
 J4686:  LD      B,A
@@ -1127,7 +1127,7 @@ J4686:  LD      B,A
         PUSH    BC
         LD      A,(IDBYT2)
         AND     A                       ; MSX1 ?
-        LD      A,(RG08SAV)
+        LD      A,(RG8SAV)
         RES     1,A                     ; sprites on
 J469F:  LD      B,A
         LD      C,08H
@@ -1193,14 +1193,14 @@ J46F7:  LD      A,(IX+0)
         LD      B,A
         LD      C,02H   ; 2 
         CALL    WRTVDP
-        LD      A,(RG09SAV)
+        LD      A,(RG9SAV)
         OR      0CH                     ; interlaced on, even/odd on
         JR      J4725
 J4718:  AND     0DFH
         LD      B,A
         LD      C,02H   ; 2 
         CALL    WRTVDP
-        LD      A,(RG09SAV)
+        LD      A,(RG9SAV)
         AND     0F3H                    ; interlaced off, even/odd off
 J4725:  LD      B,A
         LD      C,09H   ; 9 
@@ -1268,7 +1268,6 @@ I475C:  DEFB    0,0
 ;         Subroutine _CLS
 ;            Inputs  ________________________
 ;            Outputs ________________________
-
 
 C479C:  LD      A,(SCRMOD)
         CP      2                       ; graphic screen ?
@@ -2320,7 +2319,7 @@ C4C6E:  PUSH    BC
         LD      BC,J6A00
 J4CA9:  ADD     HL,DE
         ADD     HL,BC
-        LD      A,(RG23SAV)
+        LD      A,(RG23SA)
         LD      C,00H
         LD      B,A
         LD      A,(IX+0)
@@ -2497,7 +2496,6 @@ J4D56:  EI
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-
 J4D6C:  EI
         CALL    C4583
         CALL    C41F9                  ; get KANJI workspace
@@ -2673,7 +2671,7 @@ I4E84:  DEFB    8
         DEFB    18
         DEFW    C4F5E
         DEFB    27
-        DEFW    CF38B
+        DEFW    WRPRIM+6
         DEFB    2
         DEFW    C51A6
         DEFB    6
@@ -3864,7 +3862,6 @@ I5587:  DEFB	0,0,0,0,0,0,0,0
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-
 C559F:  LD      A,C
         CP      0FFH
         RET     Z
@@ -4412,7 +4409,7 @@ C58E8:  CALL    C6386
 C5903:  LD      A,(IDBYT2)
         CP      02H                     ; MSX2+ or higher ?
         RET     C                       ; nope, quit
-        LD      A,(RG25SAV)
+        LD      A,(RG25SA)
         AND     18H
         CP      18H
         RET     NZ
@@ -4734,7 +4731,7 @@ J5B31:  CALL    C621D
         JR      NZ,J5B51
         LD      A,C
         ADD     A,20H   ; " "
-        LD      HL,I741F+42
+        LD      HL,I7420+42-1
         LD      BC,42
         CPDR
         JR      NZ,J5B4C
@@ -5112,7 +5109,7 @@ C5DA7:  CALL    C616D
 ;            Outputs ________________________
 
 C5DB3:  LD      HL,(HOLD8+38)
-        LD      A,(RG23SAV)
+        LD      A,(RG23SA)
         ADD     A,L
         OUT     (C),A
         LD      A,(ACPAGE)
@@ -5214,7 +5211,7 @@ C5E50:  CALL    C5EE1
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
-C5E55:  LD      A,(RG23SAV)
+C5E55:  LD      A,(RG23SA)
         ADD     A,C
         LD      B,A
         LD      C,17H
@@ -5293,7 +5290,7 @@ C5EA5:  PUSH    HL
 
 
 C5EB0:  LD      B,A
-        LD      A,(RG23SAV)
+        LD      A,(RG23SA)
         ADD     A,L
         LD      L,A
         LD      A,E
@@ -5522,7 +5519,7 @@ J5FD8:  POP     AF
 ;            Outputs ________________________
 
 C5FDD:  LD      B,A
-        LD      A,(RG23SAV)
+        LD      A,(RG23SA)
         ADD     A,L
         LD      L,A
         LD      A,E
@@ -5655,7 +5652,7 @@ C607E:  LD      A,08H   ; 8
 ;            Outputs ________________________
 
 C6080:  PUSH    AF
-        LD      A,(RG23SAV)
+        LD      A,(RG23SA)
         ADD     A,L
         LD      L,A
         POP     AF
@@ -5857,7 +5854,7 @@ C619B:  CALL    C616D
         OUT     (C),L
         OUT     (C),H
         LD      HL,(HOLD8+38)
-        LD      A,(RG23SAV)
+        LD      A,(RG23SA)
         ADD     A,L
         OUT     (C),A
         LD      A,(ACPAGE)
@@ -7253,8 +7250,8 @@ J690D:  BIT     1,(IY+8)
         JR      C,J694C
         BIT     0,(IY+8)
         JR      NZ,J6931
-        LD      A,03H   ; 3 
-        CALL    C6A74
+        LD      A,3
+        CALL    C6A74                   ; MSX-JE release
         CALL    C68D3
         CALL    C6A27
         CALL    NC,C6B21
@@ -7263,10 +7260,10 @@ J692C:  CALL    C6A36
 J6931:  CALL    C68DB
         LD      E,(IY+15)
         LD      D,(IY+16)
-        LD      A,02H   ; 2 
-        CALL    C6A74
-        LD      A,04H   ; 4 
-        CALL    C6A74
+        LD      A,2
+        CALL    C6A74                   ; MSX-JE invoke
+        LD      A,4
+        CALL    C6A74                   ; MSX-JE clear
         CALL    C6A43
         CALL    C6ACD
         JR      J692C
@@ -7280,8 +7277,8 @@ J694C:  BIT     0,(IY+8)
         JR      Z,J69AB
 J695E:  CALL    C6B94
         SET     1,(IY+8)
-J6965:  LD      A,06H   ; 6 
-        CALL    C6A74
+J6965:  LD      A,6
+        CALL    C6A74                   ; MSX-JE dispatch
         BIT     2,A
         JR      Z,J6975
         CALL    C69EA
@@ -7292,8 +7289,8 @@ J6975:  RRCA
         POP     AF
         RRCA
         JP      NC,J690D
-        LD      A,07H   ; 7 
-        CALL    C6A74
+        LD      A,7
+        CALL    C6A74                   ; MSX-JE get result
         LD      A,(HL)
         AND     A
         JP      Z,J690D
@@ -7449,8 +7446,8 @@ J6A6E:  LD      A,0FFH
         LD      (CNSDFG),A
         RET
 
-;         Subroutine __________________________
-;            Inputs  ________________________
+;         Subroutine execute MSX-JE function
+;            Inputs  A = functionnumber
 ;            Outputs ________________________
 
 C6A74:  PUSH    IY
@@ -7470,7 +7467,7 @@ C6A81:  EXX
         LD      HL,0
         ADD     HL,SP
         LD      A,H
-        CP      0C1H
+        CP      HIGH 0C100H
         JR      NC,C6A9E
         EX      DE,HL
         PUSH    IY
@@ -7727,7 +7724,7 @@ J6BBF:  LD      A,(DE)
         PUSH    HL
         PUSH    BC
         LD      C,A
-        LD      B,00H
+        LD      B,0
         LD      HL,I7372
         ADD     HL,BC
         ADD     HL,BC
@@ -8040,7 +8037,7 @@ J6D97:  LD      H,23H   ; "#"
         AND     A
         RET
 J6D9C:  PUSH    BC
-        LD      HL,I7449+42
+        LD      HL,I744A+42-1
         LD      BC,42
         CPDR
         LD      L,C
@@ -8097,7 +8094,7 @@ J6DC9:  LD      A,(IX+0)
         LD      A,L
         PUSH    HL
         PUSH    BC
-        LD      HL,I741F+42
+        LD      HL,I7420+42-1
         LD      BC,42
         CPDR
         JR      NZ,J6E03
@@ -8966,8 +8963,7 @@ I7274:	DEFB	00H,04H,08H,0CH,08H,0CH,08H,0CH
 	DEFB	50H,54H,58H,5CH,58H,5CH,58H,5CH
 	DEFB	60H,64H,68H,6CH,68H,6CH,68H,6CH
 	DEFB	70H,74H,78H,7CH,78H,7CH,78H,7CH
-
-I72D5:	DEFB	40H,44H,48H,4CH,48H,4CH,48H,4CH
+	DEFB	40H,44H,48H,4CH,48H,4CH,48H,4CH
 	DEFB	50H
         DEFB    54H,58H,5CH,58H,5CH,58H,5CH
 	DEFB	60H,64H,68H,6CH,68H,6CH,68H,6CH
@@ -8980,6 +8976,7 @@ I72D5:	DEFB	40H,44H,48H,4CH,48H,4CH,48H,4CH
 	DEFB	0D0H,0D4H,0D8H,0DCH,0D8H,0DCH,0D8H,0DCH
 	DEFB	0E0H,0E4H,0E8H,0ECH,0E8H,0ECH,0E8H,0ECH
 	DEFB	0F0H,0F4H,0F8H,0FCH,0F8H,0FCH
+
 I7332:  DEFB    0F8H,0FCH
 	DEFB	0C0H,0C4H,0C8H,0CCH,0C8H,0CCH,0C8H,0CCH
 	DEFB	0D0H,0D4H,0D8H,0DCH,0D8H,0DCH,0D8H,0DCH
@@ -8989,7 +8986,9 @@ I7332:  DEFB    0F8H,0FCH
 	DEFB	0D0H,0D4H,0D8H,0DCH,0D8H,0DCH,0D8H,0DCH
 	DEFB	0E0H,0E4H,0E8H,0ECH,0E8H,0ECH,0E8H,0ECH
 	DEFB	0F0H,0F4H,0F8H,0FCH,0F8H,0FCH
+
 I7372:  DEFB    0F8H,0FCH
+
 I7374:	DEFB	0A7H,00H,0B1H,00H,0A8H,00H,0B2H,00H
 	DEFB	0A9H,00H,0B3H,00H,0AAH,00H,0B4H,00H
 	DEFB	0ABH,00H,0B5H,00H,0B6H,00H,0B6H,0DEH
@@ -9012,14 +9011,16 @@ I7374:	DEFB	0A7H,00H,0B1H,00H,0A8H,00H,0B2H,00H
 	DEFB	0DBH,00H,0DCH,00H,0DCH,00H,0B2H,00H
 	DEFB	0B4H,00H,0A6H,00H,0DDH,00H,0CDH,0DEH
 	DEFB	0B6H,00H,0B9H
-I741F:  DEFB    00H
+        DEFB    00H
+
 I7420:  DEFB    21H,2AH,49H,74H
 	DEFB	70H,73H,75H,47H,4AH,4BH,76H,5CH
 	DEFB	24H,3DH,25H,3FH,27H,28H,63H,61H
 	DEFB	64H,29H,77H,4EH,6FH,4FH,30H,32H
 	DEFB	46H,50H,43H,51H,41H,23H,56H,57H
 	DEFB	22H,26H,3CH,5DH,2BH
-I7449:  DEFB    2CH
+        DEFB    2CH
+
 I744A:  DEFB    20H,21H
 	DEFB	22H,23H,24H,25H,26H,27H,28H,29H
 	DEFB	2AH,2BH,2CH,2DH,2EH,2FH,3AH,3BH
@@ -9309,7 +9310,7 @@ C762C:  PUSH    BC
         PUSH    HL
         LD      C,A
         LD      B,00H
-        LD      HL,I72D5-09FH+1
+        LD      HL,I7374-2*09FH
         ADD     HL,BC
         ADD     HL,BC
         LD      A,(HL)

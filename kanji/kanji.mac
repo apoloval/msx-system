@@ -1,6 +1,10 @@
-;  
-;   MSX-JE -> Source re-created by Z80DIS 2.2
-;      Z80DIS was written by Kenneth Gielow
+; KANJI.MAC
+;
+; KANJI (BASIC + Extended BIOS + japanese input frontend processor) (full version)
+; as found in Panasonic Turbo-R GT/ST
+;
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
 ;
 ; Code Copyrighted by ASCII and maybe others
 ; Source comments by Arjen Zeilemaker
@@ -16,134 +20,136 @@
 M0D0C	EQU	0D0CH	; bios: pop af, pop bc, pop de, pop hl, ret
 D0004	EQU	0004H	; address pattern generator
 D0006	EQU	0006H	; address vdp dataport (read)
-CALSLT	EQU	001CH	; JC---
-IDBYT2	EQU	002DH	; ---L-
-WRTVDP	EQU	0047H	; JC--I
-RDVRM	EQU	004AH	; -C---
-WRTVRM	EQU	004DH	; -C---
-FILVRM	EQU	0056H	; JC---
-LDIRMV	EQU	0059H	; J----
-LDIRVM	EQU	005CH	; J----
-CHGMOD	EQU	005FH	; -C---
-GICINI	EQU	0090H	; -C---
-CHSNS	EQU	009CH	; -C---
-CHGET	EQU	009FH	; JC---
-CHPUT	EQU	00A2H	; ----I
-LPTOUT	EQU	00A5H	; -C--I
-LPTSTT	EQU	00A8H	; ----I
-BREAKX	EQU	00B7H	; ----I
-CLS	EQU	00C3H	; J----
-TOTEXT	EQU	00D2H	; ----I
-SNSMAT	EQU	0141H	; -C---
-KILBUF	EQU	0156H	; -C---
-CALBAS	EQU	0159H	; JC---
-EXTROM	EQU	015FH	; -C---
+CALSLT	EQU	001CH
+IDBYT2	EQU	002DH
+WRTVDP	EQU	0047H
+RDVRM	EQU	004AH
+WRTVRM	EQU	004DH
+FILVRM	EQU	0056H
+LDIRMV	EQU	0059H
+LDIRVM	EQU	005CH
+CHGMOD	EQU	005FH
+GICINI	EQU	0090H
+CHSNS	EQU	009CH
+CHGET	EQU	009FH
+CHPUT	EQU	00A2H
+LPTOUT	EQU	00A5H
+LPTSTT	EQU	00A8H
+BREAKX	EQU	00B7H
+BEEP    EQU     00C0H
+CLS	EQU	00C3H
+TOTEXT	EQU	00D2H
+SNSMAT	EQU	0141H
+KILBUF	EQU	0156H
+CALBAS	EQU	0159H
+EXTROM	EQU	015FH
 M4601	EQU	4601H
 CBFF0	EQU	0BFF0H
 
-S.PUTCHR	EQU	0139H	; ----I
+S.PUTCHR	EQU	0139H
 
 
 DF30F	EQU	0F30FH	; double byte header definition used by the disksystem
 DF349	EQU	0F349H	; bottom of disksystem
 DF36B	EQU	0F36BH	; enable tpa (ram) on page 1
 
-LINL40	EQU	0F3AEH	; ---L-
-LINL32	EQU	0F3AFH	; ---L-
-LINLEN	EQU	0F3B0H	; --SLI
-CRTCNT	EQU	0F3B1H	; --SLI
-CLMLST	EQU	0F3B2H	; --S--
-CLIKSW	EQU	0F3DBH	; ---L-
-CSRY	EQU	0F3DCH	; --SLI
-CSRX	EQU	0F3DDH	; ---LI
-CNSDFG	EQU	0F3DEH	; --SL-
-RG0SAV	EQU	0F3DFH	; --SL-
-RG1SAV	EQU	0F3E0H	; ---L-
-RG2SAV	EQU	0F3E1H	; ---L-
-RG7SAV	EQU	0F3E6H	; ---L-
-TRGFLG	EQU	0F3E8H	; ----I
-FORCLR	EQU	0F3E9H	; --SL-
-BAKCLR	EQU	0F3EAH	; --SLI
-SCNCNT	EQU	0F3F6H	; ----I
-REPCNT	EQU	0F3F7H	; --S-I
-PUTPNT	EQU	0F3F8H	; --SL-
-GETPNT	EQU	0F3FAH	; --SL-
-RAWPRT	EQU	0F418H	; ----I
-CURLIN	EQU	0F41CH	; ---L-
-BUFMIN	EQU	0F55DH	; ----I
-BUF	EQU	0F55EH	; --SLI
-TTYPOS	EQU	0F661H	; --S--
-VALTYP	EQU	0F663H	; --SLI
-TXTTAB	EQU	0F676H	; --SL-
-DSCTMP	EQU	0F698H	; ----I
-AUTFLG	EQU	0F6AAH	; ---L-
-OLDLIN	EQU	0F6BEH	; --S--
+WRPRIM  EQU     0F385H
+LINL40	EQU	0F3AEH
+LINL32	EQU	0F3AFH
+LINLEN	EQU	0F3B0H
+CRTCNT	EQU	0F3B1H
+CLMLST	EQU	0F3B2H
+CLIKSW	EQU	0F3DBH
+CSRY	EQU	0F3DCH
+CSRX	EQU	0F3DDH
+CNSDFG	EQU	0F3DEH
+RG0SAV	EQU	0F3DFH
+RG1SAV	EQU	0F3E0H
+RG2SAV	EQU	0F3E1H
+RG7SAV	EQU	0F3E6H
+TRGFLG	EQU	0F3E8H
+FORCLR	EQU	0F3E9H
+BAKCLR	EQU	0F3EAH
+SCNCNT	EQU	0F3F6H
+REPCNT	EQU	0F3F7H
+PUTPNT	EQU	0F3F8H
+GETPNT	EQU	0F3FAH
+RAWPRT	EQU	0F418H
+CURLIN	EQU	0F41CH
+BUFMIN	EQU	0F55DH
+BUF	EQU	0F55EH
+TTYPOS	EQU	0F661H
+VALTYP	EQU	0F663H
+TXTTAB	EQU	0F676H
+DSCTMP	EQU	0F698H
+AUTFLG	EQU	0F6AAH
+OLDLIN	EQU	0F6BEH
 OLDTXT	EQU	0F6C0H
-FUNACT	EQU	0F7BAH	; ----I
-SWPTMP	EQU	0F7BCH	; --SLI
-DECCNT	EQU	0F7F4H	; --SL-
-DAC	EQU	0F7F6H	; ----I
-HOLD8	EQU	0F806H	; --S-I
-MAXFIL	EQU	0F85FH	; --SL-
-FILTAB	EQU	0F860H	; --S--
-FNKSTR	EQU	0F87FH	; ----I
-ACPAGE	EQU	0FAF6H	; ---L-
-EXBRSA	EQU	0FAF8H	; ---L-
-CHRCNT	EQU	0FAF9H	; --S--
-MODE	EQU	0FAFCH	; ---LI
-NORUSE	EQU	0FAFDH	; --SLI
-HOKVLD	EQU	0FB20H	; --SL-
-ENSTOP	EQU	0FBB0H	; ---L-
-BASROM	EQU	0FBB1H	; ---LI
-LINTTB	EQU	0FBB2H	; --SL-
-FSTPOS	EQU	0FBCAH	; --SLI
-FNKSWI	EQU	0FBCDH	; --S--
+FUNACT	EQU	0F7BAH
+SWPTMP	EQU	0F7BCH
+DECCNT	EQU	0F7F4H
+DAC	EQU	0F7F6H
+HOLD8	EQU	0F806H
+MAXFIL	EQU	0F85FH
+FILTAB	EQU	0F860H
+FNKSTR	EQU	0F87FH
+ACPAGE	EQU	0FAF6H
+EXBRSA	EQU	0FAF8H
+CHRCNT	EQU	0FAF9H
+MODE	EQU	0FAFCH
+NORUSE	EQU	0FAFDH
+HOKVLD	EQU	0FB20H
+ENSTOP	EQU	0FBB0H
+BASROM	EQU	0FBB1H
+LINTTB	EQU	0FBB2H
+FSTPOS	EQU	0FBCAH
+FNKSWI	EQU	0FBCDH
 FNKFLG	EQU	0FBCEH
-ONGSBF	EQU	0FBD8H	; --SL-
-CLIKFL	EQU	0FBD9H	; --SL-
+ONGSBF	EQU	0FBD8H
+CLIKFL	EQU	0FBD9H
 OLDKEY	EQU	0FBDAH
-NEWKEY	EQU	0FBE5H	; ----I
-KEYBUF	EQU	0FBF0H	; ----I
-LINWRK	EQU	0FC18H	; ----I
-PATWRK	EQU	0FC40H	; ----I
-HIMEM	EQU	0FC4AH	; --SL-
+NEWKEY	EQU	0FBE5H
+KEYBUF	EQU	0FBF0H
+LINWRK	EQU	0FC18H
+PATWRK	EQU	0FC40H
+HIMEM	EQU	0FC4AH
 TRPTBL	EQU	0FC4CH
-INTFLG	EQU	0FC9BH	; --SL-
-ESCCNT	EQU	0FCA7H	; --S-I
-INSFLG	EQU	0FCA8H	; --S-I
-CSRSW	EQU	0FCA9H	; --SL-
-CSTYLE	EQU	0FCAAH	; --SL-
-CAPST	EQU	0FCABH	; ---LI
-KANAST	EQU	0FCACH	; --SL-
-KANAMD	EQU	0FCADH	; ---L-
-SCRMOD	EQU	0FCAFH	; --SL-
-OLDSCR	EQU	0FCB0H	; ---L-
-EXPTBL	EQU	0FCC1H	; ----I
-SLTWRK	EQU	0FD09H	; ----I
-PROCNM	EQU	0FD89H	; ----I
+INTFLG	EQU	0FC9BH
+ESCCNT	EQU	0FCA7H
+INSFLG	EQU	0FCA8H
+CSRSW	EQU	0FCA9H
+CSTYLE	EQU	0FCAAH
+CAPST	EQU	0FCABH
+KANAST	EQU	0FCACH
+KANAMD	EQU	0FCADH
+SCRMOD	EQU	0FCAFH
+OLDSCR	EQU	0FCB0H
+EXPTBL	EQU	0FCC1H
+SLTWRK	EQU	0FD09H
+PROCNM	EQU	0FD89H
 
-H.TIMI	EQU	0FD9FH	; --S--
+H.TIMI	EQU	0FD9FH
 H.CHPU	EQU	0FDA4H
 H.DSPC	EQU	0FDA9H
 H.ERAC	EQU	0FDAEH
 H.DSPF	EQU	0FDB3H
 H.ERAF	EQU	0FDB8H
-H.TOTE	EQU	0FDBDH	; ---L-
-D.FDBE	EQU	0FDBEH	; ---L-
+H.TOTE	EQU	0FDBDH
+D.FDBE	EQU	0FDBEH
 H.CHGE	EQU	0FDC2h
-H.KEYC	EQU	0FDCCH	; -C---
-H.KEYA	EQU	0FDD1H	; -C---
+H.KEYC	EQU	0FDCCH
+H.KEYA	EQU	0FDD1H
 H.PINL	EQU	0FDDBh
 H.INLI	EQU	0FDE5h
 H.WIDT	EQU	0FF84h
-H.PHYD	EQU	0FFA7H	; ---L-
+H.PHYD	EQU	0FFA7H
 H.LPTO	EQU	0FFB6h
 H.SCRE	EQU	0FFC0h
-EXTBIO	EQU	0FFCAH	; -CS-I
-RG8SAV	EQU	0FFE7H	; ---L-
-RG9SAV	EQU	0FFE8H	; ---L-
-RG23SA	EQU	0FFF6H	; ---LI
-RG25SA	EQU	0FFFAH	; ---L-
+EXTBIO	EQU	0FFCAH
+RG8SAV	EQU	0FFE7H
+RG9SAV	EQU	0FFE8H
+RG23SA	EQU	0FFF6H
+RG25SA	EQU	0FFFAH
 
 
 ?4000:	DEFB	"AB"
@@ -918,9 +924,9 @@ C4504:	PUSH	HL
         JR	NC,J4511
         LD	L,12+8
 J4511:	ADD	HL,SP
-        LD	(HL),8BH
+        LD	(HL),LOW (WRPRIM+6)
         INC	HL
-        LD	(HL),0F3H
+        LD	(HL),HIGH (WRPRIM+6)
         POP	AF
         POP	HL
         RET
@@ -1183,55 +1189,41 @@ J46DC:	POP	HL
         POP	AF
         RET
 
-I46DF:	DEFB	0,0
-        JR	NZ,J46EF
-        EX	AF,AF'
-        INC	BC
-        JR	NZ,J46F3
-        JR	NZ,J46F6
-        LD	B,B
-        DEC	C
-        LD	B,B
-        DEC	C
-        JR	NZ,J46FC
-J46EF:	DEFB	0,0
-        JR	Z,J46FF
-J46F3:	LD	A,(BC)
-        INC	BC
-        JR	Z,J4703
-        JR	Z,J4706
-        LD	D,B
-        DEC	C
-        LD	D,B
-J46FC:	DEC	C
-        JR	Z,J470C
-J46FF:	DEFB	0,0
-        JR	NZ,J470F
-J4703:	EX	AF,AF'
-        INC	BC
-        JR	NZ,J4713
-        JR	NZ,J4721
-        LD	B,B
-        JR	J474C
+I46DF:  DEFB    0,0
+        DEFB    32,12
+        DEFB    8,3
+        DEFB    32,12
+        DEFB    32,13
+        DEFB    64,13
+        DEFB    64,13
+        DEFB    32,13
+        DEFB    0,0
+        DEFB    40,12
+        DEFB    10,3
+        DEFB    40,12
+        DEFB    40,13
+        DEFB    80,13
+        DEFB    80,13
+        DEFB    40,13
+        DEFB    0,0
+        DEFB    32,12
+        DEFB    8,3
+        DEFB    32,12
+        DEFB    32,24
+        DEFB    64,24
+        DEFB    64,24
+        DEFB    32,24
+        DEFB    0,0
+        DEFB    40,12
+        DEFB    10,3
+        DEFB    40,12
+        DEFB    40,24
+        DEFB    80,24
+        DEFB    80,24
+        DEFB    40,24
 
-J470C:	JR	J472E
-
-?470E:	JR	J4710
-J4710:	NOP
-        JR	Z,J471F
-J4713:	LD	A,(BC)
-        INC	BC
-        JR	Z,J4723
-        JR	Z,J4731
-        LD	D,B
-        JR	J476C
-
-?471C:	JR	A4746
-
-?471E:	JR	J475A
-
-?4720:	XOR	A
-J4721:	CALL	M,C$02FE
+A471F:  LD      A,(SCRMOD)
+        CP      2                       ; graphic screen ?
         JR	NC,J4736
         CALL	C4099			; get my SLTWRK entry
         BIT	5,(IX+1)		; kanji driver active ?
@@ -1319,7 +1311,8 @@ J479B:	CALL	C4C9B
         XOR	A
         CALL	C4C6F
         LD	H,01H	; 1 
-        CALL	C4954
+
+C47A8:  CALL	C4954
         RET	NZ
         CALL	C495C
         LD	L,01H	; 1 
@@ -1356,93 +1349,69 @@ C47BD:	INC	HL
 C47D1:	PUSH	BC
         RET
 
-T47D3:	RLCA
-        RET	NZ
-        NOP
-        EX	AF,AF'
-        DEC	HL
-        LD	C,C
-        ADD	HL,BC
-        LD	H,H
-        LD	C,C
-        LD	A,(BC)
-        XOR	B
-        LD	B,A
-        DEC	BC
-        LD	(HL),D
-        LD	C,C
-        INC	C
-        ADC	A,(HL)
-        LD	C,D
-        DEC	C
-        LD	(HL),H
-        LD	C,C
-        DEC	DE
-        DEC	L
-        LD	C,B
-        INC	E
-        LD	C,(HL)
-        LD	C,C
-        DEC	E
-        DEC	HL
-        LD	C,C
-        LD	E,4AH	; "J"
-        LD	C,C
-        RRA
-I47F5:	LD	D,H
-        LD	C,C
+T47D3:  DEFB    7
+        DEFW    BEEP
+        DEFB    8
+        DEFW    C492B
+        DEFB    9
+        DEFW    C4964
+        DEFB    10
+        DEFW    C47A8
+        DEFB    11
+        DEFW    C4972
+        DEFB    12
+        DEFW    C4A8E
+        DEFB    13
+        DEFW    C4974
+        DEFB    27
+        DEFW    C482D
+        DEFB    28
+        DEFW    C494E
+        DEFB    29
+        DEFW    C492B
+        DEFB    30
+        DEFW    C494A
+        DEFB    31
+        DEFW    C4954
 
-T47F7:	LD	L,D
-        ADC	A,(HL)
-        LD	C,D
-        LD	B,L
-        ADC	A,(HL)
-        LD	C,D
-        LD	C,E
-        EI
-        LD	C,C
-        LD	C,D
-        LD	D,L
-        LD	C,D
-        LD	L,H
-        LD	SP,HL
-        LD	C,C
-        LD	C,H
-        OR	D
-        LD	C,C
-        LD	C,L
-        LD	A,B
-        LD	C,C
-        LD	E,C
-        LD	HL,(04148H)
-        LD	C,D
-        LD	C,C
-        LD	B,D
-        LD	D,H
-        LD	C,C
-        LD	B,E
-        INC	HL
-        LD	C,C
-        LD	B,H
-        LD	C,B
-        LD	C,C
-        LD	C,B
-        LD	(HL),D
-        LD	C,C
-        LD	A,B
-        INC	H
-        LD	C,B
-        LD	A,C
-        DAA
-        LD	C,B
+T47F7:	DEFB    "j"
+        DEFW    C4A8E
+        DEFB    "E"
+        DEFW    C4A8E
+        DEFB    "K"
+        DEFW    C49FB
+        DEFB    "J"
+        DEFW    C4A55
+        DEFB    "l"
+        DEFW    C49F9
+        DEFB    "L"
+        DEFW    C49B2
+        DEFB    "M"
+        DEFW    C4978
+        DEFB    "Y"
+        DEFW    C482A
+        DEFB    "A"
+        DEFW    C494A
+        DEFB    "B"
+        DEFW    C4954
+        DEFB    "C"
+        DEFW    C4923
+        DEFB    "D"
+        DEFW    C4948
+        DEFB    "H"
+        DEFW    C4972
+        DEFB    "x"
+        DEFW    C4824
+        DEFB    "y"
+        DEFW    C4827
 
-        LD	A,01H
+C4824:  LD	A,01H
         DEFB	1
-        LD	A,02H
+C4827:  LD	A,02H
         DEFB	1
-        LD	A,04H
+C482A:  LD	A,04H
         DEFB	1
-        LD	A,0FFH
+C482D:  LD	A,0FFH
         LD	(ESCCNT),A
         RET
 
@@ -1686,7 +1655,7 @@ C493E:	CALL	C4948
         RET	NZ
         LD	A,(LINLEN)
         LD	H,A
-        JR	J494A
+        JR	C494A
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1694,7 +1663,8 @@ C493E:	CALL	C4948
 
 C4948:	DEC	H
         DEFB	03EH
-J494A:	DEC	L
+
+C494A:	DEC	L
         RET	Z
         JR	C495C
 
@@ -1727,12 +1697,12 @@ J4960:	DEC	L
         XOR	A
         JR	C495C
 
-J4964:	LD	A,20H	; " "
+C4964:	LD	A,20H	; " "
         CALL	C4769
         LD	A,(CSRX)
         DEC	A
         AND	07H	; 7 
-        JR	NZ,J4964
+        JR	NZ,C4964
         RET
 
 ;	  Subroutine __________________________
@@ -1929,7 +1899,7 @@ C4A44:	LD	A,C
         RES	7,H
         RET
 
-J4A55:	PUSH	HL
+C4A55:	PUSH	HL
         CALL	C49FB
         POP	HL
         CALL	C4C76
@@ -1938,7 +1908,7 @@ J4A55:	PUSH	HL
         RET	Z
         LD	H,01H	; 1 
         INC	L
-        JR	J4A55
+        JR	C4A55
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1971,7 +1941,7 @@ A4A79:	EI
         POP	HL
         RET
 
-?4A8E:	CALL	C60BB
+C4A8E:	CALL	C60BB
         CALL	C6A65
         CALL	C4A65
 ;	  Subroutine __________________________
@@ -2615,44 +2585,36 @@ C4E02:	XOR	A
         LD	(CSTYLE),A
         JP	C4885
 
-T4E0E:	EX	AF,AF'
-        RET
+T4E0E:	DEFB    8
+        DEFW    C4FC9
+        DEFB    18
+        DEFW    C4EE8
+        DEFB    27
+        DEFW    WRPRIM+6
+        DEFB    2
+        DEFW    C5130
+        DEFB    6
+        DEFW    C511A
+        DEFB    14
+        DEFW    C50F9
+        DEFB    5
+        DEFW    C50D0
+        DEFB    3
+        DEFW    C4EB4
+        DEFB    13
+        DEFW    C4E38
+        DEFB    21
+        DEFW    C50C5
+        DEFB    127
+        DEFW    C4FF6
+        DEFB    29
+        DEFW    C51B6
+        DEFB    30
+        DEFW    C524A
+        DEFB    31
+        DEFW    C51BF
 
-?4E10:	LD	C,A
-        LD	(DE),A
-        RET	PE
-        LD	C,(HL)
-        DEC	DE
-        ADC	A,E
-        DI
-        LD	(BC),A
-        JR	NC,J4E6B
-        LD	B,1AH
-        LD	D,C
-        LD	C,0F9H
-        LD	D,B
-        DEC	B
-        RET	NC
-        LD	D,B
-        INC	BC
-        OR	H
-        LD	C,(HL)
-        DEC	C
-        JR	C,J4E77
-        DEC	D
-        PUSH	BC
-        LD	D,B
-        LD	A,A
-        OR	4FH	; "O"
-        DEC	E
-        OR	(HL)
-        LD	D,C
-        LD	E,4AH	; "J"
-        LD	D,D
-        RRA
-        CP	A
-        LD	D,C
-        CALL	C51A2
+C4E38:  CALL	C51A2
         LD	A,(AUTFLG)
         AND	A
         JR	Z,J4E43
@@ -2729,7 +2691,7 @@ C4E9D:	LD	A,1BH
         JP	C473A			; character to kanji screen
 
 J4EB3:	INC	L
-        CALL	C4C61
+C4EB4:  CALL	C4C61
         JR	Z,J4EB3
         CALL	C4E02
         XOR	A
@@ -2764,7 +2726,7 @@ C4ED4:	LD	A,(TRPTBL+3*10+0)
         SCF
         RET
 
-?4EE8:	LD	HL,INSFLG
+C4EE8:	LD	HL,INSFLG
         LD	A,(HL)
         XOR	0FFH
         LD	(HL),A
@@ -2917,7 +2879,7 @@ C4FC2:	PUSH	HL
         POP	HL
         RET
 
-?4FC9:	CALL	C489D
+C4FC9:	CALL	C489D
         CALL	C48DA
         LD	HL,(CSRY)
         DEC	A
@@ -2943,7 +2905,7 @@ J4FF0:	INC	L
         LD	(CSRY),HL
         JR	J4FF9
 
-?4FF6:	CALL	C489D
+C4FF6:	CALL	C489D
 J4FF9:	LD	HL,(CSRY)
         CALL	C4C80
         INC	A
@@ -3070,12 +3032,12 @@ J50BC:	LD	A,H
         CALL	C49FB
         JP	C4885
 
-?50C5:	CALL	C489D
+C50C5:	CALL	C489D
         CALL	C51A2
         LD	(CSRY),HL
         JR	J50E0
 
-?50D0:	CALL	C489D
+C50D0:	CALL	C489D
         CALL	C48DA
         DEC	A
         LD	HL,(CSRY)
@@ -3096,7 +3058,7 @@ J50EF:	CALL	C4885
         LD	(INSFLG),A
         JP	C4E02
 
-?50F9:	CALL	C489D
+C50F9:	CALL	C489D
         LD	HL,(CSRY)
         DEC	L
 J5100:	INC	L
@@ -3113,7 +3075,7 @@ J510B:	DEC	H
 J5115:	CALL	C494E
         JR	J50EF
 
-?511A:	CALL	C489D
+C511A:	CALL	C489D
         CALL	C5160
 J5120:	CALL	C5146
         JR	Z,J50EF
@@ -3123,7 +3085,7 @@ J5127:	CALL	C5146
         JR	NC,J5127
         JR	J50EF
 
-?5130:	CALL	C489D
+C5130:	CALL	C489D
 J5133:	CALL	C5160
         JR	Z,J50EF
         JR	NC,J5133
@@ -3208,11 +3170,11 @@ J51AA:	INC	L
         LD	HL,(FSTPOS)
         RET
 
-?51B6:	CALL	C489D
+C51B6:	CALL	C489D
         CALL	C493E
         JP	J50EF
 
-?51BF:	CALL	C489D
+C51BF:	CALL	C489D
         CALL	C51C8
         JP	J50EF
 
@@ -3303,7 +3265,7 @@ C523F:	LD	A,(HL)
         INC	HL
         JR	C523F
 
-?524A:	CALL	C489D
+C524A:	CALL	C489D
         CALL	C5253
         JP	J50EF
 
@@ -3312,10 +3274,10 @@ C523F:	LD	A,(HL)
 ;	     Outputs ________________________
 
 C5253:	CALL	C5370
-        JP	NC,J494A
+        JP	NC,C494A
         LD	A,(CSRY)
         DEC	A
-        JP	NZ,J494A
+        JP	NZ,C494A
         LD	L,00H
 J5262:	INC	L
         CALL	C52F9
@@ -3701,104 +3663,65 @@ J5491:	RRA
         POP	HL
         RET
 
-I54A0:	LD	A,(BC)
-        LD	H,B
-        LD	D,L
-        LD	D,9AH
-        LD	D,L
-        JR	NC,J551F
-        LD	D,L
-        INC	SP
-        LD	HL,(D$3456)
-        ADD	HL,SP
-        LD	D,(HL)
-        DEC	(HL)
-        ADD	A,A
-        LD	D,A
-        LD	A,(D$55B4)
-        INC	A
-        LD	HL,(D$3D56)
-        LD	C,C
-        LD	D,(HL)
-        LD	B,C
-        LD	HL,(D$4256)
-        JR	NZ,J5517
-        RST	38H
-        LD	HL,(0FF56H)
-        LD	HL,I$2322
-        INC	H
-        DEC	H
-        LD	H,27H	; "'"
-        JR	Z,J54F7
-I54CE:	LD	E,B
-        LD	D,(HL)
-        LD	E,B
-        LD	D,(HL)
-        ADC	A,H
-        LD	D,L
-        ADC	A,(HL)
-        LD	D,L
-I54D6:	RET	M
-        LD	D,H
-        CALL	PE,C$E054
-        LD	D,H
-        CALL	NC,C$2D54
-        LD	E,(HL)
-        LD	E,H
-        LD	B,B
-        LD	E,E
-        DEC	SP
-        LD	A,(D$2C5D)
-        LD	L,2FH	; "/"
-        RST	38H
-        DEC	A
-        LD	A,(HL)
-        LD	A,H
-        LD	H,B
-        LD	A,E
-        DEC	HL
-        LD	HL,(D$3C7D)
-        LD	A,3FH	; "?"
-        LD	E,A
-        DEC	L
-J54F7:	LD	E,1CH
-        NOP
-        DEC	DE
-        DEC	SP
-        LD	A,(D$2C1D)
-        LD	L,2FH	; "/"
-        RST	38H
-        DEC	A
-        LD	E,1CH
-        NOP
-        DEC	DE
-        DEC	HL
-        LD	HL,(D$3C1D)
-        LD	A,3FH	; "?"
-        RRA
-        DEFB	0,0,0,0,0,0,0,0,0
-J5517:	DEFB	0
-        DEC	DE
-        ADD	HL,BC
-        NOP
-        EX	AF,AF'
-        JR	J552B
+I54A0:	DEFB    00AH
+        DEFW    C5560
+        DEFB    016H
+        DEFW    C559A
+        DEFB    030H
+        DEFW    C5577
+        DEFB    033H
+        DEFW    C562A
+        DEFB    034H
+        DEFW    C5639
+        DEFB    035H
+        DEFW    C5787
+        DEFB    03AH
+        DEFW    C55B4
+        DEFB    03CH
+        DEFW    C562A
+        DEFB    03DH
+        DEFW    C5649
+        DEFB    041H
+        DEFW    C562A
+        DEFB    042H
+        DEFW    C5620
+        DEFB    0FFH
+        DEFW    C562A
 
-?551E:	JR	NZ,J552C
-        LD	(DE),A
-        LD	A,A
-        DEC	E
-        LD	E,1FH
-        INC	E
-        LD	HL,(D$2F2B)
-        JR	NC,J555C
-J552B:	LD	(D$3433),A
-        DEC	(HL)
-        LD	(HL),37H	; "7"
-        JR	C,J556C
-        DEC	L
-        INC	L
-        LD	L,79H	; "y"
+I54C4:  DEFB    0FFH
+        DEFB    "!",022H,"#$%&'()"
+ 
+I54CE:  DEFW    C5658
+        DEFW    C5658
+        DEFW    C558C
+        DEFW    C558E
+
+I54D6:  DEFW    I5502-00AH
+        DEFW    I54F6-00AH
+        DEFW    I54EA-00AH
+        DEFW    I54DE-00AH
+
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_
+
+I54DE:  DEFB    "-^\@[;:],./",0FFH
+
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_ +SHIFT
+
+I54EA:  DEFB    "=~|`{+*}<>?_"
+
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_ +CTRL
+
+I54F6:  DEFB    "-",01EH,01CH,0,01BH,";:",01DH,",./",0FFH
+
+;	Table		keycodes for keys -,^,yen,@,[,;,:,],komma,.,/,_ +CTRL+SHIFT
+
+I5502:  DEFB    "=",01EH,01CH,0,01BH,"+*",01DH,"<>?",01FH
+
+I550E:  DEFB	0,0,0,0,0,0,0,0
+        DEFB	0,0,01BH,009H,0,008H,018H,00DH
+        DEFB	" ",00CH,012H,07FH,01DH,01EH,01FH,01CH
+
+C5536:  LD      A,C
         CP	0FFH
         RET	Z
         LD	HL,I54A0
@@ -3826,7 +3749,7 @@ J555C:	RET	C
         POP	DE
         JR	J5555
 
-?5560:	ADD	A,30H	; "0"
+C5560:	ADD	A,30H	; "0"
         LD	B,A
         LD	A,(NEWKEY+6)
         RRCA
@@ -3840,7 +3763,7 @@ J556C:	LD	HL,I54C4
         RET	Z
 J5574:	JP	C5658
 
-?5577:	LD	A,(NEWKEY+6)
+C5577:	LD	A,(NEWKEY+6)
         AND	03H	; 3 
         ADD	A,A
         LD	E,A
@@ -3855,8 +3778,8 @@ J5574:	JP	C5658
         SUB	15H
         JP	(HL)
 
-?558C:	ADD	A,20H	; " "
-        LD	B,A
+C558C:	ADD	A,20H	; " "
+C558E:  LD	B,A
         LD	A,(CAPST)
         CPL
         AND	20H	; " "
@@ -3864,7 +3787,7 @@ J5574:	JP	C5658
         ADD	A,40H	; "@"
         JR	J5574
 
-?559A:	LD	HL,I54D6
+C559A:	LD	HL,I54D6
         LD	A,(NEWKEY+6)
         AND	03H	; 3 
         ADD	A,A
@@ -3882,7 +3805,7 @@ J5574:	JP	C5658
         JP	NZ,C5658
         RET
 
-D$55B4:	LD	A,(NEWKEY+6)
+C55B4:	LD	A,(NEWKEY+6)
         RRCA
         JR	C,J55BE
         LD	A,C
@@ -3962,23 +3885,23 @@ C560B:	LD	A,(HL)
         LD	(ONGSBF),A
         RET
 
-?5620:	LD	A,(NEWKEY+6)
+C5620:	LD	A,(NEWKEY+6)
         RRCA
         LD	A,0CH	; 12 
         SBC	A,00H
         JR	C5658
 
-?562A:	CALL	H.KEYA
+C562A:	CALL	H.KEYA
         LD	E,A
         LD	D,00H
-        LD	HL,I54DE
+        LD	HL,I550E-030H
         ADD	HL,DE
         LD	A,(HL)
         AND	A
         RET	Z
         JR	C5658
 
-?5639:	LD	HL,CAPST
+C5639:	LD	HL,CAPST
         LD	A,(HL)
         CPL
         LD	(HL),A
@@ -3990,7 +3913,7 @@ C560B:	LD	A,(HL)
 J5646:	OUT	(0ABH),A
         RET
 
-?5649:	LD	A,(NEWKEY+6)
+C5649:	LD	A,(NEWKEY+6)
         RRCA
         RRCA
         LD	A,03H	; 3 
@@ -4065,141 +3988,42 @@ J56A1:	LD	B,00H
         XOR	20H	; " "
         RET
 
-I56BA:	RET
+;	Table		ANSI layout, without SHIFT (based on CAPS on)
 
-?56BB:	OR	C
-        OR	D
-        OR	E
-        OR	H
-        OR	L
-        PUSH	BC
-        ADD	A,0C7H
-        RET	Z
-        RST	10H
-        RET	C
-        EXX
-        JP	C,J$D3DB
-        SBC	A,0DFH
-        SUB	0DCH
-        AND	(HL)
-        DEFB	0DDH		; << Illegal Op Code Byte >>
+I56BA:	DEFB	0C9H,0B1H,0B2H,0B3H,0B4H,0B5H,0C5H,0C6H
+        DEFB	0C7H,0C8H,0D7H,0D8H,0D9H,0DAH,0DBH,0D3H
+        DEFB	0DEH,0DFH,0D6H,0DCH,0A6H,0DDH,0BBH,0C4H
+        DEFB	0C2H,0BDH,0B8H,0BEH,0BFH,0CFH,0CCH,0D0H
+        DEFB	0D1H,0D2H,0D5H,0D4H,0CDH,0CEH,0B6H,0B9H
+        DEFB	0BCH,0BAH,0CBH,0C3H,0B7H,0C1H,0CAH,0C0H
 
-        CP	E
-        CALL	NZ,C$BDC2
-        CP	B
-        CP	(HL)
-        CP	A
-        RST	08H
-        CALL	Z,C.D1D0
-        JP	NC,J$D4D5
-        CALL	C.B6CE
-        CP	C
-        CP	H
-        CP	D
-        SET	0,E
-        OR	A
-        POP	BC
-        JP	Z,J$C9C0
-        AND	A
-        XOR	B
-        XOR	C
-        XOR	D
-        XOR	E
-        PUSH	BC
-        ADD	A,0C7H
-        RET	Z
-        RST	10H
-        RET	C
-        EXX
-        JP	C,J$D3A2
-        OR	B
-        AND	E
-        XOR	(HL)
-        AND	H
-        AND	C
-        AND	L
-        CP	E
-        CALL	NZ,C$BDAF
-        CP	B
-        CP	(HL)
-        CP	A
-        RST	08H
-        CALL	Z,C.D1D0
-        JP	NC,J$ACAD
-        CALL	C.B6CE
-        CP	C
-        CP	H
-        CP	D
-        SET	0,E
-        OR	A
-        POP	BC
-        JP	Z,J$DCC0
-        RST	00H
-        CALL	Z,C$B3B1
-        OR	H
-        OR	L
-        CALL	NC,C$D6D5
-        ADC	A,0CDH
-        OR	B
-        SBC	A,0DFH
-        JP	C,J$D1B9
-        RET	Z
-        EXX
-        JP	NC,J$C1DB
-        CP	D
-        CP	A
-        CP	H
-        OR	D
-        JP	Z,J.B8B7
-        ADD	A,0CFH
-        RET
+;	Table		ANSI layout, with SHIFT (based on CAPS on)
 
-?573B:	RET	C
-        OUT	(0D0H),A
-        RST	10H
-        CP	(HL)
-        RET	NZ
-        CP	L
-        CALL	NZ,C.C5B6
-        SET	0,E
-        CP	E
-        DEFB	0DDH		; << Illegal Op Code Byte >>
+I56EA:	DEFB	0C9H,0A7H,0A8H,0A9H,0AAH,0ABH,0C5H,0C6H
+        DEFB	0C7H,0C8H,0D7H,0D8H,0D9H,0DAH,0A2H,0D3H
+        DEFB	0B0H,0A3H,0AEH,0A4H,0A1H,0A5H,0BBH,0C4H
+        DEFB	0AFH,0BDH,0B8H,0BEH,0BFH,0CFH,0CCH,0D0H
+        DEFB	0D1H,0D2H,0ADH,0ACH,0CDH,0CEH,0B6H,0B9H
+        DEFB	0BCH,0BAH,0CBH,0C3H,0B7H,0C1H,0CAH,0C0H
 
-        JP	NZ,J$C7A6
-        CALL	Z,C$A9A7
-        XOR	D
-        XOR	E
-        XOR	H
-        XOR	L
-        XOR	(HL)
-        ADC	A,0CDH
-        OR	B
-        SBC	A,0A2H
-        JP	C,J$A3B9
-        AND	H
-        AND	C
-        AND	L
-        IN	A,(0C1H)
-        CP	D
-        CP	A
-        CP	H
-        XOR	B
-        JP	Z,J.B8B7
-        ADD	A,0CFH
-        RET
+;	Table		JIS layout, without SHIFT (based on CAPS on)
 
-?576B:	RET	C
-        OUT	(0D0H),A
-        RST	10H
-        CP	(HL)
-        RET	NZ
-        CP	L
-        CALL	NZ,C.C5B6
-        SET	0,E
-        CP	E
-        DEFB	0DDH		; << Illegal Op Code Byte >>
+I571A:	DEFB	0DCH,0C7H,0CCH,0B1H,0B3H,0B4H,0B5H,0D4H
+        DEFB	0D5H,0D6H,0CEH,0CDH,0B0H,0DEH,0DFH,0DAH
+        DEFB	0B9H,0D1H,0C8H,0D9H,0D2H,0DBH,0C1H,0BAH
+        DEFB	0BFH,0BCH,0B2H,0CAH,0B7H,0B8H,0C6H,0CFH
+        DEFB	0C9H,0D8H,0D3H,0D0H,0D7H,0BEH,0C0H,0BDH
+        DEFB	0C4H,0B6H,0C5H,0CBH,0C3H,0BBH,0DDH,0C2H
 
-        XOR	A
+;	Table		JIS layout, with SHIFT (based on CAPS on)
+
+I574A:	DEFB	0A6H,0C7H,0CCH,0A7H,0A9H,0AAH,0ABH,0ACH
+        DEFB	0ADH,0AEH,0CEH,0CDH,0B0H,0DEH,0A2H,0DAH
+        DEFB	0B9H,0A3H,0A4H,0A1H,0A5H,0DBH,0C1H,0BAH
+        DEFB	0BFH,0BCH,0A8H,0CAH,0B7H,0B8H,0C6H,0CFH
+        DEFB	0C9H,0D8H,0D3H,0D0H,0D7H,0BEH,0C0H,0BDH
+        DEFB	0C4H,0B6H,0C5H,0CBH,0C3H,0BBH,0DDH,0AFH
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -4213,7 +4037,7 @@ C577A:	DI
         EI
         RET
 
-?5787:	LD	HL,MODE
+C5787:	LD	HL,MODE
         BIT	0,(HL)
         JR	Z,J5793
         XOR	A
@@ -4480,7 +4304,7 @@ J58DB:	PUSH	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C58FA:	JP	(IY+0)
+C58FA:	JP	(IY)
 
 J58FC:	CALL	C589F
         LD	A,C
@@ -7481,7 +7305,7 @@ C6A27:	EXX
 
 C6A44:	EX	AF,AF'
         EXX
-        JP	(IY+0)
+        JP	(IY)
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -8873,421 +8697,84 @@ C71F1:	LD	C,10H	; 16
         LD	C,A
         RET
 
-I71FD:	DEFB	0,0,0,0
-        LD	DE,I$3306
-        RLCA
-        RLA
-        LD	BC,I$0327
-        LD	D,C
-        LD	BC,I$0627
-        LD	(HL),C
-        LD	BC,I$0373
-        LD	H,C
-        LD	B,64H	; "d"
-        LD	B,11H	; 17 
-        INC	B
-        LD	H,L
-        LD	(BC),A
-        LD	D,L
-        DEC	B
-        LD	(HL),A
-        RLCA
+I71FD:	DEFB    00H,00H,00H,00H,11H,06H,33H,07H
+        DEFB	17H,01H,27H,03H,51H,01H,27H,06H
+	DEFB	71H,01H,73H,03H,61H,06H,64H,06H
+	DEFB	11H,04H,65H,02H,55H,05H,77H,07H
 
-I721D:	NOP
-        INC	B
-        EX	AF,AF'
-        INC	C
-        EX	AF,AF'
-        INC	C
-        EX	AF,AF'
-        INC	C
-        DJNZ	J723B
-        JR	J7245
-?7229:	JR	J7247
-?722B:	JR	J7249
-?722D:	JR	NZ,J7253
-        JR	Z,J725D
-        JR	Z,J725F
-        JR	Z,J7261
-        JR	NC,J726B
-        JR	C,J7275
-        JR	C,J7277
+I721D:	DEFB	00H,04H,08H,0CH,08H,0CH,08H,0CH
+        DEFB	10H,14H,18H,1CH,18H,1CH,18H,1CH
+	DEFB	20H,24H,28H,2CH,28H,2CH,28H,2CH
+	DEFB	30H,34H,38H,3CH,38H,3CH,38H,3CH
+	DEFB	40H,44H,48H,4CH,48H,4CH,48H,4CH
+	DEFB	50H,54H,58H,5CH,58H,5CH,58H,5CH
+	DEFB	60H,64H,68H,6CH,68H,6CH,68H,6CH
+	DEFB	70H,74H,78H,7CH,78H,7CH,78H,7CH
+	DEFB	40H,44H,48H,4CH,48H,4CH,48H,4CH
+	DEFB	50H,54H,58H,5CH,58H,5CH,58H,5CH
+	DEFB	60H,64H,68H,6CH,68H,6CH,68H,6CH
+	DEFB	70H,74H,78H,7CH,78H,7CH,78H,7CH
+	DEFB	40H,44H,48H,4CH,48H,4CH,48H,4CH
+	DEFB	50H
+        DEFB    54H,58H,5CH,58H,5CH,58H,5CH
+	DEFB	60H,64H,68H,6CH,68H,6CH,68H,6CH
+	DEFB	70H,74H,78H,7CH,78H,7CH,78H,7CH
+	DEFB	80H,84H,88H,8CH,88H,8CH,88H,8CH
+	DEFB	90H,94H,98H,9CH,98H,9CH,98H,9CH
+	DEFB	0A0H,0A4H,0A8H,0ACH,0A8H,0ACH,0A8H,0ACH
+	DEFB	0B0H,0B4H,0B8H,0BCH,0B8H,0BCH,0B8H,0BCH
+	DEFB	0C0H,0C4H,0C8H,0CCH,0C8H,0CCH,0C8H,0CCH
+	DEFB	0D0H,0D4H,0D8H,0DCH,0D8H,0DCH,0D8H,0DCH
+	DEFB	0E0H,0E4H,0E8H,0ECH,0E8H,0ECH,0E8H,0ECH
+	DEFB	0F0H,0F4H,0F8H,0FCH,0F8H,0FCH
+I72DB:  DEFB    0F8H,0FCH
+	DEFB	0C0H,0C4H,0C8H,0CCH,0C8H,0CCH,0C8H,0CCH
+	DEFB	0D0H,0D4H,0D8H,0DCH,0D8H,0DCH,0D8H,0DCH
+	DEFB	0E0H,0E4H,0E8H,0ECH,0E8H,0ECH,0E8H,0ECH
+	DEFB	0F0H,0F4H,0F8H,0FCH,0F8H,0FCH,0F8H,0FCH
+	DEFB	0C0H,0C4H,0C8H,0CCH,0C8H,0CCH,0C8H,0CCH
+	DEFB	0D0H,0D4H,0D8H,0DCH,0D8H,0DCH,0D8H,0DCH
+	DEFB	0E0H,0E4H,0E8H,0ECH,0E8H,0ECH,0E8H,0ECH
+	DEFB	0F0H,0F4H,0F8H,0FCH,0F8H,0FCH
+I731B:  DEFB    0F8H,0FCH
+I731D:	DEFB	0A7H,00H,0B1H,00H,0A8H,00H,0B2H,00H
+	DEFB	0A9H,00H,0B3H,00H,0AAH,00H,0B4H,00H
+	DEFB	0ABH,00H,0B5H,00H,0B6H,00H,0B6H,0DEH
+	DEFB	0B7H,00H,0B7H,0DEH,0B8H,00H,0B8H,0DEH
+	DEFB	0B9H,00H,0B9H,0DEH,0BAH,00H,0BAH,0DEH
+	DEFB	0BBH,00H,0BBH,0DEH,0BCH,00H,0BCH,0DEH
+	DEFB	0BDH,00H,0BDH,0DEH,0BEH,00H,0BEH,0DEH
+	DEFB	0BFH,00H,0BFH,0DEH,0C0H,00H,0C0H,0DEH
+	DEFB	0C1H,00H,0C1H,0DEH,0AFH,00H,0C2H,00H
+	DEFB	0C2H,0DEH,0C3H,00H,0C3H,0DEH,0C4H,00H
+	DEFB	0C4H,0DEH,0C5H,00H,0C6H,00H,0C7H,00H
+	DEFB	0C8H,00H,0C9H,00H,0CAH,00H,0CAH,0DEH
+	DEFB	0CAH,0DFH,0CBH,00H,0CBH,0DEH,0CBH,0DFH
+	DEFB	0CCH,00H,0CCH,0DEH,0CCH,0DFH,0CDH,00H
+	DEFB	0CDH,0DEH,0CDH,0DFH,0CEH,00H,0CEH,0DEH
+	DEFB	0CEH,0DFH,0CFH,00H,0D0H,00H,0D1H,00H
+	DEFB	0D2H,00H,0D3H,00H,0ACH,00H,0D4H,00H
+	DEFB	0ADH,00H,0D5H,00H,0AEH,00H,0D6H,00H
+	DEFB	0D7H,00H,0D8H,00H,0D9H,00H,0DAH,00H
+	DEFB	0DBH,00H,0DCH,00H,0DCH,00H,0B2H,00H
+	DEFB	0B4H,00H,0A6H,00H,0DDH,00H,0CDH,0DEH
+	DEFB	0B6H,00H,0B9H
+        DEFB    00H
 
-J723B:	JR	C,J7279
-        LD	B,B
-        LD	B,H
-        LD	C,B
-        LD	C,H
-        LD	C,B
-        LD	C,H
-        LD	C,B
-        LD	C,H
-J7245:	LD	D,B
-        LD	D,H
-J7247:	LD	E,B
-        LD	E,H
-J7249:	LD	E,B
-        LD	E,H
-        LD	E,B
-        LD	E,H
-        LD	H,B
-        LD	H,H
-        LD	L,B
-        LD	L,H
-        LD	L,B
-        LD	L,H
-J7253:	LD	L,B
-        LD	L,H
-        LD	(HL),B
-        LD	(HL),H
-        LD	A,B
-        LD	A,H
-        LD	A,B
-        LD	A,H
-        LD	A,B
-        LD	A,H
-J725D:	LD	B,B
-        LD	B,H
-J725F:	LD	C,B
-        LD	C,H
-J7261:	LD	C,B
-        LD	C,H
-        LD	C,B
-        LD	C,H
-        LD	D,B
-        LD	D,H
-        LD	E,B
-        LD	E,H
-        LD	E,B
-        LD	E,H
-J726B:	LD	E,B
-        LD	E,H
-        LD	H,B
-        LD	H,H
-        LD	L,B
-        LD	L,H
-        LD	L,B
-        LD	L,H
-        LD	L,B
-        LD	L,H
-J7275:	LD	(HL),B
-        LD	(HL),H
-J7277:	LD	A,B
-        LD	A,H
-J7279:	LD	A,B
-        LD	A,H
-        LD	A,B
-        LD	A,H
-        LD	B,B
-        LD	B,H
-        LD	C,B
-        LD	C,H
-        LD	C,B
-        LD	C,H
-        LD	C,B
-        LD	C,H
-        LD	D,B
-        LD	D,H
-        LD	E,B
-        LD	E,H
-        LD	E,B
-        LD	E,H
-        LD	E,B
-        LD	E,H
-        LD	H,B
-        LD	H,H
-        LD	L,B
-        LD	L,H
-        LD	L,B
-        LD	L,H
-        LD	L,B
-        LD	L,H
-        LD	(HL),B
-        LD	(HL),H
-        LD	A,B
-        LD	A,H
-        LD	A,B
-        LD	A,H
-        LD	A,B
-        LD	A,H
-        ADD	A,B
-        ADD	A,H
-        ADC	A,B
-        ADC	A,H
-        ADC	A,B
-        ADC	A,H
-        ADC	A,B
-        ADC	A,H
-        SUB	B
-        SUB	H
-        SBC	A,B
-        SBC	A,H
-        SBC	A,B
-        SBC	A,H
-        SBC	A,B
-        SBC	A,H
-        AND	B
-        AND	H
-        XOR	B
-        XOR	H
-        XOR	B
-        XOR	H
-        XOR	B
-        XOR	H
-        OR	B
-        OR	H
-        CP	B
-        CP	H
-        CP	B
-        CP	H
-        CP	B
-        CP	H
-        RET	NZ
-        CALL	NZ,C.CCC8
-        RET	Z
-        CALL	Z,C.CCC8
-        RET	NC
-        CALL	NC,C.DCD8
-        RET	C
-        CALL	C,C.DCD8
-        RET	PO
-        CALL	PO,C.ECE8
-        RET	PE
-        CALL	PE,C.ECE8
-        RET	P
-        CALL	P,C.FCF8
-        RET	M
-        CALL	M,C.FCF8
-        RET	NZ
-        CALL	NZ,C.CCC8
-        RET	Z
-        CALL	Z,C.CCC8
-        RET	NC
-        CALL	NC,C.DCD8
-        RET	C
-        CALL	C,C.DCD8
-        RET	PO
-        CALL	PO,C.ECE8
-        RET	PE
-        CALL	PE,C.ECE8
-        RET	P
-        CALL	P,C.FCF8
-        RET	M
-        CALL	M,C.FCF8
-        RET	NZ
-        CALL	NZ,C.CCC8
-        RET	Z
-        CALL	Z,C.CCC8
-        RET	NC
-        CALL	NC,C.DCD8
-        RET	C
-        CALL	C,C.DCD8
-        RET	PO
-        CALL	PO,C.ECE8
-        RET	PE
-        CALL	PE,C.ECE8
-        RET	P
-        CALL	P,C.FCF8
-        RET	M
-        CALL	M,C.FCF8
+I73C9:  DEFB    21H,2AH,49H,74H
+	DEFB	70H,73H,75H,47H,4AH,4BH,76H,5CH
+	DEFB	24H,3DH,25H,3FH,27H,28H,63H,61H
+	DEFB	64H,29H,77H,4EH,6FH,4FH,30H,32H
+	DEFB	46H,50H,43H,51H,41H,23H,56H,57H
+	DEFB	22H,26H,3CH,5DH,2BH
+        DEFB    2CH
 
-T731D:	AND	A
-        NOP
-        OR	C
-        NOP
-        XOR	B
-        NOP
-        OR	D
-        NOP
-        XOR	C
-        NOP
-        OR	E
-        NOP
-        XOR	D
-        NOP
-        OR	H
-        NOP
-        XOR	E
-        NOP
-        OR	L
-        NOP
-        OR	(HL)
-        NOP
-        OR	(HL)
-        SBC	A,0B7H
-        NOP
-        OR	A
-        SBC	A,0B8H
-        NOP
-        CP	B
-        SBC	A,0B9H
-        NOP
-        CP	C
-        SBC	A,0BAH
-        NOP
-        CP	D
-        SBC	A,0BBH
-        NOP
-        CP	E
-        SBC	A,0BCH
-        NOP
-        CP	H
-        SBC	A,0BDH
-        NOP
-        CP	L
-        SBC	A,0BEH
-        NOP
-        CP	(HL)
-        SBC	A,0BFH
-        NOP
-        CP	A
-        SBC	A,0C0H
-        NOP
-        RET	NZ
-        SBC	A,0C1H
-        NOP
-        POP	BC
-        SBC	A,0AFH
-        NOP
-        JP	NZ,J$C200
-        SBC	A,0C3H
-        NOP
-        JP	J$C4DE
-
-?736C:	NOP
-        CALL	NZ,C$C5DE
-        NOP
-        ADD	A,00H
-        RST	00H
-        NOP
-        RET	Z
-        NOP
-        RET
-
-?7378:	NOP
-        JP	Z,J$CA00
-        SBC	A,0CAH
-        RST	18H
-        RLC	B
-        SET	3,(HL)
-        SET	3,A
-        CALL	Z,C$CC00
-        SBC	A,0CCH
-        RST	18H
-        CALL	C$CD00
-        SBC	A,0CDH
-        RST	18H
-        ADC	A,00H
-        ADC	A,0DEH
-        ADC	A,0DFH
-        RST	08H
-        NOP
-        RET	NC
-        NOP
-        POP	DE
-        NOP
-        JP	NC,J$D300
-        NOP
-        XOR	H
-        NOP
-        CALL	NC,C$AD00
-        NOP
-        PUSH	DE
-        NOP
-        XOR	(HL)
-        NOP
-        SUB	00H
-        RST	10H
-        NOP
-        RET	C
-        NOP
-        EXX
-        NOP
-        JP	C,J$DB00
-        NOP
-        CALL	C,C$DC00
-        NOP
-        OR	D
-        NOP
-        OR	H
-        NOP
-        AND	(HL)
-        NOP
-        DEFB	0DDH		; << Illegal Op Code Byte >>
-
-        NOP
-        CALL	C$B6DE
-        NOP
-        CP	C
-        NOP
-
-T73C9:	LD	HL,I492A
-        LD	(HL),H
-        LD	(HL),B
-        LD	(HL),E
-        LD	(HL),L
-        LD	B,A
-        LD	C,D
-        LD	C,E
-        HALT
-?73D4:	LD	E,H
-        INC	H
-        DEC	A
-        DEC	H
-        CCF
-        DAA
-        JR	Z,J743F
-        LD	H,C
-        LD	H,H
-        ADD	HL,HL
-        LD	(HL),A
-        LD	C,(HL)
-        LD	L,A
-        LD	C,A
-        JR	NC,J7417
-        LD	B,(HL)
-        LD	D,B
-        LD	B,E
-        LD	D,C
-        LD	B,C
-        INC	HL
-        LD	D,(HL)
-        LD	D,A
-        LD	(D$3C26),HL
-        LD	E,L
-        DEC	HL
-        INC	L
-
-T73F3:	JR	NZ,J7416
-        LD	(D$2423),HL
-        DEC	H
-        LD	H,27H	; "'"
-        JR	Z,J7426
-        LD	HL,(D$2C2B)
-        DEC	L
-        LD	L,2FH	; "/"
-        LD	A,(D$3C3B)
-        DEC	A
-        LD	A,3FH	; "?"
-        LD	B,B
-        LD	E,E
-        LD	E,H
-        LD	E,L
-        LD	E,(HL)
-        LD	E,A
-        LD	H,B
-        LD	A,E
-        LD	A,H
-        LD	A,L
-        LD	A,(HL)
-        AND	C
-        AND	D
-J7416:	AND	E
-J7417:	AND	H
-        AND	L
-        OR	B
-        DEC	L
-        SBC	A,0DFH
+I73F3:  DEFB    20H,21H
+	DEFB	22H,23H,24H,25H,26H,27H,28H,29H
+	DEFB	2AH,2BH,2CH,2DH,2EH,2FH,3AH,3BH
+	DEFB	3CH,3DH,3EH,3FH,40H,5BH,5CH,5DH
+	DEFB	5EH,5FH,60H,7BH,7CH,7DH,7EH,0A1H
+	DEFB	0A2H,0A3H,0A4H,0A5H,0B0H,2DH,0DEH,0DFH
 
 J741D:	LD	L,(IY+12)
         LD	H,(IY+13)
@@ -10124,7 +9611,7 @@ C78CB:	EXX
 
 C78E8:	EX	AF,AF'
         EXX
-        JP	(IY+0)
+        JP	(IY)
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -10203,7 +9690,7 @@ J7949:	POP	DE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7951:	LD	DE,0222H
+C7951:	LD	DE,546
         LD	HL,(HIMEM)
         AND	A
         SBC	HL,DE
@@ -10259,5 +9746,7 @@ C79B9:	PUSH	DE
         POP	IY
         POP	DE
         RET
+
+        DEFS    8000H-$,0FFH
 
         END
