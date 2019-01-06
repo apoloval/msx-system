@@ -898,7 +898,7 @@ C0336:	LD	HL,I29F6
 
         XOR	A
 
-        IFNDEF	FS-A1FM	
+        IFNDEF	FSA1FM	
         LD	C,0FFH			; assume internal devices should be enabled
         ELSE
         LD	C,0FDH
@@ -9602,7 +9602,7 @@ J3509:	DI
         CALL	C3597			; wait ? and read 4 inputbits (DY3-DY0)
         PUSH	AF
 
-        IFNDEF	FS-5500
+        IFNDEF	FS5500
         CALL	C3585			; pulse high
         ELSE
         CALL	C3F8B
@@ -9730,7 +9730,7 @@ C35A3:	OUT	(0A0H),A
 ;	     Outputs ________________________
 
 C35AA:
-        IFNDEF	FS-5500
+        IFNDEF	FS5500
         EX	(SP),HL
         EX	(SP),HL
         EX	(SP),HL
@@ -11498,7 +11498,7 @@ I3CEC:	DEFB	00AH			; id
         DEFB	001H			; beep tone 0, volume 1
         DEFB	000H			; title color
 
-        IFNDEF	HB-F9P
+        IFNDEF	HBF9P
         DEFB	003H			; native code
         ELSE
         DEFB	005H
@@ -11509,7 +11509,7 @@ I3CEC:	DEFB	00AH			; id
         ENDIF
 
 
-        IFDEF	FS-5500
+        IFDEF	FS5500
         
 C3F8B:	LD	D,48
 J3F8D:	DEC	D

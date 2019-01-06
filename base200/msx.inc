@@ -1,5 +1,9 @@
 
-
+; Special versions
+;
+; FS5500 EQU 1							; National FS-5500F1 mouse timing
+; HBF9P EQU 1							; Sony HB-F9P country code
+; FSA1FM EQU 1							; Panasonic FS-A1FM internal devices
 
 MSXVER	EQU	1			; MSX version
 

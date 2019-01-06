@@ -125,7 +125,7 @@ M.0431          EQU     0431H
 
 JF37D		EQU	0F37DH	; BDOS routine for diskbasic
 VARWRK		EQU	0F380H
-.LOW		EQU	0F406h
+LOW.		EQU	0F406h
 ERRFLG		EQU	0F414H
 LPTPOS		EQU	0F415H
 PRTFLG		EQU	0F416H
@@ -566,7 +566,7 @@ I392E:	DEFW	C63EA			; END
         DEFW	C4016			; OUT
         DEFW	C4A1D			; LPRINT
         DEFW	C5229			; LLIST
-         DEFW	CLS			; CLS
+        DEFW	CLS			; CLS
         DEFW	C51C9			; WIDTH
         DEFW	C485D			; ELSE, skip to end of BASIC line
         DEFW	C6438			; TRON
@@ -12118,7 +12118,7 @@ A7A2D:	call	C521C
         ld	hl,CS1200
         jr	z,A7A41
         add	hl,bc
-A7A41:	ld	de,.LOW
+A7A41:	ld	de,LOW.
         ldir
         pop	hl
         ret
@@ -12449,6 +12449,23 @@ J7B80:	RR	C
         IM	1				; switch to interrupt mode 1 (Z80 defaults to mode 0)
         JP	C7C76				; continue with system initialization
 
+
+        IF      INTHZ EQ 50
+
+;       Subroutine      patchroutine for PAL setup of VDP (part 2)
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+PTCPA2: LD      HL,0A0F9H
+PTCPA1: DEC     HL
+        LD      A,H
+        OR      L
+        JR      NZ,PTCPA1               ; wait
+        JP      M.0431                  ; resume orginal routine
+
+        ENDIF
+
+
         DEFS	07BCBH-$,0			; remaining space
 
 ;	Subroutine	BASE function
@@ -12471,7 +12488,10 @@ J7BCB:
 ; #####################
 ;	because of the above code, 7BD2-7BE1 is free for other use
 
-;       Subroutine      patchroutine for PAL setup of VDP
+
+        IF      INTHZ EQ 50
+
+;       Subroutine      patchroutine for PAL setup of VDP (part 1)
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
@@ -12481,12 +12501,9 @@ PTCPAL: LD      A,50H
         OUT     (99H),A
         LD      A,89H
         OUT     (99H),A
-        LD      HL,0A0F9H
-PTCPA1: DEC     HL
-        LD      A,H
-        OR      L
-        JR      NZ,PTCPA1               ; wait
-        JP      M.0431                  ; resume orginal routine
+        JP      PTCPA2
+
+        ENDIF
 
 
         DEFS	07BE2H-$,0			; remaining space
