@@ -5101,7 +5101,7 @@ J55DB:	PUSH	BC
         POP	HL
         DEC	HL
         RST	CHRGTR			; get next BASIC character
-        CALL	C79C2			; call statement handler
+        CALL	CALSLT			; call statement handler
         POP	DE
         POP	BC
         JR	C,J55D5			; statement not recognized, try next
@@ -12059,11 +12059,7 @@ C79A9:	RET	NZ
 J79BE:	XOR	A
         JP	CLS
 
-C79C2:	EX	AF,AF'
-        BIT	7,D
-        JP	NZ,J7BD2
-        EX	AF,AF'
-        JP	CALSLT
+        DEFS	079CCH-$,0
 
 ;	Subroutine	SCREEN statement
 ;	Inputs		________________________
@@ -12505,13 +12501,7 @@ J7BCB:
 ; #####################
 ;	because of the above code, 7BD2-7BE1 is free for other use
 
-J7BD2:	EX	AF,AF'
-        LD	(BUF+256),SP
-        LD	SP,BUF+256
-        CALL	CALSLT
-        LD	SP,(BUF+256)
-        RET
-
+        DEFS	07BE2H-$,0
 
 ;	Subroutine	VPOKE statement
 ;	Inputs		________________________
