@@ -10930,7 +10930,16 @@ I3C87:	DEFB	"Too many files"
 I3C96:	DEFB	"RAM disk offline"
         DEFB	0
 
-        IF	CNTRY EQ 0
+; *************************************
+; PUTCHR and KYKLOK
+; *************************************
+
+        IF	KEYTYP EQ 0
+
+; Japanese version
+
+; routine to handle special keys (non letter) in SHIFT KANA mode
+
 J3CA7:	LD	HL,KANAMD
         INC	(HL)
         DEC	(HL)			; ANSI layout ?
@@ -11432,22 +11441,9 @@ I3F71:	DEFB	0FDH,0F4H,092H,0F5H,092H,0F6H,0F7H,0F8H
 
         ENDIF
 
-        IF	CNTRY NE 0
+        IF	KEYTYP NE 0
 
-J3F04:	PUSH	AF
-        LD	A,0FH
-        OUT	(0A0H),A
-        IN	A,(0A2H)
-        AND	7FH
-        LD	B,A
-        POP	AF
-        OR	A
-        LD	A,80H
-        JR	Z,J3F3A
-        XOR	A
-J3F3A:	OR	B
-        OUT	(0A1H),A
-        RET
+; International version, officially not needed
 
 C3CA7:	CALL	C1947
         DEC	HL
@@ -11474,7 +11470,7 @@ J3CC0:	INC	HL
 C3CC3:	LD	(AVCSAV),A
         XOR	A
         OUT	(0F8H),A
-J3CC9:	LD	(DFFF8),A
+	LD	(DFFF8),A
 J3CCC:	RET
 
 C3CCD:	RST	28H
@@ -11521,6 +11517,74 @@ I3CEC:	DEFB	00AH			; id
         ENDIF
 
         DEFB	0FFH
+
+
+;	Subroutine	PUTCHR
+;	Inputs		________________________
+;	Outputs		________________________
+
+J3CC9:	PUSH	AF
+        CALL	X3E78			; keyclick
+        POP	AF
+
+;	Subroutine	__________________________
+;	Inputs		________________________
+;	Outputs		________________________
+
+C3E62:	LD	HL,(PUTPNT)
+        LD	(HL),A
+        INC	HL
+        LD	A,L
+        CP	(KEYBUF+40) AND 255
+        JR	NZ,J3E6F
+        LD	HL,KEYBUF
+J3E6F:	LD	A,(GETPNT)
+        CP	L
+        RET	Z
+        LD	(PUTPNT),HL
+        RET
+
+;	Subroutine	KYKLOK
+;	Inputs		________________________
+;	Outputs		________________________
+
+J3F04:	LD	A,(NEWKEY+6)
+        LD	E,A
+        OR	0FEH			; only SHIFT status remains
+        BIT	4,E
+        JR	NZ,X3E96		; CODE not pressed,
+        AND	0FDH
+X3E96:	CPL
+        INC	A
+        LD	(KANAST),A		; dead status
+
+
+
+;	Subroutine	keyclick
+;	Inputs		________________________
+;	Outputs		________________________
+
+X3E78:	LD	A,(CLIKSW)
+        AND	A
+        RET	Z
+        LD	A,(CLIKFL)
+        AND	A
+        RET	NZ
+        LD	A,0FH
+        LD	(CLIKFL),A
+        DI
+        OUT	(0ABH),A
+        LD	A,0AH
+X3E8C:	DEC	A
+        JR	NZ,X3E8C		; wait 0.05 ms (in Z80 mode!)
+        LD	A,0EH
+        OUT	(0ABH),A
+        EI
+        RET
+
+; *************************************
+; End of PUTCHR and KYKLOK
+; *************************************
 
         ENDIF
 
