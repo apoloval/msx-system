@@ -194,6 +194,7 @@ RG10SA	EQU	0FFE9H
 RG11SA	EQU	0FFEAH
 RG18SA	EQU	0FFF1H
 DFFF7	EQU	0FFF7H
+DFFF8   EQU     0FFF8H
 DFFFF	EQU	0FFFFH
 
         DEFB	"CD"
@@ -11433,6 +11434,21 @@ I3F71:	DEFB	0FDH,0F4H,092H,0F5H,092H,0F6H,0F7H,0F8H
 
         IF	CNTRY NE 0
 
+J3F04:	PUSH	AF
+        LD	A,0FH
+        OUT	(0A0H),A
+        IN	A,(0A2H)
+        AND	7FH
+        LD	B,A
+        POP	AF
+        OR	A
+        LD	A,80H
+        JR	Z,J3F3A
+        XOR	A
+J3F3A:	OR	B
+        OUT	(0A1H),A
+        RET
+
 C3CA7:	CALL	C1947
         DEC	HL
         LD	C,(HL)
@@ -11455,10 +11471,10 @@ J3CC0:	INC	HL
         LD	(HL),E
         RET
 
-C3CC3:	LD	(D.FAF7),A
+C3CC3:	LD	(AVCSAV),A
         XOR	A
         OUT	(0F8H),A
-J3CC9:	LD	(D.FFF8),A
+J3CC9:	LD	(DFFF8),A
 J3CCC:	RET
 
 C3CCD:	RST	28H
@@ -11477,7 +11493,7 @@ J3CD0:	RET	NC
         RET
 
 C3CE1:	PUSH	HL
-J3CE2:	LD	HL,D.FFF8
+J3CE2:	LD	HL,DFFF8
         AND	(HL)
         OR	E
         LD	(HL),A

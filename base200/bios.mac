@@ -68,6 +68,8 @@ M7E1A   EQU     7E1AH   ; read word from extension ROM
 M7FBE   EQU     7FBEH   ; helper routine RDSLT in basicrom
 M7FC4   EQU     7FC4H   ; helper routine WRSLT in basicrom
 
+PTCPAL  EQU     7BD2H
+
 RDPRIM  EQU     0F380H
 WRPRIM  EQU     0F385H
 CLPRIM  EQU     0F38CH
