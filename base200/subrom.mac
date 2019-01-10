@@ -4846,81 +4846,126 @@ C188E:	LD	A,"/"
         CALL	C195E
 
         IF	DATFMT EQ 0
-        JR	Z,J18A6
-        CP	24H
-        JR	NC,J18C0
+
+	JR	Z,J18A6
+	CP	24H
+	JR	NC,J18C0
 J18A6:	LD	B,A
-        CALL	C1956
-        JR	Z,J18B0
-        CP	60H
-        JR	J18B2
+	CALL	C1956
+	JR	Z,J18B0
+	CP	60H
+	JR	J18B2
 
 J18B0:	CP	13H
 J18B2:	JR	NC,J18C0
-        LD	C,A
-        CALL	C1956
-        JR	Z,J18BE
-        CP	60H
-        JR	J18C0
-
+	LD	C,A
+	CALL	C1956
+	JR	Z,J18BE
+	CP	60H
+	JR	J18C0
 J18BE:	CP	32H
-J18C0:	JP	NC,J0546		; illegal function call error
-        LD	D,A
-        POP	HL
-        PUSH	IX
-        DEC	HL
-        RST	10H
-        POP	IX
-        LD	A,00H
-        JR	Z,J18D9
-        PUSH	IX
-        RST	08H
-        DEFB	","
-        RST	08H
-        DEFB	"A"
-        POP	IX
-        OR	01H
-        ENDIF
+J18C0:	JP	NC,J0546
+	LD	D,A
+	POP	HL
+	PUSH	IX
+	DEC	HL
+	RST	10H
+	POP	IX
+	LD	A,00H
+	JR	Z,J18D9
+	PUSH	IX
+	RST	08H
+	DEFB    ","
+	RST	08H
+	DEFB    "A"
+	POP	IX
+        OR	01H 
+
+	ENDIF
+
+        IF	DATFMT EQ 1
+
+	LD	E,24H
+	JR	NZ,J18A7
+	LD	D,A
+	LD	E,13H
+J18A7:	CP	E
+	JR	NC,J18C4
+	LD	B,A
+	CALL	C1956
+	LD	E,32H
+	JR	Z,J18B4
+	LD	E,60H
+J18B4:	CP	E
+	JR	NC,J18C4
+	LD	C,A
+	CALL	C1956
+	JR	NZ,J18C2
+	LD	B,A
+	LD	A,C
+	LD	C,D
+	JR	J18C7
+
+J18C2:	CP	60H
+J18C4:	JP	NC,J0546
+J18C7:	LD	D,A
+	POP	HL
+	PUSH	IX
+	DEC	HL
+	RST	10H
+	LD	A,00H
+	JR	Z,J18D7
+	RST	08H
+	DEFB    ","
+	RST	08H
+	DEFB    "A"
+        OR	01H 
+J18D7:	POP	IX
+
+	ENDIF
 
         IF	DATFMT EQ 2
-        LD	E,24H
-        JR	NZ,J18A7
-        LD	D,A
-        LD	E,32H
+
+	LD	E,24H
+	JR	NZ,J18A7
+	LD	D,A
+	LD	E,32H
 J18A7:	CP	E
-        JR	NC,J18C3
-        LD	B,A
-        CALL	C1956
-        LD	E,13H
-        JR	Z,J18B4
-        LD	E,60H
+	JR	NC,J18C3
+	LD	B,A
+	CALL	C1956
+	LD	E,13H
+	JR	Z,J18B4
+	LD	E,60H
 J18B4:	CP	E
-        JR	NC,J18C3
-        LD	C,A
-        CALL	C1956
-        JR	NZ,J18C0
-        LD	B,A
-        JR	J18C6
+	JR	NC,J18C3
+	LD	C,A
+	CALL	C1956
+	JR	NZ,J18C0
+	LD	B,A
+	JR	J18C6
 
 J18C0:	LD	D,A
-        CP	60H
+	CP	60H
 J18C3:	JP	NC,J0546
 J18C6:	POP	HL
-        PUSH	IX
-        DEC	HL
-        RST	10H
-        LD	A,0
-        JR	Z,J18D5
-        RST	08H
-        DEFB	","
-        RST	08H
-        DEFB	",A"
-        OR	01H 
+	PUSH	IX
+	DEC	HL
+	RST	10H
+	LD	A,00H
+	JR	Z,J18D5
+	RST	08H
+	DEFB    ","
+	RST	08H
+	DEFB    "A"
+	OR	01H
 J18D5:	POP	IX
         NOP
         NOP
-        ENDIF
 
+	ENDIF
+
+	
 J18D9:	PUSH	HL
         PUSH	AF
         PUSH	BC
@@ -11443,7 +11488,35 @@ I3F71:	DEFB	0FDH,0F4H,092H,0F5H,092H,0F6H,0F7H,0F8H
 
         IF	KEYTYP NE 0
 
-; International version, officially not needed
+        IF	DATFMT EQ 1
+
+C3CA7:	CALL	C1947
+	LD	BC,-8
+	ADD	HL,BC
+	LD	D,H
+	LD	E,L
+	LD	B,(HL)
+	INC	HL
+	LD	C,(HL)
+	INC	HL
+	BIT	4,(HL)
+	RET	NZ
+	INC	HL
+	PUSH	BC
+	LD	BC,5
+	LDIR
+	POP	BC
+	INC	DE
+	EX	DE,HL
+	LD	(HL),B
+	INC	HL
+	LD	(HL),C
+	RET
+
+        ENDIF
+
+
+        IF	DATFMT EQ 1
 
 C3CA7:	CALL	C1947
         DEC	HL
@@ -11466,6 +11539,9 @@ J3CBE:	ADD	HL,BC
 J3CC0:	INC	HL
         LD	(HL),E
         RET
+
+        ENDIF
+
 
 C3CC3:	LD	(AVCSAV),A
         XOR	A
@@ -11518,6 +11594,8 @@ I3CEC:	DEFB	00AH			; id
 
         DEFB	0FFH
 
+
+; International version, officially not needed
 
 ;	Subroutine	PUTCHR
 ;	Inputs		________________________
