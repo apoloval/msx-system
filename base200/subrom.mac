@@ -4603,12 +4603,12 @@ J16FE:	POP	BC
         PUSH	HL
         LD	A,(DE)
         RLCA
-        AND	01H	; 1 
+        AND	01H
         LD	B,A
         LD	C,04H
         CALL	C194B			; change RP-501 register 13
-        LD	C,02H	; 2 
-J1718:	LD	B,02H	; 2 
+        LD	C,2
+J1718:	LD	B,2
 J171A:	LD	A,(DE)
         INC	A
         JR	Z,J1723
@@ -4621,8 +4621,8 @@ J1723:	INC	DE
         EX	DE,HL
         DEC	DE
         DAA
-        AND	0FH	; 15 
-        OR	30H	; "0"
+        AND	0FH
+        OR	"0"
         LD	(HL),A
         INC	DE
         INC	DE
@@ -4647,7 +4647,7 @@ J173E:
 
         POP	DE
         POP	HL
-        LD	(HL),08H	; 8 
+        LD	(HL),8
         INC	HL
         LD	(HL),E
         INC	HL
@@ -4655,15 +4655,11 @@ J173E:
         POP	HL
         RET
 
-I174B:	DEFB	05H,00H,04H,00H,":",03H,00H,02H
-        DEFB	00H,":",01H,00H,00H,00H,85H,00H
-        DEFB	84H,00H,":",83H,00H,82H,00H,":"
-        DEFB	81H,00H,80H,00H
+I174B:	DEFB	05H,00H,04H,00H,":",03H,00H,02H,00H,":",01H,00H,00H,00H
+        DEFB    85H,00H,84H,00H,":",83H,00H,82H,00H,":",81H,00H,80H,00H
 
-I1767:	DEFB	0CH,08H,0BH,00H,"/",0AH,00H,09H
-        DEFB	00H,"/",08H,00H,07H,00H,0FFH,00H
-        DEFB	0FFH,00H,"/",0FFH
-        DEFB	00H,0FFH,00H,"/",88H,00H,87H,00H
+I1767:	DEFB	0CH,08H,0BH,00H,"/",0AH,00H,09H,00H,"/",08H,00H,07H,00H
+        DEFB    0FFH,00H,0FFH,00H,"/",0FFH,00H,0FFH,00H,"/",88H,00H,87H,00H
 
 ;	  Subroutine SET SCREEN statement
 ;	     Inputs  ________________________
@@ -11516,7 +11512,7 @@ C3CA7:	CALL	C1947
         ENDIF
 
 
-        IF	DATFMT EQ 1
+        IF	DATFMT EQ 2
 
 C3CA7:	CALL	C1947
         DEC	HL
