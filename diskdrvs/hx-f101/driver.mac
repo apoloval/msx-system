@@ -1,0 +1,1700 @@
+; Diskdriver Toshiba HX-F101 (external floppydisk controller)
+; FDC	unknown, wd1793 compatible
+
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+
+; Code Copyrighted by JVC and maybe others
+; Source comments by Arjen Zeilemaker
+
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+; Driver
+
+MYSIZE		equ	9
+
+				; +0
+				; +1	drive motor stop timer
+				; +2	saved current track physical drive 0
+				; +3	saved current track physical drive 1
+				; +4	current phantom drive (used with 1 physical drive)
+				; +5	saved drivenumber (DSKFMT)
+				; +6	saved RAWFLG (DSKFMT)
+				; +7	not used
+				; +8	number of physical drives
+
+SECLEN		equ	512
+
+C.0000	EQU	0000H	; -C--I
+I.0001	EQU	0001H	; ----I
+I$0002	EQU	0002H	; ----I
+I$0003	EQU	0003H	; ----I
+I$0004	EQU	0004H	; ----I
+I$0009	EQU	0009H	; ----I
+I$0012	EQU	0012H	; ----I
+J$0024	EQU	0024H	; J----
+C.0038	EQU	0038H	; -C---
+I$00C5	EQU	00C5H	; ----I
+J.0100	EQU	0100H	; J---I
+D$0101	EQU	0101H	; ---L-
+I.0102	EQU	0102H	; ----I
+I$013B	EQU	013BH	; ----I
+I.01F8	EQU	01F8H	; ----I
+C.0200	EQU	0200H	; JC--I
+I$023E	EQU	023EH	; ----I
+I.0301	EQU	0301H	; ----I
+J$0302	EQU	0302H	; J----
+I.0502	EQU	0502H	; ----I
+I$063E	EQU	063EH	; ----I
+I.0960	EQU	0960H	; ----I
+D$322E	EQU	322EH	; --S--
+I$3430	EQU	3430H	; ----I
+I$3F00	EQU	3F00H	; ----I
+J$4022	EQU	4022H	; J----
+J$8008	EQU	8008H	; J----
+J$8015	EQU	8015H	; J----
+I$AFC8	EQU	0AFC8H	; ----I
+I$BB80	EQU	0BB80H	; ----I
+BDOS	EQU	0F37DH	; -C---
+D$FF06	EQU	0FF06H	; ---L-
+
+?.7405:	DEFB	"Producted by TOSHIBA CORPORATION.Program --- by Yasuo Shimizu ( HS dev. HSA group )"
+
+I$7458:
+DEFDPB	EQU	$-1
+
+	DEFB	0F8h		; Media F8
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 9 sectors
+        DEFB	04h		; 1 side
+        DEFB	01h		; 3.5" 360 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	12
+        DEFW	355
+        DEFB	2
+        DEFW	5
+
+        DEFB	0F9h		; Media F9
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 9 sectors
+        DEFB	04h		; 2 sides
+        DEFB	01h		; 3.5" 720 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	14
+        DEFW	714
+        DEFB	3
+        DEFW	7
+
+        DEFB	0FAh		; Media FA
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 8 sectors
+        DEFB	04h		; 1 side
+        DEFB	01h		; 3.5" 320 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	10
+        DEFW	316
+        DEFB	1
+        DEFW	3
+
+        DEFB	0FBh		; Media FB
+        DEFW	512		; 80 Tracks
+        DEFB	0Fh		; 8 sectors
+        DEFB	04h		; 2 sides
+        DEFB	01h		; 3.5" 640 Kb
+        DEFB	02h
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	12
+        DEFW	635
+        DEFB	2
+        DEFW	5
+
+        DEFB	0FCH
+        DEFW	512
+        DEFB	0FH
+        DEFB	04H
+        DEFB	00H
+        DEFB	01H
+        DEFW	1
+        DEFB	2
+        DEFB	64
+        DEFW	9
+        DEFW	0160H
+        DEFB	2
+        DEFW	5
+
+        DEFB	0FDH
+        DEFW	512
+        DEFB	0FH
+        DEFB	04H
+        DEFB	01H
+        DEFB	02H
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	12
+        DEFW	0163H
+        DEFB	2
+        DEFW	5
+
+        DEFB	0FEH
+        DEFW	512
+        DEFB	0FH
+        DEFB	04H
+        DEFB	00H
+        DEFB	01H
+        DEFW	1
+        DEFB	2
+        DEFB	64
+        DEFW	7
+        DEFW	013AH
+        DEFB	1
+        DEFW	3
+
+        DEFB	0FFH
+        DEFW	512
+        DEFB	0FH
+        DEFB	04H
+        DEFB	01H
+        DEFB	02H
+        DEFW	1
+        DEFB	2
+        DEFB	112
+        DEFW	10
+        DEFW	013CH
+        DEFB	1
+        DEFW	3
+
+OEMSTA:
+J$74E8:	SCF
+	RET
+
+;	  Subroutine INIHRD
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+J.74EA:	CALL	C$7C53			; some sort of hardware ready test ?
+	JR	C,J.74EA		; nope, wait
+	LD	A,0D0H
+	LD	(D.7FF0),A		; execute terminate without interrupt command
+	CALL	C$7CB3
+	CALL	C$7CB9			; wait ?? ms
+	LD	A,1
+	LD	(D.7FF5),A		; select physical drive 1
+	LD	A,00H
+	LD	(D.7FF4),A		; FDD motor off
+	LD	A,0			; drive 0
+	CALL	C.7C70			; seek to track 0
+	JR	C,J.74EA		; failed,
+	LD	A,00H
+	LD	(D.7FF4),A		; FDD motor off
+	RET
+
+DRIVES:
+J$7511:	PUSH	BC
+	PUSH	AF
+	CALL	GETWRK
+	LD	A,1			; drive 1
+	CALL	C.7C70			; seek to track 0
+	LD	L,2
+	JR	NC,J$7520		; ok, 2 physical drives connected
+	DEC	L			; failed, 1 physical drive connected
+J$7520:	LD	(IX+8),L		; number of physical drives
+	LD	A,0
+	LD	(D.7FF5),A		; select physical drive 0
+	POP	AF
+	JR	Z,J$752D
+	LD	L,2
+J$752D:	POP	BC
+	RET
+
+INIENV:
+J$752F:	CALL	GETWRK
+	XOR	A
+	LD	B,9-1
+J$7535:	LD	(HL),A
+	INC	HL
+	DJNZ	J$7535
+	LD	HL,I$7C31
+	JP	SETINT
+
+DSKIO:
+J$753F:	EI
+	LD	IX,I.754C
+	PUSH	IX
+	JP	NC,C.76CF
+	JP	C.7556
+;	-----------------
+I.754C:	PUSH	AF
+	LD	A,248
+	DI
+	LD	(IX+1),A
+	EI
+	POP	AF
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C.7556:	CALL	C.7780
+	RET	C
+J$755A:	LD	A,H
+	AND	A
+	JP	M,J.757E
+	CP	3EH	; ">"
+	JR	C,J.757E
+	LD	DE,($SECBUF)
+	PUSH	HL
+	PUSH	BC
+	LD	BC,SECLEN
+	PUSH	IX
+	CALL	XFER
+	POP	IX
+	LD	HL,($SECBUF)
+	CALL	C.758E
+	POP	BC
+	POP	HL
+	RET	C
+	JR	J$7582
+;	-----------------
+J.757E:	CALL	C.758E
+	RET	C
+J$7582:	DEC	B
+	RET	Z
+	CALL	C.7690
+	RET	C
+	JR	J$755A
+;	-----------------
+?.758A:	LD	A,0CH	; 12 
+	SCF
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C.758E:	LD	E,03H	; 3 
+	CALL	C.75DD
+	JR	NC,J$75A6
+	JP	M,J.75C5
+	BIT	6,A
+	JR	NZ,J.75C5
+	CALL	C.788C
+	LD	E,02H	; 2 
+	CALL	C.75DD
+	JR	C,J.75C5
+J$75A6:	LD	A,(RAWFLG)
+	OR	A
+	RET	Z
+	CALL	C.7628
+	RET	NC
+	JP	M,J.75C5
+	LD	D,03H	; 3 
+J$75B4:	LD	E,01H	; 1 
+	CALL	C.75DD
+	JR	C,J.75C5
+	CALL	C.7628
+	RET	NC
+	JP	M,J.75C5
+	DEC	D
+	JR	NZ,J$75B4
+J.75C5:	LD	E,A
+	LD	A,02H	; 2 
+	BIT	7,E
+	RET	NZ
+	LD	A,00H
+	BIT	6,E
+	RET	NZ
+	LD	A,08H	; 8 
+	BIT	4,E
+	RET	NZ
+	LD	A,04H	; 4 
+	BIT	3,E
+	RET	NZ
+	LD	A,0CH	; 12 
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.75DD:	PUSH	HL
+	PUSH	DE
+	PUSH	BC
+	PUSH	IX
+	PUSH	IY
+	CALL	C.7CAB			; wait for command ready
+	PUSH	HL
+	CALL	DISINT
+	POP	HL
+	DI
+	LD	A,0A0H			; WRITE SECTOR
+	LD	(D.7FF0),A		; 
+	LD	BC,I.7FF7
+	LD	DE,I$760D
+	PUSH	DE
+	LD	DE,D.7FF3
+	LD	IY,J.7602
+	EX	(SP),HL
+	EX	(SP),HL
+J.7602:	LD	A,(BC)
+	ADD	A,A
+	RET	P			; IRQ, quit
+	JP	C,J.7602		; no DRQ, wait
+	LD	A,(HL)
+	LD	(DE),A
+	INC	HL
+	JP	(IY)
+;	-----------------
+I$760D:	EI
+	CALL	ENAINT
+	POP	IY
+	POP	IX
+	POP	BC
+	POP	DE
+	POP	HL
+	LD	A,(D.7FF0)
+	AND	0DCH			; ignore RECORD TYPE, DRQ and BUSY flags
+	RET	Z			; no error, quit
+	SCF
+	RET	M			; NOT READY, quit
+	BIT	6,A
+	RET	NZ			; WRITE PROTECT, quit
+	DEC	E
+	JR	NZ,C.75DD		; try again
+	SCF
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C.7628:	PUSH	HL
+	PUSH	DE
+	LD	DE,($SECBUF)
+	OR	A
+	SBC	HL,DE
+	JR	NZ,J$766A
+	PUSH	BC
+	PUSH	IX
+	CALL	C.7CAB			; wait for command ready
+	CALL	DISINT
+	DI
+	LD	A,82H			; READ SECTOR
+	LD	(D.7FF0),A
+	LD	HL,I$7659
+	PUSH	HL
+	LD	HL,J.7651
+	LD	DE,D.7FF3
+	LD	BC,I.7FF7
+	EX	(SP),HL
+	EX	(SP),HL
+J.7651:	LD	A,(BC)
+	ADD	A,A
+	RET	P			; IRQ, quit
+	JP	C,J.7651		; no DRQ, wait
+	LD	A,(DE)
+	JP	(HL)
+;	-----------------
+I$7659:	EI
+	CALL	ENAINT
+	POP	IX
+	POP	BC
+	POP	DE
+	POP	HL
+	LD	A,(D.7FF0)
+	AND	9CH			; ignore WRITE PROTECT,RECORD TYPE, DRQ and BUSY flags
+	RET	Z			; no error, quit
+	SCF
+	RET
+;	-----------------
+J$766A:	EX	DE,HL
+	LD	E,01H	; 1 
+	CALL	C.772B
+	POP	DE
+	POP	HL
+	RET	C
+	PUSH	HL
+	PUSH	DE
+	PUSH	BC
+	LD	DE,($SECBUF)
+	LD	BC,SECLEN
+J$767D:	LD	A,(DE)
+	CPI
+	SCF
+	JR	NZ,J$768A
+	JP	PO,J$7689
+	INC	DE
+	JR	J$767D
+;	-----------------
+J$7689:	CCF
+J$768A:	LD	A,04H	; 4 
+	POP	BC
+	POP	DE
+	POP	HL
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C.7690:	CALL	C.7CAB			; wait for command ready
+	INC	H
+	INC	H
+	LD	A,(D.7FF2)
+	INC	A
+	LD	(D.7FF2),A
+	BIT	1,C
+	JP	NZ,J$76A5
+	CP	9+1
+	JR	C,J.76CD
+J$76A5:	CP	8+1
+	JR	C,J.76CD
+	LD	A,1
+	LD	(D.7FF2),A		; record 1
+	LD	A,(D.7FF1)
+	PUSH	AF			; save current track
+	CALL	C.7CAB			; wait for command ready
+	LD	A,54H			; STEP-IN (with track register update)
+	CALL	C$784E			; execute seek
+	POP	DE
+	RET	NC
+	CALL	C.7862
+	JR	C,J$76C9
+	PUSH	BC
+	LD	C,D
+	INC	C
+	CALL	C.7845			; seek to track
+	POP	BC
+	RET	NC
+J$76C9:	LD	A,06H	; 6 
+	SCF
+	RET
+;	-----------------
+J.76CD:	OR	A
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C.76CF:	CALL	C.7780
+	RET	C
+J$76D3:	LD	A,H
+	AND	A
+	JP	M,J.76FA
+	CP	3EH	; ">"
+	JR	C,J.76FA
+	PUSH	HL
+	LD	HL,($SECBUF)
+	CALL	C.7706
+	POP	HL
+	RET	C
+	PUSH	HL
+	PUSH	BC
+	PUSH	IX
+	EX	DE,HL
+	LD	HL,($SECBUF)
+	LD	BC,SECLEN
+	CALL	XFER
+	POP	IX
+	POP	BC
+	POP	HL
+	JP	J$76FE
+;	-----------------
+J.76FA:	CALL	C.7706
+	RET	C
+J$76FE:	DEC	B
+	RET	Z
+	CALL	C.7690
+	RET	C
+	JR	J$76D3
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C.7706:	LD	E,0AH	; 10 
+	CALL	C.772B
+	RET	NC
+	JP	M,J$7718
+	CALL	C.788C
+	LD	E,0AH	; 10 
+	CALL	C.772B
+	RET	NC
+J$7718:	LD	E,A
+	LD	A,02H	; 2 
+	BIT	7,E
+	RET	NZ
+	LD	A,08H	; 8 
+	BIT	4,E
+	RET	NZ
+	LD	A,04H	; 4 
+	BIT	3,E
+	RET	NZ
+	LD	A,0CH	; 12 
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.772B:	PUSH	HL
+	PUSH	DE
+	PUSH	BC
+	PUSH	IX
+	PUSH	IY
+	CALL	C.7CAB			; wait for command ready
+	PUSH	HL
+	CALL	DISINT
+	POP	HL
+	DI
+	LD	A,80H			; READ SECTOR
+	LD	(D.7FF0),A
+	LD	BC,I.7FF7
+	LD	DE,I$775B
+	PUSH	DE
+	LD	DE,D.7FF3
+	LD	IY,J.7750
+	EX	(SP),HL
+	EX	(SP),HL
+J.7750:	LD	A,(BC)
+	ADD	A,A
+	RET	P			; IRQ, quit
+	JP	C,J.7750		; no DRQ, wait
+	LD	A,(DE)
+	LD	(HL),A
+	INC	HL
+	JP	(IY)
+;	-----------------
+I$775B:	EI
+	CALL	ENAINT
+	POP	IY
+	POP	IX
+	POP	BC
+	POP	DE
+	POP	HL
+	LD	A,(D.7FF0)
+	AND	9CH			; ignore WRITE PROTECT, RECORD TYPE, DRQ and BUSY flags
+	RET	Z			; no error, quit
+	SCF
+	RET	M			; NOT READY, quit
+	BIT	4,A
+	JR	Z,J.777B
+	LD	D,A
+	LD	A,E
+	CP	03H
+	LD	A,D
+	JR	C,J.777B
+	LD	E,2			; RECORD NOT FOUD, only 2 retries
+J.777B:	DEC	E
+	JR	NZ,C.772B		; try again
+	SCF
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.7780:	PUSH	HL
+	PUSH	BC
+	PUSH	AF
+	CALL	GETWRK
+	POP	AF
+	POP	BC
+	CP	02H	; 2 
+	JR	NC,J$77E0
+	PUSH	AF
+	LD	A,C
+	CP	0F8H
+	JR	Z,J.779B
+	CP	0FAH
+	JR	Z,J.779B
+	POP	AF
+	LD	A,0AH	; 10 
+	JR	J.77E2
+;	-----------------
+J.779B:	POP	AF
+	CALL	C.77E5
+	JR	NC,J$77A5
+	LD	A,02H	; 2 
+	JR	J.77E2
+;	-----------------
+J$77A5:	PUSH	BC
+	BIT	1,C
+	LD	C,E
+	LD	B,D
+	LD	DE,9
+	JR	Z,J$77B0
+	DEC	E
+J$77B0:	PUSH	IX
+	CALL	DIV16
+	POP	IX
+	CALL	C.7CAB			; wait for command ready
+	LD	A,L
+	INC	A
+	LD	(D.7FF2),A
+	LD	A,(D.7FF5)
+	RRA				; current selected physical drive
+	LD	A,(IX+2)
+	JR	NC,J$77CB		; drive 0,
+	LD	A,(IX+3)
+J$77CB:	LD	(D.7FF1),A
+	CP	C
+	JR	Z,J.77DB
+	CALL	C$7834
+	JR	NC,J.77DB
+	LD	A,06H	; 6 
+	POP	BC
+	JR	J.77E2
+;	-----------------
+J.77DB:	POP	BC
+	POP	HL
+	OR	A
+	RET
+;	-----------------
+?.77DF:	POP	AF
+J$77E0:	LD	A,0CH	; 12 
+J.77E2:	POP	HL
+	SCF
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.77E5:	LD	L,A
+	CALL	C.7CAB			; wait for command ready
+	LD	A,(D.7FF5)
+	RRA				; current selected physical drive
+	LD	A,(D.7FF1)
+	JR	NC,J$77F7		; drive 0,
+	LD	(IX+3),A
+	JR	J$77FA
+;	-----------------
+J$77F7:	LD	(IX+2),A
+J$77FA:	LD	A,L
+	LD	H,(IX+8)
+	DEC	H			; only 1 physical drive ?
+	JR	NZ,J$7816		; nope,
+	LD	H,(IX+4)
+	LD	(IX+4),A
+	CP	H
+	JR	Z,J$7815
+	PUSH	IX
+	PUSH	DE
+	PUSH	BC
+	CALL	PROMPT
+	POP	BC
+	POP	DE
+	POP	IX
+J$7815:	XOR	A
+J$7816:	LD	(D.7FF5),A		; select physical drive
+	DI
+	LD	A,0FFH
+	LD	(IX+1),A
+	EI
+	LD	A,02H
+	LD	(D.7FF4),A		; FDD motor on
+	LD	A,(D.7FF0)
+	RLA				; FDD ready ?
+	RET	NC			; yep, quit
+	CALL	C$7C99			; wait for FDD ready
+	RET	NC			; FDD ready, quit
+	LD	A,00H
+	LD	(D.7FF4),A		; FDD motor off
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7834:	LD	A,C
+	CP	80
+	CCF
+	RET	C
+	CALL	C.7845			; seek to track
+	RET	NC
+	CALL	C.7862
+	RET	C
+	CALL	C.7845			; seek to track
+	RET
+
+;	  Subroutine seek to track
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.7845:	CALL	C.7CAB			; wait for command ready
+	LD	A,C
+	LD	(D.7FF3),A
+	LD	A,14H			; SEEK
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$784E:	LD	(D.7FF0),A
+	EX	(SP),HL
+	EX	(SP),HL
+	CALL	C.7CAB			; wait for command ready
+	LD	A,(D.7FF0)
+	AND	10H			; RECORD NOT FOUND ?
+	SCF
+	RET	NZ			; yep, quit with error
+	CALL	C.7CBF			; wait seek settle time
+	OR	A
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.7862:	CALL	C.7CAB			; wait for command ready
+	LD	A,(D.7FF1)
+	CP	72
+	LD	A,40H			; STEP-IN (without track register update)
+	CALL	C,C.78AF
+	CALL	C.7873			; seek to track 0
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.7873:	CALL	C.7CAB			; wait for command ready
+	LD	A,00H			; RESTORE
+	LD	(D.7FF0),A
+	EX	(SP),HL
+	EX	(SP),HL
+	CALL	C.7CAB			; wait for command ready
+	LD	A,(D.7FF0)
+	AND	04H			; TRACK00 ?
+	SCF
+	RET	Z			; no, quit with error
+	CALL	C.7CBF			; wait seek settle time
+	OR	A
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C.788C:	CALL	C.7CAB			; wait for command ready
+	LD	A,(D.7FF1)
+	CP	48H	; "H"
+	PUSH	AF
+	LD	A,40H			; STEP-IN (without track register update)
+	JR	C,J$789B
+	LD	A,60H			; STEP-OUT (without track register update)
+J$789B:	CALL	C.78AF
+	CALL	C.7CBF			; wait seek settle time
+	POP	AF
+	LD	A,60H			; STEP-OUT (without track register update)
+	JR	C,J$78A8
+	LD	A,40H			; STEP-IN (without track register update)
+J$78A8:	CALL	C.78AF
+	CALL	C.7CBF			; wait seek settle time
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.78AF:	PUSH	BC
+	LD	B,7
+	PUSH	AF
+	CALL	C.7CAB			; wait for command ready
+	POP	AF
+J$78B7:	LD	(D.7FF0),A
+	EX	(SP),HL
+	EX	(SP),HL
+	CALL	C.7CAB			; wait for command ready
+	LD	A,20H			; STEP (with track register update)
+	DJNZ	J$78B7
+	POP	BC
+	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$78C5:	CALL	C.7CAB			; wait for command ready
+	LD	A,40H			; STEP-IN (without track register update)
+	LD	(D.7FF0),A
+	CALL	C.7CBF			; wait seek settle time
+	CALL	C.7CAB			; wait for command ready
+	LD	A,60H			; STEP-OUT (without track register update)
+	LD	(D.7FF0),A
+	CALL	C.7CBF			; wait seek settle time
+	RET
+
+DSKCHG:
+J$78DC:	EI
+	PUSH	HL
+	PUSH	BC
+	PUSH	AF
+	CALL	GETWRK
+	POP	AF
+	POP	BC
+	POP	HL
+	LD	D,A
+	LD	E,(IX+8)
+	DEC	E			; only 1 physical drive ?
+	JR	NZ,J$78F8		; nope,
+	CP	(IX+4)			; same phantom drive as previous operation ?
+	LD	A,(D.7FF6)
+	LD	E,A			; read disk change status
+	JR	Z,J.7913		; yep,can use physical disk change status
+	JR	J.7928			; nope, read sector 1 to determine mediadescriptor byte of disk
+
+J$78F8:	LD	A,(D.7FF6)
+	LD	E,A			; read disk change status
+	LD	A,(D.7FF5)
+	AND	01H			; current physical drive
+	CP	D			; same as requested ?
+	JR	Z,J.7913		; yep,
+	PUSH	AF
+	LD	A,D
+	LD	(D.7FF5),A		; select physical drive
+	EX	(SP),HL
+	EX	(SP),HL
+	LD	A,(D.7FF6)
+	LD	E,A			; read disk change status
+	POP	AF
+	LD	(D.7FF5),A		; select physical drive
+J.7913:	RR	E			; disk changed ?
+	JR	NC,J.7928		; yep, read sector 1 to determine mediadescriptor byte of disk
+	LD	A,C
+	CP	0F8H			; valid mediadescriptor byte ?
+	JR	Z,J.7924		; yep, return DISK NOT CHANGED
+	CP	0FAH			; valid mediadescriptor byte ?
+	JR	Z,J.7924		; yep, return DISK NOT CHANGED
+	LD	A,0AH
+	SCF
+	RET
+
+J.7924:	OR	A
+	LD	B,1
+	RET
+;	-----------------
+J.7928:	LD	IY,I.754C
+	PUSH	IY
+	LD	A,D
+	LD	B,01H	; 1 
+	PUSH	BC
+	PUSH	HL
+	LD	C,0F8H
+	LD	DE,1
+	LD	HL,($SECBUF)
+	CALL	C.76CF
+	JR	C,J$795A
+	CALL	C$78C5
+	LD	HL,($SECBUF)
+	LD	B,(HL)
+	POP	HL
+	PUSH	BC
+	CALL	C.795D
+	JR	C,J$7958
+	POP	AF
+	POP	BC
+	CP	C
+	SCF
+	CCF
+	LD	B,0FFH
+	RET	NZ
+	INC	B
+	RET
+;	-----------------
+J$7958:	LD	A,0AH	; 10 
+J$795A:	POP	DE
+	POP	DE
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+GETDPB:
+C.795D:	EI
+	EX	DE,HL
+	INC	DE
+	LD	A,B
+	SUB	0F8H
+	RET	C
+	LD	L,A
+	LD	H,00H
+	ADD	HL,HL
+	LD	C,L
+	LD	B,H
+	ADD	HL,HL
+	ADD	HL,HL
+	ADD	HL,HL
+	ADD	HL,BC
+	LD	BC,I$7458
+	ADD	HL,BC
+	LD	BC,18
+	PUSH	DE
+	LDIR
+	POP	HL
+	DEC	HL
+	OR	A
+	RET
+
+CHOICE:
+J$797C:	LD	HL,0
+	RET
+
+DSKFMT:
+J$7980:	LD	HL,I.754C
+	PUSH	HL
+	CALL	GETWRK
+	LD	A,D
+	CP	02H	; 2 
+	JR	NC,J$79ED
+	LD	(IX+5),A
+	CALL	C.77E5
+	JR	C,J$79F0
+	CALL	C.7873
+	JR	C,J.79F3
+	EX	AF,AF'
+	PUSH	AF
+	XOR	A
+	EX	AF,AF'
+J$799D:	LD	B,0AH	; 10 
+J$799F:	PUSH	BC
+	CALL	C$7AC2			; format track
+	AND	0C4H			; ignore WRITE FAULT, RECORD TYPE, DRQ and BUSY flags
+	POP	BC
+	JR	Z,J$79AE		; no error,
+	BIT	2,A
+	JR	Z,J$79D1
+	JR	J$79CF
+;	-----------------
+J$79AE:	LD	A,(RAWFLG)
+	OR	A
+	JR	NZ,J$79CA
+J$79B4:	EX	AF,AF'
+	INC	A
+	LD	C,A
+	EX	AF,AF'
+	LD	A,C
+	CP	50H	; "P"
+	JR	NC,J$79F7
+	CALL	C.7CAB			; wait for command ready
+	LD	A,50H			; STEP-IN (with track register update)
+	LD	(D.7FF0),A
+	CALL	C.7CBF			; wait seek settle time
+	JR	J$799D
+;	-----------------
+J$79CA:	CALL	C$7BEA
+	JR	NC,J$79B4
+J$79CF:	DJNZ	J$799F
+J$79D1:	EX	AF,AF'
+	POP	AF
+	EX	AF,AF'
+	SCF
+	LD	E,A
+	LD	A,02H	; 2 
+	BIT	7,E
+	RET	NZ
+	LD	A,00H
+	BIT	6,E
+	RET	NZ
+	LD	A,08H	; 8 
+	BIT	4,E
+	RET	NZ
+	LD	A,04H	; 4 
+	BIT	3,E
+	RET	NZ
+	LD	A,0AH	; 10 
+	RET
+;	-----------------
+J$79ED:	LD	A,10H	; 16 
+	LD	BC,I$023E
+J$79F0	EQU	$-2
+	LD	BC,I$063E
+J.79F3	EQU	$-2
+	SCF
+	RET
+;	-----------------
+J$79F7:	EX	AF,AF'
+	POP	AF
+	EX	AF,AF'
+	CALL	C.7873
+	JP	C,J.79F3
+	LD	A,(RAWFLG)
+	LD	(IX+6),A
+	LD	A,0FFH
+	LD	(RAWFLG),A
+	LD	HL,I$7D05
+	LD	DE,($SECBUF)
+	LD	BC,I$00C5
+	LDIR
+	LD	BC,I$013B
+J$7A1A:	XOR	A
+	LD	(DE),A
+	INC	DE
+	DEC	BC
+	LD	A,B
+	OR	C
+	JR	NZ,J$7A1A
+	LD	A,(IX+5)
+	LD	HL,($SECBUF)
+	LD	BC,I.01F8
+	LD	DE,C.0000
+	PUSH	HL
+	CALL	C.7556
+	POP	HL
+	JR	C,J.7AAC
+	LD	A,0F8H
+	LD	(HL),A
+	INC	HL
+	LD	A,0FFH
+	LD	(HL),A
+	INC	HL
+	LD	(HL),A
+	INC	HL
+	XOR	A
+	LD	B,0FDH
+J$7A42:	LD	(HL),A
+	INC	HL
+	DJNZ	J$7A42
+J$7A46:	LD	(HL),A
+	INC	HL
+	DJNZ	J$7A46
+	LD	BC,I.01F8
+	LD	DE,I.0001
+	LD	HL,($SECBUF)
+	PUSH	HL
+	PUSH	BC
+	LD	A,(IX+5)
+	CALL	C.7556
+	POP	BC
+	POP	HL
+	JP	C,J.7AAC
+	PUSH	HL
+	PUSH	BC
+	LD	DE,I$0003
+	LD	A,(IX+5)
+	CALL	C.7556
+	POP	BC
+	POP	HL
+	JP	C,J.7AAC
+	PUSH	HL
+	XOR	A
+	LD	(HL),A
+	INC	HL
+	LD	(HL),A
+	INC	HL
+	LD	(HL),A
+	POP	HL
+	PUSH	HL
+	LD	DE,I$0002
+	LD	A,(IX+5)
+	CALL	C.7556
+	POP	HL
+	JP	C,J.7AAC
+	LD	B,08H	; 8 
+	LD	DE,I$0004
+	LD	A,(IX+5)
+J$7A8E:	PUSH	AF
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	LD	BC,I.01F8
+	CALL	C.7556
+	JP	C,J$7ABC
+	POP	HL
+	POP	DE
+	POP	BC
+	POP	AF
+	INC	DE
+	DJNZ	J$7A8E
+	PUSH	AF
+	LD	A,(IX+6)
+	LD	(RAWFLG),A
+	POP	AF
+	OR	A
+	RET
+;	-----------------
+J.7AAC:	CP	0AH	; 10 
+	JR	NZ,J.7AB2
+	LD	A,10H	; 16 
+J.7AB2:	PUSH	AF
+	LD	A,(IX+6)
+	LD	(RAWFLG),A
+	POP	AF
+	SCF
+	RET
+;	-----------------
+J$7ABC:	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	JR	J.7AB2
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7AC2:	PUSH	IX
+	LD	HL,I$7BDC
+	PUSH	HL
+	EX	AF,AF'
+	PUSH	AF
+	CALL	DISINT
+	DI
+	POP	AF
+	EX	AF,AF'
+	CALL	C.7CAB			; wait for command ready
+	LD	A,0F0H			; WRITE TRACK
+	LD	(D.7FF0),A
+	LD	C,01H	; 1 
+	LD	B,80
+	LD	HL,D.7FF3
+	LD	DE,I.7FF7
+	EX	(SP),HL
+	EX	(SP),HL
+J.7AE4:	LD	A,(DE)
+	ADD	A,A
+	RET	P			; IRQ, quit
+	JP	C,J.7AE4		; no DRQ, wait
+	LD	(HL),4EH	; "N"
+	DJNZ	J.7AE4
+	LD	B,12
+J.7AF0:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7AF0
+	LD	(HL),00H
+	DJNZ	J.7AF0
+	LD	B,03H	; 3 
+J.7AFC:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7AFC
+	LD	(HL),0F6H
+	DJNZ	J.7AFC
+J$7B06:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B06
+	LD	(HL),0FCH
+	LD	B,1AH
+J.7B10:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B10
+	LD	(HL),4EH	; "N"
+	DJNZ	J.7B10
+J$7B1A:	LD	B,0CH	; 12 
+J.7B1C:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B1C
+	LD	(HL),00H
+	DJNZ	J.7B1C
+	LD	B,03H	; 3 
+J.7B28:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B28
+	LD	(HL),0F5H
+	DJNZ	J.7B28
+J$7B32:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B32
+	LD	(HL),0FEH
+J$7B3A:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B3A
+	EX	AF,AF'
+	LD	(HL),A
+	EX	AF,AF'
+J$7B43:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B43
+	LD	(HL),00H
+J$7B4B:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B4B
+	LD	(HL),C
+J$7B52:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B52
+	LD	(HL),02H	; 2 
+J$7B5A:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B5A
+	LD	(HL),0F7H
+	LD	B,16H
+J.7B64:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B64
+	LD	(HL),4EH	; "N"
+	DJNZ	J.7B64
+	LD	B,0CH	; 12 
+J.7B70:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B70
+	LD	(HL),00H
+	DJNZ	J.7B70
+	LD	B,03H	; 3 
+J.7B7C:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B7C
+	LD	(HL),0F5H
+	DJNZ	J.7B7C
+J$7B86:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7B86
+	LD	(HL),0FBH
+J.7B8E:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B8E
+	LD	(HL),0E5H
+	DJNZ	J.7B8E
+J.7B98:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7B98
+	LD	(HL),0E5H
+	DJNZ	J.7B98
+J$7BA2:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J$7BA2
+	LD	(HL),0F7H
+	LD	B,36H	; "6"
+J.7BAC:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7BAC
+	LD	(HL),4EH	; "N"
+	DJNZ	J.7BAC
+	INC	C
+	LD	A,C
+	CP	0AH	; 10 
+	JP	C,J$7B1A
+J.7BBD:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7BBD
+	LD	(HL),4EH	; "N"
+	DJNZ	J.7BBD
+J.7BC7:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7BC7
+	LD	(HL),4EH	; "N"
+	DJNZ	J.7BC7
+J.7BD1:	LD	A,(DE)
+	ADD	A,A
+	RET	P
+	JP	C,J.7BD1
+	LD	(HL),4EH	; "N"
+	DJNZ	J.7BD1
+	POP	HL
+I$7BDC:	EX	AF,AF'
+	PUSH	AF
+	EI
+	CALL	ENAINT
+	POP	AF
+	EX	AF,AF'
+	POP	IX
+	LD	A,(D.7FF0)		; read status
+	RET
+;	-----------------
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+C$7BEA:	EX	AF,AF'
+	PUSH	AF
+	EX	AF,AF'
+	PUSH	HL
+	PUSH	BC
+	LD	HL,($SECBUF)
+	LD	B,01H	; 1 
+J$7BF4:	CALL	C.7CAB			; wait for command ready
+	LD	A,B
+	LD	(D.7FF2),A
+	CALL	C.7628
+	JR	C,J.7C1C
+	INC	B
+	INC	B
+	LD	A,B
+	CP	0AH	; 10 
+	JR	C,J$7BF4
+	LD	B,02H	; 2 
+J$7C09:	CALL	C.7CAB			; wait for command ready
+	LD	A,B
+	LD	(D.7FF2),A
+	CALL	C.7628
+	JR	C,J.7C1C
+	INC	B
+	INC	B
+	LD	A,B
+	CP	09H	; 9 
+	JR	C,J$7C09
+J.7C1C:	POP	BC
+	POP	HL
+	EX	AF,AF'
+	POP	AF
+	EX	AF,AF'
+	RET
+
+MTOFF:
+?.7C22:	CALL	GETWRK
+	XOR	A
+	DI
+	LD	(HL),A
+	INC	HL
+	LD	(HL),A
+	LD	A,00H
+	LD	(D.7FF4),A		; FDD motor off
+	EI
+	RET
+
+;	  Subroutine interrupt handler disk driver
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+I$7C31:	PUSH	AF
+	CALL	GETWRK
+	LD	A,(HL)
+	OR	A			; disk motor timer disabled ?
+	JP	NZ,J.7C4F		; yep, quit
+	INC	HL
+	LD	A,(HL)
+	OR	A			; disk motor timer already finished ?
+	JP	Z,J.7C4F		; yep, quit
+	CP	0FFH			; disk motor timer paused ?
+	JP	Z,J.7C4F		; yep, quit
+	DEC	A
+	LD	(HL),A			; disk motor timer finshed ?
+	JP	NZ,J.7C4F
+	LD	A,00H
+	LD	(D.7FF4),A		; FDD motor off
+J.7C4F:	POP	AF
+	JP	PRVINT
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7C53:	XOR	A
+	LD	(D.7FF5),A		; select physical drive 0
+	INC	A
+	LD	(D.7FF6),A
+	LD	A,(D.7FF5)
+	AND	01H			; drive select register working ok ?
+	SCF
+	RET	NZ			; nope, quit
+	INC	A
+	LD	(D.7FF5),A		; select physical drive 1
+	DEC	A
+	LD	(D.7FF6),A
+	LD	A,(D.7FF5)
+	RRA
+	CCF
+	RET
+
+;	  Subroutine seek to track 0
+;	     Inputs  A = physical drive
+;	     Outputs ________________________
+
+C.7C70:	LD	(D.7FF5),A		; select physical drive
+	CALL	C.7CAB			; wait for command ready
+	LD	A,00H			; RESTORE
+	LD	(D.7FF0),A
+	EX	(SP),HL
+	EX	(SP),HL
+	LD	HL,45000
+J$7C80:	LD	A,(D.7FF0)
+	RRA				; RESTORE finished ?
+	JR	NC,J$7C94		; yep, quit
+	DEC	HL
+	LD	A,H
+	OR	L
+	JR	NZ,J$7C80
+	LD	A,0D0H
+	LD	(D.7FF0),A		; execute terminate without interrupt command
+	EX	(SP),HL
+	EX	(SP),HL
+	SCF
+	RET
+
+J$7C94:	AND	02H	; 2 
+	RET	NZ
+	SCF
+	RET
+
+;	  Subroutine wait for FDD ready
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7C99:	PUSH	HL
+	LD	HL,64000
+J$7C9D:	LD	A,(D.7FF0)
+	RLA
+	JR	NC,J$7CA9
+	DEC	HL
+	LD	A,H
+	OR	L
+	JR	NZ,J$7C9D
+	SCF
+J$7CA9:	POP	HL
+	RET
+
+;	  Subroutine wait for command ready
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.7CAB:	LD	A,(D.7FF0)
+	RRA
+	RET	NC
+	JP	C.7CAB
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7CB3:	PUSH	HL
+	LD	HL,48000
+	JR	J.7CC9
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C$7CB9:	PUSH	HL
+	LD	HL,24000
+	JR	J.7CC9
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C.7CBF:	PUSH	HL
+	LD	HL,2400
+	JR	J.7CC9
+
+?.7CC5:	PUSH	HL
+	LD	HL,2400
+J.7CC9:	DEC	HL
+	LD	A,H
+	OR	L
+	JR	NZ,J.7CC9
+	POP	HL
+	RET
+
+?.7CD0:	POP	HL
+	LD	A,(HL)
+	OR	A
+	SCF
+	RET	NZ
+	DEC	A
+	LD	(RAWFLG),A
+	OR	A
+	RET
+
+?.7CDB:	POP	HL
+	LD	A,(HL)
+	OR	A
+	SCF
+	RET	NZ
+	LD	(RAWFLG),A
+	OR	A
+	RET
+
+?.7CE5:	POP	HL
+	LD	A,(HL)
+	OR	A
+	SCF
+	RET	NZ
+	PUSH	HL
+	CALL	GETWRK
+	POP	HL
+	LD	A,0FFH
+	LD	(IX+0),A
+	OR	A
+	RET
+
+?.7CF6:	POP	HL
+	LD	A,(HL)
+	OR	A
+	SCF
+	RET	NZ
+	PUSH	HL
+	CALL	GETWRK
+	POP	HL
+	XOR	A
+	LD	(IX+0),A
+	RET
+
+I$7D05:
+        .PHASE	0C000H
+
+        DEFB	0EBH				; x86 JMP +0100H
+        DEFB	0FEH
+        DEFB	090H				; x86 NOP
+	DEFB	"ASC  2.2"
+        DEFW	512
+        DEFB	2
+        DEFW	1
+        DEFB	2
+        DEFW	112
+        DEFW	02D0H
+        DEFB	0F8H
+        DEFW	2
+        DEFW	9
+        DEFW	1
+        DEFW	0
+
+        RET	NC
+        LD	(DC058+1),DE
+        LD	(DC0C4),A
+        LD	(HL),LOW DC056
+        INC	HL
+        LD	(HL),HIGH DC056
+J7430:	LD	SP,KBUF+256
+        LD	DE,DC09F
+        LD	C,0FH	; 15 
+        CALL	BDOS
+        INC	A
+        JP	Z,DC063
+        LD	DE,0100H
+        LD	C,1AH
+        CALL	BDOS
+        LD	HL,1
+        LD	(DC09F+14),HL
+        LD	HL,04000H-0100H
+        LD	DE,DC09F
+        LD	C,27H
+        CALL	BDOS
+        JP	0100H
+
+DC056:	DEFW	DC058
+
+DC058:	CALL	0
+        LD	A,C
+        AND	0FEH
+        CP	02H	; 2 
+        JP	NZ,DC06A
+DC063:	LD	A,(DC0C4)
+        AND	A
+        JP	Z,J4022
+DC06A:	LD	DE,DC079
+        LD	C,09H	; 9 
+        CALL	BDOS
+        LD	C,07H	; 7 
+        CALL	BDOS
+        JR	J7430
+
+DC079:	DEFB	"Boot error",13,10
+        DEFB	"Press any key for retry",13,10
+        DEFB	"$"
+
+DC09F:	DEFB	0
+        DEFB	"MSXDOS  SYS"
+        DEFW	0
+        DEFW	0
+        DEFB	0,0,0,0
+        DEFW	0
+        DEFW	0
+        DEFB	0
+        DEFB	0
+        DEFW	0
+        DEFW	0
+        DEFW	0
+        DEFB	0
+        DEFB	0,0,0,0
+
+DC0C4:	DEFB	0
+
+        .DEPHASE
+
+
+INIHRD:
+	JP	J.74EA
+?.7F03:	JP	J$7511
+?.7F06:	JP	J$752F
+?.7F09:	JP	J$753F
+?.7F0C:	JP	J$78DC
+?.7F0F:	JP	C.795D
+?.7F12:	JP	J$797C
+?.7F15:	JP	J$7980
+?.7F18:	JP	J$74E8
+?.7F1B:	DEFB	0,0,0
+	DEFB	0,0,0
+	JP	PROMPT
+?.7F24:	JP	SETINT
+?.7F27:	JP	PRVINT
+?.7F2A:	JP	GETSLT
+?.7F2D:	JP	GETWRK
+?.7F30:	JP	DIV16
+?.7F33:	JP	ENASLT
+?.7F36:	JP	XFER
+?.7F39:	DEFB	0,0,0
+	DEFB	0,0,0
+	JP	J$7F51
+?.7F42:	JP	J$7F55
+?.7F45:	JP	J$7F59
+?.7F48:	JP	J$7F5D
+?.7F4B:	JP	J$7F61
+?.7F4E:	JP	J$7F65
+
+J$7F51:	LD	HL,($SECBUF)
+	RET
+
+J$7F55:	LD	HL,RAMAD0
+	RET
+
+J$7F59:	LD	HL,RAMAD1
+	RET
+
+J$7F5D:	LD	HL,RAMAD2
+	RET
+
+J$7F61:	LD	HL,RAMAD3
+	RET
+
+J$7F65:	LD	HL,RAWFLG
+	RET
+
+	DEFS	07FD0H-$,0
+
+	DEFB	"TSDFDD00104Apr85"
+
+	DEFS	07FEEH-$,0
+
+	DEFB	0ADH
+	DEFB	065H
+
+D.7FF0:	DEFB	0
+D.7FF1:	DEFB	0
+D.7FF2:	DEFB	0
+D.7FF3:	DEFB	0
+D.7FF4:	DEFB	0			; b0 FDD motor on/off (w)
+D.7FF5:	DEFB	0			; b0 FDD select (r/w)
+D.7FF6:	DEFB	0			; b0 FDD change (r/w)
+I.7FF7:	DEFB	0			; b7 DRQ (r), b6 IRQ (r)
+
+	DEFS	08000H-$,0
+
+	END
