@@ -1100,15 +1100,15 @@ J7A40:	CALL	C783B		; recalibrate head
         LD	HL,I7417	; DPB 0F9H
 J7A4F:	LD	BC,9
         ADD	HL,BC
-        LD	A,(HL)
+        LD	A,(HL)		; first FAT sector
         LD	(IY+3),A
         LD	BC,2
         ADD	HL,BC
-        LD	A,(HL)
+        LD	A,(HL)		; number of FATs
         LD	(IY+6),A
         LD	BC,4
         ADD	HL,BC
-        LD	A,(HL)
+        LD	A,(HL)		; 
         LD	(IY+4),A
         INC	HL
         LD	A,(HL)

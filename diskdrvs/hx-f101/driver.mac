@@ -84,8 +84,8 @@ DEFDPB  EQU     $-1
         DEFW    1
         DEFB    2
         DEFB    112
-        DEFW    12
-        DEFW    635
+        DEFW    10
+        DEFW    636
         DEFB    2
         DEFW    5
 
@@ -153,6 +153,7 @@ J74E8: 	SCF
 ;            Inputs  ________________________
 ;            Outputs ________________________
 
+INIHRD:
 J74EA: 	CALL    C7C53                  	; some sort of hardware ready test ?
         JR      C,J74EA                	; nope, wait
         LD      A,0D0H			; FORCE INTERRUPT, terminate without interrupt
@@ -1011,7 +1012,7 @@ J79F7: 	EX      AF,AF'
         LD      DE,($SECBUF)
         LD      BC,L7D05
         LDIR
-        LD      BC,SECLEN-L$7D05
+        LD      BC,SECLEN-L7D05
 J7A1A: 	XOR     A
         LD      (DE),A
         INC     DE
@@ -1608,7 +1609,8 @@ DC0C4:  DEFB    0
         .DEPHASE
 L7D05	EQU	$-I7D05
 
-INIHRD:
+        DEFS    07F00H-$,0
+
         JP      J74EA
 ?7F03: 	JP      J7511
 ?7F06: 	JP      J752F

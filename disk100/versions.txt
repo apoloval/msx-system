@@ -1,0 +1,10 @@
+From the README file of MSX-DOS kit,the following versions exists:
+
+Jun 20,	1984	first release
+Jan 29,	1985	fixed write protect problem, fixed single drive copy problem
+Feb 23,	1985	fixed single drive copy	problem
+Mar  1,	1985	added motor off	function
+Mar  7,	1985	fixed MKI bug
+May 28,	1985	fixed interslot	routines
+Aug 23,	1985	fixed control-C	problem
+Sep  2,	1985	fixed disk damage and template problem
