@@ -30,7 +30,6 @@
 ;       EXTRN   GETDPB
 ;       EXTRN   CHOICE
 ;       EXTRN   DSKFMT
-;       EXTRN   MTOFF
 ;       EXTRN   OEMSTA
 ;       EXTRN   MYSIZE
 ;       EXTRN   SECLEN

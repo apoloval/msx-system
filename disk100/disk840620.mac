@@ -6623,14 +6623,12 @@ J66CB:  ADD     HL,SP
         JP      NC,J731F                ; syntax error
         POP     HL
         CALL    C72CC
-        RST     38H
+        DEFB    0FFH
         CALL    C72CC
-        SUB     D
+        DEFB    092H
         CALL    C72CC
-        RST     28H
-        DEFB    0DDH            ; << Illegal Op Code Byte >>
-
-        LD      HL,M4756
+        DEFB    0EFH
+        LD      IX,M4756
         CALL    CALBAS
         DEC     DE
         INC     D
