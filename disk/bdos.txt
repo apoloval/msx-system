@@ -1,0 +1,429 @@
+ BDOS Calls
+				 ============
+
+If a disk drive with controller is connected to the MSX computer, then
+all disk routines (just like the BASIC I / O System routines) are
+in the memory of the computer. Also for these disk routines it applies that they
+can be called from an application program. To prevent
+a program from working on one computer but not on another computer,
+these disk routines (BDOS routines) must also
+be used by means of a special method of calling.
+
+The way to call these routines is as follows:
+
+ 1 - Loads the function number of the routine to be called in register C of the
+     Z80 microprocessor.
+
+ 2 - CALL the address & HF37D, if the program runs under Disk BASIC.
+     Call the address & H0005 if the program runs under MSX-DOS.
+
+In the following list of the BDOS calls, the
+following data is included for each call :
+
+	NUMBER
+	NAME
+	FUNCTION
+	INPUT
+	OUTPUT
+
+NUMBER is the function number, which register C must be placed before
+address & HF37D or & H0005 is called.
+
+NAME is the name of the function to be called
+
+FUNCTION is a brief explanation of what the function does
+
+INPUT lists the registers that must be loaded with
+data that the function needs to deliver the desired result.
+
+OUTPUT lists the registers that contain the result of the function
+.
+
+If one of the aforementioned points does not apply, the
+point in question will be omitted from the description.
+
+================================================================ ============================
+
+& H00 SYSTEM RESET
+	------------------- -------------------------------------------------- -
+	Jumps to the "warm start" of Disk BASIC or to address & H0000
+	if the function was called under MSX-DOS.
+
+& H01 CONSOLE INPUT
+	----------------------------------------------- -----------------------
+	Reads a sign from console and is this in register A. Performs function
+	& H00 off if CTRL + C was pressed. Starts output of screen
+	info to the printer when CTRL + P has been pressed and confirms this
+	if CTRL + N has been pressed. Sends the entered character to
+	the screen.
+	OUTPUT A: the keyed-in character
+
+& H02 CONSOLE OUTPUT
+	----------------------------------------- -----------------------------
+	Sends the sign that register E is to the console.
+	INPUT E: the character to write to the console
+
+& H03 AUX INPUT
+	-------------------------------------- --------------------------------
+	Reads a character from the AUX device (for example RS232) and puts it in
+	register A.
+	OUTPUT A: the character read
+
+& H04 AUX OUTPUT
+	-------------------------------------------- --------------------------
+	Writes the character from register E to the AUX device.
+	INPUT E: the character to be written to AUX
+
+& H05 LST OUTPUT
+	-------------------------------------- --------------------------------
+	Writes the character from register E to the printer.
+	INPUT E: the character to be printed
+
+& H06 DIRECT CONSOLE I / O
+	------------------------------------ ----------------------------------
+	Sends the character in register E to the console, unless in
+	register E the code & HFF. In this case, the console
+	read. The read character is put in register A, without it
+	checking
+	the keyed-in code and without sending the keyed-in character to the console. If nothing is entered
+	, register A will contain the value 0.
+	INPUT E: & HFF if to be read. Every other code
+			   is written to console.
+	OUTPUT A: the input character.
+
+& H07 DIRECT INPUT
+	----------------------------------------------- -----------------------
+	Reads a character from console and puts it in register A. There is no check
+	on the code of the character, and the character is not
+	returned to console.
+	OUTPUT A: the input character.
+
+& H08 DIRECT INPUT
+	-------------------------------------------------- --------------------
+	Reads a character from console and puts it in register A. Checks whether
+	CTRL + C, CTRL + P or CRTL + N has been pressed. Does
+	not return the keyed character to the console.
+	OUTPUT A: the character entered.
+
+& H09 STRING OUTPUT
+	----------------------------------------------- -----------------------
+	Discs the string whose start address is in register pair DE
+	to console. Writing continues until a $ sign is
+	found.
+	INPUT DE: the starting address of the string.
+
+& H0A BUFFERED INPUT
+	----------------------------------------------- -----------------------
+	Reads a string from console and puts it in memory from the
+	address given in register pair DE + 2. CR (return) ends the string.
+	The length of the string is set to the address
+	+ 1 given in register pair DE . CR is not counted in length. The maximum length
+	of the string is passed on via the memory location that
+        is designated with the address in register pair DE.
+	INPUT DE: pointer to string-space
+
+& H0B CONSOLE STATUS
+	--------------------------------------- -------------------------------
+	Checks whether input is made from console. Put 0 in register A
+	if there is no input. Put & HFF in register A if there is input.
+	OUTPUT A: console status
+
+& H0C GET VERSION NUMBER
+	---------------------------------------------- ------------------------
+	Put the version number in register pair HL.
+	OUTPUT H: & H00
+			L: & H22
+
+& H0D DISK RESET
+	---------------------------------------- ------------------------------
+	Sets drive A: as the default drive, sets the transfer address to & H80 and
+	removes all sectors in memory that have been changed but have
+	not been written to disk.
+
+& H0E SELECT DISK
+	----------------------------------------------- -----------------------
+	The disk given in register E makes the default drive (0 = drive A)
+	INPUT E: drive number
+
+& H0F OPEN FILE
+	-------------------------------------------------- --------------------
+	Opens a file in accordance with the specifications in the FCB that is referred to with the address
+	in register pair DE. The following
+	FCB fields are populated from the directory:
+		File Size
+		Date
+		Time
+		Device ID
+		Directory
+		First Cluster
+		Last Cluster
+		Last Accessed Cluster
+	The following FCB fields are set after performing this
+	function:
+		Record Size
+		Current Block
+		Current Record
+		Random Record
+	If the function has been performed successfully, register A will be the value
+	& H00, if not, register A will contain the value & HFF.
+	INPUT DE: FCB address
+	OUTPUT A: & H00 - successful
+			    & HFF - unsuccessful
+
+& H10 CLOSE FILE
+	------------------------------- ---------------------------------------
+	Close the file that is in the FCB that with it address in register pair
+	DE is designated. If the file is successfully closed, register
+	A will contain the value & H00, if not, then the value & HFF
+	INPUT DE: FCB address
+	OUTPUT A: & H00 - successful
+			    & HFF - unsuccessful
+
+& H11 SEARCH FIRST
+        ----------- -------------------------------------------------- ---------
+        Searches from the start of the directory for the occurrence of the file
+        indicated in the FCB indicated by the address in register pair DE
+        in the directory and copies the directory entry (32
+        bytes long) to the transfer address. If the file is
+        found in the directory, register A will also be loaded with & H00. If the
+        file is not found, nothing is copied to the transfer address
+        and register A is loaded with the value & HFF. The
+        characters * and? May be used in the file name (in the FCB).
+        INPUT DE: FCB address
+        OUTPUT A: & H00 - file found
+                            & HFF - file not found
+
+& H12 SEARCH NEXT
+	------------------------------------------ ----------------------------
+	Searches the directory from where the last SEARCH
+	function found a searched file for the following occurrence
+	of that file name in the directory. Otherwise works exactly like
+	the SEARCH FIRST function (above).
+	INPUT DE: FCB address
+	OUPUT A: & H00 - file found
+			    & HFF - file not found
+
+& H13 DELETE FILE
+	----------------------------- -----------------------------------------
+        Deletes the file in the FCB where with the address in register pair DE becomes
+	referred from the directory by
+	replacing the first character of the file name in the directory with the code & HE5 ​​and the FAT to release the
+	clusters used by the file .
+	INPUT DE: FCB address
+        OUTPUT A: & H00 - file deleted
+			    & HFF - file not (completely) deleted
+
+& H14 SEQUENTIAL READ
+        -------------------------- --------------------------------------------
+        Reads a record (128 bytes ). The file, the block within the file in which
+        the record is located and the record itself are indicated in the
+        fields. File name, Current Block and Current Record of the FCB that
+        is designated with the address in register pair DE. The information read
+        is stored in memory from the set transfer address. The
+        Current Block and Current Record fields in the FCB are automatically
+        increased by 1.
+        INPUT DE: FCB address
+        OUTPUT A: & H00 - record read
+			    & H01 - record not (correctly) read
+
+& H15 SEQUENTIAL WRITE
+        -------------------------- --------------------------------------------
+        Writes a record (of 128 bytes) to the file designated with the File
+        Control Block with the address in register pair DE. The
+        data that makes up the record is in the RAM, starting from the
+        "transfer" address. The record (on disk) is determined by the
+        current block and current record fields in the FCB. These fields are
+        automatically increased by 1.
+        INPUT DE: FCB address
+        OUTPUT A: & H00 = record written
+                            & H01 = record not written
+
+& H16 CREATE FILE
+        ----------------------------- -----------------------------------------
+        Creates a file, according to the data in it File Control Block, which
+        is designated with the address in register pair DE. If the file already exists
+        , it will be overwritten. The following fields are
+        defined after execution :
+                Record Size, Current Block, Current Record, Random Record.
+        Whether or not the file has been created is reported in register A.
+        INPUT DE: FCB address
+        OUTPUT A: & H00 = file created
+                            & H01 = file not created
+
+& H17 RENAME FILE
+        --------------- -------------------------------------------------- -----
+        Returns the file designated with the FCB designated
+        with the address in register pair DE, the file name from the FCB
+        designated by the address in DE plus 16. The file name may use
+        the characters * and?
+        INPUT DE: FCD address file to rename.
+                        DE + 16: FCB address with new file name.
+        OUTPUT A: & H00 = file renamed
+                               & H01 = file not renamed
+
+& H18 GET LOGIN VECTOR
+        ---------------------------------- ------------------------------------
+        Provides in the register pair HL a bit table from which can be
+        formatted which drives are online.
+        OUTPUT HL: bit table
+
+& H19 GET DEFAULT DRIVE NAME
+        --------------------------------------- -------------------------------
+        Put the default drive name in register A.
+        OUTPUT A: default drive name.
+
+& H1A SET TRANSFER ADDRESS
+        ---------------------------------------------- ------------------------
+        Sets the RAM address to which the data to be read or read from the disk is set
+        to the data in registerpar DE address.
+        INPUT DE: RAM address
+
+& H1B GET ALLOCATION
+        ----------------------------------------- -----------------------------
+        Provides information about the disk drive specified in register E. In the
+        indicated disk name is not valid, register A will
+        contain the value & HFF after execution .
+        INPUT E: drive name
+        OUTPUT A: number of sectors per cluster
+                        BC: number of bytes per sector
+                        DE: number of clusters on the write
+                        HL: number of free clusters
+                        IX: Device Parameter Block address
+                        IY: File Allocation Table (FAT) address
+
+& H21 RANDOM READ
+        -------- -------------------------------------------------- ------------
+        Reads a record from a file, which is indicated with the FCB that
+        is designated with the address in register pair DE. The record to be read
+        is determined by the random block field in the FCB. The dates of it
+        record is put in RAM from the "transfer" address. The
+        record length is always 128 bytes.
+        INPUT DE: FCB address
+        OUTPUT A: & H00 = record read
+                            & H01 = record not (correctly) read
+
+& H22 RANDOM WRITE
+        -------------------------- --------------------------------------------
+        Writes a record to a file , which is indicated with the FCB
+        that is designated with the address in register pair DE. The
+        record to be written is determined by the random block field in the FCB.
+        The data from the record starts at the "transfer" address.
+        INPUT DE:
+        OUTPUT A: & H00 = record written
+                            & H01 = record not (properly) written
+
+& H23 GET FILE SIZE
+        ------------------------------- ---------------------------------------
+        Calculates the length of the file from the FCB that will be designated by
+        the address in register pair DE. The length of the file is given as a
+        multiple of 128 and stored in the random record field in
+        the FCB.
+        INPUT DE: FCB address
+        OUTPUT A: & H00 = Length calculated
+                            & H01 = Length not calculated
+
+& H24 SET RANDOM RECORD
+        -------------------------------------------------- --------------------
+        Calculates the position of the "current record" using the
+        current block and current record fields from the FC designated with
+        the address in register pair DE and places the result of the
+        calculation in the random record field of the same FCB.
+        INPUT DE: FCB Address
+
+& H26 RANDOM BLOCK WRITE
+        ---------------------------------------- ------------------------------
+        Writes record (s) to the file from the FCB that is designated by
+        the address in register pair DE . The data for the record starts on it
+        "transfer" address. The record to be described in the file is determined
+        by the random block field from the FCB. The current random record field
+        is automatically increased by the number of written records. The
+        number of records is determined by the value in register pair HL. The
+        record length is determined by the record size field from the FCB.
+        INPUT DE: FCB address
+                        HL: Number of records
+        OUTPUT A: & H00 = record (s) written
+                            & H01 = record (s) not written
+
+& H27 RANDOM RECORD READ
+        ------------------ -------------------------------------------------- -
+        Reads record (s) from the file from the FCB designated by the
+        address in register pair DE in the memory to the "transfer" address.
+        The record to be read in the file is determined by the random block
+        field from the FCB. The current random record field is automatically
+        increased by the number of records read. The number of records is
+        determined by the value in register pair HL. The record length is
+        determined by the record size field from the FCB. The actual number of
+        records read is set in HL.
+        INPUT DE: FCB address
+                        HL: Number of records
+        OUTPUT A: & H00 = record (s) read
+                            & H01 = record (s) not read
+                        HL: Number of records read
+
+& H28 RANDOM WRITE WITH ZERO-FILL
+        ------------------------------ ----------------------------------------
+        Writes a record to the file that is specified the FCB with
+        address in register pair DE. Which record (in the file) is written
+        is determined by the random block field in the FCB. The record length
+        is always 128 bytes. When a file is expanded (extended),
+        all records that are not written will be filled with zeros.
+        INPUT DE: FCB address
+        OUTPUT A: & H00 = Record written
+                            & H01 = Record not written
+
+& H2A GET DATE
+        ------------------------------------------ ----------------------------
+        Reads the date and puts it in the Z80 registers.
+        OUTPUT A: day of the week
+                        D: day
+                        E: month
+                        HL: year
+
+& H2B SET DATE
+        ------------------------------- ---------------------------------------
+        Sets the date on the DE and HL register pairs specified date.
+        INPUT D: day
+                        E: month
+                        HL: year
+        OUTPUT A: & H00 = date set
+                            & H01 = date not set
+
+& H2C GET TIME
+        ----------------------------------- -----------------------------------
+        Reads the time and puts it in the Z80 registers.
+        OUTPUT E: hundredths of seconds
+                        D: seconds
+                        L: minutes
+                        H: Hours
+
+& H2D SET TIME
+        -------------------------------- --------------------------------------
+        Sets the time specified in the DE and HL register pairs time.
+        INPUT E: hundredths of seconds
+                        D: seconds
+                        L: minutes
+                        H: Hours
+        OUTPUT A: & H00 = time set
+                            & H01 = time not set
+
+& H2E SET VERIFY FLAG
+        ---------------------------- ------------------------------------------
+        Turn the Verify Flag on or off, dependent on register E.
+        INPUT E: & H00 = verify-flag reset
+                           & H01 = verify-flag reset
+
+& H2F ABSOLUTE DISK READ
+        ---------------------- ------------------------------------------------
+        Reads sector (s) write and put the content of that sector (s) in
+        the RAM of the "transfer"-address.
+        INPUT DE: sector number
+                        H: number of sectors to be read
+                        L: driver number
+
+& H30 ABSOLUTE DISK WRITE
+        --------------------------------- -------------------------------------
+        Writes sector (s) to disk from RAM, starting at
+        the "transfer" address.
+        INPUT DE: sector number
+                        H: number of sectors to be written
+                        L: drive number
