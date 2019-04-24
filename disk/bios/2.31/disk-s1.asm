@@ -1,0 +1,2624 @@
+; DISK-S1.ASM
+;
+; DOS 2.31 kernel bank 1
+;
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+;
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+;
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
+
+        .Z80
+        ASEG
+        ORG	4000H
+
+DOSST1	MACRO	X,Y
+        LOCAL   _D1
+        DEFB	X
+	DEFB	_D1-$
+	DEFB	Y
+_D1:    DEFB    0
+        ENDM
+
+DOSST2	MACRO	X,Y
+	LOCAL	_D2
+        DEFB	X
+	DEFB	_D2-$
+Z1 	ASET 	0
+        IRPC	Z,<Y>
+        IF      Z1 EQ 0
+Z1	ASET	1
+	IF	('&Z' GE '0') AND ('&Z' LE '9')
+Z2	ASET	('&Z'-'0')*16
+	ENDIF
+	IF	('&Z' GE 'A') AND ('&Z' LE 'F')
+Z2	ASET	('&Z'-'A'+10)*16
+	ENDIF
+	ELSE
+	IF	('&Z' GE '0') AND ('&Z' LE '9')
+Z2	ASET	Z2+('&Z'-'0')
+	ENDIF
+	IF	('&Z' GE 'A') AND ('&Z' LE 'F')
+Z2	ASET	Z2+('&Z'-'A'+10)
+	ENDIF
+	DEFB	Z2
+Z1	ASET	0
+        ENDIF
+        ENDM
+_D2:  	DEFB	0
+        ENDM
+
+;
+BDOS	EQU	0005H
+WRSLT	EQU	0014H
+CALSLT	EQU	001CH
+ENASLT	EQU	0024H
+IDBYT0	EQU	002BH
+KEYINT	EQU	0038H
+C0046	EQU	0046H
+C004B	EQU	004BH
+C005C	EQU	005CH
+C005F	EQU	005FH
+CHPUT	EQU	00A2H
+CHGCPU	EQU	0180H
+GETCPU	EQU	0183H
+GETSLO	EQU	402DH
+
+
+IB062	EQU	0B062H	; start of the undefined BDOS data area
+DB064	EQU	0B064H	; pointer to lowest BDOS data block
+IBA35	EQU	0BA35H	; memorymapper pointertable
+IBA75	EQU	0BA75H	; upcase table
+IBBFF	EQU	0BBFFH	; last static BDOS data
+
+IF1D3	EQU	0F1D3H
+CF1D9	EQU	0F1D9H
+CF1FD	EQU	0F1FDH
+IF200	EQU	0F200H
+CF218	EQU	0F218H
+CF224	EQU	0F224H
+DF23C	EQU	0F23CH
+IF24F	EQU	0F24FH
+DF2B8	EQU	0F2B8H
+DF2BA	EQU	0F2BAH
+DF2C5	EQU	0F2C5H
+DF2C7	EQU	0F2C7H
+DF2C8	EQU	0F2C8H
+DF2C9	EQU	0F2C9H
+DF2CA	EQU	0F2CAH
+DF2CB	EQU	0F2CBH
+DF2CC	EQU	0F2CCH
+DF2CD	EQU	0F2CDH
+DF2CF	EQU	0F2CFH
+DF2D0	EQU	0F2D0H
+DF2D1	EQU	0F2D1H
+DF2D3	EQU	0F2D3H
+LF2D5	EQU	0F2D5H
+DF2DC	EQU	0F2DCH
+DF2DE	EQU	0F2DEH
+DF2E0	EQU	0F2E0H
+DF2E1	EQU	0F2E1H
+DF2E6	EQU	0F2E6H
+DF2EA	EQU	0F2EAH
+DF2EB	EQU	0F2EBH
+DF2FE	EQU	0F2FEH
+CF303	EQU	0F303H
+DF30F	EQU	0F30FH
+IF314	EQU	0F314H
+CF327	EQU	0F327H
+CF32C	EQU	0F32CH
+DF341	EQU	0F341H
+DF342	EQU	0F342H
+DF343	EQU	0F343H
+DF344	EQU	0F344H
+DF347	EQU	0F347H
+DF348	EQU	0F348H
+DF368	EQU	0F368H
+DF36B	EQU	0F36BH
+DF36E	EQU	0F36EH
+CF371	EQU	0F371H
+CF374	EQU	0F374H
+CF377	EQU	0F377H
+CF37A	EQU	0F37AH
+CF37D	EQU	0F37DH
+
+RDPRIM	EQU	0F380H
+WRPRIM	EQU	0F385H
+CLPRIM	EQU	0F38CH
+CLPRM1	EQU	0F398H
+KBUF	EQU	0F41FH
+MEMSIZ	EQU	0F672H
+STKTOP	EQU	0F674H
+SAVSTK	EQU	0F6B1H
+MAXFIL	EQU	0F85FH
+FILTAB	EQU	0F860H
+NULBUF	EQU	0F862H
+BOTTOM	EQU	0FC48H
+HIMEM	EQU	0FC4AH
+EXPTBL	EQU	0FCC1H
+SLTTBL	EQU	0FCC5H
+DFFFF	EQU	0FFFFH
+
+
+        INCLUDE	DISK.INC
+
+
+        DEFB	"AB"
+        DEFW	L403C			; Init routine (only switches back to bank 0)
+        DEFW	0
+        DEFW	0
+        DEFW	0
+        DEFW	0
+        DEFW	0
+        DEFW	0
+
+        DEFS	0403CH-$,0
+
+L403C:	XOR	A
+        CALL	L40A3
+        NOP			; should never execute here
+        NOP
+        NOP
+
+L4043:	CALL	J410C		; EXTBIO for DOS2 mapperfunctions
+        JP	LF2D5		; cont EXTBIO
+
+L4049:	PUSH	AF
+        LD	A,(L40FF)
+        PUSH	AF
+        XOR	A
+        CALL	L40A3
+        NOP			; should never execute here
+        NOP
+        NOP
+        POP	AF
+        CALL	L40A3
+        POP	AF
+        RET
+
+L405B:	CALL	L40A3
+        EX	AF,AF'
+        CALL	L4069
+        EX	AF,AF'
+        XOR	A
+        CALL	L40A3
+        EX	AF,AF'
+        RET
+
+L4069:	JP	(IX)
+
+        DEFS	040A6H-$-3,0
+
+; This one must start at #40A3, because there must be a RET
+; instruction at end for switching to DOS1 kernel.
+; At #40A6 is at RET instruction in DOS1 kernel
+
+L40A3:
+        BNKCHG
+
+L40A6:	RET
+
+        DEFS	040FFH-$,0
+
+L40FF:	DEFB	1			; present bank number register
+
+I4100:	JP	C4A15			; Check and invoke memorymapper of 6 or more segments
+J4103:	JP	J410F			; install disksystem routines
+J4106:	JP	C4C74			; copy message to buffer
+J4109:	JP	J4C5F			; copy errorstring to buffer
+J410C:	JP	J4B4D			; EXTBIO handler memorymapper
+
+J410F:	DI
+        CALL	C495C			; initialize memorymapper variables
+        RET	C			; error, quit
+        CALL	C427F
+        RET	C
+        LD	A,01H
+        LD	(DF23C),A
+        LD	A,(IDBYT0)
+        RLCA
+        SBC	A,A
+        ADD	A,6			; number of interrupts per 100 ms
+        LD	(DF2B8),A
+        LD	(DF2BA),A
+        LD	HL,IF314
+        LD	DE,DF2CB
+        LD	BC,4
+        LDIR
+        LD	A,(DF2CF)
+        CALL	CF224
+        CALL	C418C
+        LD	A,(DF2D0)
+        CALL	CF218
+        LD	HL,0C9F1H		; POP AF RET
+        PUSH	HL
+        LD	HL,0B0EDH		; LDIR
+        PUSH	HL
+        LD	HL,I416E		; continue here after BDOS code segment is copied
+        PUSH	HL
+        LD	HL,L40A3
+        PUSH	HL			; set dos2 mappersegment routine
+        LD	A,(L40FF)
+        PUSH	AF			; save current dos2 mappersegment (=1)
+        LD	HL,6
+        ADD	HL,SP
+        PUSH	HL			; LDIR routine on stack
+        CALL	CF1FD
+        LD	HL,I4100
+        LD	DE,0
+        LD	BC,03EF0H		; setup LDIR registers
+        LD	A,2
+        JP	L40A3			; set dos2 mappersegment to 2
+
+I416E:	POP	HL
+        POP	HL			; remove routine from stack
+        CALL	0			; initialize BDOS code
+        EX	AF,AF'
+        DI
+        LD	A,(EXPTBL+0)
+        LD	H,00H
+        CALL	ENASLT			; rom-bios on page 0
+        LD	A,(DF2CD)
+        CALL	CF224
+        LD	A,(DF2CB)
+        CALL	CF218
+        EI
+        EX	AF,AF'
+        RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C418C:	LD	A,(IDBYT0)
+        AND	0FH			; character generator
+        LD	(KBUF+0),A
+        LD	HL,IBA75
+        XOR	A
+        LD	B,A			; 256 chars
+J4199:	PUSH	AF
+        CALL	C41A4
+        LD	(HL),A
+        POP	AF
+        INC	A
+        INC	HL
+        DJNZ	J4199			; build upcase table
+        RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C41A4:	PUSH	HL
+        PUSH	BC
+        PUSH	AF
+        LD	A,(KBUF+0)
+        AND	03H			; character generator
+        ADD	A,A
+        LD	C,A
+        LD	B,00H
+        LD	HL,I41DC
+        ADD	HL,BC
+        LD	A,(HL)
+        INC	HL
+        LD	H,(HL)
+        LD	L,A			; pointer
+        POP	AF
+        LD	B,(HL)			; number of entries
+        INC	HL
+J41BB:	CP	(HL)
+        INC	HL
+        JR	C,J41C2		; below range, next entry
+        CP	(HL)
+        JR	C,J41D7		; in range, adjust with offset
+J41C2:	INC	HL
+        INC	HL
+        DJNZ	J41BB
+        CP	080H
+        JR	C,J41D9
+        CP	0C0H
+        JR	NC,J41D9		; 00-7F and C0-FF does not change anything
+        LD	C,(HL)
+        INC	HL
+        LD	H,(HL)
+        LD	L,C
+        LD	C,A
+        ADD	HL,BC
+        LD	A,(HL)			; get upcase version of char
+        JR	J41D9
+
+J41D7:	INC	HL
+        ADD	A,(HL)
+J41D9:	POP	BC
+        POP	HL
+        RET
+
+I41DC:	DEFW	I41E4
+        DEFW	I41EA
+        DEFW	I41F0
+        DEFW	I41F6
+
+
+; japanese charactergenerator
+
+I41E4:	DEFB	1
+        DEFB	061H,07BH,-32
+        DEFW 	I41FF-080H
+
+; international charactergenerator
+
+I41EA:	DEFB	1
+        DEFB	061H,07BH,-32
+        DEFW	I423F-080H
+
+; unknown charactergenerator (2)
+
+I41F0:	DEFB	1
+        DEFB	061H,07BH,-32
+        DEFW	I41FF-080H
+
+; unknown charactergenerator (3)
+
+I41F6:	DEFB	2
+        DEFB	061H,07BH,-32
+        DEFB	0C0H,0DFH,-32
+        DEFW	I41FF-080H
+
+I41FF:	DEFB	080H,081H,082H,083H,084H,085H,086H,087H
+        DEFB	088H,089H,08AH,08BH,08CH,08DH,08EH,08FH
+        DEFB	090H,091H,092H,093H,094H,095H,096H,097H
+        DEFB	098H,099H,09AH,09BH,09CH,09DH,09EH,09FH
+        DEFB	0A0H,0A1H,0A2H,0A3H,0A4H,0A5H,0A6H,0A7H
+        DEFB	0A8H,0A9H,0AAH,0ABH,0ACH,0ADH,0AEH,0AFH
+        DEFB	0B0H,0B1H,0B2H,0B3H,0B4H,0B5H,0B6H,0B7H
+        DEFB	0B8H,0B9H,0BAH,0BBH,0BCH,0BDH,0BEH,0BFH
+
+I423F:	DEFB	080H,09AH,045H,041H,08EH,041H,08FH,080H
+        DEFB	045H,045H,045H,049H,049H,049H,08EH,08FH
+        DEFB	090H,092H,092H,04FH,099H,04FH,055H,055H
+        DEFB	059H,099H,09AH,09BH,09CH,09DH,09EH,09FH
+        DEFB	041H,049H,04FH,055H,0A5H,0A5H,0A6H,0A7H
+        DEFB	0A8H,0A9H,0AAH,0ABH,0ACH,0ADH,0AEH,0AFH
+        DEFB	0B0H,0B0H,0B2H,0B2H,0B4H,0B4H,0B6H,0B6H
+        DEFB	0B8H,0B8H,0BAH,0BBH,0BCH,0BDH,0BEH,0BFH
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C427F:	LD	HL,1636
+        CALL	C4BBE			; allocate memory (adjust BASIC areapointers)
+        RET	C			; error, quit
+        LD	(HL),0
+        LD	E,L
+        LD	D,H
+        INC	DE
+        LD	BC,200
+        LDIR				; clear KEYINT stackspace
+        LD	(DF2D3),HL		; top of KEYINT stackspace
+        LD	BC,300
+        LDIR				; clear BDOS stackspace
+        LD	(DF2FE),HL		; top of BDOS stackspace
+        EX	DE,HL
+        LD	HL,I4418
+        PUSH	DE
+        LD	BC,0470H
+        LDIR
+        LD	BC,IF1D3		; jump entry table
+        LD	HL,I4888
+J42AB:	LD	E,(HL)
+        INC	HL
+        LD	D,(HL)
+        INC	HL
+        LD	A,D
+        OR	E
+        JR	Z,J42C4
+        EX	(SP),HL
+        EX	DE,HL
+        ADD	HL,DE
+        EX	DE,HL
+        EX	(SP),HL
+        LD	A,0C3H
+        LD	(BC),A
+        INC	BC
+        LD	A,E
+        LD	(BC),A
+        INC	BC
+        LD	A,D
+        LD	(BC),A
+        INC	BC
+        JR	J42AB
+
+J42C4:	POP	DE
+        LD	HL,I48C8
+J42C8:	LD	C,(HL)
+        INC	HL
+        LD	B,(HL)
+        INC	HL
+        LD	A,B
+        OR	C
+        JR	Z,J42DE
+        PUSH	HL
+        LD	H,B
+        LD	L,C
+        ADD	HL,DE
+        LD	A,(HL)
+        ADD	A,E
+        LD	(HL),A
+        INC	HL
+        LD	A,(HL)
+        ADC	A,D
+        LD	(HL),A
+        POP	HL
+        JR	J42C8
+
+J42DE:	LD	A,(DF2D0)
+        LD	HL,R.0216+1
+        ADD	HL,DE
+        LD	(HL),A
+        LD	A,(DF344)
+        AND	03H
+        LD	HL,R.0295+1
+        ADD	HL,DE
+        LD	(HL),A                  ; primary slot on page 0
+        LD	C,A
+        LD	B,0
+        RLCA
+        RLCA
+        RLCA
+        RLCA
+        OR	C                       ; primary slot on page 2 and 0
+        LD	HL,R.0144+1
+        ADD	HL,DE
+        LD	(HL),A
+        LD	A,(DF344)
+        BIT	7,A                     ; DOS mapper in expanded slot ?
+        JR	Z,J4356                 ; nope,
+        LD	HL,R.027E
+        ADD	HL,DE
+        LD	(HL),B
+        INC	HL
+        LD	(HL),B                  ; enable secundairy slot register code
+        LD	HL,R.0109
+        ADD	HL,DE
+        LD	(HL),B
+        INC	HL
+        LD	(HL),B                  ; enable secundairy slot register code
+        LD	HL,R.012A
+        ADD	HL,DE
+        LD	(HL),B
+        INC	HL
+        LD	(HL),B                  ; enable secundairy slot register code
+        LD	HL,R.029D
+        ADD	HL,DE
+        LD	(HL),32H                ; enable secundairy slot register code
+        RRCA
+        RRCA
+        AND	03H                     ; secundairy slot
+        LD	HL,R.0289+1
+        ADD	HL,DE
+        LD	(HL),A                  ; secundairy slot in page 0
+        LD	L,A
+        RLCA
+        RLCA
+        RLCA
+        RLCA
+        OR	L                       ; secundairy slot in page 2 and 0
+        LD	HL,R.0135+1
+        ADD	HL,DE
+        LD	(HL),A
+        PUSH	DE
+        LD	HL,SLTTBL
+        ADD	HL,BC
+        EX	DE,HL                   ; SLTTBL entry
+        LD	BC,R.028B+1
+        ADD	HL,BC
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D
+        LD	BC,R.029D-R.028B-1
+        ADD	HL,BC
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D
+        LD	BC,R.010E-R.029D-1
+        ADD	HL,BC
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D
+        LD	BC,R.0137-R.010E-1
+        ADD	HL,BC
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D
+        POP	DE
+J4356:	LD	A,(EXPTBL+0)
+        AND	03H	; 3
+        LD	HL,R.0275+1
+        ADD	HL,DE
+        LD	(HL),A
+        LD	C,A
+        LD	B,00H
+        RRCA
+        RRCA
+        LD	HL,R.0256+1
+        ADD	HL,DE
+        LD	(HL),A
+        LD	A,(EXPTBL+0)
+        BIT	7,A
+        JR	Z,J43D1
+        LD	HL,R.025F
+        ADD	HL,DE
+        LD	(HL),B
+        INC	HL
+        LD	(HL),B
+        RRCA
+        RRCA
+        AND	03H	; 3
+        LD	HL,R.0269+1
+        ADD	HL,DE
+        LD	(HL),A
+        LD	A,(DF344)
+        XOR	C
+        AND	03H	; 3
+        JR	NZ,J4397
+        LD	HL,R.026E
+        ADD	HL,DE
+        LD	(HL),32H	; "2"
+        INC	HL
+        LD	(HL),0FFH
+        INC	HL
+        LD	(HL),0FFH
+        JR	J43BC
+
+J4397:	LD	A,0F5H
+        LD	HL,R.017E
+        ADD	HL,DE
+        LD	(HL),A
+        LD	HL,R.01B1
+        ADD	HL,DE
+        LD	(HL),A
+        LD	HL,R.0212
+        ADD	HL,DE
+        LD	(HL),A
+        LD	HL,R.024A
+        ADD	HL,DE
+        LD	(HL),0CDH
+        LD	HL,R.01A4
+        ADD	HL,DE
+        LD	(HL),B
+        INC	HL
+        LD	(HL),B
+        LD	HL,R.01DB
+        ADD	HL,DE
+        LD	(HL),B
+        INC	HL
+        LD	(HL),B
+J43BC:	PUSH	DE
+        LD	HL,SLTTBL
+        ADD	HL,BC
+        EX	DE,HL
+        LD	BC,R.0261+1
+        ADD	HL,BC
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D
+        LD	BC,10
+        ADD	HL,BC
+        LD	(HL),D
+        DEC	HL
+        LD	(HL),E
+        POP	DE
+J43D1:	LD	HL,I43F6
+J43D4:	LD	C,(HL)
+        INC	HL
+        LD	B,(HL)
+        INC	HL
+        LD	A,B
+        OR	C
+        JR	Z,J43F4
+        LD	A,0C3H
+        LD	(BC),A
+        INC	BC
+        PUSH	DE
+        LD	E,(HL)
+        INC	HL
+        LD	D,(HL)
+        INC	HL
+        EX	(SP),HL
+        EX	DE,HL
+        BIT	7,H
+        JR	NZ,J43EC
+        ADD	HL,DE
+J43EC:	LD	A,L
+        LD	(BC),A
+        INC	BC
+        LD	A,H
+        LD	(BC),A
+        POP	HL
+        JR	J43D4
+
+J43F4:	OR	A
+        RET
+
+
+I43F6:	DEFW	DF368
+        DEFW	R.0000
+        DEFW	DF36B
+        DEFW	R.0009
+        DEFW	DF36E
+        DEFW	R.0022
+        DEFW	CF371
+        DEFW	CF327
+        DEFW	CF374
+        DEFW	CF32C
+        DEFW	CF377
+        DEFW	R.00F9
+        DEFW	CF37A
+        DEFW	R.0101
+        DEFW	CF37D
+        DEFW	R.0064
+        DEFW	0
+
+
+I4418:
+        .PHASE	0
+
+;
+; enable disksystem rom on page 1
+;
+
+R.0000:	PUSH	AF
+        LD	A,I
+        PUSH	AF
+        LD	A,(DF348)
+        JR	J0010
+
+;
+; enable dos ram on page 1
+;
+
+R.0009:	PUSH	AF
+        LD	A,I
+        PUSH	AF
+        LD	A,(DF342)
+J0010:	PUSH	HL
+        PUSH	DE
+        PUSH	BC
+        LD	H,40H
+        CALL	ENASLT
+        POP	BC
+        POP	DE
+        POP	HL
+        POP	AF
+        JP	PE,J0020
+        EI
+J0020:	POP	AF
+        RET
+
+;
+; transfer to/from dos ram
+;
+
+R.0022:	PUSH	AF
+        PUSH	HL
+        PUSH	DE
+        PUSH	BC
+        CALL	GETSLO
+        PUSH	AF
+        LD	A,(DF342)
+        LD	H,40H
+        CALL	ENASLT
+        POP	AF
+        POP	BC
+        POP	DE
+        POP	HL
+        LDIR
+        PUSH	HL
+        PUSH	DE
+        PUSH	BC
+        LD	H,40H
+        CALL	ENASLT
+        POP	BC
+        POP	DE
+        POP	HL
+        POP	AF
+        RET
+
+;
+; Transfer to/from slot (F1D3)
+;
+
+R.0045:	PUSH	DE
+        PUSH	HL
+        LD	A,B
+        LD	H,40H
+        CALL	ENASLT
+        EI
+        POP	DE
+        POP	BC
+        LD	HL,(DF2E1)
+        EX	AF,AF'
+        JR	C,J$0057
+        EX	DE,HL
+J$0057:	EX	AF,AF'
+        LDIR
+        LD	A,(DF348)
+        LD	H,40H
+        CALL	ENASLT
+        EI
+        RET
+
+;
+; BDOS entry diskbasic
+;
+
+R.0064:	LD	(DF2E6),IX
+        LD	IY,(DF348-1)
+        LD	IX,(DF2DE)
+        JP	CALSLT
+
+;
+; jump to adres on pointer
+;
+
+R.0073:	EI
+        PUSH	DE
+        LD	E,(HL)
+        INC	HL
+        LD	D,(HL)
+        EX	DE,HL
+        POP	DE
+        JP	(HL)
+
+;
+; interslot call with PROMPT routine (F1DF)
+;
+
+R.007B:	EX	AF,AF'
+        CALL	C$00DD
+
+        IF	TURBOR EQ 1
+        PUSH	IX
+        LD	IX,GETCPU
+        CALL	CF1D9			; get current cpu mode
+        PUSH	AF
+        XOR	A			; Z80 mode
+        LD	IX,CHGCPU
+        CALL	CF1D9			; change cpu mode
+        POP	AF
+        POP	IX
+        PUSH	AF
+        ELSE
+        DEFS	016H,0
+        ENDIF
+
+        EX	AF,AF'
+        CALL	CALSLT
+
+        IF	TURBOR EQ 1
+        EX	AF,AF'
+        POP	AF
+        PUSH	IX
+        LD	IX,CHGCPU
+        CALL	CF1D9			; restore cpu mode
+        POP	IX
+        EX	AF,AF'
+        ELSE
+        DEFS	14,0
+        ENDIF
+
+C$00A7:	EX	AF,AF'
+        LD	A,(DF36B)
+        CALL	C$00DF
+        EX	AF,AF'
+        RET
+
+J$00B0:	POP	AF
+        CALL	C$00A7
+        PUSH	IY
+        PUSH	DE
+        CALL	GETSLO
+        PUSH	AF
+        CALL	C.034F
+        PUSH	AF
+        CALL	C.0107
+        LD	IY,(DF347)
+        LD	IX,(DF2DC)
+        CALL	CALSLT
+        CALL	C.0128
+        POP	AF
+        CALL	C.0349
+        POP	AF
+        LD	H,40H	; "@"
+        CALL	ENASLT
+        POP	DE
+        POP	IY
+
+C$00DD:	LD	A,0C9H
+
+C$00DF:	LD	(DF368),A
+        EXX
+        LD	HL,IF24F
+        LD	DE,I$00F6
+        LD	B,3
+J$00EB:	LD	C,(HL)
+        LD	A,(DE)
+        LD	(HL),A
+        LD	A,C
+        LD	(DE),A
+        INC	HL
+        INC	DE
+        DJNZ	J$00EB
+        EXX
+        RET
+
+I$00F6:	JP	J$00B0
+
+;
+; call routine in BDOS code segment
+;
+
+R.00F9:	CALL	C.0128
+        CALL	CLPRM1+1
+        JR	C.0107
+
+;
+; call BDOS handler in BDOS code segment
+;
+
+R.0101:	CALL	C.0128
+        CALL	BDOS
+
+;
+; restore DOS TPA segments (F1FA)
+;
+
+C.0107:	DI
+        PUSH	AF
+R.0109:	JR	J$0114
+        LD	A,(DF2EB)
+R.010E: LD	(0),A
+        LD	(DFFFF),A
+J$0114:	LD	A,(DF2EA)
+        OUT	(0A8H),A
+        LD	A,(DF2CB)
+        CALL	C.0335
+        LD	A,(DF2CD)
+        CALL	C.0349
+        POP	AF
+        EI
+        RET
+
+;
+; Activate BDOS segments (F1F7)
+;
+
+C.0128:	DI
+        PUSH	AF
+R.012A:	JR	J$013D
+        LD	A,(DFFFF)
+        CPL
+        LD	(DF2EB),A
+        AND	0CCH
+R.0135:	OR	0
+R.0137: LD	(0),A
+        LD	(DFFFF),A
+J$013D:	IN	A,(0A8H)
+        LD	(DF2EA),A
+        AND	0CCH
+R.0144:	OR	00H
+        OUT	(0A8H),A
+        CALL	C.033B
+        LD	(DF2CB),A
+        CALL	C.0345
+        LD	(DF2CC),A
+        CALL	C.034F
+        LD	(DF2CD),A
+        LD	A,(DF2D0)
+        CALL	C.0335
+        LD	A,(DF2CF)
+        CALL	C.0349
+        POP	AF
+        EI
+        RET
+
+;
+; transfer to/from segment (F1D6)
+;
+
+R.0169:	PUSH	AF
+        DI
+        CALL	C.0335
+        LDIR
+        LD	A,(DF2D0)
+        CALL	C.0335
+        EI
+        POP	AF
+        RET
+
+;
+; interslot call to main-bios (F1D9)
+;
+
+R.0179:	EX	AF,AF'
+        PUSH	AF
+        CALL	C.025E
+R.017E:	NOP
+        CALL	C.034F
+        PUSH	AF
+        CALL	C.033B
+        PUSH	AF
+        LD	A,(DF2CB)
+        CALL	C.0335
+        LD	A,(DF2CD)
+        CALL	C.0349
+        EI
+        EX	AF,AF'
+        CALL	CLPRM1
+        EX	AF,AF'
+        CALL	C.027D
+        POP	AF
+        CALL	C.0335
+        POP	AF
+        CALL	C.0349
+R.01A4:	JR	J$01AA
+        POP	AF
+        CALL	C.024E
+J$01AA:	POP	AF
+        EX	AF,AF'
+        EI
+        RET
+
+;
+; print string via CHPUT (F1DC)
+;
+
+R.01AE:	CALL	C.025E
+R.01B1:	NOP
+        LD	A,(DF2CB)
+        CALL	C.0335
+J$01B8:	PUSH	HL
+        PUSH	BC
+        LD	B,(HL)
+        LD	A,(DF2CD)
+        CALL	C.0349
+        LD	A,B
+        EI
+        CALL	CHPUT
+        DI
+        LD	A,(DF2CF)
+        CALL	C.0349
+        POP	BC
+        POP	HL
+        INC	HL
+        DJNZ	J$01B8
+        LD	A,(DF2D0)
+        CALL	C.0335
+        CALL	C.027D
+R.01DB:	JR	J$01E1
+        POP	AF
+        CALL	C.024E
+J$01E1:	EI
+        RET
+
+;
+; KEYINT
+;
+
+R.01E3:	DI
+        PUSH	AF
+        PUSH	HL
+        PUSH	BC
+        LD	HL,(DF2D3)
+        OR	A
+        SBC	HL,SP
+        JR	C,J$01F6
+        LD	BC,200
+        SBC	HL,BC
+        JR	C,J$0207
+J$01F6:	LD	(DF2D1),SP
+        LD	SP,(DF2D3)
+        CALL	C.020F
+        LD	SP,(DF2D1)
+        JR	J$020A
+
+J$0207:	CALL	C.020F
+
+J$020A:	POP	BC
+        POP	HL
+        POP	AF
+        EI
+        RET
+
+C.020F:	CALL	C.025E
+R.0212:	NOP
+        CALL	C.033B
+R.0216:	CP	00H
+        JR	NZ,J$0247
+        PUSH	AF
+        CALL	C.0345
+        PUSH	AF
+        CALL	C.034F
+        PUSH	AF
+        LD	A,(DF2CD)
+        CALL	C.0349
+        LD	A,(DF2CC)
+        CALL	C.033F
+        LD	A,(DF2CB)
+        CALL	C.0335
+        CALL	KEYINT
+        DI
+        POP	AF
+        CALL	C.0349
+        POP	AF
+        CALL	C.033F
+        POP	AF
+        CALL	C.0335
+        JR	R.024A
+
+J$0247:	CALL	KEYINT
+R.024A:	JP	C.027D
+        POP	AF
+
+C.024E:	PUSH	BC
+        PUSH	DE
+        LD	E,A
+        IN	A,(0A8H)
+        LD	B,A
+        AND	3FH
+R.0256:	OR	0
+        CALL	C004B			; change secundairy slotregister
+        POP	DE
+        POP	BC
+        RET
+
+C.025E:	DI
+R.025F:	JR	J$0271
+R.0261:	LD	A,(0)
+        LD	(DF2E0),A
+        AND	0FCH
+R.0269:	OR	00H
+        LD	(0),A
+R.026E:	CALL	C.024E
+J$0271:	IN	A,(0A8H)
+        AND	0FCH
+R.0275:	OR	00H
+        OUT	(0A8H),A
+        LD	A,(DF2E0)
+        RET
+
+;
+; DOS mapper slot on page 0 (F1FD)
+;
+
+C.027D:	DI
+R.027E:	JR	J$0291
+
+?.0280:	LD	A,(DFFFF)
+        CPL
+        LD	(DF2E0),A
+        AND	0FCH
+R.0289:	OR	0
+R.028B:	LD	(0),A
+        LD	(DFFFF),A
+J$0291:	IN	A,(0A8H)
+        AND	0FCH
+R.0295:	OR	0
+        OUT	(0A8H),A
+        LD	A,(DF2E0)
+        RET
+
+R.029D:	RET
+	DEFB	0,0
+        LD	(DFFFF),A
+        RET
+
+;
+; allocate segment (F200)
+;
+
+R.02A4:	PUSH	HL
+        LD	HL,C005C
+        JR	J$02AE
+;
+; free segment (F203)
+;
+
+R.02AA:	PUSH	HL
+        LD	HL,C005F
+J$02AE:	PUSH	DE
+        CALL	CF377
+        POP	DE
+        POP	HL
+        RET
+
+;
+; RDSEG (F206)
+;
+
+
+R.02B5:	DI
+        PUSH	HL
+        PUSH	BC
+        LD	B,A
+        CALL	C.034F
+        LD	C,A
+        LD	A,B
+        CALL	C.0349
+        RES	6,H
+        SET	7,H
+        LD	B,(HL)
+        LD	A,C
+        CALL	C.0349
+        LD	A,B
+        POP	BC
+        POP	HL
+        RET
+
+;
+; WRSEG (F209)
+;
+
+R.02CE:	DI
+        PUSH	HL
+        PUSH	BC
+        LD	B,A
+        CALL	C.034F
+        LD	C,A
+        LD	A,B
+        CALL	C.0349
+        RES	6,H
+        SET	7,H
+        LD	(HL),E
+        LD	A,C
+        CALL	C.0349
+        POP	BC
+        POP	HL
+        RET
+
+;
+; CALLF segment (F20F)
+;
+
+R.02E6:	EXX
+        EX	(SP),HL
+        LD	D,(HL)
+        INC	HL
+        PUSH	DE
+        POP	IY
+        LD	E,(HL)
+        INC	HL
+        LD	D,(HL)
+        INC	HL
+        PUSH	DE
+        POP	IX
+        EX	(SP),HL
+        EXX
+
+;
+; CALSEG (F20C)
+;
+
+R.02F6:	EXX
+        EX	AF,AF'
+        PUSH	IX
+        POP	HL
+        CALL	C.0325
+        PUSH	AF
+        PUSH	HL
+        PUSH	IY
+        POP	AF
+        CALL	C.0315
+        EX	AF,AF'
+        EXX
+        CALL	CLPRM1
+        EXX
+        EX	AF,AF'
+        POP	HL
+        POP	AF
+        CALL	C.0315
+        EX	AF,AF'
+        EXX
+        RET
+
+;
+; ENASEG (F212)
+;
+
+C.0315:	BIT	7,H
+        JR	NZ,J$031F
+        BIT	6,H
+        JR	Z,C.0335
+        JR	C.033F
+
+J$031F:	BIT	6,H
+        JR	Z,C.0349
+        JR	C.0356
+
+;
+; get current segment (F215)
+;
+
+C.0325:	BIT	7,H
+        JR	NZ,J$032F
+        BIT	6,H
+        JR	Z,C.033B
+        JR	C.0345
+
+J$032F:	BIT	6,H
+        JR	Z,C.034F
+        JR	C.0353
+
+;
+;
+;
+
+C.0335:	LD	(DF2C7),A
+        OUT	(0FCH),A
+        RET
+
+C.033B:	LD	A,(DF2C7)
+        RET
+
+C.033F:	LD	(DF2C8),A
+        OUT	(0FDH),A
+        RET
+
+C.0345:	LD	A,(DF2C8)
+        RET
+
+C.0349:	LD	(DF2C9),A
+        OUT	(0FEH),A
+        RET
+
+C.034F:	LD	A,(DF2C9)
+        RET
+
+C.0353:	LD	A,(DF2CA)
+C.0356:	RET
+
+;
+; RDSLT (F1E8)
+;
+
+R.0357:	RES	6,D
+        JR	J$035D
+
+;
+; WRSLT (F1EB)
+;
+
+R.035B:	SET	6,D
+J$035D:	DI
+        LD	(R.0391+1),HL
+        EX	DE,HL
+        LD	(R.0394+1),HL
+        LD	C,A
+        LD	B,D
+        CALL	C.043C
+        BIT	7,C                     ; slot expanded ?
+        JR	Z,C.038A                ; nope,
+        CALL	C.0408                  ; change secundairy slot register
+        PUSH	DE
+        PUSH	BC
+        PUSH	AF
+        CALL	C.038A                  ; RDSLT/WRSLT on primairy slot
+        LD	C,A
+        POP	AF                      ; same slot as slot in page 3 ?
+        POP	DE
+        LD	B,D
+        EX	(SP),HL
+        JR	NZ,J$0382
+        LD	A,E
+        LD	(DFFFF),A               ; yep, change secundairy slot register directly
+J$0382:	CALL	NZ,C004B		; nope, change secundairy slot register with helper routine
+        LD	(HL),E
+        POP	HL
+        LD	A,C
+        LD	E,C
+        RET
+
+C.038A:	IN	A,(0A8H)
+        LD	B,A
+        AND	(HL)
+        INC	HL
+        OR	(HL)
+        DI
+R.0391:	LD	HL,0
+R.0394:	LD	DE,0
+        BIT	6,D
+        LD	D,B
+        JP	NZ,WRPRIM
+        CALL	RDPRIM
+        LD	A,E
+        RET
+
+;
+; CALLF (F1F4)
+;
+
+R.03A2:	EXX
+        EX	AF,AF'
+        POP	HL
+        LD	A,(HL)
+        INC	HL
+        LD	C,(HL)
+        INC	HL
+        LD	B,(HL)
+        INC	HL
+        PUSH	HL
+        PUSH	BC
+        POP	IX
+        JR	J$03B9
+
+;
+; CALSLT (F1EE)
+;
+
+R.03B1:	EXX
+        EX	AF,AF'
+        PUSH	IX
+        POP	BC
+        PUSH	IY
+        POP	AF
+J$03B9:	LD	C,A
+        CALL	C.043C
+        BIT	7,C                     ; slot expanded ?
+        JR	Z,C.03E8                ; nope,
+        CALL	C.0408                  ; change secundairy slot register
+        PUSH	BC
+        PUSH	DE
+        PUSH	AF
+        CALL	C.03E8                  ; CALSLT on primairy slot
+        EXX
+        EX	AF,AF'
+        POP	BC
+        POP	HL
+        LD	A,I
+        DI
+        POP	DE
+        PUSH	AF
+        LD	A,B
+        CP	D                       ; same slot as slot in page 3 ?
+        LD	B,D
+        JR	NZ,J$03DC
+        LD	A,E
+        LD	(DFFFF),A               ; yes, change secundairy slot register directly
+J$03DC:	CALL	NZ,C004B		; nope, change secundairy slot register with helper routine
+        LD	(HL),E
+        POP	AF
+        JP	PO,J$03E5
+        EI
+J$03E5:	EX	AF,AF'
+        EXX
+        RET
+
+C.03E8:	IN	A,(0A8H)
+        PUSH	AF
+        AND	(HL)
+        INC	HL
+        OR	(HL)
+        EXX
+        DI
+        JP	CLPRIM
+
+;
+; ENASLT (F1F1)
+;
+
+R.03F3:	PUSH	HL
+        LD	C,A
+        LD	B,H
+        CALL	C.043C
+        BIT	7,C                     ; slot expanded ?
+        CALL	NZ,C.0408               ; yep, change secundairy slot register
+        IN	A,(0A8H)
+        AND	(HL)
+        INC	HL
+
+C$0402:	OR	(HL)
+        DI
+        OUT	(0A8H),A
+        POP	HL
+        RET
+
+C.0408:	PUSH	HL
+        AND	03H
+        LD	E,A
+        LD	HL,SLTTBL
+        ADD	HL,DE
+        PUSH	HL
+        LD	A,C
+        RRCA
+        RRCA
+        LD	C,A
+        CALL	C.043C
+        DI
+        POP	DE
+        LD	A,(DE)
+        LD	(DF2E0),A
+        AND	(HL)
+        INC	HL
+        OR	(HL)
+        LD	(DE),A                  ; update SLTTBL
+        LD	L,A
+        IN	A,(0A8H)
+        LD	B,A
+        XOR	C
+        AND	3FH
+        XOR	C
+        LD	H,A
+        CP	B                       ; same slot as slot in page 3 ?
+        JR	NZ,J$0432
+        LD	A,L
+        LD	(DFFFF),A               ; yep, change secundairy slot register directly
+J$0432:	CALL	NZ,C0046		; nope, change secundairy slotregister with helper routine
+        LD	A,(DF2E0)
+        LD	C,A
+        LD	A,H
+        POP	HL
+        RET
+
+C.043C:	AND	03H	; 3
+        LD	D,A
+        LD	A,B
+        RRCA
+        RRCA
+        RRCA
+        RRCA
+        AND	0CH	; 12
+        OR	D
+        LD	E,A
+        LD	D,00H
+        LD	HL,I$0450
+        ADD	HL,DE
+        ADD	HL,DE
+        RET
+
+I$0450:	DEFB	0FCH,000H,0FCH,001H,0FCH,002H,0FCH,003H
+        DEFB	0F3H,000H,0F3H,004H,0F3H,008H,0F3H,00CH
+        DEFB	0CFH,000H,0CFH,010H,0CFH,020H,0CFH,030H
+        DEFB	03FH,000H,03FH,040H,03FH,080H,03FH,0C0H
+
+        .DEPHASE
+
+I4888:	DEFW	R.0045
+        DEFW	R.0169
+        DEFW	R.0179
+        DEFW	R.01AE
+        DEFW	R.007B
+        DEFW	R.0073
+        DEFW	R.01E3
+        DEFW	R.0357
+        DEFW	R.035B
+        DEFW	R.03B1
+        DEFW	R.03F3
+        DEFW	R.03A2
+        DEFW	C.0128
+        DEFW	C.0107
+        DEFW	C.027D
+        DEFW	R.02A4
+        DEFW	R.02AA
+        DEFW	R.02B5
+        DEFW	R.02CE
+        DEFW	R.02F6
+        DEFW	R.02E6
+        DEFW	C.0315
+        DEFW	C.0325
+        DEFW	C.0335
+        DEFW	C.033B
+        DEFW	C.033F
+        DEFW	C.0345
+        DEFW	C.0349
+        DEFW	C.034F
+        DEFW	C.0356
+        DEFW	C.0353
+        DEFW	0
+
+I48C8:	DEFW	001DH
+        DEFW	007DH
+        DEFW	00ACH
+        DEFW	00B2H
+        DEFW	00BCH
+        DEFW	00C0H
+        DEFW	00CEH
+        DEFW	00D2H
+        DEFW	00E7H
+        DEFW	00F7H
+        DEFW	00FAH
+        DEFW	0102H
+        DEFW	011DH
+        DEFW	0123H
+        DEFW	0149H
+        DEFW	014FH
+        DEFW	0155H
+        DEFW	015EH
+        DEFW	0164H
+        DEFW	016CH
+        DEFW	0174H
+        DEFW	017CH
+        DEFW	0180H
+        DEFW	0184H
+        DEFW	018BH
+        DEFW	0191H
+        DEFW	019AH
+        DEFW	019EH
+        DEFW	01A2H
+        DEFW	01A8H
+        DEFW	01AFH
+        DEFW	01B6H
+        DEFW	01BFH
+        DEFW	01CBH
+        DEFW	01D6H
+        DEFW	01D9H
+        DEFW	01DFH
+        DEFW	01FFH
+        DEFW	0208H
+        DEFW	0210H
+        DEFW	0214H
+        DEFW	021CH
+        DEFW	0220H
+        DEFW	0227H
+        DEFW	022DH
+        DEFW	0233H
+        DEFW	023BH
+        DEFW	023FH
+        DEFW	0243H
+        DEFW	024BH
+        DEFW	026FH
+        DEFW	02BAH
+        DEFW	02BFH
+        DEFW	02C8H
+        DEFW	02D3H
+        DEFW	02D8H
+        DEFW	02E1H
+        DEFW	02FCH
+        DEFW	0304H
+        DEFW	0310H
+        DEFW	035FH
+        DEFW	0363H
+        DEFW	0368H
+        DEFW	036FH
+        DEFW	0375H
+        DEFW	03BBH
+        DEFW	03C2H
+        DEFW	03C8H
+        DEFW	03E2H
+        DEFW	03F7H
+        DEFW	03FCH
+        DEFW	0416H
+        DEFW	044BH
+        DEFW	0
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C495C:	LD	(DF343),A		; disksystem page 2 ram = current page 2 slotid
+        CALL	C4A15			; check and invoke memorymapper with at least 6 pages
+        RET	C
+        EX	DE,HL
+        LD	HL,KBUF+32
+        SBC	HL,DE			; number of memorymappers*2
+        ADD	HL,HL
+        ADD	HL,HL			; number of memorymappers*8
+        INC	HL			; +1
+        PUSH	DE
+        CALL	C4BBE			; allocate memory (adjust BASIC areapointers)
+        POP	DE
+        RET	C			; error, quit
+        LD	(DF2C5),HL		; memorymappertable
+        EX	DE,HL
+J4976:	LD	A,(HL)
+        OR	A
+        JR	Z,J498A		        ; no more memorymappers, continue
+        INC	HL
+        LDI				; slotid
+        LD	(DE),A			; number of segments
+        INC	DE
+        LD	(DE),A			; number of free segments
+        INC	DE
+        XOR	A
+        LD	B,5
+J4984:	LD	(DE),A
+        INC	DE
+        DJNZ	J4984
+        JR	J4976			; next memorymapper
+
+J498A:	LD	(DE),A			; endmarker
+        LD	HL,(DF2C5)
+        LD	A,(HL)			; slotid of disksystem memorymapper
+        PUSH	HL
+        LD	(DF344),A		; disksystem page 3 ram
+        LD	(DF342),A		; disksystem page 1 ram
+        LD	(DF341),A		; disksystem page 0 ram
+        LD	H,80H
+        CALL	ENASLT			; enable disksystem ram on page 2
+        POP	HL
+        INC	HL
+        LD	A,(HL)			; number of segments
+
+        IF	TURBOR EQ 1
+        BIT	2,A			; are 4 pages missing of what should be expected ?
+        JR	Z,J49A8		        ; no, reserve 4 segements for R800 RAM mode
+        ADD	A,4
+        LD	(HL),A			; 4 extra segments (that were invisable because of R800 RAM mode)
+J49A8:	SUB	4
+        ENDIF
+
+        DEC	A
+        LD	(DF2CF),A		; BDOS data segment
+        DEC	A
+        LD	(DF2D0),A		; BDOS code segment
+        SUB	4			; 4 segments for DOS tpa
+        INC	HL
+        LD	(HL),A			; number of free segments
+        INC	HL
+
+        IF	TURBOR EQ 1
+        LD	(HL),10			; number of allocated segments (4 tpa, 2 bdos, 4 shadow ram)
+        ELSE
+        LD	(HL),6
+        ENDIF
+
+        LD	DE,IF314
+        LD	HL,DF2C7
+        LD	A,3
+J49C1:	LD	(DE),A
+        INC	DE
+        LD	(HL),A			; setup current segment
+        INC	HL
+        DEC	A
+        JP	P,J49C1
+        LD	A,(DF2CF)
+        OUT	(0FEH),A		; BDOS data segment on page 2
+        LD	HL,IBBFF
+J49D1:	LD	(HL),0
+        DEC	HL
+        BIT	7,H
+        JR	NZ,J49D1		; clear 8000H-0BBFFH
+        LD	HL,IB062
+        LD	(DB064),HL		; BDOS data memory start at 0B062H downwards
+        LD	HL,(DF2C5)		; memorymappertable
+        LD	A,(HL)			; slotid
+        INC	HL
+        PUSH	HL
+        CALL	C4B26			; setup memorymapper pointer table and segment allocationtable
+        DEC	HL
+
+        IF	TURBOR EQ 1
+        DEC	(HL)			; last segment is reserved (shadow rom MSX-kanji)
+        DEC	HL
+        DEC	(HL)			; last-1 segment is reserved (shadow rom MSX-subrom)
+        DEC	HL
+        DEC	(HL)			; last-2 segment is reserved (shadow rom MSX-basicrom)
+        DEC	HL
+        DEC	(HL)			; last-3 segment is reserved (shadow rom MSX-biosrom)
+        DEC	HL
+        ENDIF
+
+        DEC	(HL)			; last-4 segment is reserved (BDOS data segment)
+        DEC	HL
+        DEC	(HL)			; last-5 segment is reserved (BDOS code segment)
+        EX	DE,HL
+        LD	B,4
+J49F6:	DEC	(HL)
+        INC	HL
+        DJNZ	J49F6			; first 4 segments are reserved (DOS TPA segments)
+        POP	HL
+        LD	BC,8-1
+        ADD	HL,BC			; to the next memorymappertable entry
+J49FF:	LD	A,(HL)
+        OR	A
+        JR	Z,J4A0F		        ; end of table, quit
+        INC	HL
+        PUSH	HL
+        CALL	C4B26			; setup memorymapper pointer table and segment allocationtable
+        POP	HL
+        LD	BC,8-1
+        ADD	HL,BC			; to the next memorymappertable entry
+        JR	J49FF
+
+J4A0F:	LD	A,1
+        OUT	(0FEH),A		; restore segment 1 on page 2
+        OR	A
+        RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C4A15:	DI
+        PUSH	AF
+        LD	HL,KBUF+32
+        XOR	A
+        LD	(HL),A
+        PUSH	HL
+        LD	HL,EXPTBL
+J4A20:	BIT	7,(HL)
+        JR	Z,J4A26
+        SET	7,A
+J4A26:	PUSH	HL
+        PUSH	AF
+        LD	H,80H
+        CALL	ENASLT
+        CALL	C4A8A			; check if memorymapper and count the segments
+        OR	A
+        JR	Z,J4A63		        ; no memorymapper,
+        POP	BC
+        POP	HL
+        EX	(SP),HL
+        PUSH	BC
+        LD	C,A			; number of segments
+
+        IF	TURBOR EQ 1
+        LD	A,(HL)
+        OR	A			; already found a memorymapper ?
+        JR	Z,J4A5B		        ; nope,
+        LD	A,B
+        DEC	A
+        AND	02H
+        LD	B,A			; internal slot (0,3) /external slot (1,2)
+        INC	HL
+        LD	A,(HL)
+        DEC	HL
+        DEC	A
+        AND	02H			; internal slot (0,3) /external slot (1,2) of last found
+        CP	B
+        LD	A,C
+        POP	BC
+        PUSH	BC
+        LD	C,A
+        LD	A,(HL)
+        JR	C,J4A5B		        ; last external, now internal, internal as last
+        JR	NZ,J4A54		; last internal, now external, keep the internal last
+        CP	C			; last is same type as now, which has more segments ?
+        JR	C,J4A5B		        ; now is bigger, now as last
+J4A54:	LD	(HL),C
+        LD	C,A
+        INC	HL
+        LD	A,(HL)
+        LD	(HL),B
+        LD	B,A
+        DEC	HL
+
+        ELSE
+
+        LD      A,(HL)
+        CP      C                       ; this memory mapper bigger then sofar ?
+        JR      C,J4A05                 ; yep, put this memory mapper last on the list
+        LD      (HL),C
+        LD      C,A
+        INC     HL
+        LD      A,(HL)
+        LD      (HL),B
+        LD      B,A
+        DEC     HL                      ; put this memory mapper on the list and keep bigest last on the list
+
+        ENDIF
+
+J4A5B:	DEC	HL
+        LD	(HL),B			; slotid
+        DEC	HL
+        LD	(HL),C			; segments
+        POP	BC
+        EX	(SP),HL
+        PUSH	HL
+        PUSH	BC
+J4A63:	POP	AF
+        POP	HL
+        BIT	7,A
+        JR	Z,J4A6F
+        ADD	A,04H
+        BIT	4,A
+        JR	Z,J4A26
+J4A6F:	INC	HL
+        INC	A
+        AND	03H
+        JR	NZ,J4A20
+        POP	HL
+        POP	AF
+        PUSH	HL
+        LD	H,80H
+        CALL	ENASLT			; restore page 1
+        POP	HL
+        LD	A,(HL)
+        CP	6			; has the preffered memorymapper 6 or more segments
+        RET	C			; nope, quit
+        PUSH	HL
+        INC	HL
+        CALL	C4ADD			; enable preffered memorymapper on page 2 and 3
+        POP	HL
+        XOR	A
+        RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C4A8A:	LD	HL,08000H
+        LD	B,(HL)
+        LD	(HL),0AAH
+        XOR	A
+        OUT	(0FEH),A
+        LD	C,(HL)
+        LD	(HL),55H
+        INC	A
+        OUT	(0FEH),A
+        LD	E,(HL)
+        XOR	A
+        OUT	(0FEH),A
+        LD	(HL),C
+        INC	A
+        OUT	(0FEH),A
+        LD	(HL),B
+        LD	A,E
+        CP	0AAH
+        LD	B,00H
+        JR	NZ,J4AD7
+        LD	HL,08000H
+        LD	B,00H
+J4AAE:	LD	A,B
+        OUT	(0FEH),A
+        LD	A,(HL)
+        PUSH	AF
+        INC	SP
+        LD	(HL),0AAH
+        INC	B
+        JR	NZ,J4AAE
+J4AB9:	LD	A,B
+        OUT	(0FEH),A
+        LD	A,(HL)
+        CP	0AAH
+        JR	NZ,J4ACB
+        LD	A,55H
+        LD	(HL),A
+        CP	(HL)
+        JR	NZ,J4ACB
+        INC	B
+        JR	NZ,J4AB9
+        DEC	B
+J4ACB:	LD	C,00H
+J4ACD:	LD	A,C
+        DEC	A
+        OUT	(0FEH),A
+        DEC	SP
+        POP	AF
+        LD	(HL),A
+        DEC	C
+        JR	NZ,J4ACD
+J4AD7:	LD	A,1
+        OUT	(0FEH),A
+        LD	A,B
+        RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C4ADD:	LD	A,(HL)
+        PUSH	AF
+        LD	H,80H
+        CALL	ENASLT
+        XOR	A
+        OUT	(0FEH),A
+        LD	HL,0
+        SBC	HL,SP
+        LD	C,L
+        LD	B,H			; size of the area above the stackpointer
+        LD	HL,0
+        ADD	HL,SP			; start of the area above the stackpointer
+        LD	E,L
+        LD	D,H
+        RES	6,D			; page 2 based
+        LDIR				; copy area above the stackpointer
+        OUT	(0FFH),A
+        INC	A
+        OUT	(0FEH),A
+        INC	A
+        OUT	(0FDH),A
+        INC	A
+        OUT	(0FCH),A		; initialize segments on all pages
+        POP	AF
+        LD	HL,0
+        ADD	HL,SP			; save stackpointer
+        LD	SP,0C000H		; stackpointer now in page 2
+        PUSH	AF
+        PUSH	HL
+        CALL	ENASLT			; enable slot on page were stackpointer was in (page 3)
+        POP	HL
+        POP	AF
+        LD	SP,HL			; restore stackpointer
+        BIT	7,A
+        JR	Z,J4B25
+        AND	03H
+        LD	C,A
+        LD	B,0
+        LD	HL,SLTTBL
+        ADD	HL,BC
+        LD	A,(DFFFF)
+        CPL
+        LD	(HL),A			; adjust SLTTBL entry, because thats changed after the copy!
+J4B25:	RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C4B26:	EX	DE,HL
+        AND	0FH			; primary and secundairy slot
+        ADD	A,A
+        ADD	A,A
+        LD	C,A
+        LD	B,0
+        LD	HL,IBA35
+        ADD	HL,BC			; memorymapper slot pointertable
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D
+        INC	HL			; pointer to memorymapper info
+        EX	DE,HL
+        LD	C,(HL)
+        LD	B,0			; number or segments
+        LD	HL,(DB064)
+        OR	A
+        SBC	HL,BC
+        LD	(DB064),HL		; allocate BDOS data memory for segment allocationtable
+        INC	HL
+        INC	HL
+        EX	DE,HL
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D			; pointer to memorymapper segment allocationtable
+        LD	H,D
+        LD	L,E
+        ADD	HL,BC
+        RET
+
+;	  Subroutine EXTBIO handler
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+J4B4D:	PUSH	DE
+        PUSH	AF
+        CALL	C4B55
+        POP	AF
+        POP	DE
+        RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C4B55:	LD	A,D
+        OR	E			; boardcast, build devicename table ?
+        JR	NZ,J4B61		; nope,
+        LD	A,4
+        CALL	C4BB2			; write devicenumber (4 = MAPPER)
+        JP	C4BB2			; write reserved
+
+J4B61:	LD	A,D
+        CP	4			; MAPPER EXTBIO ?
+        RET	NZ			; nope, control to next EXTBIO handler
+        LD	A,E
+        OR	A			; function 0 ?
+        JR	Z,J4B70
+        DEC	A			; function 1 ?
+        JR	Z,J4B99
+        DEC	A			; function 2 ?
+        JR	Z,J4BA2
+        RET
+
+J4B70:	PUSH	HL
+        LD	HL,(DF2C5)
+        LD	C,(HL)
+        INC	HL
+        LD	D,(HL)
+        INC	HL
+        LD	E,(HL)
+        POP	HL
+        LD	A,C
+        CALL	C4BB2
+        LD	A,LOW IF200
+        CALL	C4BB2
+        LD	A,HIGH IF200
+        CALL	C4BB2
+        LD	A,E
+        CALL	C4BB2
+        LD	A,D
+        CALL	C4BB2
+        CALL	C4BB2
+        CALL	C4BB2
+        JP	C4BB2
+
+J4B99:	POP	DE
+        POP	AF
+        LD	HL,(DF2C5)
+        LD	A,(HL)
+        PUSH	AF
+        PUSH	DE
+        RET
+
+J4BA2:	POP	DE
+        POP	AF
+        LD	HL,(DF2C5)
+        LD	B,(HL)
+        INC	HL
+        LD	A,(HL)
+        INC	HL
+        LD	C,(HL)
+        LD	HL,IF200
+        PUSH	AF
+        PUSH	DE
+        RET
+
+;	  Subroutine __________________________
+;	     Inputs  ________________________
+;	     Outputs ________________________
+
+C4BB2:	PUSH	BC
+        PUSH	DE
+        LD	E,A
+        LD	A,B
+        CALL	WRSLT
+        POP	DE
+        POP	BC
+        INC	HL
+        XOR	A
+        RET
+
+;	Subroutine	allocate memory (adjust BASIC areapointers)
+;	Inputs		HL = number of bytes to allocate
+;	Outputs		Cx set if out of memory
+
+C4BBE:	LD	A,L
+        OR	H
+        RET	Z
+        EX	DE,HL
+        LD	HL,0
+        SBC	HL,DE
+        LD	C,L
+        LD	B,H
+        ADD	HL,SP
+        CCF
+        RET	C
+        LD	A,H
+        CP	0C2H
+        RET	C
+        LD	DE,(BOTTOM)
+        SBC	HL,DE
+        RET	C
+        LD	A,H
+        CP	02H	; 2
+        RET	C
+        PUSH	BC
+        LD	HL,0
+        ADD	HL,SP
+        LD	E,L
+        LD	D,H
+        ADD	HL,BC
+        PUSH	HL
+        LD	HL,(STKTOP)
+        OR	A
+        SBC	HL,DE
+        LD	C,L
+        LD	B,H
+        INC	BC
+        POP	HL
+        LD	SP,HL
+        EX	DE,HL
+        LDIR
+        POP	BC
+        LD	HL,(HIMEM)
+        ADD	HL,BC
+        LD	(HIMEM),HL
+        LD	DE,-534
+        ADD	HL,DE
+        LD	(FILTAB),HL
+        EX	DE,HL
+        LD	HL,(MEMSIZ)
+        ADD	HL,BC
+        LD	(MEMSIZ),HL
+        LD	HL,(NULBUF)
+        ADD	HL,BC
+        LD	(NULBUF),HL
+        LD	HL,(STKTOP)
+        ADD	HL,BC
+        JR	J4C3B
+
+;	  Subroutine setup i/o channels
+;	     Inputs  ________________________
+;	     Outputs ________________________
+;	Remark		NOT USED
+
+?4C16:	LD	A,1
+        LD	(MAXFIL),A
+        LD	HL,(HIMEM)
+        LD	DE,-534
+        ADD	HL,DE
+        LD	(FILTAB),HL
+        LD	E,L
+        LD	D,H
+        DEC	HL
+        DEC	HL
+        LD	(MEMSIZ),HL
+        LD	BC,200
+        OR	A
+        SBC	HL,BC
+        PUSH	HL
+        LD	HL,13
+        ADD	HL,DE
+        LD	(NULBUF),HL
+        POP	HL
+
+J4C3B:	LD	(STKTOP),HL
+        DEC	HL
+        DEC	HL
+        LD	(SAVSTK),HL
+        LD	L,E
+        LD	H,D
+        INC	HL
+        INC	HL
+        INC	HL
+        INC	HL
+        LD	A,02H	; 2
+J4C4B:	EX	DE,HL
+        LD	(HL),E
+        INC	HL
+        LD	(HL),D
+        INC	HL
+        EX	DE,HL
+        LD	BC,7
+        LD	(HL),B
+        ADD	HL,BC
+        LD	(HL),B
+        LD	BC,256+2
+        ADD	HL,BC
+        DEC	A
+        JR	NZ,J4C4B
+        RET
+
+J4C5F:	LD	HL,L4D64		; errorstring table
+        CALL	C4C77			; copy errorstring to buffer
+        RET	Z			; found, quit
+        PUSH	AF
+        CP	64
+        LD	A,11			; system error message for undefined error 64-255
+        JR	NC,J4C6F
+        LD	A,12			; user error message for error 0-63
+J4C6F:	CALL	C4C74			; copy message to buffer
+        POP	AF
+        RET
+
+;	  Subroutine copy message to buffer
+;	     Inputs  A=messageid, DE=buffer
+;	     Outputs Zx set if found
+
+C4C74:	LD	HL,L4CA0
+
+;	  Subroutine copy string to buffer
+;	     Inputs  A=stringid, HL=stringtable, DE=buffer
+;	     Outputs ________________________
+
+C4C77:	PUSH	BC
+        PUSH	DE
+        LD	E,A
+        LD	A,(DF30F)
+        OR	A			; double byte active ?
+        JR	Z,J4C85
+        DEC	HL
+        LD	A,(HL)
+        DEC	HL
+        LD	L,(HL)
+        LD	H,A			; yes, use alternate table
+J4C85:	LD	A,(HL)
+        OR	A
+        LD	A,E
+        JR	Z,J4C9A			; end of table, quit
+        SUB	(HL)
+        INC	HL
+        LD	C,(HL)
+        LD	B,0
+        INC	HL
+        JR	Z,J4C95			; this is it, copy string
+        ADD	HL,BC
+        JR	J4C85			; next string
+
+J4C95:	POP	DE
+        PUSH	DE
+        LDIR
+        EX	DE,HL
+J4C9A:	POP	DE
+        POP	BC
+        OR	A
+        RET
+
+
+        DEFW	L0000
+L4CA0:	DOSST1	1,<"Not enough memory">
+        DOSST1	2,<"Drive name? (">
+        DOSST1	3,<") ">
+        DOSST1	4,<"Strike a key when ready ">
+        DOSST1	5,<"Aborted">
+        DOSST1	6,<"Format complete">
+        DOSST1	7,<"Insert disk for drive ">
+        DOSST1	8,<":">
+        DOSST1	9,<"and strike a key when ready ">
+        DOSST1	10,<"*** ">
+        DOSST1	11,<"System error ">
+        DOSST1	12,<"User error ">
+        DEFB	0
+
+; ERRORS
+
+        DEFW	L0001
+L4D64:	DOSST1	0FFH,<"Incompatible disk">
+        DOSST1	0FEH,<"Write error">
+        DOSST1	0FDH,<"Disk error">
+        DOSST1	0FCH,<"Not ready">
+        DOSST1	0FBH,<"Verify error">
+        DOSST1	0FAH,<"Data error">
+        DOSST1	0F9H,<"Sector not found">
+        DOSST1	0F8H,<"Write protected disk">
+        DOSST1	0F7H,<"Unformatted disk">
+        DOSST1	0F6H,<"Not a DOS disk">
+        DOSST1	0F5H,<"Wrong disk">
+        DOSST1	0F4H,<"Wrong disk for file">
+        DOSST1	0F3H,<"Seek error">
+        DOSST1	0F2H,<"Bad file allocation table">
+        DOSST1	0F0H,<"Cannot format this drive">
+        DOSST1	0DFH,<"Internal error">
+        DOSST1	0DEH,<"Not enough memory">
+        DOSST1	0DCH,<"Invalid MSX-DOS call">
+        DOSST1	0DBH,<"Invalid drive">
+        DOSST1	0DAH,<"Invalid filename">
+        DOSST1	0D9H,<"Invalid pathname">
+        DOSST1	0D8H,<"Pathname too long">
+        DOSST1	0D7H,<"File not found">
+        DOSST1	0D6H,<"Directory not found">
+        DOSST1	0D5H,<"Root directory full">
+        DOSST1	0D4H,<"Disk full">
+        DOSST1	0D3H,<"Duplicate filename">
+        DOSST1	0D2H,<"Invalid directory move">
+        DOSST1	0D1H,<"Read only file">
+        DOSST1	0D0H,<"Directory not empty">
+        DOSST1	0CFH,<"Invalid attributes">
+        DOSST1	0CEH,<"Invalid . or .. operation">
+        DOSST1	0CDH,<"System file exists">
+        DOSST1	0CCH,<"Directory exists">
+        DOSST1	0CBH,<"File exists">
+        DOSST1	0CAH,<"File is already in use">
+        DOSST1	0C9H,<"Cannot transfer above 64k">
+        DOSST1	0C8H,<"File allocation error">
+        DOSST1	0C7H,<"End of file">
+        DOSST1	0C6H,<"File access violation">
+        DOSST1	0C5H,<"Invalid process id">
+        DOSST1	0C4H,<"No spare file handles">
+        DOSST1	0C3H,<"Invalid file handle">
+        DOSST1	0C2H,<"File handle not open">
+        DOSST1	0C1H,<"Invalid device operation">
+        DOSST1	0C0H,<"Invalid environment string">
+        DOSST1	0BFH,<"Environment string too long">
+        DOSST1	0BEH,<"Invalid date">
+        DOSST1	0BDH,<"Invalid time">
+        DOSST1	0BCH,<"RAM disk (drive H:) already exists">
+        DOSST1	0BBH,<"RAM disk does not exist">
+        DOSST1	0BAH,<"File handle has been deleted">
+        DOSST1	0B8H,<"Invalid sub-function number">
+        DOSST1	0B7H,<"Invalid File Control Block">
+        DOSST1	09FH,<"Ctrl-STOP pressed">
+        DOSST1	09EH,<"Ctrl-C pressed">
+        DOSST1	09DH,<"Disk operation aborted">
+        DOSST1	09CH,<"Error on standard output">
+        DOSST1	09BH,<"Error on standard input">
+        DOSST1	08FH,<"Wrong version of command">
+        DOSST1	08EH,<"Unrecognized command">
+        DOSST1	08DH,<"Command too long">
+        DOSST1	08BH,<"Invalid parameter">
+        DOSST1	08AH,<"Too many parameters">
+        DOSST1	089H,<"Missing parameter">
+        DOSST1	088H,<"Invalid option">
+        DOSST1	087H,<"Invalid number">
+        DOSST1	086H,<"File for HELP not found">
+        DOSST1	085H,<"Wrong version of MSX-DOS">
+        DOSST1	084H,<"Cannot concatenate destination file">
+        DOSST1	083H,<"Cannot create destination file">
+        DOSST1	082H,<"File cannot be copied onto itself">
+        DOSST1	081H,<"Cannot overwrite previous destination file">
+        DOSST1	07FH,<"Insert MSX-DOS2 disk in drive ",007H,":">
+        DOSST1	07EH,<"Press any key to continue... ">
+        DEFB	0
+
+L0000:	DOSST2	1,<83818382838A82AA91AB82E882DC82B982F1>
+        DOSST2	2,<836883898343837596BC82CD3F2028>
+        DOSST1	3,<") ">
+        DOSST2	4,<89BD82A9834C815B82F0899F82B582C489BA82B382A220>
+        DOSST2	5,<91C582BF90D882E782EA82DC82B582BD>
+        DOSST2	6,<83748348815B837D8362836782AA8AAE97B982B582DC82B582BD>
+        DOSST2	7,<8368838983438375>
+        DOSST2	8,<3A977082CC836683428358834E82F093FC82EA82C4>
+        DOSST2	9,<89BD82A9834C815B82F0899F82B582C489BA82B382A2>
+        DOSST1	10,<"*** ">
+        DOSST2	11,<835683588365838083478389815B20>
+        DOSST2	12,<8386815B8355815B83478389815B20>
+        DEFB	0
+
+L0001:
+
+        DOSST2	0FFH,<82B182CC836683428358834E82CD8E67977082C582AB82DC82B982F1>
+        DOSST2  0FEH,<8F9182AB8D9E82DD88D98FED82C582B7>
+        DOSST2	0FDH,<836683428358834E82AA88D98FED82C582B7>
+        DOSST2  0FCH,<836683428358834E82AA93FC82C182C482A282DC82B982F1>
+        DOSST2	0FBH,<90B382B582AD8F9182AB8D9E82DC82EA82DC82B982F182C582B582BD>
+        DOSST2  0FAH,<836683428358834E82CC8366815B835E82AA88D98FED82C582B7>
+        DOSST2  0F9H,<835A834E835E815B82AA8CA982C282A982E882DC82B982F1>
+        DEFB    0F8H
+        DEFB    23H,83H,66H,83H,42H,83H,58H,83H,4EH,82H,0AAH,8FH
+        DEFB    91H,82H,0ABH,8DH,9EH,82H,0DDH,95H,0DBH,8CH,0ECH,82H
+        DEFB    0B3H,82H,0EAH,82H,0C4H,82H,0A2H,82H,0DCH,82H,0B7H
+        DEFB    0
+        DEFB    0F7H,25H,83H,66H
+        DEFB	83H,42H,83H,58H,83H,4EH,82H,0AAH
+        DEFB	83H,74H,83H,48H,81H,5BH,83H,7DH
+        DEFB	83H,62H,83H,67H,82H,0B3H,82H,0EAH
+        DEFB	82H,0C4H,82H,0A2H,82H,0DCH,82H,0B9H
+        DEFB	82H,0F1H,00H,0F6H,1EH,4DH,53H,58H
+        DEFB	2DH,44H,4FH,53H,83H,66H,83H,42H
+        DEFB	83H,58H,83H,4EH,82H,0C5H,82H,0CDH
+        DEFB	82H,0A0H,82H,0E8H,82H,0DCH,82H,0B9H
+        DEFB	82H,0F1H,00H,0F5H,13H,83H,66H,83H
+        DEFB	42H,83H,58H,83H,4EH,82H,0AAH,88H
+        DEFB	0E1H,82H,0A2H,82H,0DCH,82H,0B7H,00H
+        DEFB	0F4H,27H,82H,0B1H,82H,0CCH,83H,74H
+        DEFB	83H,40H,83H,43H,83H,8BH,97H,70H
+        DEFB	82H,0CCH,83H,66H,83H,42H,83H,58H
+        DEFB	83H,4EH,82H,0C5H,82H,0CDH,82H,0A0H
+        DEFB	82H,0E8H,82H,0DCH,82H,0B9H,82H,0F1H
+        DEFB	00H,0F3H,11H,83H,56H,81H,5BH,83H
+        DEFB	4EH,83H,47H,83H,89H,81H,5BH,82H
+        DEFB	0C5H,82H,0B7H,00H,0F2H,0CH,46H,41H
+        DEFB	54H,88H,0D9H,8FH,0EDH,82H,0C5H,82H
+        DEFB	0B7H,00H,0F0H,25H,82H,0B1H,82H,0CCH
+        DEFB	83H,68H,83H,89H,83H,43H,83H,75H
+        DEFB	82H,0CDH,83H,74H,83H,48H,81H,5BH
+        DEFB	83H,7DH,83H,62H,83H,67H,82H,0C5H
+        DEFB	82H,0ABH,82H,0DCH,82H,0B9H,82H,0F1H
+        DEFB	00H,0DFH,0EH,44H,4FH,53H,82H,0AAH
+        DEFB	88H,0D9H,8FH,0EDH,82H,0C5H,82H,0B7H
+        DEFB	00H,0DEH,11H,83H,81H,83H,82H,83H
+        DEFB	8AH,81H,5BH,95H,73H,91H,0ABH,82H
+        DEFB	0C5H,82H,0B7H,00H,0DCH,24H,96H,0B3H
+        DEFB	8CH,0F8H,82H,0C8H,4DH,53H,58H,2DH
+        DEFB	44H,4FH,53H,83H,74H,83H,40H,83H
+        DEFB	93H,83H,4EH,83H,56H,83H,87H,83H
+        DEFB	93H,94H,0D4H,8DH,86H,82H,0C5H,82H
+        DEFB	0B7H,00H,0DBH,15H,96H,0B3H,8CH,0F8H
+        DEFB	82H,0C8H,83H,68H,83H,89H,83H,43H
+        DEFB	83H,75H,96H,0BCH,82H,0C5H,82H,0B7H
+        DEFB	00H,0DAH,15H,95H,73H,90H,0B3H,82H
+        DEFB	0C8H,83H,74H,83H,40H,83H,43H,83H
+        DEFB	8BH,96H,0BCH,82H,0C5H,82H,0B7H,00H
+        DEFB	0D9H,11H,96H,0B3H,8CH,0F8H,82H,0C8H
+        DEFB	83H,70H,83H,58H,96H,0BCH,82H,0C5H
+        DEFB	82H,0B7H,00H,0D8H,13H,83H,70H,83H
+        DEFB	58H,96H,0BCH,82H,0AAH,92H,0B7H,89H
+        DEFB	0DFH,82H,0ACH,82H,0DCH,82H,0B7H,00H
+        DEFB	0D7H,19H,83H,74H,83H,40H,83H,43H
+        DEFB	83H,8BH,82H,0AAH,8CH,0A9H,82H,0C2H
+        DEFB	82H,0A9H,82H,0E8H,82H,0DCH,82H,0B9H
+        DEFB	82H,0F1H,00H,0D6H,1DH,83H,66H,83H
+        DEFB	42H,83H,8CH,83H,4EH,83H,67H,83H
+        DEFB	8AH,82H,0AAH,8CH,0A9H,82H,0C2H,82H
+        DEFB	0A9H,82H,0E8H,82H,0DCH,82H,0B9H,82H
+        DEFB	0F1H,00H,0D5H,21H,83H,8BH,81H,5BH
+        DEFB	83H,67H,83H,66H,83H,42H,83H,8CH
+        DEFB	83H,4EH,83H,67H,83H,8AH,82H,0AAH
+        DEFB	82H,0A2H,82H,0C1H,82H,0CFH,82H,0A2H
+        DEFB	82H,0C5H,82H,0B7H,00H,0D4H,17H,83H
+        DEFB	66H,83H,42H,83H,58H,83H,4EH,82H
+        DEFB	0AAH,82H,0A2H,82H,0C1H,82H,0CFH,82H
+        DEFB	0A2H,82H,0C5H,82H,0B7H,00H,0D3H,1BH
+        DEFB	83H,74H,83H,40H,83H,43H,83H,8BH
+        DEFB	96H,0BCH,82H,0AAH,8FH,64H,95H,0A1H
+        DEFB	82H,0B5H,82H,0C4H,82H,0A2H,82H,0DCH
+        DEFB	82H,0B7H,00H,0D2H,1DH,83H,66H,83H
+        DEFB	42H,83H,8CH,83H,4EH,83H,67H,83H
+        DEFB	8AH,82H,0AAH,88H,0DAH,93H,0AEH,82H
+        DEFB	0C5H,82H,0ABH,82H,0DCH,82H,0B9H,82H
+        DEFB	0F1H,00H,0D1H,1BH,83H,74H,83H,40H
+        DEFB	83H,43H,83H,8BH,82H,0AAH,93H,0C7H
+        DEFB	82H,0DDH,8FH,6FH,82H,0B5H,90H,0EAH
+        DEFB	97H,70H,82H,0C5H,82H,0B7H,00H,0D0H
+        DEFB	1FH,83H,66H,83H,42H,83H,8CH,83H
+        DEFB	4EH,83H,67H,83H,8AH,82H,0AAH,8BH
+        DEFB	0F3H,82H,0C5H,82H,0CDH,82H,0A0H,82H
+        DEFB	0E8H,82H,0DCH,82H,0B9H,82H,0F1H,00H
+        DEFB	0CFH,0FH,96H,0B3H,8CH,0F8H,82H,0C8H
+        DEFB	91H,0AEH,90H,0ABH,82H,0C5H,82H,0B7H
+        DEFB	00H,0CEH,1EH,2EH,82H,0E2H,2EH,2EH
+        DEFB	82H,0C9H,91H,0CEH,82H,0B5H,82H,0C4H
+        DEFB	82H,0CDH,91H,80H,8DH,0ECH,82H,0C5H
+        DEFB	82H,0ABH,82H,0DCH,82H,0B9H,82H,0F1H
+        DEFB	00H,0CDH,1FH,83H,56H,83H,58H,83H
+        DEFB	65H,83H,80H,83H,74H,83H,40H,83H
+        DEFB	43H,83H,8BH,82H,0AAH,8AH,0F9H,82H
+        DEFB	0C9H,82H,0A0H,82H,0E8H,82H,0DCH,82H
+        DEFB	0B7H,00H,0CCH,1BH,83H,66H,83H,42H
+        DEFB	83H,8CH,83H,4EH,83H,67H,83H,8AH
+        DEFB	82H,0AAH,8AH,0F9H,82H,0C9H,82H,0A0H
+        DEFB	82H,0E8H,82H,0DCH,82H,0B7H,00H,0CBH
+        DEFB	17H,83H,74H,83H,40H,83H,43H,83H
+        DEFB	8BH,82H,0AAH,8AH,0F9H,82H,0C9H,82H
+        DEFB	0A0H,82H,0E8H,82H,0DCH,82H,0B7H,00H
+        DEFB	0CAH,15H,83H,74H,83H,40H,83H,43H
+        DEFB	83H,8BH,82H,0AAH,8EH,67H,97H,70H
+        DEFB	92H,86H,82H,0C5H,82H,0B7H,00H,0C9H
+        DEFB	1CH,36H,34H,4BH,82H,0F0H,89H,7AH
+        DEFB	82H,0A6H,82H,0E9H,93H,5DH,91H,97H
+        DEFB	82H,0CDH,82H,0C5H,82H,0ABH,82H,0DCH
+        DEFB	82H,0B9H,82H,0F1H,00H,0C8H,17H,83H
+        DEFB	74H,83H,40H,83H,43H,83H,8BH,82H
+        DEFB	0CCH,8AH,84H,93H,96H,88H,0D9H,8FH
+        DEFB	0EDH,82H,0C5H,82H,0B7H,00H,0C7H,15H
+        DEFB	83H,74H,83H,40H,83H,43H,83H,8BH
+        DEFB	82H,0CCH,8FH,49H,82H,0EDH,82H,0E8H
+        DEFB	82H,0C5H,82H,0B7H,00H,0C6H,19H,83H
+        DEFB	74H,83H,40H,83H,43H,83H,8BH,83H
+        DEFB	41H,83H,4EH,83H,5AH,83H,58H,88H
+        DEFB	0D9H,8FH,0EDH,82H,0C5H,82H,0B7H,00H
+        DEFB	0C5H,15H,96H,0B3H,8CH,0F8H,82H,0C8H
+        DEFB	83H,76H,83H,8DH,83H,5AH,83H,58H
+        DEFB	49H,44H,82H,0C5H,82H,0B7H,00H,0C4H
+        DEFB	1DH,83H,74H,83H,40H,83H,43H,83H
+        DEFB	8BH,83H,6EH,83H,93H,83H,68H,83H
+        DEFB	8BH,82H,0AAH,91H,0ABH,82H,0E8H,82H
+        DEFB	0DCH,82H,0B9H,82H,0F1H,00H,0C3H,1BH
+        DEFB	96H,0B3H,8CH,0F8H,82H,0C8H,83H,74H
+        DEFB	83H,40H,83H,43H,83H,8BH,83H,6EH
+        DEFB	83H,93H,83H,68H,83H,8BH,82H,0C5H
+        DEFB	82H,0B7H,00H,0C2H,29H,83H,74H,83H
+        DEFB	40H,83H,43H,83H,8BH,83H,6EH,83H
+        DEFB	93H,83H,68H,83H,8BH,82H,0AAH,83H
+        DEFB	49H,81H,5BH,83H,76H,83H,93H,82H
+        DEFB	0B3H,82H,0EAH,82H,0C4H,82H,0A2H,82H
+        DEFB	0DCH,82H,0B9H,82H,0F1H,00H,0C1H,21H
+        DEFB	96H,0B3H,8CH,0F8H,82H,0C8H,83H,66H
+        DEFB	83H,6FH,83H,43H,83H,58H,83H,49H
+        DEFB	83H,79H,83H,8CH,81H,5BH,83H,56H
+        DEFB	83H,87H,83H,93H,82H,0C5H,82H,0B7H
+        DEFB	00H,0C0H,13H,96H,0B3H,8CH,0F8H,82H
+        DEFB	0C8H,8AH,0C2H,8BH,0ABH,95H,0CFH,90H
+        DEFB	94H,82H,0C5H,82H,0B7H,00H,0BFH,15H
+        DEFB	8AH,0C2H,8BH,0ABH,95H,0CFH,90H,94H
+        DEFB	82H,0AAH,92H,0B7H,89H,0DFH,82H,0ACH
+        DEFB	82H,0DCH,82H,0B7H,00H,0BEH,11H,96H
+        DEFB	0B3H,8CH,0F8H,82H,0C8H,93H,0FAH,95H
+        DEFB	74H,82H,0AFH,82H,0C5H,82H,0B7H,00H
+        DEFB	0BDH,0FH,96H,0B3H,8CH,0F8H,82H,0C8H
+        DEFB	8EH,9EH,8AH,0D4H,82H,0C5H,82H,0B7H
+        DEFB	00H,0BCH,23H,52H,41H,4DH,20H,44H
+        DEFB	49H,53H,4BH,28H,83H,68H,83H,89H
+        DEFB	83H,43H,83H,75H,48H,3AH,29H,82H
+        DEFB	0CDH,8AH,0F9H,82H,0C9H,82H,0A0H,82H
+        DEFB	0E8H,82H,0DCH,82H,0B7H,00H,0BBH,15H
+        DEFB	52H,41H,4DH,20H,44H,49H,53H,4BH
+        DEFB	82H,0AAH,82H,0A0H,82H,0E8H,82H,0DCH
+        DEFB	82H,0B9H,82H,0F1H,00H,0BAH,1BH,83H
+        DEFB	74H,83H,40H,83H,43H,83H,8BH,82H
+        DEFB	0AAH,8FH,0C1H,8BH,8EH,82H,0B3H,82H
+        DEFB	0EAH,82H,0C4H,82H,0A2H,82H,0DCH,82H
+        DEFB	0B7H,00H,0B8H,21H,96H,0B3H,8CH,0F8H
+        DEFB	82H,0C8H,83H,54H,83H,75H,83H,74H
+        DEFB	83H,40H,83H,93H,83H,4EH,83H,56H
+        DEFB	83H,87H,83H,93H,94H,0D4H,8DH,86H
+        DEFB	82H,0C5H,82H,0B7H,00H,0B7H,0EH,96H
+        DEFB	0B3H,8CH,0F8H,82H,0C8H,46H,43H,42H
+        DEFB	82H,0C5H,82H,0B7H,00H,9FH,18H,43H
+        DEFB	74H,72H,6CH,2DH,53H,54H,4FH,50H
+        DEFB	82H,0AAH,89H,9FH,82H,0B3H,82H,0EAH
+        DEFB	82H,0DCH,82H,0B5H,82H,0BDH,00H,9EH
+        DEFB	15H,43H,74H,72H,6CH,2DH,43H,82H
+        DEFB	0AAH,89H,9FH,82H,0B3H,82H,0EAH,82H
+        DEFB	0DCH,82H,0B5H,82H,0BDH,00H,9DH,21H
+        DEFB	83H,66H,83H,42H,83H,58H,83H,4EH
+        DEFB	93H,0FCH,8FH,6FH,97H,0CDH,82H,0AAH
+        DEFB	91H,0C5H,82H,0BFH,90H,0D8H,82H,0E7H
+        DEFB	82H,0EAH,82H,0DCH,82H,0B5H,82H,0BDH
+        DEFB	00H,9CH,1DH,95H,57H,8FH,80H,8FH
+        DEFB	6FH,97H,0CDH,82H,0C5H,83H,47H,83H
+        DEFB	89H,81H,5BH,82H,0AAH,8BH,4EH,82H
+        DEFB	0ABH,82H,0DCH,82H,0B5H,82H,0BDH,00H
+        DEFB	9BH,1DH,95H,57H,8FH,80H,93H,0FCH
+        DEFB	97H,0CDH,82H,0C5H,83H,47H,83H,89H
+        DEFB	81H,5BH,82H,0AAH,8BH,4EH,82H,0ABH
+        DEFB	82H,0DCH,82H,0B5H,82H,0BDH,00H,8FH
+        DEFB	1FH,83H,52H,83H,7DH,83H,93H,83H
+        DEFB	68H,82H,0CCH,83H,6FH,81H,5BH,83H
+        DEFB	57H,83H,87H,83H,93H,82H,0AAH,88H
+        DEFB	0E1H,82H,0A2H,82H,0DCH,82H,0B7H,00H
+        DEFB	8EH,13H,83H,52H,83H,7DH,83H,93H
+        DEFB	83H,68H,82H,0AAH,88H,0E1H,82H,0A2H
+        DEFB	82H,0DCH,82H,0B7H,00H,8DH,15H,83H
+        DEFB	52H,83H,7DH,83H,93H,83H,68H,82H
+        DEFB	0AAH,92H,0B7H,82H,0B7H,82H,0ACH,82H
+        DEFB	0DCH,82H,0B7H,00H,8BH,15H,96H,0B3H
+        DEFB	8CH,0F8H,82H,0C8H,83H,70H,83H,89H
+        DEFB	83H,81H,81H,5BH,83H,5EH,82H,0C5H
+        DEFB	82H,0B7H,00H,8AH,17H,83H,70H,83H
+        DEFB	89H,83H,81H,81H,5BH,83H,5EH,82H
+        DEFB	0AAH,91H,0BDH,82H,0B7H,82H,0ACH,82H
+        DEFB	0DCH,82H,0B7H,00H,89H,1BH,83H,70H
+        DEFB	83H,89H,83H,81H,81H,5BH,83H,5EH
+        DEFB	82H,0AAH,95H,73H,91H,0ABH,82H,0B5H
+        DEFB	82H,0C4H,82H,0A2H,82H,0DCH,82H,0B7H
+        DEFB	00H,88H,19H,96H,0B3H,8CH,0F8H,82H
+        DEFB	0C8H,83H,49H,83H,76H,83H,56H,83H
+        DEFB	87H,83H,93H,8EH,77H,92H,0E8H,82H
+        DEFB	0C5H,82H,0B7H,00H,87H,0FH,96H,0B3H
+        DEFB	8CH,0F8H,82H,0C8H,90H,94H,92H,6CH
+        DEFB	82H,0C5H,82H,0B7H,00H,86H,1DH,48H
+        DEFB	45H,4CH,50H,83H,74H,83H,40H,83H
+        DEFB	43H,83H,8BH,82H,0AAH,8CH,0A9H,82H
+        DEFB	0C2H,82H,0A9H,82H,0E8H,82H,0DCH,82H
+        DEFB	0B9H,82H,0F1H,00H,85H,1EH,4DH,53H
+        DEFB	58H,2DH,44H,4FH,53H,82H,0CCH,83H
+        DEFB	6FH,81H,5BH,83H,57H,83H,87H,83H
+        DEFB	93H,82H,0AAH,88H,0E1H,82H,0A2H,82H
+        DEFB	0DCH,82H,0B7H,00H,84H,1FH,95H,0A1H
+        DEFB	8EH,0CAH,90H,0E6H,83H,74H,83H,40H
+        DEFB	83H,43H,83H,8BH,82H,0CDH,8CH,8BH
+        DEFB	8DH,87H,82H,0C5H,82H,0ABH,82H,0DCH
+        DEFB	82H,0B9H,82H,0F1H,00H,83H,19H,83H
+        DEFB	74H,83H,40H,83H,43H,83H,8BH,82H
+        DEFB	0F0H,8DH,0ECH,90H,0ACH,82H,0C5H,82H
+        DEFB	0ABH,82H,0DCH,82H,0B9H,82H,0F1H,00H
+        DEFB	82H,1DH,8EH,0A9H,95H,0AAH,8EH,0A9H
+        DEFB	90H,67H,82H,0C9H,82H,0CDH,83H,52H
+        DEFB	83H,73H,81H,5BH,82H,0C5H,82H,0ABH
+        DEFB	82H,0DCH,82H,0B9H,82H,0F1H,00H,81H
+        DEFB	1FH,83H,74H,83H,40H,83H,43H,83H
+        DEFB	8BH,82H,0CCH,8FH,64H,82H,0CBH,8FH
+        DEFB	91H,82H,0ABH,82H,0AAH,82H,0C5H,82H
+        DEFB	0ABH,82H,0DCH,82H,0B9H,82H,0F1H,00H
+        DEFB	7FH,2AH,4DH,53H,58H,2DH,44H,4FH
+        DEFB	53H,32H,20H,82H,0CCH,83H,66H,83H
+        DEFB	42H,83H,58H,83H,4EH,82H,0F0H,83H
+        DEFB	68H,83H,89H,83H,43H,83H,75H,20H
+        DEFB	07H,3AH,20H,82H,0C9H,93H,0FCH,82H
+        DEFB	0EAH,82H,0C4H,00H,7EH,18H,89H,0BDH
+        DEFB	82H,0A9H,83H,4CH,81H,5BH,82H,0F0H
+        DEFB	89H,9FH,82H,0B5H,82H,0C4H,89H,0BAH
+        DEFB	82H,0B3H,82H,0A2H,20H,00H
+        DEFB    0
+
+        DEFS	07FD0H-$,0
+
+L7FD0:
+	BNKCHG
+        RET
+
+
+; diskdriver interrupt handler
+
+L7FD4:	EX	AF,AF'
+        LD	A,(L40FF)
+        PUSH	AF		; Save DOS2 mapper block
+        XOR	A
+        CALL	L7FD0		; Set block 0
+        EX	AF,AF'
+        CALL	0		; interrupt handler
+        EX	AF,AF'
+        POP	AF
+        CALL	L7FD0		; Set old block
+        EX	AF,AF'
+        RET
+
+        DEFS	08000H-$,0
+
+        END

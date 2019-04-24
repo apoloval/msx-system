@@ -1,0 +1,2638 @@
+; SERIAL.ASM
+;
+; MSX-SERIAL first generation (as used in the Spectravideo SVI-738 serial interface)
+;
+; Source re-created by Z80DIS 2.2
+; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
+;
+; Code Copyrighted by ASCII and maybe others
+; Source comments by Arjen Zeilemaker
+;
+; Sourcecode supplied for STUDY ONLY
+; Recreation NOT permitted without authorisation of the copyrightholders
+;
+
+
+	.Z80
+	ASEG
+
+        org     04000H
+
+RDSLT	equ	0000CH
+WRSLT	equ	00014H
+CALSLT  equ     0001CH
+CHSNS   equ     0009CH
+CHGET   equ     0009FH
+CHPUT   equ     000A2H
+LPTOUT  equ     000A5H
+BREAKX	equ	000B7H
+
+CHRGTR	equ	04666H
+M4769	equ	04769H
+FRMEVL	equ	04C64H
+FRMQNT	equ	0542FH
+GETBYT	equ	0521CH
+FRESTR	equ	067D0H
+PTRGET	equ	05EA4H
+DOCNVF  equ     0517AH
+SNERR   equ     04055H
+FCERR   equ     0475AH
+USERR   equ     0481CH
+TMERR   equ     0406DH
+DIOERR  equ     073B2H
+DERFAO  equ     06E6EH
+DERFNO  equ     06E77H
+DERIER  equ     06E80H
+DERSOO  equ     06E86H
+DERBFN  equ     06E6BH
+M631B	equ	0631BH
+M632B	equ	0632BH
+M6331	equ	06331H
+
+BUF     equ     0F55EH
+VALTYP	equ	0F663H
+DAC     equ     0F7F6H
+NULBUF  equ     0F862H
+PTRFIL  equ     0F864H
+FNKSTR	equ	0F87FH
+TOCNT   equ     0FB03H			; timeout value
+RSFCB   equ     0FB04H			; saved channel
+RSIQLN  equ     0FB06H			; buffersize
+MEXBIH  equ     0FB07H                  ; Save for EXTBIO
+OLDSTT  equ     0FB0CH                  ; Save for H.NEWS
+OLDINT  equ     0FB11H                  ; Save for H.KEYI
+DEVNUM  equ     0FB16H			; msx serial devicenumber/trap number
+DATCNT  equ     0FB17H			;
+ERRORS  equ     0FB1AH
+FLAGS   equ     0FB1BH
+ESTBLS  equ     0FB1CH
+COMMSK  equ     0FB1DH                  ; mask byte (for unused bits)
+LSTCOM  equ     0FB1EH                  ; command byte
+LSTMOD  equ     0FB1FH                  ; mode byte
+
+HOKVLD	equ	0FB20H
+ONGSBF	equ	0FBD8H
+TRPTBL	equ	0FC4CH
+INTFLG  equ     0FC9BH
+CSRSR   equ     0FCA9H
+EXPTBL  equ     0FCC1H
+PROCNM	EQU	0FD89H
+H.KEYI  equ     0FD9AH
+H.NEWS  equ     0FF3EH
+EXTBIO  equ     0FFCAH
+DISINT	equ	0FFCFH
+ENAINT	equ	0FFD4H
+
+        db      "AB"
+        dw      A4075
+        dw      A4150
+        dw      A41FC
+	dw	0
+        ds      6,0
+
+;
+; BIOS table for RS232
+;
+
+;     Device information byte indicates following options are installed or not:
+;	bits #  76543210
+;		||||||||
+;		|||||||+----- reserved
+;		|||||||
+;		||||||+------ TXREADY interrupt
+;		||||||
+;		|||||+------- sync/break character detected
+;		|||||
+;		||||+-------- timer interrupt
+;		||||
+;		|||+--------- carrier detect
+;		|||
+;		||+---------- ring indicator
+;		||
+;		|+----------- reserved
+;		|
+;		+------------ reserved
+
+
+T4010:  db      010H			; +00 MSX serial features (no TxReady INT, No Sync detect, No Timer INT, Have CD, No RI)
+        db      0			; +01 MSX serial version (version 1.0)
+        db      0			; +02 reserved
+        jp      A4040			; +03 INIT
+        jp      A426A			; +06 OPEN
+        jp      A515D			; +09 STAT
+        jp      A42CF			; +0C GETCHR
+        jp      A4FDC			; +0F SNDCHR
+        jp      A429A			; +12 CLOSE
+        jp      A406A			; +15 EOF
+        jp      A4321			; +18 LOC
+        jp      A434C			; +1B LOF
+        jp      A4389			; +1E BACKUP
+        jp      A50E0			; +21 SNDBRK
+        jp      A5145			; +24 DTR
+        ret				; +27 future entry
+        ret
+        ret
+        ret				; +2A future entry
+        ret
+        ret
+        ret				; +2D future entry
+        ret
+        ret
+
+; INIT
+
+A4040:  ei
+        push    bc
+        push    de
+        push    hl
+        ld      iy,-13
+        add     iy,sp
+        ld      sp,iy			; reserve parameterblock on stack
+        push    iy
+        pop     de
+        ld      c,13
+A4051:  call    A44C9			; read interslot byte
+        ld      (de),a
+        inc     de
+        dec     c
+        jr      nz,A4051                ; copy parameter on stack
+        call    A4CED                   ; initialize RS232 port
+        push    af
+        ld      iy,15
+        add     iy,sp
+        pop     af
+        ld      sp,iy			; remove parameterblock from stack
+        pop     hl
+        pop     de
+        pop     bc
+        ret
+
+; EOF
+
+A406A:  ld      hl,0
+        call    A4E71			; chars left
+        ret     z			; none, quit
+        call    A4369
+        ret
+
+; msx-serial init
+
+A4075:  call    A4E5D                   ; disable RS232 ints
+        ld      iy,T4143
+        call    A4CED                   ; initialize RS232 port
+        call    A4131
+        di
+        ld      de,OLDINT
+        ld      hl,H.KEYI
+        ld      bc,5
+        ldir                            ; save H.KEYI
+        ld      de,OLDSTT
+        ld      hl,H.NEWS
+        ld      bc,5
+        ldir                            ; save H.NEWS
+        call    A4E41			; get my slotid
+        ld      (H.KEYI+1),a
+        ld      (H.NEWS+1),a
+        ld      a,0F7H
+        ld      (H.KEYI+0),a
+        ld      (H.NEWS+0),a
+        ld      hl,T4E6B
+        ld      (H.KEYI+2),hl
+        ld      hl,T4BF1
+        ld      (H.NEWS+2),hl
+        ld      a,0C9H
+        ld      (H.KEYI+4),a
+        ld      (H.NEWS+4),a
+        ei
+        ld      hl,HOKVLD
+        bit     0,(hl)			; EXTBIO valid ?
+        jr      nz,A40D2		; yes, use it
+        set     0,(hl)
+        ld      hl,EXTBIO
+        ld      b,5
+A40CD:  ld      (hl),0C9H
+        inc     hl
+        djnz    A40CD			; no, initialize it
+A40D2:  xor     a
+        ld      de,00801H
+        call    EXTBIO                  ; count RS232's sofar
+        ld      hl,DEVNUM
+        ld      (hl),a                  ; this interface devicenum
+        xor     a
+        ld      de,00001H
+        call    EXTBIO                  ; get my TRAP entry
+        add     a,a
+        add     a,a
+        add     a,a
+        add     a,a			; in b7-b4
+        or      (hl)
+        ld      (hl),a
+        ld      de,MEXBIH
+        di
+        ld      hl,EXTBIO
+        ld      bc,5
+        ldir                            ; save old EXTBIO for cascading
+        call    A4E41			; get my slotid
+        ld      (EXTBIO+1),a
+        ld      a,0F7H
+        ld      (EXTBIO+0),a
+        ld      hl,T43DE
+        ld      (EXTBIO+2),hl
+        ld      a,0C9H
+        ld      (EXTBIO+4),a
+        ld      bc,L4119
+        ld      hl,T4119
+        ld      de,DISINT+0
+        ldir				; initialize disk support routines
+        ei
+        ret
+;
+T4119:  push    de
+        ld      e,002H
+        jr      A4121			; signals disable interrupt
+;
+        push    de
+        ld      e,003H
+A4121:  ld      d,000H			; signals enable interrupt
+        push    ix
+        push    iy
+        call    EXTBIO
+        ei
+        pop     iy
+        pop     ix
+        pop     de
+        ret
+
+L4119	equ	$-T4119
+
+;
+A4131:  xor     a
+        ld      (FLAGS),a
+A4135:  push    hl
+        ld      hl,DATCNT
+        xor     a
+        ld      (hl),a			; receivebuffer empty
+        inc     hl
+        ld      (hl),a			; getpos = 0
+        inc     hl
+        ld      (hl),a			; ??
+        inc     hl
+        ld      (hl),a			; clear errors
+        pop     hl
+        ret
+;
+T4143:  db      "8N1XHNNN"
+        dw      1200
+        dw      1200
+        db      0
+
+A4150:  ei
+        push    hl
+        pop     ix
+        ld      de,T419F
+        call    A415D
+        ret     c
+        push    de
+        ret
+;
+A415D:  push    bc
+        push    hl
+A415F:  ld      hl,PROCNM
+        ld      a,(de)
+        inc     a
+        jr      z,A4178
+        call    A417C
+        jr      z,A4170
+        inc     de
+        inc     de
+        inc     de
+        jr      A415F
+;
+A4170:  ex      de,hl
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        and     a
+        jr      A4179
+;
+A4178:  scf
+A4179:  pop     hl
+        pop     bc
+        ret
+;
+A417C:  ld      a,(de)
+        call    A4CE4
+        ld      c,a
+        ld      a,(hl)
+        call    A4CE4
+        cp      c
+        jr      nz,A418E
+        and     a
+        ret     z
+        inc     de
+        inc     hl
+        jr      A417C
+;
+A418E:  ld      a,(de)
+        and     a
+        jr      z,A4195
+        inc     de
+A4193:  jr      A418E
+;
+A4195:  ld      a,(hl)
+        and     a
+        jr      z,A419C
+        inc     hl
+        jr      A4195
+;
+A419C:  ld      a,l
+        or      h
+        ret
+;
+T419F:  db      "COMINI",0
+        dw      A4596
+        db      "COMDTR",0
+        dw      A4659
+        db      "COMSTAT",0
+        dw      A4677
+        db      "COMBREAK",0
+        dw      A469B
+        db      "COMTERM",0
+        dw      A46E0
+        db      "COM",0
+        dw      A4B48
+        db      "COMON",0
+        dw      A4BA0
+        db      "COMOFF",0
+        dw      A4B82
+        db      "COMSTOP",0
+        dw      A4BBE
+        db      "COMHELP",0
+        dw      A4951
+        db      -1
+
+A41FC:  ei
+        cp      0FFH
+        jp      nz,A4239
+        ld      hl,PROCNM
+        ld      a,(hl)
+        cp      "C"
+        jr      nz,A4237
+        inc     hl
+        ld      a,(hl)
+        cp      "O"
+        jr      nz,A4237
+        inc     hl
+        ld      a,(hl)
+        cp      "M"
+        jr      nz,A4237
+        inc     hl
+        ld      a,(hl)
+        and     a
+        jr      nz,A421E
+        dec     hl
+        ld      a,"0"			; use COM0
+A421E:  sub     "0"
+        jr      c,A4237
+        cp      9+1
+        jr      nc,A4237
+        push    bc
+        push    af
+        ld      a,(DEVNUM)
+        and     00FH
+        ld      b,a
+        pop     af
+        cp      b			; Is it my RS232 ?
+        pop     bc
+        jr      nz,A4237		; no,
+        inc     hl
+        ld      a,(hl)
+        and     a
+        ret     z
+A4237:  scf				; devicename not recognized
+        ret
+;
+A4239:  push    hl
+        push    af
+        ld      hl,T424A
+        add     a,l
+        ld      l,a
+        jr      nc,A4243
+        inc     h
+A4243:  ld      a,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,a
+        pop     af
+        ex      (sp),hl
+        ret
+;
+T424A:  dw      A425E			; OPEN (BASIC)
+        dw      A429A			; CLOSE (BASIC)
+        dw      A4482
+        dw      A42BC
+        dw      A42C8
+        dw      A4313			; LOC (BASIC)
+        dw      A4346			; LOF (BASIC)
+        dw      A4360
+        dw      A44A0
+        dw      A4389			; BACKUP (BASIC)
+
+; OPEN (BASIC)
+
+A425E:  ld      c,127			; buffersize 127
+        call    A426A			; OPEN
+        jp      c,A4476
+        ld      (PTRFIL),hl
+        ret
+
+; OPEN
+
+A426A:  push    bc
+        push    de
+        push    hl
+        ld      (RSFCB),hl		; save filechannel controlblock
+        ld      a,c
+        ld      (RSIQLN),a		; size of the buffer
+        ld      (hl),e			; filemode
+        xor     a
+        inc     hl
+        inc     hl
+        ld      (hl),a
+        inc     hl
+        ld      (hl),a
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      (hl),a
+        call    A4131
+        ld      a,e
+        cp      8			; append mode ?
+        jr      z,A4295			; quit with error
+        ld      hl,FLAGS
+        set     3,(hl)			; flag port open
+        di
+        call    A4E64			; enable RS232 ints
+        call    A5132			; enable RTS
+        ei
+        scf
+A4295:  ccf
+        pop     hl
+        pop     de
+        pop     bc
+        ret
+
+; CLOSE
+
+A429A:  push    hl
+        ld      hl,(RSFCB)		; filechannel controlblock
+        ld      a,(hl)
+        cp      2			; output mode ?
+        scf
+        ccf
+        jr      nz,A42AA		; nope, skip CTRL-Z
+        ld      a,01AH			; CTRL-Z
+        call    A4FDC			; SNDCHR
+A42AA:  di
+        call    A5183
+        call    A513A			; disable RTS
+        call    A4E5D                   ; disable RS232 ints
+        ei
+        ld      hl,FLAGS
+        res     3,(hl)			; flag port closed
+        pop     hl
+        ret
+;
+A42BC:  ld      a,c
+        call    A4FDC			; SNDCHR
+        ei
+        jp      c,A44AC
+        jp      z,A44AC
+        ret
+;
+A42C8:  call    A42CF			; GETCHR
+        jp      m,A44AC
+        ret
+
+; GETCHR
+
+A42CF:  push    hl
+        push    bc
+        call    A43A1
+        ld      c,(hl)			; backup char (if any)
+        ld      (hl),0
+        dec     hl
+        ld      a,(hl)			; error status backup char
+        ld      (ERRORS),a
+        ld      (hl),0
+        inc     hl
+        and     a			; backup char has error status ?
+        jr      nz,A4309		; yep,
+        ld      a,c
+        and     a
+        jr      nz,A42F5
+        call    A4E85
+        ei
+        ld      c,a
+        jp      m,A4309
+        call    A50A3
+        jr      c,A4309
+        jr      z,A4309
+A42F5:  push    hl
+        ld      hl,(RSFCB)		; filechannel controlblock
+        ld      a,(hl)
+        pop     hl
+        cp      4			; random (raw) mode ?
+        jr      z,A430D			; yep,
+        ld      a,c
+        cp      01AH
+        jr      nz,A430D
+        ld      (hl),a
+        and     a
+        scf
+        jr      A4310
+;
+A4309:  or      080H
+        jr      A430F
+;
+A430D:  xor     a
+        inc     a
+A430F:  ld      a,c
+A4310:  pop     bc
+        pop     hl
+        ret
+;
+A4313:  push    hl
+        call    A4321			; LOC
+A4317:  ld      (DAC+2),hl
+        ld      hl,VALTYP
+        ld      (hl),2
+        pop     hl
+        ret
+
+; LOC
+
+A4321:  push    af
+        ei
+        ld      hl,(RSFCB)		; filechannel controlblock
+        ld      a,(hl)
+        cp      1			; input mode ?
+        jr      nz,A433E		; nope,
+        call    A4399			; backup char ?
+        jr      z,A4336			; nope,
+        sub     01AH
+        jr      z,A4341
+        ld      a,001H
+A4336:  push    bc
+        call    A43A8
+        add     a,b
+        pop     bc
+        jr      A4341
+;
+A433E:  call    A4E71			; chars left
+A4341:  ld      l,a
+        ld      h,0
+        pop     af
+        ret
+;
+A4346:  push    hl
+        call    A434C			; LOF
+A434A:  jr      A4317
+;
+A434C:  push    af
+        ei
+        call    A4321			; LOC
+        push    de
+        ex      de,hl
+        ld      a,(RSIQLN)
+        ld      l,a
+        ld      h,000H
+        and     a
+        sbc     hl,de
+        inc     hl
+        pop     de
+        pop     af
+        ret
+;
+A4360:  push    hl
+        call    A4369
+        jp      m,A44AC
+        jr      A434A
+;
+A4369:  push    bc
+        ld      b,a
+        ei
+        call    A42CF			; GETCHR
+        jp      m,A4386
+        push    bc
+        ld      c,a
+        call    A4389			; BACKUP
+        pop     bc
+        cp      01AH
+        jr      z,A4382
+        xor     a
+        ld      l,a
+        ld      h,a
+        inc     a
+        jr      A4386
+;
+A4382:  ld      hl,0FFFFH
+        scf
+A4386:  ld      a,b
+        pop     bc
+        ret
+
+; BACKUP
+
+A4389:  push    hl
+        call    A43A1
+        ld      (hl),c
+        push    af
+        dec     hl
+        ld      a,(ERRORS)
+        and     038H
+        ld      (hl),a
+        pop     af
+        pop     hl
+        ret
+;
+A4399:  push    hl
+        call    A43A1
+        ld      a,(hl)
+        pop     hl
+        and     a
+        ret
+;
+A43A1:  ld      hl,(RSFCB)		; filechannel controlblock
+        inc     hl
+        inc     hl
+        inc     hl
+        ret
+;
+A43A8:  push    af
+        push    hl
+        ld      b,000H
+        call    A4E80			; chars left in receivebuffer
+        jr      z,A43BE			; none, quit
+        ld      c,a
+A43B2:  call    A43C1
+        ld      a,(hl)
+        cp      01AH
+        jr      z,A43BE
+        inc     b
+        dec     c
+        jr      nz,A43B2
+A43BE:  pop     hl
+        pop     af
+        ret
+;
+A43C1:  push    de
+        ld      a,(DATCNT+1)		; getpos
+        ld      hl,RSIQLN
+        add     a,b
+        jr      c,A43CE
+        cp      (hl)
+        jr      c,A43CF
+A43CE:  sub     (hl)
+A43CF:  ld      hl,(RSFCB)		; filechannel controlblock
+        ld      e,LOW 9
+        ld      d,HIGH 9
+        add     hl,de
+        ld      e,a
+        ld      d,0
+        add     hl,de
+        add     hl,de
+        pop     de
+        ret
+;
+; EXTBIO handler
+;
+T43DE:  ei
+        push    af
+        ld      a,d
+        inc     a			; system exclusive ?
+        jp      z,A4433			; yes, handle it
+        dec     a			; broadcast ?
+        jp      nz,A4446		; no, should be a RS232
+
+; EXTBIO broadcast
+
+        ld      a,e
+        and     a			; build device name table ?
+        jr      z,A43F9			; yes, handle it
+        dec     a			; return numer of trap entries ?
+        jr      z,A4406			; yes, handle it
+        dec     a			; disable interrupt ?
+        jr      z,A440C			; yes, handle it
+        dec     a			; enable interrupt ?
+        jr      z,A4420			; yes, handle it
+        jp      A4461			; unknown to me, let other EXTBIO handle it
+;
+A43F9:  ld      a,008H			; deviceid = MSX serial
+        call    A44B3			; write interslot byte
+        ld      a,000H			; reserved byte
+        call    A44B3			; write interslot byte
+        jp      A4461			; pass control to other EXTBIO
+;
+A4406:  pop     af
+        inc     a			; I use one trap entry!
+        push    af
+        jp      A4461			; pass control to other EXTBIO
+;
+A440C:  call    A4C32			; port open ?
+        jr      z,A441D			; nope, quit
+        push    bc
+        call    A4FA8			; suspend transmit
+        ei
+        nop
+        pop     bc
+        di
+        call    A4E5D                   ; disable RS232 ints
+        ei
+A441D:  jp      A4461
+;
+A4420:  call    A4C32			; port open ?
+        jr      z,A4430			; nope, quit
+        di
+        call    A4E64			; enable RS232 ints
+        call    A5132			; enable RTS
+        call    A4F8E			; resume transmit
+        ei
+A4430:  jp      A4461
+
+; EXTBIO system exclusive
+
+A4433:  ld      a,e
+        and     a			; Build slot address table ?
+        jr      nz,A4444		; no, unknown to me, let other EXTBIO handle it
+        call    A4465			; my bios table
+        ld      a,0			; makerid = ASCII
+        call    A44B3			; write interslot byte
+        ld      a,0			; reserved byte
+        call    A44B3			; write interslot byte
+A4444:  jr      A4461			; pass control to other EXTBIO
+;
+A4446:  cp      008H			; RS232 ?
+        jr      nz,A4461		; no, unknown to me, let other EXTBIO handle it
+        ld      a,e
+        and     a			; Build slot address table ?
+        jr      z,A4454			; yep, handle it
+        cp      001H			; Return number of channels ?
+        jr      z,A445E			; yep, handle it
+        jr      A4461			; unknown to me, let other EXTBIO handle it
+;
+A4454:  call    A4465			; my BIOS table
+        ld      a,0			; reserved byte
+        call    A44B3			; write interslot byte
+        jr      A4461
+;
+A445E:  pop     af
+        inc     a			; I have one channel
+        push    af
+A4461:  pop     af
+        jp      MEXBIH			; pass control to other EXTBIO
+;
+A4465:  call    A4E41			; get my slotid
+        call    A44B3			; write interslot byte
+        ld      a,LOW T4010
+        call    A44B3			; write interslot byte
+        ld      a,HIGH T4010
+        call    A44B3			; write interslot byte
+        ret
+;
+A4476:  ld      ix,DERBFN
+        jr      A44B0
+;
+A447C:  ld      ix,DERIER
+        jr      A44B0
+;
+A4482:  ld      ix,DERSOO
+        jr      A44B0
+;
+A4488:  ld      ix,DERFAO
+        jr      A44B0
+;
+A448E:  ld      ix,DERFNO
+        jr      A44B0
+;
+A4494:  ld      ix,USERR
+        jr      A44B0
+;
+A449A:  ld      ix,SNERR
+        jr      A44B0
+;
+A44A0:  ld      ix,FCERR
+        jr      A44B0
+;
+A44A6:  ld      ix,TMERR
+        jr      A44B0
+;
+A44AC:  ld      ix,DIOERR
+A44B0:  jp      A4585
+
+; write interslot byte
+
+A44B3:  push    af
+        push    bc
+        push    de
+        push    ix
+        ld      e,a
+        ld      a,b
+        ld      ix,WRSLT
+        call    A458A
+        ei
+        inc     hl
+        pop     ix
+        pop     de
+        pop     bc
+        pop     af
+        ret
+
+; read interslot byte
+
+A44C9:  push    bc
+        push    de
+        push    ix
+        ld      a,b
+        ld      ix,RDSLT
+        call    A458A
+        ei
+        inc     hl
+        pop     ix
+        pop     de
+        pop     bc
+        ret
+
+; CTRL-STOP pressed ?
+
+A44DC:  push    ix
+        ld      ix,BREAKX
+        call    A458A
+        pop     ix
+        ret
+;
+A44E8:  push    bc
+        ld      b,a
+        ld      a,(BUF+3)
+        and     a
+        jr      z,A450E
+        ld      a,b
+        cp      020H
+        jr      nc,A450E
+        ld      a,05EH
+        call    A4510
+        ld      a,b
+        add     a,040H
+        call    A4510
+        ld      a,b
+        cp      00AH
+        pop     bc
+        ret     nz
+        ld      a,00DH
+        call    A4510
+        ld      a,00AH
+        jr      A4510
+;
+A450E:  ld      a,b
+        pop     bc
+A4510:  push    af
+        call    CHPUT
+        ei
+        ld      a,(BUF+5)
+        and     a
+        jr      z,A4521
+        pop     af
+        push    af
+        call    LPTOUT
+        ei
+A4521:  pop     af
+        ret
+;
+A4523:  ld      a,(hl)
+        ex      (sp),hl
+        cp      (hl)
+        jp      nz,A449A
+        inc     hl
+        ex      (sp),hl
+
+A452B:  push    ix
+        ld      ix,CHRGTR
+        exx
+        push    hl
+        exx
+        call    A4585
+        exx
+        pop     hl
+        exx
+        pop     ix
+        ret
+;
+A453D:  push    ix
+        ld      ix,FRMEVL
+        call    A4585
+        pop     ix
+        ret
+;
+A4549:  push    ix
+        ld      ix,FRMQNT
+        call    A4585
+        pop     ix
+        ret
+;
+A4555:  push    ix
+        ld      ix,GETBYT
+        call    A4585
+        pop     ix
+        ret
+;
+A4561:  push    ix
+        ld      ix,PTRGET
+        call    A4585
+        pop     ix
+        ret
+;
+A456D:  push    ix
+        ld      ix,FRESTR
+        call    A4585
+        pop     ix
+        ret
+;
+A4579:  push    ix
+        ld      ix,DOCNVF
+        call    A4585
+        pop     ix
+        ret
+;
+A4585:  call    A458A
+        ei
+        ret
+;
+A458A:  push    iy
+        ld      iy,(EXPTBL+0-1)
+        call    CALSLT
+        pop     iy
+        ret
+
+; _COMINI
+
+A4596:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4C32			; port open ?
+        di
+        call    A4E5D                   ; disable RS232 ints
+        ei
+        ld      a,(LSTCOM)
+        ld      (BUF+2),a
+        ld      iy,BUF+9
+        push    bc
+        push    de
+        push    hl
+        ld      bc,0000DH
+        push    iy
+        pop     de
+        ld      hl,T4143
+        ldir
+        pop     hl
+        pop     de
+        pop     bc
+        ld      a,b
+        and     c
+        inc     a
+        jr      nz,A45D6
+        ld      a,d
+        and     a
+        jp      z,A4642
+        cp      03AH
+        jp      z,A4642
+        cp      029H
+        jp      z,A463F
+        call    A4523
+        defb	","
+        jr      A45FC
+;
+A45D6:  push    hl
+        exx
+        push    hl
+        exx
+        pop     hl
+        ld      a,b
+        and     a
+        jr      z,A45EF
+        push    iy
+        pop     de
+A45E2:  ld      a,(hl)
+        cp      020H
+        jr      z,A45EB
+        call    A4CE4
+        ld      (de),a
+A45EB:  inc     de
+        inc     hl
+        djnz    A45E2
+A45EF:  pop     hl
+        dec     hl
+        call    A452B
+        cp      029H
+        jr      z,A463F
+        call    A4523
+        defb	","
+A45FC:  cp      02CH
+        jr      z,A4616
+        call    A4549
+        ld      (iy+008H),e
+        ld      (iy+009H),d
+        ld      a,(hl)
+        cp      029H
+        jr      nz,A4616
+        ld      (iy+00AH),e
+        ld      (iy+00BH),d
+        jr      A463F
+;
+A4616:  call    A4523
+        defb	","
+        cp      02CH
+        jr      z,A462C
+        call    A4549
+        ld      (iy+00AH),e
+        ld      (iy+00BH),d
+        ld      a,(hl)
+        cp      029H
+        jr      z,A463F
+A462C:  call    A4523
+        defb	","
+        cp      029H
+        jr      z,A463F
+        call    A4555
+        ld      (iy+00CH),a
+        call    A4523
+        defb	")"
+        dec     hl
+A463F:  call    A452B
+A4642:  ei
+        call    A4CED                   ; initialize RS232 port
+        jp      c,A44A0
+        call    A4C32			; port open ?
+        call    nz,A4E64		; yep, enable RS232 ints
+        ld      a,(BUF+2)
+        bit     5,a
+        call    nz,A5132		; enable RTS
+        and     a
+        ret
+
+; _COMDTR
+
+A4659:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        call    A4523
+        defb	","
+        call    A4C32			; port open ?
+        jp      z,A448E			; nope,
+        call    A4549
+        call    A4523
+        defb	")"
+        ld      a,d
+        or      e
+        call    A5145			; DTR
+        ei
+        ret
+
+; _COMSTAT
+
+A4677:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        call    A4523
+        defb	","
+        call    A4C32			; port open ?
+        jp      z,A448E			; nope,
+        call    A4561
+        push    hl
+        call    A515D			; STAT
+        ld      (DAC+2),hl
+        pop     hl
+        call    A4CAB
+        call    A4523
+        defb	")"
+        and     a
+        ret
+
+; _COMBREAK
+
+A469B:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        call    A4C32			; port open ?
+        jp      z,A448E			; nope,
+        ld      a,d
+        cp      02CH
+        jr      z,A46BC
+        and     a
+        jr      z,A46B7
+        cp      03AH
+        jr      z,A46B7
+        call    A4523
+        defb	")"
+A46B7:  ld      de,0000AH
+        jr      A46C6
+;
+A46BC:  call    A452B
+        call    A4549
+        call    A4523
+        defb	")"
+A46C6:  push    hl
+        ld      hl,2
+        and     a
+        sbc     hl,de
+        jp      nc,A44A0
+        pop     hl
+        call    A50E0			; SNDBRK
+        ei
+        ld      a,000H
+        inc     a
+        call    A50E0			; SNDBRK
+        jp      c,A44AC
+        and     a
+        ret
+
+; _COMTERM
+
+A46E0:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        ld      a,d
+        and     a
+        jr      z,A46F2
+        cp      ":"
+        jr      z,A46F2
+        call    A4523
+        defb	")"
+A46F2:  push    hl
+        pop     ix
+        call    A4C32			; port open ?
+        jp      nz,A4488		; yep,
+        ld      iy,(NULBUF)
+        xor     a
+        ld      (BUF+0),a
+        ld      (BUF+5),a
+        ld      (BUF+3),a
+        ld      (BUF+4),a
+        ld      hl,FNKSTR+5*16
+        ld      de,BUF+8
+        ld      bc,3*16
+        push    bc
+        push    hl
+        ldir
+        pop     hl
+        pop     bc
+        ld      b,c
+        push    hl
+A471D:  ld      (hl),0
+        inc     hl
+        djnz    A471D
+        pop     de
+        ld      hl,T4903
+        ld      bc,5
+        push    bc
+        ldir
+        pop     bc
+        ld      de,FNKSTR+6*16
+        push    bc
+        ldir
+        pop     bc
+        ld      de,FNKSTR+7*16
+        push    bc
+        ldir
+        pop     bc
+        ld      a,(CSRSR)
+        ld      (BUF+6),a
+        call    A4924			; cursor on
+        push    iy
+        pop     hl
+        ld      e,4			; random (raw) mode
+        ld      c,120			; buffersize 120
+        call    A426A			; OPEN
+A474E:  ei
+        push    iy
+        pop     hl
+        call    A4321			; LOC
+        ld      a,l
+        or      h			; something in receivebuffer ?
+        jr      z,A4783			; nope,
+        call    A4912
+        jr      c,A47AF
+        ld      c,a
+        ld      a,(BUF+0)
+        and     a
+        jr      nz,A4775
+        ld      a,c
+        cp      01BH
+        jr      nz,A4770
+        ld      a,001H
+        ld      (BUF+0),a
+        ld      a,c
+A4770:  call    A44E8			; character to screen
+        jr      A4783
+;
+A4775:  xor     a
+        ld      (BUF+0),a
+        ld      a,c
+        cp      01BH
+        jr      nz,A4770
+        call    A44E8			; character to screen
+        jr      A47D5
+;
+A4783:  call    A4946			; STOP or CTRL-STOP signaled ?
+        call    nz,A491C		; yep, send break
+        call    A44DC			; CTRL-STOP pressed ?
+        jr      c,A47AF			; yep,
+        call    CHSNS			; key pressed ?
+        ei
+        jr      z,A474E			; nope, loop
+        call    CHGET
+        ei
+        cp      0A0H			; 'function key' header ?
+        jp      z,A48E2			; yep,
+        call    A4917			; send character
+        ld      c,a
+        ld      a,(BUF+4)
+        and     a
+        jp      z,A474E			; loop
+        ld      a,c
+        call    A44E8			; character to screen
+        jp      A474E			; loop
+;
+A47AF:  push    iy
+        pop     hl
+        call    A429A			; CLOSE
+        ld      hl,BUF+8
+        ld      de,FNKSTR+5*16
+        ld      bc,00030H
+        ldir
+        push    ix
+        pop     hl
+        ld      a,(BUF+6)
+        and     a
+        push    af
+        call    z,A4934			; cursor off
+        pop     af
+        call    nz,A4924		; cursor on
+        xor     a
+        di
+        ld      (INTFLG),a
+        ret
+;
+A47D5:  ld      a,(BUF+3)
+        and     a
+        jp      nz,A474E
+        call    A4934			; cursor off
+        ld      a,0FFH
+        ld      (BUF+1),a
+A47E4:  call    A4912
+        jp      c,A47AF
+        cp      03AH
+        jr      nz,A47E4
+        call    A48B0
+        jp      c,A4867
+        and     a
+        jr      z,A483E
+        ld      b,a
+        ld      e,a
+        call    A48A5
+        jp      c,A4867
+        call    A48B0
+        jp      c,A4867
+        add     a,l
+        add     a,h
+        add     a,e
+        ld      e,a
+A4809:  call    A48B0
+        jr      c,A4867
+        ld      (hl),a
+        add     a,e
+        ld      e,a
+        inc     hl
+        djnz    A4809
+        call    A48B0
+        jr      c,A4867
+        add     a,e
+        jr      nz,A4867
+        ld      a,047H
+        call    A4917
+        ld      a,(BUF+1)
+        and     a
+        jr      z,A4832
+        inc     a
+        ld      (BUF+1),a
+        ld      a,02AH
+        call    A44E8			; character to screen
+        jr      A483B
+;
+A4832:  dec     a
+        ld      (BUF+1),a
+        ld      a,07FH
+        call    A44E8			; character to screen
+A483B:  jp      A47E4
+;
+A483E:  call    A48A5
+        jr      c,A4867
+        ld      a,h
+        or      l
+        jr      nz,A486F
+        call    A48B0
+        jr      c,A4867
+        cp      001H
+        jr      nz,A4867
+        call    A48B0
+        jr      c,A4867
+        cp      0FFH
+        jr      nz,A4867
+A4859:  ld      a,047H
+        call    A4917
+        call    A493D			; newline
+        call    A4924			; cursor on
+        jp      A474E
+;
+A4867:  ld      a,042H
+        call    A4917
+        jp      A47E4
+;
+A486F:  call    A48B0
+        jr      c,A4867
+        cp      001H
+        jr      nz,A4867
+        add     a,l
+        add     a,h
+        ld      e,a
+        call    A48B0
+        jr      c,A4867
+        add     a,e
+        jr      nz,A4867
+        call    A4912
+        jp      c,A47AF
+        cp      00AH
+        jr      nz,A4859
+        ld      a,047H
+        call    A4917
+        call    A493D			; newline
+        push    ix
+        push    hl
+        ld      hl,T489D
+        ex      (sp),hl
+        jp      (hl)
+;
+T489D:  pop     ix
+        call    A4924			; cursor on
+        jp      A474E
+;
+A48A5:  call    A48B0
+        ret     c
+        ld      h,a
+        call    A48B0
+        ret     c
+        ld      l,a
+        ret
+;
+A48B0:  push    bc
+        call    A4912
+        jr      c,A48CB
+        call    A48CD
+        jr      c,A48CB
+        add     a,a
+        add     a,a
+        add     a,a
+        add     a,a
+        ld      b,a
+        call    A4912
+        jr      c,A48CB
+        call    A48CD
+        jr      c,A48CB
+        add     a,b
+A48CB:  pop     bc
+        ret
+;
+A48CD:  call    A4CE4
+        sub     030H
+        ret     c
+        cp      00AH
+        jr      c,A48E0
+        sub     011H
+        ret     c
+        cp      006H
+        ccf
+        ret     c
+        add     a,00AH
+A48E0:  and     a
+        ret
+;
+A48E2:  call    CHGET
+        ei
+        sub     006H
+        jr      z,A48F5
+        dec     a
+        jr      z,A48FA
+        dec     a
+        jr      nz,A4900
+        ld      hl,BUF+5
+        jr      A48FD
+;
+A48F5:  ld      hl,BUF+3
+        jr      A48FD
+;
+A48FA:  ld      hl,BUF+4
+A48FD:  ld      a,(hl)
+        cpl
+        ld      (hl),a
+A4900:  jp      A474E
+
+; functionkey definitions F5-F7
+
+T4903:	defb	0A0H,006H,000H,06CH,069H
+	defb	0A0H,007H,000H,068H,066H
+	defb	0A0H,008H,000H,070H,065H
+
+A4912:  call    A4E85
+        ei
+        ret
+;
+A4917:  call    A4FDC			; SNDCHR
+        ei
+        ret
+;
+A491C:  ld      de,100
+        call    A50E0			; SNDBRK
+        ei
+        ret
+
+A4924:  ld      a,01BH
+        call    A44E8			; character to screen
+        ld      a,"y"
+A492B:  call    A44E8			; character to screen
+        ld      a,"5"
+A4930:  call    A44E8			; character to screen
+        ret
+;
+A4934:  ld      a,01BH
+        call    A44E8			; character to screen
+        ld      a,"x"
+        jr      A492B
+;
+A493D:  ld      a,00DH
+        call    A44E8			; character to screen
+        ld      a,00AH
+        jr      A4930
+;
+A4946:  ld      a,(INTFLG)
+        and     a
+        ret     z
+        xor     a
+        ld      (INTFLG),a
+        inc     a
+        ret
+
+; _COMHELP
+
+A4951:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        ld      a,d
+        and     a
+        jr      z,A4963
+        cp      03AH
+        jr      z,A4963
+        call    A4523
+        defb	")"
+A4963:  xor     a
+        ld      (BUF+3),a
+        ld      (BUF+5),a
+        ld      (BUF+4),a
+        push    hl
+        call    A493D			; newline
+        ld      hl,T49AA
+A4974:  ld      a,(hl)
+        inc     hl
+        inc     a
+        jr      z,A49A7
+        dec     a
+        jr      z,A4989
+        call    A44E8			; character to screen
+        ld      a,(INTFLG)
+        and     a
+        jr      z,A4974
+        cp      003H
+        jr      z,A49A7
+A4989:  push    hl
+        ld      hl,INTFLG
+        ld      (hl),000H
+        call    A4924			; cursor on
+A4992:  ei
+        ld      a,(hl)
+        and     a
+        jr      z,A4992
+        push    af
+        call    A4934			; cursor off
+        pop     af
+        pop     hl
+        cp      003H
+        jr      z,A49A7
+        xor     a
+        ld      (INTFLG),a
+        jr      A4974
+;
+A49A7:  pop     hl
+        and     a
+        ret
+;
+T49AA:  db      "Initialize statement options",13,10
+        db      13,10
+        db      'CALL COMINI ("',13,10
+        db      "<device# {0,1,2...9}>:",13,10
+        db      "<character length {5,6,7,8}>",13,10
+        db      "<parity {E,O,I,N}>",13,10
+        db      "<stop bits {1,2,3}>",13,10
+        db      "<XON/XOFF {X,N}>",13,10
+        db      "<CTS hand-shake {H,N}>",13,10
+        db      "<auto LF on receive {A,N}>",13,10
+        db      "<auto LF on transmit {A,N}>",13,10
+        db      '<SI/SO {S,N}>"',13,10
+        db      ",<receiver baud rate>",13,10
+        db      ",<transmitter baud rate>",13,10
+        db      ",<time out count>",13,10
+        db      "                          )",13,10
+        db      "Default:",13,10
+        db      ' CALL COMINI("0:8N1XHNNN"',13,10
+        db      "      ,1200,1200,0)",13,10
+        db      -1
+
+; _COM
+
+A4B48:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        call    A4C25			; trap entry
+        jp      c,A44A0			; all traps are used, can not handle
+A4B54:  call    A4523
+        defb	","
+A4B58:  call    A4523
+        defb	08DH			; GOSUB token
+A4B5C:  ld      ix,M4769
+        call    A4585
+        push    hl
+        ld      a,e
+        or      d
+        jr      z,A4B74
+        ld      ix,A4295
+        call    A4585
+A4B6F:  jp      nc,A4494
+        ld      e,c
+        ld      d,b
+A4B74:  call    A4C12
+A4B77:  inc     hl
+        ld      (hl),e
+        inc     hl
+        ld      (hl),d
+        pop     hl
+        call    A4523
+        defb	")"
+        and     a
+        ret
+
+; _COMOFF
+
+A4B82:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        ld      a,d
+        and     a
+        jr      z,A4B94
+        cp      03AH
+        jr      z,A4B94
+        call    A4523
+        defb	")"
+A4B94:  call    A4C25			; trap entry
+        jp      c,A44A0			; all traps are used,
+        ld      ix,M632B
+        jr      A4BE7
+
+; _COMON
+
+A4BA0:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        ld      a,d
+        and     a
+        jr      z,A4BB2
+        cp      03AH
+        jr      z,A4BB2
+        call    A4523
+        defb	")"
+A4BB2:  call    A4C25			; trap entry
+        jp      c,A44A0			; all traps are used,
+        ld      ix,M631B
+        jr      A4BDA
+
+; _COMSTOP
+
+A4BBE:  call    A4C38			; evaluate comidentifier and check if this one
+        call    A4CA1
+        ld      a,d
+        and     a
+        jr      z,A4BD0
+        cp      03AH
+        jr      z,A4BD0
+        call    A4523
+        defb	")"
+A4BD0:  call    A4C25			; trap entry
+        jp      c,A44A0			; all traps are used,
+        ld      ix,M6331
+A4BDA:  push    hl
+        push    af
+        call    A4C12
+        ld      a,(hl)
+        and     001H
+        call    z,A4135
+        pop     af
+        pop     hl
+A4BE7:  push    hl
+        call    A4C12
+        call    A4585
+        pop     hl
+        and     a
+        ret
+;
+T4BF1:  ei
+        call    A4E71			; chars left
+        push    hl
+        call    nz,A4BFD		; yep,
+        pop     hl
+        jp      OLDSTT
+;
+A4BFD:  call    A4C12
+        ld      a,(hl)
+        and     001H
+        ret     z
+        ld      a,(hl)
+        or      004H
+        cp      (hl)
+        ret     z
+        cp      005H
+        ret     nz
+        ld      (hl),a
+        ld      hl,ONGSBF
+        inc     (hl)
+        ret
+;
+A4C12:  call    A4C25			; trap entry
+        jp      c,A44A0			; all traps are used,
+        push    bc
+        ld      c,a
+        add     a,a
+        add     a,c
+        ld      c,a
+        ld      b,000H
+        ld      hl,TRPTBL+18*3
+        add     hl,bc
+        pop     bc
+        ret
+;
+A4C25:  ld      a,(DEVNUM)
+        and     0F0H
+        rrca
+        rrca
+        rrca
+        rrca				; my trap entry
+        cp      006H			; only 6 traps possible
+        ccf
+        ret
+;
+A4C32:  ld      a,(FLAGS)
+        bit     3,a
+        ret
+
+; evaluate comidentifier and check if this one
+
+A4C38:  dec     hl
+        call    A452B
+        ld      d,a
+        jr      nz,A4C46
+A4C3F:  xor     a
+        ld      bc,0FFFFH
+        push    hl
+        jr      A4C84
+;
+A4C46:  cp      "("
+        jp      z,A4C51
+        cp      ","
+        jr      z,A4C3F
+        jr      A4C59
+;
+A4C51:  call    A452B
+        ld      d,a
+        cp      ","
+        jr      z,A4C3F
+A4C59:  call    A453D
+        push    hl
+        call    A456D			; free string
+        ld      c,000H
+        ld      b,(hl)
+        inc     hl
+        ld      a,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,a
+        ld      a,b
+        and     a
+        jr      z,A4C84
+        inc     hl
+        ld      a,(hl)
+        cp      ":"
+        jr      z,A4C76
+        dec     hl
+        xor     a
+        jr      A4C84
+;
+A4C76:  dec     hl
+        ld      a,(hl)
+        sub     "0"
+        jr      c,A4C9E
+        cp      "9"-"0"+1
+        jr      nc,A4C9E
+        inc     hl
+        inc     hl
+        dec     b
+        dec     b
+A4C84:  ld      e,a
+        ld      a,(DEVNUM)
+        and     00FH			; my RS232
+        push    hl
+        exx
+        pop     hl
+        exx
+        pop     hl
+        push    af
+        dec     hl
+        call    A452B
+        ld      d,a
+        pop     af
+        cp      e
+        ret     z
+A4C98:  pop     hl
+        push    ix
+        pop     hl
+        scf
+        ret
+;
+A4C9E:  pop     hl
+        jr      A4C98
+;
+A4CA1:  ld      a,b
+        or      c
+        ret     z
+        ld      a,b
+        and     c
+        inc     a
+        ret     z
+        jp      A44A0
+;
+A4CAB:  push    hl
+        ld      hl,VALTYP
+        ld      a,(hl)
+        cp      002H
+        jr      z,A4CD9
+        cp      004H
+        jr      z,A4CC9
+        cp      008H
+        jp      nz,A44A6
+        ld      (hl),002H
+        push    de
+        ld      a,008H
+        call    A4579
+        ld      c,008H
+        jr      A4CD3
+;
+A4CC9:  ld      (hl),002H
+        push    de
+        ld      a,004H
+        call    A4579
+        ld      c,004H
+A4CD3:  pop     de
+        ld      hl,DAC+0
+        jr      A4CDE
+;
+A4CD9:  ld      hl,DAC+2
+        ld      c,002H
+A4CDE:  ld      b,000H
+        ldir
+        pop     hl
+        ret
+;
+A4CE4:  cp      061H
+        ret     c
+        cp      07BH
+        ret     nc
+        sub     020H
+        ret
+
+; initialize rs232 port
+
+A4CED:  ld      a,(iy+000H)
+        sub     "5"
+        cp      "8"-"5"+1
+        jr      nc,A4D0E
+        ld      b,a
+        ld      d,a
+        call    A4DC2
+        ld      a,(iy+001H)
+        cp      "E"
+        jr      z,A4D10
+        cp      "O"
+        jr      z,A4D12
+        cp      "I"
+        jr      z,A4D16
+        cp      "N"
+        jr      z,A4D1D
+A4D0E:  scf
+        ret
+;
+A4D10:  set     3,b			; parity even
+A4D12:  set     2,b			; parity enabled
+        jr      A4D1D
+;
+A4D16:  ld      a,b
+        cp      "8"-"5"			; parity ignore AND 8 bits ?
+        jp      z,A4D0E			; yep, illegal
+        inc     b			; extra bit (which is ignored)
+A4D1D:  rlc     b
+        rlc     b
+        ld      a,(iy+002H)
+        sub     "1"
+        cp      "3"-"1"+1
+        jp      nc,A4D0E
+        inc     a
+        rrca
+        rrca
+        or      b
+        ld      b,a
+        ld      c,000H
+        ld      a,(iy+003H)
+        cp      "X"
+        jr      nz,A4D3D
+        set     0,c			; XON/XOFF protocol
+        jr      A4D42
+;
+A4D3D:  cp      "N"
+        jp      nz,A4D0E
+A4D42:  ld      a,(iy+004H)
+        cp      "H"
+        jr      nz,A4D4D
+        set     1,c			; RTS/CTS handshake
+        jr      A4D52
+;
+A4D4D:  cp      "N"
+        jp      nz,A4D0E
+A4D52:  ld      a,(iy+005H)
+        cp      "A"
+        jr      nz,A4D5D
+        set     3,c			; Auto LF receive
+        jr      A4D62
+;
+A4D5D:  cp      "N"
+        jp      nz,A4D0E
+A4D62:  ld      a,(iy+006H)
+        cp      "A"
+        jr      nz,A4D6D
+        set     2,c			; Auto LF send
+        jr      A4D72
+;
+A4D6D:  cp      "N"
+        jp      nz,A4D0E
+A4D72:  ld      a,(iy+007H)
+        cp      "S"
+        jr      nz,A4D83
+        ld      a,d
+        cp      002H
+        jp      nz,A4D0E
+        set     4,c			; SI/SO control
+        jr      A4D88
+;
+A4D83:  cp      "N"
+        jp      nz,A4D0E
+A4D88:  ld      a,c
+        ld      (ESTBLS),a
+        ld      a,002H
+        or      b
+        ld      (LSTMOD),a
+        call    A50B5
+        ld      e,(iy+008H)
+        ld      d,(iy+009H)
+        call    A4DD6
+        jp      c,A4D0E
+        ld      c,0
+        call    A51DC			; timer 0 = receiver baud rate
+        ld      e,(iy+00AH)
+        ld      d,(iy+00BH)
+        call    A4DD6
+        jp      c,A4D0E
+        ld      c,1
+        call    A51DC			; timer 1 = transmitter baud rate
+        ld      a,(iy+00CH)
+        ld      (TOCNT),a
+        call    A5148			; enable DTR
+        or      a
+        ret
+;
+A4DC2:  push    af
+        push    bc
+        xor     003H
+        ld      c,0FFH
+        jr      z,A4DCF
+        ld      b,a
+A4DCB:  srl     c
+        djnz    A4DCB
+A4DCF:  ld      a,c
+        ld      (COMMSK),a
+        pop     bc
+        pop     af
+        ret
+;
+A4DD6:  push    hl
+        bit     7,d
+        jr      z,A4DE8
+        ld      a,e
+        and     d
+        inc     a
+        jr      z,A4E04
+        ld      hl,00000H
+        sbc     hl,de
+        ex      de,hl
+        jr      A4E03
+;
+A4DE8:  ld      hl,T4E07
+A4DEB:  ld      c,(hl)
+        inc     hl
+        ld      b,(hl)
+        inc     hl
+        ld      a,b
+        or      c
+        jr      z,A4E04
+        push    hl
+        ld      l,e
+        ld      h,d
+        and     a
+        sbc     hl,bc
+        pop     hl
+        jr      z,A4E00
+        inc     hl
+        inc     hl
+        jr      A4DEB
+;
+A4E00:  ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+A4E03:  scf
+A4E04:  ccf
+        pop     hl
+        ret
+;
+T4E07:  dw         50,00900h
+        dw         75,00600h
+        dw        110,00417h
+        dw        300,00180h
+        dw        600,000C0h
+        dw       1200,00060h
+        dw       1800,00040h
+        dw       2000,0003Ah
+        dw       2400,00030h
+        dw       3600,00020h
+        dw       4800,00018h
+        dw       7200,00010h
+        dw       9600,0000Ch
+        dw      19200,00006h
+        dw      0
+
+; get my slotid
+
+A4E41:  push    bc
+        push    hl
+        in      a,(0A8H)
+        rrca
+        rrca
+        and     003H
+        ld      c,a
+        ld      b,000H
+        ld      hl,EXPTBL
+        add     hl,bc
+        or      (hl)
+A4E51:  ld      c,a
+        inc     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      a,(hl)
+        and     00CH
+        or      c
+        pop     hl
+        pop     bc
+        ret
+
+; disable RS232 ints
+
+A4E5D:  push    af
+        ld      a,0FFH
+        out     (082H),a
+        pop     af
+        ret
+
+; enable RS232 ints
+
+A4E64:  push    af
+        ld      a,0FEH
+        out     (082H),a
+        pop     af
+        ret
+
+; interrupt handler
+
+T4E6B:  call    A4ED1			; handle rs232 interrupt
+        jp      OLDINT
+
+; chars left
+
+A4E71:  call    A4E80			; chars left in receivebuffer
+        push    bc
+        ld      b,a
+        call    A4399			; backup char ?
+        jr      z,A4E7D			; nope,
+        ld      a,1
+A4E7D:  add     a,b
+        pop     bc
+        ret
+;
+A4E80:  ld      a,(DATCNT+0)		; chars left in receivebuffer
+        and     a
+        ret
+;
+A4E85:  push    hl
+        push    de
+        push    bc
+        ld      hl,DATCNT
+A4E8B:  ei
+        call    A44DC			; CTRL-STOP pressed ?
+        jr      c,A4EC9			; yep,
+        ld      a,(hl)
+        and     a
+        jr      nz,A4EA1
+        call    A5132			; enable RTS
+        call    A4F8E
+        jr      c,A4EC9
+        jr      z,A4EC9
+        jr      A4E8B
+;
+A4EA1:  cp      003H
+        jr      nc,A4EB0
+        call    A5132			; enable RTS
+        call    A4F8E
+        ei
+        jr      c,A4EC9
+        jr      z,A4EC9
+A4EB0:  di
+        dec     (hl)
+        call    A4F73
+        ld      c,(hl)
+        ld      b,080H
+        inc     hl
+        ld      a,(hl)
+        ld      (ERRORS),a
+        and     a
+        jr      z,A4EC1
+        inc     b
+A4EC1:  ld      a,c
+        or      a
+        dec     b
+A4EC4:  ei
+        pop     bc
+        pop     de
+        pop     hl
+        ret
+;
+A4EC9:  push    af
+        pop     bc
+        res     7,c
+        push    bc
+        pop     af
+        jr      A4EC4
+
+; handle rs232 interrupt
+
+A4ED1:  call    A512D                   ; received char ?
+        ret     z                       ; nop, quit
+        call    A5113                   ; get char
+        ld      hl,COMMSK
+        and     (hl)                    ; mask off
+        ld      c,a
+        call    A5119                   ; read error status
+        ld      b,a
+        and     a
+        jr      nz,A4EFE                ; errors,
+        ld      hl,FLAGS
+        ld      a,c
+        cp      011H                    ; XON ?
+        jr      z,A4EF4			; yep,
+        cp      013H                    ; XOFF ?
+        jr      nz,A4F0F		; nope, put in receivebuffer
+        set     2,(hl)			; flag XOFF
+        jr      A4EF6
+;
+A4EF4:  res     2,(hl)			; flag XON
+A4EF6:  ld      a,(ESTBLS)
+        bit     0,a                     ; use XON/XOFF handshake ?
+        ret     nz			; yep, we are done
+        jr      A4F0F                   ; put in receivebuffer
+;
+A4EFE:  and     020H                    ; framing error ?
+        jr      z,A4F27                 ; nop,
+        ld      a,c
+        and     a
+        jr      nz,A4F27
+        ld      hl,FLAGS
+        set     4,(hl)
+        ld      b,000H
+        jr      A4F27
+;
+A4F0F:  ld      a,(ESTBLS)
+        bit     4,a			; SI/SO control ?
+        jr      z,A4F27			; nope,
+        ld      hl,FLAGS
+        ld      a,c
+        sub     00FH
+        jr      nz,A4F21
+        res     7,(hl)
+        ret
+;
+A4F21:  inc     a
+        jr      nz,A4F27
+        set     7,(hl)
+        ret
+;
+A4F27:  ld      hl,DATCNT+0
+        ld      a,(RSIQLN)
+        cp      (hl)			; receivebuffer full ?
+        ret     z			; yep, quit
+        inc     (hl)
+        inc     hl
+        push    bc
+        call    A4F73
+        pop     bc
+        ld      a,(ESTBLS)
+        bit     4,a			; SI/SO control ?
+        ld      a,c
+        jr      z,A4F4C			; nope,
+        cp      020H
+        jr      c,A4F4C
+        ld      a,(FLAGS)
+        bit     7,a
+        ld      a,c
+        jr      z,A4F4C
+        or      080H
+A4F4C:  ld      (hl),a
+        push    hl
+        ld      hl,DATCNT
+        ld      a,(RSIQLN)
+        sub     (hl)
+        pop     hl
+        jr      nz,A4F5A
+        set     7,b
+A4F5A:  cp      010H
+        call    c,A4FA8			; suspend transmit
+        ld      a,b
+        inc     hl
+        ld      (hl),a
+        dec     hl
+        and     a
+        ret     nz
+        ld      a,(ESTBLS)
+        bit     3,a			; Auto LF receive ?
+        ret     z			; nope, quit
+        ld      a,(hl)
+        cp      00DH
+        ret     nz
+        ld      c,00AH
+        jr      A4F27
+;
+A4F73:  inc     hl
+        ld      a,(hl)
+        ld      c,a
+        inc     a
+        push    hl
+        ld      hl,RSIQLN
+        cp      (hl)
+        pop     hl
+        jr      c,A4F80
+        xor     a
+A4F80:  ld      (hl),a
+        ex      de,hl
+        ld      hl,(RSFCB)		; filechannel controlblock
+        ld      b,0
+        add     hl,bc
+        add     hl,bc
+        ld      bc,9
+        add     hl,bc
+        ret
+;
+A4F8E:  di
+        ld      a,(FLAGS)
+        bit     1,a
+        jr      nz,A4F99
+        xor     a
+        inc     a
+        ret
+;
+A4F99:  ld      c,011H
+        call    A4FC4
+        ret     c
+        ret     z
+        push    hl
+        ld      hl,FLAGS
+        res     1,(hl)
+        pop     hl
+        ret
+;
+A4FA8:  di
+        xor     a
+        inc     a
+        ld      a,(FLAGS)
+        bit     1,a
+        ret     nz
+        push    hl
+        ld      hl,FLAGS
+        set     1,(hl)
+        pop     hl
+        ld      c,013H
+        call    A4FC4
+        call    A5183
+        call    A513A			; disable RTS
+        ret
+;
+A4FC4:  ld      a,(ESTBLS)
+        bit     0,a			; XON/XOFF handshake ?
+        jr      nz,A4FCE		; yep,
+        xor     a
+        inc     a
+        ret
+;
+A4FCE:  call    A5183
+        push    de
+        call    A5192
+        pop     de
+        ret     c
+        ret     z
+        ld      a,c
+        jp      A5116
+
+; SNDCHR
+
+A4FDC:  ei
+        push    bc
+        ld      c,a
+        ld      a,(ESTBLS)
+        bit     4,a			; SI/SO control ?
+        jr      z,A501E			; nope,
+        ld      a,c
+        cp      020H
+        jr      c,A501E
+        ld      a,(FLAGS)
+        bit     0,a
+        jr      nz,A5008
+        bit     7,c
+        jr      z,A501E
+        ld      a,00EH
+        call    A5020
+        jr      c,A506A
+        jr      z,A506A
+        push    hl
+        ld      hl,FLAGS
+        set     0,(hl)
+        pop     hl
+        jr      A501C
+;
+A5008:  bit     7,c
+        jr      nz,A501C
+        ld      a,00FH
+        call    A5020
+        jr      c,A506A
+        jr      z,A506A
+        push    hl
+        ld      hl,FLAGS
+        res     0,(hl)
+        pop     hl
+A501C:  res     7,c
+A501E:  ld      a,c
+        pop     bc
+A5020:  push    hl
+        ld      hl,ESTBLS
+        bit     2,(hl)			; Auto LF send ?
+        pop     hl
+        jr      z,A503F			; nope,
+        cp      00AH
+        jr      nz,A503F
+        ld      a,(FLAGS)
+        bit     5,a
+        ld      a,00AH
+        jr      z,A503F
+        push    hl
+        ld      hl,FLAGS
+        res     5,(hl)
+        pop     hl
+        and     a
+        ret
+;
+A503F:  push    bc
+        ld      c,a
+        push    de
+        call    A5070
+        pop     de
+        jr      c,A506A
+        jr      z,A506A
+        call    A5183
+        call    A5192
+        jr      c,A506A
+        jr      z,A506A
+        ld      a,c
+        call    A5116
+        ei
+        push    hl
+        ld      hl,FLAGS
+        cp      00DH
+        jr      nz,A5065
+        set     5,(hl)
+        jr      A5067
+;
+A5065:  res     5,(hl)
+A5067:  pop     hl
+        xor     a
+        inc     a
+A506A:  call    A50A3
+        ld      a,c
+        pop     bc
+        ret
+;
+A5070:  ld      a,(ESTBLS)
+        bit     0,a			; XON/XOFF handshake ?
+        jr      z,A50A0			; nope,
+        ld      a,(TOCNT)
+        ld      d,a
+A507B:  ld      e,100			; 100*10 ms = 1 second
+A507D:  call    A51CB			; program timer 2 to 10 ms
+A5080:  ei
+        call    A44DC			; CTRL-STOP pressed ?
+        di
+        ret     c			; yep, quit
+        ld      a,(FLAGS)
+        bit     2,a
+        jr      z,A50A0
+        ld      a,(TOCNT)
+        and     a			; no timeout ?
+        jr      z,A5080			; yep, wait forever
+        call    A51D7			; timer 2 finished ?
+        jr      nc,A5080		; nope,
+        and     a
+        dec     e
+        jr      nz,A507D		; next 10 ms
+        dec     d
+        jr      nz,A507B		; next 1 s
+        ret
+;
+A50A0:  xor     a
+        inc     a
+        ret
+;
+A50A3:  push    hl
+        ld      hl,ERRORS
+        ld      (hl),000H
+        jr      c,A50B1
+        jr      nz,A50B3
+        set     6,(hl)
+        jr      A50B3
+;
+A50B1:  set     2,(hl)
+A50B3:  pop     hl
+        ret
+;
+A50B5:  xor     a
+        out     (081H),a
+        push    af
+        pop     af
+        out     (081H),a
+        push    af
+        pop     af
+        out     (081H),a
+        push    af
+        pop     af
+        ld      a,040H
+        out     (081H),a
+        push    af
+        pop     af			; reset 8251
+        ld      a,(LSTMOD)
+        out     (081H),a
+        push    af
+        pop     af
+        call    A5113
+        call    A5119                   ; read error status
+        ld      a,007H
+        call    A51C3
+        call    A5113
+        jp      A5119                   ; read error status
+
+; SNDBRK
+
+A50E0:  push    bc
+        di
+        call    A4E5D                   ; disable RS232 ints
+        ei
+        ld      a,(LSTCOM)
+        or      008H                    ; BREAK on
+        ld      b,a
+A50EC:  call    A44DC			; CTRL-STOP pressed ?
+        jr      c,A5101			; yep,
+        call    A5183
+        xor     a
+        call    A5116
+        ld      a,b
+        call    A51C3
+        dec     de
+        ld      a,e
+        or      d
+        jr      nz,A50EC
+A5101:  push    af
+        call    A5183
+        ld      a,b
+        and     0F7H			; BREAK off
+        call    A51C3
+        di
+        call    A4E64			; enable RS232 ints
+        ei
+        pop     af
+        pop     bc
+        ret
+;
+A5113:  in      a,(080H)
+        ret
+;
+A5116:  out     (080H),a
+        ret
+
+; read error status
+
+A5119:  in      a,(081H)
+        and     038H
+        push    af
+        ld      a,(LSTCOM)
+        push    af
+        or      010H                    ; reset errors
+        call    A51C3
+        pop     af
+        call    A51C3
+        pop     af
+        ret
+;
+A512D:  in      a,(081H)
+        and     002H
+        ret
+
+; Enable RTS
+
+A5132:  push    af
+        ld      a,(LSTCOM)
+        set     5,a                     ; RTS=1
+        jr      A5140
+
+; Disable RTS
+
+A513A:  push    af
+        ld      a,(LSTCOM)
+        res     5,a                     ; RTS=0
+A5140:  call    A51C3
+        pop     af
+        ret
+
+; DTR
+
+A5145:  and     a
+        jr      z,A5151
+
+; enable DTR
+
+A5148:  di
+        push    af
+        ld      a,(LSTCOM)
+        or      002H                    ; DTR=1
+        jr      A5158
+
+; disable DTR
+
+A5151:  di
+        push    af
+        ld      a,(LSTCOM)
+        and     0FDH                    ; DTR=0
+A5158:  call    A51C3
+        pop     af
+        ret
+
+; STAT
+
+A515D:  push    af
+        in      a,(082H)
+        ld      l,0C1H
+        xor     l
+        and     l
+        ld      l,a			; CTS, Timer2 output, CD
+        in      a,(081H)
+        and     080H			; DSR active ?
+        jr      z,A516D
+        set     3,l			; yep
+A516D:  di
+        ld      a,(FLAGS)
+        bit     4,a
+        jr      z,A517C
+        set     2,l
+        res     4,a
+        ld      (FLAGS),a
+A517C:  ei
+        ld      a,(ERRORS)
+        ld      h,a
+        pop     af
+        ret
+;
+A5183:  push    af
+A5184:  ei
+        nop
+        nop
+        di
+        in      a,(081H)
+        and     005H
+        cp      005H
+        jr      nz,A5184
+        pop     af
+        ret
+;
+A5192:  ld      a,(ESTBLS)
+        bit     1,a			; RTS/CTS handshake ?
+        jr      z,A51C0			; nope, quit
+        ld      a,(TOCNT)
+        ld      d,a
+A519D:  ld      e,100			; 100*10 ms = 1 second
+A519F:  call    A51CB			; program timer 2 to 10 ms
+A51A2:  call    A44DC			; CTRL-STOP pressed ?
+        ei
+        ret     c
+        in      a,(082H)
+        bit     7,a			; CTS asserted ?
+        jr      z,A51C0			; yep, quit
+        ld      a,(TOCNT)
+        and     a			; no timeout ?
+        jr      z,A51A2			; yep, wait forever
+        call    A51D7			; timer 2 finished ?
+        jr      nc,A51A2		; nope,
+        and     a
+        dec     e
+        jr      nz,A519F
+        dec     d
+        jr      nz,A519D
+        ret
+;
+A51C0:  xor     a
+        inc     a
+        ret
+;
+A51C3:  out     (081H),a
+        ld      (LSTCOM),a
+        push    af
+        pop     af
+        ret
+;
+A51CB:  push    af
+        push    bc
+        push    de
+        ld      a,0B0H			; LSB/MSB, interrupt generator, binary
+        ld      c,086H			; timer 2
+        ld      de,04800H		; 10 ms
+        jr      A51E9
+;
+A51D7:  in      a,(082H)
+        rlca
+        rlca
+        ret
+;
+A51DC:  push    af
+        push    bc
+        push    de
+        ld      a,c
+        ld      b,c
+        add     a,084H			; timer
+        ld      c,a
+        ld      a,b
+        rrca
+        rrca
+        or      036H			; LSB/MSB, square wave generator, binary
+A51E9:  out     (087H),a
+        out     (c),e
+        out     (c),d
+        pop     de
+        pop     bc
+        pop     af
+        ret
+
+	defs	06000H-$,000H
+
+        end
