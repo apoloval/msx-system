@@ -209,27 +209,26 @@ HIMSAV  equ     0F349H
 YF349   equ     0F349H                  ; disksystem bottom (lowest address used by the disksystem)
 DOSHIM  equ     0F34BH
 YF34B   equ     0F34BH                  ; msxdos system bottom
-$SECBUF equ     0F34DH                  ; pointer to sectorbuffer, can be used by the diskdriver
+_SECBUF equ     0F34DH                  ; pointer to sectorbuffer, can be used by the diskdriver
 YF34F   equ     0F34FH                  ; pointer to datasectorbuffer
 YF351   equ     0F351H                  ; pointer to directorysectorbuffer
 YF353   equ     0F353H                  ; pointer to the diskbasic FCB's
 YF355   equ     0F355H                  ; DPB table for 8 drives
 RSLREG  equ     0F365H
 XF365   equ     0F365H                  ; routine read primary slotregister
-$DOSON  equ     0F368H
+_DOSON  equ     0F368H
 XF368   equ     0F368H                  ; routine enable disksystem rom on page 1
-$DOSOF  equ     0F36BH
+_DOSOF  equ     0F36BH
 XF36B   equ     0F36BH                  ; routine enable dos ram on page 1
 XFER    equ     0F36EH                  ; routine transfer to/from dos ram
-$AUXIN  equ     0F371H
+_AUXIN  equ     0F371H
 XF371   equ     0F371H                  ; auxiliary input routine
-$AUXOU  equ     0F374H
+_AUXOU  equ     0F374H
 XF374   equ     0F374H                  ; auxiliary output routine
 BLDCHK  equ     0F377H
 XF377   equ     0F377H                  ; routine diskbasic BLOAD
 XF37A   equ     0F37AH                  ; routine diskbasic BSAVE
 BSVCHK  equ     0F37AH
-XF37A   equ     0F37AH                  ; routine diskbasic BSAVE
 BDOS    equ     0F37DH
 XF37D   equ     0F37DH                  ; BDOS entry point
 
@@ -291,9 +290,9 @@ H.DSKI  equ     0FE17H
 H.LSET  equ     0FE21H
 H.RSET  equ     0FE26H
 H.FIEL  equ     0FE2BH
-H.MKI$  equ     0FE30H
-H.MKS$  equ     0FE35H
-H.MKD$  equ     0FE3AH
+H.MKI   equ     0FE30H
+H.MKS   equ     0FE35H
+H.MKD   equ     0FE3AH
 H.CVI   equ     0FE3FH
 H.CVS   equ     0FE44H
 H.CVD   equ     0FE49H
@@ -530,7 +529,7 @@ A409B:  push    ix
         ret
 
 ;       Subroutine      BDOS 00 (system reset)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 
@@ -606,7 +605,7 @@ A410A:  dec     c
         jr      A414E                   ; put clock in running mode
 
 ;       Subroutine      store date
-;       Inputs          
+;       Inputs
 ;       Outputs         -
 
 A4115:  ld      (YF33B),hl
@@ -624,7 +623,7 @@ A4115:  ld      (YF33B),hl
         jr      A4142
 
 ;       Subroutine      store time
-;       Inputs          
+;       Inputs
 ;       Outputs         -
 
 A4130:  ld      a,(YF338)
@@ -686,7 +685,7 @@ A4171:  push    af
         jr      A4156
 
 ;       Subroutine      get date and time
-;       Inputs          
+;       Inputs
 ;       Outputs         Cx set if from clockchip,
 
 A4179:  ld      a,(YF338)
@@ -740,7 +739,7 @@ A41B5:  ld      d,a
 ?41C1:  defb    " MSX-DOS ver. 2.2 Copyright 1984 by Microsoft "
 
 ;       Subroutine      BDOS 0C (return version number)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 
@@ -842,7 +841,7 @@ A4252:  ld      a,(de)
         ret
 
 ;       Subroutine      check if devicename
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A425A:  call    XF255
@@ -887,7 +886,7 @@ A42A3:  scf
         ret
 
 ;       Subroutine      validate FCB, clear S2 and find direntry
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 
@@ -903,7 +902,7 @@ A42B1:  call    A440E                   ; validate FCB drive and filename
         ret     c                       ; invalid, quit
 
 ;       Subroutine      find first directoryentry
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 
@@ -912,7 +911,7 @@ A42B5:  call    A425A                   ; check if devicename
         call    A44D3                   ; reset direntry search and get latest FAT
 
 ;       Subroutine      find next directoryentry
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A42BC:  call    XF258
@@ -963,7 +962,7 @@ A4308:  ld      a,(hl)
         ret
 
 ;       Subroutine      get next direntry (at start of search)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A430E:  ld      a,(YF2B8)
@@ -972,7 +971,7 @@ A430E:  ld      a,(YF2B8)
         jr      nc,A4367                ; yep, update directory of disk when needed and quit
 
 ;       Subroutine      get direntry
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4317:  call    XF25B
@@ -1003,7 +1002,7 @@ A4342:  push    hl
         ret
 
 ;       Subroutine      get next direntry (while searching)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4348:  call    XF25E
@@ -1022,7 +1021,7 @@ A4348:  call    XF25E
         ret
 
 ;       Subroutine      at end of directory
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4367:  call    A4743                   ; flush directory buffer
@@ -1030,7 +1029,7 @@ A4367:  call    A4743                   ; flush directory buffer
         ret
 
 ;       Subroutine      BDOS 13 (delete file)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A436C:  call    A440E                   ; validate FCB drive and filename
@@ -1052,7 +1051,7 @@ A4376:  ld      a,0E5H
         jp      A45CF                   ; write FAT buffer (SHOULD BE: JP A45C4, flush FAT buffer)
 
 ;       Subroutine      BDOS 17 (rename file)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4392:  call    A440E                   ; validate FCB drive and filename
@@ -1114,7 +1113,7 @@ A440B:  ld      a,0FFH                  ; error
         ret
 
 ;       Subroutine      validate FCB drive and filename
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A440E:  call    XF261
@@ -1146,7 +1145,7 @@ A4435:  ld      (YF2E1),a               ; set current driveid
         ret
 
 ;       Subroutine      get max record and extent
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4439:  ld      a,(iy+31)
@@ -1174,7 +1173,7 @@ A445E:  ld      bc,0FF7FH               ; extent 255, record 127
         ret
 
 ;       Subroutine      BDOS 0F (open file)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4462:  call    A42A5                   ; validate FCB, clear S2 and find direntry
@@ -1239,7 +1238,7 @@ A44AE:  ld      (de),a                  ; devicecode
         ret
 
 ;       Subroutine      handle DSKCHG error
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A44CA:  ld      c,a
@@ -1248,7 +1247,7 @@ A44CA:  ld      c,a
         jr      A44DB                   ; get latest FAT (try again)
 
 ;       Subroutine      reset direntry search and get latest FAT
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A44D3:  ld      a,0FFH
@@ -1256,7 +1255,7 @@ A44D3:  ld      a,0FFH
         ld      (YF2FE),a               ; not found a free direntry
 
 ;       Subroutine      get latest FAT
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A44DB:  call    XF267
@@ -1330,7 +1329,7 @@ A4547:  pop     af                      ; adjust first FAT sector to the first F
         ld      b,c                     ; restore sectors per FAT (B is destroyed by the DSKIO)
 
 ; End of change
- 
+
         dec     a
         jr      nz,A4522                ; there is a other FAT copy, try that one
         call    A45FA                   ; get FAT parameters (so the first FAT copy is used)
@@ -1340,7 +1339,7 @@ A4547:  pop     af                      ; adjust first FAT sector to the first F
         jr      A4529                   ; use FAT buffer
 
 ;       Subroutine      get pointer to DPB of current drive
-;       Inputs          
+;       Inputs
 ;       Outputs         HL = IX = pointer to DPB
 
 A4555:  call    XF26A
@@ -1371,7 +1370,7 @@ A4563:  ld      a,(YF2E1)               ; current driveid
         defs    0456FH-$,0
 
 ;       Subroutine      BDOS 10 (close file)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A456F:  push    de
@@ -1417,7 +1416,7 @@ A456F:  push    de
         call    A4748                   ; update directory of disk
 
 ;       Subroutine      flush FAT buffer
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A45C4:  ld      l,(ix+19)
@@ -1428,7 +1427,7 @@ A45C4:  ld      l,(ix+19)
         ret     nz                      ; nope, quit (?? return error if FAT buffer invalid)
 
 ;       Subroutine      write FAT buffer
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A45CF:  call    XF26D
@@ -1455,7 +1454,7 @@ A45E9:  pop     af
         ret
 
 ;       Subroutine      make FAT buffer unchanged and quit with error
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A45EE:  ld      l,(ix+19)
@@ -1491,7 +1490,7 @@ A4617:  ld      hl,(YF351)              ; dirsector buffer
         ret
 
 ;       Subroutine      BDOS 16 (create file)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A461D:  push    de
@@ -1591,7 +1590,7 @@ A46A4:  push    bc
         ret
 
 ;       Subroutine      BDOS 2F (read logical sector)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A46BA:  ld      b,h
@@ -1601,7 +1600,7 @@ A46BA:  ld      b,h
         ld      hl,(YF23D)              ; transferaddress
 
 ;       Subroutine      read sectors with DOS error handling
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A46C5:  call    XF270
@@ -1615,7 +1614,7 @@ A46C5:  call    XF270
         ret                             ; IGNORE, quit
 
 ;       Subroutine      read sectors
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A46D7:  ld      a,(ix+0)                ; driveid
@@ -1631,7 +1630,7 @@ A46D7:  ld      a,(ix+0)                ; driveid
         ret
 
 ;       Subroutine      adjust parameters to restart at error sector and start diskerror handler
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A46E8:  push    af
@@ -1659,7 +1658,7 @@ A46E8:  push    af
         ld      a,(ix+0)                ; driveid
 
 ;       Subroutine      start diskerror handler
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A470A:  call    XF273
@@ -1677,7 +1676,7 @@ A470A:  call    XF273
         jp      XF1E2                   ; Warm boot
 
 ;       Subroutine      BDOS 30 (write logical sector)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4720:  ld      b,h
@@ -1688,7 +1687,7 @@ A4720:  ld      b,h
         jr      A4755                   ; write sectors with DOS error handling
 
 ;       Subroutine      flush datasector buffer
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A472D:  ld      hl,YF242
@@ -1703,7 +1702,7 @@ A472D:  ld      hl,YF242
         jr      A4755                   ; write sector with DOS error handling
 
 ;       Subroutine      flush directory buffer
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4743:  ld      a,(YF23C)
@@ -1711,7 +1710,7 @@ A4743:  ld      a,(YF23C)
         ret     z                       ; nope, quit
 
 ;       Subroutine      write dirsector buffer
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4748:  call    XF276
@@ -1721,7 +1720,7 @@ A4748:  call    XF276
         call    A460D                   ; setup dirsector parameters
 
 ;       Subroutine      write sectors with DOS error handling
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4755:  call    XF279
@@ -1744,7 +1743,7 @@ A4755:  call    XF279
         ret                             ; IGNORE, quit
 
 ;       Subroutine      BDOS 14 (read next record)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4775:  call    A4EF8                   ; get recordnumber from CR,EX and S2 fields
@@ -1752,7 +1751,7 @@ A4775:  call    A4EF8                   ; get recordnumber from CR,EX and S2 fie
         jr      A4783                   ; update sequencial fields
 
 ;       Subroutine      BDOS 15 (write next record)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A477D:  call    A4EF8                   ; get recordnumber from CR,EX and S2 fields
@@ -1761,7 +1760,7 @@ A4783:  call    A486A                   ; increase recordnumber if something was
         jr      A479C                   ; update CR,EX and S2 field
 
 ;       Subroutine      BDOS 21 (random access read record)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4788:  call    A4857                   ; get recordnumber from Rx fields, 1 record
@@ -1772,7 +1771,7 @@ A4790:  push    iy
         pop     de
 
 ;       Subroutine      BDOS 22 (random access write record)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4793:  call    A4857                   ; get recordnumber from Rx fields, 1 record
@@ -1791,7 +1790,7 @@ A479C:  ld      a,l
         ret
 
 ;       Subroutine      BDOS 27 (MSXDOS random block read)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A47B2:  xor     a
@@ -1801,7 +1800,7 @@ A47B2:  xor     a
         jr      A47C8
 
 ;       Subroutine      BDOS 26 (MSXDOS random block write)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A47BE:  xor     a
@@ -1815,7 +1814,7 @@ A47C8:  call    A486A                   ; increase recordnumber if something was
         ret
 
 ;       Subroutine      BDOS 28 (write random with zero fill)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A47D1:  push    de
@@ -1995,14 +1994,14 @@ A490F:  ld      (YF2EC),bc              ; relative cluster of startbyte
         ret
 
 ;       Subroutine      multiply
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4916:  call    XF27C
         ld      hl,0
 
 ;       Subroutine      multiply high word
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A491C:  ld      a,b
@@ -2020,14 +2019,14 @@ A4928:  rra
         ret
 
 ;       Subroutine      divide
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 DIV16:
 A492F:  ld      hl,0
 
 ;       Subroutine      divide
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4932:  call    XF27F
@@ -2053,7 +2052,7 @@ A494E:  or      a
         jr      A4947
 
 ;       Subroutine      calculate partial sector transfers
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4953:  ld      h,b
@@ -2085,7 +2084,7 @@ A4972:  ld      (YF2F8),de              ; bytes to transfer from partial sector
         ret
 
 ;       Subroutine      get absolute cluster
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4989:  call    XF282
@@ -2138,7 +2137,7 @@ A49CF:  inc     bc                      ; BC<>0 (means not found)
         ret
 
 ;       Subroutine      read datasector
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A49D2:  ld      (YF2E0),a
@@ -2187,7 +2186,7 @@ A4A1B:  ld      a,1
         ret
 
 ;       Subroutine      do partical sector read if needed
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4A36:  call    XF288
@@ -2200,7 +2199,7 @@ A4A36:  call    XF288
         jp      XF1D9                   ; transfer to DOS memory
 
 ;       Subroutine      handle partial sector write
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4A46:  call    XF28B
@@ -2224,7 +2223,7 @@ A4A46:  call    XF28B
         ret
 
 ;       Subroutine      last partial sector ?
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4A6B:  ld      hl,0
@@ -2237,7 +2236,7 @@ A4A6B:  ld      hl,0
         ret     z
 
 ;       Subroutine      to next sector (only when partical read was done)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4A7B:  ld      a,(YF2DF)
@@ -2292,7 +2291,7 @@ A4ACA:  call    A53A8                   ; console output
         jr      A4AB9
 
 ;       Subroutine      read record for dos devices
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4AD7:  ld      de,(YF2E2)              ; current transferaddress
@@ -2307,7 +2306,7 @@ A4AE1:  call    A546E                   ; auxiliary input
         ld      (de),a
         inc     de
         cp      01AH
-        jr      z,A4ABC                 ; CTRL-Z, 
+        jr      z,A4ABC                 ; CTRL-Z,
         dec     bc
         ld      a,b
         or      c                       ; all bytes done ?
@@ -2500,7 +2499,7 @@ A4C37:  ld      hl,(YF2E4+0)
         ret
 
 ;       Subroutine      write record for dos devices
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4C47:  ld      hl,(YF23D)              ; transferaddress
@@ -2776,7 +2775,7 @@ A4E32:  ld      l,(iy+26)
         jr      A4E2C                   ; mark FAT buffer changed
 
 ;       Subroutine      calculate sequencial sectors
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4E48:  call    XF2A0
@@ -2864,7 +2863,7 @@ A4ECA:  add     a,b
         jr      A4E78
 
 ;       Subroutine      get decoded characterpair (not needed, uses for secret message)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4ED2:  call    A41FA
@@ -2897,7 +2896,7 @@ A4EED:  or      l
         ret
 
 ;       Subroutine      get recordnumber from S2,EX and CR fields
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4EF8:  push    de
@@ -2914,7 +2913,7 @@ A4EF8:  push    de
         ret
 
 ;       Subroutine      allocate cluster chain
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4F12:  call    XF2A6
@@ -2967,7 +2966,7 @@ A4F56:  dec     de
         jr      A4F31                   ; try again
 
 ;       Subroutine      allocate cluster if free
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4F5E:  push    hl
@@ -3012,13 +3011,13 @@ A4F94:  ex      de,hl
         ret
 
 ;       Subroutine      release cluster chain
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4F9B:  ld      bc,0
 
 ;       Subroutine      set cluster entry and release rest of cluster chain
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4F9E:  call    XF2A9
@@ -3039,7 +3038,7 @@ A4F9E:  call    XF2A9
         ret
 
 ;       Subroutine      BDOS 11 (search for first)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A4FB8:  call    A42A5                   ; validate FCB, clear S2 and find direntry
@@ -3085,7 +3084,7 @@ A5000:  ld      a,0FFH
         ret
 
 ;       Subroutine      BDOS 12 (search for next)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A5006:  call    A440E                   ; validate FCB drive and filename
@@ -3099,7 +3098,7 @@ A5006:  call    A440E                   ; validate FCB drive and filename
         jr      A4FBB                   ; finish
 
 ;       Subroutine      BDOS 23 (compute filesize)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A501E:  call    A42A5                   ; validate FCB, clear S2 and find direntry
@@ -3129,7 +3128,7 @@ A5043:  ld      (ix+33),c
         ret                             ; quit without error
 
 ;       Subroutine      BDOS 18 (return bitmap of logged-in drives)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A504E:  ld      a,(YF347)
@@ -3141,14 +3140,14 @@ A5053:  scf
         ret
 
 ;       Subroutine      BDOS 1A (set DMA address)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A5058:  ld      (YF23D),de              ; set transferaddress
         ret
 
 ;       Subroutine      BDOS 1B (MSXDOS get allocation)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A505D:  xor     a
@@ -3191,7 +3190,7 @@ A508B:  inc     hl
         ret
 
 ;       Subroutine      BDOS 0D (reset discs)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A509F:  ld      hl,00080H
@@ -3217,14 +3216,14 @@ A50B2:  ld      e,(hl)
         ret
 
 ;       Subroutine      BDOS 25 (return current drive)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A50C4:  ld      a,(YF247)
         ret
 
 ;       Subroutine      BDOS 34 (update random access pointer)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A50C8:  call    A4EF8                   ; get recordnumber from CR,EX and S2 field
@@ -3234,7 +3233,7 @@ A50C8:  call    A4EF8                   ; get recordnumber from CR,EX and S2 fie
         ret
 
 ;       Subroutine      BDOS 0E (select disc)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A50D5:  ld      a,(YF347)
@@ -3246,7 +3245,7 @@ A50D5:  ld      a,(YF347)
         ret
 
 ;       Subroutine      BDOS 0A (buffered console input)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A50E0:  push    de
@@ -3505,7 +3504,7 @@ A523E:  ld      (YF239),a
         jp      A5104
 
 ;       Subroutine      display message of programmer (not needed)
-;       Inputs          
+;       Inputs
 ;       Outputs
 ;       Remark          activated by:
 ;                       input 127 or 255 chars, press CTRL-J, press BS or LEFT
@@ -3737,7 +3736,7 @@ NKEYNT  equ     ($-T5374)/3
 
 
 ;       Subroutine      BDOS 02 (console output)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A53A7:  ld      a,e
@@ -3828,7 +3827,7 @@ A5437:  xor     a
         ret
 
 ;       Subroutine      BDOS 0B (console status)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A543C:  call    A5412
@@ -3838,7 +3837,7 @@ A543C:  call    A5412
         ret
 
 ;       Subroutine      BDOS 01 (console input)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A5445:  call    A544E                   ; BDOS 8 (direct input)
@@ -3848,7 +3847,7 @@ A5445:  call    A544E                   ; BDOS 8 (direct input)
         ret
 
 ;       Subroutine      BDOS 08 (direct input)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A544E:  call    A541D
@@ -3868,13 +3867,13 @@ A5454:  ld      a,e
         ret
 
 ;       Subroutine      BDOS 07 (MSXDOS direct input)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A5462:  jp      A4078                   ; get keyboardinput
 
 ;       Subroutine      BDOS 05 (printer output)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A5465:  ld      a,e
@@ -3884,14 +3883,14 @@ A5466:  push    af
         jp      A409B                   ; output to printer
 
 ;       Subroutine      BDOS 03 (auxiliary input)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A546E:  call    A5412
         jp      XF371
 
 ;       Subroutine      BDOS 04 (auxiliary output)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A5474:  ld      a,e
@@ -4012,7 +4011,7 @@ A5530:  ld      (YF22B+1),a
 T5534:  defb    200,166,200,165,200,165,200,165
 
 ;       Subroutine      BDOS 2A (MSXDOS get date)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A553C:  xor     a
@@ -4026,7 +4025,7 @@ A553C:  xor     a
         ret
 
 ;       Subroutine      BDOS 2B (set date)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A5552:  ld      bc,-1980
@@ -4110,7 +4109,7 @@ A55D2:  dec     a
         jr      A55D2
 
 ;       Subroutine      BDOS 2C (MSXDOS get time)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A55DB:  xor     a
@@ -4122,7 +4121,7 @@ A55DB:  xor     a
         ret
 
 ;       Subroutine      BDOS 2D (set time)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A55E6:  ld      b,h
@@ -4143,7 +4142,7 @@ A55E6:  ld      b,h
         ret
 
 ;       Subroutine      BDOS 2E (set verify flag)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A55FF:  ld      a,e
@@ -4267,7 +4266,7 @@ T5696:  defb    080H,09AH,"E" ,"A" ,08EH,"A" ,08FH,080H
         defb    0B8H,0B8H
 
 ;       Subroutine      unsupported CP/M BDOS calls
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A56D0:  xor     a
@@ -4275,7 +4274,7 @@ A56D0:  xor     a
         ret
 
 ;       Subroutine      BDOS handler (for DiskBASIC)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A56D3:  ei
@@ -4548,7 +4547,7 @@ A58F0:  ld      (hl),0C3H
         ld      hl,(AUTLIN)
         push    hl                      ; size of the biggest sector
         call    A5EC8                   ; allocate memory (adjust BASIC areapointers, halt when error)
-        ld      ($SECBUF),hl            ; allocate sectorbuffer
+        ld      (_SECBUF),hl            ; allocate sectorbuffer
         pop     hl                      ; size of the biggest sector
         push    hl
         call    A5EC8                   ; allocate memory (adjust BASIC areapointers, halt when error)
@@ -5026,9 +5025,9 @@ T5C96:  defw    H.DSKO,A6B96
         defw    H.LSET,A6CD7
         defw    H.RSET,A6CD6
         defw    H.FIEL,A6C49
-        defw    H.MKI$,A6DAF
-        defw    H.MKS$,A6DB2
-        defw    H.MKD$,A6DB5
+        defw    H.MKI,A6DAF
+        defw    H.MKS,A6DB2
+        defw    H.MKD,A6DB5
         defw    H.CVI,A6DD7
         defw    H.CVS,A6DDA
         defw    H.CVD,A6DDD
@@ -5282,7 +5281,7 @@ J5EA7:  INC     HL
 
 ;       Subroutine      allocate MSXDOS memory (halt when error)
 ;       Inputs          HL = number of bytes to allocate
-;       Outputs         
+;       Outputs
 
 A5EAD:  ld      hl,(YF34B)
         and     a
@@ -5292,7 +5291,7 @@ A5EAD:  ld      hl,(YF34B)
 
 ;       Subroutine      allocate memory (adjust HIMEM, halt when error)
 ;       Inputs          HL = number of bytes to allocate
-;       Outputs         
+;       Outputs
 
 A5EB8:  ld      hl,(HIMEM)
         and     a
@@ -5305,7 +5304,7 @@ A5EC1:  jr      c,A5ECC                 ; new top below zero, halt with error
 
 ;       Subroutine      allocate memory (adjust BASIC areapointers, halt when error)
 ;       Inputs          HL = number of bytes to allocate
-;       Outputs         
+;       Outputs
 
 A5EC8:  call    A5EE8                   ; allocate memory (adjust BASIC areapointers)
 A5ECB:  ret     nc
@@ -5696,7 +5695,7 @@ A609A:  ld      hl,YF355
         ret
 
 ;       Subroutine      FORMAT BIOS call (H.FORM)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A60B0:  and     a                       ; use free BASIC memory as formatbuffer
@@ -5792,7 +5791,7 @@ A615D:  call    A62C9                   ; print CR/LF
         jp      A62C9                   ; print CR/LF
 
 ;       Subroutine      get fresh keyboardinput
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6166:  xor     a
@@ -5939,7 +5938,7 @@ A62D6:  ld      hl,0FF00H
         ret
 
 ;       Subroutine      first character filespecifier is 000H-039H (H.POSD)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 T62E8:  inc     sp
@@ -6440,7 +6439,7 @@ J6557:  LD      (YFFFF),A
         LD      A,E
         RET
 
-L63F4   EQU     $-I63F4
+L63F4   EQU     $-C63F4
 
 ;       Subroutine      __________________________
 ;       Inputs          ________________________
@@ -6677,7 +6676,7 @@ A66A0:  pop     bc
         ret
 
 ;       Subroutine      get pointer to i/o channel (H.GETP)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A66A4:  ld      ix,RETRTN
@@ -6689,7 +6688,7 @@ A66A4:  ld      ix,RETRTN
         ret
 
 ;       Subroutine      OPEN statement expander (H.NOFO)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A66B3:  ei
@@ -6732,7 +6731,7 @@ A66CD:  add     hl,sp
         ret
 
 ;       Subroutine      open i/o channel (H.NULO)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A66FC:  ei
@@ -6912,7 +6911,7 @@ A6813:  ld      (hl),b
         ret
 
 ;       Subroutine      input from i/o channel (H.INDS)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6819:  ld      ix,RETRTN
@@ -6981,7 +6980,7 @@ A6866:  ld      b,a
         ret
 
 ;       Subroutine      putback for diskdevices (H.BAKU)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6875:  ei
@@ -7003,7 +7002,7 @@ A6882:  add     hl,sp
         ret
 
 ;       Subroutine      output to i/o channel (H.FILO)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A688E:  ld      ix,RETRTN
@@ -7051,7 +7050,7 @@ A68CB:  call    A718F                   ; random block write
         ret
 
 ;       Subroutine      close i/o channel for diskdevices (H.NTFL)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A68D0:  ld      ix,RETRTN
@@ -7093,7 +7092,7 @@ A68F4:  push    hl
         ret
 
 ;       Subroutine      Binary Save  (H.BINS)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A690E:  call    A7380                   ; take control from caller
@@ -7115,7 +7114,7 @@ A690E:  call    A7380                   ; take control from caller
         jp      A731E                   ; close i/o channel
 
 ;       Subroutine      Binary Load  (H.BINL)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6939:  ld      ix,M739A                ; quit loading & start (headloop/executing)
@@ -7206,7 +7205,7 @@ A69E2:  ld      hl,00001H
         ret
 
 ;       Subroutine      BSAVE for diskdevices
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A69E7:  push    de
@@ -7310,7 +7309,7 @@ A6A9E:  pop     hl
         jr      A6A5D
 
 ;       Subroutine      BLOAD for diskdevices
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6AA7:  push    de
@@ -7420,8 +7419,8 @@ A6B6A:  call    A72D0
 A6B6E:  ld      ix,M6F0B
         jp      A731E                   ; evaluate address operand (BLOAD/SAVE)
 
-;       Subroutine      DSKI$ function (H.DSKI)
-;       Inputs          
+;       Subroutine      DSKI function (H.DSKI)
+;       Inputs
 ;       Outputs         ________________________
 
 A6B75:  call    A7380                   ; take control from caller
@@ -7441,7 +7440,7 @@ A6B75:  call    A7380                   ; take control from caller
         jr      A6BA1
 
 ;       Subroutine      DSKO statement (H.DSKO)
-;       Inputs          
+;       Inputs
 ;       Outputs
 
 A6B96:  call    A7380                   ; take control from caller
@@ -7481,7 +7480,7 @@ A6BC5:  ld      ix,M521C
         ret
 
 ;       Subroutine      GET/PUT statement (H.DGET)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6BDA:  ld      ix,RETRTN
@@ -7552,7 +7551,7 @@ A6C3F:  push    hl
         jp      A6EF8
 
 ;       Subroutine      FIELD statement (H.FIEL)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6C49:  call    A7380                   ; take control from caller
@@ -7630,13 +7629,13 @@ A6C8B:  ex      de,hl
         jr      A6C8B
 
 ;       Subroutine      RSET statement (H.RSET)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6CD6:  defb    0F6H
 
 ;       Subroutine      LSET statement (H.LSET)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6CD7:  scf
@@ -7778,22 +7777,22 @@ A6DA9:  ex      (sp),hl
         push    hl
         jp      A6D2A
 
-;       Subroutine      MKI$ function (H.MKI$)
-;       Inputs          
+;       Subroutine      MKI$ function (H.MKI)
+;       Inputs
 ;       Outputs         ________________________
 
 A6DAF:  ld      a,2
         defb    001H
 
-;       Subroutine      MKS$ function (H.MKS$)
-;       Inputs          
+;       Subroutine      MKS$ function (H.MKS)
+;       Inputs
 ;       Outputs         ________________________
 
 A6DB2:  ld      a,4
         defb    001H
 
-;       Subroutine      MKD$ function (H.MKD$)
-;       Inputs          
+;       Subroutine      MKD$ function (H.MKD)
+;       Inputs
 ;       Outputs         ________________________
 
 A6DB5:  ld      a,8
@@ -7816,21 +7815,21 @@ A6DB5:  ld      a,8
         nop
 
 ;       Subroutine      CVI function (H.CVI)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6DD7:  ld      a,2-1
         defb    001H
 
 ;       Subroutine      CVS function (H.CVS)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6DDA:  ld      a,4-1
         defb    001H
 
 ;       Subroutine      CVD function (H.CVD)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6DDD:  ld      a,8-1
@@ -7896,7 +7895,7 @@ A6DFB:  ld      ix,M5597
 T6E68:  defb    045H,065H,053H,060H,000H,000H,000H,000H
 
 ;       Subroutine       (H.EOF)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6E70:  call    A7380                   ; take control from caller
@@ -7916,7 +7915,7 @@ A6E7D:  push    af
         ret
 
 ;       Subroutine      FILES/LFILES statement (H.FILE)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6E88:  call    A7380                   ; take control from caller
@@ -7980,7 +7979,7 @@ A6EF8:  pop     hl
         jp      A731E                   ; output back to screen and quit
 
 ;       Subroutine      KILL statement (H.KILL)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6F00:  call    A7380                   ; take control from caller
@@ -7999,7 +7998,7 @@ A6F00:  call    A7380                   ; take control from caller
         ret
 
 ;       Subroutine      NAME statement (H.NAME)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A6F20:  call    A7380                   ; take control from caller
@@ -8129,14 +8128,14 @@ A7003:  ld      (hl),"?"
         ret
 
 ;       Subroutine       (H.LOF)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A7009:  ld      bc,00010H
         defb    011H
 
 ;       Subroutine       (H.LOC)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A700D:  ld      bc,00021H
@@ -8180,7 +8179,7 @@ A700D:  ld      bc,00021H
         jp      M269A                   ; dbl add
 
 ;       Subroutine      DSKF function (H.DSKF)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A7061:  call    A7380                   ; take control from caller
@@ -8195,7 +8194,7 @@ A7074:  ld      e,a
         jp      M2F99                   ; integer to DAC
 
 ;       Subroutine      COPY statement (H.COPY)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A707B:  call    A7380                   ; take control from caller
@@ -8366,7 +8365,7 @@ A71B7:  ld      e,047H
         jp      A731E
 
 ;       Subroutine      expand errormessages (H.ERRP)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A71D3:  ld      a,e
@@ -8504,7 +8503,7 @@ A731E:  call    CALBAS
         ret
 
 ;       Subroutine      devicename parser (H.PARD)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A7323:  ei
@@ -8552,7 +8551,7 @@ A7350:  pop     de
         call    A7380                   ; take control from caller
         ld      a,(hl)
         and     0DFH                    ; upcase
-        sub     040H                    ; to drivenumber/deviceid for disk (1...) 
+        sub     040H                    ; to drivenumber/deviceid for disk (1...)
         push    hl
         ld      hl,YF347
         cp      (hl)                    ; valid drive ?
@@ -8569,7 +8568,7 @@ A7374:  inc     hl
         ret
 
 ;       Subroutine      no device specified (H.NODE)
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 A737C:  ei
@@ -8577,7 +8576,7 @@ A737C:  ei
         ret
 
 ;       Subroutine      take control from caller
-;       Inputs          
+;       Inputs
 ;       Outputs         ________________________
 
 ;       This is what the stack looks like at entry:
