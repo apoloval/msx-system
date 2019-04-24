@@ -201,7 +201,7 @@ L749B:	CALL	L75EB		; init dskio
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER		; transport sector data to SECBUF
@@ -309,14 +309,14 @@ L7556:	CALL	L75EB		; init dskio
         BIT	1,(IX+5)
         JR	NZ,L7596	; it's a verify,
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	L75A4		; read sector (with ready) in SECBUF
         POP	HL
         RET	C		; error, quit
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         EX	DE,HL
         LD	BC,512
         CALL	XFER		; transfer SECBUF to transfer adres
@@ -686,11 +686,11 @@ J$77DE:	INC	B
 	PUSH	BC
 	PUSH	HL
 	LD	DE,1
-	LD	HL,($SECBUF)
+	LD	HL,(_SECBUF)
 	AND	A
 	CALL	DSKIO
 	JR	C,J7808
-	LD	HL,($SECBUF)
+	LD	HL,(_SECBUF)
 	LD	B,(HL)
 	POP	HL
 	PUSH	BC
@@ -1069,7 +1069,7 @@ L79FC:	PUSH	HL
         LD	HL,L7B98
         LD	BC,L_SCWR	; write, install write sector routine
 L7A16:	PUSH	DE
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LDIR			; copy routine to secbuf
         POP	HL
         PUSH	DE
@@ -1081,14 +1081,14 @@ L7A1F:	LD	E,(HL)
         OR	E
         JR	Z,L7A3C
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,DE
         INC	HL
         LD	C,(HL)
         INC	HL
         LD	B,(HL)
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,BC
         EX	DE,HL
         LD	(HL),D
@@ -1183,7 +1183,7 @@ L7AA5:	LD	E,(HL)
 L7AB7:	POP	BC
         POP	DE
         POP	IY
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         EX	(SP),HL
         RET
 

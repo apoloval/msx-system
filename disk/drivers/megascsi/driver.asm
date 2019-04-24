@@ -67,7 +67,7 @@ D$F2FD		equ	0F2FDH
 H.RUNC		equ	0FECBH
 
 ;RAWFLG		equ	0F30Dh
-;$SECBUF		equ	0F34Dh
+;_SECBUF		equ	0F34Dh
 ;XFER		equ	0F36Eh
 ;DISINT		equ	0FFCFh
 ;ENAINT		equ	0FFD4h
@@ -100,7 +100,7 @@ C.7417:	CALL	C$7460
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.741A:	EXX	
+C.741A:	EXX
         LD	L,A			; driveid
         EX	AF,AF'
         ADD	HL,HL
@@ -114,16 +114,16 @@ C.741A:	EXX
 J$7428:	LD	A,(HL)
         PUSH	HL
         POP	IX			; pointer to partitionentry
-        EXX	
+        EXX
         SUB	0FFH
         RET	NC			; deviceid 0FFH, Cx reset, Zx set
         DEC	A			; deviceid 000H, Cx set, Zx set
-        RET	
+        RET
 
-C$7432:	EXX	
+C$7432:	EXX
         LD	C,A			; driveid
         EX	AF,AF'
-        DI	
+        DI
         LD	A,2
         OUT	(99H),A
         LD	A,8FH
@@ -146,9 +146,9 @@ J$7450:	LD	HL,(D$7FAA)
         LD	B,HIGH 07F8CH
         LD	A,(BC)
         SET	6,A			; b6 set
-        EXX	
-        EI	
-C$7460:	RET	
+        EXX
+        EI
+C$7460:	RET
 
 J$7461:	IN	A,(0AAH)
         LD	L,A
@@ -202,7 +202,7 @@ J$7499:	POP	HL
         XOR	L
         OUT	(0AAH),A
         BIT	6,B
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -214,9 +214,9 @@ C.74B3:	CALL	C.74FE			; check if key pressed, wait until released
         PUSH	AF
         PUSH	BC
         LD	A,L
-        CPL	
+        CPL
         AND	81H
-        EXX	
+        EXX
         RST	30H
         DEFB	080H
         DEFW	0180H
@@ -226,7 +226,7 @@ C.74B3:	CALL	C.74FE			; check if key pressed, wait until released
         POP	AF
         EX	AF,AF'
         LD	B,HIGH (I$7F00-2000H)
-        RET	
+        RET
 
 ;	  Subroutine lock/unlock bank
 ;	     Inputs  ________________________
@@ -237,14 +237,14 @@ I$74CC:	LD	HL,I$7CDE		; workarea
         JR	C,J$74D5
         LD	(HL),1
         POP	HL
-        RET	
+        RET
 
 J$74D5:	SRA	(HL)
         POP	HL
-        CCF	
+        CCF
         RET	NC
         LD	A,6			; error
-        RET	
+        RET
 
 ;	  Subroutine check if key combination pressed
 ;	     Inputs  ________________________
@@ -269,15 +269,15 @@ C.74E2:	PUSH	HL
         IN	A,(0A9H)
         LD	H,A
         LD	A,L
-        RLCA	
+        RLCA
 J$74F3:	RLC	H
         ADD	A,20H
         JR	NC,J$74F3
         XOR	H
-        RRA	
+        RRA
         SBC	A,A
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine check if key pressed, wait until released
 ;	     Inputs  L b3-b0=row, L b7-b4=col
@@ -288,7 +288,7 @@ C.74FE:	CALL	C.74E2			; check if key pressed
 J$7502:	CALL	C.74E2
         JR	Z,J$7502		; wait util key is released
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine select scsi device
 ;	     Inputs  ________________________
@@ -314,14 +314,14 @@ J$7539:	LD	A,(IY+5)		; phase sense
         JR	NC,J$7539		; wait for BUSREQ
         RRA
         AND	07H			; BUSMSG,BUSCD,BUSIO
-        RET	
+        RET
 
 J$7543:	XOR	A
         LD	(IY+2),A		; command BUS release
         LD	(IY+11),A
         LD	A,2
         SCF
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -343,7 +343,7 @@ J$754F:	BIT	3,(IY+5)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.7568:	SCF	
+C.7568:	SCF
         CALL	C.74CB			; lock bank
         RET	C			; already locked, quit
 
@@ -356,13 +356,13 @@ C.756D:	PUSH	AF
         LD	(SEL4000),A
         POP	AF
         LD	IY,SCSIADR
-        RET	
+        RET
 
 ;	  Subroutine driver bank on 4000-5FFF with lock
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.7579:	SCF	
+C.7579:	SCF
         CALL	C.74CB			; lock bank
         RET	C			; already locked, quit
 
@@ -374,14 +374,14 @@ C.757E:	PUSH	AF
         LD	A,128+BNKNDRV
         LD	(SEL4000),A		; driver bank 4000-5FFF (write)
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine adjust for sectorsize
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.7586:	LD	A,B
-        EXX	
+        EXX
         LD	E,A			; number of sectors
         LD	B,(IX+8)
         LD	C,(IX+9)		; sectorsize
@@ -389,32 +389,32 @@ C.7586:	LD	A,B
         SUB	02H
         OR	C
         LD	D,A
-        EXX	
+        EXX
         RET	Z			; sectorsize 512, quit
-        EXX	
+        EXX
         LD	A,B
         OR	C
-        EXX	
+        EXX
         LD	A,2
-        SCF	
+        SCF
         RET	Z			; sectorsize 0, quit with NOT READY error
-        EXX	
+        EXX
         LD	D,0
         LD	A,B
         DEC	A
         OR	C
-        EXX	
+        EXX
         LD	A,0AH
-        SCF	
+        SCF
         RET	NZ			; not 256, quit with UNSUPPORTED MEDIA error
         SLA	E
         RL	D
         RL	C			; sectornumber*2
-        EXX	
+        EXX
         SLA	E			; number of sectors*2
         XOR	A			; ok
-        EXX	
-        RET	
+        EXX
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -422,7 +422,7 @@ C.7586:	LD	A,B
 
 C$75B5:	LD	A,C
         PUSH	DE
-        EXX	
+        EXX
         POP	HL
         ADD	HL,DE
         ADC	A,D
@@ -433,8 +433,8 @@ C$75B5:	LD	A,C
         SBC	A,H
         LD	A,(IX+5)
         SBC	A,D
-        EXX	
-        LD	A,0CH	; 12 
+        EXX
+        LD	A,0CH	; 12
         RET	C
         LD	A,E
         ADD	A,(IX+4)
@@ -446,7 +446,7 @@ C$75B5:	LD	A,C
         ADC	A,(IX+2)
         LD	C,A
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine reset scsi bus
 ;	     Inputs  ________________________
@@ -479,7 +479,7 @@ C$75F1:	LD	(IY+1),0D8H		; disable+reset+arb_ebl+par_ebl
         LD	(IY+14),A		; clear transmit counter
         LD	(IY+5),A		; clear diagnose control
         LD	(IY+1),18H		; enable+arb_ebl+par_ebl
-        RET	
+        RET
 
 ;	  Subroutine read ramdisk sectors
 ;	     Inputs  ________________________
@@ -499,18 +499,18 @@ C.7619:	BIT	7,D
         CALL	C.764C			; read ramdisk sector non switched
 J$762C:	POP	BC
         DJNZ	C.7619			; next sector
-        RET	
+        RET
 
 J$7630:	EX	AF,AF'
         PUSH	DE
-        LD	DE,($SECBUF)
-        CALL	C.764C			; read ramdisk sector in $SECBUF
+        LD	DE,(_SECBUF)
+        CALL	C.764C			; read ramdisk sector in _SECBUF
         POP	DE
         PUSH	HL
         LD	B,HIGH 512		; 512 bytes
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C.79BE			; normal kernel bank on 4000-5FFF
-        CALL	XFER			; transfer from $SECBUF
+        CALL	XFER			; transfer from _SECBUF
         LD	(SEL4000),A		; restore bank on 4000-5FFF
         POP	HL
         JR	J$762C			; continue
@@ -531,7 +531,7 @@ I$7650:	CALL	C.7DC0			; copy
         INC	A
         LD	(SEL4000),A		; yep, select next bank 4000-5FFF
 J$765F:	DJNZ	C.764C
-        RET	
+        RET
 
 ;	  Subroutine write ramdisk sectors
 ;	     Inputs  ________________________
@@ -551,19 +551,19 @@ C.7662:	BIT	7,H
         CALL	C.7696			; write ramdisk sector non switched
 J$7675:	POP	BC
         DJNZ	C.7662			; next sector
-        RET	
+        RET
 
 J$7679:	EX	AF,AF'
         PUSH	DE
         LD	B,HIGH 512		; 512 bytes
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         CALL	C.79BE			; normal kernel bank on 4000-5FFF
-        CALL	XFER			; transfer to $SECBUF
+        CALL	XFER			; transfer to _SECBUF
         LD	(SEL4000),A		; restore bank on 4000-5FFF
         POP	DE
         PUSH	HL
         INC	B			; 1 sector
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C.7696			; write ramdisk sector non switched
         POP	HL
         JR	J$7675			; continue
@@ -584,7 +584,7 @@ I$769A:	CALL	C.7DC0			; copy
         INC	A
         LD	(SEL4000),A		; yep, select next bank 4000-5FFF
 J$76A9:	DJNZ	C.7696			; next sector
-        RET	
+        RET
 
 ;	  Subroutine read or write controller
 ;	     Inputs  HL = buffer, BC = size, D = phase
@@ -600,7 +600,7 @@ J$76AD:	LD	E,(HL)
         LD	A,B
         OR	C
         JR	NZ,J$76AD
-        RET	
+        RET
 
 ;	  Subroutine read or write byte controller
 ;	     Inputs  ________________________
@@ -609,9 +609,9 @@ J$76AD:	LD	E,(HL)
 C.76BA:	LD	A,(IY+5)		; phase sense
         BIT	3,A
         RET	Z			; BUSBSY reset, quit
-        RLA	
+        RLA
         JR	NC,C.76BA		; wait until BUSREQ
-        RRA	
+        RRA
         AND	07H
         XOR	D
         RET	NZ
@@ -627,23 +627,23 @@ J$76D8:	LD	(IY+2),0E0H		; command ACKREQ_S
 J.76DF:	BIT	7,(IY+5)
         JR	NZ,J.76DF		; wait until BUSREQ
         LD	(IY+2),0C0H		; command ACKREQ_C
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine sector transfer
 ;	     Inputs  HL=transfer,D=phase,BC=sectorsize,E=number of sectors
 ;	     Outputs ________________________
 
 C.76EB:	LD	A,(IY+5)		; phase sense
-        RLA	
+        RLA
         JR	NC,C.76EB		; wait for BUSREQ
-        RRA	
+        RRA
         AND	07H
         CP	D
         RET	NZ
         LD	(IY+4),0FFH		; interrupt reset
         LD	A,B
-        SUB	02H 
+        SUB	02H
         OR	C
         JR	Z,J$7715		; 512,
         PUSH	HL
@@ -675,11 +675,11 @@ J$7732:	RET	C
 J$7733:	BIT	4,(IY+4)
         JR	Z,J$7733
 J$7739:	LD	A,(IY+5)
-        RLA	
+        RLA
         JR	NC,J$7739
-        RRA	
+        RRA
         AND	07H
-        RET	
+        RET
 
 J$7743:	CALL	C.77B7			; write sector
         JR	J$7732
@@ -704,7 +704,7 @@ J$775C:	POP	HL
         DEC	L
         RET	C			; error, quit
         JR	NZ,C.7748		; next sector
-        RET	
+        RET
 
 J$7762:	CALL	C.7767			; read sector with switching
         JR	J$775C			; continue
@@ -716,7 +716,7 @@ J$7762:	CALL	C.7767			; read sector with switching
 C.7767:	DEC	BC
         LD	A,B
         INC	BC
-        CP	02H	; 2 
+        CP	02H	; 2
         JR	C,C.777E
         DEC	B
         DEC	B
@@ -727,20 +727,20 @@ C.7767:	DEC	BC
         POP	BC
         INC	B
         INC	B
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.777E:	PUSH	DE
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	HL,SCSIDAT+1
         CALL	C.7798			; read sector without switching
         POP	DE
         CALL	C.79BE			; normal kernel bank on 4000-5FFF
         PUSH	BC
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	XFER
         POP	BC
         JP	C.756D			; scsi bank on 4000-5FFF
@@ -755,8 +755,8 @@ C.7798:	BIT	0,(IY+6)
         AND	18H
         JR	Z,C.7798
         LD	A,4
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$77A9:	LD	A,L
         PUSH	BC
@@ -767,7 +767,7 @@ I$77AB:	CALL	C.7DC0			; copy
         LD	H,40H
         JR	NZ,C.7798		; next sector
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine write sector
 ;	     Inputs  ________________________
@@ -789,7 +789,7 @@ J$77CA:	POP	DE
         DEC	E
         RET	C			; error, quit
         JR	NZ,C.77B7		; next sector
-        RET	
+        RET
 
 J$77D0:	CALL	C.77D5
         JR	J$77CA
@@ -812,7 +812,7 @@ C.77D5:	DEC	BC
         POP	BC
         INC	B
         INC	B
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -820,27 +820,27 @@ C.77D5:	DEC	BC
 
 C.77EC:	CALL	C.79BE			; normal kernel bank on 4000-5FFF
         PUSH	BC
-        LD	DE,($SECBUF)
-        CALL	XFER			; transfer to $SECBUF
+        LD	DE,(_SECBUF)
+        CALL	XFER			; transfer to _SECBUF
         POP	BC
         CALL	C.756D			; scsi bank on 4000-5FFF
         PUSH	HL
         LD	HL,-9
         ADD	HL,BC
         LD	DE,SCSIDAT+1
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         JR	NC,J.780D
         CALL	C.7819			; write sector without switching
         POP	HL
-        RET	
+        RET
 
 J.780D:	BIT	1,(IY+6)
         JR	NZ,J.780D
         LD	A,C
-        LDIR	
+        LDIR
         LD	C,A
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine write sector without switching
 ;	     Inputs  ________________________
@@ -852,19 +852,19 @@ C.7819:	BIT	1,(IY+6)
         AND	18H
         JR	Z,C.7819
         LD	A,4
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$782A:	LD	A,E
         PUSH	BC
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
 J$783C:	BIT	1,(IY+6)
         JR	Z,J$784F
         LD	E,A
@@ -873,8 +873,8 @@ J$783C:	BIT	1,(IY+6)
         LD	A,E
         JR	Z,J$783C
         LD	A,4
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$784F:	CALL	C.7DC0
         POP	BC
@@ -883,7 +883,7 @@ J$784F:	CALL	C.7DC0
         LD	D,40H
         JR	NZ,C.7819
         XOR	A
-        RET	
+        RET
 
 
 ;	  Subroutine MEGASCSI DSKIO
@@ -891,7 +891,7 @@ J$784F:	CALL	C.7DC0
 ;	     Outputs ________________________
 
 DSKIO:
-        EI	
+        EI
         CALL	C.7417			; get partitioninfo
 
 ;
@@ -912,8 +912,8 @@ J$7868:	EX	AF,AF'
         POP	AF
         EX	AF,AF'
         LD	A,2			; not ready error
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$7878:	EX	AF,AF'
         LD	A,0
@@ -922,13 +922,13 @@ J$7878:	EX	AF,AF'
         EX	AF,AF'
         POP	AF
         EX	AF,AF'
-        RET	
+        RET
 
 ;	  Subroutine MEGASCSI RAMDISK DSKIO
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J.7886:	SCF	
+J.7886:	SCF
         CALL	C.74CB			; lock bank
         RET	C			; already locked, quit with error
         PUSH	HL
@@ -976,17 +976,17 @@ J$78C1:	CALL	C$75B5			; validate sectornumber
         RET	C			; locking error, quit
         EX	AF,AF'
         LD	A,(D$7F91)		; target scsi-id
-        EXX	
+        EXX
         LD	D,1			; phase DATA IN
         JR	NC,J.78DF		; read
         DEC	D			; phase DATA OUT
         BIT	6,(IX+1)		; write protected partition ?
         JR	Z,J.78DF		; nope, continue
-        EXX	
+        EXX
         LD	A,0			; write protect error
 J$78DC:	JP	C.79B2			; normal kernel bank on 4000-5FFF and unlock
 
-J.78DF:	EXX	
+J.78DF:	EXX
 J$78E0:	EX	AF,AF'
         CALL	C.7509			; select scsi device
         JR	C,J$78DC		; error, quit
@@ -1011,7 +1011,7 @@ J$7907:	EX	AF,AF'
         LD	(IY+10),E		; b7-b0 LBA
         LD	(IY+10),A		; reserved = 0
         PUSH	HL
-        EXX	
+        EXX
         POP	HL
         PUSH	DE
         LD	(IY+10),A		; b15-b8 length = 0
@@ -1031,14 +1031,14 @@ J$792D:	BIT	4,(IY+4)
         POP	DE
         LD	A,L
         OR	A
-        EXX	
+        EXX
         JR	NZ,J$794D		; status <> GOOD,
         LD	B,A
         JR	C.79B2			; normal kernel bank on 4000-5FFF and unlock
 
 J$794D:	CP	18H			; status RESERVATION CONFLICT ?
         LD	A,8
-        SCF	
+        SCF
         JR	Z,C.79B2		; yep, normal kernel bank on 4000-5FFF and unlock
         EX	AF,AF'
         DEC	A
@@ -1074,7 +1074,7 @@ J$7985:	BIT	4,(IY+4)
         POP	AF
         CP	07H			; sense key DATA PROTECT ?
         LD	A,0
-        SCF	
+        SCF
         JR	Z,C.79B2		; yep, normal kernel bank on 4000-5FFF and unlock
         LD	A,2
 ;
@@ -1088,7 +1088,7 @@ C.79B2:	PUSH	AF
         XOR	A
         CALL	C.74CB			; free bank
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine normal kernel bank on 4000-5FFF
 ;	     Inputs  ________________________
@@ -1098,7 +1098,7 @@ C.79BE:	PUSH	AF
 ?.79BF:	LD	A,BNK4000
         LD	(SEL4000),A		; normal kernel bank 4000-5FFF (read)
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine synch driver banks and unlock
 ;	     Inputs  ________________________
@@ -1132,7 +1132,7 @@ C.79CB:	PUSH	AF
 ;	     Outputs ________________________
 
 DSKCHG:
-?.79E5:	EI	
+?.79E5:	EI
         CALL	C.7417			; get partitioninfo
 J$79E9:	PUSH	HL
         CALL	C,C$7A28		; SCSI or FD emulation, update diskchange flag
@@ -1147,7 +1147,7 @@ J$79E9:	PUSH	HL
         CP	0FEH
         JR	NC,J$7A06		; ramdisk or FD emulation, skip id check
         INC	A
-J$7A00:	RRCA	
+J$7A00:	RRCA
         JR	NC,J$7A00
         ADD	A,A			; a valid scsi id has only 1 bit set!
         JR	NZ,J$7A16		; invalid scsi id,leave disk change flag on
@@ -1169,7 +1169,7 @@ J$7A16:	EX	AF,AF'
         RET	NC			; no error, quit with disk changed status
         CP	0AH
         RET	Z			; UNSUPPORTED MEDIA error, quit with disk changed status
-        SCF	
+        SCF
         INC	B			; error, quit with error and (diskchange unknown)
         RET
 
@@ -1211,7 +1211,7 @@ J$7A56:	BIT	4,(IY+4)
         RET	Z			; yep, quit with no error
         CP	18H			; status RESERVATION CONFLICT ?
         LD	A,8
-        SCF	
+        SCF
         RET	Z			; yep, return RESERVATION CONFLICT error
         CALL	C.7579			; driver bank on 4000-5FFF with lock
         RET	C			; locking error, quit
@@ -1233,7 +1233,7 @@ J$7A8B:	ADD	HL,DE
 ;	     Outputs ________________________
 
 GETDPB:
-?.7A92:	EI	
+?.7A92:	EI
         OR	A
         CALL	C.7417			; get partitioninfo
 
@@ -1242,19 +1242,19 @@ GETDPB:
 ;	     Outputs ________________________
 
 C$7A97:	PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	DE,0			; sector 0
         LD	BC,01FFH		; 1 sector, mediadescriptor 0FFH
         CALL	C$785F			; DSKIO
         POP	HL
         RET	C			; error, quit
-        LD	IY,($SECBUF)
+        LD	IY,(_SECBUF)
         INC	HL
         PUSH	HL
         LD	BC,18
         EX	DE,HL
         LD	HL,I$7405
-        LDIR	
+        LDIR
         POP	HL			; first copy default DPB
         LD	A,(IY+21)
         CP	0F9H			; mediadescriptor 0F9H ?
@@ -1278,7 +1278,7 @@ C$7A97:	PUSH	HL
         ADD	A,1
         LD	B,0
 J$7AD8:	INC	B
-        RRA	
+        RRA
         JR	NC,J$7AD8
         LD	(HL),B			; clustershift
         INC	HL
@@ -1346,7 +1346,7 @@ J$7B2D:	INC	DE			; number of clusters+1
         INC	HL
         LD	(HL),B			; first directorysector
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine MEGASCSI CHOICE
 ;	     Inputs  ________________________
@@ -1358,7 +1358,7 @@ CHOICE:
         RET	NC			; ramdisk, no choice string
         LD	HL,I$7B48		; empty choice string (format invalid)
         XOR	A
-        RET	
+        RET
 
 I$7B48:	DEFB	0
         DEFB	"SCSI5FF0"
@@ -1370,8 +1370,8 @@ I$7B48:	DEFB	0
 
 DSKFMT:
 J$7B52:	LD	A,10H			; write fault error
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine MEGASCSI INIHRD
 ;	     Inputs  ________________________
@@ -1382,11 +1382,11 @@ INIHRD:
         CALL	C.74DD			; check if key combination pressed
         JR	NZ,J$7B60		; no, continue
         POP	AF			; abort MEGASCSI interface
-        RET	
+        RET
 
-J$7B60:	
+J$7B60:
         IF	SCSIIC EQ 1
-        
+
         CALL	C.756D			; scsi bank on 4000-5FFF
         CALL	C$75F1			; reset scsi controller
         LD	HL,(D$7FA4)
@@ -1571,7 +1571,7 @@ J.7C73:	LD	A,(HL)
         POP	AF
         EX	(SP),HL
         LD	IY,SCSIADR		; SCSI controller base adres
-        RET	
+        RET
 
 I$7C7E:	DEFB	8
         DEFW	?.7CE4			; 00H-07H sector read/write dos drive
@@ -1640,9 +1640,9 @@ I$7C7E:	DEFB	8
 I$7CDE:	DEFB	0FFH
         DEFW	I.7CE1			; CEH-FFH invalid function
 
-I.7CE1:	SCF	
+I.7CE1:	SCF
         SBC	A,A			; A=FF, Cx set
-        RET	
+        RET
 
 ;	  Subroutine MEGASCSI sector read/write
 ;	     Inputs  ________________________
@@ -1664,10 +1664,10 @@ I.7CE1:	SCF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-?.7CF6:	RRA	
-        JR	C,J$7D1F		; free partition, 
+?.7CF6:	RRA
+        JR	C,J$7D1F		; free partition,
         PUSH	HL
-        RRA	
+        RRA
         LD	BC,00800H		; 8 dos partitions
         LD	DE,16
         LD	HL,I$7F00
@@ -1683,14 +1683,14 @@ J.7D09:	LD	A,(HL)
         POP	HL
         LD	A,0CH
         SCF				; error, no partition entry free
-        RET	
+        RET
 
 J$7D16:	POP	DE
         RES	5,H			; 7F00->5F00,7E00->5E00
         PUSH	BC
         CALL	C$7D32			; write partition entry
         POP	BC
-        RET	
+        RET
 
 J$7D1F:	LD	HL,I$7FC0		; empty partition entry
         RLA				; write
@@ -1718,7 +1718,7 @@ J$7D2A:	LD	B,A
 
 C$7D32:	LD	C,16
 J.7D34:	LD	B,0
-        RRA	
+        RRA
         JR	C,J$7D3A		; write
         EX	DE,HL			; read
 J$7D3A:	CALL	C.7579			; driver bank on 4000-5FFF with lock
@@ -1734,7 +1734,7 @@ J$7D3A:	CALL	C.7579			; driver bank on 4000-5FFF with lock
 I$7D44:	XOR	A
         LD	A,0+2*SCSIIC		; ESE type
         LD	BC,0215H		; BIOS version
-        RET	
+        RET
 
 ;	  Subroutine MEGASCSI (read/write scsi id's)
 ;	     Inputs  ________________________
@@ -1812,11 +1812,11 @@ I$7DB0:	LD	A,C
 
 I$7DB4:	LD	(IY+2),60H		; command ATN start
         XOR	A
-        RET	
+        RET
 
 I$7DBA:	LD	(IY+2),40H		; command ATN cancel
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1908,12 +1908,12 @@ I$7FC0:		defb	0,0,0,0,0,0,0,0,0,0,0,0
                 INC	A
                 LD	(SEL6000),A
                 POP	AF
-I$7FDA:		RET	
+I$7FDA:		RET
 
-?.7FDB:		RET	
-                RET	
-                RET	
-                RET	
-                RET	
+?.7FDB:		RET
+                RET
+                RET
+                RET
+                RET
 
 ?.7FE0:		DEFB	"MEGASCSI ver2.15 by K.Tsujikawa."

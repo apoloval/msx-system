@@ -140,7 +140,7 @@ DEFDPB	EQU	$-1		; default DPB is 720 Kb 3.5"
 ;	     Outputs ________________________
 
 DSKIO:
-C7495:	EI	
+C7495:	EI
         PUSH	AF
         JP	NC,J7588		; DSKIO read
         PUSH	AF
@@ -159,7 +159,7 @@ C7495:	EI
         RES	1,(IX+5)		; reset verify
         PUSH	DE
 J74B4:	POP	DE
-J74B5:	EI	
+J74B5:	EI
         POP	DE
         PUSH	AF
         LD	C,60			; diskchange counter, 1 second not diskchange
@@ -172,11 +172,11 @@ J74BE:	LD	(IX+0),240		; diskmotor counter, 4 seconds
         JR	NZ,J74CE
         LD	(IX+1),C		; diskchange counter drive 0
         POP	AF
-        RET	
+        RET
 
 J74CE:	LD	(IX+2),C		; diskchange counter drive 1
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine DSKIO write
 ;	     Inputs  ________________________
@@ -204,7 +204,7 @@ C74D3:	CALL	C7623			; select drive and cylinder
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER			; XFER
@@ -282,7 +282,7 @@ I7556:	CALL	C79AA			; Terminate transfer
         CALL	C78FD			; reseek every 2nd try
         DEC	E
         JR	NZ,J751F		; next try
-        SCF	
+        SCF
         BIT	4,(IX+19)		; EC bit set ?
         LD	A,10
         RET	NZ			; yep, return
@@ -290,11 +290,11 @@ I7556:	CALL	C79AA			; Terminate transfer
 
 J7581:	XOR	A
         SCF
-        RET	
+        RET
 
 J7584:	LD	A,2
         SCF
-        RET	
+        RET
 
 ;	  Subroutine DSKIO read
 ;	     Inputs  ________________________
@@ -310,7 +310,7 @@ J7588:	CALL	C758E			; read sectors
 C758E:	CALL	C7623			; select drive and cylinder
         RET	C
         CALL	DISINT
-        DI	
+        DI
         PUSH	HL
         LD	HL,ENAINT
         EX	(SP),HL
@@ -328,14 +328,14 @@ C758E:	CALL	C7623			; select drive and cylinder
         BIT	1,(IX+5)		; verify operation ?
         JR	NZ,J75CE		; yep,
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C75DC
         POP	HL
         RET	C
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         EX	DE,HL
         LD	BC,512
         CALL	XFER
@@ -365,7 +365,7 @@ C75DC:	CALL	C787D			; Normal READY
 J75E2:	PUSH	AF
         CALL	C7881			; Force READY
         POP	AF
-        RET	
+        RET
 
 J75E8:	BIT	1,(IX+5)		; read operation ?
         JR	Z,J75F3			; yep,
@@ -398,7 +398,7 @@ J760E:	LD	A,(IX+19)
         CALL	C78FD			; reseek every 2nd try
         DEC	E
         JR	NZ,J7600
-        SCF	
+        SCF
         JP	C79B9			; return error from ST2
 
 ;	  Subroutine select drive and cylinder
@@ -418,8 +418,8 @@ C7623:	PUSH	AF
 J7636:	CP	2			; driveid valid ?
         JR	C,J763E			; yep, continue
 J763A:	LD	A,12			; quit with OTHER ERROR
-        SCF	
-        RET	
+        SCF
+        RET
 
 J763E:	PUSH	AF
         LD	A,C
@@ -489,19 +489,19 @@ J76A1:	LD	H,A
 J76B5:	RES	2,(IX+11)		; HDS = 0 (head select)
         LD	(IX+13),0		; H = 0 (head)
 J76BD:	LD	A,C
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         AND	0C0H			; mediatype in b7,b6
         OR	D
         LD	D,A			; combine with DOR byte
-        DI	
+        DI
         LD	A,(IX+6)		; last current motor on status both drives
         OR	H
         LD	(D7FF8),A		; enable motor, select drive
         AND	30H
         LD	(IX+6),A		; save current motor on status both drives
         LD	(IX+0),0FFH		; diskmotor counter stopped
-        EI	
+        EI
         LD	C,L			; cylinder
         CALL	C787D			; Normal READY
         CALL	C7708			; wait for READY from drive
@@ -516,7 +516,7 @@ J76BD:	LD	A,C
         POP	HL
         XOR	A
         SCF				; return WRITE PROTECT
-        RET	
+        RET
 
 J76F2:	PUSH	BC
         INC	C
@@ -529,11 +529,11 @@ J76FB:	CALL	C790E			; seek to cylinder
         POP	BC
         CALL	C790E			; seek to cylinder
         POP	HL
-        RET	
+        RET
 
 J7704:	POP	HL
         LD	A,2
-        RET	
+        RET
 
 ;	  Subroutine wait for READY from drive
 ;	     Inputs  ________________________
@@ -554,11 +554,11 @@ J7710:	DEC	HL
         JR	Z,J7710			; nope, wait
         POP	BC
         AND	A
-        RET	
+        RET
 
 J7727:	POP	BC
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine INIHRD
 ;	     Inputs  ________________________
@@ -590,13 +590,13 @@ INIHRD:	LD	HL,0
 
 MTOFF:	CALL	C7885			; Motor off both drives
         LD	(IX+6),A		; last current motor on status both drives = OFF
-        RET	
+        RET
 
 ;	  Subroutine initialize FDC
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7753:	LD	(D7FF8),A	
+C7753:	LD	(D7FF8),A
         LD	A,0FAH
         LD	(D7FF9),A		; normal READY, disable TC
         CALL	C7885			; Motor off both drives
@@ -635,7 +635,7 @@ DRIVES:	PUSH	BC
         JR	Z,J779B			; SHIFT pressed, return 1 drive
         INC	L			; 2 drives (phantomed)
 J779B:	POP	BC
-        RET	
+        RET
 
 J779D:	INC	L
         LD	(IX+7),L
@@ -689,7 +689,7 @@ J77E0:	POP	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-DSKCHG:	EI	
+DSKCHG:	EI
         PUSH	HL
         PUSH	BC
         PUSH	AF
@@ -708,11 +708,11 @@ J77F7:	INC	B
         PUSH	BC
         PUSH	HL
         LD	DE,1
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         AND	A
         CALL	C7495			; read 1st sector 1st FAT
         JR	C,J7820			; error, quit with error
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,(HL)			; mediadescriptor
         POP	HL
         PUSH	BC
@@ -729,14 +729,14 @@ J77F7:	INC	B
         INC	B			; return DISK CHANGE UNKNOWN
 J7820:	POP	DE
         POP	DE
-        RET	
+        RET
 
 ;	  Subroutine GETDPB
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 GETDPB:
-C7823:	EI	
+C7823:	EI
         EX	DE,HL
         INC	DE
         LD	A,B
@@ -754,15 +754,15 @@ C7823:	EI
         LD	BC,I7405
         ADD	HL,BC
         LD	BC,18
-        LDIR	
-        RET	
+        LDIR
+        RET
 
 ;	  Subroutine CHOICE
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 CHOICE:	LD	HL,I7842
-        RET	
+        RET
 
 I7842:	DEFB	13,10
         DEFB	"1 - 1 side, double track",13,10
@@ -774,8 +774,8 @@ I7842:	DEFB	13,10
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-OEMSTA:	SCF	
-        RET	
+OEMSTA:	SCF
+        RET
 
 ;	  Subroutine Normal READY
 ;	     Inputs  ________________________
@@ -797,10 +797,10 @@ C7881:	LD	A,30H
 
 C7885:	LD	A,4
         LD	(D7FF8),A		; motor off both drives, enable FDC
-        RET	
+        RET
 
 J788B:	LD	(D7FF9),A
-        RET	
+        RET
 
 ;	  Subroutine verify sector
 ;	     Inputs  ________________________
@@ -839,7 +839,7 @@ I78C2:	CALL	C79AA			; Terminate transfer
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 
 
@@ -868,7 +868,7 @@ J78DC:	CP	8+1
         LD	(IX+13),A		; flip side
         JR	Z,J78F6			; was at side 1, to next cylinder, head 0
         SET	2,(IX+11)		; head 1
-        RET	
+        RET
 
 J78F6:	RES	2,(IX+11)		; head 0
 J78FA:	INC	C			; next cylinder
@@ -908,7 +908,7 @@ J7927:	DEC	BC
         JR	NZ,J7927		; wait
         POP	BC
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine start FDC command
 ;	     Inputs  ________________________
@@ -924,8 +924,8 @@ J7933:	LD	A,(D7FFA)
         OR	L
         JR	NZ,J7933		; wait for 33.5 ms
         POP	HL
-        SCF	
-        RET	
+        SCF
+        RET
 
 J7942:	PUSH	DE
         PUSH	IX
@@ -945,7 +945,7 @@ R795A:	LD	(D7FFB),A
         DJNZ	J7950
         POP	HL
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine wait for seek to complete
 ;	     Inputs  ________________________
@@ -974,7 +974,7 @@ R7980:	CALL	C792F			; start FDC command
 R7983:	CALL	C7989			; get result
         XOR	A
         POP	BC
-        RET	
+        RET
 
 ;	  Subroutine get result
 ;	     Inputs  ________________________
@@ -991,7 +991,7 @@ R7994:	LD	A,(D7FFB)
         JR	J798B
 
 J799E:	POP	IX
-        RET	
+        RET
 
 ;	  Subroutine wait 16.5 ms
 ;	     Inputs  ________________________
@@ -1002,7 +1002,7 @@ J79A4:	DEC	BC
         LD	A,B
         OR	C
         JR	NZ,J79A4
-        RET	
+        RET
 
 ;	  Subroutine terminate transfer
 ;	     Inputs  ________________________
@@ -1012,10 +1012,10 @@ C79AA:	LD	A,2
 R79AC:	LD	(D7FF9),A		; TC=0
         INC	A
 R79B0:	LD	(D7FF9),A		; TC=1
-        NOP	
+        NOP
         DEC	A
 R79B5:	LD	(D7FF9),A		; TC=0
-        RET	
+        RET
 
 ;	  Subroutine return error from ST2
 ;	     Inputs  ________________________
@@ -1029,7 +1029,7 @@ C79B9:	LD	E,(IX+20)
         LD	A,4
         RET	NZ			; yep,
         LD	A,12			; OTHER ERROR
-        RET	
+        RET
 
 L_SUPP	EQU	$-S_SUPP
 
@@ -1077,7 +1077,7 @@ R7A03:	CALL	C7989			; get result
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 L_VFSC	EQU	$-S_VFSC
 
@@ -1098,8 +1098,8 @@ C7A0A:	PUSH	HL
         LD	HL,S_WRSC		; write routine
         LD	BC,L_WRSC
 J7A24:	PUSH	DE
-        LD	DE,($SECBUF)
-        LDIR	
+        LD	DE,(_SECBUF)
+        LDIR
         POP	HL
         PUSH	DE
 J7A2D:	LD	E,(HL)
@@ -1110,14 +1110,14 @@ J7A2D:	LD	E,(HL)
         OR	E			; end of table ?
         JR	Z,J7A4A			; yep,
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,DE
         INC	HL
         LD	C,(HL)
         INC	HL
         LD	B,(HL)			; address
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,BC			; adjust to SECBUF address
         EX	DE,HL
         LD	(HL),D
@@ -1134,7 +1134,7 @@ J7A4A:	POP	DE
         LD	BC,L_SUPP + L_VFSC
         JR	NC,J7A59		; read/verify
         LD	BC,L_SUPP
-J7A59:	LDIR	
+J7A59:	LDIR
         POP	IY
         PUSH	AF
         POP	AF
@@ -1214,9 +1214,9 @@ J7AB3:	LD	E,(HL)
 J7AC5:	POP	BC
         POP	DE
         POP	IY
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         EX	(SP),HL
-        RET	
+        RET
 
 I7ACE:	DEFW	R3006
         DEFW	R301E
@@ -1285,7 +1285,7 @@ I7B2C:	DEFW	R79EC-S_SUPP
 ;	  Subroutine read sector(s)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;	Remark	this routine in copied to ($SECBUF)+0
+;	Remark	this routine in copied to (_SECBUF)+0
 
 I7B36:
 S_RDSC:
@@ -1332,7 +1332,7 @@ R3049:	CALL	C79B9-S_SUPP+L_RDSC	; return error from ST2
         JR	J7B86
 
 J7B84:	LD	A,2
-J7B86:	SCF	
+J7B86:	SCF
 J7B87:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -1348,7 +1348,7 @@ R3060:	LD	A,0
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
         .DEPHASE
 L_RDSC	EQU	$-S_RDSC
@@ -1357,7 +1357,7 @@ L_RDSC	EQU	$-S_RDSC
 ;	  Subroutine write sector(s)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-;	Remark	this routine in copied to ($SECBUF)+0
+;	Remark	this routine in copied to (_SECBUF)+0
 
 I7BA2:
 S_WRSC:
@@ -1448,7 +1448,7 @@ J7C3B:	XOR	A
         JR	J7C40
 
 J7C3E:	LD	A,2
-J7C40:	SCF	
+J7C40:	SCF
 J7C41:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -1464,7 +1464,7 @@ R10AE:	LD	A,0
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
         .DEPHASE
 L_WRSC	EQU	$-S_WRSC
@@ -1517,7 +1517,7 @@ J7CA7:	ADD	HL,DE
         DJNZ	J7CA7
         POP	DE
         LD	C,5
-        LDIR	
+        LDIR
         BIT	0,(IY+7)
         LD	A,14H			; motor on drive 0, select drive 0
         JR	Z,J7CB9
@@ -1588,7 +1588,7 @@ J7D23:	LD	(HL),A			; new cylinder
 J7D2E:	POP	BC
         POP	HL
 J7D30:	PUSH	AF
-        EI	
+        EI
         CALL	ENAINT			; enable interrupts
         CALL	C7885			; Motor off both drives
         POP	AF
@@ -1696,7 +1696,7 @@ J7D96:	DEC	(HL)			; 0FFH
         AND	A			; read
         CALL	C7495			; DSKIO
         JR	C,J7DE2			; error, quit
-        RET	
+        RET
 
 J7DDE:	POP	HL
         POP	BC
@@ -1705,8 +1705,8 @@ J7DDE:	POP	HL
 J7DE2:	CP	12
         JR	NZ,J7DE8
         LD	A,16
-J7DE8:	SCF	
-        RET	
+J7DE8:	SCF
+        RET
 
 ;	  Subroutine clear track buffer
 ;	     Inputs  ________________________
@@ -1721,7 +1721,7 @@ J7DEE:	LD	(HL),0
         OR	C
         JR	NZ,J7DEE
         POP	HL
-        RET	
+        RET
 
 I7DF8:	DEFW	I7E02
         DEFB	0F8H
@@ -1799,7 +1799,7 @@ C7E4D:	CALL	C787D			; Normal READY
         EX	DE,HL
         LD	HL,J7E3E
         LD	BC,6
-        LDIR	
+        LDIR
         POP	BC
         LD	A,(IY+7)
         OR	B
@@ -1851,7 +1851,7 @@ J7EC5:	CALL	C7881			; Force READY
         LD	B,A
         AND	0C0H
         RET	Z
-        SCF	
+        SCF
         BIT	3,B
         LD	A,2			; NOT READY
         RET	NZ
@@ -1862,7 +1862,7 @@ J7EC5:	CALL	C7881			; Force READY
         LD	A,0			; WRITE PROTECT
         RET	NZ
         LD	A,16
-        RET	
+        RET
 
 J7EE4:	POP	BC
 J7EE5:	XOR	A
@@ -1874,12 +1874,12 @@ J7EE5:	XOR	A
 
 J7EF4:	CALL	C7881			; Force READY
         LD	A,2			; NOT READY
-        RET	
+        RET
 
 J7EFA:	CALL	C7881			; Force READY
         XOR	A			; WRITE PROTECT
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1896,7 +1896,7 @@ J7F09:	LD	(HL),1
         INC	HL
         INC	HL
         DJNZ	J7F09
-        RET	
+        RET
 
 I7F12:
         .PHASE	0C01EH

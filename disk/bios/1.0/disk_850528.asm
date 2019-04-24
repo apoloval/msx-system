@@ -1,8 +1,8 @@
 ; DOS1.ASM
 
-; DOS 1.00 kernel (as used in the Philips VY-0010 diskinterface)
+; DOS 1.01 kernel (as used in the SVI-738 diskinterface)
 ; version number is not offical, it is created by me
-; Assume this is version Jun 20, 1984
+; Assume this is version May 28, 1985 (added motor off function, fixed MKI bug, fixed interslot routines)
 
 ; Source re-created by Z80DIS 2.2
 ; Z80DIS was written by Kenneth Gielow, Palo Alto, CA
@@ -30,6 +30,7 @@
 ;       EXTRN   GETDPB
 ;       EXTRN   CHOICE
 ;       EXTRN   DSKFMT
+;       EXTRN   MTOFF
 ;       EXTRN   OEMSTA
 ;       EXTRN   MYSIZE
 ;       EXTRN   SECLEN
@@ -48,8 +49,6 @@
 
 
 WBOOT   equ     00000H
-DBUF    equ     00080H
-
 RDSLT   equ     0000CH
 WRSLT   equ     00014H
 CALSLT  equ     0001CH
@@ -201,7 +200,7 @@ YF347   equ     0F347H                  ; number of drives in disksystem
 YF348   equ     0F348H                  ; slotid disksytem rom
 YF349   equ     0F349H                  ; disksystem bottom (lowest address used by the disksystem)
 YF34B   equ     0F34BH                  ; msxdos system bottom
-$SECBUF equ     0F34DH                  ; pointer to sectorbuffer, can be used by the diskdriver
+_SECBUF equ     0F34DH                  ; pointer to sectorbuffer, can be used by the diskdriver
 YF34F   equ     0F34FH                  ; pointer to datasectorbuffer
 YF351   equ     0F351H                  ; pointer to directorysectorbuffer
 YF353   equ     0F353H                  ; pointer to the diskbasic FCB's
@@ -329,8 +328,6 @@ M3042   equ     03042H          ; convert DAC from sgn to dbl
 M30D1   equ     030D1H          ; dbl to integer
 M325C   equ     0325CH          ; sgn multiply
 M3FD6   equ     03FD6H          ; empty string
-M4055   equ     04055H          ; syntax error
-M406D   equ     0406DH          ; type mismatch error
 M406F   equ     0406FH          ; BASIC error
 M409B   equ     0409BH          ; restart BASIC
 M4173   equ     04173H          ; execute statement
@@ -339,7 +336,6 @@ M4601   equ     04601H          ; execution loop
 M4666   equ     04666H          ; CHRGTR
 M46FF   equ     046FFH          ; convert to SNG
 M4756   equ     04756H          ; evaluate word operand and check for 0-32767 range
-M475A   equ     0475AH          ; illegal function call error
 M4AFF   equ     04AFFH          ; output back to screen
 M4C5F   equ     04C5FH          ; evaluate =expression
 M4C64   equ     04C64H          ; evaluate expression
@@ -352,25 +348,15 @@ M5432   equ     05432H          ; convert address to integer
 M54F7   equ     054F7H          ; convert pointers to linenumbers
 M5597   equ     05597H          ; GETYPR
 M5EA4   equ     05EA4H          ; get address of variable
-M6275   equ     06275H          ; out of memory error
 M6627   equ     06627H          ; allocate temp string
-M6671   equ     06671H          ; string formula too complex error
 M668E   equ     0668EH          ; allocate stringspace
 M67D0   equ     067D0H          ; free temporary string
-M6825   equ     06825H          ; push temporary descriptor to temporary desciptor heap and quit
 M6A0E   equ     06A0EH          ; evaluate filespecification
 M6A6D   equ     06A6DH          ; get i/o channel pointer
 M6AFA   equ     06AFAH          ; open i/o channel
 M6B24   equ     06B24H          ; close i/o channel
 M6C1C   equ     06C1CH          ; close all i/o channels
 M6E41   equ     06E41H          ; resume character putback routine
-M6E6B   equ     06E6BH          ; bad filename error
-M6E6E   equ     06E6EH          ; file already open error
-M6E74   equ     06E74H          ; file not found error
-M6E77   equ     06E77H          ; file not open error
-M6E7A   equ     06E7AH          ; field overflow error
-M6E7D   equ     06E7DH          ; bad filenumber error
-M6E83   equ     06E83H          ; input past end error
 M6E92   equ     06E92H          ; start of BSAVE routine
 M6EC6   equ     06EC6H          ; start of BLOAD routine
 M6EF4   equ     06EF4H          ; finish BLOAD
@@ -417,7 +403,7 @@ RETRTN  equ     WRPRIM+6        ; address with a RET instruction, allways availa
         defw    A6576
         defw    0
         defw    0
-        defs    6,0
+        defs    6
 
 ; diskdriver entries
 
@@ -426,24 +412,21 @@ T4013:  jp      DSKCHG                  ; DSKCHG entrypoint
 T4016:  jp      GETDPB                  ; GETDPB entrypoint
 T4019:  jp      CHOICE                  ; CHOICE entrypoint
 T401C:  jp      DSKFMT                  ; DSKFMT entrypoint
-T401F:  nop                             ; MTOFF entrypoint is not supported
-        nop
-        nop
+T401F:  jp      MTOFF                   ; MTOFF entrypoint
 
 ; kernel entries
 
-A4022:  jp      J5B35                   ; start DiskBasic entrypoint
-
+A4022:  jp      A5B3A                   ; start DiskBasic entrypoint
 A4025:  scf                             ; format disk entrypoint (workarea must be supplied)
-        jp      C60AC
+        jp      A60B1
+A4029:  jp      A620D                   ; stop all disks entry point
 
-A4029:  ret                             ; stop all disks entry point is not implemented
-        nop
-        nop
+; Unused code ??
+
         nop
 
 GETSLT:
-A402D:  jp      C5FAE                   ; get slotid entrypoint
+A402D:  jp      A5FB3                   ; get slotid entrypoint
 
 ;       Subroutine      get MSX-DOS system bottom
 ;       Inputs          -
@@ -542,30 +525,34 @@ A40A7:  ld      ix,M409B                ; restart BASIC
 A40AB:  push    iy
         ld      iy,(EXPTBL-1+0)
         call    CALSLT
+        ei
         pop     iy
         ret
 
-C40B7:  LD      A,0DH
-        OUT     (0B4H),A
-        LD      A,0AH
-        OUT     (0B5H),A                ; alarm off, clock running, bank 2
-        XOR     A
-        OUT     (0B4H),A                ; pos 0
-        LD      B,0FH
-J40C4:  IN      A,(0B5H)                ; read data
-        AND     0FH
-        XOR     B
-        OUT     (0B5H),A                ; change it and write back
-        LD      C,A
-        EX      (SP),HL
-        EX      (SP),HL                 ; wait
-        IN      A,(0B5H)
-        AND     0FH
-        CP      C                       ; correctly readback ?
-        RET     NZ                      ; nope, no clockchip!
-        XOR     B
-        OUT     (0B5H),A                ; restore orginal data
-        DJNZ    J40C4                   ; try all values
+;       Subroutine      check for and initialize clockchip
+;       Inputs          -
+;       Outputs         -
+
+A40B8:  ld      a,13
+        out     (0B4H),a
+        ld      a,00AH
+        out     (0B5H),a                ; alarm off, clock running, bank 2
+        xor     a
+        out     (0B4H),a                ; pos 0
+        ld      b,00FH
+A40C5:  in      a,(0B5H)                ; read data
+        and     00FH
+        xor     b
+        out     (0B5H),a                ; change it and write back
+        ld      c,a
+        nop                             ; wait/patched code (version 1.00 has two EX (SP),HL here)
+        in      a,(0B5H)
+        and     00FH
+        cp      c                       ; correctly readback ?
+        ret     nz                      ; nope, no clockchip!
+        xor     b
+        out     (0B5H),a                ; restore orginal data
+        djnz    A40C5                   ; try all values
         ld      a,0FFH
         ld      (YF338),a               ; flag use clockchip
         ld      a,13
@@ -990,7 +977,7 @@ A4331:  srl     c
         cp      c                       ; same as dirsector currently in buffer ?
         jr      nz,A4342                ; nope, go get it
         ld      a,(YF246)
-        cp      (ix+0)                  ; same driveid as dirsector buffer owner ?
+        cp      (ix+0)          ; same driveid as dirsector buffer owner ?
         ret     z                       ; yep, do nothing
 A4342:  push    hl
         call    A46A4                   ; read dirsector
@@ -1260,7 +1247,7 @@ A44DB:  call    XF267
         ld      c,(ix+1)                ; mediadesciptor
         ld      b,0
         or      a
-        call    C6062                   ; DSKCHG
+        call    A6067                   ; DSKCHG
         jr      c,A44CA                 ; error,
         call    A4536                   ; update DPBTBL entry current drive
         ld      l,(ix+19)
@@ -1298,7 +1285,7 @@ A4529:  ld      b,(hl)                  ; mediabyte of FAT sector
         ld      c,(ix+1)                ; mediadescriptor
         push    ix
         pop     hl
-        call    C606A                   ; GETDPB
+        call    A606F                   ; GETDPB
 A4536:  push    hl
         pop     ix
         ex      de,hl
@@ -1602,7 +1589,7 @@ A46D7:  ld      a,(ix+0)                ; driveid
         push    hl
         push    de
         push    bc
-        call    C604D                   ; read disksector
+        call    A6052                   ; read disksector
         pop     de
         ld      c,d
         pop     de
@@ -1711,7 +1698,7 @@ A4755:  call    XF279
         push    hl
         push    de
         push    bc
-        call    C604F                   ; write disksector
+        call    A6054                   ; write disksector
         pop     de
         ld      c,d
         pop     de
@@ -3234,7 +3221,7 @@ A50E0:  push    de
         ld      ix,YCONTP
         ld      a,e
         cp      c                       ; is lengthbyte valid ?
-        jr      nc,A5103
+        jr      nc,A5103                ; equal, use the line in buffer as basis otherwise use empty line as basis
         push    hl                      ; length smaller than size of buffer
         add     hl,de
         ld      a,(hl)
@@ -4242,15 +4229,16 @@ A56D0:  xor     a
 ;       Inputs
 ;       Outputs         ________________________
 
-C56D3:  LD      A,1
-        LD      (YF306),A
-        LD      A,C
-        CP      31H
-        JR      NC,A56D0
-        CP      11H
-        JR      NZ,J56E5
-        LD      (YF307),DE
-J56E5:  CP      12H
+A56D3:  ei
+        ld      a,1
+        ld      (YF306),a               ; assume CP/M compatible call
+        ld      a,c
+        cp      031H                    ; valid BDOS function ?
+        jr      nc,A56D0                ; nope, unsupported BDOS call
+        sub     011H                    ; Search First BDOS function ?
+        jr      nz,A56E6
+        ld      (YF307),de              ; yep, save address FCB for Search Next
+A56E6:  dec     a                       ; Search Next BDOS function ?
         jr      nz,A56ED
         ld      de,(YF307)              ; yep, get saved address FCB Search First
 A56ED:  push    hl
@@ -4324,7 +4312,7 @@ A57A9:  ld      hl,0F380H+MYSIZE
         ld      de,XF1C9
         and     a
         sbc     hl,de                   ; bytes needed for static workarea+workarea driver
-        call    nc,C5EE3                ; allocate memory (adjust BASIC areapointers)
+        call    nc,A5EE8                ; allocate memory (adjust BASIC areapointers)
         ret     c                       ; failed, quit
 A57B6:  push    hl
         ld      hl,XF1C9-0F380H
@@ -4377,18 +4365,18 @@ A580C:  ld      hl,YFB21                ; DRVTBL
         ld      b,4                     ; 4 diskroms
         xor     a
 A5812:  add     a,(hl)
-        jp      c,J5EC7                 ; invalid DRVTBL, error
+        jp      c,A5ECC                 ; invalid DRVTBL, error
         inc     hl
         inc     hl
         djnz    A5812
         cp      8                       ; 8 or more drives ?
         ret     nc                      ; yep, no more drives!
         ld      hl,MYSIZE               ; number of bytes for workarea driver
-        call    C5EE3                   ; allocate memory (adjust BASIC areapointers)
+        call    A5EE8                   ; allocate memory (adjust BASIC areapointers)
         ret     c                       ; failed, quit
         ex      de,hl
 
-A5825:  call    C5FC8                   ; get my SLTWRK entry
+A5825:  call    A5FCD                   ; get my SLTWRK entry
         ld      (hl),e
         inc     hl
         ld      (hl),d                  ; save base workarea in SLTWRK
@@ -4407,7 +4395,7 @@ A583E:  ld      a,(de)
         inc     de
         inc     de
         djnz    A583E                   ; next entry
-        jp      J5EC7                   ; none free, error
+        jp      A5ECC                   ; none free, error
 
 A584B:  ld      a,(YF33F)
         and     a
@@ -4438,7 +4426,7 @@ A585C:  push    bc
         call    A4916                   ; * size of DPB
         ld      l,c
         ld      h,b                     ; number of bytes for the DPBs
-        call    C5EC3                   ; allocate memory (adjust BASIC areapointers, halt when error)
+        call    A5EC8                   ; allocate memory (adjust BASIC areapointers, halt when error)
         ex      de,hl
         pop     af
         pop     hl
@@ -4474,7 +4462,7 @@ A589C:  ld      (hl),0C9H
         cp      (hl)
         ld      (hl),a                  ; clear diskinterface count
         ret     p                       ; already cleared, return control
-A58A8:  CALL    A402D
+A58A8:  call    A622D                   ; hook H.LOPD when H.CLEA is hooked (for register system bottom)
         ld      (YF348),a               ; disksystem diskrom slotid
         ld      hl,A7397
         ld      de,XF1C9
@@ -4510,25 +4498,25 @@ A58F0:  ld      (hl),0C3H
         djnz    A58F0                   ; initialize jumptable
         ld      hl,(AUTLIN)
         push    hl                      ; size of the biggest sector
-        call    C5EC3                   ; allocate memory (adjust BASIC areapointers, halt when error)
-        ld      ($SECBUF),hl            ; allocate sectorbuffer
+        call    A5EC8                   ; allocate memory (adjust BASIC areapointers, halt when error)
+        ld      (_SECBUF),hl            ; allocate sectorbuffer
         pop     hl                      ; size of the biggest sector
         push    hl
-        call    C5EC3                   ; allocate memory (adjust BASIC areapointers, halt when error)
+        call    A5EC8                   ; allocate memory (adjust BASIC areapointers, halt when error)
         ld      (YF34F),hl              ; allocate datasector buffer
         pop     hl                      ; size of the biggest sector
-        call    C5EC3                   ; allocate memory (adjust BASIC areapointers, halt when error)
+        call    A5EC8                   ; allocate memory (adjust BASIC areapointers, halt when error)
         ld      (YF351),hl              ; allocate dirsector buffer
         ld      hl,YFB21                ; DRVTBL
         ld      b,4                     ; 4 diskroms
         xor     a
 A5916:  add     a,(hl)
-        jp      c,J5EC7                 ; invalid DRVTBL, error
+        jp      c,A5ECC                 ; invalid DRVTBL, error
         inc     hl
         inc     hl
         djnz    A5916
         cp      9                       ; more as 8 drives ?
-        jp      nc,J5EC7                ; yep, error
+        jp      nc,A5ECC                ; yep, error
         ld      (YF347),a               ; drives in system
         ld      b,a                     ; number of drives
         ld      c,0                     ; drive 0
@@ -4551,7 +4539,7 @@ A592C:  ld      e,(hl)
         inc     bc                      ; and a FAT buffer flag
         ld      l,c
         ld      h,b                     ; size of the FAT buffer
-        call    C5EC3                   ; allocate memory (adjust BASIC areapointers, halt when error)
+        call    A5EC8                   ; allocate memory (adjust BASIC areapointers, halt when error)
         ld      (YF349),hl              ; base system bottom sofar
         ld      (hl),0FFH               ; flag invalid FAT buffer
         inc     hl
@@ -4588,21 +4576,21 @@ A5967:  inc     hl
         pop     ix
         ld      iy,(EXPTBL-1+0)
         call    CALSLT                  ; initialize BASIC screenmode
-        call    C40B7                   ; check for and initialize clockchip
-        call    C5C69                   ; initialize hooks
+        call    A40B8                   ; check for and initialize clockchip
+        call    A5C6E                   ; initialize hooks
         ld      a,(EXPTBL+0)
         ld      (RAMAD0),a
         ld      (RAMAD1),a              ; assume no ram available for page 0 and 1
-        call    C5F93
+        call    A5F98
         ld      (RAMAD2),a              ; slotid of current page 2
-        call    C5F90
+        call    A5F95
         ld      (RAMAD3),a              ; slotid of current page 3
         ld      c,000H
-        call    C5E4D                   ; search ram in page 0
+        call    A5E52                   ; search ram in page 0
         jr      c,A59C1
         ld      (RAMAD0),a              ; found, set ram slotid page 0
 A59C1:  ld      c,040H
-        call    C5E4D                   ; search ram in page 1
+        call    A5E52                   ; search ram in page 1
         jr      c,A59CB
         ld      (RAMAD1),a              ; found, set ram slotid page 1
 A59CB:  ld      sp,0C200H               ; switch to a temporary stack, just above temp startbuffer
@@ -4622,14 +4610,14 @@ A59E0:  ld      a,(hl)
         jr      A59F3                   ; no TEXT extension ROM found,
 
 A59E9:  ld      ix,M7E14                ; start BASIC program in ROM
-A59ED:  call    C5C11                   ; initialize diskbasic
+A59ED:  call    A5C16                   ; initialize diskbasic
         jp      CALBAS
 
-A59F3:  ld      hl,J5B35
+A59F3:  ld      hl,A5B3A
         push    hl                      ; if quit anywhere start diskbasic
-        call    C5AE2                   ; read bootsector
+        call    A5AE7                   ; read bootsector
         ret     c                       ; failed, start diskbasic
-        call    C5AD6                   ; start bootcode with Cx reset (some disk can take control from here)
+        call    A5ADB                   ; start bootcode with Cx reset (some disk can take control from here)
         ld      hl,(BOTTOM)
         ld      de,08000H
         rst     020H                    ; check if ram on both page 3 and 2
@@ -4644,63 +4632,65 @@ A59F3:  ld      hl,J5B35
 
 ; MSXDOS requirement are met, try starting it
 
-C5A11:  XOR     A
-        CALL    C6095                   ; invalidate FAT buffer drive 0
+A5A11:  XOR     A
+        CALL    A609A                   ; invalidate FAT buffer drive 0
         LD      HL,(YF349)
         LD      (YF34B),HL              ; bottom MSX-DOS system
-        CALL    C5AE2                   ; try reading bootsector of drive 0
-        JP      C,J5B35                 ; error, start diskbasic
-        LD      A,0FFH
-        LD      (YF346),A
+        CALL    A5AE7                   ; try reading bootsector of drive 0
+        JP      C,A5B3A                 ; error, start diskbasic
+        LD      (YF346),A               ; flag bootable disk
         LD      A,(RAMAD0)
-        LD      H,0
-        CALL    C64A0                   ; ENASLT
+        LD      H,00H
+        CALL    C64C2                   ; calculate masks
+        SCF
+        CALL    P,C64A2                 ; primairy slot, change it
+        CALL    C,C64AF                 ; secundairy slot, change it
         XOR     A
         LD      L,A
         LD      H,A
-J5A31:  LD      (HL),A
+J5A36:  LD      (HL),A
         INC     L
-        JR      NZ,J5A31                ; clear 0000-00FF
-        LD      BC,L6382
-        CALL    C5EA8                   ; allocate MSXDOS memory (halt when error)
+        JR      NZ,J5A36                ; clear 0000-00FF
+        LD      BC,L637B                ; size of the XFER routine
+        CALL    A5EAD                   ; allocate MSXDOS memory (halt when error)
         LD      (XFER+1),HL
         EX      DE,HL
-        LD      HL,I6382
+        LD      HL,I637B
         LDIR                            ; install XFER routine
-        LD      BC,L63A5
-        CALL    C5EA8                   ; allocate MSXDOS memory (halt when error)
+        LD      BC,L63A1                ; size of the ENARAM and ENAKRN routine
+        CALL    A5EAD                   ; allocate MSXDOS memory (halt when error)
         LD      E,L
         LD      D,H
         LD      (XF368+1),HL
         INC     HL
         INC     HL
         LD      (XF36B+1),HL
-        LD      HL,I63A5
+        LD      HL,I63A1
         LDIR                            ; install ENAKRN and ENARAM
-        LD      BC,L63F8
-        CALL    C5EA8                   ; allocate MSXDOS memory (halt when error)
+        LD      BC,L63F4                ; size of the slotswitching routines
+        CALL    A5EAD                   ; allocate MSXDOS memory (halt when error)
         PUSH    HL
         EX      DE,HL
-        LD      HL,C63F8
+        LD      HL,C63F4
         PUSH    HL
         LDIR                            ; install slot switching routines
         POP     BC
         POP     DE
         PUSH    DE
-        LD      HL,R0116-C63F8+1
+        LD      HL,R0116-C63F4+1
         ADD     HL,DE
         LD      (HL),LOW X003B
         INC     HL
-        LD      (HL),HIGH X003B
-        LD      HL,I63BE
-        CALL    C630D                   ; relocate
-        LD      HL,I5B0A
+        LD      (HL),HIGH X003B         ; change "save and change secundairy slotregister" routine
+        LD      HL,T63BA
+        CALL    A6306                   ; relocate
+        LD      HL,I5B0F
         XOR     A
         LD      B,A
         LD      D,A
-J5A7F:  LD      E,(HL)
+J5A84:  LD      E,(HL)
         CP      E
-        JR      Z,J5A93
+        JR      Z,J5A98                 ; end of table, continue
         INC     HL
         LD      C,(HL)
         INC     HL
@@ -4714,482 +4704,475 @@ J5A7F:  LD      E,(HL)
         LD      (HL),D
         EX      DE,HL
         EX      (SP),HL
-        JR      J5A7F
+        JR      J5A84                   ; make jumptable
 
-J5A93:  POP     HL
+J5A98:  POP     HL
         LD      HL,C655C
         LD      DE,X003B
         LD      BC,L655C
         LDIR                            ; install slotswitching helper routines
-        LD      BC,L633D
-        CALL    C5EA8                   ; allocate MSXDOS memory (halt when error)
+        LD      BC,L6336                ; size of the interrupt routine
+        CALL    A5EAD                   ; allocate MSXDOS memory (halt when error)
         PUSH    HL
         EX      DE,HL
-        LD      HL,I633D
+        LD      HL,I6336
         PUSH    HL
         LDIR                            ; install interrupt routine
         POP     BC
         POP     DE
         PUSH    DE
-        LD      HL,I6335
-        CALL    C630D                   ; relocate
+        LD      HL,T632E
+        CALL    A6306                   ; relocate
         POP     HL
         LD      A,0C3H
         LD      (KEYINT+0),A
-        LD      (KEYINT+1),HL
-        LD      DE,R0021-I633D+1
+        LD      (KEYINT+1),HL           ; KEYINT
+        LD      DE,R0021-I6336+1
         ADD     HL,DE
         LD      DE,(YF34B)
         LD      (HL),E
         INC     HL
-        LD      (HL),D
-        LD      BC,160
-        CALL    C5EA8                   ; allocate MSXDOS memory (halt when error)
+        LD      (HL),D                  ; start of KEYINT stack
+        LD      BC,160                  ; size of the KEYINT stack
+        CALL    A5EAD                   ; allocate MSXDOS memory (halt when error)
         LD      A,0C3H
-        CALL    C5C5D
+        CALL    A5C62                   ; enable XFER, ENAKRN and ENARAM routines
         SCF
-C5AD6:  LD      HL,YF323
-        LD      DE,XF368
-        LD      A,(YF340)
-        JP      YC000+0001EH
+A5ADB:  LD      HL,YF323                ; address diskerror handler pointer
+        LD      DE,XF368                ; ENAKRN routine
+        LD      A,(YF340)               ; coldboot flag
+        JP      YC000+01EH              ; start bootloader
 
-C5AE2:  LD      A,(DEFDPB+1)
-        LD      C,A
-        LD      B,1
-        LD      HL,(YF351)
+;       Subroutine      read bootsector of drive 0 and validate
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+A5AE7:  LD      A,(DEFDPB+1)
+        LD      C,A                     ; default mediadescriptor
+        LD      B,1                     ; 1 sector
+        LD      HL,(YF351)              ; use the dir sectorbuffer
         PUSH    HL
-        XOR     A
+        XOR     A                       ; drive 0, read
         LD      E,A
-        LD      D,A
-        CALL    PHYDIO
+        LD      D,A                     ; sector 0
+        CALL    PHYDIO                  ; read sector
         LD      A,0FFH
-        LD      (YF246),A
+        LD      (YF246),A               ; dirsector buffer is invalid
         POP     HL
-        RET     C
+        RET     C                       ; error, quit
         LD      A,(HL)
         LD      DE,YC000
         LD      BC,256
-        LDIR
+        LDIR                            ; copy bootloader to C000
         CP      0EBH
-        RET     Z
+        RET     Z                       ; valid bootloader, quit
         CP      0E9H
-        RET     Z
+        RET     Z                       ; valid bootloader, quit
         SCF
         RET
 
-I5B0A:  DEFB    LOW RDSLT ,C63F8-C63F8
-        DEFB    LOW WRSLT ,C6419-C63F8
-        DEFB    LOW CALLF ,C6447-C6419
-        DEFB    LOW CALSLT,C6459-C6447
-        DEFB    LOW ENASLT,C64A0-C6459
+I5B0F:  DEFB    LOW RDSLT,C63F4-C63F4
+        DEFB    LOW WRSLT,C6415-C63F4
+        DEFB    LOW CALLF,C6443-C6415
+        DEFB    LOW CALSLT,C6455-C6443
+        DEFB    LOW ENASLT,J649C-C6455
         DEFB    0
 
-I5B15:  DEFB    0
-        DEFB    "AUTOEXECBAS"
-        DEFB    0
-L5B15   EQU     $-I5B15
+T5B1A:  defb    0,"AUTOEXECBAS",0
+L5B1A   EQU     $-T5B1A
 
-I5B22:  DEFB    'RUN"AUTOEXEC.BAS'
-        DEFB    0
-L5B22   EQU     $-I5B22
+T5B27:  defb    'RUN"AUTOEXEC.BAS',0
+L5B27   EQU     $-T5B27
 
-I5B33:  DEFW    J5B8D
+T5B38:  defw    A5B92                   ; start DiskBASIC in direct mode
 
-J5B35:  CALL    C5C5B
-        LD      HL,I5B22
-        LD      DE,BUF+10
-        LD      BC,L5B22
-        LDIR
-        LD      HL,YF340
-        LD      A,(HL)
-        AND     A
-        LD      (HL),H
-        JR      NZ,J5B69
-        LD      (YF346),A
-        LD      HL,I5B33
-        LD      (YF323),HL
-        LD      HL,I5B15
-        LD      DE,BUF+10+L5B22
-        LD      BC,37                   ; a bit odd, should be L5B15
-        PUSH    DE
-        LDIR
-        POP     DE
-        CALL    A4462                   ; open fcb
-        INC     A
-        JR      Z,J5B8D
-        JR      J5B9B
+;       Subroutine      Start DiskBASIC
 
-J5B69:  LD      A,(WBOOT+0)
-        CP      0C3H
-        JR      NZ,J5B97
-        LD      HL,DBUF
-        LD      B,(HL)
-        INC     B
-        DEC     B
-        JR      Z,J5B97
-J5B78:  INC     HL
-        LD      A,(HL)
-        CP      20H     ; " "
-        JR      NZ,J5B82
-        DJNZ    J5B78
-        JR      J5B97
+A5B3A:  call    A5C60                   ; disable XFER,ENARAM,ENAKRN routines
+        ld      hl,T5B27
+        ld      de,BUF+10
+        ld      bc,L5B27
+        ldir                            ; copy RUN"AUTOEXEC.BAS in BUF
+        ld      hl,YF340
+        ld      a,(hl)
+        and     a                       ; is this a warm boot ?
+        ld      (hl),h                  ; next boot is a warm boot
+        jr      nz,A5B6E                ; yep, no autoexec.bas but a parameter from MSXDOS ?
 
-J5B82:  XOR     A
-        LD      C,B
-        LD      B,A
-        LD      DE,BUF+14
-        LDIR
-        LD      (DE),A
-        JR      J5B9B
+;       Subroutine      try to start AUTOEXEC.BAS
 
-J5B8D:  LD      SP,YC000+256+256
-        LD      A,(YF338)
-        AND     A
-        CALL    Z,C5D3A
-J5B97:  XOR     A
-        LD      (BUF+13),A
-J5B9B:  LD      SP,YC000+256+256
-        LD      A,(RAMAD2)
-        LD      H,80H
-        CALL    ENASLT
-        LD      A,(EXPTBL+0)
-        LD      H,00H
-        CALL    ENASLT
-        LD      HL,(BOTTOM)
+        ld      (YF346),a               ; flag CALL SYSTEM invalid
+        ld      hl,T5B38
+        ld      (YF323),hl              ; setup disk errorhandler
+        ld      hl,T5B1A
+        ld      de,BUF+10+L5B27
+        ld      bc,37                   ; a bit odd, should be L5B15
+        push    de
+        ldir                            ; setup FCB for autoexec.bas
+        pop     de
+        call    A4462                   ; open FCB
+        inc     a
+        jr      z,A5B92                 ; error, start DiskBASIC in direct mode (with date input)
+        jr      A5BA0                   ; no error, start DiskBASIC and run AUTOEXEC.BAS
+
+A5B6E:  ld      a,(WBOOT)
+        cp      0C3H                    ; MSXDOS active ?
+        jr      nz,A5B9C                ; nope, start DiskBASIC in direct mode
+        ld      hl,00080H
+        ld      b,(hl)
+        inc     b
+        dec     b
+        jr      z,A5B9C                 ; no parameter specified (after the BASIC command), start DiskBASIC in direct mode
+A5B7D:  inc     hl
+        ld      a,(hl)
+        cp      " "
+        jr      nz,A5B87
+        djnz    A5B7D                   ; remove spaces in front
+        jr      A5B9C                   ; no parameter specified, just start diskbasic
+
+A5B87:  xor     a
+        ld      c,b
+        ld      b,a
+        ld      de,BUF+14
+        ldir                            ; copy file name after the RUN" at BUF+10
+        ld      (de),a                  ; and a end of line marker
+        jr      A5BA0                   ; start DiskBASIC and run specified basicfile
+
+;       Subroutine      start DiskBASIC in direct mode (cold boot)
+
+A5B92:  ld      sp,0C200H               ; switch to a temporary stack
+        ld      a,(YF338)
+        and     a
+        call    z,A5D3F                 ; no clockchip, ask the date
+
+;       Subroutine      start DiskBASIC in direct mode
+
+A5B9C:  xor     a
+        ld      (BUF+13),a              ; make it a ordinary RUN at BUF+10
+
+;       Subroutine      start DiskBASIC
+
+A5BA0:  ld      sp,0C200H               ; switch to a temporary stack
+        ld      a,(RAMAD2)
+        ld      h,080H
+        call    ENASLT                  ; ram on page 2
+        ld      a,(EXPTBL+0)
+        ld      h,000H
+        call    ENASLT                  ; rom-bios on page 0
+        ld      hl,(BOTTOM)
+        xor     a
+        ld      (hl),a                  ; before the program always a end of line marker
+        inc     hl
+        ld      (TXTTAB),hl             ; start of basictext space
+        ld      (hl),a
+        inc     hl
+        ld      (hl),a                  ; end of program marker
+        inc     hl
+        ld      (VARTAB),hl             ; start of the variablespace
+        ld      hl,0FFFFH
+        ld      (CURLIN),hl             ; interpreter in direct mode
+        call    A5C16                   ; initialize diskbasic
+        ld      sp,(STKTOP)
+        ld      a,0FFH
+        ld      (CNSDFG),a              ; enable function keys
+        ld      a,00CH
+        rst     018H                    ; clear screen
+        ld      ix,M7D31
+        call    CALBAS                  ; display BASIC startscreen
+        call    A5F86
+        defb    13,10
+        defb    "Disk BASIC version 1.0",13,10
+        defb    0
+        ld      hl,M4173
+        push    hl                      ; execute RUN command
+        ld      hl,BUF+10-1
+        push    hl                      ; �basicpointer�
+        ld      hl,BUF+64
+        push    hl
+        ld      (hl),0E1H
+        inc     hl
+        ld      (hl),0C9H               ; pop the basicpointer when returning
+        ld      a,(EXPTBL+0)
+        ld      h,040H
+        jp      ENASLT                  ; enable basic-rom on page 1
+
+;       Subroutine      initialize DiskBASIC environment
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+A5C16:  ld      hl,T72AE
+        ld      (YF323),hl              ; setup diskerror handler
+        ld      hl,T5C6C
+        ld      (YF325),hl              ; setup abort handler
+        ld      hl,(YF349)
+        ld      (HIMEM),hl
+        ld      a,(YF345)
+        ld      c,a
+        ld      b,0                     ; number of FCB�s
+        ld      de,37
+        call    A4916                   ; * 37
+        call    A5EB8                   ; allocate memory (adjust HIMEM, halt when error)
+        ld      (YF353),hl
+        ld      bc,25                   ; size of the BLOAD/BSAVE code
+        call    A5EB8                   ; allocate memory (adjust HIMEM, halt when error)
+        ld      (XF377+1),hl            ; setup BLOAD jumpentry
+        ex      de,hl
+        ld      hl,T62ED
+        ldir                            ; copy bsave/bload patch code
+        ld      hl,0FFF5H
+        add     hl,de
+        ld      (XF37A+1),hl            ; setup BSAVE jumpentry
+        ld      a,(YF348)
+        ld      de,0FFF9H
+        add     hl,de
+        ld      (hl),a
+        ld      de,0000EH
+        add     hl,de
+        ld      (hl),a
+        call    A5F5F                   ; setup i/o channels
+                                        ; disable XFER..
+A5C60:  ld      a,0C9H
+A5C62:  ld      (XF368+0),a
+        ld      (XF36B+0),a
+        ld      (XFER+0),a
+        ret
+
+T5C6C:  defw    A40A7                   ; restart basic
+
+;       Subroutine      initialize hooks
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+A5C6E:  ld      hl,T62E8
+        ld      de,H.POSD
+        ld      bc,5
+        ldir
+        ld      hl,T5C96
+A5C7C:  ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        inc     hl
+        ld      a,e
+        or      d
+        ret     z
+        ex      de,hl
+        ld      (hl),0F7H
+        inc     hl
+        ld      a,(YF348)
+        ld      (hl),a
+        inc     hl
+        ex      de,hl
+        ldi
+        ldi
+        ld      a,0C9H
+        ld      (de),a
+        jr      A5C7C
+
+T5C96:  defw    H.DSKO,A6B96
+        defw    H.DSKI,A6B75
+        defw    H.NAME,A6F20
+        defw    H.KILL,A6F00
+        defw    H.COPY,A707B
+        defw    H.DSKF,A7061
+        defw    H.LSET,A6CD7
+        defw    H.RSET,A6CD6
+        defw    H.FIEL,A6C49
+        defw    H.MKI$,A6DAF
+        defw    H.MKS$,A6DB2
+        defw    H.MKD$,A6DB5
+        defw    H.CVI,A6DD7
+        defw    H.CVS,A6DDA
+        defw    H.CVD,A6DDD
+        defw    H.GETP,A66A4
+        defw    H.NOFO,A66B3
+        defw    H.NULO,A66FC
+        defw    H.NTFL,A68D0
+        defw    H.BINS,A690E
+        defw    H.BINL,A6939
+        defw    H.FILE,A6E88
+        defw    H.DGET,A6BDA
+        defw    H.FILO,A688E
+        defw    H.INDS,A6819
+        defw    H.LOC,A700D
+        defw    H.LOF,A7009
+        defw    H.EOF,A6E70
+        defw    H.BAKU,A6875
+        defw    H.PARD,A7323
+        defw    H.NODE,A737C
+        defw    H.ERRP,A71D3
+        defw    H.PHYD,A6055
+        defw    H.FORM,A60B0
+        defw    XF331,A56D3
+        defw    0
+
+T5D24:  defb    1,048H,"-",1,041H,"-",1,047H,"):",0
+T5D2F:  defb    "M-D-Y):",0
+T5D37:  defb    "D-M-Y):",0
+
+;       Subroutine      Ask for systemdate
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+A5D3F:  ld      (BUF+98),sp
+        ld      a,20
+        ld      (BUF+100),a             ; size of lineinput buffer
+A5D48:  call    A5F86
+        defb    13,10,"Enter date (",0
+        nop
+        nop
+        nop
+        nop                             ; room for expansion ??
+        nop                             ; extra 5 bytes
+        ld      a,(YF30E)
+        cp      1
+        ld      hl,T5D24
+        jr      c,A5D71                 ; japanese Y-M-D
+        ld      hl,T5D2F
+        jr      z,A5D71                 ; european D-M-Y
+        ld      hl,T5D37                ; american M-D-Y
+A5D71:  call    A5F8C                   ; print string
+        ld      hl,T5E4B
+        ld      (YF325),hl              ; setup abort handler
+        ld      de,BUF+100
+        call    A50E0                   ; BDOS 0A (buffered console input)
+        ld      hl,BUF+100+2
+        ld      a,(hl)
+        cp      00DH
+        ret     z                       ; empty input, do not set date, quit
+        ld      a,(YF30E)
+        and     a
+        jr      nz,A5D9F                ; no japanese
+        call    A5E0D                   ; get date year
+        call    A5DE9                   ; check for seperator and get date number (month)
+        ld      d,c
+        ld      a,(hl)
+        inc     hl
+        cp      b                       ; check if same seperator as the first one
+        jr      nz,A5DCB                ; nope, error
+        call    A5DF8                   ; get date number (day)
+        ld      e,c
+        jr      A5DB9
+
+A5D9F:  call    A5DF8                   ; get date number (day european, month american)
+        ld      d,c
+        call    A5DE9                   ; check for seperator and get date number (month european, day american)
+        ld      e,c
+        ld      a,(hl)
+        inc     hl
+        cp      b                       ; check if same seperator as the first one
+        jr      nz,A5DB1                ; nope, error
+        call    A5E0D                   ; get date year
+        jr      A5DB9
+
+A5DB1:  push    de
+        call    A553C                   ; get date
+        push    hl
+        pop     ix
+A5DB8:  pop     de
+A5DB9:  ld      a,(YF30E)
+        cp      002H
+        jr      c,A5DC3                 ; european or japanese, month already in register D
+        ld      a,e
+        ld      e,d
+        ld      d,a                     ; month in register D, day in register E
+A5DC3:  push    ix
+        pop     hl
+        call    A5552                   ; set date
+        or      a
+        ret     z                       ; no error, quit
+A5DCB:  ld      sp,(BUF+98)
+        call    A5F86
+        defb    13,10,"Invalid date",0
+        nop
+        nop
+        nop
+        nop                             ; room for expansion ??
+        nop                             ; extra 5 bytes
+        jp      A5D48                   ; try again
+
+A5DE9:  ld      a,(hl)
+        inc     hl
+        ld      b,a
+        cp      "/"
+        jr      z,A5DF8
+        cp      "."
+        jr      z,A5DF8
+        cp      "-"
+        jr      nz,A5DCB
+
+A5DF8:  call    A5E41                   ; is digit ?
+        jr      c,A5DCB                 ; nope, error
+        ld      c,a                     ; save digit
+        call    A5E41                   ; is digit ?
+        ret     c                       ; nope, quit
+        push    af
+        ld      a,c
+        add     a,a
+        add     a,a
+        add     a,c
+        add     a,a
+        ld      c,a                     ; first digit *10
+        pop     af
+        add     a,c
+        ld      c,a                     ; + second digit
+        ret
+
+A5E0D:  call    A5DF8                   ; get date number
+        ld      b,c
+        call    A5E41                   ; is digit (is year more as 2 digit number) ?
+        jr      c,A5E2C                 ; nope, make it a 4 digit number
+        dec     hl
+        call    A5DF8                   ; get date number
+        push    hl
+        push    bc
+        ld      c,b
+        ld      b,000H
+        push    de
+        ld      de,100
+        call    A4916                   ; * 100
+        pop     de
+        pop     hl
+        ld      h,000H
+        jr      A5E3B
+
+A5E2C:  push    hl
+        ld      c,b
+        ld      b,0
+        ld      hl,1900
+        ld      a,c
+        cp      80
+        jr      nc,A5E3B                ; >= 80 means 19xx
+        ld      hl,2000                 ; >80 means 20xx
+A5E3B:  add     hl,bc
+        push    hl
+        pop     ix
+        pop     hl
+        ret
+
+A5E41:  ld      a,(hl)
+        sub     030H
+        ret     c
+        cp      00AH
+        ccf
+        ret     c
+        inc     hl
+        ret
+
+T5E4B:  defw    A5E4D
+
+A5E4D:  ld      sp,(BUF+98)
+        ret
+
+A5E52:  LD      HL,EXPTBL
+        LD      B,4
         XOR     A
-        LD      (HL),A
-        INC     HL
-        LD      (TXTTAB),HL
-        LD      (HL),A
-        INC     HL
-        LD      (HL),A
-        INC     HL
-        LD      (VARTAB),HL
-        LD      HL,0FFFFH
-        LD      (CURLIN),HL
-        CALL    C5C11
-        LD      SP,(STKTOP)
-        LD      A,0FFH
-        LD      (CNSDFG),A
-        LD      A,0CH   ; 12
-        RST     18H
-        LD      IX,M7D31
-        CALL    CALBAS
-        CALL    C5F81
-        DEFB    13,10
-        DEFB    "Disk BASIC version 1.0",13,10
-        DEFB    0
-        LD      HL,M4173
-        PUSH    HL
-        LD      HL,BUF+10-1
-        PUSH    HL
-        LD      HL,BUF+64
-        PUSH    HL
-        LD      (HL),0E1H
-        INC     HL
-        LD      (HL),0C9H
-        LD      A,(EXPTBL+0)
-        LD      H,40H
-        JP      ENASLT
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5C11:  LD      HL,I72AA
-        LD      (YF323),HL
-        LD      HL,I5C67
-        LD      (YF325),HL
-        LD      HL,(YF349)
-        LD      (HIMEM),HL
-        LD      A,(YF345)
-        LD      C,A
-J5C27:  LD      B,00H
-        LD      DE,37
-        CALL    A4916
-        CALL    C5EB3
-        LD      (YF353),HL
-        LD      BC,25
-        CALL    C5EB3
-        LD      (XF377+1),HL
-        EX      DE,HL
-        LD      HL,I62F4
-        LDIR
-        LD      HL,-11
-        ADD     HL,DE
-        LD      (XF37A+1),HL
-        LD      A,(YF348)
-        LD      DE,-7
-        ADD     HL,DE
-        LD      (HL),A
-        LD      DE,14
-        ADD     HL,DE
-        LD      (HL),A
-        CALL    C5F5A
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5C5B:  LD      A,0C9H
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5C5D:  LD      (XF368),A
-        LD      (XF36B),A
-        LD      (XFER),A
-        RET
-
-I5C67:  DEFW    A40A7
-
-C5C69:  LD      HL,I62EF
-        LD      DE,H.POSD
-        LD      BC,5
-        LDIR
-        LD      HL,I5C91
-J5C77:  LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        INC     HL
-        LD      A,E
-        OR      D
-        RET     Z
-        EX      DE,HL
-        LD      (HL),0F7H
-        INC     HL
-        LD      A,(YF348)
-        LD      (HL),A
-        INC     HL
-        EX      DE,HL
-        LDI
-        LDI
-        LD      A,0C9H
-        LD      (DE),A
-        JR      J5C77
-
-I5C91:  DEFW    H.DSKO,C6B92
-        DEFW    H.DSKI,C6B71
-        DEFW    H.NAME,C6F1C
-        DEFW    H.KILL,C6EFC
-        DEFW    H.COPY,C7077
-        DEFW    H.DSKF,C705D
-        DEFW    H.LSET,C6CD3
-        DEFW    H.RSET,C6CD2
-        DEFW    H.FIEL,C6C45
-        DEFW    H.MKI$,C6DAB
-        DEFW    H.MKS$,C6DAE
-        DEFW    H.MKD$,C6DB1
-        DEFW    H.CVI ,C6DD3
-        DEFW    H.CVS ,C6DD6
-        DEFW    H.CVD ,C6DD9
-        DEFW    H.GETP,C66A3
-        DEFW    H.NOFO,C66B2
-        DEFW    H.NULO,C66FA
-        DEFW    H.NTFL,C68CC
-        DEFW    H.BINS,C690A
-        DEFW    H.BINL,C6935
-        DEFW    H.FILE,C6E84
-        DEFW    H.DGET,C6BD6
-        DEFW    H.FILO,C688A
-        DEFW    H.INDS,C6816
-        DEFW    H.LOC ,C7009
-        DEFW    H.LOF ,C7005
-        DEFW    H.EOF ,C6E6C
-        DEFW    H.BAKU,C6872
-        DEFW    H.PARD,C7326
-        DEFW    H.NODE,C737E
-        DEFW    H.ERRP,C71CF
-        DEFW    H.PHYD,C6050
-        DEFW    H.FORM,C60AB
-        DEFW    XF331 ,C56D3
-        DEFW    0
-
-I5D1F:  DEFB    1,048H,"-",1,041H,"-",1,047H,"):",0
-I5D2A:  defb    "M-D-Y):",0
-I5D32:  defb    "D-M-Y):",0
-
-C5D3A:  LD      (BUF+98),SP
-        LD      A,14H   ; 20
-        LD      (BUF+100),A
-J5D43:  CALL    C5F81
-        DEFB    13,10,"Enter date (",0
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        LD      A,(YF30E)
-        CP      01H     ; 1
-        LD      HL,I5D1F
-        JR      C,J5D6C
-        LD      HL,I5D2A
-        JR      Z,J5D6C
-        LD      HL,I5D32
-J5D6C:  CALL    C5F87
-        LD      HL,I5E46
-        LD      (YF325),HL
-        LD      DE,BUF+100
-        CALL    A50E0
-        LD      HL,BUF+102
-        LD      A,(HL)
-        CP      0DH     ; 13
-        RET     Z
-        LD      A,(YF30E)
-        AND     A
-        JR      NZ,J5D9A
-        CALL    C5E08
-        CALL    C5DE4
-        LD      D,C
-        LD      A,(HL)
-        INC     HL
-        CP      B
-        JR      NZ,J5DC6
-        CALL    C5DF3
-        LD      E,C
-        JR      J5DB4
-
-J5D9A:  CALL    C5DF3
-        LD      D,C
-        CALL    C5DE4
-        LD      E,C
-        LD      A,(HL)
-        INC     HL
-        CP      B
-        JR      NZ,J5DAC
-        CALL    C5E08
-        JR      J5DB4
-
-J5DAC:  PUSH    DE
-        CALL    A553C
-        PUSH    HL
-        POP     IX
-J5DB3:  POP     DE
-J5DB4:  LD      A,(YF30E)
-        CP      02H     ; 2
-        JR      C,J5DBE
-        LD      A,E
-        LD      E,D
-        LD      D,A
-J5DBE:  PUSH    IX
-        POP     HL
-        CALL    A5552
-        OR      A
-        RET     Z
-J5DC6:  LD      SP,(BUF+98)
-        CALL    C5F81
-        DEFB    13,10,"Invalid date",0
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        JP      J5D43
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5DE4:  LD      A,(HL)
-        INC     HL
-        LD      B,A
-        CP      2FH     ; "/"
-        JR      Z,C5DF3
-        CP      2EH     ; "."
-        JR      Z,C5DF3
-        CP      2DH     ; "-"
-        JR      NZ,J5DC6
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5DF3:  CALL    C5E3C
-        JR      C,J5DC6
-        LD      C,A
-        CALL    C5E3C
-        RET     C
-        PUSH    AF
-        LD      A,C
-        ADD     A,A
-        ADD     A,A
-        ADD     A,C
-        ADD     A,A
-        LD      C,A
-        POP     AF
-        ADD     A,C
-        LD      C,A
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5E08:  CALL    C5DF3
-        LD      B,C
-        CALL    C5E3C
-        JR      C,J5E27
-        DEC     HL
-        CALL    C5DF3
-        PUSH    HL
-        PUSH    BC
-        LD      C,B
-        LD      B,00H
-        PUSH    DE
-        LD      DE,100
-        CALL    A4916
-        POP     DE
-        POP     HL
-        LD      H,00H
-        JR      J5E36
-
-J5E27:  PUSH    HL
-        LD      C,B
-        LD      B,00H
-        LD      HL,1900
-        LD      A,C
-        CP      50H     ; "P"
-        JR      NC,J5E36
-        LD      HL,2000
-J5E36:  ADD     HL,BC
-        PUSH    HL
-        POP     IX
-        POP     HL
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5E3C:  LD      A,(HL)
-        SUB     30H     ; "0"
-        RET     C
-        CP      0AH     ; 10
-        CCF
-        RET     C
-        INC     HL
-        RET
-
-I5E46:  LD      C,B
-        LD      E,(HL)
-        LD      SP,(BUF+98)
-        RET
-
-C5E4D:  LD      HL,EXPTBL
-        LD      B,04H   ; 4
-        XOR     A
-J5E53:  AND     03H     ; 3
+J5E58:  AND     03H
         OR      (HL)
-J5E56:  PUSH    BC
+J5E5B:  PUSH    BC
         PUSH    HL
         LD      H,C
-J5E59:  LD      L,10H   ; 16
-J5E5B:  PUSH    AF
+J5E5E:  LD      L,10H
+J5E60:  PUSH    AF
         CALL    RDSLT
         CPL
         LD      E,A
@@ -5214,689 +5197,732 @@ J5E5B:  PUSH    AF
         POP     BC
         LD      A,C
         CP      B
-        JR      NZ,J5E95
+        JR      NZ,J5E9A
         POP     AF
         DEC     L
-        JR      NZ,J5E5B
+        JR      NZ,J5E60
         INC     H
         INC     H
         INC     H
         INC     H
         LD      C,A
         LD      A,H
-        CP      40H     ; "@"
-        JR      Z,J5E91
+        CP      40H
+        JR      Z,J5E96
         CP      80H
         LD      A,C
-        JR      NZ,J5E59
-J5E91:  LD      A,C
+        JR      NZ,J5E5E
+J5E96:  LD      A,C
         POP     HL
         POP     HL
         RET
 
-J5E95:  POP     AF
+J5E9A:  POP     AF
         POP     HL
         POP     BC
         AND     A
-        JP      P,J5EA2
-        ADD     A,04H   ; 4
+        JP      P,J5EA7
+        ADD     A,4
         CP      90H
-        JR      C,J5E56
-J5EA2:  INC     HL
+        JR      C,J5E5B
+J5EA7:  INC     HL
         INC     A
-I5EA4:  DJNZ    J5E53
+        DJNZ    J5E58
         SCF
         RET
 
+;       Subroutine      allocate MSXDOS memory (halt when error)
+;       Inputs          HL = number of bytes to allocate
+;       Outputs
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A5EAD:  ld      hl,(YF34B)
+        and     a
+        sbc     hl,bc
+        ld      (YF34B),hl              ; new top of MSXDOS
+        jr      A5EC1
 
-C5EA8:  LD      HL,(YF34B)
-        AND     A
-        SBC     HL,BC
-        LD      (YF34B),HL
-        JR      J5EBC
+;       Subroutine      allocate memory (adjust HIMEM, halt when error)
+;       Inputs          HL = number of bytes to allocate
+;       Outputs
 
+A5EB8:  ld      hl,(HIMEM)
+        and     a
+        sbc     hl,bc
+        ld      (HIMEM),hl              ; new top of system
+A5EC1:  jr      c,A5ECC                 ; new top below zero, halt with error
+        ld      a,h
+        cp      0C2H                    ; new top below 0C200H ?
+        jr      A5ECB
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+;       Subroutine      allocate memory (adjust BASIC areapointers, halt when error)
+;       Inputs          HL = number of bytes to allocate
+;       Outputs
 
-C5EB3:  LD      HL,(HIMEM)
-        AND     A
-        SBC     HL,BC
-        LD      (HIMEM),HL
-J5EBC:  JR      C,J5EC7
-        LD      A,H
-        CP      0C2H
-        JR      J5EC6
+A5EC8:  call    A5EE8                   ; allocate memory (adjust BASIC areapointers)
+A5ECB:  ret     nc
+A5ECC:  call    A5F86
+        defb    12
+T5ED0:  defb    "No enough memory",0
+        nop
+        nop
+        nop
+        nop                             ; room for expansion ??
+        nop                             ; extra 5 bytes
+        di
+        halt
 
-C5EC3:  CALL    C5EE3
-J5EC6:  RET     NC
-J5EC7:  CALL    C5F81
-        DEFB    12
-I5ECB:  DEFB    "No enough memory",0
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        DI
-        HALT
+;       Subroutine      allocate memory (adjust BASIC areapointers)
+;       Inputs          HL = number of bytes to allocate
+;       Outputs         Cx set if out of memory
 
+A5EE8:  ld      a,l
+        or      h                       ; size = 0 ?
+        ret     z                       ; yep, quit
+        xor     a
+        sub     l
+        ld      l,a
+        ld      a,0
+        sbc     a,h
+        ld      h,a
+        ld      c,l
+        ld      b,h                     ; - size
+        add     hl,sp
+        ccf
+        ret     c                       ; stack would become below zero, quit
+        ld      de,(BOTTOM)
+        sbc     hl,de
+        ret     c                       ; stack would become below BOTTOM, quit
+        ld      a,h
+        cp      HIGH 512
+        ret     c                       ; less then 512 bytes for stack, quit
+        push    bc
+        ld      hl,0
+        add     hl,sp
+        ld      e,l
+        ld      d,h                     ; top of stack
+        add     hl,bc
+        push    hl                      ; new top of stack
+        ld      hl,(STKTOP)
+        and     a
+        sbc     hl,de
+        ld      c,l
+        ld      b,h                     ; size of the stack
+        inc     bc
+        pop     hl
+        ld      sp,hl                   ; new stack
+        ex      de,hl
+        ldir                            ; copy stack content to new location
+        pop     bc
+        ld      hl,(HIMEM)
+        add     hl,bc
+        ld      (HIMEM),hl              ; adjust HIMEM
+        ld      de,-(2*256+2*9+2*2)
+        add     hl,de
+        ld      (FILTAB),hl             ; 1 user i/o channel + 1 system i/o channel
+        ex      de,hl
+        ld      hl,(MEMSIZ)
+        add     hl,bc
+        ld      (MEMSIZ),hl             ; adjust MEMSIZ
+        ld      hl,(NULBUF)
+        add     hl,bc
+        ld      (NULBUF),hl             ; adjust NULBUF
+        ld      hl,(STKTOP)
+        add     hl,bc                   ; adjust STKTOP
+A5F3B:  ld      (STKTOP),hl
+        dec     hl
+        dec     hl
+        ld      (SAVSTK),hl
+        ld      l,e
+        ld      h,d
+        inc     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      a,2                     ; 2 i/o channels
+A5F4B:  ex      de,hl
+        ld      (hl),e
+        inc     hl
+        ld      (hl),d
+        inc     hl
+        ex      de,hl
+        ld      bc,7
+        ld      (hl),b                  ; i/o channel not open
+        add     hl,bc
+        ld      (hl),b                  ; clear i/o channel flags
+        ld      bc,256+9-7
+        add     hl,bc
+        dec     a
+        jr      nz,A5F4B
+        ret
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A5F5F:  ld      a,1
+        ld      (MAXFIL),a
+        ld      hl,(HIMEM)
+        ld      de,-(2*256+2*9+2*2)
+        add     hl,de
+        ld      (FILTAB),hl
+        ld      e,l
+        ld      d,h
+        dec     hl
+        dec     hl
+        ld      (MEMSIZ),hl
+        ld      bc,200
+        and     a
+        sbc     hl,bc
+        push    hl
+        ld      hl,2*2+9
+        add     hl,de
+        ld      (NULBUF),hl
+        pop     hl
+        jr      A5F3B
 
-C5EE3:  LD      A,L
-        OR      H
-        RET     Z
-        XOR     A
-        SUB     L
-        LD      L,A
-        LD      A,00H
-        SBC     A,H
-        LD      H,A
-        LD      C,L
-        LD      B,H
-        ADD     HL,SP
-        CCF
-        RET     C
-        LD      DE,(BOTTOM)
-        SBC     HL,DE
-        RET     C
-        LD      A,H
-        CP      02H     ; 2
-        RET     C
-        PUSH    BC
-        LD      HL,0
-        ADD     HL,SP
-        LD      E,L
-        LD      D,H
-        ADD     HL,BC
-        PUSH    HL
-        LD      HL,(STKTOP)
-        AND     A
-        SBC     HL,DE
-        LD      C,L
-        LD      B,H
-        INC     BC
-        POP     HL
-        LD      SP,HL
-        EX      DE,HL
-        LDIR
-        POP     BC
-        LD      HL,(HIMEM)
-        ADD     HL,BC
-        LD      (HIMEM),HL
-        LD      DE,0FDEAH
-        ADD     HL,DE
-        LD      (FILTAB),HL
-        EX      DE,HL
-        LD      HL,(MEMSIZ)
-        ADD     HL,BC
-        LD      (MEMSIZ),HL
-        LD      HL,(NULBUF)
-        ADD     HL,BC
-        LD      (NULBUF),HL
-        LD      HL,(STKTOP)
-        ADD     HL,BC
-J5F36:  LD      (STKTOP),HL
-        DEC     HL
-        DEC     HL
-        LD      (SAVSTK),HL
-        LD      L,E
-        LD      H,D
-        INC     HL
-        INC     HL
-        INC     HL
-J5F43:  INC     HL
-        LD      A,02H   ; 2
-J5F46:  EX      DE,HL
-        LD      (HL),E
-        INC     HL
-        LD      (HL),D
-        INC     HL
-        EX      DE,HL
-        LD      BC,7
-        LD      (HL),B
-        ADD     HL,BC
-        LD      (HL),B
-        LD      BC,258
-        ADD     HL,BC
-        DEC     A
-        JR      NZ,J5F46
-        RET
+A5F86:  ex      (sp),hl
+        call    A5F8C                   ; print string
+        ex      (sp),hl
+        ret
 
+A5F8C:  ld      a,(hl)
+        inc     hl
+        and     a
+        ret     z
+        call    A408F                   ; output to screen
+        jr      A5F8C
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+;       Subroutine      get slotid of page 3
+;       Inputs          -
+;       Outputs         A = slotid
 
-C5F5A:  LD      A,01H   ; 1
-        LD      (MAXFIL),A
-        LD      HL,(HIMEM)
-        LD      DE,0FDEAH
-        ADD     HL,DE
-        LD      (FILTAB),HL
-        LD      E,L
-        LD      D,H
-        DEC     HL
-        DEC     HL
-        LD      (MEMSIZ),HL
-        LD      BC,200
-        AND     A
-        SBC     HL,BC
-        PUSH    HL
-        LD      HL,13
-        ADD     HL,DE
-        LD      (NULBUF),HL
-        POP     HL
-        JR      J5F36
+A5F95:  ld      b,6
+        defb    021H                    ; LD HL,xxxx (skips next instruction)
 
+;       Subroutine      get slotid of page 2
+;       Inputs          -
+;       Outputs         A = slotid
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A5F98:  ld      b,4
+        call    XF365
+        push    bc
+A5F9E:  rrca
+        djnz    A5F9E
+        call    A5FEC
+        pop     bc
+        or      (hl)
+        ld      c,a
+        inc     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      a,(hl)
+        dec     b
+        dec     b
+A5FAE:  rrca
+        djnz    A5FAE
+        jr      A5FBE
 
-C5F81:  EX      (SP),HL
-        CALL    C5F87
-        EX      (SP),HL
-        RET
+;       Subroutine      get my slotid
+;       Inputs          -
+;       Outputs         A = slotid
 
+A5FB3:  call    A5FE7
+        or      (hl)
+        ret     p                       ; non expanded slot, quit
+        ld      c,a
+        inc     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      a,(hl)
+A5FBE:  and     00CH
+        or      c
+        ret
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5F87:  LD      A,(HL)
-        INC     HL
-        AND     A
-        RET     Z
-        CALL    A408F
-        JR      C5F87
-
-C5F90:  LD      B,6
-        DEFB    021H
-C5F93:  LD      B,4
-        CALL    XF365
-        PUSH    BC
-J5F99:  RRCA
-        DJNZ    J5F99
-        CALL    C5FE7
-        POP     BC
-        OR      (HL)
-        LD      C,A
-        INC     HL
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      A,(HL)
-        DEC     B
-        DEC     B
-J5FA9:  RRCA
-        DJNZ    J5FA9
-        JR      J5FB9
-
-C5FAE:  CALL    C5FE2
-        OR      (HL)
-        RET     P
-        LD      C,A
-        INC     HL
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      A,(HL)
-J5FB9:  AND     0CH     ; 12
-        OR      C
-        RET
+;       Subroutine      get my diskdriver workarea
+;       Inputs          -
+;       Outputs         HL = IX = pointer to workarea
+;       Remark          used by the diskdriver
 
 GETWRK:
-C5FBD:  CALL    C5FC8
-        LD      A,(HL)
-        INC     HL
-        LD      H,(HL)
-        LD      L,A
-        PUSH    HL
-        POP     IX
-        RET
+A5FC2:  call    A5FCD                   ; get my SLTWRK entry
+        ld      a,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,a                     ; pointer to workarea
+        push    hl
+        pop     ix
+        ret
 
+;       Subroutine      get my SLTWRK entry
+;       Inputs          -
+;       Outputs         HL = pointer to SLTWRK entry
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A5FCD:  call    A5FE7                   ; get my primairy slot
+        add     a,a
+        add     a,a
+        add     a,a
+        scf
+        adc     a,a                     ; primary slot*4 + 1
+        ld      c,a
+        ld      a,(hl)
+        add     a,a
+        sbc     a,a
+        and     00CH                    ; 0 for non expanded, 0CH for expanded
+        inc     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        and     (hl)
+        or      c
+        add     a,a                     ; word entries
+        ld      hl,SLTWRK
+        jr      A5FF3
 
-C5FC8:  CALL    C5FE2
-        ADD     A,A
-        ADD     A,A
-        ADD     A,A
-        SCF
-        ADC     A,A
-        LD      C,A
-        LD      A,(HL)
-        ADD     A,A
-        SBC     A,A
-        AND     0CH     ; 12
-        INC     HL
-        INC     HL
-        INC     HL
-        INC     HL
-        AND     (HL)
-        OR      C
-        ADD     A,A
-        LD      HL,SLTWRK
-        JR      J5FEE
+;       Subroutine      get my EXPTBL entry
+;       Inputs          -
+;       Outputs         HL = pointer to SLTWRK entry
 
+A5FE7:  call    XF365
+        rrca
+        rrca
+A5FEC:  and     003H
+        ld      hl,EXPTBL
+A5FF1:  ld      b,000H
+A5FF3:  ld      c,a
+        add     hl,bc
+        ret
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5FE2:  CALL    XF365
-        RRCA
-        RRCA
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5FE7:  AND     03H     ; 3
-        LD      HL,EXPTBL
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C5FEC:  LD      B,00H
-J5FEE:  LD      C,A
-        ADD     HL,BC
-        RET
+;       Subroutine      install my diskdriver interrupt handler
+;       Inputs          HL = pointer to interrupt handler
+;       Outputs         -
+;       Remark          used by the diskdriver
 
 SETINT:
-C5FF1:  LD      A,(H.TIMI+0)
-        CP      0C9H
-        JR      Z,J600D
-        PUSH    HL
-        LD      A,(DEVICE)
-        LD      HL,YFB29
-        CALL    C5FEC
-        ADD     HL,BC
-        ADD     HL,BC
-        EX      DE,HL
-        LD      HL,H.TIMI+1
-        LD      C,03H   ; 3
-        LDIR
-        POP     HL
-J600D:  DI
-        LD      A,0F7H
-        LD      (H.TIMI+0),A
-        LD      (H.TIMI+2),HL
-        LD      A,0C9H
-        LD      (H.TIMI+4),A
-        CALL    A402D
-        LD      (H.TIMI+1),A
-        RET
+A5FF6:  ld      a,(H.TIMI+0)
+        cp      0C9H
+        jr      z,A6012                 ; H.TIMI not hooked, skip saving H.TIMI
+        push    hl
+        ld      a,(DEVICE)              ; this diskdriver number
+        ld      hl,YFB29
+        call    A5FF1
+        add     hl,bc
+        add     hl,bc                   ; get DRVINT pointer
+        ex      de,hl
+        ld      hl,H.TIMI+1
+        ld      c,003H
+        ldir                            ; save slotid and address (assumes that is hooked by a CALLF!)
+        pop     hl
+A6012:  di
+        ld      a,0F7H
+        ld      (H.TIMI+0),a
+        ld      (H.TIMI+2),hl           ; diskdriver interrupt handler
+        ld      a,0C9H
+        ld      (H.TIMI+4),a
+        call    A402D
+        ld      (H.TIMI+1),a            ; slotid of this diskdriver
+        ret
+
+;       Subroutine      call orginal interrupt handler
+;       Inputs          -
+;       Outputs         -
+;       Remark          used by the diskdriver
 
 PRVINT:
-C6022:  PUSH    AF
-        CALL    A402D
-        LD      B,04H   ; 4
-        LD      DE,YFB29
-        LD      HL,YFB21+1
-J602E:  CP      (HL)
-        JR      Z,J603A
-        INC     DE
-        INC     DE
-        INC     DE
-        INC     HL
-        INC     HL
-        DJNZ    J602E
-J6038:  POP     AF
-        RET
+A6027:  push    af
+        call    A402D                   ; slotid of this diskdriver
+        ld      b,4
+        ld      de,YFB29
+        ld      hl,YFB21+1
+A6033:  cp      (hl)                    ; is this my DRVTBL entry ?
+        jr      z,A603F                 ; yep, get the saved interrupt handler and jump to it
+        inc     de
+        inc     de
+        inc     de
+        inc     hl
+        inc     hl
+        djnz    A6033                   ; next DRVTBL and DRVINT entry
+A603D:  pop     af
+        ret                             ; quit
 
-J603A:  EX      DE,HL
-        LD      A,(HL)
-        AND     A
-        JR      Z,J6038
-        PUSH    AF
-        POP     IY
-        INC     HL
-        LD      C,(HL)
-        INC     HL
-        LD      B,(HL)
-        PUSH    BC
-        POP     IX
-        POP     AF
-        JP      CALSLT
+A603F:  ex      de,hl
+        ld      a,(hl)
+        and     a
+        jr      z,A603D                 ; DRVINT entry not used, quit
+        push    af
+        pop     iy                      ; slotid
+        inc     hl
+        ld      c,(hl)
+        inc     hl
+        ld      b,(hl)
+        push    bc
+        pop     ix                      ; address
+        pop     af
+        jp      CALSLT
 
-C604D:  AND     A
-        DEFB    038H
+;       Subroutine      read disksector
+;       Inputs          A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferaddress
+;       Outputs         -
 
-C604F:  SCF
+A6052:  and     a
+        defb    038H                    ; JR C,xx (skips next instruction)
 
-C6050:  PUSH    IX
-        PUSH    IY
-        PUSH    HL
-        PUSH    AF
-        CALL    C6081
-        LD      L,A
-        POP     AF
-        LD      A,L
-        LD      IX,T4010
-        JR      J6076
+;       Subroutine      write disksector
+;       Inputs          A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferaddress
+;       Outputs         -
 
-C6062:  PUSH    IX
-        LD      IX,T4013
-        JR      J6070
+A6054:  scf
 
-C606A:  PUSH    IX
-        LD      IX,T4016
-J6070:  PUSH    IY
-        PUSH    HL
-        CALL    C6081
-J6076:  POP     HL
-        PUSH    HL
-        CALL    CALSLT
-        POP     HL
-        POP     IY
-        POP     IX
-        RET
+;       Subroutine      PHYDIO BIOS call (H.PHYD)
+;       Inputs          A = driveid, B = number of sectors, C = mediadescriptor, DE = start sector, HL = transferaddress
+;       Outputs         -
 
+A6055:  push    ix
+        push    iy
+        push    hl
+        push    af
+        call    A6086                   ; get diskdriverparameters
+        ld      l,a
+        pop     af                      ; restore flags (Cx)
+        ld      a,l
+        ld      ix,T4010
+        jr      A607B
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A6067:  push    ix
+        ld      ix,T4013
+        jr      A6075
 
-C6081:  LD      (YF33F),A
-        LD      HL,YFB21
-J6087:  SUB     (HL)
-        JR      C,J608E
-        INC     HL
-        INC     HL
-        JR      J6087
+A606F:  push    ix
+        ld      ix,T4016
+A6075:  push    iy
+        push    hl
+        call    A6086                   ; get diskdriverparameters
+A607B:  pop     hl
+        push    hl
+        call    CALSLT
+        jp      A636E
 
-J608E:  ADD     A,(HL)
-        INC     HL
-        LD      H,(HL)
-        PUSH    HL
-        POP     IY
-        RET
+; Unused code
+; JP A636E is a patch, to insert the �ei� instruction after CALSLT
+; patch code does not fit here, 1 byte too less
 
+        nop
+        nop
+        nop
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+;       Subroutine      get diskdriverparameters
+;       Inputs          A=driveid
+;       Outputs         IYH=slotid diskdriver, H=slotid diskdriver, A=local driveid diskdriver
 
-C6095:  LD      HL,YF355
-        CALL    C5FEC
-        ADD     HL,BC
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        LD      HL,19
-        ADD     HL,DE
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        DEC     DE
-        EX      DE,HL
-        LD      (HL),0FFH
-        RET
+A6086:  ld      (YF33F),a               ; save driveid (for PROMPT)
+        ld      hl,YFB21                ; diskdriver table
+A608C:  sub     (hl)
+        jr      c,A6093
+        inc     hl
+        inc     hl
+        jr      A608C
 
-C60AB:  AND     A
-C60AC:  LD      (YF339),SP
-        CALL    NC,C62DD
-        PUSH    HL
-        PUSH    BC
-        LD      A,(YF347)
-        DEC     A
-        JR      Z,J60FC
-J60BB:  CALL    C5F81
-        DEFB    "Drive name? (",0
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        LD      A,(YF347)
-        LD      B,A
-        LD      A,41H   ; "A"
-        JR      J60E0
+A6093:  add     a,(hl)                  ; driveid driver
+        inc     hl
+        ld      h,(hl)                  ; slotid driver
+        push    hl
+        pop     iy
+        ret
 
-J60D9:  PUSH    AF
-        LD      A,2CH   ; ","
-        CALL    A408F
-        POP     AF
-J60E0:  CALL    A408F
-        INC     A
-        DJNZ    J60D9
-        CALL    C5F81
-        DEFB    ") ",0
-J60EC:  CALL    C6190
-        CALL    C62CD
-        AND     0DFH
-        SUB     41H     ; "A"
-        LD      HL,YF347
-        CP      (HL)
-        JR      NC,J60BB
-J60FC:  CALL    C6095
-        CALL    C6081
-        PUSH    IY
-        PUSH    AF
-        PUSH    IY
-        LD      IX,T4019
-        CALL    CALSLT
-        LD      A,L
-        OR      H
-        JR      Z,J6139
-        POP     AF
-J6113:  PUSH    AF
-        CALL    RDSLT
-        AND     A
-        JR      Z,J6121
-        CALL    A408F
-        INC     HL
-        POP     AF
-        JR      J6113
+;       Subroutine      mark FAT buffer as invalid
+;       Inputs          A=driveid
+;       Outputs         ________________________
 
-J6121:  POP     AF
-        CALL    C5F81
-        DEFB    "? ",0
-J6128:  CALL    C6190
-        SUB     31H     ; "1"
-        CP      09H     ; 9
-        JR      NC,J6128
-        ADD     A,31H   ; "1"
-J6133:  CALL    C62CD
-        SUB     30H     ; "0"
-        PUSH    AF
-J6139:  CALL    C616F
-        POP     AF
-        POP     DE
-        POP     IY
-        POP     BC
-        POP     HL
-        LD      IX,T401C
-        CALL    CALSLT
-        LD      HL,I61DB
-        JR      NC,J6158
-        LD      HL,I624F
-        CALL    C5FEC
-        LD      A,(HL)
-        INC     HL
-        LD      H,(HL)
-        LD      L,A
-J6158:  CALL    C62D0
-        CALL    C5F87
-        JP      C62D0
+A609A:  ld      hl,YF355
+        call    A5FF1
+        add     hl,bc
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)                  ; pointer to DPB
+        ld      hl,00013H
+        add     hl,de
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        dec     de
+        ex      de,hl
+        ld      (hl),0FFH
+        ret
 
+;       Subroutine      FORMAT BIOS call (H.FORM)
+;       Inputs
+;       Outputs         ________________________
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A60B0:  and     a                       ; use free BASIC memory as formatbuffer
 
-C6161:  XOR     A
-        LD      (YF336),A
-        LD      IX,KILBUF
-        CALL    A40AB
-        JP      A4078
+;       Subroutine      format disk
+;       Inputs          Cx reset = use free BASIC memory as formatbuffer, Cx set = use specified buffer, HL = start of buffer, BC = size of buffer
+;       Outputs         ________________________
 
+A60B1:  ld      (YF339),sp              ; save stackpointer for abort
+        call    nc,A62D6                ; get formatbuffer in free BASIC memory
+        push    hl
+        push    bc
+        ld      a,(YF347)
+        dec     a                       ; only 1 diskdrive ?
+        jr      z,A6101                 ; yep, skip drivename input and use driveid 0
+A60C0:  call    A5F86
+        defb    "Drive name? (",0
+        nop
+        nop
+        nop
+        nop                             ; room for expansion ??
+        nop                             ; extra 5 bytes
+        ld      a,(YF347)
+        ld      b,a                     ; number of diskdrives
+        ld      a,"A"                   ; starts with "A" drive
+        jr      A60E5
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A60DE:  push    af
+        ld      a,","
+        call    A408F                   ; output to screen
+        pop     af
+A60E5:  call    A408F                   ; output to screen
+        inc     a
+        djnz    A60DE                   ; next drive
+        call    A5F86
+        defb    ") ",0
+        call    A6195                   ; get fresh consoleinput (CTRL-C aborts)
+        call    A62C6                   ; print input and CR/LF
+        and     0DFH                    ; upcase
+        sub     "A"
+        ld      hl,YF347
+        cp      (hl)                    ; driveletter valid ?
+        jr      nc,A60C0                ; nope, ask again
+A6101:  call    A609A                   ; mark FAT buffer as invalid
+        call    A6086                   ; get diskdriverparameters
+        push    iy
+        push    af
+        push    iy
+        ld      ix,T4019
+        call    CALSLT                  ; call CHOICE diskdriver
+        ld      a,l
+        or      h                       ; choice string ?
+        jr      z,A613E                 ; nope, skip choice input and use choice 0 (default format)
+        pop     af
+A6118:  push    af
+        call    RDSLT
+        and     a
+        jr      z,A6126
+        call    A408F                   ; output to screen
+        inc     hl
+        pop     af
+        jr      A6118                   ; print choice string
 
-C616F:  CALL    C5F81
-        DEFB    "Strike a key when ready ",0
-J618B:  NOP
-        NOP
-        NOP
-        NOP
-        NOP
+A6126:  pop     af
+        call    A5F86
+        defb    "? ",0
+A612D:  call    A6195                   ; get fresh consoleinput (CTRL-C aborts)
+        sub     "1"
+        cp      009H                    ; input "1"-"9" ?
+        jr      nc,A612D                ; nope, ask again
+        add     a,"1"
+A6138:  call    A62C6                   ; print input and CR/LF
+        sub     "0"                     ; choice 1-9
+        push    af
+A613E:  call    A6174                   ; prompt and get fresh consoleinput (CTRL-C aborts)
+        pop     af
+        pop     de
+        pop     iy
+        pop     bc
+        pop     hl
+        ld      ix,T401C
+        call    CALSLT                  ; call DSKFMT diskdriver
+        ld      hl,T61E0
+        jr      nc,A615D                ; no error, print "format complete" and quit
+        ld      hl,T6248
+        call    A5FF1                   ; get errorstring entry
+        ld      a,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,a                     ; pointer to errorstring
+A615D:  call    A62C9                   ; print CR/LF
+        call    A5F8C                   ; print string
+        jp      A62C9                   ; print CR/LF
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+;       Subroutine      get fresh keyboardinput
+;       Inputs
+;       Outputs         ________________________
 
-C6190:  CALL    C6161
-        CP      03H     ; 3
-        RET     NZ
-        LD      SP,(YF339)
-        CALL    C5F81
-        DEFB    13,10,"Aborted",0
-        RET
+A6166:  xor     a
+        ld      (YF336),a               ; no saved input
+        ld      ix,KILBUF
+        call    A40AB                   ; KILBUF BIOS call
+        jp      A4078                   ; get keyboardinput
 
-I61A8:  DEFB    "Write protected",0
-I61B8:  DEFB    "Not ready",0
-I61C2:  DEFB    "Disk error",0
-I61CD:  DEFB    "Bad parameter",0
-I61DB:  DEFB    "Format complete",0
+A6174:  call    A5F86
+        defb    "Strike a key when ready ",0
+        nop
+        nop
+        nop
+        nop                             ; room for expansion ??
+        nop                             ; extra 5 bytes
+A6195:  call    A6166                   ; get fresh keyboardinput
+        cp      003H
+        ret     nz
+        ld      sp,(YF339)
+        call    A5F86
+        defb    13,10,"Aborted",0
+        ret
 
-        DEFS    100,0
+T61AD:  defb    "Write protected",0
+T61BD:  defb    "Not ready",0
+T61C7:  defb    "Disk error",0
+T61D2:  defb    "Bad parameter",0
+T61E0:  defb    "Format complete",0
 
-I624F:  DEFW    I61A8
-        DEFW    I61B8
-        DEFW    I61C2
-        DEFW    I61C2
-        DEFW    I61C2
-        DEFW    I61C2
-        DEFW    I61CD
-        DEFW    I5ECB
-        DEFW    I61C2
+; unused code ??
+
+        nop
+
+A61F1:  ld      de,TEMPST+30
+        ld      hl,(TEMPPT)
+        ld      (DAC+2),hl
+        ld      a,3
+        ld      (VALTYP),a
+        call    M2EF3                   ; copy stringdescriptor
+        ld      de,TEMPST+30+3
+        rst     020H
+        ld      (TEMPPT),hl
+        ret     nz
+        jp      A72F7
+
+A620D:  ld      hl,YFB21
+        ld      b,4
+A6212:  inc     hl
+        ld      a,(hl)                  ; number of drivers of this interface
+        push    af
+        pop     iy
+        inc     hl
+        push    hl
+        push    bc
+        ld      hl,T401F
+        push    hl
+        pop     ix
+        and     a                       ; entry for interface used ?
+        call    nz,RDSLT                ; yep, read MTOFF entry
+        and     a                       ; entry for interface used AND a valid MTOFF entry ?
+        call    nz,CALSLT               ; yep, call MTOFF of interface
+        pop     bc
+        pop     hl
+        djnz    A6212                   ; next interface
+        ret
+
+A622D:  ld      a,(H.CLEA+0)
+        cp      0C9H
+A6232:  jr      z,A6245
+A6234:  ld      hl,T72F2
+        ld      de,H.LOPD
+        ld      bc,5
+        ldir
+        call    A402D
+        ld      (H.LOPD+1),a
+A6245:  jp      A402D
+
+T6248:  defw    T61AD           ; dskfmt error 0
+        defw    T61BD           ; dskfmt error 2
+        defw    T61C7           ; dskfmt error 4
+        defw    T61C7           ; dskfmt error 6
+        defw    T61C7           ; dskfmt error 8
+        defw    T61C7           ; dskfmt error 10
+        defw    T61D2           ; dskfmt error 12
+        defw    T5ED0           ; dskfmt error 14
+        defw    T61C7           ; dskfmt error 16
 
 PROMPT:
-C6255:  LD      A,(YF33F)
-        ADD     A,41H   ; "A"
-        CALL    XF24F
-        PUSH    AF
-        CALL    C5F81
-        DEFB    13,10,"Insert diskette for drive ",0
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        POP     AF
-        CALL    A408F
-        CALL    C5F81
-        DEFB    ":",13,10,"and strike a key when ready",0
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-        NOP
-J62C4:  CALL    C6161
-        CP      03H     ; 3
-        JR      Z,J62C4
-        JR      C62D0
+L625A:  ld      a,(YF33F)               ; driveid
+        add     a,"A"
+        call    XF24F                   ; PROMPT hook
+        push    af
+        call    A5F86
+        defb    13,10,"Insert diskette for drive ",0
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop                             ; room for expansion
+        nop                             ; extra 10 bytes
+        pop     af
+        call    A408F                   ; output to screen
+        call    A5F86
+        defb    ":",13,10,"and strike a key when ready",0
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop                             ; room for expansion
+        nop                             ; extra 10 bytes
+A62BD:  call    A6166                   ; get fresh keyboardinput
+        cp      003H
+        jr      z,A62BD
+        jr      A62C9                   ; print CR/LF
 
+A62C6:  call    A408F                   ; output to screen
+A62C9:  push    af
+        ld      a,00DH
+        call    A408F                   ; output to screen
+        ld      a,00AH
+        call    A408F                   ; output to screen
+A62D4:  pop     af
+        ret
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+A62D6:  ld      hl,0FF00H
+        add     hl,sp                   ; leave room for the stack
+        ld      de,(STREND)             ; end of used BASIC memory
+        xor     a
+        sbc     hl,de
+        ld      c,l
+        ld      b,h                     ; size of buffer
+        ex      de,hl                   ; start of buffer
+        ret     nc
+        ld      c,a
+        ld      b,a                     ; not enough room, size=0
+        ret
 
-C62CD:  CALL    A408F
+;       Subroutine      first character filespecifier is 000H-039H (H.POSD)
+;       Inputs
+;       Outputs         ________________________
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
+T62E8:  inc     sp
+        inc     sp
+        jp      M6F1D                   ; skip strong cassette devicecheck
 
-C62D0:  PUSH    AF
-        LD      A,0DH   ; 13
-        CALL    A408F
-        LD      A,0AH   ; 10
-        CALL    A408F
-J62DB:  POP     AF
-        RET
+T62ED:  ld      a,d
+        cp      9                       ; diskdevice ?
+        jp      nc,M6EC6+3              ; nope, resume BLOAD
+        rst     030H
+        defb    000H
+        defw    A6AA7                   ; call BLOAD for diskdevice
+        push    hl
+        jp      M6EF4                   ; finish BLOAD
 
+        ld      a,d
+        cp      9                       ; diskdevice ?
+        jp      nc,M6E92+3              ; nope, resume BSAVE
+        rst     030H
+        defb    000H
+        defw    A69E7
+        ret
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C62DD:  LD      HL,-256
-        ADD     HL,SP
-        LD      DE,(STREND)
-        XOR     A
-J62E6:  SBC     HL,DE
-J62E8:  LD      C,L
-        LD      B,H
-        EX      DE,HL
-        RET     NC
-        LD      C,A
-        LD      B,A
-        RET
-
-I62EF:  INC     SP
-        INC     SP
-        JP      M6F1D
-
-I62F4:  LD      A,D
-        CP      09H     ; 9
-        JP      NC,J6EC9
-        RST     30H
-        NOP
-        AND     E
-        LD      L,D
-        PUSH    HL
-        JP      J6EF4
-
-?6302:  LD      A,D
-        CP      09H     ; 9
-        JP      NC,J6E95
-        RST     30H
-        NOP
-        EX      (SP),HL
-J630B:  LD      L,C
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C630D:  PUSH    DE
+A6306:  PUSH    DE
         EX      DE,HL
         AND     A
         SBC     HL,BC
         PUSH    HL
         POP     IX
         EX      DE,HL
-J6316:  POP     DE
-J6317:  LD      C,(HL)
+        POP     DE
+J6310:  LD      C,(HL)
         INC     HL
         LD      B,(HL)
         INC     HL
@@ -5912,7 +5938,7 @@ J6317:  LD      C,(HL)
         INC     HL
         LD      B,(HL)
         PUSH    HL
-J6327:  PUSH    IX
+        PUSH    IX
         POP     HL
         ADD     HL,BC
         LD      C,L
@@ -5923,15 +5949,15 @@ J6327:  PUSH    IX
         LD      (HL),C
         EX      DE,HL
         POP     DE
-        JR      J6317
+        JR      J6310
 
-I6335:  DEFW    R000C  -I633D
-        DEFW    R001E+1-I633D
-        DEFW    R002F  -I633D
+T632E:  DEFW    R000C-I6336
+        DEFW    R001E+1-I6336
+        DEFW    R002F-I6336
         DEFW    0FFFFH
 
-I633D:  PUSH    IY
-        PUSH    IX
+I6336:  PUSH    IX
+        PUSH    IY
         PUSH    HL
         PUSH    DE
         PUSH    BC
@@ -5940,41 +5966,41 @@ I633D:  PUSH    IY
         EX      AF,AF'
         PUSH    AF
         PUSH    HL
-R000C:  LD      HL,(D6365+1)
+R000C:  LD      HL,(D635E+1)
         LD      A,L
         OR      H
         POP     HL
         LD      IX,KEYINT
-        LD      IY,(EXPTBL-1)
-        JR      NZ,J637C
+        LD      IY,(EXPTBL+0-1)
+        JR      NZ,J6375
         POP     AF
-R001E:  LD      (D6365+1),SP
+R001E:  LD      (D635E+1),SP
 R0021:  LD      SP,0
         CALL    CALSLT
         DI
-D6365:  LD      SP,0
+D635E:  LD      SP,0
         PUSH    HL
         LD      HL,0
-R002F:  LD      (D6365+1),HL
+R002F:  LD      (D635E+1),HL
         POP     HL
-J6370:  EX      AF,AF'
+J6369:  EX      AF,AF'
         EXX
         POP     AF
         POP     BC
         POP     DE
-        POP     HL
-        POP     IX
+A636E:  POP     HL
         POP     IY
+        POP     IX
         EI
         RET
 
-J637C:  POP     AF
+J6375:  POP     AF
         CALL    CALSLT
-        JR      J6370
+        JR      J6369
 
-L633D   EQU     $-I633D
+L6336   EQU     $-I6336
 
-I6382:  PUSH    AF
+I637B:  PUSH    AF
         PUSH    HL
         PUSH    DE
         PUSH    BC
@@ -5991,6 +6017,7 @@ I6382:  PUSH    AF
         PUSH    HL
         PUSH    DE
         PUSH    BC
+        CALL    XF368
         LD      H,40H
         CALL    ENASLT
         POP     BC
@@ -5999,20 +6026,20 @@ I6382:  PUSH    AF
         POP     AF
         RET
 
-L6382   EQU     $-I6382
+L637B   EQU     $-I637B
 
-I63A5:  JR      J63AD
+I63A1:  JR      J63A9
 
-?63A7:  PUSH    AF
+?63A3:  PUSH    AF
         LD      A,(RAMAD1)
-        JR      J63B1
+        JR      J63AD
 
-J63AD:  PUSH    AF
+J63A9:  PUSH    AF
         LD      A,(YF348)
-J63B1:  PUSH    HL
+J63AD:  PUSH    HL
         PUSH    DE
         PUSH    BC
-        LD      H,40H   ; "@"
+        LD      H,40H
         CALL    ENASLT
         POP     BC
         POP     DE
@@ -6020,44 +6047,45 @@ J63B1:  PUSH    HL
         POP     AF
         RET
 
-L63A5   EQU     $-I63A5
+L63A1   EQU     $-I63A1
 
-I63BE:  DEFW    C63F8-C63F8
-        DEFW    R0003-C63F8
-        DEFW    R0017-C63F8
-        DEFW    R001C-C63F8
-        DEFW    R0022-C63F8
-        DEFW    R0025-C63F8
-        DEFW    R0039-C63F8
-        DEFW    R003F-C63F8
-        DEFW    R0069-C63F8
-        DEFW    R006C-C63F8
-        DEFW    R007E-C63F8
-        DEFW    R0094-C63F8
-        DEFW    C64A0-C63F8
-        DEFW    R00AB-C63F8
-        DEFW    R00BC-C63F8
-        DEFW    J6408-C63F8
-        DEFW    R0013-C63F8
-        DEFW    J6429-C63F8
-        DEFW    R0034-C63F8
-        DEFW    J6470-C63F8
-        DEFW    R007B-C63F8
-        DEFW    J64AD-C63F8
-        DEFW    R00B8-C63F8
-        DEFW    J651E-C63F8
-        DEFW    R0131-C63F8
-        DEFW    J652C-C63F8
-        DEFW    R0145-C63F8
-        DEFW    C6541-C63F8
+T63BA:  DEFW    C63F4-C63F4
+        DEFW    R0003-C63F4
+        DEFW    R0017-C63F4
+        DEFW    R001C-C63F4
+        DEFW    R0022-C63F4
+        DEFW    R0025-C63F4
+        DEFW    R0039-C63F4
+        DEFW    R003F-C63F4
+        DEFW    R0069-C63F4
+        DEFW    R006C-C63F4
+        DEFW    R007E-C63F4
+        DEFW    R0094-C63F4
+        DEFW    J649C-C63F4
+        DEFW    R00AB-C63F4
+        DEFW    R00BC-C63F4
+        DEFW    J6404-C63F4
+        DEFW    R0013-C63F4
+        DEFW    J6425-C63F4
+        DEFW    R0034-C63F4
+        DEFW    J646C-C63F4
+        DEFW    R007B-C63F4
+        DEFW    J64A9-C63F4
+        DEFW    R00B8-C63F4
+        DEFW    J651E-C63F4
+        DEFW    R0131-C63F4
+        DEFW    J652C-C63F4
+        DEFW    R0145-C63F4
+        DEFW    C6541-C63F4
         DEFW    0FFFFH
 
-;         Subroutine RDSLT MSXDOS
-;            Inputs  ________________________
-;            Outputs ________________________
 
-C63F8:  CALL    C64C6                   ; calculate masks
-R0003:  JP      M,J6408                 ; expanded slot, handle
+;       Subroutine      RDSLT MSXDOS
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+C63F4:  CALL    C64C2                   ; calculate masks
+R0003:  JP      M,J6404                 ; expanded slot, handle
         IN      A,(0A8H)
         LD      D,A
         AND     C
@@ -6066,23 +6094,22 @@ R0003:  JP      M,J6408                 ; expanded slot, handle
         LD      A,E
         RET
 
-J6408:  CALL    C6515                   ; check if primairy slot 0, page 0
-R0013:  JP      Z,J651E                 ; yep, handle RDSLT without helper routines
+J6404:  CALL    C6511                   ; check if helper routines are hit by secundair slot change
+R0013:  JP      Z,J651E                 ; yep, handle it differently
         PUSH    HL
-R0017:  CALL    C64EB
+R0017:  CALL    C64E7                   ; change secundairy slot register with helper routine
         EX      (SP),HL
         PUSH    BC
-R001C:  CALL    C63F8
-        JR      J643A
+R001C:  CALL    C63F4                   ; RDSLT on primairy slot
+        JR      J6436
 
+;       Subroutine      WRSLT MSXDOS
+;       Inputs          ________________________
+;       Outputs         ________________________
 
-;         Subroutine WRSLT MSXDOS
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6419:  PUSH    DE
-R0022:  CALL    C64C6                   ; calculate masks
-R0025:  JP      M,J6429                 ; expanded slot, handle
+C6415:  PUSH    DE
+R0022:  CALL    C64C2                   ; calculate masks
+R0025:  JP      M,J6425                 ; expanded slot, handle
         POP     DE
         IN      A,(0A8H)
         LD      D,A
@@ -6090,31 +6117,31 @@ R0025:  JP      M,J6429                 ; expanded slot, handle
         OR      B
         JP      WRPRIM
 
-J6429:  CALL    C6515                   ; check if primairy slot 0, page 0
-R0034:  JP      Z,J6524                 ; yep, handle WRSLT without helper routines
+J6425:  CALL    C6511                   ; check if helper routines are hit by secundair slot change
+R0034:  JP      Z,J6524                 ; yep, handle it differently
         EX      (SP),HL
         PUSH    HL
-R0039:  CALL    C64EB
+R0039:  CALL    C64E7                   ; change secundairy slot register with helper routine
         POP     DE
         EX      (SP),HL
         PUSH    BC
-R003F:  CALL    C6419
-J643A:  POP     BC
+R003F:  CALL    C6415                   ; WRSLT on primairy slot
+J6436:  POP     BC
         EX      (SP),HL
         PUSH    AF
         LD      A,B
-        AND     3FH     ; "?"
+        AND     3FH
         OR      C
         CALL    X0046
         POP     AF
         POP     HL
         RET
 
-;         Subroutine CALLF MSXDOS
-;            Inputs  ________________________
-;            Outputs ________________________
+;       Subroutine      CALLF MSXDOS
+;       Inputs          ________________________
+;       Outputs         ________________________
 
-C6447:  EX      (SP),HL
+C6443:  EX      (SP),HL
         PUSH    AF
         PUSH    DE
         LD      A,(HL)
@@ -6131,18 +6158,18 @@ C6447:  EX      (SP),HL
         POP     AF
         EX      (SP),HL
 
-;         Subroutine CALSLT MSXDOS
-;            Inputs  ________________________
-;            Outputs ________________________
+;       Subroutine      CALSLT MSXDOS
+;       Inputs          ________________________
+;       Outputs         ________________________
 
-C6459:  EXX
+C6455:  EXX
         EX      AF,AF'
         PUSH    IY
         POP     AF
         PUSH    IX
         POP     HL
-R0069:  CALL    C64C6                   ; calculate masks
-R006C:  JP      M,J6470                 ; expanded slot, handle
+R0069:  CALL    C64C2                   ; calculate masks
+R006C:  JP      M,J646C                 ; expanded slot, handle
         IN      A,(0A8H)
         PUSH    AF
         AND     C
@@ -6150,9 +6177,9 @@ R006C:  JP      M,J6470                 ; expanded slot, handle
         EXX
         JP      CLPRIM
 
-J6470:  CALL    C6515                   ; check if primairy slot 0, page 0
-R007B:  JP      Z,J652C                 ; yep, handle CALSLT without helper routines
-R007E:  CALL    C64EB
+J646C:  CALL    C6511                   ; check if helper routines are hit by secundair slot change
+R007B:  JP      Z,J652C                 ; yep, handle it differently
+R007E:  CALL    C64E7                   ; change secundairy slot register with helper routine
         PUSH    AF
         POP     IY
         PUSH    HL
@@ -6168,14 +6195,14 @@ R007E:  CALL    C64EB
         PUSH    HL
         EX      AF,AF'
         EXX
-R0094:  CALL    C6459
+R0094:  CALL    C6455                   ; CALSLT on primairy slot
         EXX
         EX      AF,AF'
         POP     HL
         POP     BC
         POP     DE
         LD      A,B
-        AND     3FH     ; "?"
+        AND     3FH
         OR      C
         DI
         CALL    X004B
@@ -6184,23 +6211,22 @@ R0094:  CALL    C6459
         EXX
         RET
 
+;       Subroutine      ENASLT MSXDOS
+;       Inputs          ________________________
+;       Outputs         ________________________
 
-;         Subroutine ENASLT MSXDOS
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C64A0:  CALL    C64C6                   ; calculate masks
-R00AB:  JP      M,J64AD                 ; expanded slot, handle
-        IN      A,(0A8H)
+J649C:  CALL    C64C2                   ; calculate masks
+R00AB:  JP      M,J64A9                 ; expanded slot, handle
+C64A2:  IN      A,(0A8H)
         AND     C
         OR      B
         OUT     (0A8H),A
         RET
 
-J64AD:  CALL    C6515                   ; check if primairy slot 0, page 0
-R00B8:  JP      Z,C6541                 ; yep, handle ENASLT without helper routines
-        PUSH    HL
-R00BC:  CALL    C64EB
+J64A9:  CALL    C6511                   ; check if helper routines are hit by secundair slot change
+R00B8:  JP      Z,C6541                 ; yep, handle it differently
+C64AF:  PUSH    HL
+R00BC:  CALL    C64E7                   ; change secundairy slot register with helper routine
         LD      C,A
         LD      B,00H
         LD      A,L
@@ -6211,50 +6237,48 @@ R00BC:  CALL    C64EB
         LD      (HL),A
         POP     HL
         LD      A,C
-        JR      C64A0
+        JR      J649C                   ; ENASLT on primairy slot
 
+;       Subroutine      calculate masks
+;       Inputs          ________________________
+;       Outputs         ________________________
 
-;         Subroutine caculate masks
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C64C6:  DI
+C64C2:  DI
         PUSH    AF
         LD      A,H
         RLCA
         RLCA
         AND     03H
-        LD      E,A                     ; page
+        LD      E,A
         INC     E
         LD      A,0C0H
-J64D1:  RLCA
+J64CD:  RLCA
         RLCA
         DEC     E
-        JR      NZ,J64D1
-        LD      E,A                     ; page select mask
+        JR      NZ,J64CD
+        LD      E,A
         CPL
-        LD      C,A                     ; page clear mask
+        LD      C,A
         POP     AF
         PUSH    AF
         AND     03H
-        LD      B,A                     ; primairy slot
+        LD      B,A
         INC     B
         LD      A,0ABH
-J64E1:  ADD     A,55H   ; "U"
-        DJNZ    J64E1
-        LD      D,A                     ; slot set mask (all pages)
+J64DD:  ADD     A,55H
+        DJNZ    J64DD
+        LD      D,A
         AND     E
-        LD      B,A                     ; slot set mask (page)
+        LD      B,A
         POP     AF
         AND     A
         RET
 
+;       Subroutine      change secundairy slot register with helper routine
+;       Inputs          ________________________
+;       Outputs         ________________________
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C64EB:  PUSH    AF
+C64E7:  PUSH    AF
         LD      A,D
         AND     0C0H
         LD      C,A
@@ -6263,50 +6287,51 @@ C64EB:  PUSH    AF
         LD      D,A
         IN      A,(0A8H)
         LD      B,A
-        AND     3FH     ; "?"
+        AND     3FH
         OR      C
         PUSH    AF
         LD      A,D
         RRCA
         RRCA
-        AND     03H     ; 3
+        AND     03H
         LD      D,A
         INC     D
         LD      A,0ABH
-J6503:  ADD     A,55H   ; "U"
+J64FF:  ADD     A,55H
         DEC     D
-        JR      NZ,J6503
+        JR      NZ,J64FF
         AND     E
         LD      D,A
         LD      A,E
         CPL
         LD      H,A
         POP     AF
-R0116:  CALL    C655C
+R0116:  CALL    C655C                   ; save and change secundair slotregister
         POP     AF
-        AND     03H     ; 3
+        AND     03H
         RET
 
+;       Subroutine      check if helper routines are hit by secundair slot change
+;       Inputs          ________________________
+;       Outputs         ________________________
 
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6515:  INC     D
-        DEC     D                       ; primairy slot 0 ?
-        RET     NZ
-        LD      B,A
+C6511:  LD      C,A
         LD      A,E
-        CP      03H                     ; page 0 ?
-        LD      A,B
+        CP      03H
+        LD      A,C
+        RET     NZ                      ; not page 0, quit
+        LD      A,(RAMAD0)
+        AND     E                       ; primary slot of the helper routines
+        CP      B                       ; same as requested ?
+        LD      A,C
         RET
 
-J651E:  CALL    C6549                   ; change secundairy slot register
+J651E:  CALL    C6549                   ; Change secundairy slot register
         LD      E,(HL)
-        JR      C6529                   ; restore secundairy slot register
+        JR      C6529
 
 J6524:  POP     DE
-R0131:  CALL    C6549                   ; change secundairy slot register
+R0131:  CALL    C6549                   ; Change secundairy slot register
         LD      (HL),E
 
 ;       Subroutine      __________________________
@@ -6314,9 +6339,9 @@ R0131:  CALL    C6549                   ; change secundairy slot register
 ;       Outputs         ________________________
 
 C6529:  LD      A,B
-        JR      J6557
+        JR      J6557                   ; Restore secundairy slot register
 
-J652C:  CALL    C6541                   ; change secundairy slot register and update SLTTBL
+J652C:  CALL    C6541                   ; Change secundairy slot register and update SLTTBL
         PUSH    HL
         PUSH    BC
         EX      AF,AF'
@@ -6327,7 +6352,7 @@ J652C:  CALL    C6541                   ; change secundairy slot register and up
         POP     BC
 R0145:  CALL    C6529                   ; restore secundairy slot register
         POP     HL
-        LD      (HL),B                  ; restore SLTTBL
+        LD      (HL),B
         EX      AF,AF'
         EXX
         RET
@@ -6336,14 +6361,14 @@ R0145:  CALL    C6529                   ; restore secundairy slot register
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
-C6541:  CALL    C6549                   ; change secundairy slot register
+C6541:  CALL    C6549                   ; Change secundairy slot register
         LD      HL,SLTTBL
         LD      (HL),D
         RET
 
-;       Subroutine      __________________________
+;       Subroutine      Change secundairy slot register
 ;       Inputs          ________________________
-;       Outputs         ________________________
+;       Outputs         B = old secundairy slot register value
 
 C6549:  RRCA
         RRCA
@@ -6359,7 +6384,7 @@ J6557:  LD      (YFFFF),A
         LD      A,E
         RET
 
-L63F8   EQU     $-C63F8
+L63F4   EQU     $-C63F4
 
 ;       Subroutine      __________________________
 ;       Inputs          ________________________
@@ -6409,7 +6434,7 @@ A658D:  ld      a,(de)
         ld      h,(hl)
         ld      l,a
         ex      (sp),hl
-        call    C72D6                   ;
+        call    A72DA                   ;
         scf
         ccf
         ret
@@ -6436,15 +6461,15 @@ T65B1:  defb    "SYSTEM",0
 A65C4:  ret     nz
         ld      a,(YF346)
         and     a
-        jp      z,J7319                 ; illegal function call error
+        jp      z,A7315
         ld      ix,M6C1C
-        call    CALBAS                  ; close all i/o channels
+        call    A731E                   ; close all i/o channels
         call    TOTEXT
         call    ERAFNK
-        jp      C5A11                   ; start MSXDOS
+        jp      A5A11                   ; start MSXDOS
 
 A65DC:  push    hl
-        call    z,C60AC
+        call    z,A60B1
         pop     hl
         and     a
         ret
@@ -6502,13 +6527,13 @@ A6626:  inc     de
         djnz    A661E                   ; next char
         pop     hl
         pop     hl
-        jr      J669F                   ; quit with Zx set (file open)
+        jr      A66A0                   ; quit with Zx set (file open)
 
 A662E:  pop     hl
         pop     af
         dec     a
         jp      p,A65F7                 ; next channel
-        jr      J669F                   ; quit with Zx reset (file not open)
+        jr      A66A0                   ; quit with Zx reset (file not open)
 
 A6636:  push    hl
         push    de
@@ -6517,7 +6542,7 @@ A6636:  push    hl
         ld      (BUF+10),a
         call    A6657                   ; copy FILNAM to FCB
         call    A6645                   ; search file
-        jr      J669F
+        jr      A66A0
 
 A6645:  ld      hl,BUF+84
         ld      (YF23D),hl              ; transferaddress in BUF
@@ -6546,1947 +6571,1990 @@ A665A:  ld      hl,FILNAM
 ;       +6      +14     returnaddress CALLF caller
 ;       +8      +16     returnaddress hook caller
 
-C6663:  PUSH    HL
-        PUSH    DE
-        PUSH    BC
-        PUSH    AF
-        LD      A,(YF348)
-        ADD     A,A
-        LD      HL,16
-        JR      NC,J6672
-        LD      L,16+8
-J6672:  ADD     HL,SP
-        PUSH    IX
-        POP     BC
-        LD      (HL),C
-        INC     HL
-        LD      (HL),B
-        LD      HL,10
-        ADD     HL,SP
-        EX      DE,HL
-        JR      J668C
-
-J6680:  PUSH    IY
-        POP     BC
-J6683:  LD      C,(HL)
-        LD      A,(DE)
-        LD      (HL),A
-        LD      A,C
-        LD      (DE),A
-        INC     HL
-        INC     DE
-        DJNZ    J6683
-J668C:  LD      A,(YF348)
-        ADD     A,A
-        LD      HL,18
-        JR      NC,J6697
-        LD      L,18+8
-J6697:  ADD     HL,SP
-        LD      A,E
-        SUB     L
-        LD      A,D
-        SBC     A,H
-        JR      C,J6680
-J669E:  POP     AF
-J669F:  POP     BC
-        POP     DE
-        POP     HL
-        RET
-
-C66A3:  LD      IX,RETRTN
-        LD      IY,00200H
-        CALL    C6663
-        POP     HL
-        LD      A,(HL)
-        AND     A
-        RET
-
-C66B2:  LD      BC,256
-        LD      (YF33D),BC
-        CALL    C72D6
-        LD      A,E
-        RET     Z
-        PUSH    AF
-        PUSH    HL
-        LD      A,(YF348)
-        ADD     A,A
-        LD      HL,12
-        JR      NC,J66CB
-        LD      L,12+8
-J66CB:  ADD     HL,SP
-        LD      A,(HL)
-        CP      04H     ; 4
-        JP      NZ,J731F                ; syntax error
-        INC     HL
-        LD      A,(HL)
-        CP      09H     ; 9
-        JP      NC,J731F                ; syntax error
-        POP     HL
-        CALL    C72CC
-        DEFB    0FFH
-        CALL    C72CC
-        DEFB    092H
-        CALL    C72CC
-        DEFB    0EFH
-        LD      IX,M4756
-        CALL    CALBAS
-        DEC     DE
-        INC     D
-        DEC     D
-        JP      NZ,J7319                ; illegal function call error
-        INC     DE
-        LD      (YF33D),DE
-        POP     AF
-        RET
-
-C66FA:  RET     NC
-        LD      IX,RETRTN
-        LD      IY,00400H
-        CALL    C6663
-        CALL    C6FA5
-        CALL    A65EA
-        JP      Z,J7301                 ; file already open error
-        LD      (PTRFIL),HL
-        LD      A,E
-        CP      04H     ; 4
-        JR      Z,J671E
-        LD      BC,1
-        LD      (YF33D),BC
-J671E:  POP     AF
-        PUSH    AF
-        PUSH    HL
-        PUSH    DE
-        LD      HL,YF345
-        CP      (HL)
-        JP      NC,J7307                ; bad filenumber error
-        LD      BC,37
-        LD      E,A
-        LD      D,B
-        LD      HL,(YF353)
-        CALL    A491C
-        XOR     A
-        LD      HL,12
-        ADD     HL,BC
-        LD      (HL),A
-        POP     DE
-        POP     HL
-        INC     HL
-        LD      (HL),C
-        INC     HL
-        LD      (HL),B
-        INC     HL
-        LD      (HL),A
-        INC     HL
-        LD      (HL),D
-        INC     HL
-        INC     HL
-        LD      (HL),A
-        CALL    A6636
-        PUSH    BC
-        PUSH    DE
-        LD      A,D
-        LD      (BC),A
-        LD      E,C
-        LD      D,B
-        INC     DE
-        CALL    A665A
-        POP     DE
-        POP     BC
-        LD      A,E
-        JR      NZ,J6775
-        AND     86H
-        JP      Z,J7313                 ; file not found error
-J675E:  PUSH    DE
-        PUSH    BC
-        LD      E,C
-        LD      D,B
-        CALL    A461D
-        AND     A
-        JP      NZ,J71A7
-        POP     HL
-        CALL    C67FB
-        POP     DE
-        LD      HL,(PTRFIL)
-        LD      (HL),E
-J6772:  POP     AF
-        POP     HL
-        RET
-
-J6775:  CP      08H     ; 8
-        JR      Z,J67BE
-        CP      02H     ; 2
-        JR      Z,J675E
-        CP      80H
-        JR      Z,J675E
-        PUSH    DE
-        PUSH    BC
-        LD      E,C
-        LD      D,B
-        CALL    A4462                   ; open fcb
-        POP     HL
-        CALL    C67FB
-        POP     DE
-        LD      HL,(PTRFIL)
-        LD      (HL),E
-        LD      A,E
-        CP      04H     ; 4
-        JR      Z,J6772
-        PUSH    HL
-        LD      HL,FLBMEM
-        XOR     A
-        CP      (HL)
-        LD      (HL),A
-        POP     HL
-        JR      NZ,J6772
-        LD      BC,6
-        ADD     HL,BC
-        PUSH    HL
-        LD      (HL),0FFH
-        LD      HL,(PTRFIL)
-        CALL    C6827
-        POP     HL
-        DEC     HL
-        DEC     HL
-        DEC     HL
-        LD      (HL),A
-        CP      0FFH
-        JR      NZ,J6772
-        INC     HL
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      (HL),80H
-J67BC:  JR      J6772
-
-J67BE:  PUSH    BC
-        LD      E,C
-        LD      D,B
-        CALL    A4462                   ; open fcb
-        POP     HL
-        PUSH    HL
-        CALL    C67FB
-        LD      HL,(PTRFIL)
-        LD      (HL),01H        ; 1
-        LD      BC,6
-        ADD     HL,BC
-        LD      (HL),0FFH
-        LD      HL,(PTRFIL)
-J67D7:  PUSH    HL
-        CALL    C6827
-        POP     HL
-        JR      NC,J67D7
-        LD      (HL),02H        ; 2
-        POP     HL
-        LD      BC,33
-        ADD     HL,BC
-        LD      C,04H   ; 4
-        PUSH    HL
-        SCF
-J67E9:  LD      A,(HL)
-        SBC     A,B
-        LD      (HL),A
-        INC     HL
-        DEC     C
-        JR      NZ,J67E9
-        POP     HL
-        INC     C
-        JR      NC,J67F6
-        LD      C,04H   ; 4
-J67F6:  CALL    C6810
-        JR      J67BC
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C67FB:  LD      BC,12
-        ADD     HL,BC
-        LD      (HL),B
-        INC     HL
-        LD      (HL),B
-        INC     HL
-        LD      BC,(YF33D)
-        LD      (HL),C
-        INC     HL
-        LD      (HL),B
-        LD      BC,17
-        ADD     HL,BC
-        LD      C,05H   ; 5
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6810:  LD      (HL),B
-        INC     HL
-        DEC     C
-        JR      NZ,C6810
-        RET
-
-C6816:  LD      IX,RETRTN
-        LD      IY,00600H
-        CALL    C6663
-        CALL    C6827
-        JP      J669F
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6827:  PUSH    HL
-        LD      A,(HL)
-        CP      01H     ; 1
-        JP      NZ,J7195                ; bad file mode error
-        LD      E,L
-        LD      D,H
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      A,(HL)
-        AND     A
-        JR      NZ,J6863
-        INC     HL
-        INC     HL
-        INC     HL
-        INC     (HL)
-        LD      A,(HL)
-        INC     HL
-        INC     HL
-        INC     HL
-        JR      NZ,J685E
-        PUSH    HL
-        LD      (YF23D),HL
-        EX      DE,HL
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        LD      HL,256
-        CALL    A47B2
-        LD      E,L
-        LD      D,H
-        DEC     H
-        LD      A,L
-        OR      H
-        POP     HL
-        JR      Z,J685E
-        PUSH    HL
-        ADD     HL,DE
-        LD      (HL),1AH
-        POP     HL
-        XOR     A
-J685E:  LD      C,A
-        LD      B,00H
-        ADD     HL,BC
-        LD      A,(HL)
-J6863:  LD      B,A
-        SUB     1AH
-        SUB     01H     ; 1
-        LD      A,B
-        POP     HL
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      (HL),00H
-        RET     NC
-        LD      (HL),A
-        RET
-
-C6872:  PUSH    HL
-        LD      A,(YF348)
-        ADD     A,A
-        LD      HL,8
-        JR      NC,J687E
-        LD      L,10H   ; 16
-J687E:  ADD     HL,SP
-        LD      (HL),41H        ; "A"
-        INC     HL
-        LD      (HL),6EH        ; "n"
-        POP     HL
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      (HL),C
-        RET
-
-C688A:  LD      IX,RETRTN
-        LD      IY,00800H
-        CALL    C6663
-        LD      A,(HL)
-        CP      02H     ; 2
-        JP      NZ,J7195                ; bad file mode error
-        POP     AF
-        PUSH    AF
-        CALL    C68A3
-        JP      J669E
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C68A3:  PUSH    HL
-        LD      BC,6
-        ADD     HL,BC
-        LD      C,(HL)
-        INC     (HL)
-        INC     HL
-        INC     HL
-        INC     HL
-        ADD     HL,BC
-        LD      (HL),A
-        POP     HL
-        RET     NZ
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C68B1:  PUSH    HL
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        LD      BC,4
-        ADD     HL,BC
-        LD      A,(HL)
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      (YF23D),HL
-        AND     A
-        LD      L,A
-        LD      H,B
-        JR      NZ,J68C7
-        INC     H
-J68C7:  CALL    C718B
-        POP     HL
-        RET
-
-C68CC:  LD      IX,RETRTN
-        LD      IY,00400H
-        CALL    C6663
-        POP     HL
-        LD      A,(HL)
-        SUB     02H     ; 2
-        JR      NZ,J68F0
-        PUSH    HL
-        LD      HL,FLBMEM
-        CP      (HL)
-        LD      (HL),A
-        POP     HL
-        JR      NZ,J68F0
-        LD      (HL),04H        ; 4
-        LD      A,1AH
-        CALL    C68A3
-        CALL    NZ,C68B1
-J68F0:  PUSH    HL
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        CALL    A456F
-        POP     HL
-        PUSH    HL
-        LD      DE,7
-        ADD     HL,DE
-        LD      (HL),D
-        LD      L,D
-        LD      H,D
-        LD      (PTRFIL),HL
-        POP     HL
-        INC     (HL)
-        DEC     (HL)
-        LD      (HL),D
-        POP     HL
-        RET
-
-C690A:  CALL    C7381
-        PUSH    HL
-        LD      IX,M54F7
-        CALL    CALBAS
-        LD      A,0FFH
-        CALL    C69C3
-        LD      HL,(TXTTAB)
-        LD      (YF23D),HL
-        EX      DE,HL
-        LD      HL,(VARTAB)
-        AND     A
-        SBC     HL,DE
-        CALL    C7187
-        LD      (NLONLY),A
-        POP     HL
-        LD      IX,M6B24
-        JP      CALBAS
-
-C6935:  LD      IX,M739A
-        LD      IY,00200H
-        CALL    C6663
-        POP     AF
-        JP      Z,J7195                 ; bad file mode error
-        LD      IX,M6C1C
-        CALL    CALBAS
-        LD      HL,(YF353)
-        PUSH    HL
-        CALL    C67FB
-        POP     HL
-        PUSH    HL
-        LD      BC,19
-        ADD     HL,BC
-        LD      A,(HL)
-        AND     A
-        JP      NZ,J72E9                ; out of memory error
-        DEC     HL
-        OR      (HL)
-        JP      NZ,J72E9                ; out of memory error
-        DEC     HL
-        LD      D,(HL)
-        DEC     HL
-        LD      E,(HL)
-        LD      HL,(TXTTAB)
-        ADD     HL,DE
-        JP      C,J72E9                 ; out of memory error
-        LD      BC,128+19
-        ADD     HL,BC
-        JP      C,J72E9                 ; out of memory error
-        SBC     HL,SP
-        JP      NC,J72E9                ; out of memory error
-        EX      DE,HL
-        EX      (SP),HL
-        EX      DE,HL
-        CALL    C69CC
-        LD      HL,(TXTTAB)
-        LD      (YF23D),HL
-        POP     HL
-        DEC     HL
-        CALL    A47B2
-        LD      DE,(TXTTAB)
-        ADD     HL,DE
-        LD      (VARTAB),HL
-        LD      IX,M4253
-        CALL    CALBAS
-        LD      A,(FILNAM+0)
-        AND     A
-        RET     NZ
-        LD      (NLONLY),A
-        LD      HL,I69B5
-        LD      DE,BUF+10
-        LD      BC,5
-        PUSH    DE
-        LDIR
-        POP     HL
-        LD      IX,M4601
-        JP      CALBAS
-
-I69B5:  DEFB    ":",092H,0
-        DEFW    0
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C69BA:  PUSH    HL
-        LD      A,L
-        CALL    C69C7
-        POP     HL
-        LD      A,H
-        JR      C69C7
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C69C3:  LD      DE,(YF353)
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C69C7:  LD      BC,A47BE
-        JR      J69CF
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C69CC:  LD      BC,A47B2
-J69CF:  PUSH    AF
-        LD      HL,1
-        ADD     HL,SP
-        LD      (YF23D),HL
-        PUSH    DE
-        CALL    C69DE
-        POP     DE
-        POP     AF
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C69DE:  LD      HL,1
-        PUSH    BC
-        RET
-
-?69E3:  PUSH    DE
-        CALL    C6B66
-        LD      (SAVENT),DE
-        PUSH    DE
-        CALL    C6B66
-        LD      (SAVEND),DE
-        EX      (SP),HL
-        EX      DE,HL
-        RST     20H
-        JP      C,J7319                 ; illegal function call error
-        EX      DE,HL
-        EX      (SP),HL
-        CALL    C72D6
-        SCF
-        JR      Z,J6A17
-        CALL    C72CC
-        INC     L
-        CP      53H     ; "S"
-        JR      NZ,J6A0F
-        CALL    C72D7
-        AND     A
-        JR      J6A17
-
-J6A0F:  CALL    C6B6A
-        LD      (SAVENT),DE
-        SCF
-J6A17:  POP     BC
-        JR      NC,J6A1F
-        INC     B
-        DEC     B
-        JP      P,J7319                 ; illegal function call error
-J6A1F:  POP     DE
-        PUSH    HL
-        PUSH    BC
-        PUSH    AF
-        XOR     A
-        LD      E,02H   ; 2
-        LD      IX,M6AFA
-        CALL    CALBAS
-        LD      A,0FEH
-        CALL    C69C3
-        POP     AF
-        POP     HL
-        PUSH    HL
-        PUSH    AF
-        CALL    C69BA
-        LD      HL,(SAVEND)
-        CALL    C69BA
-        LD      HL,(SAVENT)
-        CALL    C69BA
-        POP     AF
-        POP     BC
-        PUSH    AF
-        LD      (YF23D),BC
-        LD      HL,(SAVEND)
-        AND     A
-        SBC     HL,BC
-        INC     HL
-        POP     AF
-        JR      NC,J6A69
-        CALL    C7187
-J6A59:  LD      A,0FFH
-        LD      (FLBMEM),A
-        XOR     A
-        LD      IX,M6B24
-        CALL    CALBAS
-        JP      J6EF4
-
-J6A69:  CALL    C7161
-J6A6C:  PUSH    HL
-I6A6D:  LD      DE,(SAVENT)
-        RST     20H
-        PUSH    AF
-        LD      C,L
-        LD      B,H
-        LD      HL,(SAVEND)
-        PUSH    HL
-        ADD     HL,BC
-        LD      (SAVEND),HL
-        POP     HL
-        LD      DE,(YF23D)
-        CALL    LDIRMV
-        POP     AF
-        JR      NC,J6A9A
-        POP     HL
-        PUSH    HL
-        CALL    C7187
-        LD      HL,(SAVENT)
-        POP     DE
-        AND     A
-        SBC     HL,DE
-        LD      (SAVENT),HL
-        EX      DE,HL
-        JR      J6A6C
-
-J6A9A:  POP     HL
-        LD      HL,(SAVENT)
-        CALL    C7187
-        JR      J6A59
-
-?6AA3:  PUSH    DE
-        XOR     A
-        LD      (RUNBNF),A
-        LD      C,A
-        LD      B,A
-        CALL    C72D6
-        JR      Z,J6ACC
-        CALL    C72CC
-        INC     L
-        CP      52H     ; "R"
-        JR      Z,J6ABB
-        CP      53H     ; "S"
-        JR      NZ,J6AC7
-J6ABB:  LD      (RUNBNF),A
-        CALL    C72D7
-        JR      Z,J6ACC
-        CALL    C72CC
-        INC     L
-J6AC7:  CALL    C6B6A
-        LD      B,D
-        LD      C,E
-J6ACC:  POP     DE
-        PUSH    HL
-        PUSH    BC
-        LD      A,0FFH
-        LD      (FLBMEM),A
-        XOR     A
-        LD      E,01H   ; 1
-        LD      IX,M6AFA
-        CALL    CALBAS
-        LD      DE,(YF353)
-        CALL    C69CC
-        CP      0FEH
-        JP      NZ,J7195                ; bad file mode error
-        POP     BC
-        CALL    C6B58
-        PUSH    HL
-        CALL    C6B58
-        PUSH    HL
-        CALL    C6B58
-        LD      (SAVENT),HL
-        POP     HL
-I6AFA:  POP     BC
-        AND     A
-        SBC     HL,BC
-        INC     HL
-        LD      (YF23D),BC
-        LD      A,(RUNBNF)
-        CP      53H     ; "S"
-        JR      Z,J6B16
-        CALL    A47B2
-J6B0D:  LD      IX,M4AFF
-        CALL    CALBAS
-        POP     HL
-        RET
-
-J6B16:  CALL    C7161
-J6B19:  PUSH    HL
-        LD      DE,(SAVENT)
-        RST     20H
-        PUSH    AF
-        LD      DE,(YF353)
-I6B24:  CALL    A47B2
-        POP     AF
-        POP     BC
-        PUSH    BC
-        PUSH    AF
-        LD      HL,(SAVEND)
-        PUSH    HL
-        ADD     HL,BC
-        LD      (SAVEND),HL
-        POP     DE
-        LD      HL,(YF23D)
-        POP     AF
-        JR      NC,J6B4A
-        CALL    LDIRVM
-        LD      HL,(SAVENT)
-        POP     DE
-        AND     A
-        SBC     HL,DE
-        LD      (SAVENT),HL
-        EX      DE,HL
-        JR      J6B19
-
-J6B4A:  POP     BC
-        LD      BC,(SAVENT)
-        CALL    LDIRVM
-        XOR     A
-        LD      (RUNBNF),A
-        JR      J6B0D
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6B58:  PUSH    BC
-        CALL    C69CC
-        PUSH    AF
-        CALL    C69CC
-        LD      H,A
-        POP     AF
-        LD      L,A
-        POP     BC
-        ADD     HL,BC
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6B66:  CALL    C72CC
-        INC     L
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6B6A:  LD      IX,M6F0B
-        JP      CALBAS
-
-C6B71:  CALL    C7381
-        CALL    C72D7
-        CALL    C72CC
-        DEFB    "("
-        CALL    C6BC1
-        CALL    C72CC
-        ADD     HL,HL
-        PUSH    HL
-        LD      HL,M3FD6
-        LD      (DAC+2),HL
-        POP     HL
-        LD      A,03H   ; 3
-        LD      (VALTYP),A
-        AND     A
-        JR      J6B9D
-
-C6B92:  CALL    C7381
-        CALL    C6BC1
-        CALL    C72D6
-        RET     NZ
-        SCF
-J6B9D:  PUSH    AF
-        PUSH    HL
-        PUSH    DE
-        LD      E,C
-        CALL    A505D
-        INC     A
-        JP      Z,J7198                 ; bad drive name error
-        POP     DE
-        POP     HL
-        POP     AF
-        PUSH    HL
-        LD      A,0FFH
-        LD      (YF246),A
-        LD      A,(IX+0)
-        LD      B,1
-        LD      C,(IX+1)
-        LD      HL,(YF351)
-        CALL    PHYDIO
-        POP     HL
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6BC1:  LD      IX,M521C
-        CALL    CALBAS
-        PUSH    DE
-        CALL    C72CC
-        INC     L
-        LD      IX,M542F
-        CALL    CALBAS
-        POP     BC
-        RET
-
-C6BD6:  LD      IX,RETRTN
-        LD      IY,00400H
-        CALL    C6663
-        LD      A,(HL)
-        CP      04H     ; 4
-        JP      NZ,J7195                ; bad file mode error
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        LD      BC,7
-        ADD     HL,BC
-        EX      (SP),HL
-        CALL    C72D6
-        JR      Z,J6C25
-        PUSH    DE
-        CALL    C72CC
-        INC     L
-        LD      IX,M4C64
-        CALL    CALBAS
-        PUSH    HL
-        CALL    C6DF7
-        LD      A,C
-        OR      B
-        OR      L
-        OR      H
-        JP      Z,J7319                 ; illegal function call error
-        LD      A,C
-        OR      B
-        DEC     BC
-        JR      NZ,J6C12
-        DEC     HL
-J6C12:  EX      DE,HL
-        POP     HL
-        EX      (SP),HL
-        PUSH    HL
-        PUSH    DE
-        LD      DE,33
-        ADD     HL,DE
-        POP     DE
-I6C1C:  LD      (HL),C
-        INC     HL
-        LD      (HL),B
-        INC     HL
-        LD      (HL),E
-        INC     HL
-        LD      (HL),D
-        POP     DE
-        POP     HL
-J6C25:  EX      (SP),HL
-        LD      (YF23D),HL
-        POP     HL
-        POP     AF
-        PUSH    HL
-        AND     A
-        LD      HL,J72F5                ; input past end error
-        LD      BC,A47B2
-        JR      Z,J6C3B
-        LD      HL,J71A4
-        LD      BC,A47BE
-J6C3B:  PUSH    HL
-        CALL    C69DE
-        AND     A
-        RET     NZ
-        POP     HL
-        JP      J6EF4
-
-C6C45:  CALL    C7381
-        CP      23H     ; "#"
-        CALL    Z,C72D7
-        LD      IX,M521C
-        CALL    CALBAS
-        JP      Z,J731F                 ; syntax error
-        PUSH    HL
-        LD      IX,M6A6D
-        CALL    CALBAS
-        LD      E,L
-        LD      D,H
-        JP      Z,J72EF                 ; file not open error
-        JP      C,J7319                 ; illegal function call error
-        LD      A,(HL)
-        CP      04H     ; 4
-        JP      NZ,J7195                ; bad file mode error
-        INC     HL
-        LD      A,(HL)
-        INC     HL
-        LD      H,(HL)
-        LD      L,A
-        LD      BC,14
-        ADD     HL,BC
-        LD      C,(HL)
-        INC     HL
-        LD      B,(HL)
-        LD      (BUF+10),BC
-        LD      HL,0
-        LD      (BUF+12),HL
-        LD      BC,9
-        POP     HL
-J6C87:  EX      DE,HL
-        ADD     HL,BC
-        EX      DE,HL
-        LD      A,(HL)
-        CP      2CH     ; ","
-        RET     NZ
-        PUSH    DE
-        LD      IX,M521B
-        CALL    CALBAS
-        PUSH    AF
-        CALL    C72CC
-        LD      B,C
-        CALL    C72CC
-        LD      D,E
-        LD      IX,M5EA4
-        CALL    CALBAS
-        LD      IX,M5597
-        CALL    CALBAS
-        JP      NZ,J72E3                ; type mismatch error
-        POP     AF
-        EX      (SP),HL
-        PUSH    DE
-        PUSH    HL
-        LD      HL,(BUF+12)
-        LD      C,A
-        LD      B,00H
-        ADD     HL,BC
-        LD      (BUF+12),HL
-        EX      DE,HL
-        LD      HL,(BUF+10)
-        RST     20H
-        JP      C,J72FB                 ; field overflow error
-        POP     DE
-        POP     HL
-        LD      (HL),C
-        INC     HL
-        LD      (HL),E
-        INC     HL
-        LD      (HL),D
-        LD      B,00H
-        POP     HL
-        JR      J6C87
-
-C6CD2:  DEFB    0F6H
-
-C6CD3:  SCF
-        CALL    C7381
-        PUSH    AF
-        LD      IX,M5EA4
-        CALL    CALBAS
-        LD      IX,M5597
-        CALL    CALBAS
-        JP      NZ,J72E3                ; type mismatch error
-        PUSH    DE
-        LD      IX,M4C5F
-        CALL    CALBAS
-        POP     BC
-        EX      (SP),HL
-        PUSH    HL
-        PUSH    BC
-        LD      IX,M67D0
-        CALL    CALBAS
-        LD      B,(HL)
-        EX      (SP),HL
-        LD      A,(HL)
-        LD      C,A
-        PUSH    BC
-        PUSH    HL
-        PUSH    AF
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        OR      A
-        JR      Z,J6D66
-        LD      HL,(NULBUF)
-        DEC     HL
-        RST     20H
-        JR      C,J6D44
-        LD      HL,(VARTAB)
-        RST     20H
-        JR      C,J6D44
-        LD      E,C
-        LD      D,00H
-        LD      HL,(STKTOP)
-        ADD     HL,DE
-        EX      DE,HL
-        LD      HL,(FRETOP)
-        RST     20H
-        JR      C,J6D79
-        POP     AF
-J6D26:  LD      A,C
-        LD      IX,M668E
-        CALL    CALBAS
-        POP     HL
-        POP     BC
-        EX      (SP),HL
-        PUSH    DE
-        PUSH    BC
-        LD      IX,M67D0
-        CALL    CALBAS
-        POP     BC
-        POP     DE
-        EX      (SP),HL
-        PUSH    BC
-        PUSH    HL
-        INC     HL
-        PUSH    AF
-        LD      (HL),E
-        INC     HL
-        LD      (HL),D
-J6D44:  POP     AF
-        POP     HL
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        POP     BC
-        POP     HL
-        INC     HL
-        LD      A,(HL)
-        INC     HL
-        LD      H,(HL)
-        LD      L,A
-        LD      A,C
-        CP      B
-        JR      NC,J6D56
-        LD      B,A
-J6D56:  SUB     B
-        LD      C,A
-        POP     AF
-        CALL    NC,C6D70
-        INC     B
-J6D5D:  DEC     B
-        JR      Z,J6D6B
-        LD      A,(HL)
-        LD      (DE),A
-        INC     HL
-        INC     DE
-        JR      J6D5D
-
-J6D66:  POP     BC
-        POP     BC
-        POP     BC
-        POP     BC
-        POP     BC
-J6D6B:  CALL    C,C6D70
-        POP     HL
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6D70:  LD      A,20H   ; " "
-        INC     C
-J6D73:  DEC     C
-        RET     Z
-        LD      (DE),A
-        INC     DE
-        JR      J6D73
-
-J6D79:  POP     AF
-        POP     HL
-        POP     BC
-        EX      (SP),HL
-        EX      DE,HL
-        JR      NZ,J6DA5
-        PUSH    BC
-        LD      A,B
-        LD      IX,M6627
-        CALL    CALBAS
-        LD      DE,DSCTMP
-        LD      HL,(TEMPPT)
-        LD      (DAC+2),HL
-        LD      A,3
-        LD      (VALTYP),A
-        CALL    M2EF3
-        LD      DE,FRETOP
-        RST     20H
-        LD      (TEMPPT),HL
-        JP      Z,J72DD                 ; string formula too complex error
-        POP     BC
-J6DA5:  EX      (SP),HL
-        PUSH    BC
-        PUSH    HL
-        JP      J6D26
-
-C6DAB:  LD      A,2
-        DEFB    1
-
-C6DAE:  LD      A,4
-        DEFB    1
-
-C6DB1:  LD      A,8
-        CALL    C7381
-        PUSH    AF
-        LD      IX,M517A
-        CALL    CALBAS
-        POP     AF
-        LD      IX,M6627
-        CALL    CALBAS
-        LD      HL,(DSCTMP+1)
-        CALL    M2F10
-        LD      IX,M6825
-        JP      CALBAS                  ; push temporary descriptor to temporary desciptor heap and quit
-
-C6DD3:  LD      A,2-1
-        DEFB    1
-
-C6DD6:  LD      A,4-1
-        DEFB    1
-
-C6DD9:  LD      A,8-1
-        CALL    C7381
-        PUSH    AF
-        LD      IX,M67D0
-        CALL    CALBAS
-        POP     AF
-        CP      (HL)
-        JP      NC,J7319                ; illegal function call error
-        INC     A
-        INC     HL
-        LD      C,(HL)
-        INC     HL
-        LD      H,(HL)
-        LD      L,C
-        LD      (VALTYP),A
-        JP      M2F08
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6DF7:  LD      IX,M5597
-        CALL    CALBAS
-        LD      BC,(DAC+2)
-        LD      HL,0
-        RET     M
-        JP      Z,J72E3                 ; type mismatch error
-        LD      HL,DAC
-        LD      DE,BUF+158
-        LD      BC,8
-        LDIR
-        LD      HL,I6E64
-        LD      DE,ARG
-        LD      C,08H   ; 8
-        LDIR
-        CALL    M289F
-        AND     A
-        CALL    M30D1
-        LD      IX,M5432
-        CALL    CALBAS
-        PUSH    DE
-        EX      DE,HL
-        LD      IX,M46FF
-        CALL    CALBAS
-        CALL    M3042
-        LD      BC,06545H
-        LD      DE,06053H
-        CALL    M325C
-        LD      HL,DAC
-        LD      DE,ARG
-        LD      BC,8
-        LDIR
-        LD      HL,BUF+158
-        LD      DE,DAC
-        LD      C,08H   ; 8
-        LDIR
-        CALL    M268C
-        LD      IX,M5432
-        CALL    CALBAS
-        LD      C,E
-        LD      B,D
-        POP     HL
-        RET
-
-I6E64:  DEFB    045H,065H,053H,060H,000H,000H,000H,000H
-
-C6E6C:  CALL    C7381
-        PUSH    HL
-        CALL    C6827
-        LD      HL,0
-        JR      NC,J6E79
-        DEC     HL
-J6E79:  PUSH    AF
-        CALL    M2F99
-        POP     AF
-        POP     HL
-        INC     HL
-        INC     HL
-        INC     HL
-        LD      (HL),A
-        RET
-
-C6E84:  CALL    C7381
-        LD      D,00H
-        JR      Z,J6E91
-        CALL    C6F7C
-        PUSH    HL
-        JR      J6E95
-
-J6E91:  PUSH    HL
-        CALL    C6FFA
-J6E95:  CALL    C6F5F
-        LD      A,(PRTFLG)
-        AND     A
-        PUSH    AF
-        CALL    A6645
-        JP      Z,J7313                 ; file not found error
-        LD      IX,M7323
-        CALL    CALBAS
-J6EAA:  LD      HL,BUF+85
-        LD      B,0BH   ; 11
-J6EAF:  LD      A,(HL)
-        INC     HL
-        RST     18H
-        LD      A,B
-        CP      04H     ; 4
-        JR      NZ,J6EBF
-        LD      A,(HL)
-        CP      20H     ; " "
-        JR      Z,J6EBE
-        LD      A,2EH   ; "."
-J6EBE:  RST     18H
-J6EBF:  DJNZ    J6EAF
-        CALL    CKCNTC
-        POP     AF
-        PUSH    AF
-        LD      A,(LINLEN)
-J6EC9:  LD      B,A
-        LD      A,(TTYPOS)
-        JR      Z,J6ED4
-        LD      B,50H   ; "P"
-        LD      A,(LPTPOS)
-J6ED4:  AND     A
-        JR      Z,J6EE6
-        ADD     A,0CH   ; 12
-        CP      B
-        JR      NC,J6EDF
-        LD      A,20H   ; " "
-        RST     18H
-J6EDF:  LD      IX,M7328
-        CALL    NC,CALBAS
-J6EE6:  LD      DE,BUF+10
-        XOR     A
-        LD      (BUF+22),A
-        CALL    A5006
-        INC     A
-        JR      NZ,J6EAA
-        POP     AF
-J6EF4:  POP     HL
-        LD      IX,M4AFF
-        JP      CALBAS
-
-C6EFC:  CALL    C7381
-        CALL    C6F92
-        CALL    C72D6
-        RET     NZ
-        CALL    A65EA
-        JP      Z,J719E                 ; file still open error
-        CALL    C6F5F
-        PUSH    HL
-        LD      DE,BUF+10
-        CALL    A436C
-        AND     A
-        JP      NZ,J7313                ; file not found error
-        POP     HL
-        RET
-
-C6F1C:  CALL    C7381
-        CALL    C6F92
-        CALL    A65EA
-        JP      Z,J719E                 ; file still open error
-        CALL    C6F5F
-        PUSH    HL
-        CALL    A6645
-        JP      Z,J7313                 ; file not found error
-        POP     HL
-        CALL    C72CC
-        LD      B,C
-        CALL    C72CC
-        LD      D,E
-        CALL    C6F92
-        LD      A,D
-        LD      (BUF+26),A
-        PUSH    HL
-        LD      HL,(BUF+10)
-        AND     A
-        JR      Z,J6F4D
-        CP      L
-        JP      NZ,J71B3
-J6F4D:  LD      DE,BUF+27
-        CALL    A665A
-        LD      DE,BUF+10
-        CALL    A4392
-        AND     A
-        JP      NZ,J71A1                ; file already exists
-        POP     HL
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6F5F:  CALL    A65E3
-        INC     A
-        LD      (BUF+10),A
-        PUSH    HL
-        PUSH    DE
-        CALL    A6657
-        POP     DE
-        POP     HL
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6F6E:  LD      IX,M6A0E
-        CALL    CALBAS
-        LD      A,D
-        CP      09H     ; 9
-        RET     C
-        JP      J7198                   ; bad drive name error
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6F7C:  CALL    C6F6E
-        PUSH    HL
-        LD      HL,FILNAM
-        LD      B,0BH   ; 11
-J6F85:  LD      A,(HL)
-        INC     HL
-        CP      20H     ; " "
-        JR      NZ,J6F96
-        DJNZ    J6F85
-        CALL    C6FFA
-        JR      J6F96
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6F92:  CALL    C6F6E
-        PUSH    HL
-J6F96:  LD      HL,FILNAM
-        LD      B,08H   ; 8
-        CALL    C6FF1
-        LD      B,03H   ; 3
-        CALL    C6FF1
-        POP     HL
-        DEFB    0F6H
-C6FA5:  SCF
-        PUSH    DE
-        PUSH    HL
-        LD      DE,FILNAM
-        PUSH    DE
-        LD      B,0BH   ; 11
-J6FAE:  PUSH    BC
-        LD      A,(DE)
-        LD      HL,I6FC8
-        LD      BC,13
-        JR      C,J6FB9
-        DEC     BC
-J6FB9:  CPIR
-        JR      Z,J6FEE
-        POP     BC
-        INC     DE
-        DJNZ    J6FAE
-        POP     HL
-        CALL    C6FD5
-        POP     HL
-        POP     DE
-        RET
-
-I6FC8:  DEFB    '."/\[]:+=;,*?'
-
-C6FD5:  LD      A," "
-        CP      (HL)
-        JR      Z,J6FEE
-        LD      B,07H   ; 7
-        CALL    C6FE1
-        LD      B,03H   ; 3
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6FE1:  INC     HL
-        CP      (HL)
-        JR      Z,J6FE8
-        DJNZ    C6FE1
-        RET
-
-J6FE8:  DEC     B
-        RET     Z
-        INC     HL
-        CP      (HL)
-        JR      Z,J6FE8
-J6FEE:  JP      J730D                   ; bad filename error
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6FF1:  LD      A,(HL)
-        CP      2AH     ; "*"
-        JR      Z,J6FFF
-        INC     HL
-        DJNZ    C6FF1
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C6FFA:  LD      HL,FILNAM
-        LD      B,0BH   ; 11
-J6FFF:  LD      (HL),3FH        ; "?"
-        INC     HL
-        DJNZ    J6FFF
-        RET
-
-C7005:  LD      BC,16
-        DEFB    011H
-
-C7009:  LD      BC,33
-        CALL    C7381
-        PUSH    BC
-        LD      IX,M521F
-        CALL    CALBAS
-        LD      IX,M6A6D
-        CALL    CALBAS
-        JP      C,J7319                 ; illegal function call error
-        JP      Z,J72EF                 ; file not open error
-        POP     BC
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        EX      DE,HL
-        ADD     HL,BC
-        LD      C,(HL)
-        INC     HL
-        LD      B,(HL)
-        INC     HL
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        EX      DE,HL
-        PUSH    BC
-        LD      IX,M46FF
-        CALL    CALBAS
-        LD      BC,06545H
-        LD      DE,06053H
-        CALL    M325C
-        LD      HL,DAC
-        LD      DE,ARG
-        LD      BC,8
-        LDIR
-        POP     HL
-        LD      IX,M46FF
-        CALL    CALBAS
-        CALL    M3042
-        JP      M269A
-
-C705D:  CALL    C7381
-        LD      IX,M521F
-        CALL    CALBAS
-        LD      HL,YF347
-        CP      (HL)
-        JR      Z,J7070
-        JP      NC,J7198                ; bad drive name error
-J7070:  LD      E,A
-        CALL    A505D
-        JP      M2F99
-
-C7077:  CALL    C7381
-        CALL    C6F7C
-        CALL    A65EA
-        JP      Z,J719E                 ; file still open error
-        CALL    C6F5F
-        PUSH    HL
-        LD      A,(YF247)
-        INC     A
-        LD      (BUF+47),A
-        LD      HL,BUF+11
-        LD      DE,BUF+48
-        LD      BC,36
-        LDIR
-        POP     HL
-        CALL    C72D6
-        JR      Z,J70BF
-        CALL    C72CC
-        EXX
-        CALL    C6F7C
-        CALL    A65EA
-        JP      Z,J719E                 ; file still open error
-        CALL    A65E3
-        INC     A
-        LD      (BUF+47),A
-        PUSH    HL
-        LD      DE,BUF+48
-        CALL    A665A
-        POP     HL
-        CALL    C72D6
-        RET     NZ
-J70BF:  PUSH    HL
-        CALL    A6645
-        JP      Z,J7313                 ; file not found error
-J70C6:  CALL    CKCNTC
-        LD      BC,BUF+47
-        LD      DE,BUF+121
-        LD      HL,BUF+84
-        LD      A,0CH   ; 12
-J70D4:  PUSH    AF
-        LD      A,(BC)
-        CP      3FH     ; "?"
-        JR      NZ,J70DB
-        LD      A,(HL)
-J70DB:  LD      (DE),A
-        INC     BC
-        INC     DE
-        INC     HL
-        POP     AF
-        DEC     A
-        JR      NZ,J70D4
-        LD      HL,BUF+84
-        LD      DE,BUF+121
-        LD      B,0CH   ; 12
-J70EB:  LD      A,(DE)
-        CP      (HL)
-        JR      NZ,J70F6
-        INC     HL
-        INC     DE
-        DJNZ    J70EB
-        JP      J7319                   ; illegal function call error
-
-J70F6:  CALL    C7168
-        PUSH    HL
-        XOR     A
-        LD      (BUF+96),A
-        LD      DE,BUF+84
-        CALL    A4462                   ; open fcb
-        LD      DE,BUF+121
-        CALL    A461D
-        AND     A
-        JP      NZ,J71A7
-        LD      L,A
-        LD      H,A
-        LD      (BUF+117),HL
-        LD      (BUF+119),HL
-        LD      (BUF+154),HL
-        LD      (BUF+156),HL
-        INC     HL
-        LD      (BUF+98),HL
-        LD      (BUF+135),HL
-        POP     HL
-J7124:  PUSH    HL
-        LD      DE,BUF+84
-        CALL    A47B2
-        LD      A,L
-        OR      H
-        JR      Z,J7138
-        LD      DE,BUF+121
-        CALL    C718B
-        POP     HL
-        JR      J7124
-
-J7138:  POP     HL
-        LD      HL,(BUF+104)
-        LD      (BUF+141),HL
-        LD      HL,(BUF+106)
-        LD      (BUF+143),HL
-        LD      DE,BUF+121
-        CALL    A456F
-        LD      HL,BUF+84
-        LD      (YF23D),HL
-        LD      DE,BUF+10
-        XOR     A
-        LD      (BUF+22),A
-        CALL    A5006
-        INC     A
-        JP      NZ,J70C6
-        POP     HL
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C7161:  LD      (SAVENT),HL
-        LD      (SAVEND),BC
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C7168:  LD      HL,-512
-        ADD     HL,SP
-        JR      NC,J717B
-        LD      DE,(STREND)
-        AND     A
-        SBC     HL,DE
-        JR      C,J717B
-        LD      A,H
-        AND     A
-        JR      NZ,J7182
-J717B:  LD      DE,(NULBUF)
-        LD      HL,256
-J7182:  LD      (YF23D),DE
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C7187:  LD      DE,(YF353)
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C718B:  CALL    A47BE
-        AND     A
-        RET     Z
-        JR      J71A4
-
-J7192:  LD      E,3CH
-        DEFB    1
-J7195:  LD      E,3DH
-        DEFB    1
-J7198:  LD      E,3EH
-        DEFB    1
-        LD      E,3FH
-        DEFB    1
-J719E:  LD      E,40H
-        DEFB    1
-J71A1:  LD      E,41H
-        DEFB    1
-J71A4:  LD      E,42H
-        DEFB    1
-J71A7:  LD      E,43H
-        DEFB    1
-J71AA:  LD      E,44H
-        DEFB    1
-J71AD:  LD      E,45H
-        DEFB    1
-J71B0:  LD      E,46H
-        DEFB    1
-J71B3:  LD      E,47H
-        LD      BC,0
-        XOR     A
-        LD      (NLONLY),A
-        LD      (FLBMEM),A
-        PUSH    DE
-        LD      IX,M6B24
-        CALL    CALBAS
-        POP     DE
-        LD      IX,M406F
-        JP      CALBAS
-
-C71CF:  LD      A,E
-        CP      3CH
-        RET     C
-        CP      48H
-        RET     NC
-        SUB     3BH
-        LD      B,A
-        LD      HL,I71F1
-J71DC:  LD      A,(HL)
-        AND     A
-        INC     HL
-        JR      NZ,J71DC
-        DJNZ    J71DC
-        DEC     HL
-        LD      DE,BUF+166
-        PUSH    DE
-        LD      BC,22
-        LDIR
-        LD      E,01H   ; 1
-        POP     HL
-        RET
-
-I71F1:  DEFB    0
-        DEFB    "Bad FAT",0
-        DEFB    "Bad file mode",0
-        DEFB    "Bad drive name",0
-        DEFB    "Bad sector number",0
-        DEFB    "File still open",0
-        DEFB    "File already exists",0
-        DEFB    "Disk full",0
-        DEFB    "Too many files",0
-        DEFB    "Disk write protected",0
-        DEFB    "Disk I/O error",0
-        DEFB    "Disk offline",0
-        DEFB    "Rename across disk",0
-
-
-I72AA:  DEFW    J72AC
-
-J72AC:  BIT     7,C
-        JP      NZ,J7192                ; bad fat error
-        RES     0,C
-        LD      B,00H
-        LD      HL,I72BE
-        ADD     HL,BC
-J72B9:  LD      A,(HL)
-        INC     HL
-        LD      H,(HL)
-        LD      L,A
-        JP      (HL)
-
-I72BE:  DEFW    J71AA
-        DEFW    J71B0
-        DEFW    J71AD
-        DEFW    J71AD
-        DEFW    J71AD
-        DEFW    J71AD
-        DEFW    J71AD
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C72CC:  CALL    C72D6
-        EX      (SP),HL
-        CP      (HL)
-        JR      NZ,J731F                ; syntax error
-        INC     HL
-        EX      (SP),HL
-        INC     HL
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C72D6:  DEC     HL
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C72D7:  LD      IX,M4666
-        JR      J7323
-
-J72DD:  LD      IX,M6671
-        JR      J7323
-
-J72E3:  LD      IX,M406D
-        JR      J7323
-
-J72E9:  LD      IX,M6275
-        JR      J7323
-
-J72EF:  LD      IX,M6E77
-        JR      J7323
-
-J72F5:  LD      IX,M6E83
-        JR      J7323
-
-J72FB:  LD      IX,M6E7A
-J72FF:  JR      J7323
-
-J7301:  LD      IX,M6E6E
-        JR      J7323
-
-J7307:  LD      IX,M6E7D
-        JR      J7323
-
-J730D:  LD      IX,M6E6B
-        JR      J7323
-
-J7313:  LD      IX,M6E74
-        JR      J7323
-
-J7319:  LD      IX,M475A
-        JR      J7323
-
-J731F:  LD      IX,M4055
-J7323:  JP      CALBAS
-
-C7326:  PUSH    HL
-        PUSH    DE
-I7328:  LD      A,(YF348)
-        ADD     A,A
-        LD      HL,16
-        JR      NC,J7333
-        LD      L,16+8
-J7333:  ADD     HL,SP
-        LD      E,(HL)
-        INC     HL
-        LD      D,(HL)
-        PUSH    HL
-        LD      HL,M6E92+3
-        RST     20H
-        POP     HL
-        JR      Z,J734C
-        PUSH    HL
-        LD      HL,M6EC6+3
-        RST     20H
-        POP     HL
-        JR      NZ,J7352
-        LD      DE,XF377
-        JR      J734F
-
-J734C:  LD      DE,XF37A
-J734F:  LD      (HL),D
-        DEC     HL
-        LD      (HL),E
-J7352:  POP     DE
-        POP     HL
-        LD      A,E
-        CP      02H     ; 2
-        RET     C
-        LD      A,(HL)
-        CP      ":"
-        JR      Z,J730D                 ; bad filename error
-        INC     HL
-        LD      A,(HL)
-        CP      ":"
-        DEC     HL
-        RET     NZ
-        CALL    C7381
-        LD      A,(HL)
-        AND     0DFH
-        SUB     40H
-        PUSH    HL
-        LD      HL,YF347
-        CP      (HL)
-        POP     HL
-        JR      Z,J7376
-        JP      NC,J7198                ; bad drive name error
-J7376:  INC     HL
-        INC     HL
-        DEC     E
-        DEC     E
-        PUSH    DE
-        INC     E
-        POP     DE
-        RET
-
-C737E:  LD      A,0
-        RET
-
-
-;         Subroutine __________________________
-;            Inputs  ________________________
-;            Outputs ________________________
-
-C7381:  PUSH    HL
-        PUSH    AF
-        LD      A,(YF348)
-        ADD     A,A
-        LD      HL,12
-        JR      NC,J738E
-        LD      L,12+8
-J738E:  ADD     HL,SP
-        LD      (HL),LOW RETRTN
-        INC     HL
-        LD      (HL),HIGH RETRTN
-        POP     AF
-        POP     HL
-        RET
+
+A6663:  ei
+        push    hl
+        push    de
+        push    bc
+        push    af
+        ld      a,(YF348)
+        add     a,a
+        ld      hl,16
+        jr      nc,A6673
+        ld      l,16+8
+A6673:  add     hl,sp
+        push    ix
+        pop     bc
+        ld      (hl),c
+        inc     hl
+        ld      (hl),b
+        ld      hl,10
+        add     hl,sp
+        ex      de,hl
+        jr      A668D
+
+A6681:  push    iy
+        pop     bc
+A6684:  ld      c,(hl)
+        ld      a,(de)
+        ld      (hl),a
+        ld      a,c
+        ld      (de),a
+        inc     hl
+        inc     de
+        djnz    A6684
+A668D:  ld      a,(YF348)
+        add     a,a
+        ld      hl,18
+        jr      nc,A6698
+        ld      l,18+8
+A6698:  add     hl,sp
+        ld      a,e
+        sub     l
+        ld      a,d
+        sbc     a,h
+        jr      c,A6681
+A669F:  pop     af
+A66A0:  pop     bc
+        pop     de
+        pop     hl
+        ret
+
+;       Subroutine      get pointer to i/o channel (H.GETP)
+;       Inputs
+;       Outputs         ________________________
+
+A66A4:  ld      ix,RETRTN
+        ld      iy,00200H
+        call    A6663                   ; take control from caller (move parameters on stack)
+        pop     hl
+        ld      a,(hl)
+        and     a
+        ret
+
+;       Subroutine      OPEN statement expander (H.NOFO)
+;       Inputs
+;       Outputs         ________________________
+
+A66B3:  ei
+        ld      bc,256
+        ld      (YF33D),bc              ; default recordsize 256
+        call    A72DA                   ; at end of statement ?
+        ld      a,e
+        ret     z                       ; yes, quit
+        push    af
+        push    hl
+        ld      a,(YF348)
+        add     a,a
+        ld      hl,12
+        jr      nc,A66CD
+        ld      l,12+8
+A66CD:  add     hl,sp
+        ld      a,(hl)
+        cp      4                       ; random mode ?
+        jp      nz,A7318                ; nope,
+        inc     hl
+        ld      a,(hl)
+        cp      9                       ; disk device ?
+        jp      nc,A7318                ; nope,
+        pop     hl
+        call    A72D0
+        defb    0FFH
+        call    A72D0
+        defb    092H
+        call    A72D0
+        defb    0EFH                    ; check for LEN=
+        ld      ix,M4756
+        call    A731E                   ; evaluate word operand and check for 0-32767 range
+        dec     de
+        inc     d
+        dec     d                       ; should be 1-256
+        jp      nz,A7315                ; nope,
+        inc     de
+        ld      (YF33D),de              ; recordsize
+        pop     af
+        ret
+
+;       Subroutine      open i/o channel (H.NULO)
+;       Inputs
+;       Outputs         ________________________
+
+A66FC:  ei
+        ret     nc                      ; not for a disk device, return control
+        ld      ix,RETRTN
+        ld      iy,00400H
+        call    A6663                   ; take control from caller (move parameters on stack)
+        call    A6FA9                   ; validate filename
+        call    A65EA                   ; is file already open in one of the I/O channels ?
+        jp      z,A7309                 ; yep, error
+        ld      (PTRFIL),hl
+        ld      a,e
+        cp      4
+        jr      z,A6721                 ; random mode, recordsize already set
+        ld      bc,1
+        ld      (YF33D),bc              ; all others use recordsize 1
+A6721:  pop     af
+        push    af                      ; I/O channel number
+        push    hl
+        push    de
+        ld      hl,YF345
+        cp      (hl)                    ; do I have a FCB for this channel ?
+        jp      nc,A730C                ; nope,
+        ld      bc,37
+        ld      e,a
+        ld      d,b
+        ld      hl,(YF353)              ; base of the FCB's
+        call    A491C                   ; base + 37 * channelnumber
+        xor     a
+        ld      hl,12
+        add     hl,bc
+        ld      (hl),a                  ; reset EX byte of FCB
+        pop     de
+        pop     hl
+        inc     hl
+        ld      (hl),c
+        inc     hl
+        ld      (hl),b                  ; pointer to FCB
+        inc     hl
+        ld      (hl),a                  ; no backup char
+        inc     hl
+        ld      (hl),d                  ; devicenumber
+        inc     hl
+        inc     hl
+        ld      (hl),a                  ; current bufferoffset = 0
+        call    A6636                   ; search file
+        push    bc
+        push    de
+        ld      a,d
+        ld      (bc),a                  ; devicenumber
+        ld      e,c
+        ld      d,b
+        inc     de
+        call    A665A                   ; copy FILNAM to FCB
+        pop     de
+        pop     bc
+        ld      a,e
+        jr      nz,A6778                ; file exists,
+        and     086H                    ; file not exists and not binsav, random or output mode ?
+        jp      z,A7312                 ; yep, error
+A6761:  push    de
+        push    bc
+        ld      e,c
+        ld      d,b
+        call    A461D                   ; create file
+        and     a
+        jp      nz,A71AB                ; failed, error
+        pop     hl
+        call    A67FE                   ; setup FCB fields
+        pop     de
+        ld      hl,(PTRFIL)
+        ld      (hl),e                  ; filemode, I/O channel open
+A6775:  pop     af
+        pop     hl
+        ret
+
+A6778:  cp      8
+        jr      z,A67C1                 ; append mode,
+        cp      2
+        jr      z,A6761                 ; output mode, create file (overwrites!)
+        cp      080H
+        jr      z,A6761                 ; binsav mode, create file (overwrites!)
+        push    de
+        push    bc
+        ld      e,c
+        ld      d,b
+        call    A4462                   ; open fcb
+        pop     hl
+        call    A67FE                   ; setup FCB fields
+        pop     de
+        ld      hl,(PTRFIL)
+        ld      (hl),e                  ; filemode, I/O channel open
+        ld      a,e
+        cp      4                       ; random mode ?
+        jr      z,A6775                 ; yep, quit
+        push    hl
+        ld      hl,FLBMEM
+        xor     a
+        cp      (hl)                    ; in raw mode ?
+        ld      (hl),a
+        pop     hl
+        jr      nz,A6775                ; yep, quit
+        ld      bc,6
+        add     hl,bc
+        push    hl
+        ld      (hl),0FFH               ; position 255, so next get char fills buffer
+        ld      hl,(PTRFIL)
+        call    A682A                   ; get char from I/O channel
+        pop     hl
+        dec     hl
+        dec     hl
+        dec     hl
+        ld      (hl),a
+        cp      0FFH
+        jr      nz,A6775                ; yep, quit
+        inc     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      (hl),080H
+A67BF:  jr      A6775                   ; quit
+
+A67C1:  push    bc
+        ld      e,c
+        ld      d,b
+        call    A4462                   ; open fcb
+        pop     hl
+        push    hl
+        call    A67FE                   ; setup FCB fields
+        ld      hl,(PTRFIL)
+        ld      (hl),1                  ; first in input mode
+        ld      bc,6
+        add     hl,bc
+        ld      (hl),0FFH               ; position 255, so next get char fills buffer
+        ld      hl,(PTRFIL)
+A67DA:  push    hl
+        call    A682A                   ; get char from I/O channel
+        pop     hl
+        jr      nc,A67DA                ; not at the end of file, continue
+        ld      (hl),2                  ; continue in output mode
+        pop     hl
+        ld      bc,00021H
+        add     hl,bc                   ; to the Rx field
+        ld      c,004H
+        push    hl
+        scf
+A67EC:  ld      a,(hl)
+        sbc     a,b
+        ld      (hl),a
+        inc     hl
+        dec     c
+        jr      nz,A67EC                ; decrease by 1
+        pop     hl
+        inc     c
+        jr      nc,A67F9                ; Make Rx a multiply of 256
+        ld      c,004H                  ; Rx = 0
+A67F9:  call    A6813
+        jr      A67BF                   ; quit
+
+A67FE:  ld      bc,0000CH
+        add     hl,bc
+        ld      (hl),b                  ; clear EX byte
+        inc     hl
+        ld      (hl),b                  ; clear S1 byte
+        inc     hl
+        ld      bc,(YF33D)
+        ld      (hl),c
+        inc     hl
+        ld      (hl),b                  ; user recordsize = recordsize
+        ld      bc,00011H
+        add     hl,bc
+        ld      c,005H
+A6813:  ld      (hl),b
+        inc     hl
+        dec     c
+        jr      nz,A6813                ; clear CR byte and Rx bytes
+        ret
+
+;       Subroutine      input from i/o channel (H.INDS)
+;       Inputs
+;       Outputs         ________________________
+
+A6819:  ld      ix,RETRTN
+        ld      iy,00600H
+        call    A6663                   ; take control from caller (move parameters on stack)
+        call    A682A                   ; get char from I/O channel
+        jp      A66A0                   ; quit
+
+A682A:  push    hl
+        ld      a,(hl)
+        cp      1                       ; input mode ?
+        jp      nz,A7199                ; nope, error
+        ld      e,l
+        ld      d,h
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      a,(hl)
+        and     a                       ; backup char ?
+        jr      nz,A6866                ; yep, use that
+        inc     hl
+        inc     hl
+        inc     hl
+        inc     (hl)                    ; update counter
+        ld      a,(hl)
+        inc     hl
+        inc     hl
+        inc     hl                      ; to the buffer
+        jr      nz,A6861                ; still characters left, use them
+        push    hl
+        ld      (YF23D),hl              ; transferaddress is I/O channel buffer
+        ex      de,hl
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)                  ; pointer to FCB
+        ld      hl,256
+        call    A47B2                   ; random block read
+        ld      e,l
+        ld      d,h
+        dec     h
+        ld      a,l
+        or      h                       ; have read 256 records ?
+        pop     hl
+        jr      z,A6861                 ; yep, then not at end of file
+        push    hl
+        add     hl,de
+        ld      (hl),01AH               ; put a CTRL-Z at the end
+        pop     hl
+        xor     a
+A6861:  ld      c,a
+        ld      b,0
+        add     hl,bc
+        ld      a,(hl)                  ; get char
+A6866:  ld      b,a
+        sub     01AH
+        sub     001H
+        ld      a,b
+        pop     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      (hl),0                  ; no backup char
+        ret     nc                      ; no CTRL-Z, quit
+        ld      (hl),a                  ; CTRL-Z as backup char, so it is always read again
+        ret
+
+;       Subroutine      putback for diskdevices (H.BAKU)
+;       Inputs
+;       Outputs         ________________________
+
+A6875:  ei
+        push    hl
+        ld      a,(YF348)
+        add     a,a
+        ld      hl,8
+        jr      nc,A6882
+        ld      l,8+8
+A6882:  add     hl,sp
+        ld      (hl),LOW M6E41
+        inc     hl
+        ld      (hl),HIGH M6E41         ; resume character putback
+        pop     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      (hl),c
+        ret
+
+;       Subroutine      output to i/o channel (H.FILO)
+;       Inputs
+;       Outputs         ________________________
+
+A688E:  ld      ix,RETRTN
+        ld      iy,00800H
+        call    A6663                   ; take control from caller (move parameters on stack)
+        ld      a,(hl)
+        cp      2                       ; output mode ?
+        jp      nz,A7199                ; nope, error
+        pop     af
+        push    af
+        call    A68A7                   ; write char to I/O channel
+        jp      A669F                   ; quit
+
+A68A7:  push    hl
+        ld      bc,6
+        add     hl,bc
+        ld      c,(hl)                  ; position
+        inc     (hl)                    ; update
+        inc     hl
+        inc     hl
+        inc     hl                      ; to buffer
+        add     hl,bc
+        ld      (hl),a                  ; put char in buffer
+        pop     hl
+        ret     nz                      ; buffer not full, quit
+A68B5:  push    hl
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)                  ; pointer to FCB
+        ld      bc,4
+        add     hl,bc
+        ld      a,(hl)                  ; position
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      (YF23D),hl              ; transferaddress
+        and     a
+        ld      l,a
+        ld      h,b
+        jr      nz,A68CB                ; not a complete buffer, only the used part
+        inc     h                       ; 256
+A68CB:  call    A718F                   ; random block write
+        pop     hl
+        ret
+
+;       Subroutine      close i/o channel for diskdevices (H.NTFL)
+;       Inputs
+;       Outputs         ________________________
+
+A68D0:  ld      ix,RETRTN
+        ld      iy,00400H
+        call    A6663                   ; take control from caller (move parameters on stack)
+        pop     hl
+        ld      a,(hl)
+        sub     2                       ; output mode ?
+        jr      nz,A68F4                ; nope,
+        push    hl
+        ld      hl,FLBMEM
+        cp      (hl)                    ; raw mode ?
+        ld      (hl),a
+        pop     hl
+        jr      nz,A68F4                ; yep, skip CTRL-Z
+        ld      (hl),4                  ; switch to random mode
+        ld      a,01AH                  ; CTRL-Z
+        call    A68A7                   ; write char to I/O channel
+        call    nz,A68B5                ; buffer not empty, write remaining I/O channel buffer
+A68F4:  push    hl
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)                  ; pointer to FCB
+        call    A456F                   ; close fcb
+        pop     hl
+        push    hl
+        ld      de,7
+        add     hl,de
+        ld      (hl),d
+        ld      l,d
+        ld      h,d
+        ld      (PTRFIL),hl
+        pop     hl
+        inc     (hl)
+        dec     (hl)
+        ld      (hl),d
+        pop     hl
+        ret
+
+;       Subroutine      Binary Save  (H.BINS)
+;       Inputs
+;       Outputs         ________________________
+
+A690E:  call    A7380                   ; take control from caller
+        push    hl
+        ld      ix,M54F7
+        call    A731E                   ; convert linepointers to linenumbers
+        ld      a,0FFH
+        call    A69C7                   ; write byte to FCB (binairy basicfile id)
+        ld      hl,(TXTTAB)
+        ld      (YF23D),hl              ; transferaddress
+        ex      de,hl
+        ld      hl,(VARTAB)
+        and     a
+        sbc     hl,de
+        call    A718B
+        ld      (NLONLY),a              ; not loading basic program, close i/o channels when requested
+        pop     hl
+        ld      ix,M6B24
+        jp      A731E                   ; close i/o channel
+
+;       Subroutine      Binary Load  (H.BINL)
+;       Inputs
+;       Outputs         ________________________
+
+A6939:  ld      ix,M739A                ; quit loading & start (headloop/executing)
+        ld      iy,00200H
+        call    A6663                   ; take control from caller (move parameters on stack)
+        pop     af
+        jp      z,A7199
+        ld      ix,M6C1C
+        call    A731E                   ; close all i/o channels
+        ld      hl,(YF353)
+        push    hl
+        call    A67FE
+        pop     hl
+        push    hl
+        ld      bc,00013H
+        add     hl,bc
+        ld      a,(hl)
+        and     a
+        jp      nz,A72FD
+        dec     hl
+        or      (hl)
+        jp      nz,A72FD
+        dec     hl
+        ld      d,(hl)
+        dec     hl
+        ld      e,(hl)
+        ld      hl,(TXTTAB)
+        add     hl,de
+        jp      c,A72FD
+        ld      bc,00093H
+        add     hl,bc
+        jp      c,A72FD
+        sbc     hl,sp
+        jp      nc,A72FD
+        ex      de,hl
+        ex      (sp),hl
+        ex      de,hl
+        call    A69D0                   ; read byte from FCB
+        ld      hl,(TXTTAB)
+        ld      (YF23D),hl              ; transferaddresss
+        pop     hl
+        dec     hl
+        call    A47B2                   ; random block read
+        ld      de,(TXTTAB)
+        add     hl,de
+        ld      (VARTAB),hl
+        ld      ix,M4253
+        call    A731E                   ; recalculate linepointers
+        ld      a,(FILNAM+0)
+        and     a
+        ret     nz
+        ld      (NLONLY),a              ; not loading basic program, close i/o channels when requested
+        ld      hl,T69B9
+        ld      de,BUF+10
+        ld      bc,5
+        push    de
+        ldir
+        pop     hl                      ; �basicpointer�
+        ld      ix,M4601
+        jp      A731E                   ; continue in the execution loop
+
+T69B9:  defb    ":",092H,0,0,0          ; :RUN
+
+A69BE:  push    hl
+        ld      a,l
+        call    A69CB                   ; write byte to FCB
+        pop     hl
+        ld      a,h
+        jr      A69CB                   ; write byte to FCB
+
+A69C7:  ld      de,(YF353)
+A69CB:  ld      bc,A47BE                ; random block write
+        jr      A69D3
+
+A69D0:  ld      bc,A47B2                ; random block read
+A69D3:  push    af
+        ld      hl,1
+        add     hl,sp
+        ld      (YF23D),hl              ; transferaddress
+        push    de
+        call    A69E2
+        pop     de
+        pop     af
+        ret
+
+A69E2:  ld      hl,00001H
+        push    bc
+        ret
+
+;       Subroutine      BSAVE for diskdevices
+;       Inputs
+;       Outputs         ________________________
+
+A69E7:  push    de
+        call    A6B6A
+        ld      (SAVENT),de
+        push    de
+        call    A6B6A
+        ld      (SAVEND),de
+        ex      (sp),hl
+        ex      de,hl
+        rst     020H
+        jp      c,A7315
+        ex      de,hl
+        ex      (sp),hl
+        call    A72DA                   ; at end of statement ?
+        scf
+        jr      z,A6A1B                 ; yep,
+        call    A72D0
+        defb    ","                     ; check for ","
+        cp      "S"
+        jr      nz,A6A13
+        call    A72DB                   ; get basic character
+        and     a
+        jr      A6A1B
+
+A6A13:  call    A6B6E
+        ld      (SAVENT),de
+        scf
+A6A1B:  pop     bc
+        jr      nc,A6A23
+        inc     b
+        dec     b
+        jp      p,A7315
+A6A23:  pop     de
+        push    hl
+        push    bc
+        push    af
+        xor     a                       ; i/o channel 0
+        ld      e,2                     ; output mode
+        ld      ix,M6AFA
+        call    A731E                   ; open i/o channel
+        ld      a,0FEH
+        call    A69C7                   ; write byte to FCB (bsave file id)
+        pop     af
+        pop     hl
+        push    hl
+        push    af
+        call    A69BE                   ; write word to FCB
+        ld      hl,(SAVEND)
+        call    A69BE                   ; write word to FCB
+        ld      hl,(SAVENT)
+        call    A69BE                   ; write word to FCB
+        pop     af
+        pop     bc
+        push    af
+        ld      (YF23D),bc              ; transferaddress
+        ld      hl,(SAVEND)
+        and     a
+        sbc     hl,bc
+        inc     hl
+        pop     af
+        jr      nc,A6A6D
+        call    A718B
+A6A5D:  ld      a,0FFH
+        ld      (FLBMEM),a              ; raw mode
+        xor     a
+        ld      ix,M6B24
+        call    A731E                   ; close i/o channel
+        jp      A6EF8
+
+A6A6D:  call    A7165
+A6A70:  push    hl
+        ld      de,(SAVENT)
+        rst     020H
+        push    af
+        ld      c,l
+        ld      b,h
+        ld      hl,(SAVEND)
+        push    hl
+        add     hl,bc
+        ld      (SAVEND),hl
+        pop     hl
+        ld      de,(YF23D)              ; transferaddress
+        call    LDIRMV
+        pop     af
+        jr      nc,A6A9E
+        pop     hl
+        push    hl
+        call    A718B
+        ld      hl,(SAVENT)
+        pop     de
+        and     a
+        sbc     hl,de
+        ld      (SAVENT),hl
+        ex      de,hl
+        jr      A6A70
+
+A6A9E:  pop     hl
+        ld      hl,(SAVENT)
+        call    A718B
+        jr      A6A5D
+
+;       Subroutine      BLOAD for diskdevices
+;       Inputs
+;       Outputs         ________________________
+
+A6AA7:  push    de
+        xor     a
+        ld      (RUNBNF),a              ; assume no autostart, no vram
+        ld      c,a
+        ld      b,a                     ; assume offset 0
+        call    A72DA                   ; at end of statement ?
+        jr      z,A6AD0                 ; yep,
+        call    A72D0
+        defb    ","                     ; check for ","
+        cp      "R"                     ; autorun specified ?
+        jr      z,A6ABF                 ; yep, set autorun
+        cp      "S"                     ; vram specified ?
+        jr      nz,A6ACB                ; nope, then it must be a offset
+A6ABF:  ld      (RUNBNF),a
+        call    A72DB                   ; get basic character
+        jr      z,A6AD0                 ; end of statement, skip offset
+        call    A72D0
+        defb    ","                     ; check for ","
+A6ACB:  call    A6B6E
+        ld      b,d
+        ld      c,e                     ; offset
+A6AD0:  pop     de
+        push    hl
+        push    bc
+        ld      a,0FFH
+        ld      (FLBMEM),a              ; raw mode
+        xor     a                       ; i/o channel 0
+        ld      e,1                     ; input mode
+        ld      ix,M6AFA
+        call    A731E                   ; open i/o channel
+        ld      de,(YF353)
+        call    A69D0                   ; read byte from FCB
+        cp      0FEH
+        jp      nz,A7199
+        pop     bc
+        call    A6B5C                   ; read word from FCB and add offset
+        push    hl
+        call    A6B5C                   ; read word from FCB and add offset
+        push    hl
+        call    A6B5C                   ; read word from FCB and add offset
+        ld      (SAVENT),hl
+        pop     hl
+        pop     bc
+        and     a
+        sbc     hl,bc                   ; end address - start address
+        inc     hl
+        ld      (YF23D),bc              ; transferaddress
+        ld      a,(RUNBNF)
+        cp      "S"                     ; vram load ?
+        jr      z,A6B1A                 ; yep,
+        call    A47B2                   ; random block read
+A6B11:  ld      ix,M4AFF
+        call    A731E                   ; output back to screen
+        pop     hl
+        ret
+
+A6B1A:  call    A7165
+A6B1D:  push    hl
+        ld      de,(SAVENT)
+        rst     020H
+        push    af
+        ld      de,(YF353)
+        call    A47B2                   ; random block read
+        pop     af
+        pop     bc
+        push    bc
+        push    af
+        ld      hl,(SAVEND)
+        push    hl
+        add     hl,bc
+        ld      (SAVEND),hl
+        pop     de
+        ld      hl,(YF23D)              ; transferaddress
+        pop     af
+        jr      nc,A6B4E
+        call    LDIRVM
+        ld      hl,(SAVENT)
+        pop     de
+        and     a
+        sbc     hl,de
+        ld      (SAVENT),hl
+        ex      de,hl
+        jr      A6B1D
+
+A6B4E:  pop     bc
+        ld      bc,(SAVENT)
+        call    LDIRVM
+        xor     a
+        ld      (RUNBNF),a
+        jr      A6B11
+
+A6B5C:  push    bc
+        call    A69D0                   ; read byte from FCB
+        push    af
+        call    A69D0                   ; read byte from FCB
+        ld      h,a
+        pop     af
+        ld      l,a
+        pop     bc
+        add     hl,bc
+        ret
+
+A6B6A:  call    A72D0
+        defb    ","                     ; check for ","
+A6B6E:  ld      ix,M6F0B
+        jp      A731E                   ; evaluate address operand (BLOAD/SAVE)
+
+;       Subroutine      DSKI$ function (H.DSKI)
+;       Inputs
+;       Outputs         ________________________
+
+A6B75:  call    A7380                   ; take control from caller
+        call    A72DB                   ; get basic character
+        call    A72D0
+        defb    "("                     ; check for "("
+        call    A6BC5
+        call    A72D0
+        defb    ")"                     ; check for ")"
+        push    hl
+        ld      hl,M3FD6
+        ld      (DAC+2),hl
+        pop     hl
+        ld      a,3
+        ld      (VALTYP),a
+        and     a
+        jr      A6BA1
+
+;       Subroutine      DSKO statement (H.DSKO)
+;       Inputs
+;       Outputs
+
+A6B96:  call    A7380                   ; take control from caller
+        call    A6BC5
+        call    A72DA                   ; at end of statement ?
+        ret     nz                      ; nope, quit
+        scf
+A6BA1:  push    af
+        push    hl
+        push    de
+        ld      e,c
+        call    A505D
+        inc     a
+        jp      z,A719C
+        pop     de
+        pop     hl
+        pop     af
+        push    hl
+        ld      a,0FFH
+        ld      (YF246),a               ; invalid dirsector buffer
+        ld      a,(ix+0)                ; driveid
+        ld      b,001H
+        ld      c,(ix+1)                ; mediadescriptor
+        ld      hl,(YF351)              ; temporary use dirsector buffer
+        call    PHYDIO
+        pop     hl
+        ret
+
+A6BC5:  ld      ix,M521C
+        call    A731E                   ; evaluate byte operand
+        push    de
+        call    A72D0
+        defb    ","                     ; check for ","
+        ld      ix,M542F
+        call    A731E                   ; evaluate address operand
+        pop     bc
+        ret
+
+;       Subroutine      GET/PUT statement (H.DGET)
+;       Inputs
+;       Outputs         ________________________
+
+A6BDA:  ld      ix,RETRTN
+        ld      iy,00400H
+        call    A6663                   ; take control from caller (move parameters on stack)
+        ld      a,(hl)
+        cp      4                       ; random mode ?
+        jp      nz,A7199                ; nope,
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)                  ; pointer to FCB
+        ld      bc,7
+        add     hl,bc
+        ex      (sp),hl
+        call    A72DA                   ; at end of statement ?
+        jr      z,A6C29                 ; yep,
+        push    de
+        call    A72D0
+        defb    ","                     ; check for ","
+        ld      ix,M4C64
+        call    A731E                   ; evaluate expression
+        push    hl
+        call    A6DFB
+        ld      a,c
+        or      b
+        or      l
+        or      h
+        jp      z,A7315
+        ld      a,c
+        or      b
+        dec     bc
+        jr      nz,A6C16
+        dec     hl
+A6C16:  ex      de,hl
+        pop     hl
+        ex      (sp),hl
+        push    hl
+        push    de
+        ld      de,00021H
+        add     hl,de
+        pop     de
+        ld      (hl),c
+        inc     hl
+        ld      (hl),b
+        inc     hl
+        ld      (hl),e
+        inc     hl
+        ld      (hl),d
+        pop     de
+        pop     hl
+A6C29:  ex      (sp),hl
+        ld      (YF23D),hl              ; transferaddress
+        pop     hl
+        pop     af
+        push    hl
+        and     a
+        ld      hl,A7303
+        ld      bc,A47B2                ; random block read
+        jr      z,A6C3F
+        ld      hl,A71A8
+        ld      bc,A47BE                ; random block write
+A6C3F:  push    hl
+        call    A69E2
+        and     a
+        ret     nz
+        pop     hl
+        jp      A6EF8
+
+;       Subroutine      FIELD statement (H.FIEL)
+;       Inputs
+;       Outputs         ________________________
+
+A6C49:  call    A7380                   ; take control from caller
+        cp      "#"
+        call    z,A72DB                 ; get basic character
+        ld      ix,M521C
+        call    A731E                   ; evaluate byte operand
+        jp      z,A7318
+        push    hl
+        ld      ix,M6A6D
+        call    A731E                   ; get i/o channel pointer
+        ld      e,l
+        ld      d,h
+        jp      z,A7300
+        jp      c,A7315
+        ld      a,(hl)
+        cp      004H
+        jp      nz,A7199
+        inc     hl
+        ld      a,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,a
+        ld      bc,0000EH
+        add     hl,bc
+        ld      c,(hl)
+        inc     hl
+        ld      b,(hl)
+        ld      (BUF+10),bc
+        ld      hl,00000H
+        ld      (BUF+12),hl
+        ld      bc,00009H
+        pop     hl
+A6C8B:  ex      de,hl
+        add     hl,bc
+        ex      de,hl
+        ld      a,(hl)
+        cp      ","
+        ret     nz
+        push    de
+        ld      ix,M521B
+        call    A731E                   ; skip basic char and evaluate byte operand
+        push    af
+        call    A72D0
+        defb    "A"
+        call    A72D0
+        defb    "S"                     ; check for "AS"
+        ld      ix,M5EA4
+        call    A731E                   ; get address of variable
+        ld      ix,M5597
+        call    A731E                   ; GETYPR
+        jp      nz,A72FA
+        pop     af
+        ex      (sp),hl
+        push    de
+        push    hl
+        ld      hl,(BUF+12)
+        ld      c,a
+        ld      b,000H
+        add     hl,bc
+        ld      (BUF+12),hl
+        ex      de,hl
+        ld      hl,(BUF+10)
+        rst     020H
+        jp      c,A7306
+        pop     de
+        pop     hl
+        ld      (hl),c
+        inc     hl
+        ld      (hl),e
+        inc     hl
+        ld      (hl),d
+        ld      b,000H
+        pop     hl
+        jr      A6C8B
+
+;       Subroutine      RSET statement (H.RSET)
+;       Inputs
+;       Outputs         ________________________
+
+A6CD6:  defb    0F6H
+
+;       Subroutine      LSET statement (H.LSET)
+;       Inputs
+;       Outputs         ________________________
+
+A6CD7:  scf
+        call    A7380                   ; take control from caller
+        push    af
+        ld      ix,M5EA4
+        call    A731E                   ; get address of variable
+        ld      ix,M5597
+        call    A731E                   ; GETYPR
+        jp      nz,A72FA
+        push    de
+        ld      ix,M4C5F
+        call    A731E                   ; evaluate =expression
+        pop     bc
+        ex      (sp),hl
+        push    hl
+        push    bc
+        ld      ix,M67D0
+        call    A731E                   ; free temporary string
+        ld      b,(hl)
+        ex      (sp),hl
+        ld      a,(hl)
+        ld      c,a
+        push    bc
+        push    hl
+        push    af
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        or      a
+        jr      z,A6D6A
+        ld      hl,(NULBUF)
+        dec     hl
+        rst     020H
+        jr      c,A6D48
+        ld      hl,(VARTAB)
+        rst     020H
+        jr      c,A6D48
+        ld      e,c
+        ld      d,000H
+        ld      hl,(STKTOP)
+        add     hl,de
+        ex      de,hl
+        ld      hl,(FRETOP)
+        rst     020H
+        jr      c,A6D7D
+        pop     af
+A6D2A:  ld      a,c
+        ld      ix,M668E
+        call    A731E                   ; allocate stringspace
+        pop     hl
+        pop     bc
+        ex      (sp),hl
+        push    de
+        push    bc
+        ld      ix,M67D0
+        call    A731E                   ; free temporary string
+        pop     bc
+        pop     de
+        ex      (sp),hl
+        push    bc
+        push    hl
+        inc     hl
+        push    af
+        ld      (hl),e
+        inc     hl
+        ld      (hl),d
+A6D48:  pop     af
+        pop     hl
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        pop     bc
+        pop     hl
+        inc     hl
+        ld      a,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,a
+        ld      a,c
+        cp      b
+        jr      nc,A6D5A
+        ld      b,a
+A6D5A:  sub     b
+        ld      c,a
+        pop     af
+        call    nc,A6D74
+        inc     b
+A6D61:  dec     b
+        jr      z,A6D6F
+        ld      a,(hl)
+        ld      (de),a
+        inc     hl
+        inc     de
+        jr      A6D61
+
+A6D6A:  pop     bc
+        pop     bc
+        pop     bc
+        pop     bc
+        pop     bc
+A6D6F:  call    c,A6D74
+        pop     hl
+        ret
+
+A6D74:  ld      a,020H
+        inc     c
+A6D77:  dec     c
+        ret     z
+        ld      (de),a
+        inc     de
+        jr      A6D77
+
+A6D7D:  pop     af
+        pop     hl
+        pop     bc
+        ex      (sp),hl
+        ex      de,hl
+        jr      nz,A6DA9
+        push    bc
+        ld      a,b
+        ld      ix,M6627
+        call    A731E                   ; allocate temporary string
+        ld      de,TEMPST+30
+        ld      hl,(TEMPPT)
+        ld      (DAC+2),hl
+        ld      a,3
+        ld      (VALTYP),a
+        call    M2EF3                   ; copy stringdescriptor
+        ld      de,TEMPST+30+3
+        rst     020H
+        ld      (TEMPPT),hl
+        jp      z,A72F7
+        pop     bc
+A6DA9:  ex      (sp),hl
+        push    bc
+        push    hl
+        jp      A6D2A
+
+;       Subroutine      MKI$ function (H.MKI$)
+;       Inputs
+;       Outputs         ________________________
+
+A6DAF:  ld      a,2
+        defb    001H
+
+;       Subroutine      MKS$ function (H.MKS$)
+;       Inputs
+;       Outputs         ________________________
+
+A6DB2:  ld      a,4
+        defb    001H
+
+;       Subroutine      MKD$ function (H.MKD$)
+;       Inputs
+;       Outputs         ________________________
+
+A6DB5:  ld      a,8
+        call    A7380                   ; take control from caller
+        push    af
+        ld      ix,M517A
+        call    A731E                   ; convert DAC
+        pop     af
+        ld      ix,M6627
+        call    A731E                   ; allocate temporary string
+        ld      hl,(DSCTMP+1)
+        call    M2F10                   ; copy variable content from DAC
+        jp      A61F1
+
+; Unused code
+; JP A61F1 is a patch, reason unknown
+; patch code does not fit here
+
+        nop
+        nop
+        nop
+        nop
+
+;       Subroutine      CVI function (H.CVI)
+;       Inputs
+;       Outputs         ________________________
+
+A6DD7:  ld      a,2-1
+        defb    001H
+
+;       Subroutine      CVS function (H.CVS)
+;       Inputs
+;       Outputs         ________________________
+
+A6DDA:  ld      a,4-1
+        defb    001H
+
+;       Subroutine      CVD function (H.CVD)
+;       Inputs
+;       Outputs         ________________________
+
+A6DDD:  ld      a,8-1
+        call    A7380                   ; take control from caller
+        push    af
+        ld      ix,M67D0
+        call    A731E                   ; free temporary string
+        pop     af
+        cp      (hl)
+        jp      nc,A7315
+        inc     a
+        inc     hl
+        ld      c,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,c
+        ld      (VALTYP),a
+        jp      M2F08                   ; copy variable content to DAC
+
+A6DFB:  ld      ix,M5597
+        call    A731E                   ; GETYPR
+        ld      bc,(DAC+2)
+        ld      hl,0
+        ret     m
+        jp      z,A72FA
+        ld      hl,DAC
+        ld      de,BUF+158
+        ld      bc,8
+        ldir
+        ld      hl,T6E68
+        ld      de,ARG
+        ld      c,8
+        ldir
+        call    M289F                   ; dbl divide
+        and     a
+        call    M30D1                   ; dbl to integer
+        ld      ix,M5432
+        call    A731E                   ; convert address to integer
+        push    de
+        ex      de,hl
+        ld      ix,M46FF
+        call    A731E                   ; convert integer to sgn in DAC
+        call    M3042                   ; convert DAC from sgn to dbl
+        ld      bc,06545H
+        ld      de,06053H
+        call    M325C                   ; sgn multiply
+        ld      hl,DAC
+        ld      de,ARG
+        ld      bc,8
+        ldir
+        ld      hl,BUF+158
+        ld      de,DAC
+        ld      c,8
+        ldir
+        call    M268C                   ; dbl subtract
+        ld      ix,M5432
+        call    A731E                   ; convert address to integer
+        ld      c,e
+        ld      b,d
+        pop     hl
+        ret
+
+T6E68:  defb    045H,065H,053H,060H,000H,000H,000H,000H
+
+;       Subroutine       (H.EOF)
+;       Inputs
+;       Outputs         ________________________
+
+A6E70:  call    A7380                   ; take control from caller
+        push    hl
+        call    A682A                   ; get char from I/O channel
+        ld      hl,0
+        jr      nc,A6E7D
+        dec     hl
+A6E7D:  push    af
+        call    M2F99                   ; integer to DAC
+        pop     af
+        pop     hl
+        inc     hl
+        inc     hl
+        inc     hl
+        ld      (hl),a
+        ret
+
+;       Subroutine      FILES/LFILES statement (H.FILE)
+;       Inputs
+;       Outputs         ________________________
+
+A6E88:  call    A7380                   ; take control from caller
+        ld      d,000H
+        jr      z,A6E95
+        call    A6F80
+        push    hl
+        jr      A6E99
+
+A6E95:  push    hl
+        call    A6FFE
+A6E99:  call    A6F63
+        ld      a,(PRTFLG)
+        and     a                       ; output to printer ?
+        push    af
+        call    A6645
+        jp      z,A7312
+        ld      ix,M7323
+        call    A731E                   ; newline to OUTDO if not at start of line
+A6EAE:  ld      hl,BUF+85
+        ld      b,11
+A6EB3:  ld      a,(hl)
+        inc     hl
+        rst     018H
+        ld      a,b
+        cp      004H
+        jr      nz,A6EC3
+        ld      a,(hl)
+        cp      " "
+        jr      z,A6EC2
+        ld      a,"."
+A6EC2:  rst     018H
+A6EC3:  djnz    A6EB3
+        call    CKCNTC
+        pop     af                      ; output to printer ?
+        push    af
+        ld      a,(LINLEN)
+        ld      b,a                     ; screenwidth
+        ld      a,(TTYPOS)              ; screenpos
+        jr      z,A6ED8                 ; nope, use screen
+        ld      b,80                    ; printerwidth
+        ld      a,(LPTPOS)              ; printerpos
+A6ED8:  and     a                       ; at start of line ?
+        jr      z,A6EEA                 ; yep, no newline
+        add     a,00CH
+        cp      b
+        jr      nc,A6EE3
+        ld      a," "
+        rst     018H
+A6EE3:  ld      ix,M7328
+        call    nc,A731E                ; yep, newline to OUTDO
+A6EEA:  ld      de,BUF+10
+        xor     a
+        ld      (BUF+22),a
+        call    A5006                   ; search for next
+        inc     a
+        jr      nz,A6EAE
+        pop     af
+A6EF8:  pop     hl
+        ld      ix,M4AFF
+        jp      A731E                   ; output back to screen and quit
+
+;       Subroutine      KILL statement (H.KILL)
+;       Inputs
+;       Outputs         ________________________
+
+A6F00:  call    A7380                   ; take control from caller
+        call    A6F96
+        call    A72DA                   ; at end of statement ?
+        ret     nz                      ; nope, quit
+        call    A65EA                   ; is file already open in one of the I/O channels ?
+        jp      z,A71A2
+        call    A6F63
+        push    hl
+        ld      de,BUF+10
+        call    A436C                   ; delete file
+        and     a
+        jp      nz,A7312
+        pop     hl
+        ret
+
+;       Subroutine      NAME statement (H.NAME)
+;       Inputs
+;       Outputs         ________________________
+
+A6F20:  call    A7380                   ; take control from caller
+        call    A6F96
+        call    A65EA                   ; is file already open in one of the I/O channels ?
+        jp      z,A71A2
+        call    A6F63
+        push    hl
+        call    A6645
+        jp      z,A7312
+        pop     hl
+        call    A72D0
+        defb    "A"
+        call    A72D0
+        defb    "S"                     ; check for "AS"
+        call    A6F96
+        ld      a,d
+        ld      (BUF+26),a
+        push    hl
+        ld      hl,(BUF+10)
+        and     a
+        jr      z,A6F51
+        cp      l
+        jp      nz,A71B7
+A6F51:  ld      de,BUF+27
+        call    A665A
+        ld      de,BUF+10
+        call    A4392                   ; rename file
+        and     a
+        jp      nz,A71A5
+        pop     hl
+        ret
+
+A6F63:  call    A65E3
+        inc     a
+        ld      (BUF+10),a
+        push    hl
+        push    de
+        call    A6657
+        pop     de
+        pop     hl
+        ret
+
+A6F72:  ld      ix,M6A0E
+        call    A731E                   ; evaluate filespecification
+        ld      a,d
+        cp      009H
+        ret     c
+        jp      A719C
+A6F80:  call    A6F72
+        push    hl
+        ld      hl,FILNAM
+        ld      b,00BH
+A6F89:  ld      a,(hl)
+        inc     hl
+        cp      " "
+        jr      nz,A6F9A
+        djnz    A6F89
+        call    A6FFE
+        jr      A6F9A
+
+A6F96:  call    A6F72
+        push    hl
+A6F9A:  ld      hl,FILNAM
+        ld      b,008H
+        call    A6FF5
+        ld      b,003H
+        call    A6FF5
+        pop     hl
+        defb    0F6H
+A6FA9:  scf
+        push    de
+        push    hl
+        ld      de,FILNAM
+        push    de
+        ld      b,11
+A6FB2:  push    bc
+        ld      a,(de)
+        ld      hl,T6FCC
+        ld      bc,0000DH
+        jr      c,A6FBD
+        dec     bc
+A6FBD:  cpir
+        jr      z,A6FF2
+        pop     bc
+        inc     de
+        djnz    A6FB2
+        pop     hl
+        call    A6FD9
+        pop     hl
+        pop     de
+        ret
+
+T6FCC:  defb    '."/\[]:+=;,*?'
+
+A6FD9:  ld      a," "
+        cp      (hl)
+        jr      z,A6FF2
+        ld      b,007H
+        call    A6FE5
+        ld      b,003H
+A6FE5:  inc     hl
+        cp      (hl)
+        jr      z,A6FEC
+        djnz    A6FE5
+        ret
+
+A6FEC:  dec     b
+        ret     z
+        inc     hl
+        cp      (hl)
+        jr      z,A6FEC
+A6FF2:  jp      A730F
+
+A6FF5:  ld      a,(hl)
+        cp      "*"
+        jr      z,A7003
+        inc     hl
+        djnz    A6FF5
+        ret
+
+A6FFE:  ld      hl,FILNAM
+        ld      b,00BH
+A7003:  ld      (hl),"?"
+        inc     hl
+        djnz    A7003
+        ret
+
+;       Subroutine       (H.LOF)
+;       Inputs
+;       Outputs         ________________________
+
+A7009:  ld      bc,00010H
+        defb    011H
+
+;       Subroutine       (H.LOC)
+;       Inputs
+;       Outputs         ________________________
+
+A700D:  ld      bc,00021H
+        call    A7380                   ; take control from caller
+        push    bc
+        ld      ix,M521F
+        call    A731E                   ; convert to byte
+        ld      ix,M6A6D
+        call    A731E                   ; get i/o channel pointer
+        jp      c,A7315
+        jp      z,A7300
+        pop     bc
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        ex      de,hl
+        add     hl,bc
+        ld      c,(hl)
+        inc     hl
+        ld      b,(hl)
+        inc     hl
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        ex      de,hl
+        push    bc
+        ld      ix,M46FF
+        call    A731E                   ; convert integer to sgn in DAC
+        ld      bc,06545H
+        ld      de,06053H
+        call    M325C                   ; sgn multiply
+        ld      hl,DAC
+        ld      de,ARG
+        ld      bc,8
+        ldir
+        pop     hl
+        ld      ix,M46FF
+        call    A731E                   ; convert integer to sgn in DAC
+        call    M3042                   ; convert DAC from sgn to dbl
+        jp      M269A                   ; dbl add
+
+;       Subroutine      DSKF function (H.DSKF)
+;       Inputs
+;       Outputs         ________________________
+
+A7061:  call    A7380                   ; take control from caller
+        ld      ix,M521F
+        call    A731E                   ; convert to byte
+        ld      hl,YF347
+        cp      (hl)
+        jr      z,A7074
+        jp      nc,A719C
+A7074:  ld      e,a
+        call    A505D
+        jp      M2F99                   ; integer to DAC
+
+;       Subroutine      COPY statement (H.COPY)
+;       Inputs
+;       Outputs         ________________________
+
+A707B:  call    A7380                   ; take control from caller
+        call    A6F80
+        call    A65EA                   ; is file already open in one of the I/O channels ?
+        jp      z,A71A2
+        call    A6F63
+        push    hl
+        ld      a,(YF247)
+        inc     a
+        ld      (BUF+47),a
+        ld      hl,BUF+11
+        ld      de,BUF+48
+        ld      bc,00024H
+        ldir
+        pop     hl
+        call    A72DA                   ; at end of statement ?
+        jr      z,A70C3                 ; yep,
+        call    A72D0
+        defb    0D9H                    ; check for TO token
+        call    A6F80
+        call    A65EA                   ; is file already open in one of the I/O channels ?
+        jp      z,A71A2
+        call    A65E3
+        inc     a
+        ld      (BUF+47),a
+        push    hl
+        ld      de,BUF+48
+        call    A665A
+        pop     hl
+        call    A72DA                   ; at end of statement ?
+        ret     nz                      ; nope, quit
+A70C3:  push    hl
+        call    A6645
+        jp      z,A7312
+A70CA:  call    CKCNTC
+        ld      bc,BUF+47
+        ld      de,BUF+121
+        ld      hl,BUF+84
+        ld      a,00CH
+A70D8:  push    af
+        ld      a,(bc)
+        cp      "?"
+        jr      nz,A70DF
+        ld      a,(hl)
+A70DF:  ld      (de),a
+        inc     bc
+        inc     de
+        inc     hl
+        pop     af
+        dec     a
+        jr      nz,A70D8
+        ld      hl,BUF+84
+        ld      de,BUF+121
+        ld      b,00CH
+A70EF:  ld      a,(de)
+        cp      (hl)
+        jr      nz,A70FA
+        inc     hl
+        inc     de
+        djnz    A70EF
+        jp      A7315
+
+A70FA:  call    A716C
+        push    hl
+        xor     a
+        ld      (BUF+96),a
+        ld      de,BUF+84
+        call    A4462                   ; open fcb
+        ld      de,BUF+121
+        call    A461D                   ; create file
+        and     a
+        jp      nz,A71AB
+        ld      l,a
+        ld      h,a
+        ld      (BUF+117),hl
+        ld      (BUF+119),hl
+        ld      (BUF+154),hl
+        ld      (BUF+156),hl
+        inc     hl
+        ld      (BUF+98),hl
+        ld      (BUF+135),hl
+        pop     hl
+A7128:  push    hl
+        ld      de,BUF+84
+        call    A47B2                   ; random block read
+        ld      a,l
+        or      h
+        jr      z,A713C
+        ld      de,BUF+121
+        call    A718F                   ; random block write
+        pop     hl
+        jr      A7128
+
+A713C:  pop     hl
+        ld      hl,(BUF+104)
+        ld      (BUF+141),hl
+        ld      hl,(BUF+106)
+        ld      (BUF+143),hl
+        ld      de,BUF+121
+        call    A456F                   ; close fcb
+        ld      hl,BUF+84
+        ld      (YF23D),hl              ; transferaddress
+        ld      de,BUF+10
+        xor     a
+        ld      (BUF+22),a
+        call    A5006                   ; search for next
+        inc     a
+        jp      nz,A70CA
+        pop     hl
+        ret
+
+A7165:  ld      (SAVENT),hl
+        ld      (SAVEND),bc
+A716C:  ld      hl,0FE00H
+        add     hl,sp
+        jr      nc,A717F
+        ld      de,(STREND)
+        and     a
+        sbc     hl,de
+        jr      c,A717F
+        ld      a,h
+        and     a
+        jr      nz,A7186
+A717F:  ld      de,(NULBUF)
+        ld      hl,256
+A7186:  ld      (YF23D),de              ; transferaddress
+        ret
+
+A718B:  ld      de,(YF353)
+A718F:  call    A47BE                   ; random block write
+        and     a
+        ret     z
+        jr      A71A8
+
+A7196:  ld      e,03CH
+        defb    001H
+A7199:  ld      e,03DH
+        defb    001H
+A719C:  ld      e,03EH
+        defb    001H
+        ld      e,03FH
+        defb    001H
+A71A2:  ld      e,040H
+        defb    001H
+A71A5:  ld      e,041H
+        defb    001H
+A71A8:  ld      e,042H
+        defb    001H
+A71AB:  ld      e,043H
+        defb    001H
+A71AE:  ld      e,044H
+        defb    001H
+A71B1:  ld      e,045H
+        defb    001H
+A71B4:  ld      e,046H
+        defb    001H
+A71B7:  ld      e,047H
+        ld      bc,00000H
+        xor     a
+        ld      (NLONLY),a              ; not loading basic program, close i/o channels when requested
+        ld      (FLBMEM),a              ; ascii mode
+        push    de
+        ld      ix,M6B24
+        call    A731E                   ; close i/o channel
+        pop     de
+        ld      ix,M406F                ; BASIC error
+        jp      A731E
+
+;       Subroutine      expand errormessages (H.ERRP)
+;       Inputs
+;       Outputs         ________________________
+
+A71D3:  ld      a,e
+        cp      03CH                    ; normal BASIC error ?
+        ret     c                       ; yep, quit
+        cp      048H                    ; DiskBASIC error ?
+        ret     nc                      ; nope, quit
+        sub     03BH
+        ld      b,a                     ; 1 based offset
+        ld      hl,T71F5
+A71E0:  ld      a,(hl)
+        and     a
+        inc     hl
+        jr      nz,A71E0
+        djnz    A71E0                   ; next errormessage
+        dec     hl                      ; include trailing zero
+        ld      de,BUF+166
+        push    de
+        ld      bc,22
+        ldir                            ; copy errormessage to temporary place
+        ld      e,1                     ; erroroffset 1
+        pop     hl
+        ret
+
+T71F5:  defb    0
+        defb    "Bad FAT",0
+        defb    "Bad file mode",0
+        defb    "Bad drive name",0
+        defb    "Bad sector number",0
+        defb    "File still open",0
+        defb    "File already exists",0
+        defb    "Disk full",0
+        defb    "Too many files",0
+        defb    "Disk write protected",0
+        defb    "Disk I/O error",0
+        defb    "Disk offline",0
+        defb    "Rename across disk",0
+
+
+T72AE:  defw    A72B0                   ; pointer to the default diskerror handler for DiskBASIC
+
+;       Subroutine      diskerror handler for DiskBASIC
+;       Inputs          ________________________
+;       Outputs         ________________________
+
+A72B0:  bit     7,c                     ; FAT error ?
+        jp      nz,A7196                ; yep, bad fat error
+        res     0,c
+        ld      b,0
+        ld      hl,T72C2
+        add     hl,bc
+A72BD:  ld      a,(hl)
+        inc     hl
+        ld      h,(hl)
+        ld      l,a
+        jp      (hl)
+
+T72C2:  defw    A71AE                   ; Write Protect error, disk write protect error
+        defw    A71B4                   ; Not Ready error, disk offline error
+        defw    A71B1                   ; Data/CRC error, disk i/o error
+        defw    A71B1                   ; Seek error, disk i/o error
+        defw    A71B1                   ; Record not found error, disk i/o error
+        defw    A71B1                   ; Write fault error, disk i/o error
+        defw    A71B1                   ; Other error, disk i/o error
+
+;       Subroutine      check for BASIC character
+;       Inputs          HL = BASIC pointer
+;       Outputs         ________________________
+
+A72D0:  call    A72DA
+        ex      (sp),hl
+        cp      (hl)
+        jr      nz,A7318
+        inc     hl
+        ex      (sp),hl
+        inc     hl
+A72DA:  dec     hl
+A72DB:  ld      ix,M4666
+        jr      A731E                   ; continue in CHRGTR
+
+; unused code, used for keeping the diskdrive code aligned at 07405H
+
+        nop
+        nop
+        nop
+
+;       Subroutine      register disksystem bottom when expansion has hooked H.CLEA
+;       Inputs          -
+;       Outputs         ________________________
+
+A72E4:  ld      a,0C9H
+        ld      (H.LOPD+0),a
+        ld      de,(HIMEM)
+        ld      (YF349),de
+        ret
+
+;       routine for H.LOPD
+
+T72F2:  rst     030H
+        defb    0
+        defw    A72E4
+        ret
+
+A72F7:  ld      e,010H
+        defb    001H
+
+A72FA:  ld      e,00DH
+        defb    001H
+
+A72FD:  ld      e,007H
+        defb    001H
+
+A7300:  ld      e,03BH
+        defb    001H
+
+A7303:  ld      e,037H
+        defb    001H
+
+A7306:  ld      e,032H
+        defb    001H
+
+A7309:  ld      e,036H
+        defb    001H
+
+A730C:  ld      e,034H
+        defb    001H
+
+A730F:  ld      e,038H
+        defb    001H
+
+A7312:  ld      e,035H
+        defb    001H
+
+A7315:  ld      e,005H
+        defb    001H
+
+A7318:  ld      e,002H
+        ld      ix,M406F                ; BASIC error
+A731E:  call    CALBAS
+        ei
+        ret
+
+;       Subroutine      devicename parser (H.PARD)
+;       Inputs
+;       Outputs         ________________________
+
+A7323:  ei
+        push    hl
+        push    de
+        ld      a,(YF348)
+        add     a,a
+        ld      hl,16
+        jr      nc,A7331
+        ld      l,16+8
+A7331:  add     hl,sp
+        ld      e,(hl)
+        inc     hl
+        ld      d,(hl)
+        push    hl
+        ld      hl,M6E92+3
+        rst     020H                    ; called from BSAVE ?
+        pop     hl
+        jr      z,A734A                 ; yep, adjust returnaddress for DiskBASIC BSAVE
+        push    hl
+        ld      hl,M6EC6+3
+        rst     020H                    ; called from BLOAD ?
+        pop     hl
+        jr      nz,A7350                ; nope, do not adjust returnaddress
+        ld      de,XF377
+        jr      A734D                   ; yep, adjust returnaddress for DiskBASIC BLOAD
+
+A734A:  ld      de,XF37A
+A734D:  ld      (hl),d
+        dec     hl
+        ld      (hl),e
+A7350:  pop     de
+        pop     hl
+        ld      a,e
+        cp      2                       ; filespecification length <2 ?
+        ret     c                       ; yep, no device specified
+        ld      a,(hl)
+        cp      ":"                     ; first character a ":" ?
+        jr      z,A730F                 ; yep,
+        inc     hl
+        ld      a,(hl)
+        cp      ":"                     ; second character a ":" ?
+        dec     hl
+        ret     nz                      ; nope, no diskdevice specifier
+        call    A7380                   ; take control from caller
+        ld      a,(hl)
+        and     0DFH                    ; upcase
+        sub     040H                    ; to drivenumber/deviceid for disk (1...)
+        push    hl
+        ld      hl,YF347
+        cp      (hl)                    ; valid drive ?
+        pop     hl
+        jr      z,A7374
+        jp      nc,A719C                ; nope,
+A7374:  inc     hl
+        inc     hl
+        dec     e
+        dec     e
+        push    de
+        inc     e                       ; flag Zx reset
+        pop     de
+        ret
+
+;       Subroutine      no device specified (H.NODE)
+;       Inputs
+;       Outputs         ________________________
+
+A737C:  ei
+        ld      a,0                     ; deviceid for default drive
+        ret
+
+;       Subroutine      take control from caller
+;       Inputs
+;       Outputs         ________________________
+
+;       This is what the stack looks like at entry:
+;
+;       prim    exp
+;       +0      +0      returnaddress A7380 caller
+;       +2      +2      callf BIOS registers
+;       +6      +14     returnaddress CALLF caller
+;       +8      +16     returnaddress hook caller
+
+A7380:  ei
+        push    hl
+        push    af
+        ld      a,(YF348)
+        add     a,a
+        ld      hl,12
+        jr      nc,A738E
+        ld      l,12+8
+A738E:  add     hl,sp
+        ld      (hl),LOW RETRTN
+        inc     hl
+        ld      (hl),HIGH RETRTN
+        pop     af
+        pop     hl
+        ret
 
 ;       Subroutine      BDOS 09 (output string)
 ;       Inputs          DE = address of string
@@ -8573,6 +8641,5 @@ DSKDRV:
 
 
         end
-
 
 

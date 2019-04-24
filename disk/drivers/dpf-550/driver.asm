@@ -125,7 +125,7 @@ DEFDPB	EQU	$-1
 ;	     Outputs ________________________
 
 DSKIO:
-C744D:	EI	
+C744D:	EI
         JP	NC,C7527
         CALL	C747B
 J7454:	PUSH	AF
@@ -146,11 +146,11 @@ J745B:	LD	A,0D0H
         JR	NZ,J7476
         LD	(IX+1),C
         POP	AF
-        RET	
+        RET
 
 J7476:	LD	(IX+2),C
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -173,7 +173,7 @@ C747B:	CALL	C75DB
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER
@@ -203,7 +203,7 @@ J74B9:	CALL	C76CB
         LD	DE,I$74D9
         PUSH	DE
         CALL	DISINT
-        DI	
+        DI
         OUT	(WDPD0),A
 J74CB:	IN	A,(WDPD4)
         ADD	A,A			; IRQ ?
@@ -217,7 +217,7 @@ J74CB:	IN	A,(WDPD4)
 I$74D9:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         CALL	ENAINT
         IN	A,(WDPD0)
         AND	5CH	; "\"
@@ -230,16 +230,16 @@ I$74D9:	POP	BC
         POP	AF
         DEC	E
         JR	NZ,J74B9
-        SCF	
+        SCF
         LD	E,A
         BIT	4,E
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         RET	NZ
         BIT	3,E
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         RET	NZ
-        LD	A,0CH	; 12 
-        RET	
+        LD	A,0CH	; 12
+        RET
 
 J7503:	LD	A,0D0H
         OUT	(WDPD0,A
@@ -258,13 +258,13 @@ J7512:	IN	A,(WDPD4)
         LD	A,E
         OR	D
         JP	NZ,J7512
-J7520:	LD	A,02H	; 2 
-        SCF	
-        RET	
+J7520:	LD	A,02H	; 2
+        SCF
+        RET
 
 J7524:	XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -290,7 +290,7 @@ C752D:	CALL	C75DB
         AND	A
         JP	M,J7562
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C756E
         POP	HL
         RET	C
@@ -298,7 +298,7 @@ C752D:	CALL	C75DB
         PUSH	DE
         PUSH	BC
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,512
         CALL	XFER
         POP	BC
@@ -326,9 +326,9 @@ J7570:	CALL	C76CB
         LD	DE,I$75B1
         PUSH	DE
         CALL	DISINT
-        DI	
+        DI
         OUT	(WDPD0),A
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
         LD	DE,0
 J7587:	IN	A,(WDPD4)
         ADD	A,A			; DRQ ?
@@ -360,7 +360,7 @@ J75AA:	IN	A,(WDPD3)
 I$75B1:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         CALL	ENAINT
         IN	A,(WDPD0)
         AND	1CH
@@ -371,20 +371,20 @@ I$75B1:	POP	BC
         POP	AF
         DEC	E
         JR	NZ,J7570
-        SCF	
+        SCF
         LD	E,A
         BIT	4,E
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         RET	NZ
         BIT	3,E
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         RET	NZ
-        LD	A,0CH	; 12 
-        RET	
+        LD	A,0CH	; 12
+        RET
 
-J75D7:	LD	A,02H	; 2 
-        SCF	
-        RET	
+J75D7:	LD	A,02H	; 2
+        SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -396,11 +396,11 @@ C75DB:	PUSH	AF
         POP	HL
         POP	BC
         POP	AF
-        CP	02H	; 2 
+        CP	02H	; 2
         JR	C,J75EC
-J75E8:	LD	A,0CH	; 12 
-        SCF	
-        RET	
+J75E8:	LD	A,0CH	; 12
+        SCF
+        RET
 
 J75EC:	PUSH	AF
         LD	A,C
@@ -439,18 +439,18 @@ J7617:	ADD	A,1			; drive 0 -> b1=0,b0=1  drive 1 -> b1=1,b0=0
         OR	04H			; side 1
 J7623:	LD	D,A
         LD	A,C
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         AND	0C0H
         OR	D
         LD	D,A
         CALL	DISINT
-        DI	
+        DI
         OUT	(WDPD5),A		; select drive and side (motor on)
         LD	A,(IX+0)
         AND	A
         LD	(IX+0),0FFH
-        EI	
+        EI
         CALL	ENAINT
         LD	C,L
         LD	A,(IX+7)
@@ -489,7 +489,7 @@ J767B:	IN	A,(WDPD1)
 J767D:	CP	C			; head on the right track ?
         CALL	NZ,C76C0		; nope, seek to track
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -502,11 +502,11 @@ C7683:	CALL	C76CB
         OUT	(WDPD2),A
         BIT	7,D
         JR	NZ,J7694
-        CP	0AH	; 10 
+        CP	0AH	; 10
         RET	C
-J7694:	CP	09H	; 9 
+J7694:	CP	09H	; 9
         RET	C
-        LD	A,01H	; 1 
+        LD	A,01H	; 1
         OUT	(WDPD2),A
         BIT	6,D
         JR	Z,J76A9
@@ -515,7 +515,7 @@ J7694:	CP	09H	; 9
         SET	2,D
         LD	A,D
         OUT	(WDPD5),A
-        RET	
+        RET
 
 J76A9:	RES	2,D
         LD	A,D
@@ -550,15 +550,15 @@ J76C7:	OUT	(WDPD0),A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 C76CB:	IN	A,(WDPD0)
-        RRA	
+        RRA
         JR	C,C76CB
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 C76D1:	CALL	C76CB
-        LD	A,09H	; 9 
+        LD	A,09H	; 9
         JR	J76C7
 
 INIHRD:
@@ -566,47 +566,47 @@ C76D8:	LD	A,0D0H
         OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
-        LD	A,01H	; 1 
+        LD	A,01H	; 1
         CALL	C76EC
-        LD	A,02H	; 2 
+        LD	A,02H	; 2
         CALL	C76EC
         XOR	A
         OUT	(WDPD5),A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 C76EC:	OUT	(WDPD5),A
         CALL	C76CB
-        LD	A,09H	; 9 
+        LD	A,09H	; 9
         OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	HL,0
 J76FA:	IN	A,(WDPD0)
-        RRA	
+        RRA
         RET	NC
         DEC	HL
         LD	A,L
         OR	H
         JR	NZ,J76FA
-        RET	
+        RET
 
 DRIVES:
 C7704:	PUSH	BC
         PUSH	AF
         CALL	GETWRK
-        LD	A,02H	; 2 
+        LD	A,02H	; 2
         OUT	(WDPD5),A
         CALL	C76CB
-        LD	A,09H	; 9 
+        LD	A,09H	; 9
         OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
         LD	HL,0
 J7719:	IN	A,(WDPD0)
-        RRA	
+        RRA
         JR	NC,J7725
         DEC	HL
         LD	A,L
@@ -620,9 +620,9 @@ J7725	EQU	$-2
         OUT	(WDPD5),A
         POP	AF
         JR	Z,J7732
-        LD	L,02H	; 2 
+        LD	L,02H	; 2
 J7732:	POP	BC
-        RET	
+        RET
 
 INIENV:
 C7734:	CALL	GETWRK
@@ -659,7 +659,7 @@ J7762:	POP	AF
         JP	PRVINT
 
 DSKCHG:
-C7766:	NOP	
+C7766:	NOP
         PUSH	HL
         PUSH	BC
         PUSH	AF
@@ -673,8 +673,8 @@ C7766:	NOP
         LD	B,(IX+6)
         CP	B
         JR	Z,J7787
-        SCF	
-        LD	B,01H	; 1 
+        SCF
+        LD	B,01H	; 1
         JR	J7790
 
 J7781:	AND	A
@@ -684,21 +684,21 @@ J7787:	LD	B,(IX+1)
 J778A:	AND	A
         INC	B
         DEC	B
-        LD	B,01H	; 1 
+        LD	B,01H	; 1
         RET	NZ
 J7790:	PUSH	AF
         PUSH	BC
         PUSH	HL
         LD	DE,1
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C7527
         JR	C,J77BD
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,(HL)
         POP	HL
         PUSH	BC
         CALL	C77C1
-        LD	A,0CH	; 12 
+        LD	A,0CH	; 12
         JR	C,J77BD
         POP	DE
         POP	BC
@@ -706,28 +706,28 @@ J7790:	PUSH	AF
         JR	NC,J77B4
         AND	A
         LD	B,0FFH
-        RET	
+        RET
 
 J77B4:	LD	A,D
         CP	C
-        SCF	
-        CCF	
+        SCF
+        CCF
         LD	B,0FFH
         RET	NZ
         INC	B
-        RET	
+        RET
 
 J77BD:	POP	DE
         POP	DE
         POP	DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 GETDPB:
-C77C1:	NOP	
+C77C1:	NOP
         EX	DE,HL
         INC	DE
         LD	A,B
@@ -745,39 +745,39 @@ C77C1:	NOP
         LD	BC,I$7405
         ADD	HL,BC
         LD	BC,18
-        LDIR	
-        RET	
+        LDIR
+        RET
 
 CHOICE:
 C77DC:	LD	HL,0
-        RET	
+        RET
 
 DSKFMT:
 C77E0:	PUSH	DE
         LD	A,D
-        CP	02H	; 2 
+        CP	02H	; 2
         JP	NC,J783B
         LD	DE,0
         LD	C,0FCH
         CALL	C75DB
         PUSH	DE
         CALL	DISINT
-        DI	
+        DI
         CALL	C76D1
         IN	A,(WDPD0)
-        AND	04H	; 4 
+        AND	04H	; 4
         JP	Z,J7840
         CALL	GETWRK
         XOR	A
         LD	(IX+8),A
         LD	E,A
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
 J7808:	PUSH	AF
         CALL	C7959
         POP	AF
         DEC	A
         JP	NZ,J7808
-J7811:	LD	B,03H	; 3 
+J7811:	LD	B,03H	; 3
         PUSH	BC
 J7814:	CALL	C7959
         IN	A,(WDPD0)
@@ -790,40 +790,40 @@ J7814:	CALL	C7959
         POP	BC
         POP	DE
 J7826:	POP	DE
-        SCF	
+        SCF
         LD	B,A
         BIT	6,B
         LD	A,00H
         RET	NZ
         BIT	4,B
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         RET	NZ
         BIT	3,B
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         RET	NZ
-        LD	A,10H	; 16 
-        RET	
+        LD	A,10H	; 16
+        RET
 
 J783B:	POP	DE
-        SCF	
-        LD	A,0CH	; 12 
-        RET	
+        SCF
+        LD	A,0CH	; 12
+        RET
 
 J7840:	POP	DE
 J7841:	POP	DE
-        SCF	
-        LD	A,06H	; 6 
-        RET	
+        SCF
+        LD	A,06H	; 6
+        RET
 
 J7846:	POP	DE
 J7847:	POP	DE
         POP	DE
 J7849:	POP	DE
-        CP	0CH	; 12 
+        CP	0CH	; 12
         RET	NZ
-        LD	A,10H	; 16 
-        SCF	
-        RET	
+        LD	A,10H	; 16
+        SCF
+        RET
 
 J7851:	LD	HL,I.00C8
 J7854:	DEC	HL
@@ -847,16 +847,16 @@ J7875:	POP	DE
         JP	J78C9
 
 ?.7879:	LD	A,D
-        OR	04H	; 4 
+        OR	04H	; 4
         OUT	(WDPD5),A
         CALL	C76D1
         IN	A,(WDPD0)
-        AND	04H	; 4 
+        AND	04H	; 4
         JP	Z,J7841
         XOR	A
         LD	(IX+8),A
-        LD	E,01H	; 1 
-J788E:	LD	B,03H	; 3 
+        LD	E,01H	; 1
+J788E:	LD	B,03H	; 3
         PUSH	BC
 J7891:	CALL	C7959
         IN	A,(WDPD0)
@@ -889,12 +889,12 @@ J78A8:	DEC	HL
 
 J78C9:	CALL	C76D1
         IN	A,(WDPD0)
-        AND	04H	; 4 
+        AND	04H	; 4
         JP	Z,J7841
         LD	HL,I$7AC5
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,I$00C5
-        LDIR	
+        LDIR
         LD	BC,I$013B
 J78E2:	XOR	A
         LD	(DE),A
@@ -906,14 +906,14 @@ J78E2:	XOR	A
         POP	DE
         PUSH	DE
         LD	A,D
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	DE,0
         LD	BC,I.01FC
-        SCF	
+        SCF
         CALL	C744D
         JP	C,J7849
         LD	B,00H
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	A,00H
 J7905:	LD	(DE),A
         INC	DE
@@ -924,14 +924,14 @@ J7909:	LD	(DE),A
         POP	DE
         PUSH	DE
         LD	A,D
-        LD	B,08H	; 8 
+        LD	B,08H	; 8
         LD	DE,2
 J7915:	PUSH	AF
         PUSH	DE
         PUSH	BC
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,I.01FC
-        SCF	
+        SCF
         CALL	C744D
         JP	C,J7846
         POP	BC
@@ -939,7 +939,7 @@ J7915:	PUSH	AF
         POP	AF
         INC	DE
         DJNZ	J7915
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	A,0FCH
         LD	(DE),A
         INC	DE
@@ -949,14 +949,14 @@ J7915:	PUSH	AF
         LD	(DE),A
         POP	DE
         LD	A,D
-        LD	B,02H	; 2 
+        LD	B,02H	; 2
         LD	DE,1
 J793F:	PUSH	AF
         PUSH	DE
         PUSH	BC
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,I.01FC
-        SCF	
+        SCF
         CALL	C744D
         JP	C,J7847
         POP	BC
@@ -971,10 +971,10 @@ J793F:	PUSH	AF
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 C7959:	CALL	DISINT
-        DI	
+        DI
         CALL	C7ABD
         LD	A,0FCH
-        LD	D,01H	; 1 
+        LD	D,01H	; 1
         OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
@@ -988,7 +988,7 @@ J796C:	IN	A,(WDPD4)
         OUT	(WDPD3),A
         DJNZ	J796C
         LD	C,00H
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
 J797C:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
@@ -997,7 +997,7 @@ J797C:	IN	A,(WDPD4)
         OUT	(WDPD3),A
         DJNZ	J797C
         LD	C,0F6H
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J798C:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
@@ -1006,7 +1006,7 @@ J798C:	IN	A,(WDPD4)
         OUT	(WDPD3),A
         DJNZ	J798C
         LD	C,0FCH
-        LD	B,01H	; 1 
+        LD	B,01H	; 1
 J799C:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
@@ -1024,7 +1024,7 @@ J79AC:	IN	A,(WDPD4)
         OUT	(WDPD3),A
         DJNZ	J79AC
 J79B8:	LD	C,00H
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
 J79BC:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
@@ -1033,7 +1033,7 @@ J79BC:	IN	A,(WDPD4)
         OUT	(WDPD3),A
         DJNZ	J79BC
         LD	C,0F5H
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J79CC:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
@@ -1078,7 +1078,7 @@ J7A08:	IN	A,(WDPD4)
         LD	A,C
         OUT	(WDPD3),A
         DJNZ	J7A08
-        LD	C,02H	; 2 
+        LD	C,02H	; 2
         INC	B
 J7A17:	IN	A,(WDPD4)
         ADD	A,A
@@ -1106,7 +1106,7 @@ J7A36:	IN	A,(WDPD4)
         OUT	(WDPD3),A
         DJNZ	J7A36
         LD	C,00H
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
 J7A46:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
@@ -1115,7 +1115,7 @@ J7A46:	IN	A,(WDPD4)
         OUT	(WDPD3),A
         DJNZ	J7A46
         LD	C,0F5H
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J7A56:	IN	A,(WDPD4)
         ADD	A,A
         RET	C
@@ -1167,7 +1167,7 @@ J7A9E:	IN	A,(WDPD4)
         DJNZ	J7A9E
         INC	D
         LD	A,D
-        CP	0AH	; 10 
+        CP	0AH	; 10
         JP	NZ,J79B8
 J7AB1:	IN	A,(WDPD4)
         ADD	A,A
@@ -1181,9 +1181,9 @@ J7AB1:	IN	A,(WDPD4)
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 C7ABD:	IN	A,(WDPD0)
-        AND	01H	; 1 
+        AND	01H	; 1
         JP	NZ,C7ABD
-        RET	
+        RET
 
 I$7AC5:	EX	DE,HL
         CP	90H
@@ -1198,14 +1198,14 @@ I$7AC5:	EX	DE,HL
         LD	BC,1
         LD	(BC),A
         LD	B,B
-        NOP	
+        NOP
         LD	L,B
         LD	BC,I$02FC
-        NOP	
+        NOP
         ADD	HL,BC
-        NOP	
+        NOP
         LD	BC,0
-        NOP	
+        NOP
         RET	NC
         LD	(D$C059),DE
         LD	(D.C0C4),A
@@ -1214,7 +1214,7 @@ I$7AC5:	EX	DE,HL
         LD	(HL),0C0H
 J7AF0:	LD	SP,KBUF+256
         LD	DE,I.C09F
-        LD	C,0FH	; 15 
+        LD	C,0FH	; 15
         CALL	BDOS
         INC	A
         JP	Z,J$C063
@@ -1234,15 +1234,15 @@ J7AF0:	LD	SP,KBUF+256
         CALL	0
         LD	A,C
         AND	0FEH
-        CP	02H	; 2 
+        CP	02H	; 2
         JP	NZ,J$C06A
         LD	A,(D.C0C4)
         AND	A
         JP	Z,J$4022
         LD	DE,I$C079
-        LD	C,09H	; 9 
+        LD	C,09H	; 9
         CALL	BDOS
-        LD	C,07H	; 7 
+        LD	C,07H	; 7
         CALL	BDOS
         JR	J7AF0
 
@@ -1279,7 +1279,7 @@ J7AF0:	LD	SP,KBUF+256
         DEC	C
         LD	A,(BC)
         INC	H
-        NOP	
+        NOP
         LD	C,L
         LD	D,E
         LD	E,B
@@ -1294,8 +1294,8 @@ J7AF0:	LD	SP,KBUF+256
         DEFB	0,0,0,0,0,0
 
 OEMSTA:
-C7B8A:	SCF	
-        RET	
+C7B8A:	SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1304,9 +1304,9 @@ C7B8C:	PUSH	HL
 J7B8D:	PUSH	DE
         PUSH	BC
         LD	HL,I$7C1D
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,I$0108
-        LDIR	
+        LDIR
         LD	HL,I$7BF3
         JR	J7BB2
 
@@ -1317,10 +1317,10 @@ C7BA0:	PUSH	HL
         PUSH	DE
         PUSH	BC
         LD	HL,I$7D25
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
 J7BA9	EQU	$-1
         LD	BC,I$010C
-        LDIR	
+        LDIR
         LD	HL,I$7BD3
 J7BB2:	LD	E,(HL)
         INC	HL
@@ -1330,14 +1330,14 @@ J7BB2:	LD	E,(HL)
         OR	D
         JR	Z,J7BCF
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,DE
 J7BBF:	INC	HL
 J7BC0:	LD	C,(HL)
         INC	HL
         LD	B,(HL)
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,BC
         EX	DE,HL
         LD	(HL),D
@@ -1349,76 +1349,76 @@ J7BC0:	LD	C,(HL)
 J7BCF:	POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 I$7BD3:	LD	B,00H
         JR	NZ,J7BD7
 J7BD7:	DEC	H
-        NOP	
+        NOP
         DEC	L
-        NOP	
+        NOP
         DEC	SP
-        NOP	
+        NOP
         LD	B,D
-        NOP	
+        NOP
         LD	D,L
-        NOP	
+        NOP
         LD	E,D
-        NOP	
+        NOP
         LD	H,D
-        NOP	
+        NOP
         ADC	A,(HL)
-        NOP	
+        NOP
         SUB	H
-        NOP	
+        NOP
         OR	A
-        NOP	
+        NOP
         EX	(SP),HL
-        NOP	
+        NOP
         POP	AF
-        NOP	
+        NOP
         DEC	B
         LD	BC,0
 I$7BF3:	LD	B,00H
         JR	NZ,J7BF7
 J7BF7:	DEC	H
-        NOP	
+        NOP
         DEC	L
-        NOP	
-        CCF	
-        NOP	
+        NOP
+        CCF
+        NOP
         LD	B,H
-        NOP	
+        NOP
         LD	C,B
-        NOP	
+        NOP
         LD	D,H
-        NOP	
+        NOP
         LD	E,E
-        NOP	
+        NOP
         LD	H,D
-        NOP	
+        NOP
         LD	(HL),L
-        NOP	
+        NOP
         LD	A,D
-        NOP	
+        NOP
         LD	A,(HL)
-        NOP	
+        NOP
         OR	E
-        NOP	
+        NOP
         RST	18H
-        NOP	
+        NOP
         DEFB	0EDH		; << Illegal Op Code Byte >>
 
-        NOP	
+        NOP
         LD	BC,1
-        NOP	
+        NOP
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 C7C17:	PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         EX	(SP),HL
-        RET	
+        RET
 
 I$7C1D:	PUSH	HL
         PUSH	DE
@@ -1427,17 +1427,17 @@ I$7C1D:	PUSH	HL
         LD	(D$00A7),A
         LD	H,80H
         CALL	ENASLT
-        NOP	
+        NOP
         LD	A,(RAMAD1)
         LD	H,40H	; "@"
         CALL	ENASLT
-        NOP	
+        NOP
         POP	BC
         POP	DE
         POP	HL
 J7C38:	DEC	HL
         LD	A,H
-        ADD	A,02H	; 2 
+        ADD	A,02H	; 2
         INC	HL
         JP	M,J$0099
         LD	E,15H
@@ -1449,10 +1449,10 @@ J7C42:	CALL	C.00FB
         LD	DE,I$0065
         PUSH	DE
         CALL	DISINT
-        DI	
+        DI
         OUT	(WDPD0),A
         LD	DE,0
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J7C59:	IN	A,(WDPD4)
         ADD	A,A
         JP	P,J$0054
@@ -1483,7 +1483,7 @@ J7C59:	IN	A,(WDPD4)
 ?.7C82:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         CALL	ENAINT
         IN	A,(WDPD0)
         AND	1CH
@@ -1501,16 +1501,16 @@ J7C97:	JP	M,J$0096
         JR	NZ,J7C42
         LD	E,A
         BIT	4,E
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         JR	NZ,J7CB5
         BIT	3,E
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         JR	NZ,J7CB5
-        LD	A,0CH	; 12 
+        LD	A,0CH	; 12
         JR	J7CB5
 
-J7CB3:	LD	A,02H	; 2 
-J7CB5:	SCF	
+J7CB3:	LD	A,02H	; 2
+J7CB5:	SCF
 J7CB6:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -1518,16 +1518,16 @@ J7CB6:	PUSH	HL
         LD	A,(RAMAD2)
         LD	H,80H
         CALL	ENASLT
-        NOP	
+        NOP
         LD	A,00H
         LD	H,40H	; "@"
         CALL	ENASLT
-        NOP	
+        NOP
         POP	AF
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 ?.7CD0:	CALL	C.00FB
         INC	H
@@ -1537,11 +1537,11 @@ J7CB6:	PUSH	HL
         OUT	(WDPD2),A
         BIT	7,D
         JR	NZ,J7CE1
-        CP	0AH	; 10 
+        CP	0AH	; 10
         RET	C
-J7CE1:	CP	09H	; 9 
+J7CE1:	CP	09H	; 9
         RET	C
-        LD	A,01H	; 1 
+        LD	A,01H	; 1
         OUT	(WDPD2),A
         BIT	6,D
         JR	Z,J7CF6
@@ -1550,7 +1550,7 @@ J7CE1:	CP	09H	; 9
         SET	2,D
         LD	A,D
         OUT	(WDPD5),A
-        RET	
+        RET
 
 J7CF6:	RES	2,D
         LD	A,D
@@ -1575,12 +1575,12 @@ J7D14:	OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
 J7D18:	IN	A,(WDPD0)
-        RRA	
+        RRA
         JR	C,J7D18
-        RET	
+        RET
 
 ?.7D1E:	CALL	C.00FB
-        LD	A,09H	; 9 
+        LD	A,09H	; 9
         JR	J7D14
 
 I$7D25:	PUSH	HL
@@ -1590,17 +1590,17 @@ I$7D25:	PUSH	HL
         LD	(D$00AB),A
         LD	H,80H
         CALL	ENASLT
-        NOP	
+        NOP
         LD	A,(RAMAD1)
         LD	H,40H	; "@"
         CALL	ENASLT
-        NOP	
+        NOP
         POP	BC
         POP	DE
         POP	HL
 J7D40:	DEC	HL
         LD	A,H
-        ADD	A,02H	; 2 
+        ADD	A,02H	; 2
         INC	HL
         JP	M,J$009D
         LD	E,15H
@@ -1612,7 +1612,7 @@ J7D4A:	CALL	C.00FF
         LD	DE,I$0045
         PUSH	DE
         CALL	DISINT
-        DI	
+        DI
         OUT	(WDPD0),A
         IN	A,(WDPD4)
         ADD	A,A
@@ -1626,7 +1626,7 @@ J7D4A:	CALL	C.00FF
 ?.7D6A:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         CALL	ENAINT
         IN	A,(WDPD0)
         AND	5CH	; "\"
@@ -1646,12 +1646,12 @@ J7D7F:	JP	M,J$0097
         JR	NZ,J7D4A
         LD	E,A
         BIT	4,E
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         JR	NZ,J7DC1
         BIT	3,E
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         JR	NZ,J7DC1
-        LD	A,0CH	; 12 
+        LD	A,0CH	; 12
         JR	J7DC1
 
 J7D9F:	LD	A,0D0H
@@ -1671,11 +1671,11 @@ J7D9F:	LD	A,0D0H
         LD	A,E
         OR	D
         JP	NZ,J$0089
-        LD	A,02H	; 2 
+        LD	A,02H	; 2
         JR	J7DC1
 
 J7DC0:	XOR	A
-J7DC1:	SCF	
+J7DC1:	SCF
 J7DC2:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -1683,16 +1683,16 @@ J7DC2:	PUSH	HL
         LD	A,(RAMAD2)
         LD	H,80H
         CALL	ENASLT
-        NOP	
+        NOP
         LD	A,00H
         LD	H,40H	; "@"
         CALL	ENASLT
-        NOP	
+        NOP
         POP	AF
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 ?.7DDC:	CALL	C.00FF
         INC	H
@@ -1702,11 +1702,11 @@ J7DC2:	PUSH	HL
         OUT	(WDPD2),A
         BIT	7,D
         JR	NZ,J7DED
-        CP	0AH	; 10 
+        CP	0AH	; 10
         RET	C
-J7DED:	CP	09H	; 9 
+J7DED:	CP	09H	; 9
         RET	C
-        LD	A,01H	; 1 
+        LD	A,01H	; 1
         OUT	(WDPD2),A
         BIT	6,D
         JR	Z,J7E02
@@ -1715,7 +1715,7 @@ J7DED:	CP	09H	; 9
         SET	2,D
         LD	A,D
         OUT	(WDPD5),A
-        RET	
+        RET
 
 J7E02:	RES	2,D
         LD	A,D
@@ -1740,12 +1740,12 @@ J7E20:	OUT	(WDPD0),A
         EX	(SP),HL
         EX	(SP),HL
 J7E24:	IN	A,(WDPD0)
-        RRA	
+        RRA
         JR	C,J7E24
-        RET	
+        RET
 
 ?.7E2A:	CALL	C.00FF
-        LD	A,09H	; 9 
+        LD	A,09H	; 9
         JR	J7E20
 
         DEFS	08000H-$,0

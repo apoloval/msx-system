@@ -202,7 +202,7 @@ J74C9:	LD	A,L
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER
@@ -418,7 +418,7 @@ J761D:	LD	A,L
         AND	A
         JP	M,J7649
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C7654		; read sector
         POP	HL
         RET	C
@@ -426,7 +426,7 @@ J761D:	LD	A,L
         PUSH	DE
         PUSH	BC
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,512
         CALL	XFER
         POP	BC
@@ -952,10 +952,10 @@ J7945:	AND	A
         PUSH	BC
         PUSH	HL
         LD	DE,1
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C7613		; DSKIO read
         JR	C,J796F
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,(HL)
         POP	HL
         PUSH	BC
@@ -1029,12 +1029,12 @@ DSKFMT:	LD	IY,I7E5C
         JR	NZ,J79BA	; use single sided
         LD	(IY+5),0F9H	; use double sided
 J79BA:	LD	A,B
-        CP	01H	; 1 
+        CP	01H	; 1
         JR	NC,J79C9
         LD	A,C
-        CP	0FH	; 15 
+        CP	0FH	; 15
         JR	NC,J79C9
-        LD	A,0EH	; 14 
+        LD	A,0EH	; 14
         JP	J7A0F
 
 J79C9:	LD	DE,0		; sector 0
@@ -1058,13 +1058,13 @@ J79EB:	XOR	A
         AND	0E4H		; error ?
         JR	Z,J7A13		; nope,
         LD	B,A
-        LD	A,0AH	; 10 
+        LD	A,0AH	; 10
         BIT	7,B
         JR	NZ,J7A0A
         LD	A,00H
         BIT	6,B
         JR	NZ,J7A0A
-        LD	A,0AH	; 10 
+        LD	A,0AH	; 10
         BIT	5,B
         JR	NZ,J7A0A
         LD	A,16
@@ -1108,14 +1108,14 @@ J7A4F:	LD	BC,9
         LD	(IY+6),A
         LD	BC,4
         ADD	HL,BC
-        LD	A,(HL)		; 
+        LD	A,(HL)		;
         LD	(IY+4),A
         INC	HL
         LD	A,(HL)
         LD	(IY+7),A
         LD	HL,I7E5C
         LD	BC,000C4H
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LDIR
         LD	BC,512-000C4H
         EX	DE,HL
@@ -1124,7 +1124,7 @@ J7A4F:	LD	BC,9
         CALL	C7CB4		; write sector
         JP	C,J7A0A
         LD	D,(IY+3)
-J7A8C:	LD	HL,($SECBUF)
+J7A8C:	LD	HL,(_SECBUF)
         LD	E,(IY+4)
         LD	A,(IY+5)
         LD	(HL),A
@@ -1142,7 +1142,7 @@ J7A8C:	LD	HL,($SECBUF)
         JP	C,J7A0A
 J7AAB:	DEC	E
         JR	Z,J7AC1
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,512
         CALL	C7AE3
         PUSH	DE
@@ -1157,7 +1157,7 @@ J7AC1:	DEC	D
         LD	A,(IY+6)
         SUB	D
         LD	D,A
-J7ACC:	LD	HL,($SECBUF)
+J7ACC:	LD	HL,(_SECBUF)
         LD	BC,512
         CALL	C7AE3
         PUSH	DE
@@ -1204,7 +1204,7 @@ J7B04:	LD	A,(D7FFF)
         LD	A,H
         LD	(D7FFB),A
         DJNZ	J7B04
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
         LD	H,00H
 J7B16:	LD	A,(D7FFF)
         ADD	A,A
@@ -1213,7 +1213,7 @@ J7B16:	LD	A,(D7FFF)
         LD	A,H
         LD	(D7FFB),A
         DJNZ	J7B16
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
         LD	H,0F6H
 J7B28:	LD	A,(D7FFF)
         ADD	A,A
@@ -1240,7 +1240,7 @@ J7B4B:	LD	A,(D7FFF)
         LD	A,H
         LD	(D7FFB),A
         DJNZ	J7B4B
-J7B59:	LD	B,0CH	; 12 
+J7B59:	LD	B,0CH	; 12
         LD	H,00H
 J7B5D:	LD	A,(D7FFF)
         ADD	A,A
@@ -1249,7 +1249,7 @@ J7B5D:	LD	A,(D7FFF)
         LD	A,H
         LD	(D7FFB),A
         DJNZ	J7B5D
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
         LD	H,0F5H
 J7B6F:	LD	A,(D7FFF)
         ADD	A,A
@@ -1295,7 +1295,7 @@ J7BB0:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7BB0
         INC	B
-        LD	H,02H	; 2 
+        LD	H,02H	; 2
 J7BC1:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1321,7 +1321,7 @@ J7BE4:	LD	A,(D7FFF)
         LD	A,H
         LD	(D7FFB),A
         DJNZ	J7BE4
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
         LD	H,00H
 J7BF6:	LD	A,(D7FFF)
         ADD	A,A
@@ -1330,7 +1330,7 @@ J7BF6:	LD	A,(D7FFF)
         LD	A,H
         LD	(D7FFB),A
         DJNZ	J7BF6
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
         LD	H,0F5H
 J7C08:	LD	A,(D7FFF)
         ADD	A,A
@@ -1383,7 +1383,7 @@ J7C5A:	LD	A,(D7FFF)
         DJNZ	J7C5A
         INC	E
         LD	A,E
-        CP	0AH	; 10 
+        CP	0AH	; 10
         JP	C,J7B59
         LD	B,00H
         LD	H,4EH	; "N"
@@ -1426,7 +1426,7 @@ I7CAC:	EI
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7CB4:	LD	HL,($SECBUF)
+C7CB4:	LD	HL,(_SECBUF)
         LD	D,0
         LD	E,(IY+0)
         LD	B,1
@@ -1646,6 +1646,4 @@ J7FDA:	RET
 
 J7FE0:	DEFB	"Designed by S. Isozaki"
         DEFB	0
-
-        END
 

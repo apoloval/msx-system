@@ -46,7 +46,7 @@ I7405:
         LD	(HL),HIGH DC056
 J7430:	LD	SP,KBUF+256
         LD	DE,DC09F
-        LD	C,0FH	; 15 
+        LD	C,0FH	; 15
         CALL	BDOS
         INC	A
         JP	Z,DC063
@@ -66,15 +66,15 @@ DC056:	DEFW	DC058
 DC058:	CALL	0
         LD	A,C
         AND	0FEH
-        CP	02H	; 2 
+        CP	02H	; 2
         JP	NZ,DC06A
 DC063:	LD	A,(DC0C4)
         AND	A
         JP	Z,J4022
 DC06A:	LD	DE,DC079
-        LD	C,09H	; 9 
+        LD	C,09H	; 9
         CALL	BDOS
-        LD	C,07H	; 7 
+        LD	C,07H	; 7
         CALL	BDOS
         JR	J7430
 
@@ -228,7 +228,7 @@ C755D:	CALL	C76F9				; initialise for disk i/o
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER
@@ -258,7 +258,7 @@ J7599:	CALL	C782F				; wait for command ready
         OR	02H
         BIT	0,D
         JR	Z,C75AA
-        OR	08H 
+        OR	08H
 C75AA:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -364,7 +364,7 @@ C7632:	CALL	C76F9				; initialise for disk i/o
         AND	A
         JP	M,C7666
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C7671				; read sector
         POP	HL
         RET	C
@@ -372,7 +372,7 @@ C7632:	CALL	C76F9				; initialise for disk i/o
         PUSH	DE
         PUSH	BC
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,512
         CALL	XFER
         POP	BC
@@ -547,7 +547,7 @@ J7759:	LD	A,C
         LD	A,(IX+3)
         CP	H
         JR	Z,C77CC
-        XOR	01H	; 1 
+        XOR	01H	; 1
         LD	(IX+3),A
         LD	A,(D7FF9)
         JR	Z,J777E
@@ -615,7 +615,7 @@ C77D5:	CALL	C782F				; wait for command ready
         JR	NZ,J77E8
         CP	10
         RET	C
-J77E8:	CP	9 
+J77E8:	CP	9
         RET	C
         LD	A,1
         LD	(D7FFA),A
@@ -835,10 +835,10 @@ J790C:	AND	A
         PUSH	BC
         PUSH	HL
         LD	DE,1
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C762C			; read 1st FAT sector
         JR	C,C7944			; error, quit with error
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,(HL)
         PUSH	AF
         LD	A,B
@@ -950,7 +950,7 @@ J79DA:	CALL	C7836				; select track 0
         JP	C7AD1
 
 J79EB:	LD	HL,I7405
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,L7405
         LDIR
         LD	BC,512-L7405
@@ -964,7 +964,7 @@ J79FA:	XOR	A
         POP	DE
         PUSH	DE
         LD	A,D
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	DE,0
         LD	BC,01F8H
         SCF
@@ -977,7 +977,7 @@ J79FA:	XOR	A
         PUSH	AF
         PUSH	DE
         PUSH	BC
-J7A1F:	LD	DE,($SECBUF)
+J7A1F:	LD	DE,(_SECBUF)
         LD	A,0F8H
         LD	(DE),A
         INC	DE
@@ -997,7 +997,7 @@ J7A30:	LD	(DE),A
         PUSH	AF
         PUSH	DE
         PUSH	BC
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,01F8H
         SCF
         CALL	DSKIO				; write fat sector
@@ -1011,7 +1011,7 @@ J7A30:	LD	(DE),A
         PUSH	DE
         PUSH	BC
         LD	B,3
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         XOR	A
 J7A56:	LD	(DE),A
         INC	DE
@@ -1022,7 +1022,7 @@ J7A56:	LD	(DE),A
         PUSH	AF
         PUSH	DE
         PUSH	BC
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,01F8H
         SCF
         CALL	DSKIO				; write fat sector
@@ -1045,7 +1045,7 @@ J7A56:	LD	(DE),A
 J7A80:	PUSH	AF
         PUSH	DE
         PUSH	BC
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,01F8H
         SCF
         CALL	DSKIO
@@ -1063,7 +1063,7 @@ J7A80:	PUSH	AF
 J7AA1:	PUSH	AF
         PUSH	DE
         PUSH	BC
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,01F8H
         SCF
         CCF
@@ -1172,7 +1172,7 @@ C7B56:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	C7B56				; POST INDEX GAP
         LD	C,0F5H
-        LD	B,3 
+        LD	B,3
 C7B68:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1255,7 +1255,7 @@ C7BF4:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	C7BF4				; GAP 2
         LD	C,0F5H
-        LD	B,3 
+        LD	B,3
 C7C06:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1376,7 +1376,7 @@ C7CC3:	PUSH	HL
         PUSH	DE
         PUSH	BC
         LD	HL,I7D62
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,L7D62
         LDIR
         LD	HL,I7D0A
@@ -1389,7 +1389,7 @@ C7CD7:	PUSH	HL
         PUSH	DE
         PUSH	BC
         LD	HL,I7E9F
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,L7E9F
         LDIR
         LD	HL,I7D36
@@ -1401,14 +1401,14 @@ C7CE9:	LD	E,(HL)
         OR	D
         JR	Z,J7D06
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,DE
         INC	HL
         LD	C,(HL)
         INC	HL
         LD	B,(HL)
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,BC
         EX	DE,HL
         LD	(HL),D
@@ -1471,7 +1471,7 @@ I7D36:	DEFW	Y0006
 ;	     Outputs ________________________
 
 C7D5C:	PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         EX	(SP),HL
         RET
 
@@ -1520,15 +1520,15 @@ X003A:	CALL	C0045
 X0040:	CALL	X00CD
         JR	C0034
 
-C0045:	LD	E,0AH	; 10 
+C0045:	LD	E,0AH	; 10
 X0047:	CALL	C012F
         LD	A,80H
         BIT	6,D
         JR	Z,C7DBA
-        OR	02H	; 2 
+        OR	02H	; 2
         BIT	0,D
         JR	Z,C7DBA
-        OR	08H	; 8 
+        OR	08H	; 8
 C7DBA:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -1591,15 +1591,15 @@ X00B3:	CALL	C010D
         SCF
         LD	E,A
         BIT	4,E
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         RET	NZ
         BIT	3,E
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         RET	NZ
-        LD	A,0CH	; 12 
+        LD	A,0CH	; 12
         RET
 
-J00C9:	LD	A,02H	; 2 
+J00C9:	LD	A,02H	; 2
         SCF
         RET
 
@@ -1611,11 +1611,11 @@ X00CD:	CALL	C012F
         LD	(DBFFA),A
         BIT	7,D
         JR	NZ,J7E42
-        CP	0AH	; 10 
+        CP	0AH	; 10
         RET	C
-J7E42:	CP	09H	; 9 
+J7E42:	CP	09H	; 9
         RET	C
-        LD	A,01H	; 1 
+        LD	A,01H	; 1
         LD	(DBFFA),A
         BIT	6,D
         JR	Z,C7E59
@@ -1645,7 +1645,7 @@ X0110:	CALL	X0136
         LD	(DBFFB),A
         EX	(SP),HL
         EX	(SP),HL
-        LD	A,11H	; 17 
+        LD	A,11H	; 17
 J7E7D:	LD	(DBFF8),A
         EX	(SP),HL
         EX	(SP),HL
@@ -1884,7 +1884,7 @@ Y0143:	CALL	C013C
         JR	J7FC7
 
         .DEPHASE
-        
+
 L7E9F	EQU	$-I7E9F
 
 D7FF8	EQU	07FF8H

@@ -211,7 +211,7 @@ YF347	equ	0F347H			; number of drives in disksystem
 YF348	equ	0F348H			; slotid disksytem rom
 YF349	equ	0F349H			; disksystem bottom (lowest adres used by the disksystem)
 YF34B	equ	0F34BH			; msxdos system bottom
-$SECBUF equ	0F34DH			; pointer to sectorbuffer, can be used by the diskdriver
+_SECBUF equ	0F34DH			; pointer to sectorbuffer, can be used by the diskdriver
 YF34F	equ	0F34FH			; pointer to datasectorbuffer
 YF351	equ	0F351H			; pointer to directorysectorbuffer
 YF353	equ	0F353H			; pointer to the diskbasic FCB's
@@ -4455,7 +4455,7 @@ A58F0:	ld	(hl),0C3H
         ld	hl,(AUTLIN)
         push	hl
         call	A5EC8
-        ld	($SECBUF),hl		; allocate sectorbuffer
+        ld	(_SECBUF),hl		; allocate sectorbuffer
         pop	hl
         push	hl
         call	A5EC8

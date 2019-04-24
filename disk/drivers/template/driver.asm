@@ -17,7 +17,7 @@
 ; PRVINT	call orginal interrupt handler
 ; PROMPT	prompt for phantom drive
 ; RAWFLG	verify flag
-; $SECBUF	temporary sectorbuffer
+; _SECBUF	temporary sectorbuffer
 ; XFER		transfer to TPA
 ; DISINT	inform interrupts are being disabled
 ; ENAINT	inform interrupts are being enabled
@@ -110,7 +110,7 @@ INIENV:
                 ld	hl,INTHAND
                 jp	SETINT
 
-INTHAND:	
+INTHAND:
                 push	af
                 push	bc
                 push	de

@@ -224,7 +224,7 @@ LF347	EQU	0F347H			; number of drives
 LF348	EQU	0F348H			; slotid disksystem ROM
 D.F349  EQU     0F349H  ; --SL-
 D.F34B  EQU     0F34BH  ; --SL-
-$SECBUF equ	0F34DH
+_SECBUF equ	0F34DH
 D.F34F  EQU     0F34FH  ; --S--
 D.F351  EQU     0F351H  ; --S--
 D.F353  EQU     0F353H  ; --S-I
@@ -1132,7 +1132,7 @@ J49F9:  LD      (D.F34F),HL
         CALL    C4C50
         LD      (HL),00H
         INC     HL
-        LD      ($SECBUF),HL
+        LD      (_SECBUF),HL
         LD      HL,D.F353
         LD      BC,I$09FF
 J4A0C:  LD      E,(HL)
@@ -1147,7 +1147,7 @@ J4A0C:  LD      E,(HL)
         PUSH    BC
         LD      BC,19
         ADD     HL,BC
-        LD      BC,($SECBUF)
+        LD      BC,(_SECBUF)
 I4A1E   EQU     $-1
         LD      (HL),C
         INC     HL
@@ -1677,7 +1677,7 @@ C4D61:  PUSH    AF
 
 C4D6E:  PUSH    HL
         PUSH    DE
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         CALL    C4106
         CALL    C4D7D
         POP     DE
@@ -2019,7 +2019,7 @@ J4F1C:  INC     A
         CALL    B.BDOS
         JR      Z,J4F41
         LD      B,A
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         LD      C,66H   ; "f"
         CALL    B.BDOS
         JP      C4D7D
@@ -2146,11 +2146,11 @@ L535D:  EXX
         EXX
         CALL    L5183           ; CR/LF to console
         LD      A,10            ; message 10 (Abort)
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         CALL    C4106           ; copy message to buffer
         CALL    L5379           ; print prompt
         POP     BC
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         LD      C,066H
         CALL    B.BDOS          ; EXPLAIN error
                                 ; print errorstring
@@ -5202,7 +5202,7 @@ C694A:  LD      HL,I6A02
         LD      (D.F323),HL
         LD      HL,I6A04
         LD      (D.F325),HL
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         LD      C,1AH
         CALL    C69F5
         LD      C,01H   ; 1
@@ -5218,7 +5218,7 @@ J6964:  PUSH    BC
         POP     DE
         POP     BC
         JR      NZ,J6980
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         LD      A,(HL)
         OR      02H     ; 2
         CP      0EBH
@@ -5235,7 +5235,7 @@ J6980:  LD      A,(DE)
 
 J698A:  LD      A,C
         LD      (LF23C),A
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         LD      DE,0C000H
         LD      BC,256
         LDIR

@@ -47,7 +47,7 @@ SECLEN		equ	512		; Size of biggest sector
 
 
 ;RAWFLG		equ	0F30Dh
-;$SECBUF		equ	0F34Dh
+;_SECBUF		equ	0F34Dh
 ;XFER		equ	0F36Eh
 
 ;DISINT		equ	0FFCFh

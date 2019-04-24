@@ -1,4 +1,4 @@
-;  
+;
 ;   SVI707MS -> Source re-created by Z80DIS 2.2
 ;      Z80DIS was written by Kenneth Gielow
 ;                            Palo Alto, CA
@@ -18,7 +18,7 @@ PRVINT  EQU     6027H
 PROMPT  EQU     625AH
 RAMAD1  EQU     0F342H
 RAMAD2  EQU     0F343H
-$SECBUF EQU     0F34DH
+_SECBUF EQU     0F34DH
 ENAKRN  EQU     0F368H
 XFER    EQU     0F36EH
 BDOS    EQU     0F37DH
@@ -147,7 +147,7 @@ C$747E: CALL    C.7604
         PUSH    HL
         PUSH    DE
         PUSH    BC
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         PUSH    DE
         LD      BC,512
         CALL    XFER
@@ -275,7 +275,7 @@ C$754B: CALL    C.7604
         AND     A
         JP      M,J.7580
         PUSH    HL
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         CALL    C.758C
         POP     HL
         RET     C
@@ -283,7 +283,7 @@ C$754B: CALL    C.7604
         PUSH    DE
         PUSH    BC
         EX      DE,HL
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         LD      BC,512
         CALL    XFER
         POP     BC
@@ -457,7 +457,7 @@ J$766E: LD      C,L
         LD      A,(IX+3)
         CP      H
         JR      Z,J.76AE
-        XOR     01H     ; 1 
+        XOR     01H     ; 1
         LD      (IX+3),A
         LD      A,(D7FB9)
         JR      Z,J$768D
@@ -543,7 +543,7 @@ C$76FA: LD      A,C
         LD      (D7FBB),A
         EX      (SP),HL
         EX      (SP),HL
-        LD      A,14H   ; 20 
+        LD      A,14H   ; 20
 J$7702: LD      (D7FB8),A
         EX      (SP),HL
         EX      (SP),HL
@@ -634,7 +634,7 @@ J$7778: POP     BC
 INIENV:
 ?.777A: CALL    GETWRK
         XOR     A
-        LD      B,07H   ; 7 
+        LD      B,07H   ; 7
 J$7780: LD      (HL),A
         INC     HL
         DJNZ    J$7780
@@ -685,10 +685,10 @@ J$77C0: INC     B
         PUSH    BC
         PUSH    HL
         LD      DE,1
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         CALL    C$744D
         JR      C,J.77E9
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         LD      B,(HL)
         POP     HL
         PUSH    BC
@@ -765,7 +765,7 @@ DSKFMT:
 C$7840: DI
         EX      AF,AF'
         LD      A,D
-        CP      01H     ; 1 
+        CP      01H     ; 1
         JR      NC,J$789C
         PUSH    HL
         LD      HL,I$1964
@@ -797,7 +797,7 @@ J$786C  EQU     $-1
 
 J$7877: LD      HL,0
 J$787A: LD      A,(D7FB8)
-J$787D: AND     02H     ; 2 
+J$787D: AND     02H     ; 2
         JR      Z,J$7888
         DEC     HL
         LD      A,H
@@ -807,7 +807,7 @@ J$787D: AND     02H     ; 2
 
 J$7888: LD      HL,0
 J$788B: LD      A,(D7FB8)
-        AND     02H     ; 2 
+        AND     02H     ; 2
         JR      NZ,J$78A4
         DEC     HL
         LD      A,H
@@ -948,7 +948,7 @@ J$7947: LDIR
         LD      HL,I$7B5C
         LD      BC,30
         LDIR
-        LD      B,09H   ; 9 
+        LD      B,09H   ; 9
         LD      C,0FCH
 J$798B: XOR     A
         LD      DE,0
@@ -1175,7 +1175,7 @@ J$7ABC: BIT     5,E
         RET
 
 J$7ACE: POP     AF
-        CP      09H     ; 9 
+        CP      09H     ; 9
         JR      C,J$7A84
         POP     HL
         PUSH    HL
@@ -1317,7 +1317,7 @@ J$7B9D: LD      (D.C0C4),A
         LD      (HL),0C0H
 J$7BA5: LD      SP,I$F51F
         LD      DE,I.C09F
-        LD      C,0FH   ; 15 
+        LD      C,0FH   ; 15
         CALL    BDOS
         INC     A
         JP      Z,J$C063
@@ -1405,7 +1405,7 @@ C$7C3F: PUSH    HL
         PUSH    DE
         PUSH    BC
 J$7C42: LD      HL,I$7CD0
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         LD      BC,I$0120
         LDIR
         LD      HL,I$7CA6
@@ -1419,7 +1419,7 @@ C$7C53: PUSH    HL
         PUSH    DE
         PUSH    BC
         LD      HL,I$7DF0
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         LD      BC,I$0134
 J$7C5E  EQU     $-2
         LDIR
@@ -1432,14 +1432,14 @@ J$7C67: LD      D,(HL)
         OR      D
         JR      Z,J$7C82
         PUSH    HL
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         ADD     HL,DE
         INC     HL
         LD      C,(HL)
 J$7C74: INC     HL
 J$7C75: LD      B,(HL)
         EX      DE,HL
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         ADD     HL,BC
         EX      DE,HL
         LD      (HL),D
@@ -1513,7 +1513,7 @@ J$7CAA: DEC     H
 ;           Outputs ________________________
 
 C.7CCA: PUSH    HL
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         EX      (SP),HL
         RET
 
@@ -1534,7 +1534,7 @@ I$7CD0: PUSH    HL
         POP     HL
 J$7CEB: DEC     HL
         LD      A,H
-        ADD     A,02H   ; 2 
+        ADD     A,02H   ; 2
         INC     HL
         JP      M,J$00A5
         LD      E,15H
@@ -1542,10 +1542,10 @@ J$7CF5: CALL    C.0112
         LD      A,80H
         BIT     6,D
         JR      Z,J.7D06
-        OR      02H     ; 2 
+        OR      02H     ; 2
         BIT     2,D
         JR      Z,J.7D06
-        OR      08H     ; 8 
+        OR      08H     ; 8
 J.7D06: PUSH    HL
         PUSH    DE
         PUSH    BC
@@ -1644,7 +1644,7 @@ J$7D75: PUSH    HL
         RET     C
 J$7DA5: CP      8+1
         RET     C
-        LD      A,01H   ; 1 
+        LD      A,01H   ; 1
         LD      (D.BFBA),A
         BIT     6,D
         JR      Z,J.7DBC
@@ -1851,7 +1851,7 @@ J.7EF0: RES     2,D
         LD      (D.BFBB),A
         EX      (SP),HL
         EX      (SP),HL
-        LD      A,14H   ; 20 
+        LD      A,14H   ; 20
 J$7F11: LD      (D.BFB8),A
         EX      (SP),HL
         EX      (SP),HL
@@ -1874,5 +1874,5 @@ D.BFB8  EQU     D7FB8+04000H
 D.BFBA  EQU     D7FBA+04000H
 D.BFBB  EQU     D7FBB+04000H
 D.BFBC  EQU     D7FBC+04000H
-        
+
         END

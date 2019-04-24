@@ -129,10 +129,10 @@ J745A:	LD	A,0D0H
         JR	NZ,J7478
         LD	(IX+1),C
         POP	AF
-        RET	
+        RET
 J7478:	LD	(IX+2),C
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -143,7 +143,7 @@ C747D:	CALL	C75EC
 J7481:	LD	A,L
         ADD	A,0FFH
         LD	A,H
-        ADC	A,01H	; 1 
+        ADC	A,01H	; 1
         CP	40H	; "@"
         JP	C,J74A9
         LD	A,H
@@ -152,7 +152,7 @@ J7481:	LD	A,L
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER
@@ -176,16 +176,16 @@ J74B7:	CALL	C76F5			; wait for command ready
         LD	A,0A0H
         BIT	6,D
         JR	Z,J74C8
-        OR	02H	; 2 
+        OR	02H	; 2
         BIT	2,D
         JR	Z,J74C8
-        OR	08H	; 8 
+        OR	08H	; 8
 J74C8:	PUSH	HL
         PUSH	DE
         PUSH	BC
         LD	DE,I74E5
         PUSH	DE
-        DI	
+        DI
         LD	(D7FF8),A
         LD	BC,D7FFC
         LD	DE,D7FFB
@@ -200,7 +200,7 @@ J74D9:	LD	A,(BC)
 I74E5:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         LD	A,(D7FF8)
         AND	0FCH
         RET	Z
@@ -212,19 +212,19 @@ I74E5:	POP	BC
         POP	AF
         DEC	E
         JR	NZ,J74B7
-J74FE:	SCF	
+J74FE:	SCF
         LD	E,A
         BIT	5,E
-        LD	A,0AH	; 10 
+        LD	A,0AH	; 10
         RET	NZ
         BIT	4,E
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         RET	NZ
         BIT	3,E
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         RET	NZ
-        LD	A,0CH	; 12 
-        RET	
+        LD	A,0CH	; 12
+        RET
 J7512:	LD	A,0D0H
         LD	(D7FF8),A
         EX	(SP),HL
@@ -243,12 +243,12 @@ J7526:	LD	A,(HL)
         LD	A,E
         OR	D
         JP	NZ,J7526
-J7533:	LD	A,02H	; 2 
-        SCF	
-        RET	
+J7533:	LD	A,02H	; 2
+        SCF
+        RET
 J7537:	XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -262,14 +262,14 @@ C7540:	CALL	C75EC
 J7544:	LD	A,L
         ADD	A,0FFH
         LD	A,H
-        ADC	A,01H	; 1 
+        ADC	A,01H	; 1
         CP	40H	; "@"
         JP	C,J7571
         LD	A,H
         AND	A
         JP	M,J7571
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C757D
         POP	HL
         RET	C
@@ -277,7 +277,7 @@ J7544:	LD	A,L
         PUSH	DE
         PUSH	BC
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,512
         CALL	XFER
         POP	BC
@@ -299,17 +299,17 @@ J757F:	CALL	C76F5			; wait for command ready
         LD	A,80H
         BIT	6,D
         JR	Z,J7590
-        OR	02H	; 2 
+        OR	02H	; 2
         BIT	2,D
         JR	Z,J7590
-        OR	08H	; 8 
+        OR	08H	; 8
 J7590:	PUSH	HL
         PUSH	DE
         PUSH	BC
         LD	BC,D7FFC
         LD	DE,I75C4
         PUSH	DE
-        DI	
+        DI
         LD	(D7FF8),A
         LD	DE,C.0000
 J75A1:	LD	A,(BC)
@@ -337,7 +337,7 @@ J75B8:	LD	A,(BC)
 I75C4:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         LD	A,(D7FF8)
         AND	9CH
         RET	Z
@@ -347,19 +347,19 @@ I75C4:	POP	BC
         POP	AF
         DEC	E
         JR	NZ,J757F
-        SCF	
+        SCF
         LD	E,A
         BIT	4,E
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         RET	NZ
         BIT	3,E
-        LD	A,04H	; 4 
+        LD	A,04H	; 4
         RET	NZ
-        LD	A,0CH	; 12 
-        RET	
-J75E8:	LD	A,02H	; 2 
-        SCF	
-        RET	
+        LD	A,0CH	; 12
+        RET
+J75E8:	LD	A,02H	; 2
+        SCF
+        RET
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -371,11 +371,11 @@ C75EC:	PUSH	AF
         POP	HL
         POP	BC
         POP	AF
-        CP	02H	; 2 
+        CP	02H	; 2
         JR	C,J75FD
-J75F9:	LD	A,0CH	; 12 
-        SCF	
-        RET	
+J75F9:	LD	A,0CH	; 12
+        SCF
+        RET
 J75FD:	PUSH	AF
         LD	A,C
         CP	0FCH
@@ -409,24 +409,24 @@ J7629:	ADD	A,09H
         JR	Z,J7635
         SRL	L
         JR	NC,J7635
-        OR	04H	; 4 
+        OR	04H	; 4
 J7635:	LD	D,A
         LD	A,C
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         AND	0C0H
         OR	D
         LD	D,A
-        DI	
+        DI
         LD	(D7FFC),A
         LD	A,(IX)
         AND	A
         LD	(IX),0FFH
-        EI	
+        EI
         JR	NZ,J765C
         PUSH	HL
         PUSH	BC
-        LD	B,02H	; 2 
+        LD	B,02H	; 2
 J7650:	LD	HL,C.0000
 J7653:	DEC	HL
         LD	A,L
@@ -442,7 +442,7 @@ J765C:	LD	C,L
         LD	A,(IX+3)
         CP	H
         JR	Z,J769C
-        XOR	01H	; 1 
+        XOR	01H	; 1
         LD	(IX+3),A
         LD	A,(D7FF9)
         JR	Z,J767B
@@ -470,7 +470,7 @@ J769C:	LD	A,(D7FF9)
 J769F:	CP	C
         CALL	NZ,C76E8		; select track
         POP	HL
-        RET	
+        RET
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -482,11 +482,11 @@ C76A5:	CALL	C76F5			; wait for command ready
         LD	(D7FFA),A
         BIT	7,D
         JR	NZ,J76B8
-        CP	0AH	; 10 
+        CP	0AH	; 10
         RET	C
-J76B8:	CP	09H	; 9 
+J76B8:	CP	09H	; 9
         RET	C
-        LD	A,01H	; 1 
+        LD	A,01H	; 1
         LD	(D7FFA),A
         BIT	6,D
         JR	Z,J76CF
@@ -495,7 +495,7 @@ J76B8:	CP	09H	; 9
         SET	2,D
         LD	A,D
         LD	(D7FFC),A
-        RET	
+        RET
 J76CF:	RES	2,D
         LD	A,D
         LD	(D7FFC),A
@@ -520,7 +520,7 @@ C76E8:	LD	A,C
         LD	(D7FFB),A
         EX	(SP),HL
         EX	(SP),HL
-        LD	A,10H	; 16 
+        LD	A,10H	; 16
 J76F0:	LD	(D7FF8),A
         EX	(SP),HL
         EX	(SP),HL
@@ -530,9 +530,9 @@ J76F0:	LD	(D7FF8),A
 ;	     Outputs ________________________
 
 C76F5:	LD	A,(D7FF8)
-        RRA	
+        RRA
         JR	C,C76F5
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -551,7 +551,7 @@ INIHRD:	LD	A,0D0H
         CALL	C7719
         XOR	A
         LD	(D7FFC),A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -565,7 +565,7 @@ C7719:	LD	(D7FFC),A
         EX	(SP),HL
         LD	HL,0
 J7729:	LD	A,(D7FF8)
-        RRA	
+        RRA
         RET	NC
         DEC	HL
         LD	A,L
@@ -585,7 +585,7 @@ DRIVES:	PUSH	BC
         EX	(SP),HL
         LD	HL,0
 J774B:	LD	A,(D7FF8)
-        RRA	
+        RRA
         JR	NC,J7758
         DEC	HL
         LD	A,L
@@ -601,7 +601,7 @@ J7758:	LD	L,2
         JR	Z,J7766
         LD	L,2
 J7766:	POP	BC
-        RET	
+        RET
 
 INIENV:	CALL	GETWRK
         XOR	A
@@ -653,33 +653,33 @@ J77B0:	LD	B,(IX+1)
 J77B3:	AND	A
         INC	B
         DEC	B
-        LD	B,01H	; 1 
+        LD	B,01H	; 1
         RET	NZ
         PUSH	BC
         PUSH	HL
         LD	DE,I.0001
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C753A
         JR	C,J77DD
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,(HL)
         POP	HL
         PUSH	BC
         CALL	GETDPB
-        LD	A,0CH	; 12 
+        LD	A,0CH	; 12
         JR	C,J77DD
         POP	AF
         POP	BC
         CP	C
-        SCF	
-        CCF	
+        SCF
+        CCF
         LD	B,0FFH
         RET	NZ
         INC	B
-        RET	
+        RET
 J77DD:	POP	DE
         POP	DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -702,11 +702,11 @@ GETDPB:	EX	DE,HL
         LD	BC,I7405
         ADD	HL,BC
         LD	BC,I$0012
-        LDIR	
-        RET	
+        LDIR
+        RET
 
 CHOICE:	LD	HL,0
-        RET	
+        RET
 
 DSKFMT:	LD	A,D
         PUSH	AF
@@ -740,10 +740,10 @@ J7817:	PUSH	AF
         POP	AF
         CALL	C78F8			; write boot sector, FATs and directory
         OR	A
-        RET	
+        RET
 J783F:	POP	HL
 J7840:	POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -761,7 +761,7 @@ J7843:	PUSH	AF
         INC	A
         CP	40
         JR	NZ,J7843
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -779,7 +779,7 @@ J785F:	PUSH	HL
         PUSH	DE
         LD	BC,D7FFC
         LD	DE,D7FFB
-        DI	
+        DI
         LD	(D7FF8),A
 J7871:	LD	A,(BC)
         ADD	A,A
@@ -792,7 +792,7 @@ J7871:	LD	A,(BC)
 I787D:	POP	BC
         POP	HL
         LD	A,(D7FF8)
-        EI	
+        EI
         AND	0E4H
         JR	J7894
 ?.7887:	JP	M,J7533
@@ -802,7 +802,7 @@ I787D:	POP	BC
         JP	J74FE
 J7894:	LD	A,(D7FF9)
         OR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -811,14 +811,14 @@ J7894:	LD	A,(D7FF9)
 C7899:	PUSH	HL
         LD	DE,I7A06
         CALL	C78B2
-        LD	B,09H	; 9 
+        LD	B,09H	; 9
 J78A2:	LD	DE,I7A11
         CALL	C78B2
         DJNZ	J78A2
         LD	DE,I7A32
         CALL	C78B2
         POP	HL
-        RET	
+        RET
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -835,11 +835,11 @@ J78BB:	LD	(HL),A
         INC	DE
         JR	J78B3
 J78C2:	POP	BC
-        RET	
+        RET
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
-C78C4:	LD	A,01H	; 1 
+C78C4:	LD	A,01H	; 1
         LD	DE,I$00A3
         JP	J78D2
 ;	  Subroutine __________________________
@@ -851,12 +851,12 @@ C78CC:	LD	DE,I$00A2
 J78D2:	PUSH	HL
         ADD	HL,DE
         LD	DE,I.0290
-        LD	B,09H	; 9 
+        LD	B,09H	; 9
 J78D9:	LD	(HL),A
         ADD	HL,DE
         DJNZ	J78D9
         POP	HL
-        RET	
+        RET
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -865,14 +865,14 @@ C78DF:	PUSH	HL
         LD	DE,I$00A4
         ADD	HL,DE
         LD	DE,I.0290
-        LD	B,09H	; 9 
+        LD	B,09H	; 9
 J78ED:	LD	A,(IX)
         INC	IX
         LD	(HL),A
         ADD	HL,DE
         DJNZ	J78ED
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -885,7 +885,7 @@ C78F8:	PUSH	AF
         EX	DE,HL
         LD	HL,I7941
         LD	BC,I$00C5
-        LDIR	
+        LDIR
         POP	HL
         LD	DE,1*512
         ADD	HL,DE
@@ -898,7 +898,7 @@ C78F8:	PUSH	AF
         LD	B,12
         LD	C,0FDH
         LD	DE,0
-        SCF	
+        SCF
         CALL	DSKIO
         RET	NC
         JP	J7840
@@ -916,7 +916,7 @@ C7925:	PUSH	HL
         INC	HL
         LD	(HL),A
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -948,7 +948,7 @@ I7941:	DEFB	0EBH,0FEH,90H,4DH,53H,58H,5FH,30H
         LD	(HL),0C0H
 J796C:	LD	SP,I$F51F
         LD	DE,I.C09F
-        LD	C,0FH	; 15 
+        LD	C,0FH	; 15
         CALL	C.F37D
         INC	A
         JP	Z,J$C063
@@ -967,15 +967,15 @@ J796C:	LD	SP,I$F51F
         CALL	C.0000
         LD	A,C
         AND	0FEH
-        CP	02H	; 2 
+        CP	02H	; 2
         JP	NZ,J$C06A
         LD	A,(D.C0C4)
         AND	A
         JP	Z,J$4022
         LD	DE,I$C079
-        LD	C,09H	; 9 
+        LD	C,09H	; 9
         CALL	C.F37D
-        LD	C,07H	; 7 
+        LD	C,07H	; 7
         CALL	C.F37D
         JR	J796C
 ?.79BA:	DEFB	42H,6FH,6FH,74H,20H,65H,72H,72H

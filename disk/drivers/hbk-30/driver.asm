@@ -118,7 +118,7 @@ I74CA:
         DEFW	355
         DEFB	2
         DEFW	5
-        
+
 DEFDPB	EQU	$-1
 
         DEFB	0F9H
@@ -202,7 +202,7 @@ J753F:	LD	A,0D0H
 
 J755E:	LD	A,3DH
         LD	(D7FFD),A		; motor off, not in use, leave disk change, select drive 1
-        LD	A,03H 
+        LD	A,03H
         LD	(D7FFD),A		; motor off, not in use, unselect drive
         LD	(IX+2),C
         POP	AF
@@ -220,7 +220,7 @@ J7571:	LD	A,H
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER
@@ -261,7 +261,7 @@ J75B1:	PUSH	HL
         LD	DE,I75D3
         PUSH	DE
         CALL	DISINT
-        DI	
+        DI
         LD	(D7FF8),A
         EX	(SP),HL
         EX	(SP),HL
@@ -279,7 +279,7 @@ J75C7:	LD	A,(BC)
 I75D3:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         CALL	ENAINT
         LD	A,(D7FF8)
         AND	0FCH
@@ -295,7 +295,7 @@ I75D3:	POP	BC
         POP	AF
         DEC	E
         JR	NZ,J75A0
-        SCF	
+        SCF
         LD	E,A
         BIT	5,E
         LD	A,0AH
@@ -332,7 +332,7 @@ J762C:	LD	A,02H
         RET
 
 J7630:	XOR	A
-        SCF	
+        SCF
         RET
 
 J7633:	CALL	C7639			; do read DSKIO
@@ -348,7 +348,7 @@ J763D:	LD	A,H
         AND	A			; transfer to page 0/1 ?
         JP	M,J7665			; nope, use disk i/o routines directly
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C7670			; read sector
         POP	HL
         RET	C			; error, quit
@@ -356,7 +356,7 @@ J763D:	LD	A,H
         PUSH	DE
         PUSH	BC
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,512
         CALL	XFER
         POP	BC
@@ -396,7 +396,7 @@ J7683:	PUSH	HL
         LD	DE,I76C5
         PUSH	DE
         CALL	DISINT
-        DI	
+        DI
         LD	(D7FF8),A
         EX	(SP),HL
         EX	(SP),HL
@@ -431,7 +431,7 @@ J76BF:	LD	A,(DE)
 I76C5:	POP	BC
         POP	DE
         POP	HL
-        EI	
+        EI
         CALL	ENAINT
         LD	A,(D7FF8)
         AND	9CH
@@ -445,7 +445,7 @@ I76C5:	POP	BC
         POP	AF
         DEC	E
         JR	NZ,J7672
-        SCF	
+        SCF
         LD	E,A
         BIT	4,E
         LD	A,08H
@@ -457,7 +457,7 @@ I76C5:	POP	BC
         RET
 
 J76F4:	LD	A,02H
-        SCF	
+        SCF
         RET
 
 ;	  Subroutine initialise for disk i/o
@@ -475,7 +475,7 @@ C76F8:	PUSH	AF
         JR	C,J7709			; yep, continue
 
 J7705:	LD	A,0CH
-        SCF	
+        SCF
         RET
 
 J7709:	PUSH	AF
@@ -525,17 +525,17 @@ J7746:	LD	L,C
         LD	A,H			; nope, use driveid
 J7751:	OR	0C4H
         CALL	DISINT
-        DI	
+        DI
         LD	(D7FFD),A		; motor on, in use led on, leave diskchange, select drive
         LD	A,(D7FF8)
         AND	80H			; drive ready ?
-        EI	
+        EI
         CALL	ENAINT
         JR	Z,J7768			; yep, no need to wait for motor spin up
         CALL	C7863			; wait motor spin up time
 J7768:	LD	A,C
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         AND	0C0H
         LD	D,A
         LD	A,(D7FFC)
@@ -678,7 +678,7 @@ J783D:	LD	(D7FF8),A
 ;	     Outputs ________________________
 
 C7849:	LD	A,(D7FF8)
-        RRA	
+        RRA
         JR	C,C7849
         RET
 
@@ -769,7 +769,7 @@ J78B4:	PUSH	BC
         LD	A,01H
         LD	(D7FFD),A		; motor off, in use off, reset disk change, select drive 1
         CALL	C7849			; wait for command ready
-        LD	A,01H 
+        LD	A,01H
         LD	(D7FF8),A		; execute RESTORE command
         EX	(SP),HL
         EX	(SP),HL
@@ -874,12 +874,12 @@ J7948:	POP	DE
         POP	AF
         PUSH	AF
         LD	DE,1
-        LD	HL,($SECBUF)
-        SCF	
-        CCF	
+        LD	HL,(_SECBUF)
+        SCF
+        CCF
         CALL	DSKIO
         JR	C,J7988
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,(HL)
         LD	A,B
         CP	0F8H
@@ -895,8 +895,8 @@ J7948:	POP	DE
         POP	AF
         POP	BC
         CP	C
-        SCF	
-        CCF	
+        SCF
+        CCF
         LD	B,0FFH
         RET	NZ
         INC	B
@@ -906,7 +906,7 @@ J7981:	POP	DE
         POP	DE
         POP	DE
         LD	A,10
-        SCF	
+        SCF
         RET
 
 J7988:	POP	DE
@@ -935,7 +935,7 @@ J798C:	EX	DE,HL
         LD	BC,I74CA
         ADD	HL,BC
         LD	BC,18
-        LDIR	
+        LDIR
         RET
 
 ;	  Subroutine CHOICE
@@ -965,7 +965,7 @@ I79B8:	DEFB	13,10
 
 J79F7:	PUSH	DE
         LD	D,A
-        LD	A,1 
+        LD	A,1
         LD	(D7FFC),A		; select side 1
         LD	A,(D7FFC)
         BIT	0,A			; side 1 still selected (controller in double sided mode) ?
@@ -1012,12 +1012,12 @@ J7A4B:	POP	DE
 J7A56:	CALL	C7C51			; clear
         CALL	C7C51			; clear
         LD	HL,19
-J7A5F:	LD	DE,($SECBUF)
+J7A5F:	LD	DE,(_SECBUF)
         ADD	HL,DE
         EX	DE,HL
         LD	HL,I7AF7
         LD	BC,9
-        LDIR	
+        LDIR
         POP	DE
         LD	A,D
         PUSH	AF
@@ -1025,7 +1025,7 @@ J7A5F:	LD	DE,($SECBUF)
         LD	DE,0
         CALL	C7C62			; write sector
         JP	C,J7C78			; select track 0 and quit with error
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	B,0
         XOR	A
         CALL	C7C51			; clear
@@ -1137,7 +1137,7 @@ J7B2F:	POP	DE
         LD	DE,0
         CALL	C7C62			; write sector
         JP	C,J7C78			; error, select track 0 and quit with error
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	B,0
         XOR	A
         CALL	C7C51			; clear
@@ -1154,7 +1154,7 @@ J7B5C:	POP	DE
         INC	E
         PUSH	DE
         LD	A,E
-        CP	0EH	; 14 
+        CP	0EH	; 14
         JP	NZ,J7B5C
         CALL	C7C20			; select side 0
         POP	DE
@@ -1307,7 +1307,7 @@ C7C36:	CALL	C7817			; setup for next cylinder
 ;	     Outputs ________________________
 
 C7C44:	LD	HL,I7405
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,L7405
         LDIR
         RET
@@ -1325,7 +1325,7 @@ C7C51:	LD	(DE),A
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7C56:	LD	DE,($SECBUF)
+C7C56:	LD	DE,(_SECBUF)
         LD	(DE),A
         INC	DE
         LD	A,0FFH
@@ -1339,8 +1339,8 @@ C7C56:	LD	DE,($SECBUF)
 ;	     Outputs ________________________
 
 C7C62:	LD	B,1
-        LD	HL,($SECBUF)
-        SCF	
+        LD	HL,(_SECBUF)
+        SCF
         CALL	DSKIO
         RET
 
@@ -1348,10 +1348,10 @@ C7C62:	LD	B,1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C7C6C:	LD	B,1 
-        LD	HL,($SECBUF)
-        SCF	
-        CCF	
+C7C6C:	LD	B,1
+        LD	HL,(_SECBUF)
+        SCF
+        CCF
         CALL	DSKIO
         RET
 
@@ -1359,17 +1359,17 @@ J7C77:	POP	DE
 J7C78:	PUSH	AF
         CALL	C7850			; select track 0
         POP	AF
-        SCF	
+        SCF
         JP	J7537
 
 J7C81:	POP	DE
         CALL	C7850			; select track 0
         LD	A,08H			; RECORD NOT FOUND error
-        SCF	
+        SCF
         JP	J7537
 
 J7C8B:	LD	A,0CH			; BAD PARAMETER error
-        SCF	
+        SCF
         RET
 
 ;	  Subroutine format track
@@ -1382,7 +1382,7 @@ C7C8F:	CALL	C7849			; wait for command ready
         LD	HL,I7E4B
         PUSH	HL
         CALL	DISINT
-        DI	
+        DI
         LD	(D7FF8),A
         EX	(SP),HL
         EX	(SP),HL
@@ -1396,7 +1396,7 @@ J7CA7:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7CA7
         LD	C,00H
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
 J7CB9:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1405,7 +1405,7 @@ J7CB9:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7CB9
         LD	C,0F6H
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J7CCB:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1432,7 +1432,7 @@ J7CEE:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7CEE
 J7CFC:	LD	C,00H
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
 J7D00:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1441,7 +1441,7 @@ J7D00:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7D00
         LD	C,0F5H
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J7D12:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1469,7 +1469,7 @@ J7D36:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7D36
         LD	A,(D7FFC)
-        AND	01H			; which side is selected 
+        AND	01H			; which side is selected
         LD	C,A
         INC	B
 J7D4B:	LD	A,(D7FFF)
@@ -1488,7 +1488,7 @@ J7D5B:	LD	A,(D7FFF)
         LD	A,C
         LD	(D7FFB),A
         DJNZ	J7D5B
-        LD	C,02H	; 2 
+        LD	C,02H	; 2
         INC	B
 J7D6C:	LD	A,(D7FFF)
         ADD	A,A
@@ -1516,7 +1516,7 @@ J7D8F:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7D8F
         LD	C,00H
-        LD	B,0CH	; 12 
+        LD	B,0CH	; 12
 J7DA1:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1525,7 +1525,7 @@ J7DA1:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7DA1
         LD	C,0F5H
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J7DB3:	LD	A,(D7FFF)
         ADD	A,A
         RET	P
@@ -1578,7 +1578,7 @@ J7E07:	LD	A,(D7FFF)
         DJNZ	J7E07
         INC	D
         LD	A,D
-        CP	0AH	; 10 
+        CP	0AH	; 10
         JP	NZ,J7CFC
         LD	C,4EH	; "N"
         LD	B,00H
@@ -1604,12 +1604,12 @@ J7E3C:	LD	A,(D7FFF)
         LD	(D7FFB),A
         DJNZ	J7E3C
         POP	HL
-I7E4B:	EI	
+I7E4B:	EI
         CALL	ENAINT
         LD	A,(D7FF8)
         RET
 
-J7E53:	SCF	
+J7E53:	SCF
         RET
 
 J7E55:	LD	A,3CH

@@ -144,7 +144,7 @@ LF348	EQU	0F348H			; slotid disksystem ROM
 LF349	EQU	0F349H			; bottom of basic disksystem
 LF34B	EQU	0F34BH			; bottom of msxdos disksystem
 LF34D	EQU	0F34DH			; pointer to sector buffer for diskdriver
-$SECBUF equ	0F34DH
+_SECBUF equ	0F34DH
 LF34F	EQU	0F34FH			; biggest sectorsize in disksystem
 LF351	EQU	0F351H			; pointer to sector buffer for BASIC
 LF353	EQU	0F353H			; pointer to DPB for RAMDISK

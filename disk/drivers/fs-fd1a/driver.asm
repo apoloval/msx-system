@@ -155,7 +155,7 @@ DEFDPB	EQU	$-1
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-DSKIO:	EI	
+DSKIO:	EI
         PUSH	AF
         JP	NC,J$758C			; read dskio,
         PUSH	AF
@@ -172,7 +172,7 @@ DSKIO:	EI
         JR	J$74CC
 
 J$74AD:	POP	DE
-J.74AE:	EI	
+J.74AE:	EI
         POP	DE
         PUSH	AF
         LD	C,60				; 1 second (NTSC)
@@ -185,11 +185,11 @@ J$74B7:	LD	(IX+0),240			; 4 seconds (NTSC)
         JR	NZ,J$74C7
         LD	(IX+1),C
         POP	AF
-        RET	
+        RET
 
 J$74C7:	LD	(IX+2),C
         POP	AF
-        RET	
+        RET
 
 J$74CC:	POP	AF
         AND	A				; read
@@ -204,7 +204,7 @@ J$74CC:	POP	AF
 C$74D7:	CALL	C.7627				; initialise for disk i/o
         RET	C
         CALL	DISINT
-        DI	
+        DI
         PUSH	HL
         LD	HL,ENAINT
         EX	(SP),HL
@@ -223,7 +223,7 @@ C$74D7:	CALL	C.7627				; initialise for disk i/o
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,512
         CALL	XFER
@@ -301,19 +301,19 @@ I$755A:	CALL	C.79CF				; terminate FDC transfer
         CALL	C.7928				; reseek every 2nd try
         DEC	E
         JR	NZ,J$7523			; next try
-        SCF	
+        SCF
         BIT	4,(IX+19)
         LD	A,10
         RET	NZ				; equipment check, quit with
         JP	J.79DE				; return error based uppon ST1
 
 J$7585:	XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 
 J.7588:	LD	A,2
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$758C:	CALL	C.7592				; do dskio
         JP	J.74AE
@@ -325,7 +325,7 @@ J$758C:	CALL	C.7592				; do dskio
 C.7592:	CALL	C.7627				; initialise for disk i/o
         RET	C
         CALL	DISINT
-        DI	
+        DI
         PUSH	HL
         LD	HL,ENAINT
         EX	(SP),HL
@@ -344,14 +344,14 @@ C.7592:	CALL	C.7627				; initialise for disk i/o
         BIT	1,(IX+5)			; verify ?
         JR	NZ,J$75D2			; yep, no need for $SEBUF trick, just verify
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C.75E0				; read sector (READY from drive)
         POP	HL
         RET	C
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         EX	DE,HL
         LD	BC,512
         CALL	XFER
@@ -381,7 +381,7 @@ C.75E0:	CALL	C.78A2				; READY input from diskdrive
 J.75E6:	PUSH	AF
         CALL	C.78A8				; READY input high (not from diskdrive)
         POP	AF
-        RET	
+        RET
 
 J.75EC:	BIT	1,(IX+5)			; verify ?
         JR	Z,J$75F7			; nope,
@@ -414,7 +414,7 @@ J$7612:	LD	A,(IX+19)
         CALL	C.7928				; reseek every 2nd try
         DEC	E
         JR	NZ,J$7604			; next try
-        SCF	
+        SCF
         JP	J.79DE				; return error based uppon ST1
 
 ;	  Subroutine __________________________
@@ -434,8 +434,8 @@ C.7627:	PUSH	AF
 J$763A:	CP	2
         JR	C,J$7642
 J$763E:	LD	A,0CH
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$7642:	PUSH	AF
         LD	A,C
@@ -506,12 +506,12 @@ J$76A7:	LD	H,A
 J.76BB:	RES	2,(IX+11)			; head 0 (physical head)
         LD	(IX+13),0			; head 0 (head in sector id)
 J$76C3:	LD	A,C
-        RRCA	
-        RRCA	
+        RRCA
+        RRCA
         AND	0C0H
         OR	D
         LD	D,A
-        DI	
+        DI
         LD	A,(IX+6)			; current motor on status
         OR	H
         LD	(L7FF8),A
@@ -519,7 +519,7 @@ J$76C3:	LD	A,C
         LD	(IX+6),A			; new motor on status
         CALL	C.78AE				; C6=0 (?? In Use LED on)
         LD	(IX+0),0FFH
-        EI	
+        EI
         LD	C,L
         CALL	C.78A2				; READY input from diskdrive
         CALL	C.7711				; sense device
@@ -533,8 +533,8 @@ J$76C3:	LD	A,C
         JR	Z,J.76FB			; yep,
         POP	HL
         XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 
 J.76FB:	PUSH	BC
         INC	C
@@ -547,11 +547,11 @@ J$7704:	CALL	C.7939				; select track
         POP	BC
         CALL	C.7939				; select track
         POP	HL
-        RET	
+        RET
 
 J$770D:	POP	HL
         LD	A,2
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -572,11 +572,11 @@ J$7719:	DEC	HL
         JR	Z,J$7719			; nope, wait
         POP	BC
         AND	A
-        RET	
+        RET
 
 J$7730:	POP	BC
-        SCF	
-        RET	
+        SCF
+        RET
 
 INIHRD:	LD	HL,0
         ADD	HL,SP
@@ -610,7 +610,7 @@ MTOFF:	CALL	C.78B4				; C6=1 (?? In Use LED off)
         LD	A,04H				; motor off, disable INTRQ/DRQ, enable FDC, drive 0
         LD	(L7FF8),A
         LD	(IX+6),A			; motor on status = all off
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -644,7 +644,7 @@ DRIVES:	PUSH	BC
         JR	Z,J.77BB
         INC	L
 J.77BB:	POP	BC
-        RET	
+        RET
 
 J$77BD:	INC	L
         LD	(IX+7),L
@@ -692,7 +692,7 @@ J$77FF:	INC	HL
 J$7805:	POP	AF
         JP	PRVINT
 
-DSKCHG:	EI	
+DSKCHG:	EI
         PUSH	HL
         PUSH	BC
         PUSH	AF
@@ -706,39 +706,39 @@ DSKCHG:	EI
         LD	B,(IX+1)
 J$781C:	INC	B
         DEC	B
-        LD	B,01H	; 1 
+        LD	B,01H	; 1
         RET	NZ
         PUSH	BC
         PUSH	HL
         LD	DE,1
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         AND	A
         CALL	DSKIO
         JR	C,J.7845
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,(HL)
         POP	HL
         PUSH	BC
         CALL	GETDPB
-        LD	A,0CH	; 12 
+        LD	A,0CH	; 12
         JR	C,J.7845
         POP	AF
         POP	BC
         CP	C
-        SCF	
-        CCF	
+        SCF
+        CCF
         LD	B,0FFH
         RET	NZ
         INC	B
 J.7845:	POP	DE
         POP	DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-GETDPB:	EI	
+GETDPB:	EI
         EX	DE,HL
         INC	DE
         LD	A,B
@@ -756,11 +756,11 @@ GETDPB:	EI
         LD	BC,I$7405
         ADD	HL,BC
         LD	BC,18
-        LDIR	
-        RET	
+        LDIR
+        RET
 
 CHOICE:	LD	HL,I$7867
-        RET	
+        RET
 
 I$7867:	DEFB	13,10
         DEFB	"1 - 1 side, double track",13,10
@@ -768,8 +768,8 @@ I$7867:	DEFB	13,10
         DEFB	13,10
         DEFB	0
 
-OEMSTA:	SCF	
-        RET	
+OEMSTA:	SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -777,7 +777,7 @@ OEMSTA:	SCF
 
 C.78A2:	LD	A,20H
         LD	(L7FF9),A			; enable C4, C4=0 (READY from drive)
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -785,7 +785,7 @@ C.78A2:	LD	A,20H
 
 C.78A8:	LD	A,30H
         LD	(L7FF9),A			; enable C4, C4=1 (force READY high)
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -793,7 +793,7 @@ C.78A8:	LD	A,30H
 
 C.78AE:	LD	A,80H
         LD	(L7FF9),A			; enable C6, C6=0 (?? In Use LED on)
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -801,7 +801,7 @@ C.78AE:	LD	A,80H
 
 C.78B4:	LD	A,0C0H
         LD	(L7FF9),A			; enable C6, C6=1 (?? In Use LED off)
-        RET	
+        RET
 
 ;	  Subroutine Verify sector
 ;	     Inputs  ________________________
@@ -840,7 +840,7 @@ I$78ED:	CALL	C.79CF				; terminate FDC transfer
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -865,7 +865,7 @@ J$7907:	CP	8+1
         LD	(IX+13),A			; flip head
         JR	Z,J$7921
         SET	2,(IX+11)			; head 1
-        RET	
+        RET
 
 J$7921:	RES	2,(IX+11)			; head 0
 J$7925:	INC	C
@@ -902,7 +902,7 @@ J$794C:	DEC	BC
         JR	NZ,J$794C
         POP	BC
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine start FDC command
 ;	     Inputs  ________________________
@@ -918,8 +918,8 @@ J$7958:	LD	A,(L7FFA)
         OR	L
         JR	NZ,J$7958
         POP	HL
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$7967:	PUSH	DE
         PUSH	IX
@@ -939,7 +939,7 @@ J.7975:	LD	A,(L7FFA)
         DJNZ	J.7975
         POP	HL
         XOR	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -955,7 +955,7 @@ J$798F:	CALL	C$799E				; sense interrupt status
         AND	0C0H				; terminated normally ?
         RET	Z				; yep, quit
         SCF					; quit with error
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -968,7 +968,7 @@ C$799E:	PUSH	BC
         CALL	C.79AE				; get command status
         XOR	A
         POP	BC
-        RET	
+        RET
 
 ;	  Subroutine get command status
 ;	     Inputs  ________________________
@@ -985,7 +985,7 @@ J.79B0:	LD	A,(L7FFA)
         JR	J.79B0
 
 J$79C3:	POP	IX
-        RET	
+        RET
 
 ;	  Subroutine Wait 16.5 ms
 ;	     Inputs  ________________________
@@ -996,7 +996,7 @@ J$79C9:	DEC	BC
         LD	A,B
         OR	C
         JR	NZ,J$79C9
-        RET	
+        RET
 
 ;	  Subroutine terminate FDC transfer
 ;	     Inputs  ________________________
@@ -1006,10 +1006,10 @@ C.79CF:	LD	A,02H
         LD	(L7FF9),A			; enable C0, C0=0
         INC	A
         LD	(L7FF9),A			; enable C0, C0=1
-        NOP	
+        NOP
         DEC	A
         LD	(L7FF9),A			; enable C0, C0=0
-        RET	
+        RET
 
 J.79DE:	LD	E,(IX+20)
         BIT	2,E
@@ -1064,7 +1064,7 @@ I$7A25:	CALL	C.79CF				; terminate FDC transfer
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
 L_RDHP	EQU	$-C.78F7
 
@@ -1085,8 +1085,8 @@ C.7A2F:	PUSH	HL
         LD	HL,I$7BC7
         LD	BC,L_WRIO
 J$7A49:	PUSH	DE
-        LD	DE,($SECBUF)
-        LDIR	
+        LD	DE,(_SECBUF)
+        LDIR
         POP	HL
         PUSH	DE
 J$7A52:	LD	E,(HL)
@@ -1097,14 +1097,14 @@ J$7A52:	LD	E,(HL)
         OR	E
         JR	Z,J$7A6F
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,DE
         INC	HL
         LD	C,(HL)
         INC	HL
         LD	B,(HL)
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,BC
         EX	DE,HL
         LD	(HL),D
@@ -1121,7 +1121,7 @@ J$7A6F:	POP	DE
         LD	BC,L_RDHP
         JR	NC,J$7A7E
         LD	BC,L_WRHP
-J$7A7E:	LDIR	
+J$7A7E:	LDIR
         POP	IY
         PUSH	AF
         POP	AF
@@ -1136,7 +1136,7 @@ J.7A8D:	PUSH	BC
         INC	HL				; offset
         PUSH	HL
         PUSH	IY
-        POP	HL				; start routine (in $SECBUF)
+        POP	HL				; start routine (in _SECBUF)
         ADD	HL,DE
         INC	HL
         LD	C,(HL)
@@ -1201,9 +1201,9 @@ J$7AD8:	LD	E,(HL)
 J.7AEA:	POP	BC
         POP	DE
         POP	IY
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         EX	(SP),HL
-        RET	
+        RET
 
 ; offset table read dskio
 
@@ -1320,7 +1320,7 @@ J$7B9A:	AND	08H				; not ready ?
         JR	J$7BAB
 
 J$7BA9:	LD	A,02H
-J$7BAB:	SCF	
+J$7BAB:	SCF
 R0051:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -1336,10 +1336,10 @@ R0060:	LD	A,0
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
         .DEPHASE
-L_RDIO	EQU	$-I$7B5B	
+L_RDIO	EQU	$-I$7B5B
 
 ;	  Subroutine write dskio page 0/1
 ;	     Inputs  ________________________
@@ -1433,7 +1433,7 @@ J$7C60:	XOR	A
         JR	J.7C65
 
 J$7C63:	LD	A,02H
-J.7C65:	SCF	
+J.7C65:	SCF
 W009F:	PUSH	HL
         PUSH	DE
         PUSH	BC
@@ -1449,7 +1449,7 @@ W00AE:	LD	A,0
         POP	BC
         POP	DE
         POP	HL
-        RET	
+        RET
 
         .DEPHASE
 L_WRIO	EQU	$-I$7BC7
@@ -1500,7 +1500,7 @@ J$7CCE:	ADD	HL,DE
         DJNZ	J$7CCE
         POP	DE
         LD	C,5
-        LDIR	
+        LDIR
         BIT	0,(IY+7)
         LD	A,14H				; motor on drive 0, disable INTRQ/DRQ, enable FDC, drive 0
         JR	Z,J$7CE0
@@ -1533,7 +1533,7 @@ J$7CF5:	XOR	A
         PUSH	HL
         POP	IX
         CALL	DISINT
-        DI	
+        DI
 J$7D0F:	LD	C,(IY+10)
         LD	A,(IY+7)
         LD	(IX+11),A			; physical drive + head
@@ -1571,7 +1571,7 @@ J$7D4A:	LD	(HL),A				; update cylinder
 J$7D55:	POP	BC
         POP	HL
 J.7D57:	PUSH	AF
-        EI	
+        EI
         CALL	ENAINT
         LD	A,04H
         LD	(L7FF8),A			; motor off, disable INTRQ/DRQ, enable FDC, drive 0
@@ -1671,7 +1671,7 @@ J$7DC2:	DEC	(HL)
         PUSH	AF
         PUSH	BC
         PUSH	HL
-        SCF	
+        SCF
         CALL	DSKIO				; write track
         JR	C,J.7E0A			; error,
         POP	HL
@@ -1681,7 +1681,7 @@ J$7DC2:	DEC	(HL)
         AND	A
         CALL	DSKIO				; read track
         JR	C,J.7E0E			; error,
-        RET	
+        RET
 
 J.7E0A:	POP	HL
         POP	BC
@@ -1690,8 +1690,8 @@ J.7E0A:	POP	HL
 J.7E0E:	CP	0CH
         JR	NZ,J$7E14
         LD	A,10H
-J$7E14:	SCF	
-        RET	
+J$7E14:	SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1706,7 +1706,7 @@ J$7E1A:	LD	(HL),00H
         OR	C
         JR	NZ,J$7E1A
         POP	HL
-        RET	
+        RET
 
 I$7E24:	DEFW	I$7E2E
         DEFB	0F8H
@@ -1789,7 +1789,7 @@ C.7E79:	CALL	C.78A2				; READY input from diskdrive
         LD	A,(IY+7)
         OR	B
         LD	(IX+11),A			; physical drive + head
-        LD	B,6 
+        LD	B,6
         CALL	C.7954				; start FDC command
         PUSH	IY
         POP	HL
@@ -1818,7 +1818,7 @@ I$7EC9:	CALL	C.79CF				; terminate FDC transfer
         LD	A,(IX+19)
         AND	0C0H				; terminated normally ?
         RET	Z				; yep, quit
-        SCF	
+        SCF
         LD	B,(IX+19)
         BIT	3,B				; not ready ?
         LD	A,02H
@@ -1831,11 +1831,11 @@ I$7EC9:	CALL	C.79CF				; terminate FDC transfer
         LD	A,00H
         RET	NZ				; yep, quit with
         LD	A,10H
-        RET	
+        RET
 
 J$7EF1:	CALL	C.78A8				; READY input high (not from diskdrive)
         LD	A,02H
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1852,7 +1852,7 @@ J$7F00:	LD	(HL),01H
         INC	HL
         INC	HL
         DJNZ	J$7F00
-        RET	
+        RET
 
 I$7F09:
         .PHASE	0C01EH

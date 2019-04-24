@@ -225,14 +225,14 @@ J755A: 	LD      A,H
         JP      M,J757E			; yep, direct IO
         CP      3EH			; page 0 transfer ?
         JR      C,J757E			; yep, direct IO
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         PUSH    HL
         PUSH    BC
         LD      BC,SECLEN
         PUSH    IX
         CALL    XFER
         POP     IX
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         CALL    C758E			; write sector
         POP     BC
         POP     HL
@@ -353,7 +353,7 @@ I760D: 	EI
 
 C7628: 	PUSH    HL
         PUSH    DE
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         OR      A
         SBC     HL,DE
         JR      NZ,J766A
@@ -399,7 +399,7 @@ J766A: 	EX      DE,HL
         PUSH    HL
         PUSH    DE
         PUSH    BC
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         LD      BC,SECLEN
 J767D: 	LD      A,(DE)
         CPI
@@ -468,7 +468,7 @@ J76D3: 	LD      A,H
         CP      3EH			; page 0 transfer ?
         JR      C,J76FA			; yep, direct IO
         PUSH    HL
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         CALL    C7706			; read sector
         POP     HL
         RET     C
@@ -476,7 +476,7 @@ J76D3: 	LD      A,H
         PUSH    BC
         PUSH    IX
         EX      DE,HL
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         LD      BC,SECLEN
         CALL    XFER
         POP     IX
@@ -867,11 +867,11 @@ J7928: 	LD      IY,I754C
         PUSH    HL
         LD      C,0F8H
         LD      DE,1			; sector 1
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         CALL    C76CF			; DSKIO read
         JR      C,J795A			; error, quit
         CALL    C78C5			; seek suffle (short), to reset disk change ?
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         LD      B,(HL)
         POP     HL
         PUSH    BC
@@ -1009,7 +1009,7 @@ J79F7: 	EX      AF,AF'
         LD      A,0FFH
         LD      (RAWFLG),A		; verify after write
         LD      HL,I7D05
-        LD      DE,($SECBUF)
+        LD      DE,(_SECBUF)
         LD      BC,L7D05
         LDIR
         LD      BC,SECLEN-L7D05
@@ -1021,7 +1021,7 @@ J7A1A: 	XOR     A
         OR      C
         JR      NZ,J7A1A		; construct boot sector
         LD      A,(IX+5)
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         LD      BC,01F8H
         LD      DE,0			; sector 0
         PUSH    HL
@@ -1046,7 +1046,7 @@ J7A46: 	LD      (HL),A
         DJNZ    J7A46			; construct 1st FAT sector
         LD      BC,01F8H
         LD      DE,1			; 1st FAT sector of first FAT
-        LD      HL,($SECBUF)
+        LD      HL,(_SECBUF)
         PUSH    HL
         PUSH    BC
         LD      A,(IX+5)
@@ -1307,8 +1307,8 @@ C7BEA: 	EX      AF,AF'
         EX      AF,AF'
         PUSH    HL
         PUSH    BC
-        LD      HL,($SECBUF)
-        LD      B,01H   ; 1 
+        LD      HL,(_SECBUF)
+        LD      B,01H   ; 1
 J7BF4: 	CALL    C7CAB                  	; wait for command ready
         LD      A,B
         LD      (D7FF2),A
@@ -1418,7 +1418,7 @@ J7C80: 	LD      A,(D7FF0)
         SCF
         RET
 
-J7C94: 	AND     02H     ; 2 
+J7C94: 	AND     02H     ; 2
         RET     NZ
         SCF
         RET
@@ -1553,7 +1553,7 @@ I7D05:
         LD      (HL),HIGH DC056
 J7430:  LD      SP,KBUF+256
         LD      DE,DC09F
-        LD      C,0FH   ; 15 
+        LD      C,0FH   ; 15
         CALL    BDOS
         INC     A
         JP      Z,DC063
@@ -1573,15 +1573,15 @@ DC056:  DEFW    DC058
 DC058:  CALL    0
         LD      A,C
         AND     0FEH
-        CP      02H     ; 2 
+        CP      02H     ; 2
         JP      NZ,DC06A
 DC063:  LD      A,(DC0C4)
         AND     A
         JP      Z,J4022
 DC06A:  LD      DE,DC079
-        LD      C,09H   ; 9 
+        LD      C,09H   ; 9
         CALL    BDOS
-        LD      C,07H   ; 7 
+        LD      C,07H   ; 7
         CALL    BDOS
         JR      J7430
 
@@ -1639,7 +1639,7 @@ L7D05	EQU	$-I7D05
 ?7F4B: 	JP      J7F61
 ?7F4E: 	JP      J7F65
 
-J7F51: 	LD      HL,($SECBUF)
+J7F51: 	LD      HL,(_SECBUF)
         RET
 
 J7F55: 	LD      HL,RAMAD0

@@ -114,7 +114,7 @@ L7060:	LD	A,E
         RET
 
 L706A:	PUSH	DE
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,512
         LDIR			; copy to sectorbuffer
         POP	DE
@@ -122,7 +122,7 @@ L706A:	PUSH	DE
         PUSH	DE
         CALL	L70C4		; set SRAM for sector
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LDIR			; copy to SRAM
         CALL	L70E1		; restore firmwarepage, ram on page 2
         POP	DE
@@ -159,11 +159,11 @@ L709D:	PUSH	DE
 L70A4:	PUSH	DE
         PUSH	HL
         CALL	L70C4		; set SRAM for sector
-L70A9:	LD	DE,($SECBUF)
+L70A9:	LD	DE,(_SECBUF)
         LDIR			; Copy to sectorbuffer
         CALL	L70E1		; restore firmwarepage, ram on page 2
         POP	DE
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,512
         LDIR			; copy to dest
         EX	DE,HL
@@ -369,14 +369,14 @@ L721B:	LD	HL,0FFFDH
 L7220:	LD	HL,0FFFCH
 L7223:	BIT	7,(IX+26)	; OptionROM ?
         JR	NZ,L71F2	; yep, cont
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	E,L
         LD	D,H
         INC	DE
         LD	(HL),0
         LD	BC,001FFH
         LDIR			; clear sector
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	BC,00200H
         XOR	A
         RET
@@ -798,7 +798,7 @@ L749B:	CALL	L75EB		; init dskio
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         PUSH	DE
         LD	BC,0200H
         CALL	XFER
@@ -904,14 +904,14 @@ L7556:	CALL	L75EB		; init dskio
         BIT	1,(IX+5)
         JR	NZ,L7596	; it's a verify
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	L75A4
         POP	HL
         RET	C
         PUSH	HL
         PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         EX	DE,HL
         LD	BC,512
         CALL	XFER
@@ -1212,7 +1212,7 @@ L7764:	INC	L
 ; +27	firmware mapper control byte
 ; +28	firmware mapper bank 4 select
 ; +29	firmware mapper bank ext select
-; +30	
+; +30
 
 INIENV:	LD	A,1
         LD	(RAWFLG),A	; Verify on
@@ -1351,7 +1351,7 @@ GETDPB:	EI
 ;
 ; Returns pointer to formatoption string
 
-CHOICE:	
+CHOICE:
 
         IFDEF	DOS2
 
@@ -1635,7 +1635,7 @@ L79FC:	PUSH	HL
         LD	HL,L7B98
         LD	BC,L_SCWR	; write, install write sector routine
 L7A16:	PUSH	DE
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LDIR			; copy routine to secbuf
         POP	HL
         PUSH	DE
@@ -1647,14 +1647,14 @@ L7A1F:	LD	E,(HL)
         OR	E
         JR	Z,L7A3C
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,DE
         INC	HL
         LD	C,(HL)
         INC	HL
         LD	B,(HL)
         EX	DE,HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         ADD	HL,BC
         EX	DE,HL
         LD	(HL),D
@@ -1749,7 +1749,7 @@ L7AA5:	LD	E,(HL)
 L7AB7:	POP	BC
         POP	DE
         POP	IY
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         EX	(SP),HL
         RET
 
@@ -2006,7 +2006,7 @@ L_SCWR	EQU	$-S_SCWR
 ;
 ; Formats a disk
 
-DSKFMT:	
+DSKFMT:
         IFDEF	DOS2
 
         LD	E,A

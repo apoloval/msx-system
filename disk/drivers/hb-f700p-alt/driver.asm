@@ -296,7 +296,7 @@ dskio_nwrt:	ld	a,h
                 push	hl
                 push	de
                 push	bc
-                ld	de,($SECBUF)
+                ld	de,(_SECBUF)
                 push	de
                 ld	bc,512
                 call	XFER
@@ -392,7 +392,7 @@ dskio_nrd:	ld	a,h
                 cp	03Eh
                 jr	c,rd_trns_norm
                 push	hl
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 call	rd_io
                 pop	hl
                 ret	c
@@ -400,7 +400,7 @@ dskio_nrd:	ld	a,h
                 push	de
                 push	bc
                 ex	de,hl
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 ld	bc,512
                 call	XFER
                 pop	bc
@@ -436,7 +436,7 @@ RdSet:		push	hl
                 ex	(sp),hl
                 ex	(sp),hl			; wait 10 microsec.
                 ld	bc,IoStsPrt
-                ld	de,DataPrt		
+                ld	de,DataPrt
 RdWait:		ld	a,(bc)
                 add	a,a			; IRQ (ready/terminate)
                 ret	p			; yes, quit
@@ -736,14 +736,14 @@ GetMedia:	push	bc
                 ld	a,d			; driveid
                 ld	b,1			; 1 sector
                 ld	de,1			; FAT sector
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 call	DSKIO
                 pop	hl
                 pop	bc
                 ret	c			; read error, quit
                 push	bc
                 push	hl
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 ld	b,(hl)
                 pop	hl
                 call	GETDPB
@@ -754,7 +754,7 @@ GetMedia:	push	bc
                 dec	b
                 ret	nz			; changed, quit
                 ld	a,c
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 xor	(hl)			; unknown, but mediabyte same ?
                 ret	z			; yep, unknown
                 dec	b			; changed
@@ -1062,12 +1062,12 @@ FmtEndTrack:	ei
                 call	ClearBuffer
                 push	bc
                 ld	hl,BootSector		; Make Bootsector
-                ld	de,($SECBUF)
+                ld	de,(_SECBUF)
                 ld	bc,BootLength
                 ldir				; Make boot for double sided
                 pop	bc
                 push	bc
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 ld	de,00Dh
                 add	hl,de
                 ex	de,hl
@@ -1123,7 +1123,7 @@ MemErrorFmt:	ld	a,00Eh
 
 ClearBuffer:	push	hl
                 push	bc
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 ld	b,0
 FillBuffer:	ld	(hl),0
                 inc	hl
@@ -1141,7 +1141,7 @@ FormatWrite:	push	hl
                 scf
                 ld	a,(ix+5)
                 ld	b,1
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 call	DSKIO
                 pop	bc
                 jr	c,KeepError
@@ -1155,7 +1155,7 @@ WriteFat:	push	bc
                 ld	(ix+1),c		; media
                 ld	(ix+2),e		; sectornumber
                 call	ClearBuffer
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 ld	(hl),c
                 inc	hl
                 ld	(hl),0FFh
@@ -1242,7 +1242,7 @@ MarkEven:	ld	(hl),e
 
 CheckWrt:	push	de
                 ex	de,hl
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 inc	h
                 inc	h
                 or	a
@@ -1259,7 +1259,7 @@ WrtFatSector:	push	de
                 call	ClearBuffer
                 pop	bc
                 pop	de
-                ld	hl,($SECBUF)
+                ld	hl,(_SECBUF)
                 inc	(ix+2)
                 ret
 

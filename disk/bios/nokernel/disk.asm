@@ -66,7 +66,7 @@ RAMAD1	equ	0F342H			; slotid DOS ram page 1
 RAMAD2	equ	0F343H			; slotid DOS ram page 2
 RAMAD3	equ	0F344H			; slotid DOS ram page 3
 YF34B	equ	0F34BH			; bottom of workarea msxdos
-$SECBUF equ	0F34DH			; sectorbuffer for diskdriver
+_SECBUF equ	0F34DH			; sectorbuffer for diskdriver
 YF355	equ	0F355H			; table of pointers to the DPBTBL
 XF365	equ	0F365H			; read primary slotregister
 XF368	equ	0F368H			; enable diskkernel in page 1

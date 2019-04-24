@@ -1,4 +1,4 @@
-;  
+;
 ;   NMS8260 -> Source re-created by Z80DIS 2.2
 ;      Z80DIS was written by Kenneth Gielow
 ;                            Palo Alto, CA
@@ -43,7 +43,7 @@ I$7405:	DEFB	0F0H
         DEFW	17
 
 DEFDPB	EQU	I$7405-1
-        
+
 INIHRD:	JP	J$7454
 DRIVES:	JP	J$7432
 INIENV:	JP	J$7442
@@ -66,13 +66,13 @@ J$7432:	PUSH	BC
         JR	NZ,J$7440		; nope, return 1 drive
         LD	L,2			; return 2 drives
 J$7440:	POP	BC
-        RET	
+        RET
 
 ;	  Subroutine INIENV
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J$7442:	RET	
+J$7442:	RET
 
 ;	  Subroutine DSKCHG
 ;	     Inputs  ________________________
@@ -80,7 +80,7 @@ J$7442:	RET
 
 J$7443:	LD	B,1			; disk unchanged
         AND	A
-MTOFF:	RET	
+MTOFF:	RET
 
 ;	  Subroutine GETDPB
 ;	     Inputs  ________________________
@@ -90,22 +90,22 @@ J$7447:	EX	DE,HL
         INC	DE
         LD	BC,18
         LD	HL,I$7405
-        LDIR	
-        RET	
+        LDIR
+        RET
 
 ;	  Subroutine OEMSTA
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J$7452:	SCF	
-        RET	
+J$7452:	SCF
+        RET
 
 ;	  Subroutine INIHRD
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 J$7454:	CALL	C$7B25			; welcome
-        DI	
+        DI
 J$7458:	CALL	C.7947
         JR	C,J.7489
         CALL	C$79D4
@@ -128,8 +128,8 @@ J$7479:	LD	D,20H
         LD	D,20H
         CALL	C.7A3B
         JR	C,J.74A5
-J.7487:	EI	
-        RET	
+J.7487:	EI
+        RET
 
 J.7489:	BIT	6,A
         JR	Z,J$7492
@@ -205,15 +205,15 @@ C.74F6:	PUSH	DE
         LD	(IX+0),A		; combine with drive
         LD	(IX+2),C		; sector (b0-b7)
         LD	A,B
-        RLCA	
-        RLCA	
-        RLCA	
-        RLCA	
-        RLCA	
+        RLCA
+        RLCA
+        RLCA
+        RLCA
+        RLCA
         RLCA				; sector (b8,b9)
         OR	(IX+1)
         LD	(IX+1),A		; combine with track
-        RET	
+        RET
 
 ;	  Subroutine Read sectors
 ;	     Inputs  ________________________
@@ -249,8 +249,8 @@ J.7538:	PUSH	HL
         JR	C,J.758C		; error,
         LD	BC,L767D
         LD	HL,I$767D
-        LD	DE,($SECBUF)
-        LDIR				; i/o routine in $SECBUF
+        LD	DE,(_SECBUF)
+        LDIR				; i/o routine in _SECBUF
         CALL	GETSLT
         LD	(IX+6),A		; slotid of this diskrom
         POP	HL
@@ -261,14 +261,14 @@ J$7569:	LD	H,0FFH
 J$756B:	LD	B,0FFH
 J$756D:	CALL	C.797E			; port 07DH
         IN	A,(C)
-        AND	0FH	; 15 
+        AND	0FH	; 15
         BIT	3,A
         JR	Z,J.758C
-        CP	0FH	; 15 
+        CP	0FH	; 15
         JR	Z,J$75CC
-        CP	0BH	; 11 
+        CP	0BH	; 11
         JR	Z,J$758F
-        CP	09H	; 9 
+        CP	09H	; 9
         JR	Z,J$7593
         DJNZ	J$756D
         DEC	H
@@ -293,26 +293,26 @@ J$7595:	CALL	C.797B			; port 07CH
         LD	A,H
         AND	A			; transfer in page 2 or 3 ?
         JP	M,J.75B3		; yep, use I/O routine in ROM
-        CALL	C$75AD			; use I/O routine in $SECBUF
+        CALL	C$75AD			; use I/O routine in _SECBUF
         JR	J.75C5
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C$75AD:	LD	IY,($SECBUF)
+C$75AD:	LD	IY,(_SECBUF)
         JP	(IY)
 
 J.75B3:	BIT	0,B			; write sector ?
         JR	Z,J$75BF		; yep,
         LD	B,0
-        INIR	
-        INIR	
+        INIR
+        INIR
         JR	J.75C5
 
 J$75BF:	LD	B,0
-        OTIR	
-        OTIR	
+        OTIR
+        OTIR
 J.75C5:	DEC	(IX+5)			; more sectors ?
         JR	Z,J$75CD		; nope,
         JR	J$7566			; yep, next
@@ -335,9 +335,9 @@ J$75CD:	PUSH	HL
 J.75E5:	CALL	C.7947
 J.75E8:	LD	A,0CH			; OTHER error
 J.75EA:	LD	B,(IX+5)
-        SCF	
+        SCF
 J.75EE:	RET
-        
+
 J$75EF:	CP	18H
         JR	Z,J$7621
 J$75F3:	CP	04H
@@ -425,13 +425,13 @@ I$767D:	PUSH	IX
         BIT	0,B
         JR	Z,J$7698
         LD	B,0
-        INIR	
-        INIR	
+        INIR
+        INIR
         JR	J$769E
 
 J$7698:	LD	B,0
-        OTIR	
-        OTIR	
+        OTIR
+        OTIR
 J$769E:	POP	IX
         PUSH	IX
         PUSH	HL
@@ -440,7 +440,7 @@ J$769E:	POP	IX
         CALL	ENASLT
         POP	HL
         POP	IX
-        RET	
+        RET
 
 L767D	EQU	$-I$767D
 
@@ -449,7 +449,7 @@ L767D	EQU	$-I$767D
 ;	     Outputs ________________________
 
 J$76B0:	LD	HL,I$76B4
-        RET	
+        RET
 
 I$76B4:	DEFB	07H,0AH,0DH,01H,58H,01H,57H,01H
         DEFB	57H,01H,57H,01H,57H,01H,57H,01H
@@ -483,9 +483,9 @@ I$76B4:	DEFB	07H,0AH,0DH,01H,58H,01H,57H,01H
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-J$7785:	CP	01H	; 1 
+J$7785:	CP	01H	; 1
         JR	Z,J$778D
-        LD	A,0CH	; 12 
+        LD	A,0CH	; 12
         JR	J.77F0
 
 J$778D:	PUSH	HL
@@ -523,19 +523,19 @@ J$77C0:	LD	(IX+11),H
         LD	D,(IX+11)
         LD	E,(IX+10)
         LD	BC,512
-        LDIR	
+        LDIR
         LD	A,(IX+12)               ; drive
         LD	B,1
         LD	C,0F0H
         LD	DE,0
         LD	H,(IX+11)
         LD	L,(IX+10)
-        SCF	
+        SCF
         CALL	C.74C5			; write boot sector
         JR	NC,J$77F3
-J.77EA:	CP	0CH	; 12 
+J.77EA:	CP	0CH	; 12
         JR	NZ,J.77F0
-        LD	A,10H	; 16 
+        LD	A,10H	; 16
 J.77F0:	JP	J.7832
 
 J$77F3:	LD	BC,2*512-1
@@ -545,7 +545,7 @@ J$77F3:	LD	BC,2*512-1
         LD	E,L
         INC	DE
         LD	(HL),00H
-        LDIR	
+        LDIR
         LD	B,9
         LD	DE,17-2
 J$7808:	CALL	C.7835
@@ -566,9 +566,9 @@ J$7827:	CALL	C.7835
         JR	C,J.77EA
         DJNZ	J$7827			; write FAT sectors
         AND	A
-J$782F:	RET	
-J$7830:	LD	A,0EH	; 14 
-J.7832:	SCF	
+J$782F:	RET
+J$7830:	LD	A,0EH	; 14
+J.7832:	SCF
         JR	J$782F
 
 ;	  Subroutine __________________________
@@ -584,18 +584,18 @@ C.7835:	INC	DE
         LD	C,0F0H
         LD	H,(IX+11)
         LD	L,(IX+10)
-        SCF	
+        SCF
         CALL	C.74C5			; write sector
         POP	BC
         POP	DE
         RET
-        
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C$784D:	LD	(IX+14),00H
-        LD	(IX+13),02H	; 2 
+        LD	(IX+13),02H	; 2
         LD	(IX+3),20H	; " "
         LD	(IX+7),00H
         LD	(IX+8),22H	; """
@@ -637,11 +637,11 @@ J$7868:	LD	A,(IX+0)
         SBC	HL,DE
         JR	NZ,J$7868
         AND	A
-J$78C6:	RET	
+J$78C6:	RET
 
 J.78C7:	CALL	C.7947
-        LD	A,10H	; 16 
-        SCF	
+        LD	A,10H	; 16
+        SCF
         JR	J$78C6
 
 ;	  Subroutine __________________________
@@ -654,7 +654,7 @@ C$78CF:	PUSH	IX
         CALL	C.7B19			; print char
         POP	IX
         RET
-        
+
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
@@ -664,7 +664,7 @@ C$78DD:	PUSH	IX
         CALL	C.7B28                  ; print string
         POP	IX
         RET
-        
+
 I$78E8:	DEFB	10,13
         DEFB	"Formatting "
         DEFB	10,13
@@ -708,7 +708,7 @@ J$793A:	INC	HL
         RES	7,(HL)
         INC	HL
         LD	(HL),0FFH
-J$7946:	RET	
+J$7946:	RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -741,36 +741,36 @@ J$795B:	INC	C			; port 07EH
         DEC	E
         JR	NZ,J$7957
 J.7977:	LD	A,41H
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine Port 07CH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.797B:	LD	C,7CH
-        RET	
+        RET
 
 ;	  Subroutine Port 07DH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.797E:	LD	C,7DH
-        RET	
+        RET
 
 ;	  Subroutine Port 07EH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.7981:	LD	C,7EH
-        RET	
+        RET
 
 ;	  Subroutine Port 07FH
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
 C.7984:	LD	C,7FH
-        RET	
+        RET
 
 J$7987:	CALL	C.7984			; port 07FH
         XOR	A
@@ -793,20 +793,20 @@ J$7987:	CALL	C.7984			; port 07FH
 
 C$79A5:	CALL	C.7A4A
         JR	C,J.79C7
-        LD	B,08H	; 8 
+        LD	B,08H	; 8
         CALL	C.797B			; port 07CH
         LD	HL,I$79CC
-        LD	D,09H	; 9 
+        LD	D,09H	; 9
 J$79B4:	CALL	C.7A9E
         JR	C,J.79C8
-        OUTI	
+        OUTI
         JR	NZ,J$79B4
         CALL	C.7ABF
         JR	C,J.79C8
         JR	Z,J.79C7
         LD	A,42H	; "B"
-J$79C6:	SCF	
-J.79C7:	RET	
+J$79C6:	SCF
+J.79C7:	RET
 J.79C8:	LD	A,40H	; "@"
         JR	J$79C6
 
@@ -848,8 +848,8 @@ C.79E3:	PUSH	DE
         JR	C,J.79FA
         JR	J$79FC
 J.79FA:	LD	A,40H
-J$79FC:	SCF	
-J$79FD:	RET	
+J$79FC:	SCF
+J$79FD:	RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -858,8 +858,8 @@ J$79FD:	RET
 C.79FE:	CALL	C.7984			; port 07FH
         XOR	A
         OUT	(C),A
-        LD	L,01H	; 1 
-J$7A06:	LD	H,0FH	; 15 
+        LD	L,01H	; 1
+J$7A06:	LD	H,0FH	; 15
 J$7A08:	LD	B,0FFH
 J$7A0A:	PUSH	HL
         PUSH	BC
@@ -888,8 +888,8 @@ J$7A1E:	CALL	C.7ABF
         JR	C,J.7A37
         JR	J$7A39
 J.7A37:	LD	A,40H	; "@"
-J$7A39:	SCF	
-J$7A3A:	RET	
+J$7A39:	SCF
+J$7A3A:	RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -920,10 +920,10 @@ J$7A54:	IN	A,(C)
         POP	DE
         POP	BC
 J.7A5E:	LD	A,40H
-        SCF	
+        SCF
         RET
-        
-J$7A62:	LD	D,0DH	; 13 
+
+J$7A62:	LD	D,0DH	; 13
         CALL	C.7A9E
         JR	C,J.7A5E
         POP	DE
@@ -937,7 +937,7 @@ J$7A62:	LD	D,0DH	; 13
         POP	DE
         JR	C,J.7A5E
         OUT	(C),D
-        LD	D,0DH	; 13 
+        LD	D,0DH	; 13
         CALL	C.7A9E
         JR	C,J.7A5E
         OUT	(C),H
@@ -949,10 +949,10 @@ J$7A62:	LD	D,0DH	; 13
         OUT	(C),B
         CALL	C.7A9E
         JR	C,J.7A5E
-        LD	A,05H	; 5 
+        LD	A,05H	; 5
         OUT	(C),A
         AND	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -965,7 +965,7 @@ J$7AA2:	LD	H,0FFH
 J$7AA4:	LD	B,0FFH
 J$7AA6:	CALL	C.797E			; port 07DH
         IN	A,(C)
-        AND	0FH	; 15 
+        AND	0FH	; 15
         XOR	D
         JR	Z,J$7ABB
         DJNZ	J$7AA6
@@ -973,18 +973,18 @@ J$7AA6:	CALL	C.797E			; port 07DH
         JR	NZ,J$7AA4
         DEC	L
         JR	NZ,J$7AA2
-        SCF	
+        SCF
         JR	J$7ABC
 J$7ABB:	AND	A
 J$7ABC:	POP	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.7ABF:	LD	D,0FH	; 15 
+C.7ABF:	LD	D,0FH	; 15
         CALL	C.7A9E
         JR	C,J.7ADF
         CALL	C.797B			; port 07CH
@@ -995,14 +995,14 @@ C.7ABF:	LD	D,0FH	; 15
         INC	C
         LD	B,00H
 J$7AD2:	IN	A,(C)
-        AND	0FH	; 15 
+        AND	0FH	; 15
         JR	Z,J$7ADE
         DJNZ	J$7AD2
         POP	AF
-        SCF	
+        SCF
         JR	J.7ADF
 J$7ADE:	POP	AF
-J.7ADF:	RET	
+J.7ADF:	RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1014,13 +1014,13 @@ C.7AE0:	LD	C,03H			; operation
         CALL	C.7A4A
         JR	C,J.7B0F
         CALL	C.797B			; port 07CH
-        LD	D,0BH	; 11 
+        LD	D,0BH	; 11
         CALL	C.7A9E
         JR	C,J.7B0F
         IN	A,(C)
         AND	7FH
         PUSH	AF
-        LD	B,03H	; 3 
+        LD	B,03H	; 3
 J$7AFD:	CALL	C.7A9E
         JR	C,J.7B15
         IN	A,(C)
@@ -1030,12 +1030,12 @@ J$7AFD:	CALL	C.7A9E
         JR	NZ,J$7B10
         POP	AF
 J$7B0E:	OR	A
-J.7B0F:	RET	
+J.7B0F:	RET
 J$7B10:	POP	AF
         LD	A,43H	; "C"
         JR	J$7B0E
 J.7B15:	POP	AF
-        SCF	
+        SCF
         JR	J.7B0F
 
 ;	  Subroutine __________________________
@@ -1045,7 +1045,7 @@ J.7B15:	POP	AF
 C.7B19:	LD	IY,(EXPTBL+0-1)
         LD	IX,CHPUT
         CALL	CALSLT
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1066,7 +1066,7 @@ C.7B28:	LD	A,(HL)
         POP	HL
         INC	HL
         JR	C.7B28
-J$7B36:	RET	
+J$7B36:	RET
 
 I$7B37:	DEFB	10,13
         DEFB	"HC-95/90 HDD SYSTEM TYPE 2"
@@ -1111,10 +1111,10 @@ J$7BE1:	PUSH	BC
         POP	DE
         POP	BC
 J$7BE8:	LD	A,C
-        AND	0FH	; 15 
+        AND	0FH	; 15
         DEC	D
         JR	NZ,J$7BDF
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1123,7 +1123,7 @@ J$7BE8:	LD	A,C
 C.7BEF:	LD	IY,(EXPTBL+0-1)
         LD	IX,BEEP
         CALL	CALSLT
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1143,7 +1143,7 @@ J$7C0A:	JR	Z,J$7C1F
         JR	Z,J$7C23
         JR	C.7BFB
 
-J$7C1F:	SCF	
+J$7C1F:	SCF
         PUSH	AF
         JR	J$7C25
 
@@ -1152,7 +1152,7 @@ J$7C23:	AND	A
 J$7C25:	LD	HL,I$7C2D
         CALL	C.7B28                          ; print string
         POP	AF
-        RET	
+        RET
 
 I$7C2D:	DEFB	27,"A",27,"M",27,"M"            ; cursor up, cursor down, cursor down
         DEFB	0
@@ -1184,7 +1184,7 @@ I$7C34:
         LD	(HL),HIGH DC056
 J$7430:	LD	SP,KBUF+256
         LD	DE,DC09F
-        LD	C,0FH	; 15 
+        LD	C,0FH	; 15
         CALL	XF37D
         INC	A
         JP	Z,DC063
@@ -1204,15 +1204,15 @@ DC056:	DEFW	DC058
 DC058:	CALL	0
         LD	A,C
         AND	0FEH
-        CP	02H	; 2 
+        CP	02H	; 2
         JP	NZ,DC06A
 DC063:	LD	A,(DC0C4)
         AND	A
         JP	Z,J4022
 DC06A:	LD	DE,DC079
-        LD	C,09H	; 9 
+        LD	C,09H	; 9
         CALL	XF37D
-        LD	C,07H	; 7 
+        LD	C,07H	; 7
         CALL	XF37D
         JR	J$7430
 
@@ -1240,7 +1240,7 @@ DC0C4:	DEFB	0
         .DEPHASE
 
         DEFS	07FB0H-$,0
-        
+
         DEFM	"Copyright 1986  by K.Chiba (VSE) MSX BIOS TYPE 2   Ver.  0.3      Oct.11 1986  "
-        NOP	
+        NOP
         END

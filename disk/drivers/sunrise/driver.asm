@@ -1,4 +1,4 @@
-;  
+;
 ;   MSXIDE -> Source re-created by Z80DIS 2.2
 ;      Z80DIS was written by Kenneth Gielow
 ;                            Palo Alto, CA
@@ -116,9 +116,9 @@ J.6BF2:	LD	A,90H			; EXECUTE DEVICE DIAGNOSTIC
         JR	NZ,J$6C14		; device does not support PACKET commands
         LD	A,10H
         LD	(D.7E06),A		; select device 1
-        EI	
-        HALT	
-        HALT	
+        EI
+        HALT
+        HALT
         LD	A,(D.7E07)
         RRCA
         JR	C,J$6C1B		; ERR bit set, no slave device!
@@ -133,7 +133,7 @@ J.6C20:	CALL	C.6B03
         DEFB	0
 
 J$6C3A:	POP	AF
-        RET	
+        RET
 
 J$6C3C:	LD	A,(D.7E01)
         CP	01H			; device 0 passed, device 1 passed or not present ?
@@ -162,7 +162,7 @@ J$6C6C:	CALL	C.6B03
         DEFB	0
 
 J$6C85:	POP	AF
-        RET	
+        RET
 
 J$6C87:	CALL	C.6B03
 
@@ -176,7 +176,7 @@ J$6C96:	LD	L,10H
         LD	(IX+4),A
 J$6CA2:	XOR	A
         LD	(D.7E06),A		; select device 0
-        RET	
+        RET
 
 ;	  Subroutine reset controler and wait for device 0 to become ready
 ;	     Inputs  ________________________
@@ -184,13 +184,13 @@ J$6CA2:	XOR	A
 
 C.6CA7:	LD	A,06H
         LD	(D.7E0E),A		; assert host reset
-        EI	
-        HALT	
-        HALT	
+        EI
+        HALT
+        HALT
         LD	A,02H			; dessert host reset
         LD	(D.7E0E),A
-        HALT	
-        HALT	
+        HALT
+        HALT
         XOR	A
 
 ;	  Subroutine wait for device to become ready
@@ -199,30 +199,30 @@ C.6CA7:	LD	A,06H
 
 C.6CB7:	LD	B,0F0H
         LD	E,A
-J$6CBA:	EI	
+J$6CBA:	EI
         LD	A,E
         LD	(D.7E06),A		; select device
-        HALT	
-        HALT	
+        HALT
+        HALT
         LD	A,(D.7E07)
         AND	80H
         RET	Z			; BSY reset, quit
-        HALT	
-        HALT	
-        HALT	
-        HALT	
-        HALT	
-        HALT	
+        HALT
+        HALT
+        HALT
+        HALT
+        HALT
+        HALT
         PUSH	BC
         CALL	C$7364
         LD	A,7
         CALL	SNSMAT
         AND	80H			; RET key pressed ?
         POP	BC
-        SCF	
+        SCF
         RET	Z			; yep, quit
         DJNZ	J$6CBA
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -239,8 +239,8 @@ J$6CE1:	JR	C,J.6D27		; timeout,
         EX	(SP),HL
         EX	(SP),HL
         LD	A,(D.7E07)
-        RRCA	
-        CCF	
+        RRCA
+        CCF
         CALL	C,C.7652		; ERR bit reset, wait for ready
         JR	C,J.6D27		; timeout,
         LD	HL,(D.7E04)
@@ -248,7 +248,7 @@ J$6CE1:	JR	C,J.6D27		; timeout,
         SBC	HL,DE
         JR	Z,J$6D71		; device has PACKET support, use that
         LD	A,(D.7E07)
-        RRCA	
+        RRCA
         JR	C,J$6D10		; ERR set, device not detected
         AND	68H			; BSY set, DRDY set (not ready), b4 set (no PACKET support) ?
         LD	A,0ECH			; IDENTIFY DEVICE
@@ -257,28 +257,28 @@ J$6D10:	CALL	C.6B03
         DEFB	"not detected.",13,10
         DEFB	0
         XOR	A
-        RET	
+        RET
 
 J$6D25:	POP	AF
 J$6D26:	POP	AF
 J.6D27:	CALL	C.6B03
         DEFB	"Controller time-out!",13,10
         DEFB	0
-        SCF	
-        RET	
+        SCF
+        RET
 
 J.6D43:	POP	AF
         CALL	C.6B03
         DEFB	"WARNING! DATA CORRUPTION DETECTED!",7,7,7,13,10
         DEFB	0
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$6D71:	LD	A,08H			; DEVICE RESET
         LD	(D.7E07),A
-        EI	
-        HALT	
-        HALT	
+        EI
+        HALT
+        HALT
         LD	A,0A1H			; IDENTIFY PACKET DEVICE
 J$6D7B:	LD	E,A
 J$6D7C:	CALL	C.7652			; wait for ready
@@ -338,8 +338,8 @@ J$6DB8:	PUSH	AF
         DEFB	"Unsupported device!",13,10
         DEFB	0
 
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine get name of device
 ;	     Inputs  ________________________
@@ -349,8 +349,8 @@ C.6DFC:	EX	AF,AF'
         CALL	C.7652			; wait for ready
         RET	C
         EX	AF,AF'
-        EI	
-        HALT	
+        EI
+        HALT
         LD	(D.7E07),A		; command
         EX	(SP),HL
         EX	(SP),HL
@@ -358,7 +358,7 @@ J$6E09:	CALL	C.7614			; get command status
         RET	C			; error or timeout, quit
         AND	08H
         JR	Z,J$6E09
-        DI	
+        DI
         LD	HL,D.7C00
         LD	DE,D.C000
         LD	BC,512
@@ -376,7 +376,7 @@ J$6E21:	LD	D,(HL)
         LD	D,A
         XOR	A			; Zx set
         LD	A,D
-        RET	
+        RET
 
 ;	  Subroutine print model string
 ;	     Inputs  ________________________
@@ -413,7 +413,7 @@ J$6E5B:	PUSH	AF
         CALL	C.6E2E			; print model string
         POP	AF
         OR	A
-        RET	
+        RET
 
 J$6E62:	CALL	C.6B03
         DEFB	"CDROM"
@@ -464,20 +464,20 @@ J$6E87:	CALL	C.6E2E			; print model string
         AND	02H
         RLCA				; LBA support in b2
         OR	01H
-        RET	
+        RET
 
 
 J$6ECD:	CALL	C.6B03
         DEFB	"CHS translation error!",13,10
         DEFB	0
-        SCF	
-        RET	
+        SCF
+        RET
 
 J.6EEB:	CALL	C.6B03
         DEFB	"No CHS report! (device too old?)",13,10
         DEFB	0
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine print translation mode
 ;	     Inputs  ________________________
@@ -489,12 +489,12 @@ C.6F13:	LD	A,(D.C000+49*2+1)
         CALL	C.6B03
         DEFB	"LBA"
         DEFB	0
-        RET	
+        RET
 
 J$6F22:	CALL	C.6B03
         DEFB	"CHS"
         DEFB	0
-        RET	
+        RET
 
 ;	  Subroutine print device mode
 ;	     Inputs  ________________________
@@ -559,7 +559,7 @@ J$6F7F:	LD	L,A
         POP	DE
         POP	BC
         POP	AF
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -629,7 +629,7 @@ DEFDPB	EQU	DMYDPB-1
 ;	     Outputs ________________________
 
 C.6F84:	LD	C,00H
-        RRCA	
+        RRCA
         JR	C,J$6F9A	; ATA device
         AND	0FH
         CP	03H		; non CDROM ATAPI device ?
@@ -676,7 +676,7 @@ J$6FA9:	PUSH	BC
         CP	18H
         JR	Z,J$6FA9	; try again
 J$6FC6:	LD	A,B
-        EXX	
+        EXX
         LD	B,A
         LD	C,00H
         POP	HL
@@ -684,7 +684,7 @@ J$6FC6:	LD	A,B
         LD	DE,48
         ADD	HL,DE		; workarea offset 0030H
         LD	A,L
-        EXX	
+        EXX
         LD	B,A
         PUSH	HL
         POP	IY		; bootsector offset 0
@@ -724,7 +724,7 @@ J$7019:	POP	HL
 
 J.701C:	CALL	C.70D8		; search space in workarea
         JR	C,J$7072	; nopes, quit
-J$7021:	EXX	
+J$7021:	EXX
         POP	HL
         LD	A,C
         OR	A
@@ -761,7 +761,7 @@ J.7054:	INC	HL
         INC	HL
         LD	D,(HL)
         LD	A,E
-        SUB	01H	; 1 
+        SUB	01H	; 1
         LD	(IX+4),A
         LD	A,D
         SBC	A,00H
@@ -771,13 +771,13 @@ J.7054:	INC	HL
         LD	(IX+6),A
         LD	A,0C1H
         LD	(IX+7),A
-        RET	
+        RET
 
 J$7070:	POP	HL
 J$7071:	POP	HL
-J$7072:	EXX	
+J$7072:	EXX
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -795,7 +795,7 @@ C.7075:	LD	A,(IY+0)
         CP	04H
         JR	NZ,C.70D0		; not a FAT16 partition
 J.708C:	LD	A,(IY+0)
-        RRCA	
+        RRCA
         XOR	0C1H
         LD	(IX+7),A		; special MSX partitionflags
         LD	A,(IY+8)
@@ -816,10 +816,10 @@ J.708C:	LD	A,(IY+0)
         LD	A,(IY+15)
         OR	A			; 4th size byte should be zero
         JR	NZ,C.70D0		; it is not, do not use partition!
-        EXX	
+        EXX
         INC	C
         LD	(IX),B			; device codebyte
-        EXX	
+        EXX
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -836,7 +836,7 @@ C.70D0:	LD	DE,-16
         ADD	IY,DE
         EX	AF,AF'
         DEC	A
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -845,7 +845,7 @@ C.70D0:	LD	DE,-16
 C.70D8:	LD	DE,8
 J$70DB:	LD	A,L
         CP	B		; end of partinfo workarea ?
-        SCF	
+        SCF
         RET	Z		; yep, quit
         LD	A,(HL)
         AND	07H
@@ -857,7 +857,7 @@ J$70DB:	LD	A,L
 J$70E8:	PUSH	HL
         POP	IX
         ADD	HL,DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -867,7 +867,7 @@ C.70ED:	CALL	C.6B03
         DEFB	13
         DEFB	27,"K"
         DEFB	0
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -880,7 +880,7 @@ C.70F5:	ADD	A,A
         LD	D,00H
         CALL	GETWRK		; get workarea pointer
         ADD	IX,DE
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -906,7 +906,7 @@ C$710B:	PUSH	AF
         EX	AF,AF'
         LD	C,A
         AND	0E7H
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         CALL	C$6FA2
         POP	IX
         POP	HL
@@ -914,7 +914,7 @@ C$710B:	PUSH	AF
         POP	BC
         POP	AF
         BIT	4,(IX)
-        RET	
+        RET
 
 J$712D:	CALL	C$7101
         JR	Z,J$7147
@@ -928,9 +928,9 @@ DSKIO:
 J$7135:	PUSH	AF
         CP	6
         JP	NC,J.71D8		; driveid must be 0-5, error
-        EXX	
+        EXX
         CALL	C.70F5			; get partitioninfo pointer in workarea
-        EXX	
+        EXX
         POP	AF
 
 ;	  Subroutine __________________________
@@ -986,7 +986,7 @@ J$7154:	PUSH	DE
 J$718D:	POP	IX
         POP	BC
         POP	HL
-        RET	
+        RET
 
 J$7192:	LD	A,(IX+7)
         BIT	7,A		; partition writeprotected ?
@@ -999,8 +999,8 @@ J$71A1:	POP	AF
         POP	BC
         POP	AF
         XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$71A7:	LD	A,(IX+4)
         SUB	E
@@ -1025,9 +1025,9 @@ J$71A7:	LD	A,(IX+4)
         POP	BC
         DEFB	03EH			; LD A,xx, skip next POP
 J$71CB:	POP	AF
-        LD	A,08H	; 8 
-        SCF	
-        RET	
+        LD	A,08H	; 8
+        SCF
+        RET
 
 J$71D0:	POP	DE
         PUSH	AF
@@ -1035,17 +1035,17 @@ J$71D0:	POP	DE
         ADD	A,D
         LD	B,A
         POP	AF
-        RET	
+        RET
 
 J.71D7:	POP	HL
 J.71D8:	POP	AF
-        LD	A,0CH	; 12 
-        SCF	
-        RET	
+        LD	A,0CH	; 12
+        SCF
+        RET
 
-J.71DD:	LD	A,02H	; 2 
-        SCF	
-        RET	
+J.71DD:	LD	A,02H	; 2
+        SCF
+        RET
 
 ;	  Subroutine DSKCHG
 ;	     Inputs  ________________________
@@ -1072,8 +1072,8 @@ J$71E1:	CP	06H
         POP	HL
         POP	AF
         LD	A,02H
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$720C:	PUSH	IX
         LD	DE,0036H
@@ -1097,7 +1097,7 @@ J$7225:	BIT	4,(IX)
 J$7235:	SET	3,(IX)
         CALL	C.7269			; GETDPB
         LD	B,0FFH			; disk change unknown
-        RET	
+        RET
 
 J$723F:	LD	A,(D.7E01)
         AND	28H
@@ -1110,20 +1110,20 @@ J.7246:	POP	HL
 
 J$724F:	POP	HL
         POP	BC
-        CP	06H	; 6 
+        CP	06H	; 6
         JR	Z,J$725D
         OR	A
-        LD	B,01H	; 1 
+        LD	B,01H	; 1
         BIT	3,(IX)
         RET	NZ
 J$725D:	SET	3,(IX)
         LD	B,0FFH
         OR	A
-        RET	
+        RET
 
-J$7265:	LD	A,02H	; 2 
-        SCF	
-        RET	
+J$7265:	LD	A,02H	; 2
+        SCF
+        RET
 
 ;	  Subroutine GETDPB
 ;	     Inputs  ________________________
@@ -1140,7 +1140,7 @@ C.7269:	CP	06H
         BIT	4,(IX+0)
         JR	NZ,J$7265		; partition not in use, quit
         PUSH	HL
-        LD	HL,($SECBUF)		; $SECBUF
+        LD	HL,(_SECBUF)		; _SECBUF
         PUSH	HL
         LD	A,(IX+0)		; devicecode
         LD	B,1			; 1 sector
@@ -1230,7 +1230,7 @@ J$7326:	LD	D,B
         LD	(IX+6),A		; sectors per cluster
         LD	B,0
 J$7331:	INC	B
-        RRCA	
+        RRCA
         JR	C,J$7331
         LD	(IX+7),B
         DEC	B
@@ -1244,7 +1244,7 @@ J$7345:	INC	HL
         LD	(IX+14),L
         LD	(IX+15),H
         OR	A
-        RET	
+        RET
 
 ; SCSI-BIOS 7F86 (TermAct)
 
@@ -1255,33 +1255,33 @@ J$734E:	LD	D,0			; target status = GOOD
 
 ; SCSI-BIOS 7F83 (SetWD3393)
 
-J$7352:	RET	
+J$7352:	RET
 
 
-J$7353:	RET	
+J$7353:	RET
 
 J$7354:	JR	J$7356
 
 J$7356:	LD	D,00H
-        RET	
+        RET
 
-J$7359:	RET	
+J$7359:	RET
 
-J$735A:	RET	
+J$735A:	RET
 
-J$735B:	RET	
+J$735B:	RET
 
-J$735C:	RET	
+J$735C:	RET
 
 J$735D:	LD	A,00H
         AND	A
-        RET	
+        RET
 
-J$7361:	RET	
+J$7361:	RET
 
-J$7362:	RET	
+J$7362:	RET
 
-J$7363:	RET	
+J$7363:	RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1291,30 +1291,30 @@ C$7364:	PUSH	AF
         PUSH	HL
         LD	A,(TEMP8)
         INC	A
-        AND	01H	; 1 
+        AND	01H	; 1
         LD	(TEMP8),A
         LD	HL,I$737C
         ADD	A,L
         LD	L,A
-        LD	A,08H	; 8 
+        LD	A,08H	; 8
         RST	18H
         LD	A,(HL)
         RST	18H
         POP	HL
         POP	AF
-        RET	
+        RET
 
 I$737C:	DEC	L
-        DAA	
+        DAA
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.737E:	RLA	
-        RLA	
-        RLA	
-        RLA	
+C.737E:	RLA
+        RLA
+        RLA
+        RLA
         AND	10H
         LD	(D.7E06),A		; select device
         EX	(SP),HL
@@ -1323,9 +1323,9 @@ C.737E:	RLA
         CALL	C.75CF			; wait for ready
         LD	A,B
         LD	(D.7E02),A		; number of sectors
-        EXX	
+        EXX
         CALL	GETWRK			; get workarea pointer
-        EXX	
+        EXX
         EX	AF,AF'
         JR	Z,J$739B		; master
         INC	IX			; slave
@@ -1336,7 +1336,7 @@ J$739B:	BIT	2,(IX+52)
         LD	A,C
         LD	(D.7E03),DE
         LD	(D.7E05),A		; sectornumber
-        RET	
+        RET
 
 J$73AF:	LD	L,C
         LD	C,(IX+50)
@@ -1351,7 +1351,7 @@ J$73AF:	LD	L,C
         LD	(D.7E04),DE
         OR	H
         LD	(D.7E06),A		; select device
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1370,7 +1370,7 @@ J$73D3:	EX	DE,HL
         LD	H,A
         INC	E
 J$73DE:	DJNZ	J$73D3
-        RET	
+        RET
 
 J$73E1:	CALL	C.7446
         RET	C
@@ -1379,13 +1379,13 @@ J$73E1:	CALL	C.7446
         CALL	C.746D			; issue 10 byte atapi command
         JR	C,J.7414
         LD	B,00H
-        RET	
+        RET
 
 J$73F3:	LD	(IX),0A8H		; READ(12)
         CALL	C$7463			; issue 12 byte atapi command
         JR	C,J.7414
         LD	B,00H
-        RET	
+        RET
 
 ;	  Subroutine ATAPI WRITE
 ;	     Inputs  ________________________
@@ -1398,32 +1398,32 @@ J$73FF:	CALL	C.7446
         CALL	C.746D			; issue 10 byte atapi command
         JR	C,J.7414
         LD	B,00H
-        RET	
+        RET
 
 J$7411:	XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 
 J.7414:	JR	Z,J.745E
         LD	E,C
-        LD	C,08H	; 8 
-        RRCA	
+        LD	C,08H	; 8
+        RRCA
         JR	C,J.7460
-        RRCA	
+        RRCA
         JR	C,J.7460
         CALL	C.749D			; request sense
         JR	C,J.745E
-        AND	0FH	; 15 
-        LD	C,02H	; 2 
-        CP	02H	; 2 
+        AND	0FH	; 15
+        LD	C,02H	; 2
+        CP	02H	; 2
         JR	Z,J.7460
-        LD	C,04H	; 4 
-        CP	03H	; 3 
+        LD	C,04H	; 4
+        CP	03H	; 3
         JR	Z,J.7460
         LD	C,00H
-        CP	07H	; 7 
+        CP	07H	; 7
         JR	Z,J.7460
-        CP	06H	; 6 
+        CP	06H	; 6
         JR	NZ,J.745E
         LD	A,E
         LD	DE,0FFCAH
@@ -1440,21 +1440,21 @@ C.7446:	PUSH	AF
         CALL	C.75D7			; select device for atapi packet
         POP	BC
         JR	C,J$745D
-        EXX	
+        EXX
         CALL	GETWRK			; get workarea pointer
         LD	DE,0036H
         ADD	IX,DE
-        EXX	
+        EXX
         POP	AF
         OR	A
         BIT	1,A
-        RET	
+        RET
 
 J$745D:	POP	AF
-J.745E:	LD	C,0CH	; 12 
+J.745E:	LD	C,0CH	; 12
 J.7460:	LD	A,C
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1489,7 +1489,7 @@ J$7474:	LD	(IX+3),C
         CALL	C.7674			; issue atapi packet
         POP	BC
         POP	HL
-        RET	
+        RET
 
 ;	  Subroutine request sense
 ;	     Inputs  ________________________
@@ -1497,7 +1497,7 @@ J$7474:	LD	(IX+3),C
 
 C.749D:	PUSH	HL
         PUSH	HL
-        EXX	
+        EXX
         POP	IX
         POP	HL
         LD	D,H
@@ -1517,8 +1517,8 @@ C.749D:	PUSH	HL
         LD	(IX+11),A
         CALL	C.7674			; issue atapi packet
         LD	A,(IX+2)
-        EXX	
-        RET	
+        EXX
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1557,13 +1557,13 @@ J$74FE:	CALL	C.75CF			; wait for ready
         POP	AF
         XOR	A
         LD	D,A
-        RET	
+        RET
 
 J$7510:	EX	AF,AF'
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         CALL	XFER
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	DE,D.7C00
         LD	B,HIGH 512
         LDIR				; write 512 bytes of data
@@ -1573,7 +1573,7 @@ J$7510:	EX	AF,AF'
 
 J.7528:	BIT	5,A
         LD	A,(D.7E01)
-        LD	C,0AH	; 10 
+        LD	C,0AH	; 10
         JR	NZ,J.759D
         LD	C,00H
         JR	J.759D
@@ -1599,10 +1599,10 @@ J$754A:	EX	AF,AF'
         LD	B,HIGH 512
 J$754F:	LD	A,(D.7E07)
         AND	88H
-        CP	08H	; 8 
+        CP	08H	; 8
         JR	NZ,J$754F
         LD	A,(D.7E07)
-        RRCA	
+        RRCA
         JR	C,J$7581
         EX	AF,AF'
         BIT	7,D
@@ -1613,40 +1613,40 @@ J$7566:	DEC	A
         POP	AF
         XOR	A
         LD	D,A
-        RET	
+        RET
 
 J$756E:	PUSH	DE
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LDIR				; read 512 bytes of data
         POP	DE
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	B,HIGH 512
         CALL	XFER
         JR	J$7566
 
 J$7581:	LD	A,(D.7E01)
-        LD	C,08H	; 8 
-        RRCA	
+        LD	C,08H	; 8
+        RRCA
         JR	C,J.759D
-        RRCA	
+        RRCA
         JR	C,J.759D
-        RRCA	
-        LD	C,08H	; 8 
-        RRCA	
-        RRCA	
+        RRCA
+        LD	C,08H	; 8
+        RRCA
+        RRCA
         JR	C,J.759D
-        RRCA	
+        RRCA
         JR	C,J$75A3
-        LD	C,04H	; 4 
-        RRCA	
+        LD	C,04H	; 4
+        RRCA
         JR	C,J.759D
-        LD	C,02H	; 2 
+        LD	C,02H	; 2
 J.759D:	POP	AF
 J$759E:	EX	AF,AF'
         LD	B,A
         LD	A,C
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$75A3:	CALL	C.75CF			; wait for ready
         LD	A,0DBH
@@ -1661,12 +1661,12 @@ J$75A3:	CALL	C.75CF			; wait for ready
 ;	     Inputs  ________________________
 ;	     Outputs ________________________
 
-C.75B7:	AND	07H	; 7 
+C.75B7:	AND	07H	; 7
         LD	C,A
         LD	DE,8
-        LD	B,06H	; 6 
+        LD	B,06H	; 6
 J$75BF:	LD	A,(HL)
-        AND	07H	; 7 
+        AND	07H	; 7
         CP	C
         JR	NZ,J$75C9
         RES	3,(HL)
@@ -1674,7 +1674,7 @@ J$75BF:	LD	A,(HL)
 J$75C9:	ADD	HL,DE
         DJNZ	J$75BF
         LD	C,18H
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1694,11 +1694,11 @@ C.75D7:	PUSH	AF
         POP	BC
         RET	C
         LD	A,B
-        AND	01H	; 1 
-        RLCA	
-        RLCA	
-        RLCA	
-        RLCA	
+        AND	01H	; 1
+        RLCA
+        RLCA
+        RLCA
+        RLCA
         LD	(D.7E06),A		; select device
         EX	(SP),HL
         EX	(SP),HL
@@ -1733,8 +1733,8 @@ J$7604:	EX	(SP),HL
         OR	C
         JR	NZ,J$75FA
         XOR	A
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1748,8 +1748,8 @@ J$7617:	LD	A,(D.7E07)
         BIT	0,A
         RET	Z			; ERR not set, quit
         LD	A,(D.7E01)
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$7627:	DEC	BC
         LD	A,B
@@ -1763,8 +1763,8 @@ J$762F:	LD	A,(D.7E07)
         BIT	0,A
         RET	Z			; ERR not set, quit
         LD	A,(D.7E01)
-        SCF	
-        RET	
+        SCF
+        RET
 
 J$763F:	PUSH	BC
         LD	BC,0960H
@@ -1779,8 +1779,8 @@ J$7643:	EX	(SP),HL
         LD	A,B
         OR	C
         JR	NZ,J$762F
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine wait for ready
 ;	     Inputs  ________________________
@@ -1796,18 +1796,18 @@ J$7655:	LD	A,(D.7E07)
         OR	C
         JR	NZ,J$7655
         LD	BC,0780H
-        EI	
+        EI
 J$7665:	LD	A,(D.7E07)
         OR	A
         BIT	7,A			; ready, quit
         RET	Z
-        HALT	
+        HALT
         DEC	BC
         LD	A,B
         OR	C
         JR	NZ,J$7665
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine issue atapi packet
 ;	     Inputs  ________________________
@@ -1815,7 +1815,7 @@ J$7665:	LD	A,(D.7E07)
 
 C.7674:	CALL	C.75E9
         RET	C
-        DI	
+        DI
         LD	(D.7E01),A		; non DMA, non overlapped
         EX	(SP),HL
         EX	(SP),HL
@@ -1832,18 +1832,18 @@ J$768D:	CALL	C.7614			; get command status
         JR	Z,J$768D
         PUSH	DE
         LD	DE,D.7C00
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
-        LDI	
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
+        LDI
         POP	DE
 J$76B2:	CALL	C.7614			; get command status
         RET	C			; error or timeout, quit
@@ -1867,7 +1867,7 @@ J.76D0:	CALL	C.7614			; get command status
         DEC	BC
         PUSH	BC
         LD	A,B
-        AND	01H	; 1 
+        AND	01H	; 1
         LD	B,A
         OR	C
         CALL	NZ,C.779C
@@ -1880,7 +1880,7 @@ J$76EC:	PUSH	BC
         POP	BC
         DJNZ	J$76EC
 J$76F6:	LD	A,(D.7E02)
-        AND	02H	; 2 
+        AND	02H	; 2
         JR	Z,J$7723
         BIT	7,D
         JR	Z,J$7718
@@ -1888,7 +1888,7 @@ J$76F6:	LD	A,(D.7E02)
         POP	BC
         LD	HL,(D.7C00)
 J$7707:	LD	A,(D.7E07)
-        RLCA	
+        RLCA
         CALL	NC,C.7789
         JR	NC,J$7707
         EX	DE,HL
@@ -1915,26 +1915,26 @@ J$7723:	BIT	7,D
         POP	BC
         LD	(D.7C00+1),A
 J$7734:	LD	A,(D.7E07)
-        RLCA	
+        RLCA
         CALL	NC,C.7789
         JR	NC,J$7734
         JR	J.76D0
 
 J$773F:	LD	A,(D.7E02)
-        AND	03H	; 3 
-        CP	03H	; 3 
+        AND	03H	; 3
+        CP	03H	; 3
         JR	NZ,J.76D0
         LD	A,(D.7E07)
-        RLCA	
+        RLCA
         JR	C,J.76D0
         LD	A,(D.7E02)
-        AND	03H	; 3 
-        CP	03H	; 3 
+        AND	03H	; 3
+        CP	03H	; 3
         RET	Z
         JP	J.76D0
 
 J$7759:	EX	DE,HL
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LD	BC,2
         PUSH	IX
         PUSH	IY
@@ -1942,7 +1942,7 @@ J$7759:	EX	DE,HL
         POP	IY
         POP	IX
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	A,(HL)
         LD	(D.7C00+0),A
         INC	HL
@@ -1951,7 +1951,7 @@ J$7759:	EX	DE,HL
         POP	BC
         LD	(D.7C00+1),A
 J$777C:	LD	A,(D.7E07)
-        RLCA	
+        RLCA
         CALL	NC,C.7789
         JR	NC,J$777C
         POP	DE
@@ -1962,17 +1962,17 @@ J$777C:	LD	A,(D.7E07)
 ;	     Outputs ________________________
 
 C.7789:	LD	A,(D.7E02)
-        AND	03H	; 3 
-        CP	03H	; 3 
-        SCF	
+        AND	03H	; 3
+        CP	03H	; 3
+        SCF
         RET	Z
         DEC	BC
         LD	A,B
         OR	C
         RET	NZ
         LD	IY,1
-        SCF	
-        RET	
+        SCF
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -1991,10 +1991,10 @@ C.779C:	LD	HL,D.7C00
 
 J$77B9:	EX	DE,HL
         BIT	7,H
-        JR	Z,J$77DD		; transferadres 0000-7FFF, read via $SECBUF
+        JR	Z,J$77DD		; transferadres 0000-7FFF, read via _SECBUF
         LDIR				; read
         EX	DE,HL
-        RET	
+        RET
 
 ;	  Subroutine __________________________
 ;	     Inputs  ________________________
@@ -2002,19 +2002,19 @@ J$77B9:	EX	DE,HL
 
 C.77C3:	PUSH	DE
         PUSH	BC
-        LD	DE,($SECBUF)
+        LD	DE,(_SECBUF)
         LDIR
         POP	BC
         POP	DE
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         PUSH	IX
         PUSH	IY
         CALL	XFER
         POP	IY
         POP	IX
-        RET	
+        RET
 
-J$77DD:	LD	DE,($SECBUF)
+J$77DD:	LD	DE,(_SECBUF)
         PUSH	BC
         PUSH	IX
         PUSH	IY
@@ -2023,15 +2023,15 @@ J$77DD:	LD	DE,($SECBUF)
         POP	IX
         POP	BC
         PUSH	HL
-        LD	HL,($SECBUF)
+        LD	HL,(_SECBUF)
         LD	DE,D.7C00
         LDIR
         POP	DE
-        RET	
+        RET
 
 J$7BFB:	CALL	C.70F5			; get partitioninfo pointer in workarea
         ADD	HL,DE
-        RET	
+        RET
 
 D.7C00	EQU	07C00H			; dataport (7C00-7DFF)
 
