@@ -12,217 +12,63 @@
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
 
-        .Z80
-        ASEG
-        org     00000H
+        org     0000H
 
-        INCLUDE MSX.INC
-
-M409B   EQU     409BH   ; Warm start msx basic
-M4666   EQU     4666H   ; CHRGTR routine in basicrom
-M558C   EQU     558CH   ; SYNCHR routine in basicrom
-M5597   EQU     5597H   ; GETYPR routine in basicrom
-M63E6   EQU     63E6H   ; STOP statement in basicrom
-M6C48   EQU     6C48H   ; file i/o output
-M73B2   EQU     73B2H   ; Device I/O error
-M7C76   EQU     7C76H   ; init code msx basic
-M7FBE   EQU     7FBEH   ; helper routine RDSLT in basicrom
-M7FC4   EQU     7FC4H   ; helper routine WRSLT in basicrom
-
-VARWRK  EQU     0F380H
-RDPRIM  equ     0F380H
-WRPRIM  equ     0F385H
-CLPRIM  equ     0F38CH
-LINL40  equ     0F3AEH
-LINL32  equ     0F3AFH
-LINLEN  equ     0F3B0H
-CRTCNT  equ     0F3B1H
-TXTNAM  equ     0F3B3H
-TXTCGP  equ     0F3B7H
-T32NAM  equ     0F3BDH
-T32COL  equ     0F3BFH
-T32CGP  equ     0F3C1H
-T32ATR  equ     0F3C3H
-T32PAT  equ     0F3C5H
-GRPNAM  equ     0F3C7H
-GRPCOL  equ     0F3C9H
-GRPCGP  equ     0F3CBH
-GRPATR  equ     0F3CDH
-GRPPAT  equ     0F3CFH
-MLTNAM  equ     0F3D1H
-MLTCGP  equ     0F3D5H
-MLTATR  equ     0F3D7H
-MLTPAT  equ     0F3D9H
-CLIKSW  equ     0F3DBH
-CSRY    equ     0F3DCH
-CSRX    equ     0F3DDH
-CNSDFG  equ     0F3DEH
-RG0SAV  equ     0F3DFH
-RG1SAV  equ     0F3E0H
-STATFL  equ     0F3E7H
-TRGFLG  equ     0F3E8H
-FORCLR  equ     0F3E9H
-BAKCLR  equ     0F3EAH
-BDRCLR  equ     0F3EBH
-ATRBYT  equ     0F3F2H
-QUEUES  equ     0F3F3H
-SCNCNT  equ     0F3F6H
-REPCNT  equ     0F3F7H
-PUTPNT  equ     0F3F8H
-GETPNT  equ     0F3FAH
-LOW.    equ     0F406H
-HIGH.   equ     0F408H
-HEADER  equ     0F40AH
-ASPCT1  equ     0F40BH
-ASPCT2  equ     0F40DH
-LPTPOS  equ     0F415H
-PRTFLG  equ     0F416H
-NTMSXP  equ     0F417H
-RAWPRT  equ     0F418H
-CURLIN  equ     0F41CH
-BUFMIN  equ     0F55DH
-BUF     equ     0F55EH
-TTYPOS  equ     0F661H
-AUTFLG  equ     0F6AAH
-SAVSTK  equ     0F6B1H
-PTRFIL  equ     0F864H
-FILNAM  equ     0F866H
-FNKSTR  equ     0F87FH
-CGPNT   equ     0F91FH
-NAMBAS  equ     0F922H
-CGPBAS  equ     0F924H
-PATBAS  equ     0F926H
-ATRBAS  equ     0F928H
-CLOC    equ     0F92AH
-CMASK   equ     0F92CH
-CSAVEA  equ     0F942H
-CSAVEM  equ     0F944H
-QUEBAK  equ     0F971H
-VOICAQ  equ     0F975H
-VOICEN  equ     0FB38H
-QUEUEN  equ     0FB3EH
-MUSICF  equ     0FB3FH
-PLYCNT  equ     0FB40H
-VCBA    equ     0FB41H
-VCBB    equ     0FB66H
-VCBC    equ     0FB8BH
-ENSTOP  equ     0FBB0H
-BASROM  equ     0FBB1H
-LINTTB  equ     0FBB2H
-FSTPOS  equ     0FBCAH
-CURSAV  equ     0FBCCH
-FNKSWI  equ     0FBCDH
-FNKFLG  equ     0FBCEH
-ONGSBF  equ     0FBD8H
-CLIKFL  equ     0FBD9H
-OLDKEY  equ     0FBDAH
-NEWKEY  equ     0FBE5H
-KEYBUF  equ     0FBF0H
-LINWRK  equ     0FC18H
-PATWRK  equ     0FC40H
-TRPTBL  equ     0FC4CH
-INTFLG  equ     0FC9BH
-PADY    equ     0FC9CH
-PADX    equ     0FC9DH
-JIFFY   equ     0FC9EH
-INTVAL  equ     0FCA0H
-INTCNT  equ     0FCA2H
-LOWLIM  equ     0FCA4H
-WINWID  equ     0FCA5H
-GRPHED  equ     0FCA6H
-ESCCNT  equ     0FCA7H
-INSFLG  equ     0FCA8H
-CSRSR   equ     0FCA9H
-CSTYLE  equ     0FCAAH
-CAPST   equ     0FCABH
-KANAST  equ     0FCACH
-KANAMD  equ     0FCADH
-SCRMOD  equ     0FCAFH
-OLDSCR  equ     0FCB0H
-BRDATR  equ     0FCB2H
-GRPACX  equ     0FCB7H
-GRPACY  equ     0FCB9H
-EXPTBL  equ     0FCC1H
-SLTTBL  equ     0FCC5H
-
-H.KEYI  equ     0FD9AH
-H.TIMI  equ     0FD9FH
-H.CHPU  equ     0FDA4H
-H.DSPC  equ     0FDA9H
-H.ERAC  equ     0FDAEH
-H.DSPF  equ     0FDB3H
-H.ERAF  equ     0FDB8H
-H.TOTE  equ     0FDBDH
-H.CHGE  equ     0FDC2H
-H.INIP  equ     0FDC7H
-H.KEYC  equ     0FDCCH
-H.KEYA  equ     0FDD1H
-H.NMI   equ     0FDD6H
-H.PINL  equ     0FDDBH
-H.QINL  equ     0FDE0H
-H.INLI  equ     0FDE5H
-H.ISFL  equ     0FEDFH
-H.OUTD  equ     0FEE4H
-H.PHYD  equ     0FFA7H
-H.FORM  equ     0FFACH
-H.LPTO  equ     0FFB6H
-H.LPTS  equ     0FFBBH
-D.FFFF  equ     0FFFFH
-
-CHKRAM: di
+CHKRAM: di                              ; 0000H
         jp      A02D7
 
-        dw      T1BBF
+
+CGTABL: dw      T1BBF                   ; 0004H
         db      098H
         db      098H
 
-SYNCHR: jp      A2683
+SYNCHR: jp      A2683                   ; 0008H
 
         defs    0000CH-$,0
 
-RDSLT:  jp      A01B6
+RDSLT:  jp      A01B6                   ; 000CH
 
         defs    00010H-$,0
 
-CHRGTR: jp      A2686
+CHRGTR: jp      A2686                   ; 0010H
 
         defs    00014H-$,0
 
-WRSLT:  jp      A01D1
+WRSLT:  jp      A01D1                   ; 0014H
 
         defs    00018H-$,0
 
-OUTDO:  jp      A1B45
+OUTDO:  jp      A1B45                   ; 0018H
 
         defs    0001CH-$,0
 
-CALSLT: jp      A0217
+CALSLT: jp      A0217                   ; 001CH
 
         defs    00020H-$,0
 
-DCOMPR: jp      A146A
+DCOMPR: jp      A146A                   ; 0020H
 
         defs    00024H-$,0
 
-ENASLT: jp      A025E
+ENASLT: jp      A025E                   ; 0024H
 
         defs    00028H-$,0
 
-GETYPR: jp      A2689
+GETYPR: jp      A2689                   ; 0028H
 ;
-IDBYT0:
+IDBYT0:                                 ; 002BH
         IF      INTHZ EQ 60
         DEFB    CHRGEN+16*DATFMT
         ELSE
         DEFB    CHRGEN+16*DATFMT+128
         ENDIF
-IDBYT1: DEFB    KEYTYP+16*BASVER
-IDBYT2: DEFB    MSXVER                  ; MSX version 0 = MSX1
+IDBYT1: DEFB    KEYTYP+16*BASVER        ; 002CH
+IDBYT2: DEFB    MSXVER                  ; 002DH, MSX version 0 = MSX1
         DEFB    0
 
         DEFS    00030H-$
 
-CALLF:  jp      A0205
+CALLF:  jp      A0205                   ; 0030H
 ;
         DEFS    00034H-$
 
@@ -233,108 +79,108 @@ CALLF:  jp      A0205
 D0034:  db      0,0
         db      0,0
 
-KEYINT: jp      A0C3C
-INITIO: jp      A049D
-INIFNK: jp      A139D
-DISSCR: jp      A0577
-ENASCR: jp      A0570
-WRTVDP: jp      A057F
-RDVRM:  jp      A07D7
-WRTVRM: jp      A07CD
-SETRD:  jp      A07EC
-SETWRT: jp      A07DF
-FILVRM: jp      A0815
-LDIRMV: jp      A070F
-LDIRVM: jp      A0744
-CHGMOD: jp      A084F
-CHGCLR: jp      A07F7
+KEYINT: jp      A0C3C                   ; 0038H
+INITIO: jp      A049D                   ; 003BH
+INIFNK: jp      A139D                   ; 003EH
+DISSCR: jp      A0577                   ; 0041H
+ENASCR: jp      A0570                   ; 0044H
+WRTVDP: jp      A057F                   ; 0047H
+RDVRM:  jp      A07D7                   ; 004AH
+WRTVRM: jp      A07CD                   ; 004DH
+SETRD:  jp      A07EC                   ; 0050H
+SETWRT: jp      A07DF                   ; 0053H
+FILVRM: jp      A0815                   ; 0056H
+LDIRMV: jp      A070F                   ; 0059H
+LDIRVM: jp      A0744                   ; 005CH
+CHGMOD: jp      A084F                   ; 005FH
+CHGCLR: jp      A07F7                   ; 0062H
 
         defs    00066H-$,0              ; align to Z80 NMI entry at 0066H
 
-        jp      A1398
-        jp      A06A8
-        jp      A050E
-        jp      A0538
-        jp      A05D2
-        jp      A061F
-        jp      A0594
-        jp      A05B4
-        jp      A0602
-        jp      A0659
-        jp      A06E4
-        jp      A06F9
-        jp      A0704
-        jp      A1510
-        jp      A04BD
-        jp      A1102
-        jp      A110E
-        jp      A11C4
-        jp      A0D6A
-        jp      A10CB
-        jp      A08BC
-        jp      A085D
-        jp      A0884
-        jp      A089D
-        jp      A23BF
-        jp      A23D5
-        jp      A23CC
-        jp      A046F
-        jp      A03FB
-        jp      A10F9
-        jp      A1113
-        jp      A0848
-        jp      A088E
-        jp      A0B26
-        jp      A0B15
-        jp      A0B2B
-        jp      A083B
-        jp      A11EE
-        jp      A1253
-        jp      A12AC
-        jp      A1273
-        jp      A1A63
-        jp      A1ABC
-        jp      A19E9
-        jp      A19F1
-        jp      A1A19
-        jp      A19DD
-        jp      A1384
-        jp      A14EB
-        jp      A1492
-        jp      A16C5
-        jp      A16EE
-        jp      A175D
-        jp      A173C
-        jp      A172A
-        jp      A170A
-        jp      A1599
-        jp      A15DF
-        jp      A1639
-        jp      A1640
-        jp      A1676
-        jp      A1647
-        jp      A167E
-        jp      A1809
-        jp      A18C7
-        jp      A18CF
-        jp      A18E4
-        jp      A197A
-        jp      K.BCAP
-        jp      K.BSND
-        jp      A144C
-        jp      A144F
-        jp      A1449
-        jp      A1452
-        jp      A148A
-        jp      A148E
-        jp      A145F
-        jp      A1B63
-        jp      A1470
-        jp      A1474
-        jp      A0468
-        jp      A01FF
+NMIHND: jp      A1398                   ; 0066H
+CLRSPR: jp      A06A8                   ; 0069H
+INITXT: jp      A050E                   ; 006CH
+INIT32: jp      A0538                   ; 006FH
+        jp      A05D2                   ; 0072H
+        jp      A061F                   ; 0075H
+SETTXT: jp      A0594                   ; 0078H
+        jp      A05B4                   ; 007BH
+SETGRP: jp      A0602                   ; 007EH
+SETMLT: jp      A0659                   ; 0081H
+CALPAT: jp      A06E4                   ; 0084H
+CALATR: jp      A06F9                   ; 0087H
+GSPSIZ: jp      A0704                   ; 008AH
+GRPPRT: jp      A1510                   ; 008DH
+GICINI: jp      A04BD                   ; 0090H
+WRTPSG: jp      A1102                   ; 0093H
+        jp      A110E                   ; 0096H
+STRTMS: jp      A11C4                   ; 0099H
+CHSNS:  jp      A0D6A                   ; 009CH
+CHGET:  jp      A10CB                   ; 009FH
+CHPUT:  jp      A08BC                   ; 00A2H
+LPTOUT: jp      A085D                   ; 00A5H
+        jp      A0884                   ; 00A8H
+CNVCHR: jp      A089D                   ; 00ABH
+PINLIN: jp      A23BF                   ; 00AEH
+INLIN:  jp      A23D5                   ; 00B1H
+QINLIN: jp      A23CC                   ; 00B4H
+        jp      A046F                   ; 00B7H
+ISCNTC: jp      A03FB                   ; 00BAH
+CKCNTC: jp      A10F9                   ; 00BDH
+BEEP:   jp      A1113                   ; 00C0H
+CLS:    jp      A0848                   ; 00C3H
+POSIT:  jp      A088E                   ; 00C6H
+FNKSB:  jp      A0B26                   ; 00C9H
+ERAFNK: jp      A0B15                   ; 00CCH
+DSPFNK: jp      A0B2B                   ; 00CFH
+TOTEXT: jp      A083B                   ; 00D2H
+GTSTCK: jp      A11EE                   ; 00D5H
+GTTRIG: jp      A1253                   ; 00D8H
+GTPAD:  jp      A12AC                   ; 00DBH
+GTPDL:  jp      A1273                   ; 00DEH
+TAPION: jp      A1A63                   ; 00E1H
+TAPIN:  jp      A1ABC                   ; 00E4H
+TAPIOF: jp      A19E9                   ; 00E7H
+TAPOON: jp      A19F1                   ; 00EAH
+TAPOUT: jp      A1A19                   ; 00EDH
+TAPOOF: jp      A19DD                   ; 00F0H
+STMOTR: jp      A1384                   ; 00F3H
+LFTQ:   jp      A14EB                   ; 00F6H
+PUTQ:   jp      A1492                   ; 00F9H
+        jp      A16C5                   ; 00FCH
+LEFTC:  jp      A16EE                   ; 00FFH
+        jp      A175D                   ; 0102H
+TUPC:   jp      A173C                   ; 0105H
+DOWNC:  jp      A172A                   ; 0108H
+TDOWNC: jp      A170A                   ; 010BH
+SCALXY: jp      A1599                   ; 010EH
+MAPXYC: jp      A15DF                   ; 0111H
+FETCHC: jp      A1639                   ; 0114H
+STOREC: jp      A1640                   ; 0117H
+SETATR: jp      A1676                   ; 011AH
+READC:  jp      A1647                   ; 011DH
+SETC:   jp      A167E                   ; 0120H
+NSETCX: jp      A1809                   ; 0123H
+GTASPC: jp      A18C7                   ; 0126H
+PNTINI: jp      A18CF                   ; 0129H
+SCANR:  jp      A18E4                   ; 012CH
+SCANL:  jp      A197A                   ; 012FH
+        jp      K.BCAP                  ; 0132H
+        jp      K.BSND                  ; 0135H
+        jp      A144C                   ; 0138H
+        jp      A144F                   ; 013BH
+        jp      A1449                   ; 013EH
+        jp      A1452                   ; 0141H
+        jp      A148A                   ; 0144H
+        jp      A148E                   ; 0147H
+ISFLIO: jp      A145F                   ; 014AH
+OUTDLP: jp      A1B63                   ; 014DH
+GETVCP: jp      A1470                   ; 0150H
+GETVC2: jp      A1474                   ; 0153H
+        jp      A0468                   ; 0156H
+        jp      A01FF                   ; 0159H
 
-        IFNDEF  SLOTFIX
+        IF      SLOTFIX EQ 0
 
         defs    001B6H-$,0
 
@@ -392,7 +238,7 @@ C01AD:  INC     D
 
 A01B6:  call    A027E                   ; make masks
 
-        IFDEF   SLOTFIX
+        IF      SLOTFIX EQ 1
         jp      m,C016F
         ELSE
         jp      m,A01C6                 ; expanded slot, handle
@@ -416,7 +262,7 @@ A01C6:  push    hl
 A01D1:  push    de
         call    A027E                   ; make masks
 
-        IFDEF   SLOTFIX
+        IF      SLOTFIX EQ 1
         jp      m,C017E
         ELSE
         jp      m,A01E1                 ; expanded slot, handle
@@ -838,7 +684,7 @@ A043F:  call    A083B
         xor     a
         ld      sp,(SAVSTK)
         push    bc
-        jp      M63E6
+        jp      C63E6
 ;
 A0454:  ld      a,(TRPTBL+10*3+0)
         rrca
@@ -2192,7 +2038,7 @@ A0D1C:  ld      a,c
         ld      a,(NEWKEY+6)
         cp      11101000b               ; CODE+GRAPH+CTRL+SHIFT pressed ?
         jr      nz,A0D3A                ; nop, quit
-        ld      ix,M409B                ; start headloop
+        ld      ix,J409B                ; start headloop
         jp      A01FF                   ; with CALBAS
 ;
 A0D3A:  ld      de,OLDKEY+11
@@ -3816,7 +3662,7 @@ A1A6F:  ld      d,c
         jr      nc,A1A82
         cpl
         inc     a
-A1A82:  cp      4                       ; difer less then 35 �sec ?
+A1A82:  cp      4                       ; difer less then 35 sec ?
         jr      nc,A1A6C                ; nop, start again
         dec     hl
         ld      a,h
@@ -3946,7 +3792,7 @@ A1B45:  push    af
         call    A145F                   ; is file output ?
         jr      z,A1B56                 ; nop,
         pop     af
-        ld      ix,M6C48                ; seq. output
+        ld      ix,C6C48                ; seq. output
         jp      A01FF                   ; with CALBAS
 ;
 A1B56:  ld      a,(PRTFLG)
@@ -4015,7 +3861,7 @@ J1BA4:  CP      0E0H                    ; E0H-FFH ?
 A1BAB:  pop     af
 J1BAC:  call    A085D                   ; to printer
         ret     nc                      ; no break, quit
-        ld      ix,M73B2                ; Device I/O error
+        ld      ix,J73B2                ; Device I/O error
         jp      A01FF                   ; via CALBAS
 ;
 J1BB7:  ld      a,020H
@@ -4029,35 +3875,35 @@ T1BBF:
 
         IF      CNTRY EQ 9
 
-        INCLUDE CHRKOR
+        INCLUDE CHRKOR.ASM
 
         ENDIF
 
 
         IF      CNTRY EQ 0
 
-        INCLUDE CHRJAPV2
+        INCLUDE CHRJAPV2.ASM
 
         ENDIF
 
 
         IF      CNTRY EQ 10
 
-        INCLUDE CHRRUS
+        INCLUDE CHRRUS.ASM
 
         ENDIF
 
 
         IF      CNTRY EQ 5
 
-        INCLUDE CHRGER
+        INCLUDE CHRGER.ASM
 
         ENDIF
 
 
         IF      (CNTRY NE 9) AND (CNTRY NE 0) AND (CNTRY NE 10) AND (CNTRY NE 5)
 
-        INCLUDE CHRINT
+        INCLUDE CHRINT.ASM
 
         ENDIF
 
@@ -4470,12 +4316,11 @@ A2674:  inc     l
         ld      hl,(FSTPOS)
         ret
 ;
-A2680:  jp      M7C76
+A2680:  jp      C7C76
 ;
-A2683:  jp      M558C
+A2683:  jp      C558C
 ;
-A2686:  jp      M4666
+A2686:  jp      C4666
 ;
-A2689:  jp      M5597
+A2689:  jp      C5597
 
-        end

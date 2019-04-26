@@ -1,64 +1,62 @@
 ; *************************************
-; BEGIN OF INTERNATIONAL KEYBOARD HANDLER
+; BEGIN OF SPANISH KEYBOARD HANDLER
 ; *************************************
 
-D0DA5:	
+D0DA5:
 
 ;	Table	keycodes for scancode 000H-02FH Normal layout
 
-        DEFB	"0" ,"1" ,"2" ,"3" ,"4" ,"5" ,"6" ,"7"
-        DEFB	"8" ,"9" ,"-" ,"=" ,"\" ,"[" ,"]" ,";"
-        DEFB	"'" ,"`" ,"," ,"." ,"/" ,0FFH,"a" ,"b"
-        DEFB	"c" ,"d" ,"e" ,"f" ,"g" ,"h" ,"i" ,"j"
-        DEFB	"k" ,"l" ,"m" ,"n" ,"o" ,"p" ,"q" ,"r"
-        DEFB	"s" ,"t" ,"u" ,"v" ,"w" ,"x" ,"y" ,"z"
+        DEFB	30H,31H,32H,33H,34H,35H,36H,37H
+        DEFB	38H,39H,2DH,3DH,5CH,5BH,5DH,0A4H
+        DEFB	27H,3BH,2CH,2EH,2FH,0FFH,61H,62H
+        DEFB	63H,64H,65H,66H,67H,68H,69H,6AH
+        DEFB	6BH,6CH,6DH,6EH,6FH,70H,71H,72H
+        DEFB	73H,74H,75H,76H,77H,78H,79H,7AH
 
 ; 	Table	keycodes for scancode 000H-02FH Shift layout
 
-        DEFB	")" ,"!" ,"@" ,"#" ,"$" ,"%" ,"^" ,"&"
-        DEFB	"*" ,"(" ,"_" ,"+" ,"|" ,"{" ,"}" ,":"
-        DEFB	022H,"~" ,"<" ,">" ,"?" ,0FFH,"A" ,"B"
-        DEFB	"C" ,"D" ,"E" ,"F" ,"G" ,"H" ,"I" ,"J"
-        DEFB	"K" ,"L" ,"M" ,"N" ,"O" ,"P" ,"Q" ,"R"
-        DEFB	"S" ,"T" ,"U" ,"V" ,"W" ,"X" ,"Y" ,"Z"
+        DEFB	29H,21H,40H,23H,24H,25H,5EH,26H
+        DEFB	2AH,28H,5FH,2BH,7CH,7BH,7DH,0A5H
+        DEFB	22H,3AH,3CH,3EH,3FH,0FFH,41H,42H
+        DEFB	43H,44H,45H,46H,47H,48H,49H,4AH
+        DEFB	4BH,4CH,4DH,4EH,4FH,50H,51H,52H
+        DEFB	53H,54H,55H,56H,57H,58H,59H,5AH
 
 ;	Table	keycodes for scancode 000H-02FH Graph layout
 
-        DEFB	009H,0ACH,0ABH,0BAH,0EFH,0BDH,0F4H,0FBH
-        DEFB	0ECH,007H,017H,0F1H,01EH,001H,00DH,006H
-        DEFB	005H,0BBH,0F3H,0F2H,01DH,0FFH,0C4H,011H
-        DEFB	0BCH,0C7H,0CDH,014H,015H,013H,0DCH,0C6H
-        DEFB	0DDH,0C8H,00BH,01BH,0C2H,0DBH,0CCH,018H
-        DEFB	0D2H,012H,0C0H,01AH,0CFH,01CH,019H,00FH
+        DEFB	09H,0ACH,0ABH,0BAH,0EFH,0BDH,0F4H,0FBH
+        DEFB	0ECH,07H,17H,0F1H,1EH,01H,0DH,06H
+        DEFB	05H,0BBH,0F3H,0F2H,1DH,0FFH,0C4H,11H
+        DEFB	0BCH,0C7H,0CDH,14H,15H,13H,0DCH,0C6H
+        DEFB	0DDH,0C8H,0BH,1BH,0C2H,0DBH,0CCH,18H
+        DEFB	0D2H,12H,0C0H,1AH,0CFH,1CH,19H,0FH
 
 ;	Table	keycodes for scancode 000H-02FH Shift+Graph layout
 
-
-        DEFB	00AH,000H,0FDH,0FCH,000H,000H,0F5H,000H
-        DEFB	000H,008H,01FH,0F0H,016H,002H,00EH,004H
-        DEFB	003H,0F7H,0AEH,0AFH,0F6H,0FFH,0FEH,000H
-        DEFB	0FAH,0C1H,0CEH,0D4H,010H,0D6H,0DFH,0CAH
-        DEFB	0DEH,0C9H,00CH,0D3H,0C3H,0D7H,0CBH,0A9H
-        DEFB	0D1H,000H,0C5H,0D5H,0D0H,0F9H,0AAH,0F8H
-
+        DEFB	0AH,00H,0FDH,0FCH,00H,00H,0F5H,00H
+        DEFB	00H,08H,1FH,0F0H,16H,02H,0EH,04H
+        DEFB	03H,0F7H,0AEH,0AFH,0F6H,0FFH,0FEH,00H
+        DEFB	0FAH,0C1H,0CEH,0D4H,10H,0D6H,0DFH,0CAH
+        DEFB	0DEH,0C9H,0CH,0D3H,0C3H,0D7H,0CBH,0A9H
+        DEFB	0D1H,00H,0C5H,0D5H,0D0H,0F9H,0AAH,0F8H
 
 ;	Table	keycodes for scancode 000H-02FH Code layout
 
-        DEFB	0EBH,09FH,0D9H,0BFH,09BH,098H,0E0H,0E1H
-        DEFB	0E7H,087H,0EEH,0E9H,000H,0EDH,0DAH,0B7H
-        DEFB	0B9H,0E5H,086H,0A6H,0A7H,0FFH,084H,097H
-        DEFB	08DH,08BH,08CH,094H,081H,0B1H,0A1H,091H
-        DEFB	0B3H,0B5H,0E6H,0A4H,0A2H,0A3H,083H,093H
-        DEFB	089H,096H,082H,095H,088H,08AH,0A0H,085H
+        DEFB	0EBH,9FH,0D9H,0BFH,9BH,98H,0E0H,0E1H
+        DEFB	0E7H,87H,0EEH,0E9H,00H,0EDH,0DAH,0B7H
+        DEFB	0B9H,0E5H,86H,0A6H,0A7H,0FFH,84H,97H
+        DEFB	8DH,8BH,8CH,94H,81H,0B1H,0A1H,91H
+        DEFB	0B3H,0B5H,0E6H,60H,0A2H,0A3H,83H,93H
+        DEFB	89H,96H,82H,95H,88H,8AH,0A0H,85H
 
 ;	Table	keycodes for scancode 000H-02FH Shift+Code layout
 
-        DEFB	0D8H,0ADH,09EH,0BEH,09CH,09DH,000H,000H
-        DEFB	0E2H,080H,000H,000H,000H,0E8H,0EAH,0B6H
-        DEFB	0B8H,0E4H,08FH,000H,0A8H,0FFH,08EH,000H
-        DEFB	000H,000H,000H,099H,09AH,0B0H,000H,092H
-        DEFB	0B2H,0B4H,000H,0A5H,000H,0E3H,000H,000H
-        DEFB	000H,000H,090H,000H,000H,000H,000H,000H
+        DEFB	0D8H,0ADH,9EH,0BEH,9CH,9DH,00H,00H
+        DEFB	0E2H,80H,00H,00H,00H,0E8H,0EAH,0B6H
+        DEFB	0B8H,0E4H,8FH,00H,0A8H,0FFH,8EH,00H
+        DEFB	00H,00H,00H,99H,9AH,0B0H,00H,92H
+        DEFB	0B2H,0B4H,00H,7EH,00H,0E3H,00H,00H
+        DEFB	00H,00H,90H,00H,00H,00H,00H,00H
 
 ;	Subroutine	rest of the functionkey handler
 ;	Inputs		C = code (035H-03EH)
@@ -153,7 +151,7 @@ J0F1F:	LD	A,(NEWKEY+6)
         BIT	4,E
         JR	NZ,J0F2B	; CODE not pressed, use SHIFT
 J0F29:	AND	0FDH		; reset b1
-J0F2B:	CPL	
+J0F2B:	CPL
         INC	A
         LD	(KANAST),A	; set DEAD status (001H-004H)
         JR	J0F64		; make keyclick
@@ -171,7 +169,7 @@ J0F2B:	CPL
 
 C0F36:	LD	HL,CAPST
         LD	A,(HL)
-        CPL	
+        CPL
         LD	(HL),A			; toggle CAPS status
         CPL				; adjust for CHGCAP and change CAPS led
 
@@ -185,7 +183,7 @@ K.BCAP:	AND	A
         JR	Z,J0F43
         INC	A
 J0F43:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler STOP key
 ;	Inputs		-
@@ -243,7 +241,7 @@ K.BSND:	AND	A
         JR	Z,J0F80
         INC	A
 J0F80:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler scancodes 000H-02FH
 ;	Inputs		C = scancode (000H-02FH)
@@ -255,7 +253,7 @@ C0F83:	LD	A,(NEWKEY+6)
         RRA				; CTRL status in Cx
         PUSH	AF
         LD	A,E
-        CPL	
+        CPL
         JR	NC,J0F9E		; CTRL pressed, ignore GRAPH and CODE key, use only SHIFT
         RRA
         RRA
@@ -383,7 +381,6 @@ D1033:	DEFB	000H,000H,000H,000H,000H,000H,000H,000H
         DEFB	"*" ,"+" ,"/" ,"0" ,"1" ,"2" ,"3" ,"4"
         DEFB	"5" ,"6" ,"7" ,"8" ,"9" ,"-" ,"," ,"."
 
-
 ;	Subroutine	reset DEAD status, next postition in keyboardbuffer with roundtrip
 ;	Inputs		-
 ;	Outputs		________________________
@@ -398,33 +395,34 @@ D1061:	DEFB	"a" ,"e", "i" ,"o" ,"u" ,"y"
 
 ;	Table	translation DEAD
 
-        DEFB	085H,08AH,08DH,095H,097H,"y"
+        DEFB	0A0H,082H,0A1H,0A2H,0A3H,079H
 
 ;	Table	translation DEAD+SHIFT
 
-        DEFB	0A0H,082H,0A1H,0A2H,0A3H,"y"
+        DEFB	0B1H,065H,0B3H,0B5H,0B7H,079H
 
 ;	Table	translation DEAD+CODE
 
-        DEFB	083H,088H,08CH,093H,096H,"y"
+        DEFB	085H,08AH,08DH,095H,097H,079H
 
 ;	Table	translation DEAD+CODE+SHIFT
 
-        DEFB	084H,089H,08BH,094H,081H,098H
+        DEFB	083H,088H,08CH,093H,096H,079H
 
+D107F:
 ;	Table	accent characters with upcase
 
-D107F:	DEFB	083H,088H,08CH,093H,096H,084H,089H,08BH
+        DEFB	083H,088H,08CH,093H,096H,084H,089H,08BH
         DEFB	094H,081H,098H,0A0H,082H,0A1H,0A2H,0A3H
         DEFB	085H,08AH,08DH,095H,097H,0B1H,0B3H,0B5H
-        DEFB	0B7H,0A4H,086H,087H,091H,0B9H,"y"
+        DEFB	0B7H,0A4H,086H,087H,091H,0B9H,079H
 
 ;	Table	translation accent characters with upcase
 
-D109E:	DEFB	"A" ,"E" ,"I" ,"O" ,"U" ,08EH,"E" ,"I"
-        DEFB	099H,09AH,"Y" ,"A" ,090H,"I" ,"O" ,"U"
-        DEFB	"A" ,"E" ,"I" ,"O" ,"U" ,0B0H,0B2H,0B4H
-        DEFB	0B6H,0A5H,08FH,080H,092H,0B8H,"Y"
+D109E:	DEFB	041H,045H,049H,04FH,055H,08EH,045H,049H
+        DEFB	099H,09AH,059H,041H,090H,049H,04FH,055H
+        DEFB	041H,045H,049H,04FH,055H,0B0H,0B2H,0B4H
+        DEFB	0B6H,0A5H,08FH,080H,092H,0B8H,059H
 
         DEFS	010C2H-$,0
 
@@ -432,9 +430,6 @@ D109E:	DEFB	"A" ,"E" ,"I" ,"O" ,"U" ,08EH,"E" ,"I"
         ORG	01B94H
 
         JR	J1BAC
-
-;	Table		scancode table
-;	Remark		last scancode+1,low byte execution address
 
 I1B96:	DEFB	030H,LOW C0F83		; scancodes 000H-02FH
         DEFB	033H,LOW C0F10		; SHIFT,CTRL,GRAPH
@@ -447,10 +442,10 @@ I1B96:	DEFB	030H,LOW C0F83		; scancodes 000H-02FH
         DEFB	042H,LOW C0F06		; HOME
         DEFB	0FFH,LOW C0F10		; ins,del,left,up,down,right, numeric pad
 
-
         DEFS	01BABH-$,0
 
 
 ; *************************************
 ; END OF INTERNATIONAL KEYBOARD HANDLER
 ; *************************************
+

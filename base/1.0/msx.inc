@@ -20,7 +20,7 @@ NDEVFIX EQU     1
 ;               0 = Use slot bug
 ;               1 = Use slot bugfix
 
-SLOTFIX EQU     1
+SLOTFIX EQU     0
 
 ;       CNTRY   Country
 ;               0 = Japan
@@ -35,7 +35,7 @@ SLOTFIX EQU     1
 ;               9 = Korea
 ;               10 = Russia
 
-CNTRY   EQU     0
+CNTRY   EQU     2
 
 
 ;       symbols used to procedure alternate code
@@ -50,10 +50,10 @@ CNTRY   EQU     0
 ;               1 = M-D-Y
 ;               2 = D-M-Y
 ;       KEYTYP  keyboard layout
-;               0 = Japanese 
-;               1 = International (QWERTY/other) 
-;               2 = French (AZERTY) 
-;               3 = English 
+;               0 = Japanese
+;               1 = International (QWERTY/other)
+;               2 = French (AZERTY)
+;               3 = English
 ;               4 = German (DIN)
 ;               5 = USSR
 ;               6 = Spanish
@@ -205,13 +205,13 @@ CHRVLN  EQU     "@"
 
         IF      (BASVER EQ 1) AND (CNTRY NE 3)
 CHRCUR  EQU     "$"
-CHRFLN  EQU     "\"
+CHRFLN  EQU     "\\"
 CHRVLN  EQU     "&"
         ENDIF
 
         IF      (BASVER EQ 1) AND (CNTRY EQ 3)
 CHRCUR  EQU     0ACH            ; pound sign
-CHRFLN  EQU     "\"
+CHRFLN  EQU     "\\"
 CHRVLN  EQU     "&"
         ENDIF
 

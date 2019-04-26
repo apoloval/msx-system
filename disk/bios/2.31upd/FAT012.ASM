@@ -4,55 +4,55 @@
 ;2006/05/02
 
 ;ver0.12
-;xcopyé¿çséûÇÃïsãÔçáÇèCê≥
+;xcopyÔøΩÔøΩÔøΩsÔøΩÔøΩÔøΩÃïsÔøΩÔçáÔøΩÔøΩÔøΩCÔøΩÔøΩ
 ;(thanks KonamiMan)
 
 ;ver0.11
-;ÉfÉBÉåÉNÉgÉäï\é¶Ç™ê≥ÇµÇ≠çsÇ»ÇÌÇÍÇ»Ç©Ç¡ÇΩÉoÉOÇèCê≥
+;ÔøΩfÔøΩBÔøΩÔøΩÔøΩNÔøΩgÔøΩÔøΩÔøΩ\ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩsÔøΩ»ÇÔøΩÔøΩ»ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩoÔøΩOÔøΩÔøΩÔøΩCÔøΩÔøΩ
 ;(thanks KonamiMan)
 
 ;ver0.10
-;DOS2.2xÇ™MASTERÇÃéûÅARAMDISKÇ…ÉAÉNÉZÉXÇ≈Ç´Ç»Ç¢ÉoÉOÇèCê≥
+;DOS2.2xÔøΩÔøΩMASTERÔøΩÃéÔøΩÔøΩARAMDISKÔøΩ…ÉAÔøΩNÔøΩZÔøΩXÔøΩ≈ÇÔøΩÔøΩ»ÇÔøΩÔøΩoÔøΩOÔøΩÔøΩÔøΩCÔøΩÔøΩ
 
 ;ver0.09
-;FATÇÃîªï ï˚ñ@ÇïœçX
-;ÉuÅ[ÉgÉZÉNÉ^Ç…'FAT16'ÇÃï∂éöóÒÇ™Ç†ÇÈÇ∆Ç´ÇÕFAT16ÉtÉHÅ[É}ÉbÉg
-;ÇªÇÍà»äOÇÕFAT12ÉtÉHÅ[É}ÉbÉgÇ∆îªíËÇ∑ÇÈ 
+;FATÔøΩÃîÔøΩÔøΩ ïÔøΩÔøΩ@ÔøΩÔøΩœçX
+;ÔøΩuÔøΩ[ÔøΩgÔøΩZÔøΩNÔøΩ^ÔøΩÔøΩ'FAT16'ÔøΩÃïÔøΩÔøΩÔøΩÔøΩÒÇ™ÇÔøΩÔøΩÔøΩ∆ÇÔøΩÔøΩÔøΩFAT16ÔøΩtÔøΩHÔøΩ[ÔøΩ}ÔøΩbÔøΩg
+;ÔøΩÔøΩÔøΩÔøΩ»äOÔøΩÔøΩFAT12ÔøΩtÔøΩHÔøΩ[ÔøΩ}ÔøΩbÔøΩgÔøΩ∆îÔøΩÔøΩËÇ∑ÔøΩÔøΩ
 
 ;ver0.08b4
-;âèúéûÇÃkernelçƒÉRÉsÅ[ï˚ñ@ÇïœçX
-;FAT16 driveÇÃÉ{ÉäÉÖÅ[ÉÄÇhÇcÇå≥Ç…ñﬂÇ∑"FF FF FF FF"
-;DSKIOÇÃEIëŒçÙÇïœçX
-;ÉtÉ@ÉìÉNÉVÉáÉì1BhÇÃÉtÉäÅ[ÉNÉâÉXÉ^ÇÃÉJÉEÉìÉgÇÕ0038hÇC9hÇ…ÇµÇƒÉfÉBÉXÉNÉäÅ[Éh
+;ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩkernelÔøΩƒÉRÔøΩsÔøΩ[ÔøΩÔøΩÔøΩ@ÔøΩÔøΩœçX
+;FAT16 driveÔøΩÃÉ{ÔøΩÔøΩÔøΩÔøΩÔøΩ[ÔøΩÔøΩÔøΩhÔøΩcÔøΩÔøΩÔøΩÔøΩÔøΩ…ñﬂÇÔøΩ"FF FF FF FF"
+;DSKIOÔøΩÔøΩEIÔøΩŒçÔøΩÔøΩœçX
+;ÔøΩtÔøΩ@ÔøΩÔøΩÔøΩNÔøΩVÔøΩÔøΩÔøΩÔøΩ1BhÔøΩÃÉtÔøΩÔøΩÔøΩ[ÔøΩNÔøΩÔøΩÔøΩXÔøΩ^ÔøΩÃÉJÔøΩEÔøΩÔøΩÔøΩgÔøΩÔøΩ0038hÔøΩÔøΩC9hÔøΩ…ÇÔøΩÔøΩƒÉfÔøΩBÔøΩXÔøΩNÔøΩÔøΩÔøΩ[ÔøΩh
 
 ;ver0.08b1
-;MEGASCSIÇÃDSKIOëŒçÙ(2000/07/21)
-;#1BhÇÃÇ∆Ç´ÇæÇØ(4011)+1ÇÉRÅ[Éã
+;MEGASCSIÔøΩÔøΩDSKIOÔøΩŒçÔøΩ(2000/07/21)
+;#1BhÔøΩÃÇ∆ÇÔøΩÔøΩÔøΩÔøΩÔøΩ(4011)+1ÔøΩÔøΩÔøΩRÔøΩ[ÔøΩÔøΩ
 
 ;ver0.08b0
-;UNDELÇÃÇΩÇﬂÇ…ÇøÇÂÇ¡Ç∆ïœçX    (2000/07/17)
-;function #14 #15 ÇégÇ¶ÇÈÇÊÇ§Ç…Ç∑ÇÈ
-;FAT16 drive ÇÃÉ{ÉäÉÖÅ[ÉÄIDÇ "7F,80,FF,FF"Ç…Ç∑ÇÈ
+;UNDELÔøΩÃÇÔøΩÔøΩﬂÇ…ÇÔøΩÔøΩÔøΩÔøΩÔøΩ∆ïœçX    (2000/07/17)
+;function #14 #15 ÔøΩÔøΩÔøΩgÔøΩÔøΩÔøΩÔøΩÊÇ§ÔøΩ…ÇÔøΩÔøΩÔøΩ
+;FAT16 drive ÔøΩÃÉ{ÔøΩÔøΩÔøΩÔøΩÔøΩ[ÔøΩÔøΩIDÔøΩÔøΩ "7F,80,FF,FF"ÔøΩ…ÇÔøΩÔøΩÔøΩ
 
 ;ver0.07
-;MEGASCSIà»äOÇÃÉCÉìÉ^Å[ÉtÉFÅ[ÉX(DSKIOÇ™MEGASCSIédólÇ»Ç‡ÇÃÇ…å¿ÇÈ)Ç…ëŒâûÅ@
-;DOS2.2x  DOS2.3xÅ@ëŒâû
-;FAT16èÌíìéû disk buffer ÇÉtÉâÉbÉVÉÖÇµÇƒñ≥å¯Ç…Ç∑ÇÈ 
-;dirÉRÉ}ÉìÉhÇ≈ÉfÉBÉXÉNÇÃãÛÇ´óeó Ç™ÇPÉNÉâÉXÉ^ï™è≠Ç»Ç≠ï\é¶Ç≥ÇÍÇÈÉoÉOÇèCê≥
+;MEGASCSIÔøΩ»äOÔøΩÃÉCÔøΩÔøΩÔøΩ^ÔøΩ[ÔøΩtÔøΩFÔøΩ[ÔøΩX(DSKIOÔøΩÔøΩMEGASCSIÔøΩdÔøΩlÔøΩ»ÇÔøΩÔøΩÃÇ…åÔøΩÔøΩÔøΩ)ÔøΩ…ëŒâÔøΩÔøΩ@
+;DOS2.2x  DOS2.3xÔøΩ@ÔøΩŒâÔøΩ
+;FAT16ÔøΩÌíìÔøΩÔøΩ disk buffer ÔøΩÔøΩÔøΩtÔøΩÔøΩÔøΩbÔøΩVÔøΩÔøΩÔøΩÔøΩÔøΩƒñÔøΩÔøΩÔøΩÔøΩ…ÇÔøΩÔøΩÔøΩ
+;dirÔøΩRÔøΩ}ÔøΩÔøΩÔøΩhÔøΩ≈ÉfÔøΩBÔøΩXÔøΩNÔøΩÃãÛÇ´óeÔøΩ ÇÔøΩÔøΩPÔøΩNÔøΩÔøΩÔøΩXÔøΩ^ÔøΩÔøΩÔøΩÔøΩÔøΩ»ÇÔøΩÔøΩ\ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩoÔøΩOÔøΩÔøΩÔøΩCÔøΩÔøΩ
 
 ;ver0.06
-;FAT16ÉhÉâÉCÉuìoò^éûÅADPB+1Eh - 20hÇFF,FF,00Ç…Ç∑ÇÈ
-;BBE4hÇ™FFxxhÇÃéûÅABBE8hÇ™FFFFhÇ©Ç«Ç§Ç©ÇÉ`ÉFÉbÉNÇ∑ÇÈ 
-;BBDEhÅ`Å@DirÇÃÉZÉNÉ^î‘çÜÇ24bitÇ≈ÉRÉsÅ[	
-;BBDEhÅ`Å@FIBÇ…ÉRÉsÅ[Ç∑ÇÈÇ∆Ç´Ç‡24bit copy	
-;ÉfÅ[É^ÉZÉOÉÅÉìÉgì‡ÇÃFile handleÇÕ38hbytes ämï€Ç∑ÇÈÅiBit16-23ÇÃÇΩÇﬂÅj
+;FAT16ÔøΩhÔøΩÔøΩÔøΩCÔøΩuÔøΩoÔøΩ^ÔøΩÔøΩÔøΩADPB+1Eh - 20hÔøΩÔøΩFF,FF,00ÔøΩ…ÇÔøΩÔøΩÔøΩ
+;BBE4hÔøΩÔøΩFFxxhÔøΩÃéÔøΩÔøΩABBE8hÔøΩÔøΩFFFFhÔøΩÔøΩÔøΩ«ÇÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ`ÔøΩFÔøΩbÔøΩNÔøΩÔøΩÔøΩÔøΩ
+;BBDEhÔøΩ`ÔøΩ@DirÔøΩÃÉZÔøΩNÔøΩ^ÔøΩ‘çÔøΩÔøΩÔøΩ24bitÔøΩ≈ÉRÔøΩsÔøΩ[
+;BBDEhÔøΩ`ÔøΩ@FIBÔøΩ…ÉRÔøΩsÔøΩ[ÔøΩÔøΩÔøΩÔøΩ∆ÇÔøΩÔøΩÔøΩ24bit copy
+;ÔøΩfÔøΩ[ÔøΩ^ÔøΩZÔøΩOÔøΩÔøΩÔøΩÔøΩÔøΩgÔøΩÔøΩÔøΩÔøΩFile handleÔøΩÔøΩ38hbytes ÔøΩmÔøΩ€ÇÔøΩÔøΩÔøΩiBit16-23ÔøΩÃÇÔøΩÔøΩﬂÅj
 
 ;ver0.05
-;FAT16èÌíìéûDOS function #14,#15,#67,#68 ÇÕégÇ¶Ç»Ç¢ 
-;FATÇÃéÌóﬁÇÕé©ìÆîªï (Root dir entryêîäÓèÄ)
-;FATì«Ç›èëÇ´à»äOÇÕFAT12,16Ç∆Ç‡ã§í ÉãÅ[É`Éì	
-;ÉNÉâÉXÉ^î‘çÜÇÕ 0002h - FFF6hëŒâû
-;DOS function #1BÇ≈êÍópÉoÉbÉtÉ@ÇÉyÅ[ÉWÇQÇ…éÊÇÈ
+;FAT16ÔøΩÌíìÔøΩÔøΩDOS function #14,#15,#67,#68 ÔøΩÕégÔøΩÔøΩÔøΩ»ÇÔøΩ
+;FATÔøΩÃéÔøΩﬁÇÕéÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ(Root dir entryÔøΩÔøΩÔøΩÓèÄ)
+;FATÔøΩ«Ç›èÔøΩÔøΩÔøΩÔøΩ»äOÔøΩÔøΩFAT12,16ÔøΩ∆ÇÔøΩÔøΩÔøΩÔøΩ ÉÔøΩÔøΩ[ÔøΩ`ÔøΩÔøΩ
+;ÔøΩNÔøΩÔøΩÔøΩXÔøΩ^ÔøΩ‘çÔøΩÔøΩÔøΩ 0002h - FFF6hÔøΩŒâÔøΩ
+;DOS function #1BÔøΩ≈êÔøΩpÔøΩoÔøΩbÔøΩtÔøΩ@ÔøΩÔøΩÔøΩyÔøΩ[ÔøΩWÔøΩQÔøΩ…éÔøΩÔøΩ
 
 
 
@@ -68,7 +68,7 @@ EXTBIO	EQU	0FFCAh
 
 ;------------------------------
 	JP	START
-	
+
 USAGE:	DB	0Dh,0Ah
 	DB	' Usage : FAT16 [/R][/D][/H]'
 	DB	0Dh,0Ah
@@ -83,7 +83,7 @@ USAGE:	DB	0Dh,0Ah
 	DB	'    FAT12',24h
 MES4:	DB	' only'
 	DB	0Dh,0Ah,'$'
-MES5:	
+MES5:
 	DB	' and FAT16 '
 	DB	0Dh,0Ah,'$'
 
@@ -91,14 +91,14 @@ MES1:	DB	0Dh,0Ah
 	DB	' FAT16 patch ver 0.12',0Dh,0Ah
 	DB	' Copyright (c) by OKEI'
 	DB	0Dh,0Ah,0Dh,0Ah,24h
-	
+
 MES1A:	DB	0Dh,0Ah
 	DB	' ... installed',0Dh,0Ah,0Dh,0Ah,'$'
 
 MES2:	DB	0Dh,0Ah
 	DB	'  dos2 only'
 	DB	0Dh,0Ah,'$'
-	
+
 MES3:	DB	0Dh,0Ah
 	DB	' ... released '
 	DB	0Dh,0Ah,'$'
@@ -106,8 +106,8 @@ MES3:	DB	0Dh,0Ah
 MES8:	DB	0Dh,0Ah
 	DB	'...already installed!!'
 	DB	0Dh,0Ah,24h
-	
-	
+
+
 MES7:	DB	0Dh,0Ah
 	DB	'  unknown kernel'
 	DB	0Dh,0Ah,'$'
@@ -122,7 +122,7 @@ MES16:	DB	0Dh,0Ah
 	DB	'  Not installed'
 	DB	0Dh,0Ah,24h
 
-	
+
 
 ;----------------------------------------------------
 START:
@@ -141,26 +141,26 @@ OPT_2:	INC	HL
 	AND	0DFh
 	CP	048h		;'H'
 	JP	Z,OPT_6		;help
-	
+
 	CP	052h		;'R'
 	JP	Z,UNINST	;FAT16 uninstall
-	
+
 	CP	044h		;'D'
 	JP	Z,INFDRV	;info on drive
-	
+
 	DEC	B
 OPT_3:	DJNZ	OPT_2
 
 OPT_6:	LD	DE,USAGE
 	LD	C,09h
 	CALL	BDOS
-	
+
 OPT_4:	CALL	INFORM
 	LD	DE,MES4		; only
 	JR	NZ,OPT_5
 	LD	DE,MES5		; and FAT16
 OPT_5:	JP	@OWARI
-	
+
 ;------------------------
 INSTAL:
 	LD	C,06Fh		;check dos version
@@ -168,24 +168,24 @@ INSTAL:
 	LD	A,B
 	CP	02h
 	LD	DE,MES2		;'DOS2 only'
-	JP	C,@OWARI		; 
+	JP	C,@OWARI		;
 	CALL	INFORM
 	LD	DE,MES8
 	JP	Z,@OWARI	;already installed
-	
+
 	LD	B,0FFh		;all drives
 	LD	D,B		;flush and clear
 	LD	C,5Fh		;_FLUSH
 	CALL	BDOS
-	
+
 	CALL	KNLTYP		;check kernel type
 	LD	DE,MES7		;'unknown kernel'
 	JP	C,@OWARI
-	
+
 	LD	DE,MES1		;'FAT16patch '
 	LD	C,09h
 	CALL	BDOS
-	
+
 	LD	D,04h		;Get address of mapper support rutine
 	LD	E,02h
 	CALL	EXTBIO
@@ -198,7 +198,7 @@ INSTAL:
 	XOR	A
 SEG_NO:	LD	(BUFSEG),A
 	CALL	KNLPAT		;KERNEL PATCH
-	
+
 	LD	A,(0F2CFh)	;data segment
 	OUT	(0FDh),A
 	LD	BC,0801h	;check DPB+1Eh
@@ -250,21 +250,21 @@ INFDRV:	DI
 	LD	B,04h
 	LD	A,41h
 	LD	(MESDR),A	;drive A -
-	
-INFDR1:	
+
+INFDR1:
 	LD	A,(HL)
 	OR	A
 	JR	Z,INFDR2	;end
 	INC	HL
 	PUSH	HL
 	PUSH	BC
-	
+
 	LD	B,A		;number of drive
 	LD	A,(HL)
 	LD	(DSLOT+3),A	;diskrom slot
 	LD	C,0		;local drive
 
-INFDR4:	
+INFDR4:
 	PUSH	BC
 	LD	A,C
 	LD	DE,0		;boot sector
@@ -286,7 +286,7 @@ DSLOT:	LD	IY,0
 	LD	IX,DAT2
 	LD	HL,DAT2
 	CALL	@DPBST
-	
+
 	LD	DE,MES11	;FAT16
 	JR	C,INFDR3
 	LD	DE,MES12	;FAT12
@@ -297,7 +297,7 @@ INFDR3:	LD	C,09h
 	LD	HL,MESDR
 	INC	(HL)
 	DJNZ	INFDR4
-	
+
 	POP	BC
 	POP	HL
 	INC	HL
@@ -320,23 +320,23 @@ KNLP_2:	PUSH	HL			;address
 	LD	DE,ADR_31-ADR_00
 	ADD	HL,DE
 	CALL	PATADR			;set address
-	
+
 	LD	HL,GETSEC		;transfer FAT16 program
 	LD	DE,PATCH+4000h
 	LD	BC,KTYPE-GETSEC+1
-	LDIR	
-	
-	
+	LDIR
+
+
 	LD	HL,SECNUM
 	LD	DE,PATCH2+4000h
 	LD	BC,FORMAT-SECNUM
 	LDIR
-	
+
 	LD	HL,FORMAT
 	LD	DE,PATCH3+4000h
 	LD	BC,STOR_1-FORMAT
 	LDIR
-	
+
 	EXX
 	LD	A,(KTYPE)
 	OR	A
@@ -357,8 +357,8 @@ KNL1:	LD	DE,338Ah		;ST-A
 	JR	TRANSF
 KNL2:	LD	DE,339Eh		;ST-B
 	LD	BC,332Eh
-	
-	
+
+
 TRANSF:
 	LD	HL,4000h
 	ADD	HL,DE
@@ -377,8 +377,8 @@ TRANSF:
 	LD	HL,GETVOL
 	LD	BC,PAT_45-GETVOL
 	LDIR
-	
-	
+
+
 	POP	HL
 
 	LD	BC,029Ch	;error address
@@ -387,15 +387,15 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR110
 	INC	HL		;#68
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
 
-	
+
+
 	LD	A,0CDh
 	LD	BC,FSIZE1-GETSEC+PATCH
 	LD	E,(HL)		;ADR_64
@@ -403,21 +403,21 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	BC,FSIZE2-GETSEC+PATCH
 	LD	E,(HL)		;ADR_65
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	XOR	A
 	LD	E,(HL)		;ADR_66
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	LD	(DE),A
-	
+
 	LD	A,0CDh
 	LD	BC,FSIZE3-GETSEC+PATCH
 	LD	E,(HL)		;ADR_67
@@ -425,7 +425,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,DPBSET-GETSEC+PATCH
 	LD	E,(HL)		;ADR200      [ver0.09]
@@ -435,8 +435,8 @@ TRANSF:
 	CALL	WRT
 	XOR	A
 	LD	(DE),A
-	
-	
+
+
 	LD	A,0C3h
 	LD	BC,ALLOC-GETSEC+PATCH
 	LD	E,(HL)		;ADR_0D
@@ -444,7 +444,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL 	WRT
-	
+
 ;PATCH2
 	LD	A,0CDh
 	LD	BC,PATCH2
@@ -462,14 +462,14 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	BC,SETNUM-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_25
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	A,0C3h
 	LD	BC,TALCLS-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_20
@@ -477,7 +477,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	A,0C3h
 	LD	BC,DSKBUF-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_60
@@ -485,14 +485,14 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	BC,GETSUB-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_0C
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	A,0CDh
 	LD	BC,SUB_16-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_0A
@@ -502,14 +502,14 @@ TRANSF:
 	CALL	WRT
 	XOR	A
 	LD	(DE),A
-	
+
 	LD	BC,ABSSEC-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_63
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	A,0C3h
 	LD	BC,FATWRT-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_16
@@ -517,7 +517,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,NUM_1-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_23
@@ -525,47 +525,47 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	BC,NUM_2-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_24
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
-	
+
+
 	LD	BC,BUF_1-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_06
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	BC,BUF_1-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_27
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR_28
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR_29
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR_2A
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	A,0CDh
 	LD	BC,BUF_5-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_2F
@@ -573,50 +573,50 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
-	
+
+
 	LD	BC,BUF_4-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_08
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
-	
+
+
 	LD	BC,BUF_2-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_07
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	BC,BUF_2-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_2B
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	BC,BUF_2-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_2E
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	BC,BUF_3-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_2C
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR_2D
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	A,0CDh
 	LD	BC,RAMRED-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_17
@@ -624,22 +624,22 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
-	
-	LD	BC,REDBUF-SECNUM+PATCH2	
+
+
+	LD	BC,REDBUF-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_19
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	BC,WRTBUF-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_1A
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	A,0C3h
 	LD	BC,DSKROM-SECNUM+PATCH2
 	LD	E,(HL)		;ADR_62
@@ -647,14 +647,14 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL 	WRT
-	
+
 	LD	BC,(PAT_42+1)
 	LD	E,(HL)		;ADR_61
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 ;PATCH3
 	LD	A,0CDh
 	LD	BC,CLST_1-FORMAT+PATCH3
@@ -663,7 +663,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,CLST_2-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_03
@@ -674,7 +674,7 @@ TRANSF:
 	XOR	A
 	LD	BC,0
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,CLST_4-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_05
@@ -685,7 +685,7 @@ TRANSF:
 	XOR	A
 	LD	BC,0
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,CLST_8-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_09
@@ -693,7 +693,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,CLST_5-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_1C
@@ -701,7 +701,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	BC,CLST_6-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_1D
 	INC	HL
@@ -711,8 +711,8 @@ TRANSF:
 	XOR	A
 	LD	BC,0
 	CALL	WRT
-	
-	
+
+
 	LD	A,0CDh
 	LD	BC,CLST_7-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_1E
@@ -720,7 +720,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	E,(HL)		;ADR_1F
 	INC	HL
 	LD	D,(HL)
@@ -730,7 +730,7 @@ TRANSF:
 	LD	BC,FIXCAL-GETDPB
 	LDIR
 	POP	HL
-	
+
 	LD	A,0CDh
 	LD	BC,CLST_9-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_0B
@@ -741,7 +741,7 @@ TRANSF:
 	XOR	A
 	LD	BC,0
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,CLST_3-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_04
@@ -752,7 +752,7 @@ TRANSF:
 	XOR	A
 	LD	BC,0
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	LD	BC,CLST_A-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_69
@@ -760,8 +760,8 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
-	
+
+
 	LD	A,0C3h
 	LD	BC,CLUST-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_21
@@ -769,35 +769,35 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	BC,CLUST2-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_22
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
-	
+
+
 	LD	BC,FATRED-FORMAT+PATCH3
-	LD	E,(HL)		;ADR_00	
+	LD	E,(HL)		;ADR_00
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR_01
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
-	
+
+
 	LD	E,(HL)		;ADR_10
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR_11
 	INC	HL
 	LD	D,(HL)
@@ -809,7 +809,7 @@ TRANSF:
 	INC	DE
 	LD	BC,0
 	CALL	REWRT
-	
+
 	LD	BC,FATRED-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_12
 	INC	HL
@@ -821,7 +821,7 @@ TRANSF:
 	LD	BC,0008h
 	LDIR
 	POP	HL
-	
+
 	LD	BC,FATRED-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_13
 	INC	HL
@@ -830,21 +830,21 @@ TRANSF:
 	CALL	REWRT
 	LD	BC,0
 	CALL	REWRT
-	
+
 	LD	BC,FATRED-FORMAT+PATCH3
 	LD	E,(HL)		;ADR_14
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	E,(HL)		;ADR_15
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
-	
+
+
 ;PATCH4 SET DE' PATCH4 ADDRESS
 
 
@@ -858,7 +858,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	EXX
 	LD	HL,STOR_2-STOR_1
 	ADD	HL,DE
@@ -870,7 +870,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	EXX
 	LD	HL,STOR_3-STOR_1
 	ADD	HL,DE
@@ -882,7 +882,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	EXX
 	LD	HL,STOR_4-STOR_1
 	ADD	HL,DE
@@ -894,7 +894,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	EXX
 	LD	HL,STOR_5-STOR_1
 	ADD	HL,DE
@@ -906,7 +906,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	EXX
 	LD	HL,STOR_6-STOR_1
 	ADD	HL,DE
@@ -918,7 +918,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	EXX
 	LD	HL,STOR_7-STOR_1
 	ADD	HL,DE
@@ -930,8 +930,8 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
-	
+
+
 	EXX
 	PUSH	HL
 	EXX
@@ -941,7 +941,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	EXX
 	LD	HL,STOR_8-STOR_1
 	ADD	HL,DE
@@ -953,7 +953,7 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	A,0CDh
 	EXX
 	LD	HL,ALLSEC-STOR_1
@@ -966,17 +966,17 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
-	
-	
-;--------------------------	
+
+
+
+;--------------------------
 	LD	BC,3F20h	;JR  NZ,3Fh
 	LD	E,(HL)		;ADR_6F
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	CALL	REWRT
-	
+
 	LD	A,0CDh
 	EXX
 	LD	HL,CHKVOL-GETVOL
@@ -989,22 +989,22 @@ TRANSF:
 	LD	D,(HL)
 	INC	HL
 	CALL	WRT
-	
+
 	LD	E,(HL)		;ADR_71
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	LD	BC,0
 	CALL	REWRT
-	
+
 	LD	A,38h		;FIB 38bytes
 	LD	E,(HL)		;ADR180
 	INC	HL
 	LD	D,(HL)
 	INC	HL
 	LD	(DE),A
-	
-	
+
+
 	LD	E,(HL)		;ADR_6E
 	INC	HL
 	LD	D,(HL)
@@ -1017,7 +1017,7 @@ TRANSF:
 	LD	(HL),D
 	POP	HL
 
-	
+
 	LD	E,(HL)		;ADR_1B
 	INC	HL
 	LD	D,(HL)
@@ -1037,20 +1037,20 @@ TRANSF:
 	LD	BC,DAT2-FIXCAL
 	LDIR
 	POP	HL
-	
+
 	LD	A,(KTYPE)	;              [ver0.10]
 	OR	A
-	JR	NZ,KNLP_3	;DOS2.2xÇÕGETDPBÇ…çsÇ©Ç»Ç¢
+	JR	NZ,KNLP_3	;DOS2.2xÔøΩÔøΩGETDPBÔøΩ…çsÔøΩÔøΩÔøΩ»ÇÔøΩ
 	LD	HL,0AFE1h	; 7375h    POP  HL
 	LD	A,0C9h		; 7376h    XOR  A
 	LD	(7375h),HL	; 7377h    RET
 	LD	(7377h),A
-	
+
 KNLP_3:	LD	A,02h
 	OUT	(0FDh),A
 	RET
-	
-	
+
+
 WRT:	EX	DE,HL
 	LD	(HL),A
 	INC	HL
@@ -1064,7 +1064,7 @@ WRT_1:	LD	(HL),C
 	RET
 
 MAPPER:	JP	(HL)
-	
+
 ;-------------------------------------------
 ;release
 UNINST:				;
@@ -1078,9 +1078,9 @@ UNINST:				;
 	LD	D,B		;flush and clean
 	LD	C,5Fh		;_FLUSH
 	CALL	BDOS
-	
+
 	CALL	KNLCPY		;KERNEL COPY
-	LD	DE,MES3		;FAT16 off 
+	LD	DE,MES3		;FAT16 off
 	JP	@OWARI
 
 
@@ -1132,7 +1132,7 @@ KNCP_2:	LD	L,(IX+0)
 	POP	HL
 	CALL	CHGBNK
 
-	
+
 KNL_3:
 	LD	HL,3F00h+8000h
 	LD	E,L
@@ -1152,7 +1152,7 @@ CHGBNK:	JP	(HL)
 
 
 ;-----------------------------
-;installed  Z=1   
+;installed  Z=1
 INFORM:
 	LD	A,(0F2D0h)
 	OUT	(0FDh),A
@@ -1161,7 +1161,7 @@ INFORM:
 	OUT	(0FDh),A
 	LD	DE,FATRED-FORMAT+PATCH3
 	OR	A
-	SBC	HL,DE		
+	SBC	HL,DE
 	RET
 
 
@@ -1187,7 +1187,7 @@ KNLTYP:
 	SBC	HL,DE
 	JR	Z,Z0016		;#02=ST-B kernel
 	JR	Z0017		;Unknown kernel
-	
+
 Z0015:	DEC	A
 	LD	DE,(07392h-14h)
 	LD	HL,046DDh
@@ -1201,7 +1201,7 @@ Z0015:	DEC	A
 	JR	Z,Z0016		;#00=DOS2.2x
 Z0017:	SCF			;unknown kernel
 	JR	KNL_
-	
+
 Z0016:	LD	(KTYPE),A
 	OR	A
 KNL_:	LD	A,02h
@@ -1209,7 +1209,7 @@ KNL_:	LD	A,02h
 	RET
 
 ;------------------------------
-PATADR:	
+PATADR:
 	LD	E,(HL)		;ADR_31
 	INC	HL
 	LD	D,(HL)
@@ -1321,7 +1321,7 @@ PATADR:
 	LD	D,(HL)
 	INC	HL
 	LD	(PAT_47+1),DE
-	
+
 	RET
 ;-------------------------------
 ;DOS2 ver 2.2x Patch address
@@ -1334,7 +1334,7 @@ ADR_00:
 	DW	743Fh-8h	;ADR_66
 	DW	7451h-8h	;ADR_67
 	DW	749Fh-14h-8h	;ADR_70
-	
+
 	DW	4C04h		;ADR_0D
 ;PATCH2
 	DW	6BBDh		;ADR_18
@@ -1342,31 +1342,31 @@ ADR_00:
 	DW	7540h-8h	;ADR_25
 	DW	746Ch-8h	;ADR_20
 	DW	6649h		;ADR_60
-	
+
 	DW	5CC4h+1		;ADR_0C
 	DW	5CA5h		;ADR_0A
 	DW	6588h+1		;ADR_63
 	DW	6DD7h		;ADR_16
 	DW	65EFh		;ADR_23
-	
+
 	DW	662Dh		;ADR_24
 	DW	4C22h+1		;ADR_06
 	DW	6E26h+1		;ADR_27
 	DW	6E63h+1		;ADR_28
 	DW	6E80h+1		;ADR_29
-	
+
 	DW	6EDCh+1		;ADR_2A
 	DW	6FBEh		;ADR_2F
 	DW	5CFEh+1		;ADR_08
 	DW	5B34h+1		;ADR_07
 	DW	66C1h+1		;ADR_2B
-	
+
 	DW	6FDFh+1		;ADR_2E
 	DW	6ED7h+1		;ADR_2C
 	DW	6F02h+1		;ADR_2D
 	DW	65CDh		;ADR_17
 	DW	6BF9h		;ADR_19
-	
+
 	DW	6D55h		;ADR_1A
 	DW	74DCh-8h	;ADR_62
 	DW	7252h+1		;ADR_61
@@ -1376,13 +1376,13 @@ ADR_00:
 	DW	5C53h		;ADR_05
 	DW	5B87h		;ADR_09
 	DW	6F6Fh		;ADR_1C
-	
+
 	DW	6F9Bh		;ADR_1D
 	DW	700Dh		;ADR_1E
 	DW	7375h		;ADR_1F
 	DW	5CB1h		;ADR_0B
 	DW	5C0Dh		;ADR_04
-	
+
 	DW	74D2h-8h	;ADR_69
 	DW	79D3h-8h	;ADR_21
 	DW	7CDCh-8h	;ADR_22
@@ -1394,7 +1394,7 @@ ADR_00:
 	DW	6A4Bh		;ADR_12
 	DW	6B5Eh		;ADR_13
 	DW	6F65h		;ADR_14
-	
+
 	DW	6FFEh		;ADR_15
 ;PATCH4
 	DW	5BEDh		;ADR120
@@ -1402,31 +1402,31 @@ ADR_00:
 	DW	629Ch		;ADR140
 	DW	6322h		;ADR150
 	DW	6436h		;ADR_6A
-	
+
 	DW	6476h		;ADR_6B
 	DW	7A8Ah-8h	;ADR_6C
 	DW	598Bh		;ADR160
 	DW	5A0Bh		;ADR170
 	DW	4CC6h		;ADR1A0
-	
+
 	DW	72EDh-14h	;ADR_6F
 	DW	6F1Fh-14h	;ADR_70
 	DW	6EC9h-14h	;ADR_71
 	DW	61A4h		;ADR180
-	
+
 	DW	732Ch-14h	;ADR_6E
 	DW	6DC0h		;ADR_1B
 	DW	4CBAh		;ADR190
-	
+
 ADR_31:	DW	2B6Ah    	;ADR_31
 	DW	2D86h    	;ADR_32
 	DW	2DDAh    	;ADR_33
-	
+
 	DW	2E0Fh    	;ADR_34
 	DW	2E35h    	;ADR_35
 	DW	324Fh    	;ADR_36
 	DW	346Fh-8h    	;ADR_37
-	
+
 	DW	3478h-8h    	;ADR_38
 	DW	368Eh-8h    	;ADR_39
 	DW	39D6h-8h    	;ADR_3A
@@ -1436,12 +1436,12 @@ ADR_31:	DW	2B6Ah    	;ADR_31
 	DW	264Ch    	;ADR_3E
 	DW	2665h    	;ADR_3F
 	DW	2652h    	;ADR_40
-	
+
 	DW	3525h-8h    	;ADR_41
 	DW	34E0h-8h    	;ADR_42
 	DW	2DB6h    	;ADR_43
 	DW	2599h    	;ADR_44
-	
+
 	DW	2FFCh    	;ADR_45
 	DW	34DCh-8h    	;ADR_46
 	DW	3302h-14h	;ADR_47
@@ -1457,7 +1457,7 @@ STA_00:
 	DW	743Fh		;ADR_66
 	DW	7451h		;ADR_67
 	DW	749Fh-14h	;ADR200
-	
+
 	DW	4C04h		;ADR_0D
 ;PATCH2
 	DW	6BBDh		;ADR_18
@@ -1465,31 +1465,31 @@ STA_00:
 	DW	7540h		;ADR_25
 	DW	746Ch		;ADR_20
 	DW	6649h		;ADR_60
-	
+
 	DW	5CC4h+1		;ADR_0C
 	DW	5CA5h		;ADR_0A
 	DW	6588h+1		;ADR_63
 	DW	6DD7h		;ADR_16
 	DW	65EFh		;ADR_23
-	
+
 	DW	662Dh		;ADR_24
 	DW	4C22h+1		;ADR_06
 	DW	6E26h+1		;ADR_27
 	DW	6E63h+1		;ADR_28
 	DW	6E80h+1		;ADR_29
-	
+
 	DW	6EDCh+1		;ADR_2A
 	DW	6FBEh		;ADR_2F
 	DW	5CFEh+1		;ADR_08
 	DW	5B34h+1		;ADR_07
 	DW	66C1h+1		;ADR_2B
-	
+
 	DW	6FDFh+1		;ADR_2E
 	DW	6ED7h+1		;ADR_2C
 	DW	6F02h+1		;ADR_2D
 	DW	65CDh		;ADR_17
 	DW	6BF9h		;ADR_19
-	
+
 	DW	6D55h		;ADR_1A
 	DW	74DCh		;ADR_62
 	DW	7252h+1		;ADR_61
@@ -1499,13 +1499,13 @@ STA_00:
 	DW	5C53h		;ADR_05
 	DW	5B87h		;ADR_09
 	DW	6F6Fh		;ADR_1C
-	
+
 	DW	6F9Bh		;ADR_1D
 	DW	700Dh		;ADR_1E
 	DW	7375h		;ADR_1F
 	DW	5CB1h		;ADR_0B
 	DW	5C0Dh		;ADR_04
-	
+
 	DW	74D2h		;ADR_69
 	DW	79D3h		;ADR_21
 	DW	7CDCh		;ADR_22
@@ -1517,7 +1517,7 @@ STA_00:
 	DW	6A4Bh		;ADR_12
 	DW	6B5Eh		;ADR_13
 	DW	6F65h		;ADR_14
-	
+
 	DW	6FFEh		;ADR_15
 ;PATCH4
 	DW	5BEDh		;ADR120
@@ -1525,31 +1525,31 @@ STA_00:
 	DW	629Ch		;ADR140
 	DW	6322h		;ADR150
 	DW	6436h		;ADR_6A
-	
+
 	DW	6476h		;ADR_6B
 	DW	7A8Ah		;ADR_6C
 	DW	598Bh		;ADR160
 	DW	5A0Bh		;ADR170
 	DW	4CC6h		;ADR1A0
-	
+
 	DW	72EDh-14h	;ADR_6F
 	DW	6F1Fh-14h	;ADR_70
 	DW	6EC9h-14h	;ADR_71
 	DW	61A4h		;ADR180
-	
+
 	DW	732Ch-14h	;ADR_6E
 	DW	6DC0h		;ADR_1B
 	DW	4CBAh		;ADR190
-	
+
 STA_31:	DW	2B6Ah    	;ADR_31
 	DW	2D86h    	;ADR_32
 	DW	2DDAh    	;ADR_33
-	
+
 	DW	2E0Fh    	;ADR_34
 	DW	2E35h    	;ADR_35
 	DW	324Fh    	;ADR_36
 	DW	346Fh    	;ADR_37
-	
+
 	DW	3478h    	;ADR_38
 	DW	368Eh    	;ADR_39
 	DW	39D6h    	;ADR_3A
@@ -1559,12 +1559,12 @@ STA_31:	DW	2B6Ah    	;ADR_31
 	DW	264Ch    	;ADR_3E
 	DW	2665h    	;ADR_3F
 	DW	2652h    	;ADR_40
-	
+
 	DW	3525h    	;ADR_41
 	DW	34E0h    	;ADR_42
 	DW	2DB6h    	;ADR_43
 	DW	2599h    	;ADR_44
-	
+
 	DW	2FFCh    	;ADR_45
 	DW	34DCh    	;ADR_46
 	DW	3302h-14h	;ADR_47
@@ -1579,7 +1579,7 @@ STB_00:
 	DW	743Fh+14h	;ADR_66
 	DW	7451h+14h	;ADR_67
 	DW	749Fh		;ADR200		;[ver0.09]
-	
+
 	DW	4C04h		;ADR_0D
 ;PATCH2
 	DW	6BBDh+14h	;ADR_18
@@ -1587,31 +1587,31 @@ STB_00:
 	DW	7540h+14h	;ADR_25
 	DW	746Ch+14h	;ADR_20
 	DW	6649h+14h	;ADR_60
-	
+
 	DW	5CC4h+1		;ADR_0C
 	DW	5CA5h		;ADR_0A
 	DW	6588h+1+14h	;ADR_63
 	DW	6DD7h+14h	;ADR_16
 	DW	65EFh+14h	;ADR_23
-	
+
 	DW	662Dh+14h	;ADR_24
 	DW	4C22h+1		;ADR_06
 	DW	6E26h+1+14h	;ADR_27
 	DW	6E63h+1+14h	;ADR_28
 	DW	6E80h+1+14h	;ADR_29
-	
+
 	DW	6EDCh+1+14h	;ADR_2A
 	DW	6FBEh+14h	;ADR_2F
 	DW	5CFEh+1		;ADR_08
 	DW	5B34h+1		;ADR_07
 	DW	66C1h+1+14h	;ADR_2B
-	
+
 	DW	6FDFh+1+14h	;ADR_2E
 	DW	6ED7h+1+14h	;ADR_2C
 	DW	6F02h+1+14h	;ADR_2D
 	DW	65CDh+14h	;ADR_17
 	DW	6BF9h+14h	;ADR_19
-	
+
 	DW	6D55h+14h	;ADR_1A
 	DW	74DCh+14h	;ADR_62
 	DW	7252h+1+14h	;ADR_61
@@ -1621,13 +1621,13 @@ STB_00:
 	DW	5C53h		;ADR_05
 	DW	5B87h		;ADR_09
 	DW	6F6Fh+14h	;ADR_1C
-	
+
 	DW	6F9Bh+14h	;ADR_1D
 	DW	700Dh+14h	;ADR_1E
 	DW	7375h+14h	;ADR_1F
 	DW	5CB1h		;ADR_0B
 	DW	5C0Dh		;ADR_04
-	
+
 	DW	74D2h+14h	;ADR_69
 	DW	79D3h+14h	;ADR_21
 	DW	7CDCh+14h	;ADR_22
@@ -1639,7 +1639,7 @@ STB_00:
 	DW	6A4Bh+14h	;ADR_12
 	DW	6B5Eh+14h	;ADR_13
 	DW	6F65h+14h	;ADR_14
-	
+
 	DW	6FFEh+14h	;ADR_15
 ;PATCH4
 	DW	5BEDh		;ADR120
@@ -1647,31 +1647,31 @@ STB_00:
 	DW	629Ch		;ADR140
 	DW	6322h		;ADR150
 	DW	6436h+14h	;ADR_6A
-	
+
 	DW	6476h+14h	;ADR_6B
 	DW	7A8Ah+14h	;ADR_6C
 	DW	598Bh		;ADR160
 	DW	5A0Bh		;ADR170
 	DW	4CC6h		;ADR1A0
-	
+
 	DW	72EDh		;ADR_6F
 	DW	6F1Fh		;ADR_70
 	DW	6EC9h		;ADR_71
 	DW	61A4h		;ADR180
-	
+
 	DW	732Ch		;ADR_6E
 	DW	6DC0h+14h	;ADR_1B
 	DW	4CBAh		;ADR190
-	
+
 STB_31:	DW	2B6Ah+14h	;ADR_31
 	DW	2D86h+14h	;ADR_32
 	DW	2DDAh+14h	;ADR_33
-	
+
 	DW	2E0Fh+14h	;ADR_34
 	DW	2E35h+14h	;ADR_35
 	DW	324Fh+14h	;ADR_36
 	DW	346Fh+14h	;ADR_37
-	
+
 	DW	3478h+14h	;ADR_38
 	DW	368Eh+14h	;ADR_39
 	DW	39D6h+14h	;ADR_3A
@@ -1681,12 +1681,12 @@ STB_31:	DW	2B6Ah+14h	;ADR_31
 	DW	264Ch+14h	;ADR_3E
 	DW	2665h+14h	;ADR_3F
 	DW	2652h+14h	;ADR_40
-	
+
 	DW	3525h+14h	;ADR_41
 	DW	34E0h+14h	;ADR_42
 	DW	2DB6h+14h	;ADR_43
 	DW	2599h+14h	;ADR_44
-	
+
 	DW	2FFCh+14h	;ADR_45
 	DW	34DCh+14h	;ADR_46
 	DW	3302h		;ADR_47
@@ -1701,7 +1701,7 @@ GT_00:
 	DW	743Fh+1Eh	;ADR_66
 	DW	7451h+1Eh	;ADR_67
 	DW	749Fh+0Ah	;ADR200
-	
+
 	DW	4C04h		;ADR_0D
 ;PATCH2
 	DW	6BBDh+1Eh	;ADR_18
@@ -1709,31 +1709,31 @@ GT_00:
 	DW	7540h+1Eh	;ADR_25
 	DW	746Ch+1Eh	;ADR_20
 	DW	6649h+1Eh	;ADR_60
-	
+
 	DW	5CC4h+1+0Ah	;ADR_0C
 	DW	5CA5h+0Ah	;ADR_0A
 	DW	6588h+1+1Eh	;ADR_63
 	DW	6DD7h+1Eh	;ADR_16
 	DW	65EFh+1Eh	;ADR_23
-	
+
 	DW	662Dh+1Eh	;ADR_24
 	DW	4C22h+1		;ADR_06
 	DW	6E26h+1+1Eh	;ADR_27
 	DW	6E63h+1+1Eh	;ADR_28
 	DW	6E80h+1+1Eh	;ADR_29
-	
+
 	DW	6EDCh+1+1Eh	;ADR_2A
 	DW	6FBEh+1Eh	;ADR_2F
 	DW	5CFEh+1+0Ah	;ADR_08
 	DW	5B34h+1+0Ah	;ADR_07
 	DW	66C1h+1+1Eh	;ADR_2B
-	
+
 	DW	6FDFh+1+1Eh	;ADR_2E
 	DW	6ED7h+1+1Eh	;ADR_2C
 	DW	6F02h+1+1Eh	;ADR_2D
 	DW	65CDh+1Eh	;ADR_17
 	DW	6BF9h+1Eh	;ADR_19
-	
+
 	DW	6D55h+1Eh	;ADR_1A
 	DW	74DCh+1Eh	;ADR_62
 	DW	7252h+1+1Eh	;ADR_61
@@ -1743,13 +1743,13 @@ GT_00:
 	DW	5C53h+0Ah	;ADR_05
 	DW	5B87h+0Ah	;ADR_09
 	DW	6F6Fh+1Eh	;ADR_1C
-	
+
 	DW	6F9Bh+1Eh	;ADR_1D
 	DW	700Dh+1Eh	;ADR_1E
 	DW	7375h+1Eh	;ADR_1F
 	DW	5CB1h+0Ah	;ADR_0B
 	DW	5C0Dh+0Ah	;ADR_04
-	
+
 	DW	74D2h+1Eh	;ADR_69
 	DW	79D3h+1Eh	;ADR_21
 	DW	7CDCh+1Eh	;ADR_22
@@ -1761,7 +1761,7 @@ GT_00:
 	DW	6A4Bh+1Eh	;ADR_12
 	DW	6B5Eh+1Eh	;ADR_13
 	DW	6F65h+1Eh	;ADR_14
-	
+
 	DW	6FFEh+1Eh	;ADR_15
 ;PATCH4
 	DW	5BEDh+0Ah	;ADR120
@@ -1769,31 +1769,31 @@ GT_00:
 	DW	629Ch+0Ah	;ADR140
 	DW	6322h+0Ah	;ADR150
 	DW	6436h+1Eh	;ADR_6A
-	
+
 	DW	6476h+1Eh	;ADR_6B
 	DW	7A8Ah+1Eh	;ADR_6C
 	DW	598Bh+0Ah	;ADR160
 	DW	5A0Bh+0Ah	;ADR170
 	DW	4CC6h		;ADR1A0
-	
+
 	DW	72EDh+0Ah	;ADR_6F
 	DW	6F1Fh+0Ah	;ADR_70
 	DW	6EC9h+0Ah	;ADR_71
 	DW	61A4h+0Ah	;ADR180
-	
+
 	DW	732Ch+0Ah	;ADR_6E
 	DW	6DC0h+1Eh	;ADR_1B
 	DW	4CBAh		;ADR190
-	
+
 GT_31:	DW	2B6Ah+1Eh	;ADR_31
 	DW	2D86h+1Eh	;ADR_32
 	DW	2DDAh+1Eh	;ADR_33
-	
+
 	DW	2E0Fh+1Eh	;ADR_34
 	DW	2E35h+1Eh	;ADR_35
 	DW	324Fh+1Eh	;ADR_36
 	DW	346Fh+1Eh	;ADR_37
-	
+
 	DW	3478h+1Eh	;ADR_38
 	DW	368Eh+1Eh	;ADR_39
 	DW	39D6h+1Eh	;ADR_3A
@@ -1803,18 +1803,18 @@ GT_31:	DW	2B6Ah+1Eh	;ADR_31
 	DW	264Ch+1Eh	;ADR_3E
 	DW	2665h+1Eh	;ADR_3F
 	DW	2652h+1Eh	;ADR_40
-	
+
 	DW	3525h+1Eh	;ADR_41
 	DW	34E0h+1Eh	;ADR_42
 	DW	2DB6h+1Eh	;ADR_43
 	DW	2599h+1Eh	;ADR_44
-	
+
 	DW	2FFCh+1Eh	;ADR_45
 	DW	34DCh+1Eh	;ADR_46
 	DW	3302h+0Ah	;ADR_47
 
-	
-	
+
+
 ;------------------------------------------------------------
 ;PATCH  3F00h -
 ;Change cluster number to sector number
@@ -1823,7 +1823,7 @@ GT_31:	DW	2B6Ah+1Eh	;ADR_31
 ;	 BIT16 = bit16-23
 
 GETSEC:
-	LD	BC,0009h		
+	LD	BC,0009h
 	ADD	HL,BC		;DPB+14h start sector of data area
 	LD	C,(HL)
 	INC	HL
@@ -1833,7 +1833,7 @@ GETSEC:
 	JR	NC,Z0024;
 	INC	A
 Z0024:	EX	DE,HL		;BDE=sector number
-	LD	(BIT16-GETSEC+PATCH),A	;save bit16-23 
+	LD	(BIT16-GETSEC+PATCH),A	;save bit16-23
 	POP	BC
 	POP	HL
 	RET
@@ -1841,20 +1841,20 @@ Z0024:	EX	DE,HL		;BDE=sector number
 FSIZE1:
 	JR	NC,FSIZ_1
 	INC	D
-FSIZ_1:	INC	(HL)	
+FSIZ_1:	INC	(HL)
 	DEC	(HL)
 	RET	NZ
 	INC	D
 	RET
-	
-FSIZE2:	
+
+FSIZE2:
 	LD	A,(IX+0FCh)
 	OR	A
 	JR	NZ,FSIZ_2
 	INC	D
 FSIZ_2:	ADD	A,E
 	RET
-	
+
 FSIZE3:
 	JR	NC,FSIZ_3
 	INC	D
@@ -1863,7 +1863,7 @@ FSIZ_3:	INC	E
 	RET	NZ
 	INC	D
 	RET
-	
+
 
 ;------------------------------------
 ;#1Bh PATCH
@@ -1874,10 +1874,10 @@ ALLOC:
 	LD	A,(BUFSEG-GETSEC+PATCH)
 	OR	A
 	JP	Z,0C07h			;Not use buffer
-	
+
 BUF_RD:
 	DI
-	LD	A,(IX+06h)		;Local drive 
+	LD	A,(IX+06h)		;Local drive
 	LD	(BUF_DR-GETSEC+PATCH+1),A
 	LD	A,(IX+0)		;Slot number of diskrom
 	LD	(DSKSLT-GETSEC+PATCH+3),A
@@ -1894,7 +1894,7 @@ BUF_RD:
 	LD	(0038h),A
 	LD	A,(BUFSEG-GETSEC+PATCH)	;Buffer segment
 	OUT	(0FEh),A		;PAGE2 BUFFER
-	
+
 FREE_0:	CALL	BUFRD-GETSEC+PATCH	;Read
 	PUSH	HL			;Cluster number
 	ADD	HL,HL
@@ -1905,11 +1905,11 @@ FREE_0:	CALL	BUFRD-GETSEC+PATCH	;Read
 	POP	DE			;Cluster number
 FREE_1:	LD	A,(HL)
 	INC	HL
-	OR	(HL)			;'00,00' 
+	OR	(HL)			;'00,00'
 	INC	HL
 	JR	NZ,FREE_2
 	INC	BC			;Count to free cluster
-FREE_2:	
+FREE_2:
 	EX	(SP),HL
 	SBC	HL,DE
 	ADD	HL,DE
@@ -1919,20 +1919,20 @@ FREE_2:
 	BIT	6,H			;Check address = C000h
 	JR	Z,FREE_1
 	JR	FREE_0
-	
-FREE_3:	
-	LD	A,(0F2CFh)		;PAGE2 ñﬂÇ∑
+
+FREE_3:
+	LD	A,(0F2CFh)		;PAGE2 ÔøΩﬂÇÔøΩ
 	OUT	(0FEh),A
 	LD	A,0C3h
 	LD	(0038h),A
-	
+
 	POP	HL
 	POP	IX
 	POP	IY
 	PUSH	HL			;Total of cluster
 	JP	0C1Bh
-	
-BUFRD:	
+
+BUFRD:
 	PUSH	BC			;Counter
 	PUSH	DE			;Cluster number
 	LD	E,D
@@ -1953,8 +1953,8 @@ DSKSLT:	LD	IY,0
 	RET
 
 ;--------------------------------------
-;349Fh FAT12,16ÇÃîªï 
-;FAT16ÇÕÉfÅ[É^ÉZÉOÉÅÉìÉgÇÃÉhÉâÉCÉuèÓïÒÅ@MEDIA ID bit7=0Ç…Ç∑ÇÈ
+;349Fh FAT12,16ÔøΩÃîÔøΩÔøΩÔøΩ
+;FAT16ÔøΩÕÉfÔøΩ[ÔøΩ^ÔøΩZÔøΩOÔøΩÔøΩÔøΩÔøΩÔøΩgÔøΩÃÉhÔøΩÔøΩÔøΩCÔøΩuÔøΩÔøΩÔøΩ@MEDIA ID bit7=0ÔøΩ…ÇÔøΩÔøΩÔøΩ
 DPBSET:
 	LD	A,(IX+15h)
 	LD	(HL),A
@@ -1967,7 +1967,7 @@ DPB_1:	LD	A,46h		;'F'
 	JR	Z,DPB_2
 	OR	A
 	JR	DPB_3
-	
+
 DPB_2:	PUSH	HL
 	PUSH	BC
 	LD	B,04h
@@ -2004,10 +2004,10 @@ RW_16:	DB	0		;bit16-23 for DISKIO
 KTYPE:	DB	0		;Kernel type
 
 ;------------------------------------------------------------
-;PATCH2   03031h - 
+;PATCH2   03031h -
 ;Write bit16-23 of sector number at buffer+8
 ;2BD1h
-SECNUM:	
+SECNUM:
 	DB	0DDh,0CBh,1Dh,7Eh	;BIT	7,(IX+1Dh)
 	LD	A,0
 	JR	NZ,SECN_1	;FAT12
@@ -2015,8 +2015,8 @@ SECNUM:
 SECN_1:	LD	C,(IX+11h)
 	LD	(HL),C
 	RET
-	
-	
+
+
 ;-----------------------------------------------
 ;Compare sector number at buffer
 CMPSEC:				;#6C33 (#6C47)
@@ -2034,7 +2034,7 @@ CMPS_1:	LD	A,(DSKEX-GETSEC+PATCH)	;
 	INC	HL
 	CP	(HL)		;bit16-23 of sector number
 	RET
-	
+
 
 ;------------------------------------------------------
 ;Set to bit16-23 of sector number at registerC
@@ -2051,7 +2051,7 @@ SETNUM:
 MED_ID:	LD	C,A		;C=MEDIA ID
 	POP	AF
 	RET
-	
+
 ;-------------------------------------------------------
 ;Total of cluster
 TALCLS:
@@ -2104,7 +2104,7 @@ DSKBUF:
 	POP	AF
 	POP	BC
 PAT_3E:	JP	0000h
-	
+
 CALUC:
 	POP	AF
 	PUSH	DE
@@ -2128,7 +2128,7 @@ PAT_40:	JP	0000h
 ;-------------------------------------
 ;1CC4h
 GETSUB:
-PAT_43:	CALL	0000h			;ÉZÉNÉ^ä∑éZ
+PAT_43:	CALL	0000h			;ÔøΩZÔøΩNÔøΩ^ÔøΩÔøΩÔøΩZ
 	LD	A,(BIT16-GETSEC+PATCH)
 	LD	(SDIR_1-GETSEC+PATCH),A
 	RET
@@ -2144,7 +2144,7 @@ SUB_16:
 	LD	(SDIR_1-GETSEC+PATCH),A
 SUB_:	LD	A,(0BBE1h)
 	RET
-	
+
 ;-------------------------------------
 ;SECTER READ/WRITE
 ;2588
@@ -2155,7 +2155,7 @@ PAT_44:	JP	0000h
 
 
 ;-----------------------------------------------------------
-;FAT WRITE 
+;FAT WRITE
 FATWRT:
 	CALL	CHKDRV-FORMAT+PATCH3
 	JR	Z,FATWR2		;16bit FAT
@@ -2163,7 +2163,7 @@ FATWRT:
 	CP	10h
 PAT_33:	JP	0000h			;12bit FAT
 
-FATWR2:	
+FATWR2:
 	CALL	FATADR-FORMAT+PATCH3	;Get address
 	JR	Z,FATWR3		;Right routine
 	LD	A,0FFh
@@ -2180,9 +2180,9 @@ FATWR3:	PUSH	HL
 	LD	A,B
 	LD	(DE),A
 PAT_34:	JP	0000h			;Return
-	
 
-	
+
+
 ;----------------------------------------------------------
 ;Set sector number at #BBB4
 NUM_1:
@@ -2192,12 +2192,12 @@ SECINC:	LD	A,(BIT16-GETSEC+PATCH)
 	INC	A
 	LD	(BIT16-GETSEC+PATCH),A
 	RET
-	
-NUM_2:	
+
+NUM_2:
 	INC	(IY+35h)
 	RET	NZ
 	JR	SECINC
-	
+
 ;-----------------------------------------------
 ;2B7Eh
 BUF_1:	XOR	A
@@ -2222,10 +2222,10 @@ BUF_4:	LD	BC,(0BBE8h)		;SUB DIR? ROOT?
 
 BUF_2:	LD	A,(BIT16-GETSEC+PATCH)
 	JR	BUF_
-	
+
 BUF_3:	XOR	A
 BUF_:	LD	(DSKEX-GETSEC+PATCH),A	;FAT
-PAT_3D:	JP	0000h			
+PAT_3D:	JP	0000h
 
 ;--------------------------------------------------------------
 ;Read a sector for Random block access
@@ -2233,7 +2233,7 @@ PAT_3D:	JP	0000h
 RAMRED:
 	PUSH	AF
 	LD	A,(BIT16-GETSEC+PATCH)
-	LD	(RW_16-GETSEC+PATCH),A	;write bit16-23 of sector number 
+	LD	(RW_16-GETSEC+PATCH),A	;write bit16-23 of sector number
 	LD	DE,(0BBB4h)
 	POP	AF
 	RET
@@ -2272,28 +2272,28 @@ PAT_42:	JP	00000h
 FORMAT:
 
 ;CLUSTER NUMBER
-CLST_1:	
+CLST_1:
 	LD	D,(HL)			;#1534
 	JR	CHK_C			;Check data 'FFFFh'
-	
+
 CLST_2:	DB	0FDh,0CBh,20h,0DEh	;SET  3,(IY+20h)	;#158B
 	JR	CHK_C
-	
-	
+
+
 CLST_4:	LD	DE,(0BBE8h)		;#1C53
 	JR	CHK_C
-	
+
 CLST_8:	POP	AF			;#1B87
 	POP	DE
 	JR	CHK_D
-	
+
 CLST_5:	POP	AF			;#2F83
 	PUSH	BC
 CHK_D:	PUSH	AF
 	JR	CHK_C
-	
+
 CLST_6:	LD	DE,(0BBA3h)		;#2FAF
-CHK_C:	
+CHK_C:
 	LD	A,D			;DE=FFFFh Z=0
 	AND	E
 	JR	CHK_A
@@ -2308,7 +2308,7 @@ CLST_7:	JR	NZ,CHK_C		;#3021
 CLST_9:	LD	DE,(0BBE8h)		;#1CB1
 	CALL	CHK_C-FORMAT+PATCH3
 	LD	DE,(0BBE4h)
-	RET	NZ			;ÉJÉåÉìÉgÇÕROOT
+	RET	NZ			;ÔøΩJÔøΩÔøΩÔøΩÔøΩÔøΩgÔøΩÔøΩROOT
 	JR	CHK_C
 
 CLST_3:	LD	DE,(0BBE6h)		;#1C0D
@@ -2317,33 +2317,33 @@ CHECK:	LD	A,D
 CHK_A:	INC	A
 	JR	Z,CHK_B
 	XOR	A
-	RET			;z=1 
+	RET			;z=1
 CHK_B:	DEC	A
-	RET			;z=0 
-	
+	RET			;z=0
+
 CLST_A:	LD	A,(HL)
 	JR	CHK_A
-	
-	
+
+
 ;---------------------------------
-	
-CLUST:	
+
+CLUST:
 	LD	HL,(0B9FAh)		;FCB+20h DPB address
 	CALL	CHKDRV-FORMAT+PATCH3
 	RET	Z			;FAT16
 	LD	A,(IX+2Ah)
 PAT_3A:	JP	0000h
-	
-CLUST2:	
+
+CLUST2:
 	LD	HL,(0B9FAh)
 	CALL	CHKDRV-FORMAT+PATCH3
 	RET	Z			;FAT16
 	LD	A,(IX+1Dh)
 PAT_3B:	JP	0000h
-	
+
 ;-------------------------------------------------------------------
 RAMDSK:
-	
+
 
 ;Get FAT address
 FATRED:
@@ -2357,18 +2357,18 @@ PAT_32:	CALL	00000h		;FAT12 routine
 
 ;Read 16bitFAT
 
-Z0018:	
+Z0018:
 	POP	AF
 	CALL	FATADR-FORMAT+PATCH3	;get address & sector set
 	JR	Z,Z0019		;no error
 Z0020:	XOR	A
 	LD	(0BBEAh),A
-	LD	A,0F2h	
+	LD	A,0F2h
 	LD	DE,0FFFFh
 PAT_39:	CALL	00000h
 	JR	Z,Z0020
 	JR	Z0021		;error
-	
+
 Z0019:	PUSH	HL
 	LD	A,(DE)		;DE=FAT address
 	LD	L,A
@@ -2387,16 +2387,16 @@ Z0021:	LD	DE,0FFFFh	;End of cluster
 	RET
 Z1021:	XOR	A		;Cy=0 Z=1
 	RET
-	
-	
+
+
 ;-----------------------------------------------------------
 ;Get sector number of FAT & read FAT sector in disk buffer
 ;Get address of FAT
-	
+
 FATADR:
 	PUSH	IX		;IX=#B9DA
-	PUSH	BC	
-	PUSH	HL		;HL=DPB address 
+	PUSH	BC
+	PUSH	HL		;HL=DPB address
 	PUSH	HL
 	POP	IX
 	DB	0FDh,0CBh,29h,86h	;RES	0,(IY+29h)
@@ -2429,7 +2429,7 @@ FATAD_:	POP	HL
 	POP	BC
 	POP	IX
 	RET
-	
+
 ;-------------------------------
 ;Z=1  FAT16 drive   Z=0  FAT12 drive
 CHKDRV:
@@ -2441,7 +2441,7 @@ CHKDRV:
 	POP	DE
 	POP	HL
 	RET
-	
+
 
 ;-------------------------------------------------
 ;PATCH4  33A8h -
@@ -2452,33 +2452,33 @@ STOR_1:	PUSH	AF
 	POP	AF
 	LD	DE,0BBD2h
 	RET
-	
+
 STOR_2:	PUSH	AF
 	LD	A,(SDIR_2-GETSEC+PATCH)
 	LD	(SDIR_1-GETSEC+PATCH),A
 	POP	AF
 	LD	HL,0BBD2h
 	RET
-	
+
 STOR_3:	LD	(IX+23h),B		;bit7-15 of sector
 	LD	A,(SDIR_1-GETSEC+PATCH)
 	LD	(IX+32h),A		;File handle
 	RET
-	
+
 STOR_4:	OR	A
 	SBC	HL,DE
 	RET	NZ
 	LD	A,(SDIR_1-GETSEC+PATCH)
 	SUB	(IX+32h)
 	RET
-	
+
 STOR_5:	PUSH	AF
 	LD	A,(SDIR_1-GETSEC+PATCH)
 	LD	(SDIR_3-GETSEC+PATCH),A
 	POP	AF
 	LD	HL,0BBDEh
 	RET
-	
+
 STOR_6:	PUSH	AF
 	LD	A,(SDIR_3-GETSEC+PATCH)
 	LD	(SDIR_1-GETSEC+PATCH),A
@@ -2493,7 +2493,7 @@ STOR_7:	PUSH	AF
 	EX	DE,HL
 	LDIR
 	RET
-	
+
 STOR_8:	PUSH	AF
 	ld	a,(ix+38h)			;[ver0.12]
 	LD	(SDIR_1-GETSEC+PATCH),A
@@ -2515,7 +2515,7 @@ ALLSEC:
 	LD	(HL),A
 	DEC	HL
 	RET
-	
+
 ;---------------------------------
 ;332Eh
 GETVOL:
@@ -2543,7 +2543,7 @@ CHKVOL:
 	LD	DE,0012h
 VOL_1:	POP	AF
 	RET
-	
+
 ;---------------------------------
 ;ADR_12
 PAT_45:	CALL	Z,0000			;#3010
@@ -2583,12 +2583,9 @@ FIXCAL:
 	LD	C,29h
 	ADC	A,A
 	DB	10h,0FCh
-	
+
 
 ;---------------------------
-DAT2:	
+DAT2:
 
 	END
-	
-	
-	

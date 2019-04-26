@@ -12,482 +12,30 @@
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
 
-        .Z80
-        ASEG
         ORG     392EH
 
-
-        INCLUDE MSX.INC
-
-
-CGTABL          EQU     0004H
-SYNCHR          EQU     0008H
-RDSLT           EQU     000CH
-CHRGTR          EQU     0010H
-OUTDO           EQU     0018H
-CALSLT          EQU     001CH
-DCOMPR          EQU     0020H
-ENASLT          EQU     0024H
-GETYPR          EQU     0028H
-INITIO          EQU     003BH
-INIFNK          EQU     003EH
-WRTVDP          EQU     0047H
-WRTVRM          EQU     004DH
-RDVRM           EQU     004AH
-FILVRM          EQU     0056H
-LDIRMV          EQU     0059H
-LDIRVM          EQU     005CH
-CHGMOD          EQU     005FH
-CHGCLR          EQU     0062H
-CLRSPR          EQU     0069H
-INITXT          EQU     006CH
-INIT32          EQU     006FH
-SETTXT          EQU     0078H
-SETGRP          EQU     007EH
-SETMLT          EQU     0081H
-CALPAT          EQU     0084H
-CALATR          EQU     0087H
-GSPSIZ          EQU     008AH
-GRPPRT          EQU     008DH
-GICINI          EQU     0090H
-WRTPSG          EQU     0093H
-STRTMS          EQU     0099H
-CHSNS           EQU     009CH
-CHGET           EQU     009FH
-CHPUT           EQU     00A2H
-LPTOUT          EQU     00A5H
-CNVCHR          EQU     00ABH
-PINLIN          EQU     00AEH
-INLIN           EQU     00B1H
-QINLIN          EQU     00B4H
-ISCNTC          EQU     00BAH
-CKCNTC          EQU     00BDH
-BEEP            EQU     00C0H
-CLS             EQU     00C3H
-POSIT           EQU     00C6H
-FNKSB           EQU     00C9H
-ERAFNK          EQU     00CCH
-DSPFNK          EQU     00CFH
-TOTEXT          EQU     00D2H
-GTSTCK          EQU     00D5H
-GTTRIG          EQU     00D8H
-GTPAD           EQU     00DBH
-GTPDL           EQU     00DEH
-TAPION          equ     00E1H
-TAPIN           equ     00E4H
-TAPIOF          equ     00E7H
-TAPOON          equ     00EAH
-TAPOUT          equ     00EDH
-TAPOOF          equ     00F0H
-STMOTR          equ     00F3H
-LFTQ            EQU     00F6H
-PUTQ            EQU     00F9H
-LEFTC           EQU     00FFH
-TUPC            EQU     0105H
-DOWNC           EQU     0108H
-TDOWNC          EQU     010BH
-SCALXY          EQU     010EH
-MAPXYC          EQU     0111H
-FETCHC          EQU     0114H
-STOREC          EQU     0117H
-SETATR          EQU     011AH
-READC           EQU     011DH
-SETC            EQU     0120H
-NSETCX          EQU     0123H
-GTASPC          EQU     0126H
-PNTINI          EQU     0129H
-SCANR           EQU     012CH
-SCANL           EQU     012FH
-ISFLIO          EQU     014AH
-OUTDLP          EQU     014DH
-GETVCP          EQU     0150H
-GETVC2          EQU     0153H
-EXTROM          EQU     015FH
-CHKSLZ          EQU     0162H
-CHKNEW          EQU     0165H
-BIGFIL          EQU     016BH
-CHGCPU          EQU     0180H
-GETCPU          EQU     0183H
-
-S.PAINT         EQU     0069H
-S.PSET          EQU     006DH
-S.GLINE         EQU     0075H
-S.DOGRPH        EQU     0085H
-S.PUTSPRT       EQU     0151H
-S.COLOR         EQU     0155H
-S.SCREEN        EQU     0159H
-S.WIDTHS        EQU     015DH
-S.VDP           EQU     0161H
-S.VDPF          EQU     0165H
-S.BASE          EQU     0169H
-S.BASEF         EQU     016DH
-S.VPOKE         EQU     0171H
-S.VPEEK         EQU     0175H
-S.SETS          EQU     0179H
-S.PROMPT        EQU     0181H
-S.SDFSCR        EQU     0185H
-S.SETSCR        EQU     0189H
-S.SCOPY         EQU     018DH
-S.GETPUT        EQU     01B1H
-
-JF37D           EQU     0F37DH  ; BDOS routine for diskbasic
-VARWRK          EQU     0F380H
-LOW.            EQU     0F406h
-ERRFLG          EQU     0F414H
-LPTPOS          EQU     0F415H
-PRTFLG          EQU     0F416H
-NTMSXP          EQU     0F417H
-VLZADR          EQU     0F419H
-VLZDAT          EQU     0F41BH
-CURLIN          EQU     0F41CH
-KBFMIN          EQU     0F41EH
-KBUF            EQU     0F41FH
-BUFMIN          EQU     0F55DH
-BUF             EQU     0F55EH
-ENDBUF          EQU     0F660H
-TTYPOS          EQU     0F661H
-DIMFLG          EQU     0F662H
-VALTYP          EQU     0F663H
-DORES           EQU     0F664H
-DONUM           EQU     0F665H
-CONTXT          EQU     0F666H
-CONSAV          EQU     0F668H
-CONTYP          EQU     0F669H
-CONLO           EQU     0F66AH
-MEMSIZ          EQU     0F672H
-STKTOP          EQU     0F674H
-TXTTAB          EQU     0F676H
-TEMPPT          EQU     0F678H
-TEMPST          EQU     0F67AH
-DSCTMP          EQU     0F698H
-FRETOP          EQU     0F69BH
-TEMP3           EQU     0F69DH
-TEMP8           EQU     0F69FH
-ENDFOR          EQU     0F6A1H
-DATLIN          EQU     0F6A3H
-SUBFLG          EQU     0F6A5H
-FLGINP          EQU     0F6A6H
-TEMP            EQU     0F6A7H
-PTRFLG          EQU     0F6A9H
-AUTFLG          EQU     0F6AAH
-AUTLIN          EQU     0F6ABH
-AUTINC          EQU     0F6ADH
-SAVTXT          EQU     0F6AFH
-SAVSTK          EQU     0F6B1H
-ERRLIN          EQU     0F6B3H
-DOT             EQU     0F6B5H
-ERRTXT          EQU     0F6B7H
-ONELIN          EQU     0F6B9H
-ONEFLG          EQU     0F6BBH
-TEMP2           EQU     0F6BCH
-OLDLIN          EQU     0F6BEH
-OLDTXT          EQU     0F6C0H
-VARTAB          EQU     0F6C2H
-ARYTAB          EQU     0F6C4H
-STREND          EQU     0F6C6H
-DATPTR          EQU     0F6C8H
-DEFTBL          EQU     0F6CAH
-PRMSTK          EQU     0F6E4H
-PRMLEN          EQU     0F6E6H
-PARM1           EQU     0F6E8H
-PRMPRV          EQU     0F74CH
-PRMLN2          EQU     0F74EH
-PARM2           EQU     0F750H
-PRMFLG          EQU     0F7B4H
-ARYTA2          EQU     0F7B5H
-NOFUNS          EQU     0F7B7H
-TEMP9           EQU     0F7B8H
-FUNACT          EQU     0F7BAH
-SWPTMP          EQU     0F7BCH
-TRCFLG          EQU     0F7C4H
-FBUFFR          EQU     0F7C5H
-DECTMP          EQU     0F7F0H
-DECTM2          EQU     0F7F2H
-DECCNT          EQU     0F7F4H
-DAC             EQU     0F7F6H
-HOLD8           EQU     0F806H
-ARG             EQU     0F847H
-RNDX            EQU     0F857H
-MAXFIL          EQU     0F85FH
-FILTAB          EQU     0F860H
-NULBUF          EQU     0F862H
-PTRFIL          EQU     0F864H
-FILNAM          EQU     0F866H
-FILNM2          EQU     0F871H
-NLONLY          EQU     0F87CH
-SAVEND          EQU     0F87DH
-FNKSTR          EQU     0F87FH
-CGPNT           EQU     0F91FH
-MINDEL          EQU     0F92DH
-MAXDEL          EQU     0F92FH
-ASPECT          EQU     0F931H
-CENCNT          EQU     0F933H
-CLINEF          EQU     0F935H
-CNPNTS          EQU     0F936H
-CPLOTF          EQU     0F938H
-CPCNT           EQU     0F939H
-CPCNT8          EQU     0F93BH
-CRCSUM          EQU     0F93DH
-CSTCNT          EQU     0F93FH
-CSCLXY          EQU     0F941H
-CSAVEA          EQU     0F942H
-CSAVEM          EQU     0F944H
-CXOFF           EQU     0F945H
-CYOFF           EQU     0F947H
-LOHMSK          EQU     0F949H
-LOHDIR          EQU     0F94AH
-LOHADR          EQU     0F94BH
-LOHCNT          EQU     0F94DH
-SKPCNT          EQU     0F94FH
-MOVCNT          EQU     0F951H
-PDIREC          EQU     0F953H
-LFPROG          EQU     0F954H
-RTPROG          EQU     0F955H
-MCLTAB          EQU     0F956H
-MCLFLG          EQU     0F958H
-QUETAB          EQU     0F959H
-PRSCNT          EQU     0FB35H
-SAVSP           EQU     0FB36H
-VOICEN          EQU     0FB38H
-SAVVOL          EQU     0FB39H
-MCLLEN          EQU     0FB3BH
-MCLPTR          EQU     0FB3CH
-MUSICF          EQU     0FB3FH
-PLYCNT          EQU     0FB40H
-BASROM          EQU     0FBB1H
-FNKFLG          EQU     0FBCEH
-ONGSBF          EQU     0FBD8H
-KEYBUF          EQU     0FBF0H
-BOTTOM          EQU     0FC48H
-HIMEM           EQU     0FC4AH
-TRPTBL          EQU     0FC4CH
-INTFLG          EQU     0FC9BH
-JIFFY           EQU     0FC9EH
-INTVAL          EQU     0FCA0H
-INTCNT          EQU     0FCA2H
-FLBMEM          EQU     0FCAEH
-SCRMOD          EQU     0FCAFH
-OLDSCR          EQU     0FCB0H
-CASPRV          equ     0FCB1H
-GXPOS           EQU     0FCB3H
-GYPOS           EQU     0FCB5H
-GRPACX          EQU     0FCB7H
-GRPACY          EQU     0FCB9H
-DRWFLG          EQU     0FCBBH
-DRWSCL          EQU     0FCBCH
-DRWANG          EQU     0FCBDH
-RUNBNF          EQU     0FCBEH
-SAVENT          EQU     0FCBFH
-EXPTBL          EQU     0FCC1H
-SLTTBL          EQU     0FCC5H
-SLTATR          EQU     0FCC9H
-SLTWRK          EQU     0FD09H
-PROCNM          EQU     0FD89H
-DEVICE          EQU     0FD99H
-
-H.KEYI          EQU     0FD9AH
-H.ONGO          EQU     0FDEAH
-H.DSKO          EQU     0FDEFH
-H.SETS          EQU     0FDF4H
-H.NAME          EQU     0FDF9H
-H.KILL          EQU     0FDFEH
-H.IPL           EQU     0FE03H
-H.COPY          EQU     0FE08H
-H.CMD           EQU     0FE0DH
-H.DSKF          EQU     0FE12H
-H.DSKI          EQU     0FE17H
-H.ATTR          EQU     0FE1CH
-H.LSET          EQU     0FE21H
-H.RSET          EQU     0FE26H
-H.FIEL          EQU     0FE2BH
-H.MKI$          EQU     0FE30H
-H.MKS$          EQU     0FE35H
-H.MKD$          EQU     0FE3AH
-H.CVI           EQU     0FE3FH
-H.CVS           EQU     0FE44H
-H.CVD           EQU     0FE49H
-H.GETP          EQU     0FE4EH
-H.SETF          EQU     0FE53H
-H.NOFO          EQU     0FE58H
-H.NULO          EQU     0FE5DH
-H.NTFL          EQU     0FE62H
-H.MERG          EQU     0FE67H
-H.SAVE          EQU     0FE6CH
-H.BINS          EQU     0FE71H
-H.BINL          EQU     0FE76H
-H.FILE          EQU     0FE7BH
-H.DGET          EQU     0FE80H
-H.FILO          EQU     0FE85H
-H.INDS          EQU     0FE8AH
-H.RSLF          EQU     0FE8FH
-H.SAVD          EQU     0FE94H
-H.LOC           EQU     0FE99H
-H.LOF           EQU     0FE9EH
-H.EOF           EQU     0FEA3H
-H.FPOS          EQU     0FEA8H
-H.BAKU          EQU     0FEADH
-H.PARD          EQU     0FEB2H
-H.NODE          EQU     0FEB7H
-H.POSD          EQU     0FEBCH
-H.GEND          EQU     0FEC6H
-H.RUNC          EQU     0FECBH
-H.CLEA          EQU     0FED0H
-H.LOPD          EQU     0FED5H
-H.STKE          EQU     0FEDAH
-H.CRDO          EQU     0FEE9H
-H.DSKC          EQU     0FEEEH
-H.DOGR          EQU     0FEF3H
-H.PRGE          EQU     0FEF8H
-H.ERRP          EQU     0FEFDH
-H.ERRF          EQU     0FF02H
-H.READ          EQU     0FF07H
-H.MAIN          EQU     0FF0CH
-H.DIRD          EQU     0FF11H
-H.FINI          EQU     0FF16H
-H.FINE          EQU     0FF1BH
-H.CRUN          EQU     0FF20H
-H.CRUS          EQU     0FF25H
-H.ISRE          EQU     0FF2AH
-H.NTFN          EQU     0FF2FH
-H.NOTR          EQU     0FF34H
-H.SNGF          EQU     0FF39H
-H.NEWS          EQU     0FF3EH
-H.GONE          EQU     0FF43H
-H.CHRG          EQU     0FF48H
-H.RETU          EQU     0FF4DH
-H.PRTF          EQU     0FF52H
-H.COMP          EQU     0FF57H
-H.FINP          EQU     0FF5CH
-H.TRMN          EQU     0FF61H
-H.FRME          EQU     0FF66H
-H.NTPL          EQU     0FF6BH
-H.EVAL          EQU     0FF70H
-H.OKNO          EQU     0FF75H
-H.FING          EQU     0FF7AH
-H.ISMI          EQU     0FF7FH
-H.WIDT          EQU     0FF84H
-H.LIST          EQU     0FF89H
-H.BUFL          EQU     0FF8EH
-H.FRQI          EQU     0FF93H
-H.SCNE          EQU     0FF98H
-H.FRET          EQU     0FF9DH
-H.PTRG          EQU     0FFA2H
-H.ERRO          EQU     0FFB1H
-H.SCRE          EQU     0FFC0H
-H.PLAY          EQU     0FFC5H
-EXTBIO          EQU     0FFCAH
-D.FFFF          EQU     0FFFFH
-
-        PUBLIC  J4067
-        PUBLIC  J4058
-        PUBLIC  J406D
-        PUBLIC  J601D
-        PUBLIC  C4EB8
-        PUBLIC  C4F47
-        PUBLIC  I3FD2
-        PUBLIC  I6677
-        PUBLIC  C5439
-        PUBLIC  C6678
-        PUBLIC  C475A
-        PUBLIC  J66A7
-
-        EXTRN   C268C
-        EXTRN   C2697
-        EXTRN   C269A
-        EXTRN   C27E6
-        EXTRN   C289F
-        EXTRN   C2993
-        EXTRN   C29AC
-        EXTRN   C29FB
-        EXTRN   C2A14
-        EXTRN   C2A72
-        EXTRN   C2AFF
-        EXTRN   C2B4A
-        EXTRN   C2BDF
-        EXTRN   C2C24
-        EXTRN   I2D1B
-        EXTRN   C2E71
-        EXTRN   J2E79
-        EXTRN   C2E82
-        EXTRN   C2E86
-        EXTRN   C2E97
-        EXTRN   C2E9A
-        EXTRN   C2EA1
-        EXTRN   C2EAB
-        EXTRN   C2EB1
-        EXTRN   C2EBE
-        EXTRN   C2EC1
-        EXTRN   C2ECC
-        EXTRN   C2ED6
-        EXTRN   C2EDF
-        EXTRN   C2EE1
-        EXTRN   C2EE8
-        EXTRN   C2EEF
-        EXTRN   C2EF3
-        EXTRN   C2EF7
-        EXTRN   C2F08
-        EXTRN   C2F0D
-        EXTRN   C2F10
-        EXTRN   C2F21
-        EXTRN   C2F4D
-        EXTRN   C2F5C
-        EXTRN   C2F83
-        EXTRN   C2F8A
-        EXTRN   C2F99
-        EXTRN   C2FB2
-        EXTRN   C2FCB
-        EXTRN   C303A
-        EXTRN   C3058
-        EXTRN   C30BE
-        EXTRN   C30CF
-        EXTRN   C314A
-        EXTRN   C3167
-        EXTRN   C3172
-        EXTRN   C3193
-        EXTRN   C31E6
-        EXTRN   C3236
-        EXTRN   C323A
-        EXTRN   C324E
-        EXTRN   C3257
-        EXTRN   C325C
-        EXTRN   J3265
-        EXTRN   C3267
-        EXTRN   J3297
-        EXTRN   C3299
-        EXTRN   C340A
-        EXTRN   C3412
-        EXTRN   C3425
-        EXTRN   C3426
-        EXTRN   C371A
-        EXTRN   C371E
-        EXTRN   C3722
-        EXTRN   C37C8
-        EXTRN   C37D7
-        EXTRN   C383F
-
-
-
-KEYWRD  MACRO   X,Y
-G       ASET    0
-Q       ASET    0
-        IRPC    D,<X>
+KEYWRD  MACRO   ?X, ?Y
+        LOCAL   G, Q
+G       DEFL    0
+Q       DEFL    0
+        IRP     ?D, <?X>
         IF      G EQ 0
-G       ASET    1
+G       DEFL    1
         ELSE
         IF      Q NE 0
         DEFB    Q
         ENDIF
-Q       ASET    "&D"
+Q       DEFL    "&?D"
         ENDIF
         ENDM
         DEFB    Q+128
-        DEFB    Y
+        DEFB    ?Y
         ENDM
 
 
-TOKEN   MACRO   X,Y
-        DEFB    "&X"+128
-        DEFB    Y
+TOKEN   MACRO   ?X, ?Y
+        DEFB    ?X+128
+        DEFB    ?Y
         ENDM
 
 
@@ -715,231 +263,231 @@ I3A3E:  DEFW    T3A72
         DEFW    T3D24
         DEFW    T3D25
 
-T3A72:  KEYWRD  <AUTO>,0A9H
-        KEYWRD  <AND>,0F6H
-        KEYWRD  <ABS>,006H
-        KEYWRD  <ATN>,00EH
-        KEYWRD  <ASC>,015H
-        KEYWRD  <ATTR$>,0E9H
+T3A72:  KEYWRD  <A,U,T,O>,0A9H
+        KEYWRD  <A,N,D>,0F6H
+        KEYWRD  <A,B,S>,006H
+        KEYWRD  <A,T,N>,00EH
+        KEYWRD  <A,S,C>,015H
+        KEYWRD  <A,T,T,R,$>,0E9H
         DEFB    0
 
-T3A88:  KEYWRD  <BASE>,0C9H
-        KEYWRD  <BSAVE>,0D0H
-        KEYWRD  <BLOAD>,0CFH
-        KEYWRD  <BEEP>,0C0H
-        KEYWRD  <BIN$>,01DH
+T3A88:  KEYWRD  <B,A,S,E>,0C9H
+        KEYWRD  <B,S,A,V,E>,0D0H
+        KEYWRD  <B,L,O,A,D>,0CFH
+        KEYWRD  <B,E,E,P>,0C0H
+        KEYWRD  <B,I,N,$>,01DH
         DEFB    0
 
-T3A9F:  KEYWRD  <CALL>,0CAH
-        KEYWRD  <CLOSE>,0B4H
-        KEYWRD  <COPY>,0D6H
-        KEYWRD  <CONT>,099H
-        KEYWRD  <CLEAR>,092H
-        KEYWRD  <CLOAD>,09BH
-        KEYWRD  <CSAVE>,09AH
-        KEYWRD  <CSRLIN>,0E8H
-        KEYWRD  <CINT>,01EH
-        KEYWRD  <CSNG>,01FH
-        KEYWRD  <CDBL>,020H
-        KEYWRD  <CVI>,028H
-        KEYWRD  <CVS>,029H
-        KEYWRD  <CVD>,02AH
-        KEYWRD  <COS>,00CH
-        KEYWRD  <CHR$>,016H
-        KEYWRD  <CIRCLE>,0BCH
-        KEYWRD  <COLOR>,0BDH
-        KEYWRD  <CLS>,09FH
-        KEYWRD  <CMD>,0D7H
+T3A9F:  KEYWRD  <C,A,L,L>,0CAH
+        KEYWRD  <C,L,O,S,E>,0B4H
+        KEYWRD  <C,O,P,Y>,0D6H
+        KEYWRD  <C,O,N,T>,099H
+        KEYWRD  <C,L,E,A,R>,092H
+        KEYWRD  <C,L,O,A,D>,09BH
+        KEYWRD  <C,S,A,V,E>,09AH
+        KEYWRD  <C,S,R,L,I,N>,0E8H
+        KEYWRD  <C,I,N,T>,01EH
+        KEYWRD  <C,S,N,G>,01FH
+        KEYWRD  <C,D,B,L>,020H
+        KEYWRD  <C,V,I>,028H
+        KEYWRD  <C,V,S>,029H
+        KEYWRD  <C,V,D>,02AH
+        KEYWRD  <C,O,S>,00CH
+        KEYWRD  <C,H,R,$>,016H
+        KEYWRD  <C,I,R,C,L,E>,0BCH
+        KEYWRD  <C,O,L,O,R>,0BDH
+        KEYWRD  <C,L,S>,09FH
+        KEYWRD  <C,M,D>,0D7H
         DEFB    0
 
-T3AF3:  KEYWRD  <DELETE>,0A8H
-        KEYWRD  <DATA>,084H
-        KEYWRD  <DIM>,086H
-        KEYWRD  <DEFSTR>,0ABH
-        KEYWRD  <DEFINT>,0ACH
-        KEYWRD  <DEFSNG>,0ADH
-        KEYWRD  <DEFDBL>,0AEH
-        KEYWRD  <DSKO$>,0D1H
-        KEYWRD  <DEF>,097H
-        KEYWRD  <DSKI$>,0EAH
-        KEYWRD  <DSKF>,026H
-        KEYWRD  <DRAW>,0BEH
+T3AF3:  KEYWRD  <D,E,L,E,T,E>,0A8H
+        KEYWRD  <D,A,T,A>,084H
+        KEYWRD  <D,I,M>,086H
+        KEYWRD  <D,E,F,S,T,R>,0ABH
+        KEYWRD  <D,E,F,I,N,T>,0ACH
+        KEYWRD  <D,E,F,S,N,G>,0ADH
+        KEYWRD  <D,E,F,D,B,L>,0AEH
+        KEYWRD  <D,S,K,O,$>,0D1H
+        KEYWRD  <D,E,F>,097H
+        KEYWRD  <D,S,K,I,$>,0EAH
+        KEYWRD  <D,S,K,F>,026H
+        KEYWRD  <D,R,A,W>,0BEH
         DEFB    0
 
-T3B2E:  KEYWRD  <ELSE>,0A1H
-        KEYWRD  <END>,081H
-        KEYWRD  <ERASE>,0A5H
-        KEYWRD  <ERROR>,0A6H
-        KEYWRD  <ERL>,0E1H
-        KEYWRD  <ERR>,0E2H
-        KEYWRD  <EXP>,00BH
-        KEYWRD  <EOF>,02BH
-        KEYWRD  <EQV>,0F9H
+T3B2E:  KEYWRD  <E,L,S,E>,0A1H
+        KEYWRD  <E,N,D>,081H
+        KEYWRD  <E,R,A,S,E>,0A5H
+        KEYWRD  <E,R,R,O,R>,0A6H
+        KEYWRD  <E,R,L>,0E1H
+        KEYWRD  <E,R,R>,0E2H
+        KEYWRD  <E,X,P>,00BH
+        KEYWRD  <E,O,F>,02BH
+        KEYWRD  <E,Q,V>,0F9H
         DEFB    0
 
-T3B4F:  KEYWRD  <FOR>,082H
-        KEYWRD  <FIELD>,0B1H
-        KEYWRD  <FILES>,0B7H
-        KEYWRD  <FN>,0DEH
-        KEYWRD  <FRE>,00FH
-        KEYWRD  <FIX>,021H
-        KEYWRD  <FPOS>,027H
+T3B4F:  KEYWRD  <F,O,R>,082H
+        KEYWRD  <F,I,E,L,D>,0B1H
+        KEYWRD  <F,I,L,E,S>,0B7H
+        KEYWRD  <F,N>,0DEH
+        KEYWRD  <F,R,E>,00FH
+        KEYWRD  <F,I,X>,021H
+        KEYWRD  <F,P,O,S>,027H
         DEFB    0
 
-T3B69:  KEYWRD  <GOTO>,089H
-        KEYWRD  <GO TO>,089H
-        KEYWRD  <GOSUB>,08DH
-        KEYWRD  <GET>,0B2H
+T3B69:  KEYWRD  <G,O,T,O>,089H
+        KEYWRD  <G,O,' ',T,O>,089H
+        KEYWRD  <G,O,S,U,B>,08DH
+        KEYWRD  <G,E,T>,0B2H
         DEFB    0
 
-T3B7B:  KEYWRD  <HEX$>,01BH
+T3B7B:  KEYWRD  <H,E,X,$>,01BH
         DEFB    0
 
-T3B80:  KEYWRD  <INPUT>,085H
-        KEYWRD  <IF>,08BH
-        KEYWRD  <INSTR>,0E5H
-        KEYWRD  <INT>,005H
-        KEYWRD  <INP>,010H
-        KEYWRD  <IMP>,0FAH
-        KEYWRD  <INKEY$>,0ECH
-        KEYWRD  <IPL>,0D5H
+T3B80:  KEYWRD  <I,N,P,U,T>,085H
+        KEYWRD  <I,F>,08BH
+        KEYWRD  <I,N,S,T,R>,0E5H
+        KEYWRD  <I,N,T>,005H
+        KEYWRD  <I,N,P>,010H
+        KEYWRD  <I,M,P>,0FAH
+        KEYWRD  <I,N,K,E,Y,$>,0ECH
+        KEYWRD  <I,P,L>,0D5H
         DEFB    0
 
 T3B9F:  DEFB    0
 
-T3BA0:  KEYWRD  <KILL>,0D4H
-        KEYWRD  <KEY>,0CCH
+T3BA0:  KEYWRD  <K,I,L,L>,0D4H
+        KEYWRD  <K,E,Y>,0CCH
         DEFB    0
 
-T3BA8:  KEYWRD  <LPRINT>,09DH
-        KEYWRD  <LLIST>,09EH
-        KEYWRD  <LPOS>,01CH
-        KEYWRD  <LET>,088H
-        KEYWRD  <LOCATE>,0D8H
-        KEYWRD  <LINE>,0AFH
-        KEYWRD  <LOAD>,0B5H
-        KEYWRD  <LSET>,0B8H
-        KEYWRD  <LIST>,093H
-        KEYWRD  <LFILES>,0BBH
-        KEYWRD  <LOG>,00AH
-        KEYWRD  <LOC>,02CH
-        KEYWRD  <LEN>,012H
-        KEYWRD  <LEFT$>,001H
-        KEYWRD  <LOF>,02DH
+T3BA8:  KEYWRD  <L,P,R,I,N,T>,09DH
+        KEYWRD  <L,L,I,S,T>,09EH
+        KEYWRD  <L,P,O,S>,01CH
+        KEYWRD  <L,E,T>,088H
+        KEYWRD  <L,O,C,A,T,E>,0D8H
+        KEYWRD  <L,I,N,E>,0AFH
+        KEYWRD  <L,O,A,D>,0B5H
+        KEYWRD  <L,S,E,T>,0B8H
+        KEYWRD  <L,I,S,T>,093H
+        KEYWRD  <L,F,I,L,E,S>,0BBH
+        KEYWRD  <L,O,G>,00AH
+        KEYWRD  <L,O,C>,02CH
+        KEYWRD  <L,E,N>,012H
+        KEYWRD  <L,E,F,T,$>,001H
+        KEYWRD  <L,O,F>,02DH
         DEFB    0
 
-T3BE8:  KEYWRD  <MOTOR>,0CEH
-        KEYWRD  <MERGE>,0B6H
-        KEYWRD  <MOD>,0FBH
-        KEYWRD  <MKI$>,02EH
-        KEYWRD  <MKS$>,02FH
-        KEYWRD  <MKD$>,030H
-        KEYWRD  <MID$>,003H
-        KEYWRD  <MAX>,0CDH
+T3BE8:  KEYWRD  <M,O,T,O,R>,0CEH
+        KEYWRD  <M,E,R,G,E>,0B6H
+        KEYWRD  <M,O,D>,0FBH
+        KEYWRD  <M,K,I,$>,02EH
+        KEYWRD  <M,K,S,$>,02FH
+        KEYWRD  <M,K,D,$>,030H
+        KEYWRD  <M,I,D,$>,003H
+        KEYWRD  <M,A,X>,0CDH
         DEFB    0
 
-T3C09:  KEYWRD  <NEXT>,083H
-        KEYWRD  <NAME>,0D3H
-        KEYWRD  <NEW>,094H
-        KEYWRD  <NOT>,0E0H
+T3C09:  KEYWRD  <N,E,X,T>,083H
+        KEYWRD  <N,A,M,E>,0D3H
+        KEYWRD  <N,E,W>,094H
+        KEYWRD  <N,O,T>,0E0H
         DEFB    0
 
-T3C18:  KEYWRD  <OPEN>,0B0H
-        KEYWRD  <OUT>,09CH
-        KEYWRD  <ON>,095H
-        KEYWRD  <OR>,0F7H
-        KEYWRD  <OCT$>,01AH
-        KEYWRD  <OFF>,0EBH
+T3C18:  KEYWRD  <O,P,E,N>,0B0H
+        KEYWRD  <O,U,T>,09CH
+        KEYWRD  <O,N>,095H
+        KEYWRD  <O,R>,0F7H
+        KEYWRD  <O,C,T,$>,01AH
+        KEYWRD  <O,F,F>,0EBH
         DEFB    0
 
-T3C2B:  KEYWRD  <PRINT>,091H
-        KEYWRD  <PUT>,0B3H
-        KEYWRD  <POKE>,098H
-        KEYWRD  <POS>,011H
-        KEYWRD  <PEEK>,017H
-        KEYWRD  <PSET>,0C2H
-        KEYWRD  <PRESET>,0C3H
-        KEYWRD  <POINT>,0EDH
-        KEYWRD  <PAINT>,0BFH
-        KEYWRD  <PDL>,024H
-        KEYWRD  <PAD>,025H
-        KEYWRD  <PLAY>,0C1H
+T3C2B:  KEYWRD  <P,R,I,N,T>,091H
+        KEYWRD  <P,U,T>,0B3H
+        KEYWRD  <P,O,K,E>,098H
+        KEYWRD  <P,O,S>,011H
+        KEYWRD  <P,E,E,K>,017H
+        KEYWRD  <P,S,E,T>,0C2H
+        KEYWRD  <P,R,E,S,E,T>,0C3H
+        KEYWRD  <P,O,I,N,T>,0EDH
+        KEYWRD  <P,A,I,N,T>,0BFH
+        KEYWRD  <P,D,L>,024H
+        KEYWRD  <P,A,D>,025H
+        KEYWRD  <P,L,A,Y>,0C1H
         DEFB    0
 
 T3C5D:  DEFB    0
 
-T3C5E:  KEYWRD  <RETURN>,08EH
-        KEYWRD  <READ>,087H
-        KEYWRD  <RUN>,08AH
-        KEYWRD  <RESTORE>,08CH
-        KEYWRD  <REM>,08FH
-        KEYWRD  <RESUME>,0A7H
-        KEYWRD  <RSET>,0B9H
-        KEYWRD  <RIGHT$>,002H
-        KEYWRD  <RND>,008H
-        KEYWRD  <RENUM>,0AAH
+T3C5E:  KEYWRD  <R,E,T,U,R,N>,08EH
+        KEYWRD  <R,E,A,D>,087H
+        KEYWRD  <R,U,N>,08AH
+        KEYWRD  <R,E,S,T,O,R,E>,08CH
+        KEYWRD  <R,E,M>,08FH
+        KEYWRD  <R,E,S,U,M,E>,0A7H
+        KEYWRD  <R,S,E,T>,0B9H
+        KEYWRD  <R,I,G,H,T,$>,002H
+        KEYWRD  <R,N,D>,008H
+        KEYWRD  <R,E,N,U,M>,0AAH
         DEFB    0
 
-T3C8E:  KEYWRD  <SCREEN>,0C5H
-        KEYWRD  <SPRITE>,0C7H
-        KEYWRD  <STOP>,090H
-        KEYWRD  <SWAP>,0A4H
-        KEYWRD  <SET>,0D2H
-        KEYWRD  <SAVE>,0BAH
-        KEYWRD  <SPC(>,0DFH
-        KEYWRD  <STEP>,0DCH
-        KEYWRD  <SGN>,004H
-        KEYWRD  <SQR>,007H
-        KEYWRD  <SIN>,009H
-        KEYWRD  <STR$>,013H
-        KEYWRD  <STRING$>,0E3H
-        KEYWRD  <SPACE$>,019H
-        KEYWRD  <SOUND>,0C4H
-        KEYWRD  <STICK>,022H
-        KEYWRD  <STRIG>,023H
+T3C8E:  KEYWRD  <S,C,R,E,E,N>,0C5H
+        KEYWRD  <S,P,R,I,T,E>,0C7H
+        KEYWRD  <S,T,O,P>,090H
+        KEYWRD  <S,W,A,P>,0A4H
+        KEYWRD  <S,E,T>,0D2H
+        KEYWRD  <S,A,V,E>,0BAH
+        KEYWRD  <S,P,C,(>,0DFH
+        KEYWRD  <S,T,E,P>,0DCH
+        KEYWRD  <S,G,N>,004H
+        KEYWRD  <S,Q,R>,007H
+        KEYWRD  <S,I,N>,009H
+        KEYWRD  <S,T,R,$>,013H
+        KEYWRD  <S,T,R,I,N,G,$>,0E3H
+        KEYWRD  <S,P,A,C,E,$>,019H
+        KEYWRD  <S,O,U,N,D>,0C4H
+        KEYWRD  <S,T,I,C,K>,022H
+        KEYWRD  <S,T,R,I,G>,023H
         DEFB    0
 
-T3CDB:  KEYWRD  <THEN>,0DAH
-        KEYWRD  <TRON>,0A2H
-        KEYWRD  <TROFF>,0A3H
-        KEYWRD  <TAB(>,0DBH
-        KEYWRD  <TO>,0D9H
-        KEYWRD  <TIME>,0CBH
-        KEYWRD  <TAN>,00DH
+T3CDB:  KEYWRD  <T,H,E,N>,0DAH
+        KEYWRD  <T,R,O,N>,0A2H
+        KEYWRD  <T,R,O,F,F>,0A3H
+        KEYWRD  <T,A,B,(>,0DBH
+        KEYWRD  <T,O>,0D9H
+        KEYWRD  <T,I,M,E>,0CBH
+        KEYWRD  <T,A,N>,00DH
         DEFB    0
 
-T3CF6:  KEYWRD  <USING>,0E4H
-        KEYWRD  <USR>,0DDH
+T3CF6:  KEYWRD  <U,S,I,N,G>,0E4H
+        KEYWRD  <U,S,R>,0DDH
         DEFB    0
 
-T3CFF:  KEYWRD  <VAL>,014H
-        KEYWRD  <VARPTR>,0E7H
-        KEYWRD  <VDP>,0C8H
-        KEYWRD  <VPOKE>,0C6H
-        KEYWRD  <VPEEK>,018H
+T3CFF:  KEYWRD  <V,A,L>,014H
+        KEYWRD  <V,A,R,P,T,R>,0E7H
+        KEYWRD  <V,D,P>,0C8H
+        KEYWRD  <V,P,O,K,E>,0C6H
+        KEYWRD  <V,P,E,E,K>,018H
         DEFB    0
 
-T3D16:  KEYWRD  <WIDTH>,0A0H
-        KEYWRD  <WAIT>,096H
+T3D16:  KEYWRD  <W,I,D,T,H>,0A0H
+        KEYWRD  <W,A,I,T>,096H
         DEFB    0
 
-T3D20:  KEYWRD  <XOR>,0F8H
+T3D20:  KEYWRD  <X,O,R>,0F8H
         DEFB    0
 
 T3D24:  DEFB    0
 
 T3D25:  DEFB    0
 
-I3D26:  TOKEN   !+,0F1H
-        TOKEN   !-,0F2H
-        TOKEN   !*,0F3H
-        TOKEN   !/,0F4H
-        TOKEN   !^,0F5H
-        TOKEN   !\,0FCH
-        TOKEN   !',0E6H
-        TOKEN   !>,0EEH
-        TOKEN   !=,0EFH
-        TOKEN   !<,0F0H
+I3D26:  TOKEN   "+",0F1H
+        TOKEN   "-",0F2H
+        TOKEN   "*",0F3H
+        TOKEN   "/",0F4H
+        TOKEN   "^",0F5H
+        TOKEN   "\\",0FCH
+        TOKEN   "'",0E6H
+        TOKEN   ">",0EEH
+        TOKEN   "=",0EFH
+        TOKEN   "<",0F0H
         DEFB    0
 
 I3D3B:  DEFB    079H                    ; +
@@ -12017,7 +11565,7 @@ C7AA0:  RST     SYNCHR
 
 J7AAF:  DEC     B                       ; PUT ?
         JP      M,C475A                 ; nope, illegal function call
-        ld      a,(scrmod)
+        ld      a,(SCRMOD)
 J7AB6:  AND     A
         JP      Z,C475A                 ; illegal function call
         RST     CHRGTR                  ; get next BASIC character
@@ -12837,7 +12385,8 @@ CLPRIM: OUT     (0A8H),A
         EX      AF,AF'
         RET
 
-CLPRM1: JP      (IX)
+CLPRM1:
+        JP      (IX)
 
 USRTAB: defw    C475A                   ; illegal function call
         defw    C475A                   ; illegal function call
@@ -12977,8 +12526,4 @@ J7FD9:  LD      (D.FFFF),A
         RET
 
         ENDIF
-
-        DEFS    08000H-$,0              ; unused space
-
-        END
 
