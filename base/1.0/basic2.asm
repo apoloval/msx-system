@@ -4581,7 +4581,7 @@ J55F8:  POP     HL
 
 J5600:
 
-        IFNDEF  NDEVFIX
+        IF      NDEVFIX EQ 0
 ;
 ; #####################
 ; early MSX 1 version code:
@@ -12488,7 +12488,7 @@ ENDPRG: defb    ':'
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
-        IFDEF   NDEVFIX
+        IF      NDEVFIX EQ 1
 
 ; bugfix for zero length devicename
 
@@ -12500,7 +12500,7 @@ C7FB7:  LD      DE,PROCNM
 
         ENDIF
 
-        IFDEF   SLOTFIX
+        IF      SLOTFIX EQ 1
 
 M7FBE:  CALL    C7FCB
         LD      E,(HL)
