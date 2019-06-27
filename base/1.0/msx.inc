@@ -35,7 +35,7 @@ SLOTFIX EQU     0
 ;               9 = Korea
 ;               10 = Russia
 
-CNTRY   EQU     2
+CNTRY   EQU     1
 
 
 ;       symbols used to procedure alternate code
