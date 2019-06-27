@@ -12327,7 +12327,7 @@ J7E72:  ADD     HL,DE
         ADD     HL,DE
         EX      DE,HL
         PUSH    DE                      ; start of i/o channel buffers
-        LD      BC,-2+256+9+2
+        LD      BC,265                  ; -2+256+9+2
 J7EC2:  LD      (HL),E
         INC     HL
         LD      (HL),D
