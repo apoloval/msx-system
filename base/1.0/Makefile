@@ -5,13 +5,12 @@ targets=$(patsubst %,target/%,$(roms))
 
 all: $(targets)
 
-target:
+target/msx.rom:
 	mkdir -p target/
-
-target/msx.rom: target
-	pasmo -I ../basekey/ -I ../basechr msx.asm target/msx.rom
+	pasmo -I ../basekey/ -I ../basechr msx.asm target/msx.rom target/msx.symbol
+	hexyl --color never target/msx.rom > target/msx.rom.hex
 
 clean:
-	rm -rf target/
+	rm -rf $(targets)
 
 .PHONY: all clean
