@@ -1,6 +1,6 @@
 ; *************************************
 ; BEGIN OF FRENCH KEYBOARD HANDLER
-; ************************************* 
+; *************************************
 
 ;
 I0DA5:
@@ -166,7 +166,7 @@ I0F1F:	DEFB	030H,LOW C0F83
 
 C0F36:	LD	HL,CAPST
         LD	A,(HL)
-        CPL	
+        CPL
         LD	(HL),A			; toggle CAPS status
         CPL				; adjust for CHGCAP and change CAPS led
 
@@ -180,7 +180,7 @@ K.BCAP:	AND	A
         JR	Z,J0F43
         INC	A
 J0F43:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler STOP key
 ;	Inputs		-
@@ -203,7 +203,7 @@ J0F50:	LD	(INTFLG),A
 
 C0F55:	LD	HL,(PUTPNT)
         LD	(HL),A			; put in keyboardbuffer
-        CALL	C105B			; reset DEAD status, next postition in keyboardbuffer with roundtrip
+        CALL	C1069			; reset DEAD status, next postition in keyboardbuffer with roundtrip
         LD	A,(GETPNT)
         CP	L			; keyboard buffer full ?
         RET	Z			; yep, quit
@@ -238,7 +238,7 @@ K.BSND:	AND	A
         JR	Z,J0F80
         INC	A
 J0F80:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler scancodes 000H-02FH
 ;	Inputs		C = scancode (000H-02FH)
@@ -273,9 +273,9 @@ J0FAA:	RRA
         CPL
         NOP
         NOP				; patch from international keyboard handler
-        RRA	
-        RRA	
-        RLCA	
+        RRA
+        RRA
+        RLCA
         AND	03H			; GRAPH and SHIFT status
         BIT	1,A
         JR	NZ,J0FC3		; GRAPH pressed, ignore CODE key, use GRAPH and SHIFT
@@ -399,7 +399,7 @@ C1069:	XOR	A
         JR	C10C2
 
 ;	Table	valid DEAD letters
-        
+
 I106F:	DEFB	"a" ,"e" ,"i" ,"o" ,"u" ,"y" ," "
 
 ;	Table	translation DEAD

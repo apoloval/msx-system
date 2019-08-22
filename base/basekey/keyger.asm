@@ -2,7 +2,7 @@
 ; BEGIN OF GERMAN KEYBOARD HANDLER
 ; *************************************
 ;
-I0DA5:
+D0DA5:
 
 ; Normal layout
 
@@ -135,7 +135,7 @@ C0F06:	LD	A,(NEWKEY+6)
 C0F10:	CALL	H.KEYA
         LD	E,A
         LD	D,0
-        LD	HL,D1033-030H
+        LD	HL,I1038-030H
         ADD	HL,DE
         LD	A,(HL)
         AND	A			; keycode for key ?
@@ -163,7 +163,7 @@ I0F1F:	DEFB	030H,LOW C0F83
 
 C0F36:	LD	HL,CAPST
         LD	A,(HL)
-        CPL	
+        CPL
         LD	(HL),A			; toggle CAPS status
         CPL				; adjust for CHGCAP and change CAPS led
 
@@ -177,7 +177,7 @@ K.BCAP:	AND	A
         JR	Z,J0F43
         INC	A
 J0F43:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler STOP key
 ;	Inputs		-
@@ -200,7 +200,7 @@ J0F50:	LD	(INTFLG),A
 
 C0F55:	LD	HL,(PUTPNT)
         LD	(HL),A			; put in keyboardbuffer
-        CALL	C105B			; reset DEAD status, next postition in keyboardbuffer with roundtrip
+        CALL	C1060			; reset DEAD status, next postition in keyboardbuffer with roundtrip
         LD	A,(GETPNT)
         CP	L			; keyboard buffer full ?
         RET	Z			; yep, quit
@@ -235,7 +235,7 @@ K.BSND:	AND	A
         JR	Z,J0F80
         INC	A
 J0F80:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler scancodes 000H-02FH
 ;	Inputs		C = scancode (000H-02FH)
@@ -247,7 +247,7 @@ C0F83:	LD	A,(NEWKEY+6)
         RRA				; CTRL status in Cx
         PUSH	AF
         LD	A,E
-        CPL	
+        CPL
         NOP
         NOP				; removed code for CTRL key (was in INT keyboard)
         RRA
@@ -337,7 +337,7 @@ J0FF5:	LD	B,0			; German keyboard extra instruction
         OR	20H			; lowercase
         LD	HL,I1066+7-1
         LD	C,7
-        CPDR	
+        CPDR
         LD	A,D
         JR	NZ,J0FC1		; not a vowel, no accent
         INC	HL
@@ -394,7 +394,7 @@ C1060:	XOR	A
         JR	C10C2
 
 ;	Table	valid DEAD letters
- 
+
 I1066:	DEFB	"a" ,"e" ,"i" ,"o" ,"u" ,"y" ," "
 
 I106D:	DEFB	0A0H,082H,0A1H,0A2H,0A3H,079H,027H		; DEAD
@@ -438,7 +438,7 @@ J1B96:	LD	A,(NEWKEY+6)
         BIT	4,E
         JR	NZ,J1BA2		; CODE not pressed, use SHIFT
         AND	0FDH			; reset b1
-J1BA2:	CPL	
+J1BA2:	CPL
         INC	A
         LD	(KANAST),A		; set DEAD status (001H-004H)
         JP	J0F64			; make keyclick
@@ -450,5 +450,3 @@ J1BA2:	CPL
 ; *************************************
 ; END OF GERMAN KEYBOARD HANDLER
 ; *************************************
-
-        END

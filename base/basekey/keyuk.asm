@@ -2,7 +2,7 @@
 ; BEGIN OF UK KEYBOARD HANDLER
 ; *************************************
 
-I$0DA5:	DEFB	30H,31H,32H,33H,34H,35H,36H,37H
+D0DA5:	DEFB	30H,31H,32H,33H,34H,35H,36H,37H
         DEFB	38H,39H,2DH,3DH,5CH,5BH,5DH,3BH
         DEFB	27H,60H,2CH,2EH,2FH,9CH,61H,62H
         DEFB	63H,64H,65H,66H,67H,68H,69H,6AH
@@ -137,7 +137,7 @@ J0F1F:	LD	A,(NEWKEY+6)
         BIT	4,E
         JR	NZ,J0F2B	; CODE not pressed, use SHIFT
 J0F29:	AND	0FDH		; reset b1
-J0F2B:	CPL	
+J0F2B:	CPL
         INC	A
         LD	(KANAST),A	; set DEAD status (001H-004H)
         JR	J0F64		; make keyclick
@@ -155,7 +155,7 @@ J0F2B:	CPL
 
 C0F36:	LD	HL,CAPST
         LD	A,(HL)
-        CPL	
+        CPL
         LD	(HL),A			; toggle CAPS status
         CPL				; adjust for CHGCAP and change CAPS led
 
@@ -169,7 +169,7 @@ K.BCAP:	AND	A
         JR	Z,J0F43
         INC	A
 J0F43:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler STOP key
 ;	Inputs		-
@@ -227,7 +227,7 @@ K.BSND:	AND	A
         JR	Z,J0F80
         INC	A
 J0F80:	OUT	(0ABH),A
-        RET	
+        RET
 
 ;	Subroutine	handler scancodes 000H-02FH
 ;	Inputs		C = scancode (000H-02FH)
@@ -239,7 +239,7 @@ C0F83:	LD	A,(NEWKEY+6)
         RRA				; CTRL status in Cx
         PUSH	AF
         LD	A,E
-        CPL	
+        CPL
         JR	NC,J0F9E		; CTRL pressed, ignore GRAPH and CODE key, use only SHIFT
         RRA
         RRA
@@ -426,8 +426,6 @@ I$1B97:	DEFB	030H,LOW C0F83		; scancodes 000H-02FH
         DEFB	041H,LOW C0F10		; BS,SELECT,RETURN,SPACE
         DEFB	042H,LOW C0F06		; HOME
         DEFB	0FFH,LOW C0F10		; ins,del,left,up,down,right, numeric pad
-
-        END
 
 ; *************************************
 ; END OF UK KEYBOARD HANDLER
