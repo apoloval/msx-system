@@ -2114,49 +2114,49 @@ A0D97:  rra                             ; this key being pressed ?
 
         IF      KEYTYP EQ 0
 
-        INCLUDE KEYJAP.ASM
+        INCLUDE "keyjap.asm"
 
         ENDIF
 
 
         IF      KEYTYP EQ 1
 
-        INCLUDE KEYINT.ASM
+        INCLUDE "keyint.asm"
 
         ENDIF
 
 
         IF      KEYTYP EQ 2
 
-        INCLUDE KEYFR.ASM
+        INCLUDE "keyfr.asm"
 
         ENDIF
 
 
         IF      KEYTYP EQ 3
 
-        INCLUDE KEYUK.ASM
+        INCLUDE "keyuk.asm"
 
         ENDIF
 
 
         IF      KEYTYP EQ 4
 
-        INCLUDE KEYGER.ASM
+        INCLUDE "keyger.asm"
 
         ENDIF
 
 
         IF      KEYTYP EQ 5
 
-        INCLUDE KEYRUS.ASM
+        INCLUDE "keyrus.asm"
 
         ENDIF
 
 
         IF      KEYTYP EQ 6
 
-        INCLUDE KEYSPA.ASM
+        INCLUDE "keyspa.asm"
 
         ENDIF
 
@@ -3875,35 +3875,35 @@ T1BBF:
 
         IF      CNTRY EQ 9
 
-        INCLUDE CHRKOR.ASM
+        INCLUDE "chrkor.asm"
 
         ENDIF
 
 
         IF      CNTRY EQ 0
 
-        INCLUDE CHRJAPV2.ASM
+        INCLUDE "chrjapv2.asm"
 
         ENDIF
 
 
         IF      CNTRY EQ 10
 
-        INCLUDE CHRRUS.ASM
+        INCLUDE "chrrus.asm"
 
         ENDIF
 
 
         IF      CNTRY EQ 5
 
-        INCLUDE CHRGER.ASM
+        INCLUDE "chrger.asm"
 
         ENDIF
 
 
         IF      (CNTRY NE 9) AND (CNTRY NE 0) AND (CNTRY NE 10) AND (CNTRY NE 5)
 
-        INCLUDE CHRINT.ASM
+        INCLUDE "chrint.asm"
 
         ENDIF
 
