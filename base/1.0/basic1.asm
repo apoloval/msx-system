@@ -11,8 +11,105 @@
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
+        INCLUDE "const.def"
+        INCLUDE "msx.def"
 
-        ORG     268CH
+; Define some RST vectors
+        DEFC    CHRGTR = $10
+        DEFC    DCOMPR = $20
+        DEFC    GETYPR = $28
+
+; Declare public symbols used from basic2.asm
+        PUBLIC  C268C
+        PUBLIC  C2697
+        PUBLIC  C269A
+        PUBLIC  C27E6
+        PUBLIC  C289F
+        PUBLIC  C2993
+        PUBLIC  C29AC
+        PUBLIC  C29FB
+        PUBLIC  C2A14
+        PUBLIC  C2A72
+        PUBLIC  C2AFF
+        PUBLIC  C2B4A
+        PUBLIC  C2BDF
+        PUBLIC  C2C24
+        PUBLIC  C2E71
+        PUBLIC  C2E82
+        PUBLIC  C2E86
+        PUBLIC  C2E97
+        PUBLIC  C2E9A
+        PUBLIC  C2EA1
+        PUBLIC  C2EAB
+        PUBLIC  C2EB1
+        PUBLIC  C2EBE
+        PUBLIC  C2EC1
+        PUBLIC  C2ECC
+        PUBLIC  C2ED6
+        PUBLIC  C2EDF
+        PUBLIC  C2EE1
+        PUBLIC  C2EE8
+        PUBLIC  C2EEF
+        PUBLIC  C2EF3
+        PUBLIC  C2EF7
+        PUBLIC  C2F08
+        PUBLIC  C2F0D
+        PUBLIC  C2F10
+        PUBLIC  C2F21
+        PUBLIC  C2F4D
+        PUBLIC  C2F5C
+        PUBLIC  C2F83
+        PUBLIC  C2F8A
+        PUBLIC  C2F99
+        PUBLIC  C2FB2
+        PUBLIC  C2FCB
+        PUBLIC  C303A
+        PUBLIC  C3058
+        PUBLIC  C30BE
+        PUBLIC  C30CF
+        PUBLIC  C314A
+        PUBLIC  C3167
+        PUBLIC  C3172
+        PUBLIC  C3193
+        PUBLIC  C31E6
+        PUBLIC  C3236
+        PUBLIC  C323A
+        PUBLIC  C324E
+        PUBLIC  C3257
+        PUBLIC  C325C
+        PUBLIC  C3267
+        PUBLIC  C3299
+        PUBLIC  C340A
+        PUBLIC  C3412
+        PUBLIC  C3425
+        PUBLIC  C3426
+        PUBLIC  C371A
+        PUBLIC  C371E
+        PUBLIC  C3722
+        PUBLIC  C37C8
+        PUBLIC  C37D7
+        PUBLIC  C383F
+        PUBLIC  I2D1B
+        PUBLIC  J2E79
+        PUBLIC  J3265
+        PUBLIC  J3297
+
+; Declared external references to the basic2.asm program
+        EXTERN  C475A
+        EXTERN  C4EB8
+        EXTERN  C4F47
+        EXTERN  C5439
+        EXTERN  C6678
+        EXTERN  I3FD2
+        EXTERN  I6677
+        EXTERN  J4058
+        EXTERN  J4067
+        EXTERN  J406D
+        EXTERN  J601D
+        EXTERN  J66A7
+
+; Program start
+;       ORG     $268C
 
 ;       Subroutine      DECSUB (dbl subtract)
 ;       Inputs          (DAC) = first operand, (ARG) = second operand
@@ -22,7 +119,7 @@ C268C:  LD      HL,ARG
         LD      A,(HL)
         OR      A
         RET     Z                       ; 2nd operand zero, quit
-        XOR     80H
+        XOR     $80
         LD      (HL),A                  ; negate 2nd operand
         JR      J26A0                   ; and do ADD
 
@@ -40,13 +137,13 @@ C269A:  LD      HL,ARG
         LD      A,(HL)
         OR      A
         RET     Z                       ; 2nd operand zero, quit
-J26A0:  AND     7FH
+J26A0:  AND     $7F
         LD      B,A
         LD      DE,DAC
         LD      A,(DE)
         OR      A
         JP      Z,C2F05                 ; DAC = ARG and quit
-        AND     7FH
+        AND     $7F
         SUB     B
         JR      NC,J26C1
         CPL
@@ -97,7 +194,7 @@ J26F7:  CALL    C276B
 ;       Outputs         ________________________
 
 C26FA:  LD      HL,DAC+1
-        LD      BC,0800H
+        LD      BC,$0800
 J2700:  LD      A,(HL)
         OR      A
         JR      NZ,J270C
@@ -107,7 +204,7 @@ J2700:  LD      A,(HL)
         DJNZ    J2700
         JP      J2E7D                   ; DAC = 0 and quit
 
-J270C:  AND     0F0H
+J270C:  AND     $F0
         JR      NZ,J2716
         PUSH    HL
         CALL    C2797
@@ -152,7 +249,7 @@ C273C:  LD      HL,DAC+8
 ;       Outputs         ________________________
 
 C2741:  LD      A,(HL)
-        CP      50H
+        CP      $50
         RET     C
         DEC     HL
         XOR     A
@@ -168,7 +265,7 @@ J2748:  ADC     A,(HL)
         XOR     (HL)
         JP      M,J4067                 ; overflow error
         INC     HL
-        LD      (HL),10H
+        LD      (HL),$10
         RET
 
 ;       Subroutine      __________________________
@@ -199,7 +296,7 @@ J2762:  LD      A,(DE)
 
 C276B:  LD      HL,ARG+8
         LD      A,(HL)
-        CP      50H
+        CP      $50
         JR      NZ,J2774
         INC     (HL)
 J2774:  LD      DE,DAC+8
@@ -215,12 +312,12 @@ J277A:  LD      A,(DE)
         RET     NC
         EX      DE,HL
         LD      A,(HL)
-        XOR     80H
+        XOR     $80
         LD      (HL),A
         LD      HL,DAC+8
         LD      B,8
         XOR     A
-J278E:  LD      A,00H
+J278E:  LD      A,$0
         SBC     A,(HL)
         DAA
         LD      (HL),A
@@ -259,7 +356,7 @@ C27A3:  OR      A
         CPL
         INC     A
         LD      C,A
-        LD      B,0FFH
+        LD      B,$FF
         LD      DE,7
         ADD     HL,DE
         LD      D,H
@@ -269,7 +366,7 @@ C27A3:  OR      A
         ADD     A,C
         LD      C,A
         PUSH    BC
-        LD      B,00H
+        LD      B,$0
         LDDR
         POP     BC
         POP     AF
@@ -320,23 +417,23 @@ C27E6:  CALL    C2E71                   ; get sign DAC
         LD      B,A
         LD      HL,DAC
         XOR     (HL)
-        AND     80H
+        AND     $80
         LD      C,A
         RES     7,B
         LD      A,(HL)
-        AND     7FH
+        AND     $7F
         ADD     A,B
         LD      B,A
-        LD      (HL),00H
-        AND     0C0H
+        LD      (HL),$0
+        AND     $C0
         RET     Z
-        CP      0C0H
+        CP      $C0
         JR      NZ,J280C
         JP      J4067                   ; overflow error
 
 J280C:  LD      A,B
-        ADD     A,40H
-        AND     7FH
+        ADD     A,$40
+        AND     $7F
         RET     Z
         OR      C
         DEC     HL
@@ -400,11 +497,11 @@ J2863:  PUSH    AF
         POP     AF
         JR      J285D
 
-J2871:  LD      B,0FH
+J2871:  LD      B,$F
         LD      DE,DAC+14
         LD      HL,DAC+15
         CALL    C2EFE
-        LD      (HL),00H
+        LD      (HL),$0
         POP     DE
         DEC     C
         JR      NZ,J2852
@@ -449,30 +546,30 @@ C289F:  LD      A,(ARG)
         OR      A
         JP      Z,J2E7D                 ; DAC = 0 and quit
         XOR     B
-        AND     80H
+        AND     $80
         LD      C,A
         RES     7,B
         LD      A,(HL)
-        AND     7FH
+        AND     $7F
         SUB     B
         LD      B,A
         RRA
         XOR     B
-        AND     40H
-        LD      (HL),00H
+        AND     $40
+        LD      (HL),$0
         JR      Z,J28C9
         LD      A,B
-        AND     80H
+        AND     $80
         RET     NZ
 J28C6:  JP      J4067                   ; overflow error
 
 J28C9:  LD      A,B
-        ADD     A,41H
-        AND     7FH
+        ADD     A,$41
+        AND     $7F
         LD      (HL),A
         JR      Z,J28C6
         OR      C
-        LD      (HL),00H
+        LD      (HL),$0
         DEC     HL
         LD      (HL),A
         LD      DE,DAC+7
@@ -490,14 +587,14 @@ J28E6:  LD      (DECTM2),HL
         LD      A,B
         LD      (DECCNT),A
         LD      HL,HOLD8+56
-J28F4:  LD      B,0FH
+J28F4:  LD      B,$F
 J28F6:  PUSH    HL
         PUSH    BC
         LD      HL,(DECTM2)
         EX      DE,HL
         LD      HL,(DECTMP)
         LD      A,(DECCNT)
-        LD      C,0FFH
+        LD      C,$FF
 J2904:  INC     C
         LD      B,A
         PUSH    HL
@@ -531,8 +628,8 @@ J2925:  LD      A,C
         SRL     B
         INC     B
         LD      E,B
-        LD      D,00H
-        LD      HL,0F7F5H
+        LD      D,$0
+        LD      HL,$F7F5
         ADD     HL,DE
         CALL    C279A
         POP     BC
@@ -541,7 +638,7 @@ J2925:  LD      A,C
         INC     C
         DEC     C
         JR      NZ,J2973
-        CP      0FH
+        CP      $F
         JR      Z,J2964
         RRCA
         RLCA
@@ -606,7 +703,7 @@ J2985:  LD      HL,DAC+8
 C2993:  LD      HL,I2D63
         CALL    C2C3B                   ; DAC = DAC * 0.15915494309190
         LD      A,(DAC)
-        AND     7FH
+        AND     $7F
         LD      (DAC),A
         LD      HL,I2D23
         CALL    C2C32                   ; DAC = DAC - 0.25
@@ -628,12 +725,12 @@ J29B2:  LD      A,(DAC)
         CALL    C2CE1                   ; pop DAC
         CALL    C268C                   ; DAC - ARG
         LD      A,(DAC)
-        CP      40H
+        CP      $40
         JP      C,J29F5
         LD      A,(DAC+1)
-        CP      25H
+        CP      $25
         JP      C,J29F5
-        CP      75H
+        CP      $75
         JP      NC,J29EC
         CALL    C2C4D                   ; ARG = DAC
         LD      HL,I2D11
@@ -669,7 +766,7 @@ C2A14:  LD      A,(DAC)
         OR      A                       ; DAC zero ?
         RET     Z                       ; yep, result zero
         CALL    M,C2C80
-        CP      41H
+        CP      $41
         JP      C,C2A3C
         CALL    C2C4D                   ; ARG = DAC
         LD      HL,I2D1B
@@ -719,7 +816,7 @@ C2A72:  CALL    C2E71                   ; get sign DAC
         LD      HL,DAC
         LD      A,(HL)
         PUSH    AF
-        LD      (HL),41H
+        LD      (HL),$41
         LD      HL,I2D2B
         CALL    C2C47                   ; compare DAC with 3.1622776601684
         JP      M,J2A92
@@ -757,7 +854,7 @@ J2A92:  POP     AF
         CALL    C27E6                   ; DAC * ARG
         CALL    C2CCC                   ; push DAC
         LD      A,(TEMP3)
-        SUB     41H
+        SUB     $41
         LD      L,A
         ADD     A,A
         SBC     A,A
@@ -780,17 +877,17 @@ C2AFF:  CALL    C2E71                   ; get sign DAC
         LD      A,(DAC)
         OR      A
         RRA
-        ADC     A,20H
+        ADC     A,$20
         LD      (ARG),A
         LD      A,(DAC+1)
         OR      A
         RRCA
         OR      A
         RRCA
-        AND     33H
-        ADD     A,10H
+        AND     $33
+        ADD     A,$10
         LD      (ARG+1),A
-        LD      A,07H
+        LD      A,$7
 J2B23:  LD      (TEMP3),A
         CALL    C2CCC                   ; push DAC
         CALL    C2CC7                   ; push ARG
@@ -898,7 +995,7 @@ C2BDF:  CALL    C2E71                   ; get sign DAC
         LD      (HL),0
 J2C15:  CALL    C2C5C                   ; DAC = RNDX
         LD      HL,DAC
-        LD      (HL),40H                ; in 0-1 range
+        LD      (HL),$40                ; in 0-1 range
         XOR     A
         LD      (DAC+8),A
         JP      C26FA                   ; normalize DAC
@@ -944,7 +1041,7 @@ C2C3B:  CALL    C2C50                   ; ARG =
 ;       Remark          Unused Code
 ;                       Not called from anywhere, leftover from a early Microsoft BASIC
 
-?2C41:  CALL    C2C50                   ; ARG =
+N2C41:  CALL    C2C50                   ; ARG =
         JP      C289F                   ; DAC / ARG and quit
 
 ;       Subroutine      compare with DAC
@@ -967,7 +1064,7 @@ C2C4D:  LD      HL,DAC
 
 C2C50:  LD      DE,ARG
 
-;       Subroutine      MOV8DH (copy HL to DE)
+;       Subroutine      MOV$8D (copy HL to DE)
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
@@ -995,7 +1092,7 @@ C2C5C:  LD      DE,DAC
 ;       Remark          Unused Code
 ;                       Not called from anywhere, leftover from a early Microsoft BASIC
 
-?2C61:  CALL    C2FCB                   ; convert to single precision real
+N2C61:  CALL    C2FCB                   ; convert to single precision real
         LD      HL,RNDX
 
 ;       Subroutine      MMF (copy DAC to HL)
@@ -1127,69 +1224,69 @@ J2CE7:  POP     BC
         EX      DE,HL
         JP      (HL)
 
-I2CF1:  DEFB    000H,014H,038H,098H,020H,042H,008H,021H         ; 0.14389820420821
-I2CF9:  DEFB    000H,021H,013H,024H,086H,054H,005H,019H         ; 0.21132486540519
-I2D01:  DEFB    000H,040H,064H,096H,051H,037H,023H,058H         ; 0.40649651372358
-I2D09:  DEFB    040H,043H,042H,094H,048H,019H,003H,024H         ; 0.43429448190324
-I2D11:  DEFB    040H,050H                                       ; 0.5
-I2D13:  DEFB    000H,000H,000H,000H,000H,000H,000H,000H         ; 0.0
-I2D1B:  DEFB    041H,010H,000H,000H,000H,000H,000H,000H         ; 1.0
-I2D23:  DEFB    040H,025H,000H,000H,000H,000H,000H,000H         ; 0.25
-I2D2B:  DEFB    041H,031H,062H,027H,076H,060H,016H,084H         ; 3.1622776601684
-I2D33:  DEFB    040H,086H,085H,088H,096H,038H,006H,050H         ; 0.86858896380650
-I2D3B:  DEFB    041H,023H,002H,058H,050H,092H,099H,040H         ; 2.3025850929940
-I2D43:  DEFB    041H,015H,070H,079H,063H,026H,079H,049H         ; 1.5707963267949
-I2D4B:  DEFB    040H,026H,079H,049H,019H,024H,031H,012H         ; 0.26794919243112
-I2D53:  DEFB    041H,017H,032H,005H,008H,007H,056H,089H         ; 1.7320508075689
-I2D5B:  DEFB    040H,052H,035H,098H,077H,055H,098H,030H         ; 0.52359877559830
-I2D63:  DEFB    040H,015H,091H,054H,094H,030H,091H,090H         ; 0.15915494309190
+I2CF1:  DEFB    $00,$14,$38,$98,$20,$42,$08,$21         ; 0.14389820420821
+I2CF9:  DEFB    $00,$21,$13,$24,$86,$54,$05,$19         ; 0.21132486540519
+I2D01:  DEFB    $00,$40,$64,$96,$51,$37,$23,$58         ; 0.40649651372358
+I2D09:  DEFB    $40,$43,$42,$94,$48,$19,$03,$24         ; 0.43429448190324
+I2D11:  DEFB    $40,$50                                       ; 0.5
+I2D13:  DEFB    $00,$00,$00,$00,$00,$00,$00,$00         ; 0.0
+I2D1B:  DEFB    $41,$10,$00,$00,$00,$00,$00,$00         ; 1.0
+I2D23:  DEFB    $40,$25,$00,$00,$00,$00,$00,$00         ; 0.25
+I2D2B:  DEFB    $41,$31,$62,$27,$76,$60,$16,$84         ; 3.1622776601684
+I2D33:  DEFB    $40,$86,$85,$88,$96,$38,$06,$50         ; 0.86858896380650
+I2D3B:  DEFB    $41,$23,$02,$58,$50,$92,$99,$40         ; 2.3025850929940
+I2D43:  DEFB    $41,$15,$70,$79,$63,$26,$79,$49         ; 1.5707963267949
+I2D4B:  DEFB    $40,$26,$79,$49,$19,$24,$31,$12         ; 0.26794919243112
+I2D53:  DEFB    $41,$17,$32,$05,$08,$07,$56,$89         ; 1.7320508075689
+I2D5B:  DEFB    $40,$52,$35,$98,$77,$55,$98,$30         ; 0.52359877559830
+I2D63:  DEFB    $40,$15,$91,$54,$94,$30,$91,$90         ; 0.15915494309190
 I2D6B:  DEFB    4
-        DEFB    041H,010H,000H,000H,000H,000H,000H,000H         ; 1.0
-        DEFB    043H,015H,093H,074H,015H,023H,060H,031H         ; 159.37415236031
-        DEFB    044H,027H,009H,031H,069H,040H,085H,016H         ; 2709.3169408516
-        DEFB    044H,044H,097H,063H,035H,057H,040H,058H         ; 4497.6335574058
+        DEFB    $41,$10,$00,$00,$00,$00,$00,$00         ; 1.0
+        DEFB    $43,$15,$93,$74,$15,$23,$60,$31         ; 159.37415236031
+        DEFB    $44,$27,$09,$31,$69,$40,$85,$16         ; 2709.3169408516
+        DEFB    $44,$44,$97,$63,$35,$57,$40,$58         ; 4497.6335574058
 I2D8C:  DEFB    3
-        DEFB    042H,018H,031H,023H,060H,015H,092H,075H         ; 18.312360159275
-        DEFB    043H,083H,014H,006H,072H,012H,093H,071H         ; 831.40672129371
-        DEFB    044H,051H,078H,009H,019H,091H,051H,062H         ; 5178.0919915162
+        DEFB    $42,$18,$31,$23,$60,$15,$92,$75         ; 18.312360159275
+        DEFB    $43,$83,$14,$06,$72,$12,$93,$71         ; 831.40672129371
+        DEFB    $44,$51,$78,$09,$19,$91,$51,$62         ; 5178.0919915162
 I2DA5:  DEFB    4
-        DEFB    0C0H,071H,043H,033H,082H,015H,032H,026H         ; -0.71433382153226
-        DEFB    041H,062H,050H,036H,051H,012H,079H,008H         ; 6.2503651127908
-        DEFB    0C2H,013H,068H,023H,070H,024H,015H,003H         ; -13.682370241503
-        DEFB    041H,085H,016H,073H,019H,087H,023H,089H         ; 8.5167319872389
+        DEFB    $C0,$71,$43,$33,$82,$15,$32,$26         ; -0.71433382153226
+        DEFB    $41,$62,$50,$36,$51,$12,$79,$08         ; 6.2503651127908
+        DEFB    $C2,$13,$68,$23,$70,$24,$15,$03         ; -13.682370241503
+        DEFB    $41,$85,$16,$73,$19,$87,$23,$89         ; 8.5167319872389
 I2DC6:  DEFB    5
-        DEFB    041H,010H,000H,000H,000H,000H,000H,000H         ; 1.0
-        DEFB    0C2H,013H,021H,004H,078H,035H,001H,056H         ; -13.210478350156
-        DEFB    042H,047H,092H,052H,056H,004H,038H,073H         ; 47.925256043873
-        DEFB    0C2H,064H,090H,066H,082H,074H,009H,043H         ; -64.906682740943
-        DEFB    042H,029H,041H,057H,050H,017H,023H,023H         ; 29.415750172323
+        DEFB    $41,$10,$00,$00,$00,$00,$00,$00         ; 1.0
+        DEFB    $C2,$13,$21,$04,$78,$35,$01,$56         ; -13.210478350156
+        DEFB    $42,$47,$92,$52,$56,$04,$38,$73         ; 47.925256043873
+        DEFB    $C2,$64,$90,$66,$82,$74,$09,$43         ; -64.906682740943
+        DEFB    $42,$29,$41,$57,$50,$17,$23,$23         ; 29.415750172323
 I2DEF:  DEFB    8
-        DEFB    0C0H,069H,021H,056H,092H,029H,018H,009H         ; -0.69215692291809
-        DEFB    041H,038H,017H,028H,086H,038H,057H,071H         ; 3.8172886385771
-        DEFB    0C2H,015H,009H,044H,099H,047H,048H,001H         ; -15.094499474801
-        DEFB    042H,042H,005H,086H,089H,066H,073H,055H         ; 42.058689667355
-        DEFB    0C2H,076H,070H,058H,059H,068H,032H,091H         ; -76.705859683291
-        DEFB    042H,081H,060H,052H,049H,027H,055H,013H         ; 81.605249275513
-        DEFB    0C2H,041H,034H,017H,002H,024H,003H,098H         ; -41.341702240398
-        DEFB    041H,062H,083H,018H,053H,007H,017H,096H         ; 6.2831853071796
+        DEFB    $C0,$69,$21,$56,$92,$29,$18,$09         ; -0.69215692291809
+        DEFB    $41,$38,$17,$28,$86,$38,$57,$71         ; 3.8172886385771
+        DEFB    $C2,$15,$09,$44,$99,$47,$48,$01         ; -15.094499474801
+        DEFB    $42,$42,$05,$86,$89,$66,$73,$55         ; 42.058689667355
+        DEFB    $C2,$76,$70,$58,$59,$68,$32,$91         ; -76.705859683291
+        DEFB    $42,$81,$60,$52,$49,$27,$55,$13         ; 81.605249275513
+        DEFB    $C2,$41,$34,$17,$02,$24,$03,$98         ; -41.341702240398
+        DEFB    $41,$62,$83,$18,$53,$07,$17,$96         ; 6.2831853071796
 I2E30:  DEFB    8
-        DEFB    0BFH,052H,008H,069H,039H,004H,000H,000H         ; -0.05208693904000
-        DEFB    03FH,075H,030H,071H,049H,013H,048H,000H         ; 0.07530714913480
-        DEFB    0BFH,090H,081H,034H,032H,024H,070H,050H         ; -0.09081343224705
-        DEFB    040H,011H,011H,007H,094H,018H,040H,029H         ; 0.11110794184029
-        DEFB    0C0H,014H,028H,057H,008H,055H,048H,084H         ; -0.14285708554884
-        DEFB    040H,019H,099H,099H,099H,094H,089H,067H         ; 0.19999999948967
-        DEFB    0C0H,033H,033H,033H,033H,033H,031H,060H         ; -0.33333333333160
-        DEFB    041H,010H,000H,000H,000H,000H,000H,000H         ; 1.0
+        DEFB    $BF,$52,$08,$69,$39,$04,$00,$00         ; -0.05208693904000
+        DEFB    $3F,$75,$30,$71,$49,$13,$48,$00         ; 0.07530714913480
+        DEFB    $BF,$90,$81,$34,$32,$24,$70,$50         ; -0.09081343224705
+        DEFB    $40,$11,$11,$07,$94,$18,$40,$29         ; 0.11110794184029
+        DEFB    $C0,$14,$28,$57,$08,$55,$48,$84         ; -0.14285708554884
+        DEFB    $40,$19,$99,$99,$99,$94,$89,$67         ; 0.19999999948967
+        DEFB    $C0,$33,$33,$33,$33,$33,$31,$60         ; -0.33333333333160
+        DEFB    $41,$10,$00,$00,$00,$00,$00,$00         ; 1.0
 
 ;       Subroutine      SIGN
 ;       Inputs          ________________________
-;       Outputs         Zx set and A = 000H if zero, Zx reset and Cx set and A = 0FFH if negative, Zx reset and Cx reset and A = 001H if postive
+;       Outputs         Zx set and A = $00 if zero, Zx reset and Cx set and A = $FF if negative, Zx reset and Cx reset and A = $01 if postive
 
 C2E71:  LD      A,(DAC+0)
         OR      A
         RET     Z
-        DEFB    0FEH            ; CP xx, skip next instruction
+        DEFB    $FE            ; CP xx, skip next instruction
 J2E77:  CPL
 J2E78:  RLA
 J2E79:  SBC     A,A
@@ -1228,7 +1325,7 @@ C2E8D:  LD      HL,DAC
         LD      A,(HL)
         OR      A                       ; exponent zero ?
         RET     Z                       ; yep, quit
-        XOR     80H
+        XOR     $80
         LD      (HL),A                  ; negate sign bit
         RET
 
@@ -1580,11 +1677,11 @@ J2F9E:  LD      (VALTYP),A
 ;       Outputs         ________________________
 
 
-C2FA2:  LD      BC,032C5H
-        LD      DE,08076H
+C2FA2:  LD      BC,$32C5
+        LD      DE,$8076
         CALL    C2F21                   ; single real compare
         RET     NZ                      ; not -32768 SGN, quit
-        LD      HL,08000H               ; -32768 INT
+        LD      HL,$8000               ; -32768 INT
 J2FAF:  POP     DE                      ; remove return address
         JR      C2F99                   ; put HL in DAC
 
@@ -1627,11 +1724,11 @@ J2FCC:  OR      A
         LD      A,D
         OR      E
         JP      Z,J66A7
-        LD      BC,0500H
+        LD      BC,$0500
         LD      HL,DAC+1
         PUSH    HL
         LD      HL,J3030
-J2FED:  LD      A,0FFH
+J2FED:  LD      A,$FF
         PUSH    DE
         LD      E,(HL)
         INC     HL
@@ -1655,7 +1752,7 @@ J2FF6:  LD      B,H
         OR      A
         JR      Z,J3024
         PUSH    AF
-        LD      A,40H
+        LD      A,$40
         ADD     A,B
         LD      (DAC),A
         POP     AF
@@ -1744,10 +1841,10 @@ C305D:  LD      HL,I30BA
         PUSH    HL
         LD      HL,DAC
         LD      A,(HL)
-        AND     7FH
-        CP      46H
+        AND     $7F
+        CP      $46
         RET     NC
-        SUB     41H
+        SUB     $41
         JR      NC,J3074
         OR      A
         POP     DE
@@ -1771,7 +1868,7 @@ J307B:  LD      A,C
         JR      J3088
 
 J3087:  INC     HL
-J3088:  AND     0FH
+J3088:  AND     $F
         LD      (DECTMP),HL
         LD      H,D
         LD      L,E
@@ -1784,13 +1881,13 @@ J3088:  AND     0FH
         ADD     HL,HL
         RET     C
         LD      E,A
-        LD      D,00H
+        LD      D,$0
         ADD     HL,DE
         RET     C
         EX      DE,HL
         LD      HL,(DECTMP)
         DJNZ    J307B
-        LD      HL,08000H
+        LD      HL,$8000
         RST     DCOMPR
         LD      A,(DAC)
         RET     C
@@ -1815,7 +1912,7 @@ I30BA:  SCF
 ;       Unused Code
 ;       Not called from anywhere, leftover from a early Microsoft BASIC
 
-?30BC:  DEC     BC
+N30BC:  DEC     BC
         RET
 
 ;       Subroutine      FIXER (round DAC), also FIX function
@@ -1845,8 +1942,8 @@ C30CF:  RST     GETYPR                  ; get DAC type
 J30E0:  LD      A,(DAC)
         OR      A
         JP      M,J3100
-        AND     7FH
-        SUB     41H
+        AND     $7F
+        SUB     $41
         JP      C,J2E7D                 ; DAC = 0 and quit
         INC     A
         SUB     C
@@ -1856,7 +1953,7 @@ J30E0:  LD      A,(DAC)
         LD      B,A
 J30F4:  DEC     HL
         LD      A,(HL)
-        AND     0F0H
+        AND     $F0
         LD      (HL),A
         DEC     B
         RET     Z
@@ -1865,8 +1962,8 @@ J30F4:  DEC     HL
         DJNZ    J30F4
         RET
 
-J3100:  AND     7FH
-        SUB     41H
+J3100:  AND     $7F
+        SUB     $41
         JR      NC,J310C
         LD      HL,-1
         JP      C2F99                   ; put HL in DAC
@@ -1877,11 +1974,11 @@ J310C:  INC     A
         CPL
         INC     A
         LD      B,A
-        LD      E,00H
+        LD      E,$0
 J3114:  DEC     HL
         LD      A,(HL)
         LD      D,A
-        AND     0F0H
+        AND     $F0
         LD      (HL),A
         CP      D
         JR      Z,J311E
@@ -1898,8 +1995,8 @@ J3129:  INC     E
         DEC     E
         RET     Z
         LD      A,C
-        CP      06H
-        LD      BC,10C1H
+        CP      $6
+        LD      BC,$10C1
         LD      DE,0
         JP      Z,C324E                 ; single real addition
         EX      DE,HL
@@ -2010,7 +2107,7 @@ J31B5:  LD      A,H
         LD      A,B
         JP      J321D
 
-J31BF:  XOR     80H
+J31BF:  XOR     $80
         OR      L
         JR      Z,J31D8
         EX      DE,HL
@@ -2059,7 +2156,7 @@ J31FD:  PUSH    HL
         INC     SP
         INC     SP
         SCF
-        DEFB    030H                    ; skip next instruction
+        DEFB    $30                    ; skip next instruction
 J3205:  POP     HL
 J3206:  RL      E
         RL      D
@@ -2105,7 +2202,7 @@ C3221:  XOR     A
 J322B:  LD      HL,(DAC+2)
         CALL    C3221
         LD      A,H
-        XOR     80H
+        XOR     $80
         OR      L
         RET     NZ
 
@@ -2136,7 +2233,7 @@ C323A:  PUSH    DE
 ;       Unused Code
 ;       Not called from anywhere, leftover from a early Microsoft BASIC
 
-?324B:  CALL    C2EDF                   ; load from HL (single)
+N324B:  CALL    C2EDF                   ; load from HL (single)
 
 ;       Subroutine      single real addition
 ;       Inputs          ________________________
@@ -2216,37 +2313,37 @@ J3297:  POP     HL
 ;       Outputs         ________________________
 
 C3299:  EX      DE,HL
-        LD      BC,00FFH
+        LD      BC,$00FF
         LD      H,B
         LD      L,B
         CALL    C2F99                   ; put HL in DAC
         EX      DE,HL
         LD      A,(HL)
-        CP      "&"
+        CP      '&'
         JP      Z,C4EB8                 ; convert text with radix indication to number
-        CP      "-"
+        CP      '-'
         PUSH    AF
         JR      Z,J32B3
-        CP      "+"
+        CP      '+'
         JR      Z,J32B3
         DEC     HL
 J32B3:  RST     CHRGTR                  ; get next BASIC character
         JP      C,J3386
-        CP      "."
+        CP      '.'
         JP      Z,J334F
-        CP      "e"
+        CP      'e'
         JR      Z,J32C2
-        CP      "E"
+        CP      'E'
 J32C2:  JR      NZ,J32DE
         PUSH    HL
         RST     CHRGTR                  ; get next BASIC character
-        CP      "l"
+        CP      'l'
         JR      Z,J32D4
-        CP      "L"
+        CP      'L'
         JR      Z,J32D4
-        CP      "q"
+        CP      'q'
         JR      Z,J32D4
-        CP      "Q"
+        CP      'Q'
 J32D4:  POP     HL
         JR      Z,J32DD
         RST     GETYPR                  ; get DAC type
@@ -2255,39 +2352,39 @@ J32D4:  POP     HL
         JR      J32F6
 
 J32DD:  LD      A,(HL)
-J32DE:  CP      "%"
+J32DE:  CP      '%'
         JP      Z,J3362
-        CP      "#"
+        CP      '#'
         JP      Z,J3370
-        CP      "!"
+        CP      '!'
         JP      Z,J3371
-        CP      "d"
+        CP      'd'
         JR      Z,J32F5
-        CP      "D"
+        CP      'D'
         JR      NZ,J331E
 J32F5:  OR      A
 J32F6:  CALL    C3377
         RST     CHRGTR                  ; get next BASIC character
         PUSH    DE
-        LD      D,00H
+        LD      D,$0
         CALL    C4F47
         LD      C,D
         POP     DE
 J3302:  RST     CHRGTR                  ; get next BASIC character
         JR      NC,J3318
         LD      A,E
-        CP      0CH
+        CP      $C
         JR      NC,J3314
         RLCA
         RLCA
         ADD     A,E
         RLCA
         ADD     A,(HL)
-        SUB     30H
+        SUB     $30
         LD      E,A
         JR      J3302
 
-J3314:  LD      E,80H
+J3314:  LD      E,$80
         JR      J3302
 
 J3318:  INC     C
@@ -2303,7 +2400,7 @@ J331E:  RST     GETYPR                  ; get DAC type
         LD      A,D
         SUB     B
         ADD     A,E
-        ADD     A,40H
+        ADD     A,$40
         LD      (DAC),A
         OR      A
         CALL    M,C334C                 ; overflow error
@@ -2372,7 +2469,7 @@ C3377:  PUSH    HL
         POP     HL
         RET
 
-J3386:  SUB     30H
+J3386:  SUB     $30
         JP      NZ,J3393
         OR      C
         JP      Z,J3393
@@ -2380,7 +2477,7 @@ J3386:  SUB     30H
         JP      Z,J32B3
 J3393:  INC     D
         LD      A,D
-        CP      07H
+        CP      $7
         JR      NZ,J339D
         OR      A
         CALL    C3377
@@ -2392,7 +2489,7 @@ J339D:  PUSH    DE
         PUSH    BC
         PUSH    HL
         LD      A,(HL)
-        SUB     30H
+        SUB     $30
         PUSH    AF
         RST     GETYPR                  ; get DAC type
         JP      P,J33D1                 ; not a integer,
@@ -2428,7 +2525,7 @@ J33D1:  POP     AF
         JR      NZ,J33E3
         LD      A,(DAC)
         OR      A
-        LD      A,00H
+        LD      A,$0
         JR      NZ,J33E3
         LD      D,A
         JP      J32B3
@@ -2438,9 +2535,9 @@ J33E3:  PUSH    DE
         PUSH    HL
         PUSH    AF
         LD      HL,DAC
-        LD      (HL),01H
+        LD      (HL),$1
         LD      A,D
-        CP      10H
+        CP      $10
         JR      C,J33F4
         POP     AF
         JR      J33C6
@@ -2448,7 +2545,7 @@ J33E3:  PUSH    DE
 J33F4:  INC     A
         OR      A
         RRA
-        LD      B,00H
+        LD      B,$0
         LD      C,A
         ADD     HL,BC
         POP     AF
@@ -2484,7 +2581,7 @@ C3412:  LD      BC,I6677
         XOR     A
         LD      (TEMP3),A
         LD      HL,FBUFFR+1
-        LD      (HL)," "
+        LD      (HL),' '
         OR      (HL)
         JR      J3441
 
@@ -2499,14 +2596,14 @@ C3425:  XOR     A
 ;       Outputs         ________________________
 
 C3426:  CALL    C375F
-        AND     08H
+        AND     $8
         JR      Z,J342F
-        LD      (HL),"+"
+        LD      (HL),'+'
 J342F:  EX      DE,HL
         CALL    C2EA1                   ; get sign DAC
         EX      DE,HL
         JP      P,J3441
-        LD      (HL),"-"
+        LD      (HL),'-'
         PUSH    BC
         PUSH    HL
         CALL    C2E86                   ; negate
@@ -2514,14 +2611,14 @@ J342F:  EX      DE,HL
         POP     BC
         OR      H
 J3441:  INC     HL
-        LD      (HL),30H
+        LD      (HL),$30
         LD      A,(TEMP3)
         LD      D,A
         RLA
         LD      A,(VALTYP)
         JP      C,J34F7
         JP      Z,J34EF
-        CP      04H
+        CP      $4
         JP      NC,J34A1
         LD      BC,0
         CALL    C36DB
@@ -2532,41 +2629,41 @@ J3441:  INC     HL
 
 C345D:  LD      HL,FBUFFR+1
         LD      B,(HL)
-        LD      C,20H
+        LD      C,$20
         LD      A,(TEMP3)
         LD      E,A
-        AND     20H
+        AND     $20
         JR      Z,J3477
         LD      A,B
         CP      C
-        LD      C,2AH
+        LD      C,$2A
         JR      NZ,J3477
         LD      A,E
-        AND     04H
+        AND     $4
         JR      NZ,J3477
         LD      B,C
 J3477:  LD      (HL),C
         RST     CHRGTR                  ; get next BASIC character
         JR      Z,J348F
-        CP      "E"
+        CP      'E'
         JR      Z,J348F
-        CP      "D"
+        CP      'D'
         JR      Z,J348F
-        CP      30H
+        CP      $30
         JR      Z,J3477
-        CP      ","
+        CP      ','
         JR      Z,J3477
-        CP      "."
+        CP      '.'
         JR      NZ,J3492
 J348F:  DEC     HL
-        LD      (HL),30H
+        LD      (HL),$30
 J3492:  LD      A,E
-        AND     10H
+        AND     $10
         JR      Z,J349A
         DEC     HL
         LD      (HL),CHRCUR
 J349A:  LD      A,E
-        AND     04H
+        AND     $4
         RET     NZ
         DEC     HL
         LD      (HL),B
@@ -2576,28 +2673,28 @@ J34A1:  PUSH    HL
         CALL    C3752
         LD      D,B
         INC     D
-        LD      BC,0300H
+        LD      BC,$0300
         LD      A,(DAC)
-        SUB     3FH
+        SUB     $3F
         JR      C,J34B9
         INC     D
         CP      D
         JR      NC,J34B9
         INC     A
         LD      B,A
-        LD      A,02H
-J34B9:  SUB     02H
+        LD      A,$2
+J34B9:  SUB     $2
         POP     HL
         PUSH    AF
         CALL    C368E
-        LD      (HL),30H
+        LD      (HL),$30
         CALL    Z,C2EE6
         CALL    C36B3
 J34C8:  DEC     HL
         LD      A,(HL)
-        CP      30H
+        CP      $30
         JR      Z,J34C8
-        CP      "."
+        CP      '.'
         CALL    NZ,C2EE6
         POP     AF
         JR      Z,J34F0
@@ -2606,40 +2703,40 @@ J34C8:  DEC     HL
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
-C34D6:  LD      (HL),"E"
+C34D6:  LD      (HL),'E'
         INC     HL
-        LD      (HL),"+"
+        LD      (HL),'+'
         JP      P,J34E2
-        LD      (HL),"-"
+        LD      (HL),'-'
         CPL
         INC     A
-J34E2:  LD      B,2FH
+J34E2:  LD      B,$2F
 J34E4:  INC     B
-        SUB     0AH
+        SUB     $A
         JR      NC,J34E4
-        ADD     A,3AH
+        ADD     A,$3A
         INC     HL
         LD      (HL),B
         INC     HL
         LD      (HL),A
 J34EF:  INC     HL
-J34F0:  LD      (HL),00H
+J34F0:  LD      (HL),$0
         EX      DE,HL
         LD      HL,FBUFFR+1
         RET
 
 J34F7:  INC     HL
         PUSH    BC
-        CP      04H
+        CP      $4
         LD      A,D
         JP      NC,J3566
         RRA
         JP      C,J35EF
-        LD      BC,0603H
+        LD      BC,$0603
         CALL    C3686
         POP     DE
         LD      A,D
-        SUB     05H
+        SUB     $5
         CALL    P,C3666
         CALL    C36DB
 J3513:  LD      A,E
@@ -2653,7 +2750,7 @@ J351C:  PUSH    HL
         JR      Z,J3525
         LD      (HL),B
         INC     HL
-J3525:  LD      (HL),00H
+J3525:  LD      (HL),$0
         LD      HL,FBUFFR
 J352A:  INC     HL
 J352B:  LD      A,(TEMP2)
@@ -2661,9 +2758,9 @@ J352B:  LD      A,(TEMP2)
         SUB     D
         RET     Z
         LD      A,(HL)
-        CP      " "
+        CP      ' '
         JR      Z,J352A
-        CP      "*"
+        CP      '*'
         JR      Z,J352A
         DEC     HL
         PUSH    HL
@@ -2671,14 +2768,14 @@ I353C:  PUSH    AF
         LD      BC,I353C
         PUSH    BC
         RST     CHRGTR                  ; get next BASIC character
-        CP      "-"
+        CP      '-'
         RET     Z
-        CP      "+"
+        CP      '+'
         RET     Z
         CP      CHRCUR
         RET     Z
         POP     BC
-        CP      30H
+        CP      $30
         JR      NZ,J355F
         INC     HL
         RST     CHRGTR                  ; get next BASIC character
@@ -2696,7 +2793,7 @@ J3559:  POP     AF
 J355F:  POP     AF
         JR      Z,J355F
         POP     HL
-        LD      (HL),"%"
+        LD      (HL),'%'
         RET
 
 J3566:  PUSH    HL
@@ -2705,13 +2802,13 @@ J3566:  PUSH    HL
         CALL    C3752
         LD      D,B
         LD      A,(DAC)
-        SUB     4FH
+        SUB     $4F
         JR      C,J3581
         POP     HL
         POP     BC
         CALL    C3425                   ; convert DAC to text, unformatted
         LD      HL,FBUFFR
-        LD      (HL),"%"
+        LD      (HL),'%'
         RET
 
 J3581:  CALL    C2E71                   ; get sign DAC
@@ -2801,8 +2898,8 @@ J35F5:  CALL    C3752
         ADD     A,B
         LD      C,A
         LD      A,D
-        AND     04H
-        CP      01H
+        AND     $4
+        CP      $1
         SBC     A,A
         LD      D,A
         ADD     A,C
@@ -2828,7 +2925,7 @@ J362F:  CPL
         INC     A
         ADD     A,D
         LD      B,A
-        LD      C,00H
+        LD      C,$0
         CALL    Z,C368E
         CALL    C36B3
         POP     AF
@@ -2839,7 +2936,7 @@ J362F:  CPL
         JR      NZ,J3654
         CALL    C3295
         LD      A,(HL)
-        CP      "."
+        CP      '.'
         CALL    NZ,C2EE6
         LD      (TEMP2),HL
 J3654:  POP     AF
@@ -2861,7 +2958,7 @@ J365D:  PUSH    BC
 C3666:  OR      A
 J3667:  RET     Z
         DEC     A
-        LD      (HL),30H
+        LD      (HL),$30
         INC     HL
         JR      J3667
 
@@ -2877,7 +2974,7 @@ J3670:  RET     Z
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
-C3674:  LD      (HL),30H
+C3674:  LD      (HL),$30
         INC     HL
         DEC     A
         JR      J3670
@@ -2891,9 +2988,9 @@ C367A:  LD      A,E
         INC     A
         LD      B,A
         INC     A
-J367F:  SUB     03H
+J367F:  SUB     $3
         JR      NC,J367F
-        ADD     A,05H
+        ADD     A,$5
         LD      C,A
 
 ;       Subroutine      __________________________
@@ -2901,7 +2998,7 @@ J367F:  SUB     03H
 ;       Outputs         ________________________
 
 C3686:  LD      A,(TEMP3)
-        AND     40H
+        AND     $40
         RET     NZ
         LD      C,A
         RET
@@ -2913,9 +3010,9 @@ C3686:  LD      A,(TEMP3)
 C368E:  DEC     B
         JP      P,J36A1
         LD      (TEMP2),HL
-        LD      (HL),"."
+        LD      (HL),'.'
 J3697:  INC     HL
-        LD      (HL),"0"
+        LD      (HL),'0'
         INC     B
         LD      C,B
         JR      NZ,J3697
@@ -2933,7 +3030,7 @@ J36A1:  JR      NZ,J36AB
 ;       Inputs          ________________________
 ;       Outputs         ________________________
 
-C36A3:  LD      (HL),"."
+C36A3:  LD      (HL),'.'
         LD      (TEMP2),HL
         INC     HL
         LD      C,B
@@ -2941,9 +3038,9 @@ C36A3:  LD      (HL),"."
 
 J36AB:  DEC     C
         RET     NZ
-        LD      (HL),","
+        LD      (HL),','
         INC     HL
-        LD      C,03H
+        LD      C,$3
         RET
 
 ;       Subroutine      __________________________
@@ -2970,8 +3067,8 @@ J36C0:  PUSH    AF
         JR      J36CE
 
 J36CD:  INC     DE
-J36CE:  AND     0FH
-        ADD     A,"0"
+J36CE:  AND     $F
+        ADD     A,'0'
         LD      (HL),A
         INC     HL
         POP     AF
@@ -2986,7 +3083,7 @@ J36CE:  AND     0FH
 
 C36DB:  PUSH    DE
         LD      DE,I3710
-        LD      A,05H
+        LD      A,$5
 J36E1:  CALL    C36A0
         PUSH    BC
         PUSH    AF
@@ -3000,7 +3097,7 @@ J36E1:  CALL    C36A0
         EX      (SP),HL
         EX      DE,HL
         LD      HL,(DAC+2)
-        LD      B,2FH
+        LD      B,$2F
 J36F4:  INC     B
         LD      A,L
         SUB     E
@@ -3073,10 +3170,10 @@ J3739:  RRA
         PUSH    BC
 J373F:  RLCA
         DJNZ    J373F
-        ADD     A,"0"
-        CP      "9"+1
+        ADD     A,'0'
+        CP      '9'+1
         JR      C,J374A
-        ADD     A,07H
+        ADD     A,$7
 J374A:  LD      (DE),A
         POP     BC
         LD      A,L
@@ -3114,7 +3211,7 @@ C375F:  LD      (TEMP3),A
         POP     BC
         POP     AF
         LD      HL,FBUFFR+1
-        LD      (HL),20H
+        LD      (HL),$20
         RET
 
 ;       Subroutine      __________________________
@@ -3128,7 +3225,7 @@ C377B:  PUSH    HL
         CPL
         INC     A
         LD      E,A
-        LD      A,01H
+        LD      A,$1
         JP      Z,J379C
         CALL    C3752
         PUSH    HL
@@ -3157,7 +3254,7 @@ C37A2:  PUSH    BC
         PUSH    HL
         CALL    C3752
         LD      A,(DAC)
-        SUB     40H
+        SUB     $40
         SUB     B
         LD      (DAC),A
         POP     HL
@@ -3172,7 +3269,7 @@ C37A2:  PUSH    BC
 C37B4:  PUSH    BC
         CALL    C3752
 J37B8:  LD      A,(HL)
-        AND     0FH
+        AND     $F
         JR      NZ,J37C5
         DEC     B
         LD      A,(HL)
