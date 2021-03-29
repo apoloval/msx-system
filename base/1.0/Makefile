@@ -4,7 +4,7 @@ sources=$(wildcard *.asm)
 includes=$(wildcard *.inc)
 roms=$(patsubst %,target/msx-%.rom,$(TARGETS))
 symbols=$(patsubst %,target/msx-%.symbol,$(TARGETS))
-hexes=$(patsubst %,target/msx-%.hex,$(TARGETS))
+listings=$(patsubst %,target/msx-%.lst,$(TARGETS))
 
 country_code_jp=0
 country_code_us=1
@@ -19,21 +19,15 @@ country_code_ko=9
 country_code_ru=10
 
 .PHONY: all
-all: rom hex
+all: rom
 
 .PHONY: rom
 rom: $(roms)
 
-.PHONY: hex
-hex: $(hexes)
-
 target/msx-%.rom: $(sources) $(includes)
 	mkdir -p target/
-	pasmo --equ CNTRY=$(country_code_$*) -I ../basekey/ -I ../basechr msx.asm target/msx-$*.rom target/msx-$*.symbol
-
-%.hex: %.rom
-	hexyl --color never $< > $@
+	pasmo --equ CNTRY=$(country_code_$*) -I ../basekey/ -I ../basechr --listing target/msx-$*.lst msx.asm target/msx-$*.rom target/msx-$*.symbol
 
 .PHONY: clean
 clean:
-	rm -rf $(roms) $(symbols) $(hexes)
+	rm -rf $(roms) $(symbols) $(listings)
