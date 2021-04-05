@@ -1,10 +1,11 @@
 TARGETS=jp us int uk fr de it es ar ko ru
 
-sources=$(wildcard *.asm)
-includes=$(wildcard *.inc)
+includes=$(wildcard *.def) $(wildcard ../basekey/*.asm) $(wildcard ../basechr/*.asm)
+sources=bios.asm basic1.asm basic2.asm # Order is relevant
+
+objects=$(foreach target,$(TARGETS),$(patsubst %.asm,target/$(target)/%.o,$(sources)))
+listings=$(patsubst %.o,%.lis,$(objects))
 roms=$(patsubst %,target/msx-%.rom,$(TARGETS))
-symbols=$(patsubst %,target/msx-%.symbol,$(TARGETS))
-listings=$(patsubst %,target/msx-%.lst,$(TARGETS))
 
 country_code_jp=0
 country_code_us=1
@@ -24,10 +25,19 @@ all: rom
 .PHONY: rom
 rom: $(roms)
 
-target/msx-%.rom: $(sources) $(includes)
-	mkdir -p target/
-	pasmo --equ CNTRY=$(country_code_$*) -I ../basekey/ -I ../basechr --listing target/msx-$*.lst msx.asm target/msx-$*.rom target/msx-$*.symbol
+.PHONY: hex
+hex: $(hexes)
+
+.PHONY: assembly
+assembly: $(objects)
 
 .PHONY: clean
 clean:
-	rm -rf $(roms) $(symbols) $(listings)
+	rm -rf $(roms) $(objects) $(listings) 
+
+.SECONDEXPANSION:
+$(objects): target/%.o: $$(word 2,$$(subst /, ,$$*)).asm $(includes)
+	z80asm -I../basekey/ -I../basechr -DCNTRY=$(country_code_$(word 1,$(subst /, ,$*))) -Otarget/$(word 1,$(subst /, ,$*)) -l $<
+
+$(roms): target/msx-%.rom: $(patsubst %.asm,target/$$*/%.o,$(sources))
+	z80asm -o$@ -b $^

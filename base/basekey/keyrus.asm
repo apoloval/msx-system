@@ -2,353 +2,337 @@
 ; BEGIN OF RUSSIAN KEYBOARD HANDLER
 ; *************************************
 ;
-I0DA5:	DEFB	29H,2BH,21H,22H,23H,0BFH,25H,26H
-        DEFB	27H,28H,24H,3DH,2DH,68H,2AH,76H
-        DEFB	5CH,3EH,62H,40H,3CH,3FH,66H,69H
-        DEFB	73H,77H,75H,61H,70H,72H,5BH,6FH
-        DEFB	6CH,64H,78H,74H,5DH,7AH,6AH,6BH
-        DEFB	79H,65H,67H,6DH,63H,7CH,6EH,71H
 
-        DEFB	39H,3BH,31H,32H,33H,34H,35H,36H
-        DEFB	37H,38H,30H,5FH,5EH,48H,3AH,56H
-        DEFB	5CH,2EH,42H,40H,2CH,2FH,46H,49H
-        DEFB	53H,57H,55H,41H,50H,52H,7BH,4FH
-        DEFB	4CH,44H,58H,54H,7DH,5AH,4AH,4BH
-        DEFB	59H,45H,47H,4DH,43H,7EH,4EH,51H
+        EXTERN  CLIKSW
 
-        DEFB	09H,0A0H,0ABH,0A1H,0AFH,0A2H,0B4H,0BBH
-        DEFB	0ACH,07H,17H,0B1H,1EH,01H,0DH,06H
-        DEFB	05H,0A3H,0B3H,0B2H,1DH,60H,84H,11H
-        DEFB	0A4H,87H,8DH,14H,15H,13H,9CH,86H
-        DEFB	9DH,88H,0BH,1BH,82H,9BH,8CH,18H
-        DEFB	92H,12H,80H,1AH,8FH,1CH,19H,0FH
+I0DA5:  DEFB    $29,$2B,$21,$22,$23,$BF,$25,$26
+        DEFB    $27,$28,$24,$3D,$2D,$68,$2A,$76
+        DEFB    $5C,$3E,$62,$40,$3C,$3F,$66,$69
+        DEFB    $73,$77,$75,$61,$70,$72,$5B,$6F
+        DEFB    $6C,$64,$78,$74,$5D,$7A,$6A,$6B
+        DEFB    $79,$65,$67,$6D,$63,$7C,$6E,$71
 
-        DEFB	0AH,0A5H,0BDH,0BCH,0A6H,0A7H,0B5H,0A8H
-        DEFB	0A9H,08H,1FH,0B0H,16H,02H,0EH,04H
-        DEFB	03H,0B7H,0AEH,9AH,0B6H,00H,0BEH,99H
-        DEFB	0BAH,81H,8EH,94H,10H,96H,9FH,8AH
-        DEFB	9EH,89H,0CH,93H,83H,97H,8BH,0AAH
-        DEFB	91H,0ADH,85H,95H,90H,0B9H,98H,0B8H
+        DEFB    $39,$3B,$31,$32,$33,$34,$35,$36
+        DEFB    $37,$38,$30,$5F,$5E,$48,$3A,$56
+        DEFB    $5C,$2E,$42,$40,$2C,$2F,$46,$49
+        DEFB    $53,$57,$55,$41,$50,$52,$7B,$4F
+        DEFB    $4C,$44,$58,$54,$7D,$5A,$4A,$4B
+        DEFB    $59,$45,$47,$4D,$43,$7E,$4E,$51
 
-        DEFB	29H,2BH,21H,22H,23H,0BFH,25H,26H
-        DEFB	27H,28H,00H,3DH,0DFH,0C8H,2AH,0D6H
-        DEFB	0DCH,3EH,0C2H,0C0H,3CH,3FH,0C6H,0C9H
-        DEFB	0D3H,0D7H,0D5H,0C1H,0D0H,0D2H,0DBH,0CFH
-        DEFB	0CCH,0C4H,0D8H,0D4H,0DDH,0DAH,0CAH,0CBH
-        DEFB	0D9H,0C5H,0C7H,0CDH,0C3H,0DEH,0CEH,0D1H
+        DEFB    $9,$A0,$AB,$A1,$AF,$A2,$B4,$BB
+        DEFB    $AC,$7,$17,$B1,$1E,$1,$D,$6
+        DEFB    $5,$A3,$B3,$B2,$1D,$60,$84,$11
+        DEFB    $A4,$87,$8D,$14,$15,$13,$9C,$86
+        DEFB    $9D,$88,$B,$1B,$82,$9B,$8C,$18
+        DEFB    $92,$12,$80,$1A,$8F,$1C,$19,$F
 
-        DEFB	39H,3BH,31H,32H,33H,34H,35H,36H
-        DEFB	37H,38H,30H,5FH,2DH,0E8H,3AH,0F6H
-        DEFB	0FCH,2EH,0E2H,0E0H,2CH,2FH,0E6H,0E9H
-        DEFB	0F3H,0F7H,0F5H,0E1H,0F0H,0F2H,0FBH,0EFH
-        DEFB	0ECH,0E4H,0F8H,0F4H,0FDH,0FAH,0EAH,0EBH
-        DEFB	0F9H,0E5H,0E7H,0EDH,0E3H,0FEH,0EEH,0F1H
+        DEFB    $A,$A5,$BD,$BC,$A6,$A7,$B5,$A8
+        DEFB    $A9,$8,$1F,$B0,$16,$2,$E,$4
+        DEFB    $3,$B7,$AE,$9A,$B6,$0,$BE,$99
+        DEFB    $BA,$81,$8E,$94,$10,$96,$9F,$8A
+        DEFB    $9E,$89,$C,$93,$83,$97,$8B,$AA
+        DEFB    $91,$AD,$85,$95,$90,$B9,$98,$B8
+
+        DEFB    $29,$2B,$21,$22,$23,$BF,$25,$26
+        DEFB    $27,$28,$0,$3D,$DF,$C8,$2A,$D6
+        DEFB    $DC,$3E,$C2,$C0,$3C,$3F,$C6,$C9
+        DEFB    $D3,$D7,$D5,$C1,$D0,$D2,$DB,$CF
+        DEFB    $CC,$C4,$D8,$D4,$DD,$DA,$CA,$CB
+        DEFB    $D9,$C5,$C7,$CD,$C3,$DE,$CE,$D1
+
+        DEFB    $39,$3B,$31,$32,$33,$34,$35,$36
+        DEFB    $37,$38,$30,$5F,$2D,$E8,$3A,$F6
+        DEFB    $FC,$2E,$E2,$E0,$2C,$2F,$E6,$E9
+        DEFB    $F3,$F7,$F5,$E1,$F0,$F2,$FB,$EF
+        DEFB    $EC,$E4,$F8,$F4,$FD,$FA,$EA,$EB
+        DEFB    $F9,$E5,$E7,$ED,$E3,$FE,$EE,$F1
 
 
-J0EC5:	LD	E,C
-        LD	D,00H
-        LD	HL,FNKFLG-035H
-        ADD	HL,DE
-        LD	A,(HL)
-        AND	A
-        JR	NZ,J0EE3
-J0ED0:	EX	DE,HL
-        ADD	HL,HL
-        ADD	HL,HL
-        ADD	HL,HL
-        ADD	HL,HL
-        LD	DE,FNKSTR-035H*16
-        ADD	HL,DE
-        EX	DE,HL
-J0EDA:	LD	A,(DE)
-        AND	A
-        RET	Z
-        CALL	C0F55
-        INC	DE
-        JR	J0EDA
+J0EC5:  LD      E,C
+        LD      D,$0
+        LD      HL,FNKFLG-$35
+        ADD     HL,DE
+        LD      A,(HL)
+        AND     A
+        JR      NZ,J0EE3
+J0ED0:  EX      DE,HL
+        ADD     HL,HL
+        ADD     HL,HL
+        ADD     HL,HL
+        ADD     HL,HL
+        LD      DE,FNKSTR-$35*16
+        ADD     HL,DE
+        EX      DE,HL
+J0EDA:  LD      A,(DE)
+        AND     A
+        RET     Z
+        CALL    C0F55
+        INC     DE
+        JR      J0EDA
 
-J0EE3:	LD	HL,(CURLIN)
-        INC	HL
-        LD	A,H
-        OR	L
-        JR	Z,J0ED0
-        LD	HL,TRPTBL-035H*3
-        ADD	HL,DE
-        ADD	HL,DE
-        ADD	HL,DE
+J0EE3:  LD      HL,(CURLIN)
+        INC     HL
+        LD      A,H
+        OR      L
+        JR      Z,J0ED0
+        LD      HL,TRPTBL-$35*3
+        ADD     HL,DE
+        ADD     HL,DE
+        ADD     HL,DE
 
-;	Subroutine	raise trap
-;	Inputs		________________________
-;	Outputs		________________________
-;	Remark		code identical among keyboard layout versions
+;       Subroutine      raise trap
+;       Inputs          ________________________
+;       Outputs         ________________________
+;       Remark          code identical among keyboard layout versions
 
-C0EF1:	LD	A,(HL)
-        AND	01H
-        RET	Z
-        LD	A,(HL)
-        OR	04H
-        CP	(HL)
-        RET	Z
-        LD	(HL),A
-        XOR	05H
-        RET	NZ
-        LD	A,(ONGSBF)
-        INC	A
-        LD	(ONGSBF),A
-        RET	
+C0EF1:  LD      A,(HL)
+        AND     $1
+        RET     Z
+        LD      A,(HL)
+        OR      $4
+        CP      (HL)
+        RET     Z
+        LD      (HL),A
+        XOR     $5
+        RET     NZ
+        LD      A,(ONGSBF)
+        INC     A
+        LD      (ONGSBF),A
+        RET     
 
-J0F06:	LD	A,(NEWKEY+6)
-        RRCA	
-        LD	A,0CH
-        SBC	A,0
-        JR	C0F55
+C0F06:  LD      A,(NEWKEY+6)
+        RRCA    
+        LD      A,$C
+        SBC     A,0
+        JR      C0F55
 
-;	  Subroutine key handler for scancode 030H and above returning normal keycode
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine key handler for scancode $30 and above returning normal keycode
+;            Inputs  ________________________
+;            Outputs ________________________
 
-J0F10:	CALL	H.KEYA
-        LD	E,A
-        LD	D,00H
-        LD	HL,D1033-030H
-        ADD	HL,DE
-        LD	A,(HL)
-        AND	A
-        RET	Z			; no action, quit
-        JR	C0F55
+C0F10:  CALL    H_KEYA
+        LD      E,A
+        LD      D,$0
+        LD      HL,D1033-$30
+        ADD     HL,DE
+        LD      A,(HL)
+        AND     A
+        RET     Z                       ; no action, quit
+        JR      C0F55
 
-;	  Subroutine russian �kana� key
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine russian �kana� key
+;            Inputs  ________________________
+;            Outputs ________________________
 
-J0F1F:	LD	HL,KANAST
-        LD	A,(HL)
-        CPL	
-        LD	(HL),A
-J0F29:	LD	A,0FH
-        OUT	(0A0H),A
-        IN	A,(0A2H)
-        AND	7FH
-        LD	B,A
-        LD	A,(HL)
-        CPL	
-        AND	80H
-        OR	B
-        OUT	(0A1H),A
+C0F1F:  LD      HL,KANAST
+        LD      A,(HL)
+        CPL     
+        LD      (HL),A
+J0F29:  LD      A,$F
+        OUT     ($A0),A
+        IN      A,($A2)
+        AND     $7F
+        LD      B,A
+        LD      A,(HL)
+        CPL     
+        AND     $80
+        OR      B
+        OUT     ($A1),A
         RET
 
-;	  Subroutine CAPS key handler
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine CAPS key handler
+;            Inputs  ________________________
+;            Outputs ________________________
 
-J0F36:	LD	HL,CAPST
-        LD	A,(HL)
-        CPL	
-        LD	(HL),A
-        CPL	
+C0F36:  LD      HL,CAPST
+        LD      A,(HL)
+        CPL     
+        LD      (HL),A
+        CPL     
 
-K.BCAP:	AND	A
-        LD	A,0CH
-        JR	Z,J0F43
-        INC	A
-J0F43:	OUT	(0ABH),A
-        RET	
+K_BCAP: AND     A
+        LD      A,$C
+        JR      Z,J0F43
+        INC     A
+J0F43:  OUT     ($AB),A
+        RET     
 
-J0F46:	LD	A,(NEWKEY+6)
-        RRCA	
-        RRCA	
-        LD	A,03H
-        JR	NC,J0F50
-        INC	A
-J0F50:	LD	(INTFLG),A
-        JR	C,J0F64
+C0F46:  LD      A,(NEWKEY+6)
+        RRCA    
+        RRCA    
+        LD      A,$3
+        JR      NC,J0F50
+        INC     A
+J0F50:  LD      (INTFLG),A
+        JR      C,J0F64
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine __________________________
+;            Inputs  ________________________
+;            Outputs ________________________
 
-C0F55:	LD	HL,(PUTPNT)
-        LD	(HL),A
-        CALL	C105B
-        LD	A,(GETPNT)
-        CP	L
-        RET	Z
-        LD	(PUTPNT),HL
-J0F64:	LD	A,(CLIKSW)
-        AND	A
-        RET	Z
-        LD	A,(CLIKFL)
-        AND	A
-        RET	NZ
-        LD	A,0FH
-        LD	(CLIKFL),A
-        OUT	(0ABH),A
-        LD	A,0AH
-J0F77:	DEC	A
-        JR	NZ,J0F77
+C0F55:  LD      HL,(PUTPNT)
+        LD      (HL),A
+        CALL    C105B
+        LD      A,(GETPNT)
+        CP      L
+        RET     Z
+        LD      (PUTPNT),HL
+J0F64:  LD      A,(CLIKSW)
+        AND     A
+        RET     Z
+        LD      A,(CLIKFL)
+        AND     A
+        RET     NZ
+        LD      A,$F
+        LD      (CLIKFL),A
+        OUT     ($AB),A
+        LD      A,$A
+J0F77:  DEC     A
+        JR      NZ,J0F77
 
-K.BSND:	AND	A
-        LD	A,0EH
-        JR	Z,J0F80
-        INC	A
-J0F80:	OUT	(0ABH),A
-        RET	
+K_BSND: AND     A
+        LD      A,$E
+        JR      Z,J0F80
+        INC     A
+J0F80:  OUT     ($AB),A
+        RET     
 
-;	  Subroutine ordinary key handler
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine ordinary key handler
+;            Inputs  ________________________
+;            Outputs ________________________
 
-J0F83:	LD	A,(NEWKEY+6)
-        LD	E,A
-        RRA	
-        RRA	
-        PUSH	AF
-        LD	A,E
-        CPL	
-        JR	NC,J0F9E		; CTRL pressed,
-        RRA	
-        RRA	
-        RLCA	
-        AND	03H	; 3 
-        BIT	1,A
-        JR	NZ,J0FA0		; GRAPH pressed,
-        JP	J1067			; patched code, handle russian �kana�, resumes at 0FA0H
+C0F83:  LD      A,(NEWKEY+6)
+        LD      E,A
+        RRA     
+        RRA     
+        PUSH    AF
+        LD      A,E
+        CPL     
+        JR      NC,J0F9E                ; CTRL pressed,
+        RRA     
+        RRA     
+        RLCA    
+        AND     $3                     ; 3 
+        BIT     1,A
+        JR      NZ,J0FA0                ; GRAPH pressed,
+        JP      J1067                   ; patched code, handle russian �kana�, resumes at $0FA0
 
-        DEFS	0F9EH-$,0		; unused space
+        DEFS    $0F9E-$,0               ; unused space
 
-J0F9E:	AND	001H
-J0FA0:	LD	E,A
-        ADD	A,A
-        ADD	A,E
-        ADD	A,A
-        ADD	A,A
-        ADD	A,A
-        ADD	A,A
-        LD	E,A
-        LD	D,00H
-        LD	HL,I0DA5
-        ADD	HL,DE
-        LD	B,D
-        ADD	HL,BC
-        POP	AF
-        LD	A,(HL)
-        INC	A
-        JP	Z,J0F1F			; dead key, handle
-        DEC	A
-        RET	Z			; no action for key, quit
-        JR	C,J0FD0			; CTRL not pressed,
-        AND	0DFH
-        SUB	40H
-        CP	20H
-        RET	NC
-J0FC1:	JR	C0F55
+J0F9E:  AND     $01
+J0FA0:  LD      E,A
+        ADD     A,A
+        ADD     A,E
+        ADD     A,A
+        ADD     A,A
+        ADD     A,A
+        ADD     A,A
+        LD      E,A
+        LD      D,$0
+        LD      HL,I0DA5
+        ADD     HL,DE
+        LD      B,D
+        ADD     HL,BC
+        POP     AF
+        LD      A,(HL)
+        INC     A
+        JP      Z,C0F1F                 ; dead key, handle
+        DEC     A
+        RET     Z                       ; no action for key, quit
+        JR      C,J0FD0                 ; CTRL not pressed,
+        AND     $DF
+        SUB     $40
+        CP      $20
+        RET     NC
+J0FC1:  JR      C0F55
 
-;	  Subroutine function key handler
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine function key handler
+;            Inputs  ________________________
+;            Outputs ________________________
 
-J0FC3:	LD	A,(NEWKEY+6)
-        RRCA	
-        JR	C,J0FCD
-        LD	A,C
-        ADD	A,05H
-        LD	C,A
-J0FCD:	JP	J0EC5
+C0FC3:  LD      A,(NEWKEY+6)
+        RRCA    
+        JR      C,J0FCD
+        LD      A,C
+        ADD     A,$5
+        LD      C,A
+J0FCD:  JP      J0EC5
 
-J0FD0:	CP	20H
-        JR	NC,J0FDF
-        PUSH	AF
-        LD	A,01H
-        CALL	C0F55
-        POP	AF
-        ADD	A,40H
-        JR	J0FC1
+J0FD0:  CP      $20
+        JR      NC,J0FDF
+        PUSH    AF
+        LD      A,$1
+        CALL    C0F55
+        POP     AF
+        ADD     A,$40
+        JR      J0FC1
 
-J0FDF:	JP	J1073			; patch code for upcase
+J0FDF:  JP      J1073                   ; patch code for upcase
 
-        DEFS	00FF0H-$,0		; unused space
+        DEFS    $0FF0-$,0               ; unused space
 
-J0FEE:	AND	0DFH
-J0FF0:	JP	C0F55
+J0FEE:  AND     $DF
+J0FF0:  JP      C0F55
 
-        DEFS	01011H-$,0		; unused space
+        DEFS    $1011-$,0               ; unused space
 
-J1011:	JP	C0F55
+J1011:  JP      C0F55
 
-        DEFS	01021H-$,0		; usused space
+        DEFS    $1021-$,0               ; usused space
 
-K.HAND:	LD	A,C
-        LD	HL,I1B96
-        CALL	H.KEYC
-        LD	D,0FH
-J102A:	CP	(HL)
-        INC	HL
-        LD	E,(HL)
-        INC	HL
-        PUSH	DE
-        RET	C
-        POP	DE
-        JR	J102A
+K_HAND: LD      A,C
+        LD      HL,I1B96
+        CALL    H_KEYC
+        LD      D,$F
+J102A:  CP      (HL)
+        INC     HL
+        LD      E,(HL)
+        INC     HL
+        PUSH    DE
+        RET     C
+        POP     DE
+        JR      J102A
 
-D1033:	DEFB	00H,00H,00H,00H,00H,00H,00H,00H
-        DEFB	00H,00H,1BH,09H,00H,08H,18H,0DH
-        DEFB	20H,0CH,12H,7FH,1DH,1EH,1FH,1CH
-        DEFB	0DH,2BH,2AH,30H,31H,32H,33H,34H
-        DEFB	35H,36H,37H,38H,39H,2DH,2CH,2EH
+D1033:  DEFB    $0,$0,$0,$0,$0,$0,$0,$0
+        DEFB    $0,$0,$1B,$9,$0,$8,$18,$D
+        DEFB    $20,$C,$12,$7F,$1D,$1E,$1F,$1C
+        DEFB    $D,$2B,$2A,$30,$31,$32,$33,$34
+        DEFB    $35,$36,$37,$38,$39,$2D,$2C,$2E
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine __________________________
+;            Inputs  ________________________
+;            Outputs ________________________
 
-C105B:	XOR	A
+C105B:  XOR     A
         NOP
         NOP
-        NOP				; patch hole, normaly resets KANAST
-        JR	C10C2
+        NOP                             ; patch hole, normaly resets KANAST
+        JR      C10C2
 
-        DEFS	01067H-$,0		; unused space
+        DEFS    $1067-$,0               ; unused space
 
-J1067:	PUSH	AF
-        LD	A,(KANAST)
-        AND	04H
-        LD	E,A
-        POP	AF
-        OR	E
-        JP	J0FA0
+J1067:  PUSH    AF
+        LD      A,(KANAST)
+        AND     $4
+        LD      E,A
+        POP     AF
+        OR      E
+        JP      J0FA0
 
-J1073:	LD	HL,CAPST
-        INC	(HL)
-        DEC	(HL)
-        JP	Z,J0FF0
-        CP	61H
-        JP	C,J1011
-        CP	0DFH
-        JP	NC,J1011
-        CP	7BH
-        JP	C,J0FEE
-        CP	0C0H
-        JP	C,J1011
-        OR	20H
-        JP	J0FF0
-
-        DEFS	010C2H-$,0		; unused space
-
-        ORG	01B94H
-
-        JR	J1BAC
-
-I1B96:	DEFB	030H,J0F83 AND 255
-        DEFB	033H,J0F10 AND 255
-        DEFB	034H,J0F36 AND 255
-        DEFB	035H,J0F1F AND 255
-        DEFB	03AH,J0FC3 AND 255
-        DEFB	03CH,J0F10 AND 255
-        DEFB	03DH,J0F46 AND 255
-        DEFB	041H,J0F10 AND 255
-        DEFB	042H,J0F06 AND 255
-        DEFB	0FFH,J0F10 AND 255
-
-        DEFS	01BABH-$,0
+J1073:  LD      HL,CAPST
+        INC     (HL)
+        DEC     (HL)
+        JP      Z,J0FF0
+        CP      $61
+        JP      C,J1011
+        CP      $DF
+        JP      NC,J1011
+        CP      $7B
+        JP      C,J0FEE
+        CP      $C0
+        JP      C,J1011
+        OR      $20
+        JP      J0FF0
 
 ; *************************************
 ; END OF RUSSIAN KEYBOARD HANDLER

@@ -1,0 +1,203 @@
+; MSX version
+        DEFC    MSXVER  = 0                       
+
+;       OPTM    Optimized code
+;               0 = Use orginal code
+;               1 = Use optimized code
+
+        DEFC    OPTM    = 0
+
+;       NDEVFIX
+;               0 = Use null device bug
+;               1 = Use null device bugfix
+
+        DEFC    NDEVFIX = 1
+
+;       SLOTFIX
+;               0 = Use slot bug
+;               1 = Use slot bugfix
+
+        DEFC    SLOTFIX = 0
+
+;       CNTRY   Country
+;               0 = Japan
+;               1 = USA
+;               2 = International
+;               3 = UK
+;               4 = France
+;               5 = Germany
+;               6 = Italy
+;               7 = Spain
+;               8 = Arabic
+;               9 = Korea
+;               10 = Russia
+
+; Uncomment this to define the language
+;        DEFC    CNTRY   = 1
+
+
+;       symbols used to procedure alternate code
+
+;       INTHZ   interrupt frequency
+;       CHRGEN  character generator
+;               0 = japanese
+;               1 = international
+;               2 = USSR ??
+;       DATFMT  date format
+;               0 = Y-M-D
+;               1 = M-D-Y
+;               2 = D-M-Y
+;       KEYTYP  keyboard layout
+;               0 = Japanese
+;               1 = International (QWERTY/other)
+;               2 = French (AZERTY)
+;               3 = English
+;               4 = German (DIN)
+;               5 = USSR
+;               6 = Spanish
+;               7 = Swedish ??
+;       BASVER  0 = Japanese
+;               1 = International
+
+
+; Japanese MSX settings
+        IF      CNTRY = 0
+
+        DEFC    INTHZ   = 60
+        DEFC    CHRGEN  = 0
+        DEFC    DATFMT  = 0
+        DEFC    KEYTYP  = 0
+        DEFC    BASVER  = 0
+
+        ENDIF
+
+; USA MSX settings
+        IF      CNTRY = 1
+
+        DEFC    INTHZ   = 60
+        DEFC    CHRGEN  = 1
+        DEFC    DATFMT  = 1
+        DEFC    KEYTYP  = 1
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+; International MSX settings
+        IF      CNTRY = 2
+
+        DEFC    INTHZ   = 50
+        DEFC    CHRGEN  = 1
+        DEFC    DATFMT  = 1
+        DEFC    KEYTYP  = 1
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+; UK MSX settings
+        IF      CNTRY = 3
+
+        DEFC    INTHZ   = 50
+        DEFC    CHRGEN  = 1
+        DEFC    DATFMT  = 2
+        DEFC    KEYTYP  = 3
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+; French MSX settings
+        IF      CNTRY = 4
+
+        DEFC    INTHZ   = 50
+        DEFC    CHRGEN  = 1
+        DEFC    DATFMT  = 2
+        DEFC    KEYTYP  = 2
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+; German MSX settings
+        IF      CNTRY = 5
+
+        DEFC    INTHZ   = 50
+        DEFC    CHRGEN  = 1
+        DEFC    DATFMT  = 2
+        DEFC    KEYTYP  = 4
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+; Italian MSX settings
+; Dateformat is not sure
+        IF      CNTRY = 6
+
+        DEFC    INTHZ   = 50
+        DEFC    CHRGEN  = 1
+        DEFC    DATFMT  = 2
+        DEFC    KEYTYP  = 1
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+; Spanish MSX settings
+        IF      CNTRY = 7
+
+        DEFC    INTHZ   = 50
+        DEFC    CHRGEN  = 1
+        DEFC    DATFMT  = 1
+        DEFC    KEYTYP  = 6
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+; Arabic MSX settings
+; Unknown
+        IF      CNTRY = 8
+
+        DEFC    INTHZ   = 60
+        DEFC    CHRGEN  = 0
+        DEFC    DATFMT  = 0
+        DEFC    KEYTYP  = 0
+        DEFC    BASVER  = 0
+
+        ENDIF
+
+; Korean MSX settings
+        IF      CNTRY = 9
+
+        DEFC    INTHZ   = 60
+        DEFC    CHRGEN  = 0
+        DEFC    DATFMT  = 0
+        DEFC    KEYTYP  = 0
+        DEFC    BASVER  = 0
+
+        ENDIF
+
+; Russian MSX settings
+        IF      CNTRY = 10
+
+        DEFC    INTHZ   = 60
+        DEFC    CHRGEN  = 2
+        DEFC    DATFMT  = 1
+        DEFC    KEYTYP  = 5
+        DEFC    BASVER  = 1
+
+        ENDIF
+
+        IF      BASVER = 0
+        DEFC    CHRCUR  = $5C            ; yen sign
+        DEFC    CHRFLN  = '&'
+        DEFC    CHRVLN  = '@'
+        ENDIF
+
+        IF      (BASVER = 1) && (CNTRY <> 3)
+        DEFC    CHRCUR  = '$'
+        DEFC    CHRFLN  = '\\'
+        DEFC    CHRVLN  = '&'
+        ENDIF
+
+        IF      (BASVER = 1) && (CNTRY = 3)
+        DEFC    CHRCUR  = $AC            ; pound sign
+        DEFC    CHRFLN  = '\\'
+        DEFC    CHRVLN  = '&'
+        ENDIF
+

@@ -11,182 +11,333 @@
 ; Sourcecode supplied for STUDY ONLY
 ; Recreation NOT permitted without authorisation of the copyrightholders
 
+        INCLUDE "const.def"
+        INCLUDE "msx.def"
 
-        org     0000H
+; Declare some external symbols defined in MSX-BASIC.
+        EXTERN  ASPCT1
+        EXTERN  ASPCT2
+        EXTERN  ATRBYT
+        EXTERN  BAKCLR
+        EXTERN  BDRCLR
+        EXTERN  C4666
+        EXTERN  C558C
+        EXTERN  C5597
+        EXTERN  C63E6
+        EXTERN  C6C48
+        EXTERN  C7C76
+        EXTERN  CLPRIM
+        EXTERN  CNSDFG
+        EXTERN  CRTCNT
+        EXTERN  CSRX
+        EXTERN  CSRY
+        EXTERN  FORCLR
+        EXTERN  GETPNT
+        EXTERN  GRPATR
+        EXTERN  GRPCGP
+        EXTERN  GRPCOL
+        EXTERN  GRPNAM
+        EXTERN  GRPPAT
+        EXTERN  J409B
+        EXTERN  J73B2
+        EXTERN  LINL32
+        EXTERN  LINL40
+        EXTERN  LINLEN
+        EXTERN  MLTATR
+        EXTERN  MLTCGP
+        EXTERN  MLTNAM
+        EXTERN  MLTPAT
+        EXTERN  PUTPNT
+        EXTERN  QUEUES
+        EXTERN  RDPRIM
+        EXTERN  REPCNT
+        EXTERN  RG0SAV
+        EXTERN  RG1SAV
+        EXTERN  SCNCNT
+        EXTERN  STATFL
+        EXTERN  T32ATR
+        EXTERN  T32CGP
+        EXTERN  T32COL
+        EXTERN  T32NAM
+        EXTERN  T32PAT
+        EXTERN  TRGFLG
+        EXTERN  TXTCGP
+        EXTERN  TXTNAM
+        EXTERN  WRPRIM
 
-CHKRAM: di                              ; 0000H
+; Declare symbols exported by this module
+        PUBLIC  BEEP
+        PUBLIC  CALATR
+        PUBLIC  CALLF
+        PUBLIC  CALPAT
+        PUBLIC  CALSLT
+        PUBLIC  CGTABL
+        PUBLIC  CHGCLR
+        PUBLIC  CHGET
+        PUBLIC  CHGMOD
+        PUBLIC  CHKRAM
+        PUBLIC  CHPUT
+        PUBLIC  CHRGTR
+        PUBLIC  CHSNS
+        PUBLIC  CKCNTC
+        PUBLIC  CLRSPR
+        PUBLIC  CLS
+        PUBLIC  CNVCHR
+        PUBLIC  D0034
+        PUBLIC  DCOMPR
+        PUBLIC  DISSCR
+        PUBLIC  DOWNC
+        PUBLIC  DSPFNK
+        PUBLIC  ENASCR
+        PUBLIC  ENASLT
+        PUBLIC  ERAFNK
+        PUBLIC  FETCHC
+        PUBLIC  FILVRM
+        PUBLIC  FNKSB
+        PUBLIC  GETVC2
+        PUBLIC  GETVCP
+        PUBLIC  GETYPR
+        PUBLIC  GICINI
+        PUBLIC  GRPPRT
+        PUBLIC  GSPSIZ
+        PUBLIC  GTASPC
+        PUBLIC  GTPAD
+        PUBLIC  GTPDL
+        PUBLIC  GTSTCK
+        PUBLIC  GTTRIG
+        PUBLIC  IDBYT0
+        PUBLIC  IDBYT1
+        PUBLIC  IDBYT2
+        PUBLIC  INIFNK
+        PUBLIC  INIT32
+        PUBLIC  INITIO
+        PUBLIC  INITXT
+        PUBLIC  INLIN
+        PUBLIC  ISCNTC
+        PUBLIC  ISFLIO
+        PUBLIC  KEYINT
+        PUBLIC  LDIRMV
+        PUBLIC  LDIRVM
+        PUBLIC  LEFTC
+        PUBLIC  LFTQ
+        PUBLIC  LPTOUT
+        PUBLIC  MAPXYC
+        PUBLIC  NMIHND
+        PUBLIC  NSETCX
+        PUBLIC  OUTDLP
+        PUBLIC  OUTDO
+        PUBLIC  PINLIN
+        PUBLIC  PNTINI
+        PUBLIC  POSIT
+        PUBLIC  PUTQ
+        PUBLIC  QINLIN
+        PUBLIC  RDSLT
+        PUBLIC  RDVRM
+        PUBLIC  READC
+        PUBLIC  SCALXY
+        PUBLIC  SCANL
+        PUBLIC  SCANR
+        PUBLIC  SETATR
+        PUBLIC  SETC
+        PUBLIC  SETGRP
+        PUBLIC  SETMLT
+        PUBLIC  SETRD
+        PUBLIC  SETTXT
+        PUBLIC  SETWRT
+        PUBLIC  STMOTR
+        PUBLIC  STOREC
+        PUBLIC  STRTMS
+        PUBLIC  SYNCHR
+        PUBLIC  TAPIN
+        PUBLIC  TAPIOF
+        PUBLIC  TAPION
+        PUBLIC  TAPOOF
+        PUBLIC  TAPOON
+        PUBLIC  TAPOUT
+        PUBLIC  TDOWNC
+        PUBLIC  TOTEXT
+        PUBLIC  TUPC
+        PUBLIC  WRSLT
+        PUBLIC  WRTPSG
+        PUBLIC  WRTVDP
+        PUBLIC  WRTVRM
+
+; Program start
+        ORG     $0000
+
+CHKRAM: di                              ; $0000
         jp      A02D7
 
 
-CGTABL: dw      T1BBF                   ; 0004H
-        db      098H
-        db      098H
+CGTABL: dw      T1BBF                   ; $0004
+        db      $98
+        db      $98
 
-SYNCHR: jp      A2683                   ; 0008H
+SYNCHR: jp      A2683                   ; $0008
 
-        defs    0000CH-$,0
+        defs    $000C-$,0
 
-RDSLT:  jp      A01B6                   ; 000CH
+RDSLT:  jp      A01B6                   ; $000C
 
-        defs    00010H-$,0
+        defs    $0010-$,0
 
-CHRGTR: jp      A2686                   ; 0010H
+CHRGTR: jp      A2686                   ; $0010
 
-        defs    00014H-$,0
+        defs    $0014-$,0
 
-WRSLT:  jp      A01D1                   ; 0014H
+WRSLT:  jp      A01D1                   ; $0014
 
-        defs    00018H-$,0
+        defs    $0018-$,0
 
-OUTDO:  jp      A1B45                   ; 0018H
+OUTDO:  jp      A1B45                   ; $0018
 
-        defs    0001CH-$,0
+        defs    $001C-$,0
 
-CALSLT: jp      A0217                   ; 001CH
+CALSLT: jp      A0217                   ; $001C
 
-        defs    00020H-$,0
+        defs    $0020-$,0
 
-DCOMPR: jp      A146A                   ; 0020H
+DCOMPR: jp      A146A                   ; $0020
 
-        defs    00024H-$,0
+        defs    $0024-$,0
 
-ENASLT: jp      A025E                   ; 0024H
+ENASLT: jp      A025E                   ; $0024
 
-        defs    00028H-$,0
+        defs    $0028-$,0
 
-GETYPR: jp      A2689                   ; 0028H
+GETYPR: jp      A2689                   ; $0028
 ;
-IDBYT0:                                 ; 002BH
-        IF      INTHZ EQ 60
+IDBYT0:                                 ; $002B
+        IF      INTHZ = 60
         DEFB    CHRGEN+16*DATFMT
         ELSE
         DEFB    CHRGEN+16*DATFMT+128
         ENDIF
-IDBYT1: DEFB    KEYTYP+16*BASVER        ; 002CH
-IDBYT2: DEFB    MSXVER                  ; 002DH, MSX version 0 = MSX1
+IDBYT1: DEFB    KEYTYP+16*BASVER        ; $002C
+IDBYT2: DEFB    MSXVER                  ; $002D, MSX version 0 = MSX1
         DEFB    0
 
-        DEFS    00030H-$
+        DEFS    $0030-$
 
-CALLF:  jp      A0205                   ; 0030H
+CALLF:  jp      A0205                   ; $0030
 ;
-        DEFS    00034H-$
+        DEFS    $0034-$
 
 ;       The next bytes are used by the diskrom, to initialize the double byte header char
-;       table (0F30FH). I have not seen a MSX with anything other than four zero's, meaning
+;       table ($F30F). I have not seen a MSX with anything other than four zero's, meaning
 ;       no double byte chars.
 
 D0034:  db      0,0
         db      0,0
 
-KEYINT: jp      A0C3C                   ; 0038H
-INITIO: jp      A049D                   ; 003BH
-INIFNK: jp      A139D                   ; 003EH
-DISSCR: jp      A0577                   ; 0041H
-ENASCR: jp      A0570                   ; 0044H
-WRTVDP: jp      A057F                   ; 0047H
-RDVRM:  jp      A07D7                   ; 004AH
-WRTVRM: jp      A07CD                   ; 004DH
-SETRD:  jp      A07EC                   ; 0050H
-SETWRT: jp      A07DF                   ; 0053H
-FILVRM: jp      A0815                   ; 0056H
-LDIRMV: jp      A070F                   ; 0059H
-LDIRVM: jp      A0744                   ; 005CH
-CHGMOD: jp      A084F                   ; 005FH
-CHGCLR: jp      A07F7                   ; 0062H
+KEYINT: jp      A0C3C                   ; $0038
+INITIO: jp      A049D                   ; $003B
+INIFNK: jp      A139D                   ; $003E
+DISSCR: jp      A0577                   ; $0041
+ENASCR: jp      A0570                   ; $0044
+WRTVDP: jp      A057F                   ; $0047
+RDVRM:  jp      A07D7                   ; $004A
+WRTVRM: jp      A07CD                   ; $004D
+SETRD:  jp      A07EC                   ; $0050
+SETWRT: jp      A07DF                   ; $0053
+FILVRM: jp      A0815                   ; $0056
+LDIRMV: jp      A070F                   ; $0059
+LDIRVM: jp      A0744                   ; $005C
+CHGMOD: jp      A084F                   ; $005F
+CHGCLR: jp      A07F7                   ; $0062
 
-        defs    00066H-$,0              ; align to Z80 NMI entry at 0066H
+        defs    $0066-$,0              ; align to Z80 NMI entry at $0066
 
-NMIHND: jp      A1398                   ; 0066H
-CLRSPR: jp      A06A8                   ; 0069H
-INITXT: jp      A050E                   ; 006CH
-INIT32: jp      A0538                   ; 006FH
-        jp      A05D2                   ; 0072H
-        jp      A061F                   ; 0075H
-SETTXT: jp      A0594                   ; 0078H
-        jp      A05B4                   ; 007BH
-SETGRP: jp      A0602                   ; 007EH
-SETMLT: jp      A0659                   ; 0081H
-CALPAT: jp      A06E4                   ; 0084H
-CALATR: jp      A06F9                   ; 0087H
-GSPSIZ: jp      A0704                   ; 008AH
-GRPPRT: jp      A1510                   ; 008DH
-GICINI: jp      A04BD                   ; 0090H
-WRTPSG: jp      A1102                   ; 0093H
-        jp      A110E                   ; 0096H
-STRTMS: jp      A11C4                   ; 0099H
-CHSNS:  jp      A0D6A                   ; 009CH
-CHGET:  jp      A10CB                   ; 009FH
-CHPUT:  jp      A08BC                   ; 00A2H
-LPTOUT: jp      A085D                   ; 00A5H
-        jp      A0884                   ; 00A8H
-CNVCHR: jp      A089D                   ; 00ABH
-PINLIN: jp      A23BF                   ; 00AEH
-INLIN:  jp      A23D5                   ; 00B1H
-QINLIN: jp      A23CC                   ; 00B4H
-        jp      A046F                   ; 00B7H
-ISCNTC: jp      A03FB                   ; 00BAH
-CKCNTC: jp      A10F9                   ; 00BDH
-BEEP:   jp      A1113                   ; 00C0H
-CLS:    jp      A0848                   ; 00C3H
-POSIT:  jp      A088E                   ; 00C6H
-FNKSB:  jp      A0B26                   ; 00C9H
-ERAFNK: jp      A0B15                   ; 00CCH
-DSPFNK: jp      A0B2B                   ; 00CFH
-TOTEXT: jp      A083B                   ; 00D2H
-GTSTCK: jp      A11EE                   ; 00D5H
-GTTRIG: jp      A1253                   ; 00D8H
-GTPAD:  jp      A12AC                   ; 00DBH
-GTPDL:  jp      A1273                   ; 00DEH
-TAPION: jp      A1A63                   ; 00E1H
-TAPIN:  jp      A1ABC                   ; 00E4H
-TAPIOF: jp      A19E9                   ; 00E7H
-TAPOON: jp      A19F1                   ; 00EAH
-TAPOUT: jp      A1A19                   ; 00EDH
-TAPOOF: jp      A19DD                   ; 00F0H
-STMOTR: jp      A1384                   ; 00F3H
-LFTQ:   jp      A14EB                   ; 00F6H
-PUTQ:   jp      A1492                   ; 00F9H
-        jp      A16C5                   ; 00FCH
-LEFTC:  jp      A16EE                   ; 00FFH
-        jp      A175D                   ; 0102H
-TUPC:   jp      A173C                   ; 0105H
-DOWNC:  jp      A172A                   ; 0108H
-TDOWNC: jp      A170A                   ; 010BH
-SCALXY: jp      A1599                   ; 010EH
-MAPXYC: jp      A15DF                   ; 0111H
-FETCHC: jp      A1639                   ; 0114H
-STOREC: jp      A1640                   ; 0117H
-SETATR: jp      A1676                   ; 011AH
-READC:  jp      A1647                   ; 011DH
-SETC:   jp      A167E                   ; 0120H
-NSETCX: jp      A1809                   ; 0123H
-GTASPC: jp      A18C7                   ; 0126H
-PNTINI: jp      A18CF                   ; 0129H
-SCANR:  jp      A18E4                   ; 012CH
-SCANL:  jp      A197A                   ; 012FH
-        jp      K.BCAP                  ; 0132H
-        jp      K.BSND                  ; 0135H
-        jp      A144C                   ; 0138H
-        jp      A144F                   ; 013BH
-        jp      A1449                   ; 013EH
-        jp      A1452                   ; 0141H
-        jp      A148A                   ; 0144H
-        jp      A148E                   ; 0147H
-ISFLIO: jp      A145F                   ; 014AH
-OUTDLP: jp      A1B63                   ; 014DH
-GETVCP: jp      A1470                   ; 0150H
-GETVC2: jp      A1474                   ; 0153H
-        jp      A0468                   ; 0156H
-        jp      A01FF                   ; 0159H
+NMIHND: jp      A1398                   ; $0066
+CLRSPR: jp      A06A8                   ; $0069
+INITXT: jp      A050E                   ; $006C
+INIT32: jp      A0538                   ; $006F
+        jp      A05D2                   ; $0072
+        jp      A061F                   ; $0075
+SETTXT: jp      A0594                   ; $0078
+        jp      A05B4                   ; $007B
+SETGRP: jp      A0602                   ; $007E
+SETMLT: jp      A0659                   ; $0081
+CALPAT: jp      A06E4                   ; $0084
+CALATR: jp      A06F9                   ; $0087
+GSPSIZ: jp      A0704                   ; $008A
+GRPPRT: jp      A1510                   ; $008D
+GICINI: jp      A04BD                   ; $0090
+WRTPSG: jp      A1102                   ; $0093
+        jp      A110E                   ; $0096
+STRTMS: jp      A11C4                   ; $0099
+CHSNS:  jp      A0D6A                   ; $009C
+CHGET:  jp      A10CB                   ; $009F
+CHPUT:  jp      A08BC                   ; $00A2
+LPTOUT: jp      A085D                   ; $00A5
+        jp      A0884                   ; $00A8
+CNVCHR: jp      A089D                   ; $00AB
+PINLIN: jp      A23BF                   ; $00AE
+INLIN:  jp      A23D5                   ; $00B1
+QINLIN: jp      A23CC                   ; $00B4
+        jp      A046F                   ; $00B7
+ISCNTC: jp      A03FB                   ; $00BA
+CKCNTC: jp      A10F9                   ; $00BD
+BEEP:   jp      A1113                   ; $00C0
+CLS:    jp      A0848                   ; $00C3
+POSIT:  jp      A088E                   ; $00C6
+FNKSB:  jp      A0B26                   ; $00C9
+ERAFNK: jp      A0B15                   ; $00CC
+DSPFNK: jp      A0B2B                   ; $00CF
+TOTEXT: jp      A083B                   ; $00D2
+GTSTCK: jp      A11EE                   ; $00D5
+GTTRIG: jp      A1253                   ; $00D8
+GTPAD:  jp      A12AC                   ; $00DB
+GTPDL:  jp      A1273                   ; $00DE
+TAPION: jp      A1A63                   ; $00E1
+TAPIN:  jp      A1ABC                   ; $00E4
+TAPIOF: jp      A19E9                   ; $00E7
+TAPOON: jp      A19F1                   ; $00EA
+TAPOUT: jp      A1A19                   ; $00ED
+TAPOOF: jp      A19DD                   ; $00F0
+STMOTR: jp      A1384                   ; $00F3
+LFTQ:   jp      A14EB                   ; $00F6
+PUTQ:   jp      A1492                   ; $00F9
+        jp      A16C5                   ; $00FC
+LEFTC:  jp      A16EE                   ; $00FF
+        jp      A175D                   ; $0102
+TUPC:   jp      A173C                   ; $0105
+DOWNC:  jp      A172A                   ; $0108
+TDOWNC: jp      A170A                   ; $010B
+SCALXY: jp      A1599                   ; $010E
+MAPXYC: jp      A15DF                   ; $0111
+FETCHC: jp      A1639                   ; $0114
+STOREC: jp      A1640                   ; $0117
+SETATR: jp      A1676                   ; $011A
+READC:  jp      A1647                   ; $011D
+SETC:   jp      A167E                   ; $0120
+NSETCX: jp      A1809                   ; $0123
+GTASPC: jp      A18C7                   ; $0126
+PNTINI: jp      A18CF                   ; $0129
+SCANR:  jp      A18E4                   ; $012C
+SCANL:  jp      A197A                   ; $012F
+        jp      K_BCAP                  ; $0132
+        jp      K_BSND                  ; $0135
+        jp      A144C                   ; $0138
+        jp      A144F                   ; $013B
+        jp      A1449                   ; $013E
+        jp      A1452                   ; $0141
+        jp      A148A                   ; $0144
+        jp      A148E                   ; $0147
+ISFLIO: jp      A145F                   ; $014A
+OUTDLP: jp      A1B63                   ; $014D
+GETVCP: jp      A1470                   ; $0150
+GETVC2: jp      A1474                   ; $0153
+        jp      A0468                   ; $0156
+        jp      A01FF                   ; $0159
 
-        IF      SLOTFIX EQ 0
+        IF      SLOTFIX = 0
 
-        defs    001B6H-$,0
+        defs    $01B6-$,0
 
         ELSE
 
-        defs    0016FH-$,0
+        defs    $016F-$,0
 
 C016F:  CALL    C01AD
         JR      NZ,A01C6
@@ -206,23 +357,23 @@ C017E:  CALL    C01AD
 J018D:  EX      (SP),HL
         PUSH    AF
         LD      A,L
-        OUT     (0A8H),A
+        OUT     ($A8),A
         LD      A,H
-        LD      (D.FFFF),A
+        LD      (D_FFFF),A
         POP     AF
         POP     HL
         RET
 
 C0199:  PUSH    AF
-        LD      A,(D.FFFF)
+        LD      A,(D_FFFF)
         CPL
         LD      H,A
-        AND     0F3H
-        LD      (D.FFFF),A
-        IN      A,(0A8H)
+        AND     $F3
+        LD      (D_FFFF),A
+        IN      A,($A8)
         LD      L,A
-        AND     0F3H
-        OUT     (0A8H),A
+        AND     $F3
+        OUT     ($A8),A
         POP     AF
         RET
 
@@ -238,13 +389,13 @@ C01AD:  INC     D
 
 A01B6:  call    A027E                   ; make masks
 
-        IF      SLOTFIX EQ 1
+        IF      SLOTFIX = 1
         jp      m,C016F
         ELSE
         jp      m,A01C6                 ; expanded slot, handle
         ENDIF
 
-        in      a,(0A8H)
+        in      a,($A8)
         ld      d,a
         and     c                       ; clear slot of page
         or      b                       ; set new slot
@@ -262,14 +413,14 @@ A01C6:  push    hl
 A01D1:  push    de
         call    A027E                   ; make masks
 
-        IF      SLOTFIX EQ 1
+        IF      SLOTFIX = 1
         jp      m,C017E
         ELSE
         jp      m,A01E1                 ; expanded slot, handle
         ENDIF
 
         pop     de
-        in      a,(0A8H)
+        in      a,($A8)
         ld      d,a
         and     c                       ; clear slot of page
         or      b                       ; set new slot
@@ -286,13 +437,13 @@ A01EC:  pop     bc
         ex      (sp),hl
         push    af
         ld      a,b
-        and     03FH
+        and     $3F
         or      c                       ; slot of sec. slotreg
-        out     (0A8H),a
+        out     ($A8),a
         ld      a,l
-        ld      (D.FFFF),a              ; restore register
+        ld      (D_FFFF),a              ; restore register
         ld      a,b
-        out     (0A8H),a                ; restore prim. slotreg
+        out     ($A8),a                ; restore prim. slotreg
         pop     af
         pop     hl
         ret
@@ -325,7 +476,7 @@ A0217:  exx
         pop     hl
         call    A027E                   ; make masks
         jp      m,A022E                 ; expanded slot, handle
-        in      a,(0A8H)
+        in      a,($A8)
         push    af
         and     c
         or      b
@@ -338,7 +489,7 @@ A022E:  call    A02A3
         push    hl
         push    bc
         ld      c,a
-        ld      b,000H
+        ld      b,$00
         ld      a,l
         and     h
         or      d
@@ -355,14 +506,14 @@ A022E:  call    A02A3
         pop     bc
         pop     de
         ld      a,b
-        and     03FH
+        and     $3F
         or      c
         di
-        out     (0A8H),a
+        out     ($A8),a
         ld      a,e
-        ld      (D.FFFF),a
+        ld      (D_FFFF),a
         ld      a,b
-        out     (0A8H),a
+        out     ($A8),a
         ld      (hl),e
         ex      af,af'
         exx
@@ -370,16 +521,16 @@ A022E:  call    A02A3
 ;
 A025E:  call    A027E                   ; get masks
         jp      m,A026B                 ; expanded slot, handle
-        in      a,(0A8H)
+        in      a,($A8)
         and     c
         or      b
-        out     (0A8H),a
+        out     ($A8),a
         ret
 ;
 A026B:  push    hl
         call    A02A3
         ld      c,a
-        ld      b,000H
+        ld      b,$00
         ld      a,l
         and     h
         or      d
@@ -395,9 +546,9 @@ A027E:  di
         ld      a,h
         rlca
         rlca
-        and     003H                    ; page
+        and     $03                    ; page
         ld      e,a
-        ld      a,0C0H
+        ld      a,$C0
 A0288:  rlca
         rlca
         dec     e
@@ -407,7 +558,7 @@ A0288:  rlca
         ld      c,a                     ; c = page clear mask
         pop     af
         push    af
-        and     003H                    ; primairy slot
+        and     $03                    ; primairy slot
         inc     a                       ; +1
         ld      b,a
         ld      a,0-01010101b
@@ -422,20 +573,20 @@ A0299:  add     a,01010101b
 ;
 A02A3:  push    af
         ld      a,d
-        and     0C0H
+        and     $C0
         ld      c,a                     ; page set mask for page 3
         pop     af
         push    af
         ld      d,a
-        in      a,(0A8H)
+        in      a,($A8)
         ld      b,a
-        and     03FH                    ; clear slot of page 3
+        and     $3F                    ; clear slot of page 3
         or      c                       ; set page 3 for sec. slotreg
-        out     (0A8H),a                ; invoke
+        out     ($A8),a                ; invoke
         ld      a,d
         rrca
         rrca
-        and     003H                    ; secundairy slot
+        and     $03                    ; secundairy slot
         ld      d,a
         ld      a,0-01010101b
 A02BB:  add     a,01010101b
@@ -446,34 +597,34 @@ A02BB:  add     a,01010101b
         ld      a,e
         cpl
         ld      h,a                     ; page clear mask
-        ld      a,(D.FFFF)
+        ld      a,(D_FFFF)
         cpl
         ld      l,a                     ; old sec. slotreg
         and     h                       ; clear page
         or      d                       ; set new slot
-        ld      (D.FFFF),a
+        ld      (D_FFFF),a
         ld      a,b
-        out     (0A8H),a                ; restore primairy slot on page 3
+        out     ($A8),a                ; restore primairy slot on page 3
         pop     af
-        and     003H
+        and     $03
         ret
 ;
-A02D7:  ld      a,082H
-        out     (0ABH),a                ; initialize PPI (active, group A mode 0, group A output, upper port C output, group B mode 0, group B input, lower port C output)
+A02D7:  ld      a,$82
+        out     ($AB),a                ; initialize PPI (active, group A mode 0, group A output, upper port C output, group B mode 0, group B input, lower port C output)
         xor     a
-        out     (0A8H),a                ; select primairy slot 0 on all pages
-        ld      a,050H
-        out     (0AAH),a                ; CAPS off, motor off, keyboard row 0
-        ld      de,0FFFFH               ; initialize lowest RAM address found (page 2)
+        out     ($A8),a                ; select primairy slot 0 on all pages
+        ld      a,$50
+        out     ($AA),a                ; CAPS off, motor off, keyboard row 0
+        ld      de,$FFFF               ; initialize lowest RAM address found (page 2)
         xor     a                       ; start with primairy slot 0
         ld      c,a                     ; initialize expanded slot flags
-A02E7:  out     (0A8H),a                ; select primairy slot on page 2 and 3
+A02E7:  out     ($A8),a                ; select primairy slot on page 2 and 3
         sla     c                       ; shift expanded slot flags
         ld      b,0                     ; assume not expanded slot
-        ld      hl,0FFFFH
-        ld      (hl),0F0H
+        ld      hl,$FFFF
+        ld      (hl),$F0
         ld      a,(hl)
-        sub     00FH                    ; is slot expanded (writen value readback inverted) ?
+        sub     $0F                    ; is slot expanded (writen value readback inverted) ?
         jr      nz,A0302                ; nope,
         ld      (hl),a
         ld      a,(hl)
@@ -481,8 +632,8 @@ A02E7:  out     (0A8H),a                ; select primairy slot on page 2 and 3
         jr      nz,A0302                ; nope,
         inc     b
         set     0,c                     ; flag slot expanded
-A02FF:  ld      (D.FFFF),a
-A0302:  ld      hl,0C000H-256           ; page 2
+A02FF:  ld      (D_FFFF),a
+A0302:  ld      hl,$C000-256           ; page 2
 A0305:  ld      a,(hl)
         cpl
         ld      (hl),a
@@ -494,7 +645,7 @@ A0305:  ld      a,(hl)
         jr      nz,A0305
         dec     h
         jp      m,A0305
-A0314:  ld      l,000H
+A0314:  ld      l,$00
         inc     h                       ; round up 256 bytes boundary
         ld      a,l
         sub     e
@@ -502,48 +653,48 @@ A0314:  ld      l,000H
         sbc     a,d                     ; page 2 with more RAM ?
         jr      nc,A0327                ; nope,
         ex      de,hl                   ; new lowest RAM address found
-        ld      a,(D.FFFF)
+        ld      a,(D_FFFF)
         cpl
         ld      l,a
-        in      a,(0A8H)
+        in      a,($A8)
         ld      h,a
         ld      sp,hl                   ; save primairy and secundairy slotregister of lowest RAM address found (page 2)
 A0327:  ld      a,b
         and     a                       ; slot expanded ?
         jr      z,A0335                 ; nope, next primary slot
-        ld      a,(D.FFFF)
+        ld      a,(D_FFFF)
         cpl
-        add     a,010H                  ; next secundairy slot page 2
-        cp      040H                    ; all secundairy slots done ?
+        add     a,$10                  ; next secundairy slot page 2
+        cp      $40                    ; all secundairy slots done ?
         jr      c,A02FF                 ; nope, next
-A0335:  in      a,(0A8H)
-        add     a,050H                  ; next primary slot page 2 and 3
+A0335:  in      a,($A8)
+        add     a,$50                  ; next primary slot page 2 and 3
         jr      nc,A02E7                ; all primary slots done ? nope, next
         ld      hl,0
         add     hl,sp
         ld      a,h
-        out     (0A8H),a
+        out     ($A8),a
         ld      a,l
-        ld      (D.FFFF),a              ; select slot with lowest RAM address found (page 2)
+        ld      (D_FFFF),a              ; select slot with lowest RAM address found (page 2)
         ld      a,c
         rlca
         rlca
         rlca
         rlca
         ld      c,a                     ; expanded slot flags in b7-b4
-        ld      de,0FFFFH               ; initialize lowest RAM address found (page 3)
-        in      a,(0A8H)
-        and     03FH                    ; primairy slot 0 in page 3
-A0353:  out     (0A8H),a                ; select new primairy slot in page 3
+        ld      de,$FFFF               ; initialize lowest RAM address found (page 3)
+        in      a,($A8)
+        and     $3F                    ; primairy slot 0 in page 3
+A0353:  out     ($A8),a                ; select new primairy slot in page 3
         ld      b,0
         rlc     c                       ; slot expanded ?
         jr      nc,A0365                ; nope,
         inc     b                       ; flag slot expanded
-        ld      a,(D.FFFF)
+        ld      a,(D_FFFF)
         cpl
-        and     03FH                    ; secundairy slot 0 in page 3
-A0362:  ld      (D.FFFF),a              ; select new secundairy slot in page 3
-A0365:  ld      hl,0FF00H-256           ; page 3 (leave upper 256 bytes out for secundairy slot register)
+        and     $3F                    ; secundairy slot 0 in page 3
+A0362:  ld      (D_FFFF),a              ; select new secundairy slot in page 3
+A0365:  ld      hl,$FF00-256           ; page 3 (leave upper 256 bytes out for secundairy slot register)
 A0368:  ld      a,(hl)
         cpl
         ld      (hl),a
@@ -555,9 +706,9 @@ A0368:  ld      a,(hl)
         jr      nz,A0368
         dec     h
         ld      a,h
-        cp      0C0H
+        cp      $C0
         jr      nc,A0368
-A0379:  ld      l,000H
+A0379:  ld      l,$00
         inc     h                       ; round up 256 bytes boundary
         ld      a,l
         sub     e
@@ -565,71 +716,71 @@ A0379:  ld      l,000H
         sbc     a,d                     ; page 3 with more RAM ?
         jr      nc,A038C                ; nope,
         ex      de,hl                   ; new lowest RAM address found
-        ld      a,(D.FFFF)
+        ld      a,(D_FFFF)
         cpl
         ld      l,a
-        in      a,(0A8H)
+        in      a,($A8)
         ld      h,a
         ld      sp,hl                   ; save primairy and secundairy slotregister of lowest RAM address found (page 3)
 A038C:  ld      a,b
         and     a                       ; slot expanded ?
         jr      z,A0398                 ; nope,
-        ld      a,(D.FFFF)
+        ld      a,(D_FFFF)
         cpl
-        add     a,040H                  ; next secundairy slot page 3
+        add     a,$40                  ; next secundairy slot page 3
         jr      nc,A0362                ; all secundairy slots done ? nope, next
-A0398:  in      a,(0A8H)
-        add     a,040H                  ; next primairy slot page 3
+A0398:  in      a,($A8)
+        add     a,$40                  ; next primairy slot page 3
         jr      nc,A0353                ; all primary slots done ? nope, next
         ld      hl,0
         add     hl,sp
         ld      a,h
-        out     (0A8H),a
+        out     ($A8),a
         ld      a,l
-        ld      (D.FFFF),a              ; select slot with lowest RAM address found (page 3)
+        ld      (D_FFFF),a              ; select slot with lowest RAM address found (page 3)
         ld      a,c
-        ld      bc,0C49H
+        ld      bc,$0C49
         ld      de,VARWRK+1
         ld      hl,VARWRK
-        ld      (hl),000H
+        ld      (hl),$00
         ldir                            ; clear system variable area
         ld      c,a
         ld      b,4
         ld      hl,EXPTBL+3
 A03BD:  rr      c
         sbc     a,a
-        and     080H
+        and     $80
         ld      (hl),a                  ; initialize slot expanded flag
         dec     hl
         djnz    A03BD
-        in      a,(0A8H)
+        in      a,($A8)
         ld      c,a                     ; save current primairy slot register
         xor     a
-        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2,3
-        ld      a,(D.FFFF)
+        out     ($A8),a                ; select primairy slot 0 in page 0,1,2,3
+        ld      a,(D_FFFF)
         cpl
         ld      l,a                     ; save current secundairy slot register slot 0
-        ld      a,040H
-        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2 slot 1 in page 3
-        ld      a,(D.FFFF)
+        ld      a,$40
+        out     ($A8),a                ; select primairy slot 0 in page 0,1,2 slot 1 in page 3
+        ld      a,(D_FFFF)
         cpl
         ld      h,a                     ; save current secundairy slot register slot 1
-        ld      a,080H
-        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2 slot 2 in page 3
-        ld      a,(D.FFFF)
+        ld      a,$80
+        out     ($A8),a                ; select primairy slot 0 in page 0,1,2 slot 2 in page 3
+        ld      a,(D_FFFF)
         cpl
         ld      e,a                     ; save current secundairy slot register slot 2
-        ld      a,0C0H
-        out     (0A8H),a                ; select primairy slot 0 in page 0,1,2 slot 3 in page 3
-        ld      a,(D.FFFF)
+        ld      a,$C0
+        out     ($A8),a                ; select primairy slot 0 in page 0,1,2 slot 3 in page 3
+        ld      a,(D_FFFF)
         cpl
         ld      d,a                     ; save current secundairy slot register slot 3
         ld      a,c
-        out     (0A8H),a                ; restore primairy slot register
+        out     ($A8),a                ; restore primairy slot register
         ld      (SLTTBL+0),hl
         ex      de,hl
         ld      (SLTTBL+2),hl           ; current secundairy slot registers saved in SLTTBL
-        im      1                       ; Z80 interrupt mode 1 (RST 38H on INT)
+        im      1                       ; Z80 interrupt mode 1 (RST $38 on INT)
         jp      A2680                   ; part 2 of init
 ;
 A03FB:  ld      a,(BASROM)
@@ -639,12 +790,12 @@ A03FB:  ld      a,(BASROM)
         ld      hl,INTFLG
         di                              ; INTFLG can not change
         ld      a,(hl)
-        ld      (hl),000H               ; reset
+        ld      (hl),$00               ; reset
         pop     hl
         ei
         and     a                       ; STOP or CTRL/STOP ?
         ret     z                       ; nop, quit
-        cp      003H
+        cp      $03
         jr      z,A042C                 ; it is CTRL/STOP
         push    hl
         push    de
@@ -653,7 +804,7 @@ A03FB:  ld      a,(BASROM)
         ld      hl,INTFLG
 A0419:  di                              ; INTFLG can not change
         ld      a,(hl)
-        ld      (hl),000H               ; reset
+        ld      (hl),$00               ; reset
         ei
         and     a                       ; STOP or CTRL/STOP ?
         jr      z,A0419                 ; nop, try again
@@ -663,7 +814,7 @@ A0419:  di                              ; INTFLG can not change
         pop     bc
         pop     de
         pop     hl
-        cp      003H                    ; CTRL/STOP ?
+        cp      $03                    ; CTRL/STOP ?
         ret     nz                      ; nop, just quit
 A042C:  push    hl
         call    A0468                   ; clear keyboard buffer
@@ -678,7 +829,7 @@ A042C:  push    hl
 ;
 A043F:  call    A083B
         ld      a,(EXPTBL+0)
-        ld      h,040H
+        ld      h,$40
         call    A025E
         pop     hl
         xor     a
@@ -705,57 +856,57 @@ A0468:  ld      hl,(PUTPNT)
         ld      (GETPNT),hl
         ret
 ;
-A046F:  in      a,(0AAH)
-        and     0F0H
-        or      007H
-        out     (0AAH),a
-        in      a,(0A9H)
-        and     010H
+A046F:  in      a,($AA)
+        and     $F0
+        or      $07
+        out     ($AA),a
+        in      a,($A9)
+        and     $10
         ret     nz
-        in      a,(0AAH)
+        in      a,($AA)
         dec     a
-        out     (0AAH),a
-        in      a,(0A9H)
-        and     002H
+        out     ($AA),a
+        in      a,($A9)
+        and     $02
         ret     nz
         push    hl
         ld      hl,(PUTPNT)
         ld      (GETPNT),hl
         pop     hl
         ld      a,(OLDKEY+7)
-        and     0EFH
+        and     $EF
         ld      (OLDKEY+7),a
         LD      A,13
         ld      (REPCNT),a
         scf
         ret
 ;
-A049D:  ld      a,007H
-        ld      e,080H
+A049D:  ld      a,$07
+        ld      e,$80
         call    A1102
-        ld      a,00FH
-        ld      e,0CFH
+        ld      a,$0F
+        ld      e,$CF
         call    A1102
-        ld      a,00BH
+        ld      a,$0B
         ld      e,a
         call    A1102
         call    A110C
-        and     040H
+        and     $40
         ld      (KANAMD),a
-        ld      a,0FFH
-        out     (090H),a
+        ld      a,$FF
+        out     ($90),a
 A04BD:  push    hl
         push    de
         push    bc
         push    af
         ld      hl,MUSICF
-        ld      b,071H
+        ld      b,$71
         xor     a
 A04C7:  ld      (hl),a
         inc     hl
         djnz    A04C7
         ld      de,VOICAQ
-        ld      b,07FH
+        ld      b,$7F
         ld      hl,128
 A04D3:  push    hl
         push    de
@@ -763,12 +914,12 @@ A04D3:  push    hl
         push    af
         call    A14DA
         pop     af
-        add     a,008H
-        ld      e,000H
+        add     a,$08
+        ld      e,$00
         call    A1102
-        sub     008H
+        sub     $08
         push    af
-        ld      l,00FH
+        ld      l,$0F
         call    A1477
         ex      de,hl
         ld      hl,T0508
@@ -781,10 +932,10 @@ A04D3:  push    hl
         add     hl,de
         ex      de,hl
         inc     a
-        cp      003H
+        cp      $03
         jr      c,A04D3
-        ld      a,007H
-        ld      e,0B8H
+        ld      a,$07
+        ld      e,$B8
         call    A1102
         jp      A08DA
 ;
@@ -811,7 +962,7 @@ A050E:  call    A0577
         jr      A0570
 ;
 A0538:  call    A0577
-        ld      a,001H
+        ld      a,$01
         ld      (SCRMOD),a
         ld      (OLDSCR),a
         ld      a,(LINL32)
@@ -830,23 +981,23 @@ A0538:  call    A0577
         call    A06BB
         call    A05B4
 A0570:  ld      a,(RG1SAV)
-        or      040H
+        or      $40
         jr      A057C
 ;
 A0577:  ld      a,(RG1SAV)
-        and     0BFH
+        and     $BF
 A057C:  ld      b,a
-        ld      c,001H
+        ld      c,$01
 A057F:  ld      a,b
         di
-        out     (099H),a
+        out     ($99),a
         ld      a,c
-        or      080H
-        out     (099H),a
+        or      $80
+        out     ($99),a
         ei
         push    hl
         ld      a,b
-        ld      b,000H
+        ld      b,$00
         ld      hl,RG0SAV
         add     hl,bc
         ld      (hl),a
@@ -854,36 +1005,36 @@ A057F:  ld      a,b
         ret
 ;
 A0594:  ld      a,(RG0SAV)
-        and     001H
+        and     $01
         ld      b,a
-        ld      c,000H
+        ld      c,$00
         call    A057F
         ld      a,(RG1SAV)
-        and     0E7H
-        or      010H
+        and     $E7
+        or      $10
         ld      b,a
         inc     c
         call    A057F
         ld      hl,TXTNAM
-        ld      de,00000H
+        ld      de,$0000
         jp      A0677
 ;
 A05B4:  ld      a,(RG0SAV)
-        and     001H
+        and     $01
         ld      b,a
-        ld      c,000H
+        ld      c,$00
         call    A057F
         ld      a,(RG1SAV)
-        and     0E7H
+        and     $E7
         ld      b,a
         inc     c
         call    A057F
         ld      hl,T32NAM
-        ld      de,00000H
+        ld      de,$0000
         jp      A0677
 ;
 A05D2:  call    A0577
-        ld      a,002H
+        ld      a,$02
         ld      (SCRMOD),a
         ld      hl,(GRPPAT)
         ld      (PATBAS),hl
@@ -892,8 +1043,8 @@ A05D2:  call    A0577
         ld      hl,(GRPNAM)
         call    A07DF
         xor     a
-        ld      b,003H
-A05EF:  out     (098H),a
+        ld      b,$03
+A05EF:  out     ($98),a
         inc     a
         jr      nz,A05EF
         djnz    A05EF
@@ -903,21 +1054,21 @@ A05EF:  out     (098H),a
         jp      A0570
 ;
 A0602:  ld      a,(RG0SAV)
-        or      002H
+        or      $02
         ld      b,a
-        ld      c,000H
+        ld      c,$00
         call    A057F
         ld      a,(RG1SAV)
-        and     0E7H
+        and     $E7
         ld      b,a
         inc     c
         call    A057F
         ld      hl,GRPNAM
-        ld      de,07F03H
+        ld      de,$7F03
         jr      A0677
 ;
 A061F:  call    A0577
-        ld      a,003H
+        ld      a,$03
         ld      (SCRMOD),a
         ld      hl,(MLTPAT)
         ld      (PATBAS),hl
@@ -926,10 +1077,10 @@ A061F:  call    A0577
         ld      hl,(MLTNAM)
         call    A07DF
         ld      de,6
-A063C:  ld      c,004H
+A063C:  ld      c,$04
 A063E:  ld      a,d
-        ld      b,020H
-A0641:  out     (098H),a
+        ld      b,$20
+A0641:  out     ($98),a
         inc     a
         djnz    A0641
         dec     c
@@ -943,29 +1094,29 @@ A0641:  out     (098H),a
         jp      A0570
 ;
 A0659:  ld      a,(RG0SAV)
-        and     001H
+        and     $01
         ld      b,a
-        ld      c,000H
+        ld      c,$00
         call    A057F
         ld      a,(RG1SAV)
-        and     0E7H
-        or      008H
+        and     $E7
+        or      $08
         ld      b,a
-        ld      c,001H
+        ld      c,$01
         call    A057F
         ld      hl,MLTNAM
-        ld      de,00000H
+        ld      de,$0000
 A0677:  ld      bc,A0602
         call    A0690
-        ld      b,00AH
+        ld      b,$0A
         ld      a,d
         call    A0691
-        ld      b,005H
+        ld      b,$05
         ld      a,e
         call    A0691
-        ld      b,009H
+        ld      b,$09
         call    A0690
-        ld      b,005H
+        ld      b,$05
 A0690:  xor     a
 A0691:  push    hl
         push    af
@@ -990,17 +1141,17 @@ A0698:  add     hl,hl
 ;
 A06A8:  ld      a,(RG1SAV)
         ld      b,a
-        ld      c,001H
+        ld      c,$01
         call    A057F
         ld      hl,(PATBAS)
-        ld      bc,00800H
+        ld      bc,$0800
         xor     a
         call    A0815
 A06BB:  ld      a,(FORCLR)
         ld      e,a
         ld      hl,(ATRBAS)
-        ld      bc,02000H
-A06C5:  ld      a,0D1H
+        ld      bc,$2000
+A06C5:  ld      a,$D1
         call    A07CD
         inc     hl
         inc     hl
@@ -1022,12 +1173,12 @@ A06DC:  ld      a,e
         ret
 ;
 A06E4:  ld      l,a
-        ld      h,000H
+        ld      h,$00
         add     hl,hl
         add     hl,hl
         add     hl,hl
         call    A0704
-        cp      008H
+        cp      $08
         jr      z,A06F3
         add     hl,hl
         add     hl,hl
@@ -1037,7 +1188,7 @@ A06F3:  ex      de,hl
         ret
 ;
 A06F9:  ld      l,a
-        ld      h,000H
+        ld      h,$00
         add     hl,hl
         add     hl,hl
         ex      de,hl
@@ -1048,15 +1199,15 @@ A06F9:  ld      l,a
 A0704:  ld      a,(RG1SAV)
         rrca
         rrca
-        ld      a,008H
+        ld      a,$08
         ret     nc
-        ld      a,020H
+        ld      a,$20
         ret
 ;
 A070F:  call    A07EC
         ex      (sp),hl
         ex      (sp),hl
-A0714:  in      a,(098H)
+A0714:  in      a,($98)
         ld      (de),a
         inc     de
         dec     bc
@@ -1065,12 +1216,12 @@ A0714:  in      a,(098H)
         jr      nz,A0714
         ret
 ;
-A071E:  call    H.INIP
+A071E:  call    H_INIP
         ld      hl,(CGPBAS)
         call    A07DF
         ld      a,(CGPNT+0)
         ld      hl,(CGPNT+1)
-        ld      bc,00800H
+        ld      bc,$0800
         push    af
 A0731:  pop     af
         push    af
@@ -1079,7 +1230,7 @@ A0731:  pop     af
         call    A01B6
         ei
         pop     bc
-        out     (098H),a
+        out     ($98),a
         inc     hl
         dec     bc
         ld      a,c
@@ -1091,7 +1242,7 @@ A0731:  pop     af
 A0744:  ex      de,hl
         call    A07DF
 A0748:  ld      a,(de)
-        out     (098H),a
+        out     ($98),a
         inc     de
         dec     bc
         ld      a,c
@@ -1099,7 +1250,7 @@ A0748:  ld      a,(de)
         jr      nz,A0748
         ret
 ;
-A0752:  ld      h,000H
+A0752:  ld      h,$00
         ld      l,a
         add     hl,hl
         add     hl,hl
@@ -1108,7 +1259,7 @@ A0752:  ld      h,000H
         ld      hl,(CGPNT+1)
         add     hl,de
         ld      de,PATWRK
-        ld      b,008H
+        ld      b,$08
         ld      a,(CGPNT+0)
 A0765:  push    af
         push    hl
@@ -1135,11 +1286,11 @@ A077E:  ld      a,(SCRMOD)
         ld      bc,24*40
         jr      z,A078D
         ld      bc,24*32
-A078D:  ld      a,020H
+A078D:  ld      a,$20
         call    A0815
         call    A0A7F
         ld      hl,LINTTB
-        ld      b,018H
+        ld      b,$18
 A079A:  ld      (hl),b
         inc     hl
         djnz    A079A
@@ -1165,7 +1316,7 @@ A07B9:  call    A0832
         add     a,a
         or      (hl)
         ld      hl,(MLTCGP)
-        ld      bc,00600H
+        ld      bc,$0600
         jr      A07B6
 ;
 A07CD:  push    af
@@ -1173,31 +1324,31 @@ A07CD:  push    af
         ex      (sp),hl
         ex      (sp),hl
         pop     af
-        out     (098H),a
+        out     ($98),a
         ret
 ;
 A07D7:  call    A07EC
         ex      (sp),hl
         ex      (sp),hl
-        in      a,(098H)
+        in      a,($98)
         ret
 ;
 A07DF:  ld      a,l
         di
-        out     (099H),a
+        out     ($99),a
         ld      a,h
-        and     03FH
-        or      040H
-        out     (099H),a
+        and     $3F
+        or      $40
+        out     ($99),a
         ei
         ret
 ;
 A07EC:  ld      a,l
         di
-        out     (099H),a
+        out     ($99),a
         ld      a,h
-        and     03FH
-        out     (099H),a
+        and     $3F
+        out     ($99),a
         ei
         ret
 ;
@@ -1220,7 +1371,7 @@ A07F7:  ld      a,(SCRMOD)
 A0815:  push    af
         call    A07DF
 A0819:  pop     af
-        out     (098H),a
+        out     ($98),a
         push    af
         dec     bc
         ld      a,c
@@ -1241,13 +1392,13 @@ A0824:  ld      a,(FORCLR)
 ;
 A0832:  ld      a,(BDRCLR)
 A0835:  ld      b,a
-        ld      c,007H
+        ld      c,$07
         jp      A057F
 ;
 A083B:  call    A0B9F                   ; grafic mode ?
         ret     c                       ; nop, quit
         ld      a,(OLDSCR)
-        call    H.TOTE
+        call    H_TOTE
         jp      A084F
 ;
 A0848:  ret     nz
@@ -1263,7 +1414,7 @@ A084F:  dec     a
         jp      z,A05D2
         jp      A061F
 ;
-A085D:  call    H.LPTO
+A085D:  call    H_LPTO
         push    af
 A0861:  call    A046F
         jr      c,A0878
@@ -1271,40 +1422,40 @@ A0861:  call    A046F
         jr      z,A0861
         pop     af
 A086C:  push    af
-        out     (091H),a
+        out     ($91),a
         xor     a
-        out     (090H),a
+        out     ($90),a
         dec     a
-        out     (090H),a
+        out     ($90),a
         pop     af
         and     a
         ret
 ;
 A0878:  xor     a
         ld      (LPTPOS),a
-        ld      a,00DH
+        ld      a,$0D
         call    A086C
         pop     af
         scf
         ret
 ;
-A0884:  call    H.LPTS
-        in      a,(090H)
+A0884:  call    H_LPTS
+        in      a,($90)
         rrca
         rrca
         ccf
         sbc     a,a
         ret
 ;
-A088E:  ld      a,01BH
+A088E:  ld      a,$1B
         rst     OUTDO
-        ld      a,059H
+        ld      a,$59
         rst     OUTDO
         ld      a,l
-        add     a,01FH
+        add     a,$1F
         rst     OUTDO
         ld      a,h
-        add     a,01FH
+        add     a,$1F
         rst     OUTDO
         ret
 ;
@@ -1316,17 +1467,17 @@ A089D:  push    hl
         ld      (hl),a
         jr      z,A08B4
         pop     af
-        sub     040H
-        cp      020H
+        sub     $40
+        cp      $20
         jr      c,A08B2
-        add     a,040H
+        add     a,$40
 A08B0:  cp      a
         scf
 A08B2:  pop     hl
         ret
 ;
 A08B4:  pop     af
-        cp      001H
+        cp      $01
         jr      nz,A08B0
         ld      (hl),a
         pop     hl
@@ -1336,7 +1487,7 @@ A08BC:  push    hl
         push    de
         push    bc
         push    af
-        call    H.CHPU
+        call    H_CHPU
         call    A0B9F                   ; grafic mode ?
         jr      nc,A08DA                ; yep, quit
         call    A0A2E                   ; cursor off
@@ -1362,25 +1513,25 @@ A08DF:  call    A089D                   ; grafic header ?
         and     a                       ; in ESC sequence ?
         jp      nz,A098F                ; yep, handle
         ld      a,c
-        cp      020H                    ; control char ?
+        cp      $20                    ; control char ?
         jr      c,A0914                 ; yep, handle
 A08F3:  ld      hl,(CSRY)               ; cursor position
-        cp      07FH
+        cp      $7F
         jp      z,A0AE3                 ; DEL, handle
         call    A0BE6                   ; 'print' char
         call    A0A44                   ; increase col
         ret     nz                      ; not at end, quit
         xor     a
         call    A0C2B                   ; expand logical line
-        ld      h,001H                  ; at begin of line
+        ld      h,$01                  ; at begin of line
 A0908:  call    A0A61                   ; down
         ret     nz                      ; no scroll needed, quit
         call    A0A69                   ; scroll up
-        ld      l,001H
+        ld      l,$01
         jp      A0A88                   ; clear line
 ;
 A0914:  ld      hl,T092F-2
-        ld      c,00CH
+        ld      c,$0C
 A0919:  inc     hl
         inc     hl
         and     a
@@ -1400,29 +1551,29 @@ A0919:  inc     hl
 A092D:  push    bc
         ret
 ;
-T092F:  db      007H
+T092F:  db      $07
         dw      A1113
-        db      008H
+        db      $08
         dw      A0A4C
-        db      009H
+        db      $09
         dw      A0A71
-        db      00AH
+        db      $0A
         dw      A0908
-        db      00BH
+        db      $0B
         dw      A0A7F
-        db      00CH
+        db      $0C
         dw      A077E
-        db      00DH
+        db      $0D
         dw      A0A81
-        db      01BH
+        db      $1B
         dw      A0989
-        db      01CH
+        db      $1C
         dw      A0A5B
-        db      01DH
+        db      $1D
         dw      A0A4C
-        db      01EH
+        db      $1E
         dw      A0A57
-        db      01FH
+        db      $1F
         dw      A0A61
 
 T0953:  db      'j'
@@ -1456,13 +1607,13 @@ T0953:  db      'j'
         db      'y'
         dw      A0983
 
-A0980:  ld      a,001H
-        db      001H
-A0983:  ld      a,002H
-        db      001H
-A0986:  ld      a,004H
-        db      001H
-A0989:  ld      a,0FFH
+A0980:  ld      a,$01
+        db      $01
+A0983:  ld      a,$02
+        db      $01
+A0986:  ld      a,$04
+        db      $01
+A0989:  ld      a,$FF
         ld      (ESCCNT),a
         ret
 ;
@@ -1470,7 +1621,7 @@ A098F:  jp      p,A099D                 ; handle long ESC sequences
         ld      (hl),0                  ; next is no ESC anymore
         ld      a,c
         ld      hl,T0953-2
-        ld      c,00FH
+        ld      c,$0F
         jp      A0919                   ; handle function
 ;
 A099D:  dec     a
@@ -1482,7 +1633,7 @@ A099D:  dec     a
         ld      a,(LINLEN)              ; max kol
         ld      de,CSRX
         jr      z,A09B3
-        ld      (hl),003H
+        ld      (hl),$03
         call    A0C32                   ; max row
         dec     de
 A09B3:  ld      b,a
@@ -1526,7 +1677,7 @@ A09DA:  ld      a,(CSRSR)
 A09E1:  ld      a,(CSRSR)
         and     a                       ; cursor visable ?
         ret     z                       ; nop, quit
-A09E6:  call    H.DSPC
+A09E6:  call    H_DSPC
         call    A0B9F                   ; grafic mode ?
         ret     nc                      ; yep, quit
         ld      hl,(CSRY)
@@ -1534,7 +1685,7 @@ A09E6:  call    H.DSPC
         call    A0BD8                   ; get char at cursorposition
         ld      (CURSAV),a              ; save
         ld      l,a
-        ld      h,000H
+        ld      h,$00
         add     hl,hl
         add     hl,hl
         add     hl,hl
@@ -1559,7 +1710,7 @@ A0A13:  ld      a,(hl)
         add     hl,bc                   ; vramadres cursor patern
         call    A0BBE                   ; copy LINWRK to vram
         pop     hl
-        ld      c,0FFH
+        ld      c,$FF
         jp      A0BE6                   ; put cursor on screen
 ;
 A0A27:  ld      a,(CSRSR)
@@ -1570,7 +1721,7 @@ A0A27:  ld      a,(CSRSR)
 A0A2E:  ld      a,(CSRSR)
         and     a                       ; cursor visable ?
         ret     z                       ; nop, quit
-A0A33:  call    H.ERAC
+A0A33:  call    H_ERAC
         call    A0B9F                   ; grafic mode ?
         ret     nc                      ; yep, quit
         ld      hl,(CSRY)
@@ -1588,16 +1739,16 @@ A0A4C:  call    A0A55
         ret     nz
         ld      a,(LINLEN)
         ld      h,a
-        defb    011H
+        defb    $11
 A0A55:  dec     h
-        defb    03EH
+        defb    $3E
 A0A57:  dec     l
         ret     z
         jr      A0A69
 
 A0A5B:  call    A0A44
         ret     nz
-        ld      h,001H
+        ld      h,$01
 A0A61:  call    A0C32
         cp      l
         ret     z
@@ -1610,16 +1761,16 @@ A0A6D:  dec     l
         xor     a
         jr      A0A69
 ;
-A0A71:  ld      a,020H
+A0A71:  ld      a,$20
         call    A08DF
         ld      a,(CSRX)
         dec     a
-        and     007H
+        and     $07
         jr      nz,A0A71
         ret
 ;
-A0A7F:  ld      l,001H
-A0A81:  ld      h,001H
+A0A7F:  ld      l,$01
+A0A81:  ld      h,$01
         jr      A0A69
 
 A0A85:  call    A0A81
@@ -1630,7 +1781,7 @@ A0A88:  call    A0C32
         push    hl
         push    af
         ld      c,a
-        ld      b,000H
+        ld      b,$00
         call    A0C1D
         ld      l,e
         ld      h,d
@@ -1661,7 +1812,7 @@ A0AB7:  call    A0C32
         push    hl
         push    af
         ld      c,a
-        ld      b,000H
+        ld      b,$00
         call    A0C1D
         ld      l,e
         ld      h,d
@@ -1685,17 +1836,17 @@ A0AD3:  push    af
 ;
 A0AE3:  call    A0A4C
         ret     z
-        ld      c,020H
+        ld      c,$20
         jp      A0BE6
 ;
-A0AEC:  ld      h,001H
+A0AEC:  ld      h,$01
 A0AEE:  call    A0C29
         push    hl
         call    A0BF2
         call    A07DF
         pop     hl
-A0AF9:  ld      a,020H
-        out     (098H),a
+A0AF9:  ld      a,$20
+        out     ($98),a
         inc     h
         ld      a,(LINLEN)
         cp      h
@@ -1709,11 +1860,11 @@ A0B05:  push    hl
         cp      l
         ret     c
         ret     z
-        ld      h,001H
+        ld      h,$01
         inc     l
         jr      A0B05
 ;
-A0B15:  call    H.ERAF
+A0B15:  call    H_ERAF
         xor     a
         call    A0B9C
         ret     nc
@@ -1726,60 +1877,60 @@ A0B15:  call    H.ERAF
 A0B26:  ld      a,(CNSDFG)
         and     a
         ret     z
-A0B2B:  call    H.DSPF
-        ld      a,0FFH
+A0B2B:  call    H_DSPF
+        ld      a,$FF
         call    A0B9C
         ret     nc
         push    hl
         ld      a,(CSRY)
         ld      hl,CRTCNT
         cp      (hl)
-        ld      a,00AH
+        ld      a,$0A
         jr      nz,A0B41
         rst     OUTDO
 A0B41:  ld      a,(NEWKEY+6)
         rrca
         ld      hl,FNKSTR+0*16
-        ld      a,001H
+        ld      a,$01
         jr      c,A0B50
         ld      hl,FNKSTR+5*16
         xor     a
 A0B50:  ld      (FNKSWI),a
         ld      de,LINWRK
         push    de
-        ld      b,028H
-        ld      a,020H
+        ld      b,$28
+        ld      a,$20
 A0B5B:  ld      (de),a
         inc     de
         djnz    A0B5B
         pop     de
-        ld      c,005H
+        ld      c,$05
         ld      a,(LINLEN)
-        sub     004H
+        sub     $04
         jr      c,A0B94
-        ld      b,0FFH
+        ld      b,$FF
 A0B6B:  inc     b
-        sub     005H
+        sub     $05
         jr      nc,A0B6B
         ld      a,b
         and     a
         jr      z,A0B94
-        defb    03EH
+        defb    $3E
 A0B75:  inc     de
         push    bc
-        ld      c,000H
+        ld      c,$00
 A0B79:  ld      a,(hl)
         inc     hl
         inc     c
         call    A089D
         jr      nc,A0B79
         jr      nz,A0B87
-        cp      020H
+        cp      $20
         jr      c,A0B88
 A0B87:  ld      (de),a
 A0B88:  inc     de
         djnz    A0B79
-        ld      a,010H
+        ld      a,$10
         sub     c
         ld      c,a
         add     hl,bc
@@ -1793,34 +1944,34 @@ A0B94:  ld      hl,(CRTCNT)
 ;
 A0B9C:  ld      (CNSDFG),a
 A0B9F:  ld      a,(SCRMOD)
-        cp      002H
+        cp      $02
         ret
 ;
 A0BA5:  push    hl
-        ld      c,008H
+        ld      c,$08
         jr      A0BB4
 ;
 A0BAA:  push    hl
-        ld      h,001H
+        ld      h,$01
         call    A0BF2
         ld      a,(LINLEN)
         ld      c,a
-A0BB4:  ld      b,000H
+A0BB4:  ld      b,$00
         ld      de,LINWRK
         call    A070F
         pop     hl
         ret
 ;
 A0BBE:  push    hl
-        ld      c,008H
+        ld      c,$08
         jr      A0BCD
 ;
 A0BC3:  push    hl
-        ld      h,001H
+        ld      h,$01
         call    A0BF2
         ld      a,(LINLEN)
         ld      c,a
-A0BCD:  ld      b,000H
+A0BCD:  ld      b,$00
         ex      de,hl
         ld      hl,LINWRK
         call    A0744
@@ -1832,7 +1983,7 @@ A0BD8:  push    hl
         call    A07EC
         ex      (sp),hl
         ex      (sp),hl
-        in      a,(098H)
+        in      a,($98)
         ld      c,a
         pop     hl
         ret
@@ -1841,13 +1992,13 @@ A0BE6:  push    hl
         call    A0BF2
         call    A07DF
         ld      a,c
-        out     (098H),a
+        out     ($98),a
         pop     hl
         ret
 ;
 A0BF2:  push    bc
         ld      e,h
-        ld      h,000H
+        ld      h,$00
         ld      d,h
         dec     l
         add     hl,hl
@@ -1862,11 +2013,11 @@ A0BF2:  push    bc
         and     a
         ld      a,(LINLEN)
         jr      z,A0C0D
-        sub     022H
+        sub     $22
         jr      A0C10
 ;
 A0C0D:  add     hl,bc
-        sub     02AH
+        sub     $2A
 A0C10:  cpl
         and     a
         rra
@@ -1881,7 +2032,7 @@ A0C10:  cpl
 ;
 A0C1D:  push    hl
         ld      de,LINTTB-1
-        ld      h,000H
+        ld      h,$00
         add     hl,de
         ld      a,(hl)
         ex      de,hl
@@ -1889,7 +2040,7 @@ A0C1D:  push    hl
         and     a
         ret
 ;
-A0C29:  defb    03EH
+A0C29:  defb    $3E
 A0C2A:  xor     a
 A0C2B:  push    af
         call    A0C1D
@@ -1916,14 +2067,14 @@ A0C3C:  push    hl
         push    af
         push    iy
         push    ix
-        call    H.KEYI
-        in      a,(099H)
+        call    H_KEYI
+        in      a,($99)
         and     a                       ; vdp interrupt ?
         jp      p,A0D02                 ; nop, quit KEYINT
-        call    H.TIMI
+        call    H_TIMI
         ei
         ld      (STATFL),a              ; save statusregister
-        and     020H                    ; sprite collisionflag set ?
+        and     $20                    ; sprite collisionflag set ?
         ld      hl,TRPTBL+11*3
         call    nz,C0EF1                ; yep, set sprite event
         ld      hl,(INTCNT)
@@ -1948,26 +2099,26 @@ A0C82:  rr      c                       ; handle this channel ?
         pop     bc
         pop     af
         inc     a
-        cp      003H
+        cp      $03
         jr      c,A0C82                 ; all 3 channels
         ld      hl,SCNCNT
         dec     (hl)                    ; do i have to scan ?
         jr      nz,A0D02                ; nop, quit KEYINT
-        ld      (hl),003H               ; next scan after 3 ints
+        ld      (hl),$03               ; next scan after 3 ints
         xor     a
         call    A120C                   ; read joystick 0
-        and     030H                    ; only firebuttons
+        and     $30                    ; only firebuttons
         push    af
-        ld      a,001H
+        ld      a,$01
         call    A120C                   ; read joystick 1
-        and     030H                    ; only firebuttons
+        and     $30                    ; only firebuttons
         rlca
         rlca
         pop     bc
         or      b
         push    af
         call    A1226                   ; read keyboard row 8
-        and     001H                    ; only spacebar
+        and     $01                    ; only spacebar
         pop     bc
         or      b
         ld      c,a
@@ -1998,11 +2149,11 @@ A0C82:  rr      c                       ; handle this channel ?
         ld      hl,REPCNT
         dec     (hl)
         jr      nz,A0D02
-        ld      (hl),001H
+        ld      (hl),$01
         ld      hl,OLDKEY
         ld      de,OLDKEY+1
         ld      bc,11-1
-        ld      (hl),0FFH
+        ld      (hl),$FF
         ldir                            ; create a being pressed
         call    A0D4E
 A0D02:  pop     ix
@@ -2020,14 +2171,14 @@ A0D02:  pop     ix
         ei
         ret
 ;
-A0D12:  in      a,(0AAH)
-        and     0F0H
+A0D12:  in      a,($AA)
+        and     $F0
         ld      c,a
         ld      b,11
         ld      hl,NEWKEY
 A0D1C:  ld      a,c
-        out     (0AAH),a
-        in      a,(0A9H)
+        out     ($AA),a
+        in      a,($A9)
         ld      (hl),a
         inc     c
         inc     hl
@@ -2104,68 +2255,68 @@ A0D89:  push    hl
 A0D97:  rra                             ; this key being pressed ?
         push    bc
         push    af
-        call    c,K.HAND                ; yep, handle key
+        call    c,K_HAND                ; yep, handle key
         pop     af
         pop     bc
         inc     c
         djnz    A0D97                   ; next key in row
-        jp      A08DB                   ; quit
+        jp      A08DB                   ; Reuse code in $08DB that pops BC, DE and HL and returns 
 
 
-        IF      KEYTYP EQ 0
+        IF      KEYTYP = 0
 
         INCLUDE "keyjap.asm"
 
         ENDIF
 
 
-        IF      KEYTYP EQ 1
+        IF      KEYTYP = 1
 
         INCLUDE "keyint.asm"
 
         ENDIF
 
 
-        IF      KEYTYP EQ 2
+        IF      KEYTYP = 2
 
         INCLUDE "keyfr.asm"
 
         ENDIF
 
 
-        IF      KEYTYP EQ 3
+        IF      KEYTYP = 3
 
         INCLUDE "keyuk.asm"
 
         ENDIF
 
 
-        IF      KEYTYP EQ 4
+        IF      KEYTYP = 4
 
         INCLUDE "keyger.asm"
 
         ENDIF
 
 
-        IF      KEYTYP EQ 5
+        IF      KEYTYP = 5
 
         INCLUDE "keyrus.asm"
 
         ENDIF
 
 
-        IF      KEYTYP EQ 6
+        IF      KEYTYP = 6
 
         INCLUDE "keyspa.asm"
 
         ENDIF
 
 
-        ORG     010C2H
+        DEFS    $10C2 - $
 
 C10C2:  inc     hl
         ld      a,l
-        cp      LOW (KEYBUF+40)
+        cp      $00FF & (KEYBUF+40)
         ret     nz
         ld      hl,KEYBUF
         ret
@@ -2173,7 +2324,7 @@ C10C2:  inc     hl
 A10CB:  push    hl
         push    de
         push    bc
-        call    H.CHGE
+        call    H_CHGE
         call    A0D6A
         jr      nz,A10E1
         call    A09DA
@@ -2182,15 +2333,15 @@ A10D9:  call    A0D6A
         call    A0A27
 A10E1:  ld      hl,INTFLG
         ld      a,(hl)
-        cp      004H
+        cp      $04
         jr      nz,A10EB
-        ld      (hl),000H
+        ld      (hl),$00
 A10EB:  ld      hl,(GETPNT)
         ld      c,(hl)
         call    C10C2
         ld      (GETPNT),hl
         ld      a,c
-        jp      A08DB
+        jp      A08DB                   ; Reuse code in $08DB that pops BC, DE and HL and returns 
 ;
 A10F9:  push    hl
         ld      hl,0
@@ -2199,27 +2350,27 @@ A10F9:  push    hl
         ret
 ;
 A1102:  di
-        out     (0A0H),a
+        out     ($A0),a
         push    af
         ld      a,e
-        out     (0A1H),a
+        out     ($A1),a
         ei
         pop     af
         ret
 ;
-A110C:  ld      a,00EH
-A110E:  out     (0A0H),a
-        in      a,(0A2H)
+A110C:  ld      a,$0E
+A110E:  out     ($A0),a
+        in      a,($A2)
         ret
 ;
 A1113:  xor     a
-        ld      e,055H
+        ld      e,$55
         call    A1102
         ld      e,a
         inc     a
         call    A1102
-        ld      e,0BEH
-        ld      a,007H
+        ld      e,$BE
+        ld      a,$07
         call    A1102
         ld      e,a
         inc     a
@@ -2252,16 +2403,16 @@ A113B:  ld      b,a                     ; channel
         ld      a,b
         ld      (QUEUEN),a
         call    A11E2                   ; get byte
-        cp      0FFH
+        cp      $FF
         jr      z,A11B0                 ; end byte,
         ld      d,a
-        and     0E0H
+        and     $E0
         rlca
         rlca
         rlca
         ld      c,a                     ; length of packet
         ld      a,d
-        and     01FH
+        and     $1F
         ld      (hl),a                  ; MSB of counter
         call    A11E2                   ; get byte
         dec     hl
@@ -2271,7 +2422,7 @@ A1166:  dec     c                       ; packet ends ?
         ret     z                       ; yep, quit
         call    A11E2                   ; get byte
         ld      d,a
-        and     0C0H
+        and     $C0
         jr      nz,A1181                ; not a freqency packet
         call    A11E2                   ; get byte
         ld      e,a
@@ -2285,24 +2436,24 @@ A1166:  dec     c                       ; packet ends ?
         jr      A1166                   ; next
 ;
 A1181:  ld      h,a
-        and     080H
+        and     $80
         jr      z,A1195                 ; not a amplitude packet
         ld      e,d
         ld      a,b
-        add     a,008H                  ; amplitude register
+        add     a,$08                  ; amplitude register
         call    A1102                   ; write PSG register
         ld      a,e
-        and     010H                    ; modulate ?
-        ld      a,00DH
+        and     $10                    ; modulate ?
+        ld      a,$0D
         call    nz,A1102                ; yep, write PSG register 13
 A1195:  ld      a,h
-        and     040H
+        and     $40
         jr      z,A1166                 ; there is no envelope packet, next
         call    A11E2                   ; get byte
         ld      d,a
         call    A11E2                   ; get byte
         ld      e,a
-        ld      a,00BH
+        ld      a,$0B
         call    A1102                   ; write PSG register 11
         inc     a
         ld      e,d
@@ -2312,8 +2463,8 @@ A1195:  ld      a,h
         jr      A1166                   ; next
 ;
 A11B0:  ld      a,b
-        add     a,008H                  ; amplitude register
-        ld      e,000H
+        add     a,$08                  ; amplitude register
+        ld      e,$00
         call    A1102                   ; write PSG register
         inc     b
         ld      hl,MUSICF
@@ -2336,7 +2487,7 @@ A11C4:  ld      a,(MUSICF)
         ld      (VCBA+0),hl
         ld      (VCBB+0),hl
         ld      (VCBC+0),hl
-        ld      a,007H
+        ld      a,$07
         ld      (MUSICF),a
         ret
 ;
@@ -2345,15 +2496,15 @@ A11E2:  ld      a,(QUEUEN)
         push    de
         push    bc
         call    A14AD
-        jp      A08DB
+        jp      A08DB                   ; Reuse code in $08DB that pops BC, DE and HL and returns 
 ;
 A11EE:  dec     a
         jp      m,A1200
         call    A120C
         ld      hl,T1233
-A11F8:  and     00FH
+A11F8:  and     $0F
         ld      e,a
-        ld      d,000H
+        ld      d,$00
         add     hl,de
         ld      a,(hl)
         ret
@@ -2367,27 +2518,27 @@ A1200:  call    A1226
         jr      A11F8
 ;
 A120C:  ld      b,a
-        ld      a,00FH
+        ld      a,$0F
         di
         call    A110E
         djnz    A121B
-        and     0DFH
-        or      04CH
+        and     $DF
+        or      $4C
         jr      A121F
 ;
-A121B:  and     0AFH
-        or      003H
-A121F:  out     (0A1H),a
+A121B:  and     $AF
+        or      $03
+A121F:  out     ($A1),a
         call    A110C
         ei
         ret
 ;
 A1226:  di
-        in      a,(0AAH)
-        and     0F0H
-        add     a,008H
-        out     (0AAH),a
-        in      a,(0A9H)
+        in      a,($AA)
+        and     $F0
+        add     a,$08
+        out     ($AA),a
+        in      a,($A9)
         ei
         ret
 ;
@@ -2398,21 +2549,21 @@ T1243:  db      0,3,5,4,1,2,0,3,7,0,6,5,8,1,7,0
 A1253:  dec     a
         jp      m,A126C
         push    af
-        and     001H
+        and     $01
         call    A120C
         pop     bc
         dec     b
         dec     b
-        ld      b,010H
+        ld      b,$10
         jp      m,A1267
-        ld      b,020H
+        ld      b,$20
 A1267:  and     b
-A1268:  sub     001H
+A1268:  sub     $01
         sbc     a,a
         ret
 ;
 A126C:  call    A1226
-        and     001H
+        and     $01
         jr      A1268
 ;
 A1273:  inc     a
@@ -2426,24 +2577,24 @@ A127A:  rla
         djnz    A127A
         ld      b,a
         pop     af
-        ld      c,010H
-        ld      de,003AFH
+        ld      c,$10
+        ld      de,$03AF
         jr      nc,A128B
-        ld      c,020H
-        ld      de,04C9FH
-A128B:  ld      a,00FH
+        ld      c,$20
+        ld      de,$4C9F
+A128B:  ld      a,$0F
         di
         call    A110E
         and     e
         or      d
         or      c
-        out     (0A1H),a
+        out     ($A1),a
         xor     c
-        out     (0A1H),a
-        ld      a,00EH
-        out     (0A0H),a
-        ld      c,000H
-A129F:  in      a,(0A2H)
+        out     ($A1),a
+        ld      a,$0E
+        out     ($A0),a
+        ld      c,$00
+A129F:  in      a,($A2)
         and     b
         jr      z,A12A9
         inc     c
@@ -2453,11 +2604,11 @@ A12A9:  ei
         ld      a,c
         ret
 ;
-A12AC:  cp      004H
-        ld      de,00CECH
+A12AC:  cp      $04
+        ld      de,$0CEC
         jr      c,A12B8
-        ld      de,003D3H
-        sub     004H
+        ld      de,$03D3
+        sub     $04
 A12B8:  dec     a
         jp      m,A12C5
         dec     a
@@ -2470,24 +2621,24 @@ A12C5:  push    af
         ld      (FILNAM+0),hl
         sbc     a,a
         cpl
-        and     040H
+        and     $40
         ld      c,a
-        ld      a,00FH
+        ld      a,$0F
         di
         call    A110E
-        and     0BFH
+        and     $BF
         or      c
-        out     (0A1H),a
+        out     ($A1),a
         pop     af
         jp      m,A12E8
         call    A110C
         ei
-        and     008H
-        sub     001H
+        and     $08
+        sub     $01
         sbc     a,a
         ret
 ;
-A12E8:  ld      c,000H
+A12E8:  ld      c,$00
         call    A1332
         call    A1332
         jr      c,A131A
@@ -2502,14 +2653,14 @@ A12E8:  ld      c,000H
         jr      nc,A1304
         cpl
         inc     a
-A1304:  cp      005H
+A1304:  cp      $05
         jr      nc,A12E8
         ld      a,c
         sub     e
         jr      nc,A130E
         cpl
         inc     a
-A130E:  cp      005H
+A130E:  cp      $05
         jr      nc,A12E8
         ld      a,d
         ld      (PADX),a
@@ -2517,16 +2668,16 @@ A130E:  cp      005H
         ld      (PADY),a
 A131A:  ei
         ld      a,h
-        sub     001H
+        sub     $01
         sbc     a,a
         ret
 ;
-A1320:  ld      c,00AH
+A1320:  ld      c,$0A
         call    A1332
         ret     c
         ld      d,l
         push    de
-        ld      c,000H
+        ld      c,$00
         call    A1332
         pop     de
         ld      e,l
@@ -2535,7 +2686,7 @@ A1320:  ld      c,00AH
         ret
 ;
 A1332:  call    A135B
-        ld      b,008H
+        ld      b,$08
         ld      d,c
 A1338:  res     0,d
         res     2,d
@@ -2557,12 +2708,12 @@ A1338:  res     0,d
         rra
         ret
 ;
-A135B:  ld      a,035H
+A135B:  ld      a,$35
         or      c
         ld      d,a
         call    A136D
 A1362:  call    A110C
-        and     002H
+        and     $02
         jr      z,A1362
         res     4,d
         res     5,d
@@ -2573,13 +2724,13 @@ A136D:  push    hl
         cpl
         and     d
         ld      d,a
-        ld      a,00FH
-        out     (0A0H),a
-        in      a,(0A2H)
+        ld      a,$0F
+        out     ($A0),a
+        in      a,($A2)
         and     l
         or      d
         or      h
-        out     (0A1H),a
+        out     ($A1),a
         pop     de
         pop     hl
         ret
@@ -2587,17 +2738,17 @@ A136D:  push    hl
 A1384:  and     a
         jp      m,A1392
 A1388:  jr      nz,A138D
-        ld      a,009H
-        defb    0C2H
-A138D:  ld      a,008H
-        out     (0ABH),a
+        ld      a,$09
+        defb    $C2
+A138D:  ld      a,$08
+        out     ($AB),a
         ret
 ;
-A1392:  in      a,(0AAH)
-        and     010H
+A1392:  in      a,($AA)
+        and     $10
         jr      A1388
 ;
-A1398:  call    H.NMI
+A1398:  call    H_NMI
         retn
 
 A139D:  ld      bc,10*16
@@ -2617,14 +2768,14 @@ T13A9:  db      "color ",0
         db      "run",13,0
         ds      16-5,0
 
-        IF BASVER EQ 0
-        DEFM    'color 15,4,7',13,0
+        IF BASVER = 0
+        DEFM    "color 15,4,7",13,0
         ds      16-14,0
         ELSE
-        DEFM    'color 15,4,4',13,0
+        DEFM    "color 15,4,4",13,0
         ds      16-14,0
         ENDIF
-        db      'cload"',0
+        db      "cload", 34, 0
         ds      16-7,0
         db      "cont",13,0
         ds      16-6,0
@@ -2633,26 +2784,26 @@ T13A9:  db      "color ",0
         db      12,"run",13,0
         ds      16-6,0
 
-A1449:  in      a,(099H)
+A1449:  in      a,($99)
         ret
 ;
-A144C:  in      a,(0A8H)
+A144C:  in      a,($A8)
         ret
 ;
-A144F:  out     (0A8H),a
+A144F:  out     ($A8),a
         ret
 ;
 A1452:  ld      c,a
         di
-        in      a,(0AAH)
-        and     0F0H
+        in      a,($AA)
+        and     $F0
         add     a,c
-        out     (0AAH),a
-        in      a,(0A9H)
+        out     ($AA),a
+        in      a,($A9)
         ei
         ret
 ;
-A145F:  call    H.ISFL
+A145F:  call    H_ISFL
         push    hl
         ld      hl,(PTRFIL)
         ld      a,l
@@ -2667,13 +2818,13 @@ A146A:  ld      a,h
         sub     e
         ret
 ;
-A1470:  ld      l,002H
+A1470:  ld      l,$02
         jr      A1477
 ;
 A1474:  ld      a,(VOICEN)
 A1477:  push    de
         ld      de,VCBA
-        ld      h,000H
+        ld      h,$00
         add     hl,de
         or      a
         jr      z,A1488
@@ -2684,10 +2835,10 @@ A1484:  add     hl,de
 A1488:  pop     de
         ret
 ;
-A148A:  call    H.PHYD
+A148A:  call    H_PHYD
         ret
 ;
-A148E:  call    H.FORM
+A148E:  call    H_FORM
         ret
 ;
 A1492:  call    A14FA
@@ -2708,7 +2859,7 @@ A1492:  call    A14FA
         inc     hl
         ld      h,(hl)
         ld      l,a
-        ld      b,000H
+        ld      b,$00
         add     hl,bc
         ld      (hl),e
         pop     hl
@@ -2716,7 +2867,7 @@ A1492:  call    A14FA
         ret
 ;
 A14AD:  call    A14FA
-        ld      (hl),000H
+        ld      (hl),$00
         jr      nz,A14D1
         ld      a,c
         cp      b
@@ -2735,7 +2886,7 @@ A14AD:  call    A14FA
         inc     hl
         ld      h,(hl)
         ld      l,a
-        ld      b,000H
+        ld      b,$00
         add     hl,bc
         ld      a,(hl)
         pop     hl
@@ -2743,11 +2894,11 @@ A14AD:  call    A14FA
         or      a
         ret     nz
         inc     a
-        ld      a,000H
+        ld      a,$00
         ret
 ;
 A14D1:  ld      c,a
-        ld      b,000H
+        ld      b,$00
         ld      hl,QUEBAK-1
         add     hl,bc
         ld      a,(hl)
@@ -2779,7 +2930,7 @@ A14EB:  call    A14FA
         sub     b
         and     (hl)
         ld      l,a
-        ld      h,000H
+        ld      h,$00
         ret
 ;
 A14FA:  call    A1504
@@ -2796,7 +2947,7 @@ A1504:  rlca
         rlca
         add     a,b
         ld      c,a
-        ld      b,000H
+        ld      b,$00
         ld      hl,(QUEUES)
         add     hl,bc
         ret
@@ -2808,9 +2959,9 @@ A1510:  push    hl
         call    A089D
         jr      nc,A157B
         jr      nz,A1523
-        cp      00DH
+        cp      $0D
         jr      z,A157E
-        cp      020H
+        cp      $20
         jr      c,A157B
 A1523:  call    A0752
         ld      a,(FORCLR)
@@ -2822,8 +2973,8 @@ A1523:  call    A0752
         jr      nc,A157B
         call    A15DF
         ld      de,PATWRK
-        ld      c,008H
-A1541:  ld      b,008H
+        ld      c,$08
+A1541:  ld      b,$08
         call    A1639
         push    hl
         push    af
@@ -2848,11 +2999,11 @@ A1558:  pop     af
 A1566:  call    A15D9
         ld      a,(GRPACX)
         jr      z,A1574
-        add     a,020H
+        add     a,$20
         jr      c,A157E
         jr      A1578
 ;
-A1574:  add     a,008H
+A1574:  add     a,$08
         jr      c,A157E
 A1578:  ld      (GRPACX),a
 A157B:  jp      A08DA
@@ -2862,10 +3013,10 @@ A157E:  xor     a
         call    A15D9
         ld      a,(GRPACY)
         jr      z,A158D
-        add     a,020H
-        db      001H
-A158D:  add     a,008H
-        cp      0C0H
+        add     a,$20
+        db      $01
+A158D:  add     a,$08
+        cp      $C0
         jr      c,A1594
         xor     a
 A1594:  ld      (GRPACY),a
@@ -2873,7 +3024,7 @@ A1594:  ld      (GRPACY),a
 ;
 A1599:  push    hl
         push    bc
-        ld      b,001H
+        ld      b,$01
         ex      de,hl
         ld      a,h
         add     a,a
@@ -2886,7 +3037,7 @@ A15A7:  ld      de,192
         jr      c,A15B1
         ex      de,hl
         dec     hl
-A15AF:  ld      b,000H
+A15AF:  ld      b,$00
 A15B1:  ex      (sp),hl
         ld      a,h
         add     a,a
@@ -2899,7 +3050,7 @@ A15BB:  ld      de,256
         jr      c,A15C5
         ex      de,hl
         dec     hl
-A15C3:  ld      b,000H
+A15C3:  ld      b,$00
 A15C5:  pop     de
         call    A15D9
         jr      z,A15D3
@@ -2915,7 +3066,7 @@ A15D3:  ld      a,b
         ret
 ;
 A15D9:  ld      a,(SCRMOD)
-        sub     002H
+        sub     $02
         ret
 ;
 A15DF:  push    bc
@@ -2923,7 +3074,7 @@ A15DF:  push    bc
         jr      nz,A1613
         ld      d,c
         ld      a,c
-        and     007H
+        and     $07
         ld      c,a
         ld      hl,T160B
         add     hl,bc
@@ -2933,13 +3084,13 @@ A15DF:  push    bc
         rrca
         rrca
         rrca
-        and     01FH
+        and     $1F
         ld      b,a
         ld      a,d
-        and     0F8H
+        and     $F8
         ld      c,a
         ld      a,e
-        and     007H
+        and     $07
         or      c
         ld      c,a
         ld      hl,(GRPCGP)
@@ -2959,24 +3110,24 @@ T160B:  db      10000000b
 
 A1613:  ld      a,c
         rrca
-        ld      a,0F0H
+        ld      a,$F0
         jr      nc,A161B
-        ld      a,00FH
+        ld      a,$0F
 A161B:  ld      (CMASK),a
         ld      a,c
         add     a,a
         add     a,a
-        and     0F8H
+        and     $F8
         ld      c,a
         ld      a,e
-        and     007H
+        and     $07
         or      c
         ld      c,a
         ld      a,e
         rrca
         rrca
         rrca
-        and     007H
+        and     $07
         ld      b,a
         ld      hl,(MLTCGP)
         add     hl,bc
@@ -3001,7 +3152,7 @@ A1647:  push    bc
         call    A07D7
         and     b
         push    af
-        ld      bc,02000H
+        ld      bc,$2000
         add     hl,bc
         call    A07D7
         ld      b,a
@@ -3012,7 +3163,7 @@ A1663:  rrca
         rrca
         rrca
         rrca
-A1667:  and     00FH
+A1667:  and     $0F
         pop     hl
         pop     bc
         ret
@@ -3023,7 +3174,7 @@ A166C:  call    A07D7
         jp      p,A1667
         jr      A1663
 ;
-A1676:  cp      010H
+A1676:  cp      $10
         ccf
         ret     c
         ld      (ATRBYT),a
@@ -3069,9 +3220,9 @@ A16AC:  push    hl
         rrca
         jr      nc,A1704
         ld      a,l
-        and     0F8H
-        cp      0F8H
-        ld      a,080H
+        and     $F8
+        cp      $F8
+        ld      a,$80
         jr      nz,A16D2
         jp      A175A
 ;
@@ -3092,8 +3243,8 @@ A16D8:  push    hl
         rlca
         jr      nc,A1704
         ld      a,l
-        and     0F8H
-        ld      a,001H
+        and     $F8
+        ld      a,$01
         jr      nz,A16FB
         jr      A175A
 ;
@@ -3128,7 +3279,7 @@ A170A:  push    hl
         jr      c,A1735
         ld      a,l
         inc     a
-        and     007H
+        and     $07
         jr      nz,A1735
         jr      A1759
 ;
@@ -3156,7 +3307,7 @@ A173C:  push    hl
         rst     DCOMPR
         jr      nc,A1768
         ld      a,l
-        and     007H
+        and     $07
         jr      nz,A1768
 A1759:  pop     de
 A175A:  scf
@@ -3171,7 +3322,7 @@ A175D:  push    hl
 A1768:  ld      a,l
         dec     hl
         ld      de,-248
-A176D:  and     007H
+A176D:  and     $07
         jr      nz,A1772
         add     hl,de
 A1772:  ld      (CLOC),hl
@@ -3182,39 +3333,39 @@ A1772:  ld      (CLOC),hl
 ;
 A1779:  call    A1639
         and     a
-        ld      a,00FH
+        ld      a,$0F
         jp      m,A17C0
         ld      a,l
-        and     0F8H
-        cp      0F8H
+        and     $F8
+        cp      $F8
         jr      nz,A1794
         jr      A175A
 ;
 A178B:  call    A1639
         and     a
-        ld      a,00FH
+        ld      a,$0F
         jp      m,A17C0
 A1794:  push    de
         ld      de,8
-        ld      a,0F0H
+        ld      a,$F0
         jr      A17BB
 ;
 A179C:  call    A1639
         and     a
-        ld      a,0F0H
+        ld      a,$F0
         jp      p,A17C0
         ld      a,l
-        and     0F8H
+        and     $F8
         jr      nz,A17B5
         jr      A175A
 ;
 A17AC:  call    A1639
         and     a
-        ld      a,0F0H
+        ld      a,$F0
         jp      p,A17C0
 A17B5:  push    de
         ld      de,-8
-        ld      a,00FH
+        ld      a,$0F
 A17BB:  add     hl,de
         ld      (CLOC),hl
         pop     de
@@ -3232,7 +3383,7 @@ A17C6:  push    hl
         jr      c,A17DC
         ld      a,l
         inc     a
-        and     007H
+        and     $07
         jr      nz,A17DC
         scf
         pop     de
@@ -3252,7 +3403,7 @@ A17E3:  push    hl
         rst     DCOMPR
         jr      nc,A17F8
         ld      a,l
-        and     007H
+        and     $07
         jr      nz,A17F8
         scf
         pop     de
@@ -3262,7 +3413,7 @@ A17E3:  push    hl
 A17F8:  ld      a,l
         dec     hl
         ld      de,-248
-A17FD:  and     007H
+A17FD:  and     $07
         jr      nz,A1802
         add     hl,de
 A1802:  ld      (CLOC),hl
@@ -3295,7 +3446,7 @@ A181C:  add     hl,bc
         add     hl,de
         ex      (sp),hl
 A182F:  ld      a,l
-        and     007H
+        and     $07
         ld      c,a
         ld      a,h
         rrca
@@ -3303,17 +3454,17 @@ A182F:  ld      a,l
         rra
         rrca
         rrca
-        and     03FH
+        and     $3F
         pop     hl
         ld      b,a
         jr      z,A1853
 A183F:  xor     a
         call    A07CD
-        ld      de,02000H
+        ld      de,$2000
         add     hl,de
         ld      a,(ATRBYT)
         call    A07CD
-        ld      de,02008H
+        ld      de,$2008
         add     hl,de
         djnz    A183F
 A1853:  dec     c
@@ -3343,11 +3494,11 @@ A186B:  pop     hl
 A186C:  ld      b,a
         call    A07D7
         ld      c,a
-        ld      de,02000H
+        ld      de,$2000
         add     hl,de
         call    A07D7
         push    af
-        and     00FH
+        and     $0F
         ld      e,a
         pop     af
         sub     e
@@ -3364,7 +3515,7 @@ A186C:  ld      b,a
         push    af
         ld      a,b
         or      c
-        cp      0FFH
+        cp      $FF
         jr      z,A18AA
         push    hl
         push    de
@@ -3378,10 +3529,10 @@ A186C:  ld      b,a
 A189E:  ld      a,b
         cpl
         and     c
-        db      011H
+        db      $11
 A18A2:  ld      a,b
         or      c
-A18A4:  ld      de,02000H
+A18A4:  ld      de,$2000
         add     hl,de
         jr      A18B8
 ;
@@ -3414,7 +3565,7 @@ A18CF:  push    af
         call    A15D9
         jr      z,A18DB
         pop     af
-        cp      010H
+        cp      $10
         ccf
         jr      A18E0
 ;
@@ -3555,7 +3706,7 @@ A19C7:  call    A1647
         cp      b
         ret     z
         call    A167E
-        ld      c,001H
+        ld      c,$01
         and     a
         ret
 ;
@@ -3570,16 +3721,16 @@ A19E2:  dec     bc
         pop     bc                      ; cassettemotor off
 
 A19E9:  push    af
-        ld      a,009H
-        out     (0ABH),a
+        ld      a,$09
+        out     ($AB),a
         pop     af
         ei
         ret
 ;
 A19F1:  or      a
         push    af                      ; flag for headerlength
-        ld      a,008H
-        out     (0ABH),a                ; cassettemotor on
+        ld      a,$08
+        out     ($AB),a                ; cassettemotor on
         ld      hl,0
 A19FA:  dec     hl
         ld      a,h
@@ -3591,7 +3742,7 @@ A19FA:  dec     hl
         add     a,a
         add     a,a                     ; *4 for long header
 A1A07:  ld      b,a
-        ld      c,000H                  ; *256 = # of cycli
+        ld      c,$00                  ; *256 = # of cycli
         di
 A1A0B:  call    A1A4D                   ; high cycle
         call    A1A3F                   ; wait
@@ -3601,10 +3752,10 @@ A1A0B:  call    A1A4D                   ; high cycle
         jr      nz,A1A0B                ; next cyclus
         jp      A046F                   ; quit with BREAKX
 ;
-A1A19:  ld      hl,(LOW.)               ; size of low cycle
+A1A19:  ld      hl,(LOW_)               ; size of low cycle
         push    af
         ld      a,l
-        sub     00EH
+        sub     $0E
         ld      l,a                     ; 14 units shorter
         call    A1A50                   ; low cycle (start bit)
         pop     af
@@ -3617,7 +3768,7 @@ A1A27:  rrca
         call    A1A40                   ; write 2 marks (stopbits)
         jp      A046F                   ; quit with BREAKX
 ;
-A1A39:  ld      hl,(LOW.)               ; low cycle size
+A1A39:  ld      hl,(LOW_)               ; low cycle size
         call    A1A50                   ; write low cycle
 A1A3F:  ret
 ;
@@ -3631,24 +3782,24 @@ A1A40:  call    A1A4D                   ; write high cycle
         call    A1A4D                   ; write high cycle
         ret
 ;
-A1A4D:  ld      hl,(HIGH.)              ; length of high cycle
+A1A4D:  ld      hl,(HIGH_)              ; length of high cycle
 A1A50:  push    af
 A1A51:  dec     l
         jp      nz,A1A51                ; wait low part
-        ld      a,00BH
-        out     (0ABH),a                ; high
+        ld      a,$0B
+        out     ($AB),a                ; high
 A1A59:  dec     h
         jp      nz,A1A59                ; wait high part
-        ld      a,00AH
-        out     (0ABH),a                ; low
+        ld      a,$0A
+        out     ($AB),a                ; low
         pop     af
         ret
 ;
-A1A63:  ld      a,008H
-        out     (0ABH),a                ; cassettemotor on
+A1A63:  ld      a,$08
+        out     ($AB),a                ; cassettemotor on
         di
-        ld      a,00EH
-        out     (0A0H),a                ; select register 14 of PSG
+        ld      a,$0E
+        out     ($A0),a                ; select register 14 of PSG
 A1A6C:  ld      hl,1111
 A1A6F:  ld      d,c
         call    A1B34                   ; count length of cycle
@@ -3680,7 +3831,7 @@ A1A90:  call    A1B34                   ; count length of cycle
         add     hl,bc                   ; add extra for calc
         ld      a,h
         rra
-        and     07FH
+        and     $7F
         ld      d,a                     ; /2
         add     hl,hl                   ; *2
         ld      a,h
@@ -3690,7 +3841,7 @@ A1A90:  call    A1B34                   ; count length of cycle
         ld      (LOWLIM),a              ; min. size of startbit
         ld      a,d
         add     a,a
-        ld      b,000H
+        ld      b,$00
 A1AAF:  sub     3
         inc     b
         jr      nc,A1AAF
@@ -3704,15 +3855,15 @@ A1ABC:  ld      a,(LOWLIM)
         ld      d,a                     ; min. size of startbit
 A1AC0:  call    A046F                   ; BREAKX
         ret     c                       ; break, quit
-        in      a,(0A2H)
+        in      a,($A2)
         rlca
         jr      nc,A1AC0                ; wait for high
 A1AC9:  call    A046F                   ; BREAKX
         ret     c                       ; break, quit
-        in      a,(0A2H)
+        in      a,($A2)
         rlca
         jr      c,A1AC9                 ; wait for low
-        ld      e,000H
+        ld      e,$00
         call    A1B1F                   ; count length of cycle
 A1AD7:  ld      b,c
         call    A1B1F                   ; count length of cycle
@@ -3742,8 +3893,8 @@ A1AE6:  call    A1B03                   ; count transitions
 ;
 A1B03:  ld      a,(WINWID)
         ld      b,a
-        ld      c,000H
-A1B09:  in      a,(0A2H)
+        ld      c,$00
+A1B09:  in      a,($A2)
         xor     e
         jp      p,A1B17
         ld      a,e
@@ -3764,10 +3915,10 @@ A1B1B:  djnz    A1B09
 ;
 A1B1F:  call    A046F
         ret     c
-A1B23:  ld      c,000H
+A1B23:  ld      c,$00
 A1B25:  inc     c
         jr      z,A1B32
-        in      a,(0A2H)
+        in      a,($A2)
         xor     e
         jp      p,A1B25
         ld      a,e
@@ -3780,15 +3931,15 @@ A1B32:  dec     c
 ;
 A1B34:  call    A046F                   ; BREAKX
         ret     c                       ; break, quit
-        in      a,(0A2H)
+        in      a,($A2)
         rlca
         jr      c,A1B34                 ; wait until casinput = 0
-        ld      e,000H
+        ld      e,$00
         call    A1B23                   ; count to high input
         jp      A1B25                   ; add count to low input
 ;
 A1B45:  push    af
-        call    H.OUTD
+        call    H_OUTD
         call    A145F                   ; is file output ?
         jr      z,A1B56                 ; nop,
         pop     af
@@ -3803,24 +3954,27 @@ A1B56:  ld      a,(PRTFLG)
         jr      nz,A1BAB                ; yep, to printer
         pop     af
 A1B63:  push    af
-        cp      009H                    ; tab ?
+        cp      $09                    ; tab ?
         jr      nz,A1B76                ; nop
-A1B68:  ld      a,020H
+A1B68:  ld      a,$20
         call    A1B63
         ld      a,(LPTPOS)
-        and     007H
+        and     $07
         jr      nz,A1B68                ; print spaces
         pop     af
         ret
 ;
-A1B76:  sub     00DH
+A1B76:  sub     $0D
         jr      z,A1B84                 ; cr, LPTPOS = 0
         jr      c,A1B87
-        cp      013H
+        cp      $13
         jr      c,A1B87                 ; control char, don't increase
         ld      a,(LPTPOS)
         inc     a                       ; increase LPTPOS
 A1B84:  ld      (LPTPOS),a
+
+;
+LPTCH0:
 A1B87:  ld      a,(NTMSXP)
         and     a                       ; MSX printer ?
         jr      z,A1BAB                 ; yep, to printer
@@ -3829,42 +3983,55 @@ A1B87:  ld      a,(NTMSXP)
         ret     nc                      ; header, quit
         jr      nz,J1BB7                ; grafic char, print space
 
+; At this point, in address $1B94, you can find different code depending on the language version.
+; In some versions, LPTCH0 continues with language-custom code. In others, it is terminated by 
+; jumping to LPTCHR below and the remaining space is used to allocate tables and code from basekey
+; modules.
+;
+; This language-specific section is placed in basekey extension files accordingly.
 
-        IF      KEYTYP EQ 0
-
-; *************************************
-; *************************************
-
-
-        AND     A
-        JP      P,J1BAC                 ; plain ascii, print
-        CP      86H
-        JR      C,J1BB7                 ; 80H-85H, print space
-        CP      0A0H                    ; 86H-9FH ?
-        JR      NC,J1BA4                ; nope,
-        ADD     A,20H
-        JR      J1BAC                   ; adjust to A6H-BFH and print
-
-J1BA4:  CP      0E0H                    ; E0H-FFH ?
-        JR      C,J1BAC                 ; nope, print
-        SUB     20H                     ; adjust to C0H-DFH
-        DEFB    038H                    ; JR C,xxxx (skip next instruction)
-
-
-; *************************************
-; *************************************
-
+        IF      KEYTYP = 0
+        INCLUDE "keyjap_ext.asm"
         ENDIF
 
-        ORG     01BABH
+        ; International or Spanish
+        IF      KEYTYP = 1 || KEYTYP = 6
+        INCLUDE "keyint_ext.asm"
+        ENDIF
+
+        ; French
+        IF      KEYTYP = 2
+        INCLUDE "keyfr_ext.asm"
+        ENDIF
+
+        ; British
+        IF      KEYTYP = 3
+        INCLUDE "keyuk_ext.asm"
+        ENDIF
+
+        ; German
+        IF      KEYTYP = 4
+        INCLUDE "keyger_ext.asm"
+        ENDIF
+
+        ; German
+        IF      KEYTYP = 5
+        INCLUDE "keyrus_ext.asm"
+        ENDIF
+
+; Pad to $1BAB
+        DEFS    $1BAB - ASMPC
 
 A1BAB:  pop     af
+
+;
+LPTCHR:
 J1BAC:  call    A085D                   ; to printer
         ret     nc                      ; no break, quit
         ld      ix,J73B2                ; Device I/O error
         jp      A01FF                   ; via CALBAS
 ;
-J1BB7:  ld      a,020H
+J1BB7:  ld      a,$20
         jr      J1BAC
 ;
 A1BBB:  pop     af
@@ -3873,55 +4040,55 @@ A1BBB:  pop     af
 T1BBF:
 
 
-        IF      CNTRY EQ 9
+        IF      CNTRY = 9
 
         INCLUDE "chrkor.asm"
 
         ENDIF
 
 
-        IF      CNTRY EQ 0
+        IF      CNTRY = 0
 
         INCLUDE "chrjapv2.asm"
 
         ENDIF
 
 
-        IF      CNTRY EQ 10
+        IF      CNTRY = 10
 
         INCLUDE "chrrus.asm"
 
         ENDIF
 
 
-        IF      CNTRY EQ 5
+        IF      CNTRY = 5
 
         INCLUDE "chrger.asm"
 
         ENDIF
 
 
-        IF      (CNTRY NE 9) AND (CNTRY NE 0) AND (CNTRY NE 10) AND (CNTRY NE 5)
+        IF      (CNTRY <> 9) & (CNTRY <> 0) & (CNTRY <> 10) & (CNTRY <> 5)
 
         INCLUDE "chrint.asm"
 
         ENDIF
 
 
-A23BF:  call    H.PINL
+A23BF:  call    H_PINL
         ld      a,(AUTFLG)
         and     a
         jr      nz,A23D5
-        ld      l,000H
+        ld      l,$00
         jr      A23E0
 ;
-A23CC:  call    H.QINL
+A23CC:  call    H_QINL
         ld      a,'?'
         rst     OUTDO
         ld      a,' '
         rst     OUTDO
 ;
-A23D5:  call    H.INLI
+A23D5:  call    H_INLI
         ld      hl,(CSRY)
         dec     l
         call    nz,A0C29                ; no extend on next line
@@ -3931,7 +4098,7 @@ A23E0:  ld      (FSTPOS),hl
         ld      (INTFLG),a
 A23E7:  call    A10CB                   ; get char
         ld      hl,T2439-2
-        ld      c,00BH
+        ld      c,$0B
         call    A0919
         push    af
         call    nz,A23FF
@@ -3943,22 +4110,22 @@ A23E7:  call    A10CB                   ; get char
 A23FE:  ret
 ;
 A23FF:  push    af
-        cp      009H
+        cp      $09
         jr      nz,A2413
         pop     af
-A2405:  ld      a,020H
+A2405:  ld      a,$20
         call    A23FF
         ld      a,(CSRX)
         dec     a
-        and     007H
+        and     $07
         jr      nz,A2405
         ret
 ;
 A2413:  pop     af
         ld      hl,INSFLG
-        cp      001H
+        cp      $01
         jr      z,A2426
-        cp      020H
+        cp      $20
         jr      c,A2428
         push    af
         ld      a,(hl)
@@ -3968,10 +4135,10 @@ A2413:  pop     af
 A2426:  rst     OUTDO
         ret
 ;
-A2428:  ld      (hl),000H
+A2428:  ld      (hl),$00
         rst     OUTDO
-        defb    03EH
-A242C:  defb    03EH
+        defb    $3E
+A242C:  defb    $3E
 A242D:  xor     a
         push    af
         call    A0A2E                   ; cursor off
@@ -3979,39 +4146,39 @@ A242D:  xor     a
         ld      (CSTYLE),a
         jp      A09E1                   ; cursor on
 ;
-T2439:  db      008H
+T2439:  db      $08
         dw      A2561
-        db      012H
+        db      $12
         dw      A24E5
-        db      01BH
+        db      $1B
         dw      A23FE
-        db      002H
+        db      $02
         dw      A260E
-        db      006H
+        db      $06
         dw      A25F8
-        db      00EH
+        db      $0E
         dw      A25D7
-        db      005H
+        db      $05
         dw      A25B9
-        db      003H
+        db      $03
         dw      A24C5
-        db      00DH
+        db      $0D
         dw      A245A
-        db      015H
+        db      $15
         dw      A25AE
-        db      07FH
+        db      $7F
         dw      A2550
 
 A245A:  call    A266C
         ld      a,(AUTFLG)
         and     a
         jr      z,A2465
-        ld      h,001H
+        ld      h,$01
 A2465:  push    hl
         call    A0A2E                   ; cursor off
         pop     hl
         ld      de,BUF
-        ld      b,0FEH
+        ld      b,$FE
         dec     l
 A2470:  inc     l
 A2471:  push    de
@@ -4021,16 +4188,16 @@ A2471:  push    de
         pop     de
         and     a
         jr      z,A248F
-        cp      020H
+        cp      $20
         jr      nc,A248A
         dec     b
         jr      z,A249F
         ld      c,a
-        ld      a,001H
+        ld      a,$01
         ld      (de),a
         inc     de
         ld      a,c
-        add     a,040H
+        add     a,$40
 A248A:  ld      (de),a
         inc     de
         dec     b
@@ -4042,11 +4209,11 @@ A248F:  inc     h
         push    de
         call    A0C1D                   ; extend at next line ?
         pop     de
-        ld      h,001H
+        ld      h,$01
         jr      z,A2470
 A249F:  dec     de
         ld      a,(de)
-        cp      020H
+        cp      $20
         jr      z,A249F
         push    hl
         push    de
@@ -4056,12 +4223,12 @@ A249F:  dec     de
         inc     de
         xor     a
         ld      (de),a
-A24AF:  ld      a,00DH
+A24AF:  ld      a,$0D
         and     a
 A24B2:  push    af
         call    A0C29                   ; no extend on next line
         call    A088E                   ; put cursor
-        ld      a,00AH
+        ld      a,$0A
         rst     OUTDO
         xor     a
         ld      (INSFLG),a
@@ -4076,7 +4243,7 @@ A24C5:  call    A0C1D                   ; extends in next line ?
         call    A242D
         xor     a
         ld      (BUF),a
-        ld      h,001H
+        ld      h,$01
         push    hl
         call    A04BD
         call    A0454
@@ -4089,14 +4256,14 @@ A24C5:  call    A0C1D                   ; extends in next line ?
 
 A24E5:  ld      hl,INSFLG
         ld      a,(hl)
-        xor     0FFH
+        xor     $FF
         ld      (hl),a
         jp      z,A242D
         jp      A242C
 ;
 A24F2:  call    A0A2E                   ; cursor off
         ld      hl,(CSRY)
-        ld      c,020H
+        ld      c,$20
 A24FA:  push    hl
 A24FB:  push    bc
         call    A0BD8                   ; read char from VRAM
@@ -4114,7 +4281,7 @@ A24FB:  push    bc
         call    A0C1D                   ; extend in next line ?
         jr      z,A254B
         ld      a,c
-        cp      020H
+        cp      $20
         push    af
         jr      nz,A2524
         ld      a,(LINLEN)
@@ -4137,7 +4304,7 @@ A2535:  ld      hl,CSRY
         dec     (hl)
         jr      nz,A253C
         inc     (hl)
-A253C:  ld      l,001H
+A253C:  ld      l,$01
         call    A0A88
         pop     hl
         dec     l
@@ -4148,7 +4315,7 @@ A2544:  pop     hl
         jp      z,A09E1                 ; cursor on
         dec     l
 A254B:  inc     l
-        ld      h,001H
+        ld      h,$01
         jr      A24FA
 
 A2550:  ld      a,(LINLEN)
@@ -4156,7 +4323,7 @@ A2550:  ld      a,(LINLEN)
         jr      nz,A255B
         call    A0C1D                   ; extend in next line ?
         jr      nz,A2595
-A255B:  ld      a,01CH
+A255B:  ld      a,$1C
         rst     OUTDO
         ld      hl,(CSRY)
 A2561:  push    hl
@@ -4189,13 +4356,13 @@ A2584:  call    A0BD8                   ; read char from VRAM
         cp      h
         jr      nz,A2584
         dec     h
-A2595:  ld      c,020H
+A2595:  ld      c,$20
         call    A0BE6                   ; calc VRAM adres
         call    A0C1D                   ; extend on next line ?
         jp      nz,A09E1                ; cursor on
         push    hl
         inc     l
-        ld      h,001H
+        ld      h,$01
         call    A0BD8                   ; read char from VRAM
         ex      (sp),hl
         call    A0BE6                   ; calc VRAM adres
@@ -4215,7 +4382,7 @@ A25BE:  call    A0C1D                   ; extend on next line ?
         call    A0AEE                   ; clear to end of line
         pop     af
         jr      nz,A25CD
-        ld      h,001H
+        ld      h,$01
         inc     l
         jr      A25BE
 ;
@@ -4236,7 +4403,7 @@ A25DE:  inc     l
 A25E9:  dec     h
         jr      z,A25F3
         call    A0BD8                   ; read char from VRAM
-        cp      020H
+        cp      $20
         jr      z,A25E9
 A25F3:  call    A0A5B                   ; cursor right
         jr      A25CD
@@ -4271,36 +4438,36 @@ A2624:  ld      hl,(CSRY)
 ;
 A2634:  ld      hl,(CSRY)
         call    A0A4C                   ; cursor left
-        ld      de,00101H
+        ld      de,$0101
 A263D:  ld      hl,(CSRY)
         rst     DCOMPR
         ret     z
         ld      de,A2668
         push    de
         call    A0BD8                   ; read char from VRAM
-        cp      030H
+        cp      $30
         ccf
         ret     nc
-        cp      03AH
+        cp      $3A
         ret     c
-        cp      041H
+        cp      $41
         ccf
         ret     nc
-        cp      05BH
+        cp      $5B
         ret     c
-        cp      061H
+        cp      $61
         ccf
         ret     nc
-        cp      07BH
+        cp      $7B
         ret     c
-        cp      086H
+        cp      $86
         ccf
         ret     nc
-        cp      0A0H
+        cp      $A0
         ret     c
-        cp      0A6H
+        cp      $A6
         ccf
-A2668:  ld      a,000H
+A2668:  ld      a,$00
         inc     a
         ret
 ;
@@ -4311,7 +4478,7 @@ A266C:  dec     l
 A2674:  inc     l
         ld      a,(FSTPOS)
         cp      l
-        ld      h,001H
+        ld      h,$01
         ret     nz
         ld      hl,(FSTPOS)
         ret

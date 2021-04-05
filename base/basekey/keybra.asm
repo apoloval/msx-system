@@ -1,332 +1,315 @@
+        EXTERN  CLIKSW
+
 ; *************************************
 ; BEGIN OF BRASILIAN KEYBOARD HANDLER
 ; ************************************* 
 
-I0DA5:	DEFB	30H,31H,32H,33H,34H,35H,36H,37H
-        DEFB	38H,39H,2DH,3DH,7BH,0FFH,5BH,0FFH
-        DEFB	2AH,87H,2CH,2EH,3BH,2FH,61H,62H
-        DEFB	63H,64H,65H,66H,67H,68H,69H,6AH
-        DEFB	6BH,6CH,6DH,6EH,6FH,70H,71H,72H
-        DEFB	73H,74H,75H,76H,77H,78H,79H,7AH
-        DEFB	29H,21H,22H,23H,24H,25H,5EH,26H
-        DEFB	27H,28H,5FH,2BH,7DH,0FFH,5DH,0FFH
-        DEFB	40H,80H,3CH,3EH,3AH,3FH,41H,42H
-        DEFB	43H,44H,45H,46H,47H,48H,49H,4AH
-        DEFB	4BH,4CH,4DH,4EH,4FH,50H,51H,52H
-        DEFB	53H,54H,55H,56H,57H,58H,59H,5AH
-        DEFB	09H,0ACH,0ABH,0BAH,0EFH,0BDH,0F4H,0FBH
-        DEFB	0ECH,07H,17H,0F1H,1EH,01H,0DH,06H
-        DEFB	05H,0BBH,0F3H,0F2H,1DH,5CH,0C4H,11H
-        DEFB	0BCH,0C7H,0CDH,14H,15H,13H,0DCH,0C6H
-        DEFB	0DDH,0C8H,0BH,1BH,0C2H,0DBH,0CCH,18H
-        DEFB	0D2H,12H,0C0H,1AH,0CFH,1CH,19H,0FH
-        DEFB	0AH,00H,0FDH,0FCH,00H,00H,0F5H,00H
-        DEFB	00H,08H,1FH,0F0H,16H,02H,0EH,04H
-        DEFB	03H,0F7H,0AEH,0AFH,0F6H,7CH,0FEH,00H
-        DEFB	0FAH,0C1H,0CEH,0D4H,10H,0D6H,0DFH,0CAH
-        DEFB	0DEH,0C9H,0CH,0D3H,0C3H,0D7H,0CBH,0A9H
-        DEFB	0D1H,00H,0C5H,0D5H,0D0H,0F9H,0AAH,0F8H
-        DEFB	0EBH,9FH,0D9H,0BFH,9BH,98H,0E0H,0E1H
-        DEFB	0E7H,87H,0EEH,0E9H,00H,0EDH,0DAH,0B7H
-        DEFB	0B9H,0E5H,86H,0A6H,0A7H,0FFH,84H,97H
-        DEFB	8DH,8BH,8CH,94H,81H,0B1H,0A1H,91H
-        DEFB	0B3H,0B5H,0E6H,0A4H,0A2H,0A3H,83H,93H
-        DEFB	89H,96H,82H,95H,88H,8AH,0A0H,85H
-        DEFB	0D8H,0ADH,9EH,0BEH,9CH,9DH,00H,00H
-        DEFB	0E2H,80H,00H,00H,00H,0E8H,0EAH,0B6H
-        DEFB	0B8H,0E4H,8FH,00H,0A8H,0FFH,8EH,00H
-        DEFB	00H,00H,00H,99H,9AH,0B0H,00H,92H
-        DEFB	0B2H,0B4H,00H,0A5H,00H,0E3H,00H,00H
-        DEFB	00H,00H,90H,00H,00H,00H,00H,00H
+I0DA5:  DEFB    $30,$31,$32,$33,$34,$35,$36,$37
+        DEFB    $38,$39,$2D,$3D,$7B,$FF,$5B,$FF
+        DEFB    $2A,$87,$2C,$2E,$3B,$2F,$61,$62
+        DEFB    $63,$64,$65,$66,$67,$68,$69,$6A
+        DEFB    $6B,$6C,$6D,$6E,$6F,$70,$71,$72
+        DEFB    $73,$74,$75,$76,$77,$78,$79,$7A
+        DEFB    $29,$21,$22,$23,$24,$25,$5E,$26
+        DEFB    $27,$28,$5F,$2B,$7D,$FF,$5D,$FF
+        DEFB    $40,$80,$3C,$3E,$3A,$3F,$41,$42
+        DEFB    $43,$44,$45,$46,$47,$48,$49,$4A
+        DEFB    $4B,$4C,$4D,$4E,$4F,$50,$51,$52
+        DEFB    $53,$54,$55,$56,$57,$58,$59,$5A
+        DEFB    $9,$AC,$AB,$BA,$EF,$BD,$F4,$FB
+        DEFB    $EC,$7,$17,$F1,$1E,$1,$D,$6
+        DEFB    $5,$BB,$F3,$F2,$1D,$5C,$C4,$11
+        DEFB    $BC,$C7,$CD,$14,$15,$13,$DC,$C6
+        DEFB    $DD,$C8,$B,$1B,$C2,$DB,$CC,$18
+        DEFB    $D2,$12,$C0,$1A,$CF,$1C,$19,$F
+        DEFB    $A,$0,$FD,$FC,$0,$0,$F5,$0
+        DEFB    $0,$8,$1F,$F0,$16,$2,$E,$4
+        DEFB    $3,$F7,$AE,$AF,$F6,$7C,$FE,$0
+        DEFB    $FA,$C1,$CE,$D4,$10,$D6,$DF,$CA
+        DEFB    $DE,$C9,$C,$D3,$C3,$D7,$CB,$A9
+        DEFB    $D1,$0,$C5,$D5,$D0,$F9,$AA,$F8
+        DEFB    $EB,$9F,$D9,$BF,$9B,$98,$E0,$E1
+        DEFB    $E7,$87,$EE,$E9,$0,$ED,$DA,$B7
+        DEFB    $B9,$E5,$86,$A6,$A7,$FF,$84,$97
+        DEFB    $8D,$8B,$8C,$94,$81,$B1,$A1,$91
+        DEFB    $B3,$B5,$E6,$A4,$A2,$A3,$83,$93
+        DEFB    $89,$96,$82,$95,$88,$8A,$A0,$85
+        DEFB    $D8,$AD,$9E,$BE,$9C,$9D,$0,$0
+        DEFB    $E2,$80,$0,$0,$0,$E8,$EA,$B6
+        DEFB    $B8,$E4,$8F,$0,$A8,$FF,$8E,$0
+        DEFB    $0,$0,$0,$99,$9A,$B0,$0,$92
+        DEFB    $B2,$B4,$0,$A5,$0,$E3,$0,$0
+        DEFB    $0,$0,$90,$0,$0,$0,$0,$0
 
-J0EC5:	LD	E,C
-        LD	D,00H
-        LD	HL,FNKFLG-035H
-        ADD	HL,DE
-        LD	A,(HL)
-        AND	A
-        JR	NZ,J0EE3
-J0ED0:	EX	DE,HL
-        ADD	HL,HL
-        ADD	HL,HL
-        ADD	HL,HL
-        ADD	HL,HL
-        LD	DE,FNKSTR-035H*16
-        ADD	HL,DE
-        EX	DE,HL
-J0EDA:	LD	A,(DE)
-        AND	A
-        RET	Z
-        CALL	C0F55
-        INC	DE
-        JR	J0EDA
+J0EC5:  LD      E,C
+        LD      D,$0
+        LD      HL,FNKFLG-$35
+        ADD     HL,DE
+        LD      A,(HL)
+        AND     A
+        JR      NZ,J0EE3
+J0ED0:  EX      DE,HL
+        ADD     HL,HL
+        ADD     HL,HL
+        ADD     HL,HL
+        ADD     HL,HL
+        LD      DE,FNKSTR-$35*16
+        ADD     HL,DE
+        EX      DE,HL
+J0EDA:  LD      A,(DE)
+        AND     A
+        RET     Z
+        CALL    C0F55
+        INC     DE
+        JR      J0EDA
 
-J0EE3:	LD	HL,(CURLIN)
-        INC	HL
-        LD	A,H
-        OR	L
-        JR	Z,J0ED0
-        LD	HL,TRPTBL-035H*3
-        ADD	HL,DE
-        ADD	HL,DE
-        ADD	HL,DE
-        LD	A,(HL)
-        AND	01H
-        RET	Z
-        LD	A,(HL)
-        OR	04H
-        CP	(HL)
-        RET	Z
-        LD	(HL),A
-        XOR	05H
-        RET	NZ
-        LD	A,(ONGSBF)
-        INC	A
-        LD	(ONGSBF),A
+J0EE3:  LD      HL,(CURLIN)
+        INC     HL
+        LD      A,H
+        OR      L
+        JR      Z,J0ED0
+        LD      HL,TRPTBL-$35*3
+        ADD     HL,DE
+        ADD     HL,DE
+        ADD     HL,DE
+        LD      A,(HL)
+        AND     $1
+        RET     Z
+        LD      A,(HL)
+        OR      $4
+        CP      (HL)
+        RET     Z
+        LD      (HL),A
+        XOR     $5
+        RET     NZ
+        LD      A,(ONGSBF)
+        INC     A
+        LD      (ONGSBF),A
         RET
 
-C0F06:	LD	A,(NEWKEY+6)
+C0F06:  LD      A,(NEWKEY+6)
         RRCA
-        LD	A,0CH
-        SBC	A,00H
-        JR	C0F55
+        LD      A,$C
+        SBC     A,$0
+        JR      C0F55
 
-C0F10:	CALL	H.KEYA
-        LD	E,A
-        LD	D,00H
-        LD	HL,I1033-030H
-        ADD	HL,DE
-        LD	A,(HL)
-        AND	A
-        RET	Z
-        JR	C0F55
+C0F10:  CALL    H_KEYA
+        LD      E,A
+        LD      D,$0
+        LD      HL,I1033-$30
+        ADD     HL,DE
+        LD      A,(HL)
+        AND     A
+        RET     Z
+        JR      C0F55
 
-J0F1F:	LD	HL,NEWKEY+6
-        LD	A,C
-        CP	0FH
-        LD	A,03H
-        JR	Z,J0F2B
-        LD	A,01H
-J0F2B:	BIT	0,(HL)
-        JR	Z,J0F30
-        INC	A
-J0F30:	LD	C,A
-        JP	J141C
+J0F1F:  LD      HL,NEWKEY+6
+        LD      A,C
+        CP      $F
+        LD      A,$3
+        JR      Z,J0F2B
+        LD      A,$1
+J0F2B:  BIT     0,(HL)
+        JR      Z,J0F30
+        INC     A
+J0F30:  LD      C,A
+        JP      J141C
 
 ;
-;	leftover from KANA keyhandler, not used
+;       leftover from KANA keyhandler, not used
 ;
 
-        DEFS	00F36H-$,0
+        DEFS    $0F36-$,0
 
-C0F36:	LD	HL,CAPST
-        LD	A,(HL)
+C0F36:  LD      HL,CAPST
+        LD      A,(HL)
         CPL
-        LD	(HL),A
+        LD      (HL),A
         CPL
 
-K.BCAP:	AND	A
-        LD	A,0CH
-        JR	Z,J0F43
-        INC	A
-J0F43:	OUT	(0ABH),A
+K_BCAP: AND     A
+        LD      A,$C
+        JR      Z,J0F43
+        INC     A
+J0F43:  OUT     ($AB),A
         RET
 
-C0F46:	LD	A,(NEWKEY+6)
+C0F46:  LD      A,(NEWKEY+6)
         RRCA
         RRCA
-        LD	A,03H
-        JR	NC,J0F50
-        INC	A
-J0F50:	LD	(INTFLG),A
-        JR	C,J0F64
+        LD      A,$3
+        JR      NC,J0F50
+        INC     A
+J0F50:  LD      (INTFLG),A
+        JR      C,J0F64
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine __________________________
+;            Inputs  ________________________
+;            Outputs ________________________
 
-C0F55:	LD	HL,(PUTPNT)
-        LD	(HL),A
-        CALL	C105B
-        LD	A,(GETPNT)
-        CP	L
-        RET	Z
-        LD	(PUTPNT),HL
-J0F64:	LD	A,(CLIKSW)
-        AND	A
-        RET	Z
-        LD	A,(CLIKFL)
-        AND	A
-        RET	NZ
-        LD	A,0FH
-        LD	(CLIKFL),A
-        OUT	(0ABH),A
-        LD	A,10
-J0F77:	DEC	A
-        JR	NZ,J0F77
+C0F55:  LD      HL,(PUTPNT)
+        LD      (HL),A
+        CALL    C105B
+        LD      A,(GETPNT)
+        CP      L
+        RET     Z
+        LD      (PUTPNT),HL
+J0F64:  LD      A,(CLIKSW)
+        AND     A
+        RET     Z
+        LD      A,(CLIKFL)
+        AND     A
+        RET     NZ
+        LD      A,$F
+        LD      (CLIKFL),A
+        OUT     ($AB),A
+        LD      A,10
+J0F77:  DEC     A
+        JR      NZ,J0F77
 
-K.BSND:	AND	A
-        LD	A,0EH
-        JR	Z,J0F80
-        INC	A
-J0F80:	OUT	(0ABH),A
+K_BSND: AND     A
+        LD      A,$E
+        JR      Z,J0F80
+        INC     A
+J0F80:  OUT     ($AB),A
         RET
 
-C0F83:	LD	A,(NEWKEY+6)
-        LD	E,A
+C0F83:  LD      A,(NEWKEY+6)
+        LD      E,A
         RRA
         RRA
-        PUSH	AF
-        LD	A,E
+        PUSH    AF
+        LD      A,E
         CPL
-        JR	NC,J0F9E
+        JR      NC,J0F9E
         RRA
         RRA
         RLCA
-        AND	03H
-        BIT	1,A
-        JR	NZ,J0FA0
-        BIT	4,E
-        JR	NZ,J0FA0
-        OR	04H
-        DEFB	011H
-J0F9E:	AND	001H
-J0FA0:	LD	E,A
-        ADD	A,A
-        ADD	A,E
-        ADD	A,A
-        ADD	A,A
-        ADD	A,A
-        ADD	A,A
-        LD	E,A
-        LD	D,00H
-        LD	HL,I0DA5
-        ADD	HL,DE
-        LD	B,D
-        ADD	HL,BC
-        POP	AF
-        LD	A,(HL)
-        INC	A
-        JP	Z,J0F1F
-        DEC	A
-        RET	Z
-        JR	C,J0FD0
-        AND	0DFH
-        SUB	40H
-        CP	20H
-        RET	NC
-J0FC1:	JR	C0F55
+        AND     $3
+        BIT     1,A
+        JR      NZ,J0FA0
+        BIT     4,E
+        JR      NZ,J0FA0
+        OR      $4
+        DEFB    $11
+J0F9E:  AND     $01
+J0FA0:  LD      E,A
+        ADD     A,A
+        ADD     A,E
+        ADD     A,A
+        ADD     A,A
+        ADD     A,A
+        ADD     A,A
+        LD      E,A
+        LD      D,$0
+        LD      HL,I0DA5
+        ADD     HL,DE
+        LD      B,D
+        ADD     HL,BC
+        POP     AF
+        LD      A,(HL)
+        INC     A
+        JP      Z,J0F1F
+        DEC     A
+        RET     Z
+        JR      C,J0FD0
+        AND     $DF
+        SUB     $40
+        CP      $20
+        RET     NC
+J0FC1:  JR      C0F55
 
-C0FC3:	LD	A,(NEWKEY+6)
+C0FC3:  LD      A,(NEWKEY+6)
         RRCA
-        JR	C,J0FCD
-        LD	A,C
-        ADD	A,05H
-        LD	C,A
-J0FCD:	JP	J0EC5
+        JR      C,J0FCD
+        LD      A,C
+        ADD     A,$5
+        LD      C,A
+J0FCD:  JP      J0EC5
 
-J0FD0:	CP	20H
-        JR	NC,J0FDF
-        PUSH	AF
-        LD	A,01H
-        CALL	C0F55
-        POP	AF
-        ADD	A,40H
-        JR	J0FC1
+J0FD0:  CP      $20
+        JR      NC,J0FDF
+        PUSH    AF
+        LD      A,$1
+        CALL    C0F55
+        POP     AF
+        ADD     A,$40
+        JR      J0FC1
 
-J0FDF:	LD	HL,CAPST
-        INC	(HL)
-        DEC	(HL)
-        JR	Z,J0FF0
-        CP	61H
-        JR	C,J1011
-        CP	7BH
-        JR	NC,J1011
-        AND	0DFH
-J0FF0:	LD	DE,(KANAST)
-        INC	E
-        DEC	E
-        JR	Z,J0FC1
-        LD	D,A
-        OR	20H
-        LD	HL,I1061+5-1
-        LD	C,5
+J0FDF:  LD      HL,CAPST
+        INC     (HL)
+        DEC     (HL)
+        JR      Z,J0FF0
+        CP      $61
+        JR      C,J1011
+        CP      $7B
+        JR      NC,J1011
+        AND     $DF
+J0FF0:  LD      DE,(KANAST)
+        INC     E
+        DEC     E
+        JR      Z,J0FC1
+        LD      D,A
+        OR      $20
+        LD      HL,I1061+5-1
+        LD      C,5
         CPDR
-        LD	A,D
-        JR	NZ,J0FC1
-        INC	HL
-        LD	C,05H
-J1008:	ADD	HL,BC
-        DEC	E
-        JR	NZ,J1008
-        LD	A,(HL)
-        BIT	5,D
-        JR	NZ,J0FC1
-J1011:	LD	C,20
-        LD	HL,I107F+20-1
+        LD      A,D
+        JR      NZ,J0FC1
+        INC     HL
+        LD      C,$5
+J1008:  ADD     HL,BC
+        DEC     E
+        JR      NZ,J1008
+        LD      A,(HL)
+        BIT     5,D
+        JR      NZ,J0FC1
+J1011:  LD      C,20
+        LD      HL,I107F+20-1
         CPDR
-        JR	NZ,J0FC1
-        LD	C,20
-        INC	HL
-        ADD	HL,BC
-        LD	A,(HL)
-        JR	J0FC1
+        JR      NZ,J0FC1
+        LD      C,20
+        INC     HL
+        ADD     HL,BC
+        LD      A,(HL)
+        JR      J0FC1
 
-K.HAND:	LD	A,C
-        LD	HL,I1B96
-        CALL	H.KEYC
-        LD	D,HIGH C0F06
-J102A:	CP	(HL)
-        INC	HL
-        LD	E,(HL)
-        INC	HL
-        PUSH	DE
-        RET	C
-        POP	DE
-        JR	J102A
+K_HAND: LD      A,C
+        LD      HL,I1B96
+        CALL    H_KEYC
+        LD      D,HIGH C0F06
+J102A:  CP      (HL)
+        INC     HL
+        LD      E,(HL)
+        INC     HL
+        PUSH    DE
+        RET     C
+        POP     DE
+        JR      J102A
 
-I1033:	DEFB	00H,00H,00H,00H,00H,00H,00H,00H
-        DEFB	00H,00H,1BH,09H,00H,08H,18H,0DH
-        DEFB	20H,0CH,12H,7FH,1DH,1EH,1FH,1CH
-        DEFB	2BH,2DH,2AH,2FH,00H,00H,00H,00H
-        DEFB	00H,00H,00H,00H,00H,00H,00H,00H
+I1033:  DEFB    $0,$0,$0,$0,$0,$0,$0,$0
+        DEFB    $0,$0,$1B,$9,$0,$8,$18,$D
+        DEFB    $20,$C,$12,$7F,$1D,$1E,$1F,$1C
+        DEFB    $2B,$2D,$2A,$2F,$0,$0,$0,$0
+        DEFB    $0,$0,$0,$0,$0,$0,$0,$0
 
-;	  Subroutine __________________________
-;	     Inputs  ________________________
-;	     Outputs ________________________
+;         Subroutine __________________________
+;            Inputs  ________________________
+;            Outputs ________________________
 
-C105B:	XOR	A
-        LD	(KANAST),A
-        JR	J10C2
+C105B:  XOR     A
+        LD      (KANAST),A
+        JR      J10C2
 
-I1061:	DEFB	061H,065H,069H,06FH,075H
-        DEFB	085H,065H,069H,095H,097H
-        DEFB	0A0H,082H,0A1H,0A2H,0A3H
-        DEFB	083H,088H,069H,093H,096H
-        DEFB	0B1H,065H,0B3H,0B5H,081H
-        DEFB	000H,000H,000H,000H,000H
+I1061:  DEFB    $61,$65,$69,$6F,$75
+        DEFB    $85,$65,$69,$95,$97
+        DEFB    $A0,$82,$A1,$A2,$A3
+        DEFB    $83,$88,$69,$93,$96
+        DEFB    $B1,$65,$B3,$B5,$81
+        DEFB    $00,$00,$00,$00,$00
 
-I107F:	DEFB	085H,065H,069H,06FH,097H,0A0H,082H,0A1H,0A2H,0A3H,083H,088H,093H,096H,061H,075H,081H,0B1H,0B5H,087H
-        DEFB	08FH,045H,049H,04FH,055H,084H,090H,089H,08AH,08BH,08CH,08DH,08EH,055H,041H,055H,09AH,0B0H,0B4H,080H
-
-        DEFS	010C2H-$,0
-
-        ORG	01B94H
-
-        JR	J1BAC
-
-I1B96:	DEFB	030H,LOW C0F83
-        DEFB	033H,LOW C0F10
-        DEFB	034H,LOW C0F36
-        DEFB	035H,LOW C0F10
-        DEFB	03AH,LOW C0FC3
-        DEFB	03CH,LOW C0F10
-        DEFB	03DH,LOW C0F46
-        DEFB	041H,LOW C0F10
-        DEFB	042H,LOW C0F06
-        DEFB	0FFH,LOW C0F10
-
-        DEFS	01BABH-$,0
+I107F:  DEFB    $85,$65,$69,$6F,$97,$A0,$82,$A1,$A2,$A3,$83,$88,$93,$96,$61,$75,$81,$B1,$B5,$87
+        DEFB    $8F,$45,$49,$4F,$55,$84,$90,$89,$8A,$8B,$8C,$8D,$8E,$55,$41,$55,$9A,$B0,$B4,$80
 
 ; *************************************
 ; END OF BRASILIAN KEYBOARD HANDLER
